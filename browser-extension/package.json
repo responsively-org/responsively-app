@@ -1,0 +1,25 @@
+{
+  "name": "whater",
+  "version": "1.0.0",
+  "description": "",
+  "main": "background_script.js",
+  "scripts": {
+    "start": "webpack --mode development  --watch",
+    "build": "webpack --mode production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.5.4",
+    "@babel/preset-env": "^7.5.4",
+    "babel-loader": "^8.0.6",
+    "copy-webpack-plugin": "^5.0.3",
+    "css-loader": "^3.0.0",
+    "style-loader": "^0.23.1",
+    "web-ext-webpack-plugin": "github:hiikezoe/web-ext-webpack-plugin",
+    "webextension-polyfill": "^0.4.0",
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.5"
+  }
+}
