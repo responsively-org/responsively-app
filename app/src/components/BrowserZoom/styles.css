@@ -1,0 +1,8 @@
+.zoom-slider {
+  width: 300px;
+  display: flex;
+}
+
+.MuiSlider-markLabelActive, .MuiSlider-markLabel {
+  color: white !important;
+}
