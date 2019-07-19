@@ -10,11 +10,6 @@ const testDevice1 = {
   width: 100,
   height: 100,
 };
-const testDevice2 = {
-  name: 'testDevice2',
-  width: 200,
-  height: 200,
-}
 
 describe('<Renderer />', () => {
   it('Renders the header and the iframe', () => {

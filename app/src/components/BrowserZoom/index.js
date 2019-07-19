@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import Slider from '@material-ui/core/Slider';
+import ZoomInIcon from '@material-ui/icons/ZoomIn';
 
-import './styles.css';
+import styles from './styles.module.css';
+import './otherStyles.css';
 
 const marks = [
   {
@@ -26,8 +28,8 @@ class BrowserZoom extends Component {
 
   render() {
     return (
-      <div className="zoom-slider">
-      Zoom:
+      <div className={styles.zoomSlider}>
+      <span className={styles.label}><ZoomInIcon /></span>
       <Slider
         defaultValue={100}
         step={25}
