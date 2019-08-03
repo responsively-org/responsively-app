@@ -7,7 +7,7 @@
     "start": "webpack --mode development  --watch",
     "build": "webpack --mode production",
     "test": "jest",
-    "test-dev": "jest --no-cache"
+    "test-dev": "jest --watch"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +15,7 @@
     "@material-ui/core": "^4.2.0",
     "@material-ui/icons": "^4.2.1",
     "classnames": "^2.2.6",
+    "normalize-url": "^4.3.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
@@ -29,6 +30,7 @@
     "chai": "^4.2.0",
     "chai-enzyme": "^1.0.0-beta.1",
     "copy-webpack-plugin": "^5.0.3",
+    "core-js": "^3.1.4",
     "css-loader": "^3.1.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
@@ -57,7 +59,9 @@
     ]
   },
   "jest": {
-    "setupFilesAfterEnv": ["<rootDir>src/setupTests.js"],
+    "setupFilesAfterEnv": [
+      "<rootDir>src/setupTests.js"
+    ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
       "\\.(css|less)$": "identity-obj-proxy"

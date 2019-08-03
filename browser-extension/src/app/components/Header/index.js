@@ -11,7 +11,7 @@ class Header extends Component {
     return (
       <div className={cx(styles.container)}>
         <h1>Whater</h1>
-        <div><BrowserZoom onChange={setBrowserZoom}/></div>
+        <BrowserZoom onChange={setBrowserZoom}/>
       </div>
     );
   }

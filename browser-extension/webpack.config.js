@@ -5,9 +5,12 @@ const path = require('path');
 module.exports = {
   entry: {
     background: ['./src/background.js'],
+    app: ['./src/app/index.js']
   },
   output: {
-    filename: '[name].js',
+    filename: (chunkData) => {
+      return chunkData.chunk.name === 'background' ? '[name].js': 'app/[name].js';
+    },
   },
   module: {
     rules: [
@@ -27,11 +30,14 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              importLoaders: 1,
-              localIdentName: '[name]_[local]_[hash:base64]',
+              modules: {
+                mode: 'local',
+                localIdentName: '[path][name]__[local]--[hash:base64:5]',
+              },
+             /* importLoaders: 1,
               sourceMap: true,
               minimize: true,
+              */
             },
           },
         ],
