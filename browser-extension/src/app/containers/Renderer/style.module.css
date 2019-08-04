@@ -1,0 +1,11 @@
+.container {
+  margin: 10px;
+}
+
+.deviceWrapper {
+
+}
+
+.device {
+  transform-origin: top left;
+}

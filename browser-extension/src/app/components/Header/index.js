@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {setBrowserZoom} from '../../commons/utils';
-import BrowserZoom from '../BrowserZoom';
+import ZoomController from '../../containers/ZoomController';
 import cx from 'classnames';
 
 import styles from './style.module.css';
@@ -11,7 +10,7 @@ class Header extends Component {
     return (
       <div className={cx(styles.container)}>
         <h1>Whater</h1>
-        <BrowserZoom onChange={setBrowserZoom}/>
+        <ZoomController />
       </div>
     );
   }

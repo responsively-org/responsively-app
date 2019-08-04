@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Renderer from '../Renderer';
+import Renderer from '../../containers/Renderer';
 import cx from 'classnames';
 
 import styles from './style.module.css';

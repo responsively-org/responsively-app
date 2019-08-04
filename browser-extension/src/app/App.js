@@ -1,12 +1,15 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
+import 'webextension-polyfill';
 
 import React from 'react';
-import './App.css';
 import DevicesPreviewer from './components/DevicesPreviewer';
 import Header from './components/Header';
 import {setURL} from './commons/postMan';
 import {DEVICES} from './commons/constants';
+
+import './App.css';
+
 
 class App extends React.Component {
 
