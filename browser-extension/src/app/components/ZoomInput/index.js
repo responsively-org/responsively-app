@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import Slider from '@material-ui/core/Slider';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
+import ZoomOutIcon from '@material-ui/icons/ZoomOut';
+import Grid from '@material-ui/core/Grid';
 
 import styles from './styles.module.css';
 import './otherStyles.css';
@@ -28,18 +30,24 @@ class BrowserZoom extends Component {
 
   render() {
     return (
-      <div className={styles.zoomSlider}>
-      <span className={styles.label}><ZoomInIcon /></span>
-      <Slider
-        defaultValue={100}
-        step={25}
-        marks={marks}
-        valueLabelDisplay="auto"
-        min={25}
-        max={200}
-        onChange={(_, value) => this.props.onChange && this.props.onChange(value)}
-      />
-      </div>
+      <Grid container spacing={1} direction="column" className={styles.zoomSlider}>
+        <Grid item>
+          <ZoomInIcon />
+        </Grid>
+        <Grid item xs>
+          <Slider
+            orientation="vertical"
+            defaultValue={100}
+            valueLabelDisplay="auto"
+            min={10}
+            max={100}
+            onChange={(_, value) => this.props.onChange && this.props.onChange(value)}
+        />
+        </Grid>
+        <Grid item>
+          <ZoomOutIcon />
+        </Grid>
+      </Grid>
     );
 
   }
