@@ -30,24 +30,25 @@ class BrowserZoom extends Component {
 
   render() {
     return (
-      <Grid container spacing={1} direction="column" className={styles.zoomSlider}>
-        <Grid item>
-          <ZoomInIcon />
+      <div className={styles.zoomSlider}>
+        <Grid container spacing={1} >
+          <Grid item>
+            <ZoomOutIcon />
+          </Grid>
+          <Grid item xs>
+            <Slider
+              defaultValue={100}
+              valueLabelDisplay="auto"
+              min={10}
+              max={100}
+              onChange={(_, value) => this.props.onChange && this.props.onChange(value)}
+          />
+          </Grid>
+          <Grid item>
+            <ZoomInIcon />
+          </Grid>
         </Grid>
-        <Grid item xs>
-          <Slider
-            orientation="vertical"
-            defaultValue={100}
-            valueLabelDisplay="auto"
-            min={10}
-            max={100}
-            onChange={(_, value) => this.props.onChange && this.props.onChange(value)}
-        />
-        </Grid>
-        <Grid item>
-          <ZoomOutIcon />
-        </Grid>
-      </Grid>
+      </div>
     );
 
   }
