@@ -40,6 +40,7 @@
     "enzyme-adapter-react-16": "^1.14.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.8.0",
+    "rewire": "^4.0.1",
     "sinon": "^7.3.2",
     "style-loader": "^0.23.1",
     "web-ext-webpack-plugin": "github:hiikezoe/web-ext-webpack-plugin",

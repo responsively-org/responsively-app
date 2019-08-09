@@ -4,7 +4,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    background: ['./src/background.js'],
+    background: ['./src/background'],
     app: ['./src/app/index.js']
   },
   output: {
@@ -32,7 +32,7 @@ module.exports = {
             options: {
               modules: {
                 mode: 'local',
-                localIdentName: '[path][name]__[local]--[hash:base64:5]',
+                localIdentName: '[name]__[local]--[hash:base64:5]',
               },
              /* importLoaders: 1,
               sourceMap: true,
