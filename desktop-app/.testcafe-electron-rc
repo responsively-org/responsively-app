@@ -1,0 +1,4 @@
+{
+  "mainWindowUrl": "./app/app.html",
+  "appPath": "."
+}
