@@ -9,7 +9,7 @@ class Renderer extends Component {
     console.log('Renderer this.props', this.props);
     return (
       <div className={cx(styles.container)}>
-        <h2>{this.props.device.name}</h2>
+        <h3>{this.props.device.name}</h3>
         <div
           className={cx(styles.deviceWrapper)}
           style={{
@@ -20,7 +20,7 @@ class Renderer extends Component {
           <webview
             className={cx(styles.device)}
             title={this.props.device.name}
-            src={this.props.src}
+            src={this.props.src || 'about:blank'}
             width={this.props.device.width}
             height={this.props.device.height}
             style={{

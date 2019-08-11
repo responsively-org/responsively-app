@@ -33,6 +33,7 @@ class AddressBar extends React.Component<Props> {
           className={styles.addressInput}
           placeholder="https://your-website.com"
           value={this.state.userTypedAddress || this.props.address}
+          onKeyDown={this._handleKeyDown}
           onChange={e => this.setState({userTypedAddress: e.target.value})}
         />
         <button className={styles.goButton} onClick={this._onChange}>
@@ -42,9 +43,25 @@ class AddressBar extends React.Component<Props> {
     );
   }
 
+  _handleKeyDown = e => {
+    if (e.key === 'Enter') {
+      this._onChange();
+    }
+  };
+
   _onChange = () => {
-    console.log('in _onChange', this.props.onChange);
-    this.props.onChange && this.props.onChange(this.state.userTypedAddress);
+    if (!this.state.userTypedAddress) {
+      return;
+    }
+    this.props.onChange &&
+      this.props.onChange(this._normalize(this.state.userTypedAddress));
+  };
+
+  _normalize = address => {
+    if (!address.startsWith('http')) {
+      address = 'https://' + address;
+    }
+    return address;
   };
 }
 
