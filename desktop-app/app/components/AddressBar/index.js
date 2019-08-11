@@ -5,11 +5,11 @@ import styles from './style.css';
 
 type Props = {
   address: string,
-  onChange: () => void
+  onChange: () => void,
 };
 
 type State = {
-  userTypedAddress: string
+  userTypedAddress: string,
 };
 
 class AddressBar extends React.Component<Props> {
@@ -19,7 +19,7 @@ class AddressBar extends React.Component<Props> {
   constructor(props) {
     super(props);
     this.state = {
-      userTypedAddress: null
+      userTypedAddress: null,
     };
   }
 
@@ -43,7 +43,8 @@ class AddressBar extends React.Component<Props> {
   }
 
   _onChange = () => {
-    this.props.onChange && this.props.onChange(this.state.address);
+    console.log('in _onChange', this.props.onChange);
+    this.props.onChange && this.props.onChange(this.state.userTypedAddress);
   };
 }
 
