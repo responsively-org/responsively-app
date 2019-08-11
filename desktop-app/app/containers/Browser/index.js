@@ -1,8 +1,9 @@
 // @flow
-import React from 'react';
+import React, {Fragment} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import AddressBar from '../../components/AddressBar';
+import Header from '../../components/Header';
+import DevicePreviewerContainer from '../DevicePreviewerContainer';
 import * as BrowserActions from '../../actions/browser';
 
 type Props = {};
@@ -13,9 +14,14 @@ class Browser extends React.Component<Props> {
   render() {
     console.log('Props', this.props);
     return (
-      <div>
-        <AddressBar onChange={this.props.onAddressChange} />
-      </div>
+      <Fragment>
+        <div>
+          <Header />
+        </div>
+        <div>
+          <DevicePreviewerContainer />
+        </div>
+      </Fragment>
     );
   }
 }

@@ -2,6 +2,7 @@
 import type {GetState, Dispatch} from '../reducers/types';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
+export const NEW_ZOOM_LEVEL = 'NEW_ZOOM_LEVEL';
 
 export function newAddress(address) {
   return {
@@ -10,8 +11,14 @@ export function newAddress(address) {
   };
 }
 
+export function newZoomLevel(zoomLevel) {
+  return {
+    type: NEW_ZOOM_LEVEL,
+    zoomLevel,
+  };
+}
+
 export function onAddressChange(newURL) {
-  console.log('onAddressChange', newURL);
   return (dispatch: Dispatch, getState: GetState) => {
     const {address} = getState();
 
@@ -22,5 +29,17 @@ export function onAddressChange(newURL) {
     }
 
     dispatch(newAddress(newURL));
+  };
+}
+
+export function onZoomChange(newLevel) {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {zoomLevel} = getState();
+
+    if (newLevel === zoomLevel) {
+      return;
+    }
+
+    dispatch(newZoomLevel(newLevel));
   };
 }

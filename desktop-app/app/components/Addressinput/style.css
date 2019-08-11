@@ -6,7 +6,6 @@
   font-size: 16px;
   height: 20px;
   width: 200px;
-  margin: 0 20px;
   padding: 5px 10px;
   border-radius: 20px;
   background: unset;
@@ -21,4 +20,3 @@
   cursor: pointer;
   outline: none;
 }
-

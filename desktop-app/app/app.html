@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <title>Hello Electron React!</title>
+    <meta charset="utf-8" />
+    <title>Responsively</title>
     <script>
       (function() {
         if (!process.env.HOT) {
@@ -12,7 +12,7 @@
           // HACK: Writing the script path should be done with webpack
           document.getElementsByTagName('head')[0].appendChild(link);
         }
-      }());
+      })();
     </script>
   </head>
   <body>
@@ -30,7 +30,7 @@
         // Dynamically insert the bundled app script in the renderer process
         const port = process.env.PORT || 1212;
         scripts.push(
-          (process.env.HOT)
+          process.env.HOT
             ? 'http://localhost:' + port + '/dist/renderer.dev.js'
             : './dist/renderer.prod.js'
         );

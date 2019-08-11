@@ -36,7 +36,7 @@ class AddressBar extends React.Component<Props> {
           onChange={e => this.setState({userTypedAddress: e.target.value})}
         />
         <button className={styles.goButton} onClick={this._onChange}>
-          <GoArrowIcon height={30} color="white" />
+          <GoArrowIcon height={20} color="white" />
         </button>
       </div>
     );
