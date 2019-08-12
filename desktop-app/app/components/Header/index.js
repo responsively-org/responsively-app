@@ -1,13 +1,13 @@
 // @flow
-import React, {Component} from 'react';
+import React from 'react';
+import Grid from '@material-ui/core/Grid';
+
 import ZoomContainer from '../../containers/ZoomContainer';
 import AddressBar from '../../containers/AddressBar';
-import Grid from '@material-ui/core/Grid';
-import cx from 'classnames';
 
 import styles from './style.module.css';
 
-const Header = function(props) {
+const Header = function() {
   return (
     <div className={styles.header}>
       <Grid
