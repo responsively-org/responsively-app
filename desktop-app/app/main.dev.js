@@ -73,6 +73,10 @@ app.on('ready', async () => {
     show: true,
     width,
     height,
+    webPreferences: {
+      nodeIntegration: true,
+      webviewTag: true,
+    },
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
