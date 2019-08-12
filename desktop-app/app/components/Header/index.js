@@ -9,14 +9,21 @@ import styles from './style.module.css';
 
 const Header = function(props) {
   return (
-    <Grid container direction="row" justify="space-evenly" alignItems="center">
-      <Grid item>
-        <AddressBar />
+    <div className={styles.header}>
+      <Grid
+        container
+        direction="row"
+        justify="space-evenly"
+        alignItems="center"
+      >
+        <Grid item>
+          <AddressBar />
+        </Grid>
+        <Grid item>
+          <ZoomContainer />
+        </Grid>
       </Grid>
-      <Grid item>
-        <ZoomContainer />
-      </Grid>
-    </Grid>
+    </div>
   );
 };
 

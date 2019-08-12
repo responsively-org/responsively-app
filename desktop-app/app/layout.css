@@ -1,0 +1,23 @@
+.appRoot {
+  height: 100%;
+  overflow: hidden;
+  margin: 0px;
+  display: flex;
+  box-sizing: border-box;
+}
+
+.iconColumn {
+  width: 75px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #00000042;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);
+}
+
+.contentColumn {
+  width: calc(100vw - 75px);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}

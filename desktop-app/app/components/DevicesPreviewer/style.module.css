@@ -1,5 +1,6 @@
 .container {
   display: flex;
+  overflow: scroll;
 }
 
 .device {

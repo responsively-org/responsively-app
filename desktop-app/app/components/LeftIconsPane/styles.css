@@ -1,0 +1,11 @@
+.iconsContainer {
+  display: flex;
+  flex-flow: column;
+  width: 75px;
+}
+
+.icon {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}

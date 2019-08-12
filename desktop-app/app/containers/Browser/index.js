@@ -15,12 +15,8 @@ class Browser extends React.Component<Props> {
     console.log('Props', this.props);
     return (
       <Fragment>
-        <div>
-          <Header />
-        </div>
-        <div>
-          <DevicePreviewerContainer />
-        </div>
+        <Header />
+        <DevicePreviewerContainer />
       </Fragment>
     );
   }
