@@ -6,7 +6,7 @@ import {bindActionCreators} from 'redux';
 import ZoomInput from '../../components/ZoomInput';
 import * as BrowserActions from '../../actions/browser';
 
-const ZoomController = props => {
+const ZoomController = function(props) {
   return (
     <ZoomInput
       value={props.browser.zoomLevel * 100}

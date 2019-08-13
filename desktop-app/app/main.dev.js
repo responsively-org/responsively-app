@@ -70,7 +70,7 @@ app.on('ready', async () => {
   const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
 
   mainWindow = new BrowserWindow({
-    show: true,
+    show: false,
     width,
     height,
     webPreferences: {
@@ -81,9 +81,13 @@ app.on('ready', async () => {
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
+  /*mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -93,7 +97,7 @@ app.on('ready', async () => {
       mainWindow.show();
       mainWindow.focus();
     }
-  });
+  });*/
 
   mainWindow.on('closed', () => {
     mainWindow = null;
