@@ -5,6 +5,10 @@ import cx from 'classnames';
 
 import styles from './style.module.css';
 
+const MESSAGE_TYPES = {
+  scroll: 'scroll',
+};
+
 class WebView extends Component {
   constructor(props) {
     super(props);
@@ -12,9 +16,9 @@ class WebView extends Component {
   }
 
   componentDidMount() {
-    console.log('this.webviewRef', this.webviewRef);
-    this.webviewRef.current.addEventListener('ipc-message', event =>
-      console.log('Message recieved', event)
+    this.webviewRef.current.addEventListener(
+      'ipc-message',
+      this.messageHandler
     );
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
@@ -22,25 +26,86 @@ class WebView extends Component {
     });
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    this.processIfScrollChange(prevProps);
+  }
+
+  processIfScrollChange = prevProps => {
+    const {
+      browser: {
+        scrollPosition: {x: prevX, y: prevY},
+      },
+    } = prevProps;
+    const {
+      browser: {
+        scrollPosition: {x, y},
+      },
+    } = this.props;
+    if (x === prevX && y === prevY) {
+      return;
+    }
+    console.log('Scrolling to ', {x, y});
+    this.webviewRef.current.send('scroll', {x, y});
+  };
+
+  messageHandler = ({channel: type, args: [message]}) => {
+    console.log('Message recieved', message);
+    switch (type) {
+      case MESSAGE_TYPES.scroll:
+        this.props.onScrollChange(message);
+        return;
+    }
+  };
+
   initEventTriggers = webview => {
     console.log('Initializing triggers');
     webview.getWebContents().executeJavaScript(`
-      window.addEventListener('scroll', () => responsivelyApp.sendMessageToHost('scroll', {x: window.scrollX, y: window.scrollY}));
+    // TODO Improve it to avoid the delay by not triggering a scroll event when it is triggered by message
+    var lastTimeScrolled = null;
+    var theElementYouCareAbout = document;
+    var intervalMilliSeconds = 100; // interval goes here
+    window.onscroll = function(){
+      if (performance.now() - lastTimeScrolled > intervalMilliSeconds){
+        var intervalScroll = setInterval(function(){
+          if (performance.now() - lastTimeScrolled > intervalMilliSeconds){
+            onScrollStop();
+            clearInterval(intervalScroll);
+          }
+        }.bind(intervalScroll).bind(intervalMilliSeconds), 100);
+      }
+      lastTimeScrolled = performance.now();
+    }.bind(intervalMilliSeconds);
+    
+    function onScrollStop (){
+      console.log('scroll stopped');
+      responsivelyApp.sendMessageToHost(
+        '${MESSAGE_TYPES.scroll}', 
+        {x: window.scrollX, y: window.scrollY}
+      );
+    }
+      /*window.addEventListener('scroll', (e) => {
+        console.log('e', e.originalEvent, e);
+          responsivelyApp.sendMessageToHost(
+            '${MESSAGE_TYPES.scroll}', 
+            {x: window.scrollX, y: window.scrollY}
+          );
+      })*/
     `);
   };
 
   render() {
-    console.log('Renderer this.props', this.props);
+    console.log('WebView this.props', this.props);
+    const {device, browser} = this.props;
     return (
       <webview
         ref={this.webviewRef}
         preload="./preload.js"
         className={cx(styles.device)}
-        src={this.props.src || 'about:blank'}
+        src={browser.address || 'about:blank'}
         style={{
-          width: this.props.width,
-          height: this.props.height,
-          transform: `scale(${this.props.zoomLevel})`,
+          width: device.width,
+          height: device.height,
+          transform: `scale(${browser.zoomLevel})`,
         }}
       />
     );
