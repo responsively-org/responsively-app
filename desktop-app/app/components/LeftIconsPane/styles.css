@@ -9,3 +9,8 @@
   justify-content: center;
   margin: 10px;
 }
+
+.logo {
+  background: white;
+  border-radius: 9%;
+}
