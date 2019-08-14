@@ -1,3 +1,17 @@
+.webViewContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.webViewToolbar {
+  padding: 5px;
+  display: flex;
+}
+
+.webViewToolbarIcons {
+  cursor: pointer;
+}
+
 .device {
   transform-origin: top left;
   background: white;

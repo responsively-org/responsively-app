@@ -1,6 +1,7 @@
 // @flow
 import React, {Component, createRef} from 'react';
 import {ipcRenderer} from 'electron';
+import BugIcon from '../icons/Bug';
 import cx from 'classnames';
 
 import styles from './style.module.css';
@@ -93,21 +94,35 @@ class WebView extends Component {
     `);
   };
 
+  _toggleDevTools = () => {
+    this.webviewRef.current.getWebContents().toggleDevTools();
+  };
+
   render() {
     console.log('WebView this.props', this.props);
     const {device, browser} = this.props;
     return (
-      <webview
-        ref={this.webviewRef}
-        preload="./preload.js"
-        className={cx(styles.device)}
-        src={browser.address || 'about:blank'}
-        style={{
-          width: device.width,
-          height: device.height,
-          transform: `scale(${browser.zoomLevel})`,
-        }}
-      />
+      <div className={cx(styles.webViewContainer)}>
+        <div className={cx(styles.webViewToolbar)}>
+          <div
+            className={cx(styles.webViewToolbarIcons)}
+            onClick={this._toggleDevTools}
+          >
+            <BugIcon width={20} color="#03ce6c" />
+          </div>
+        </div>
+        <webview
+          ref={this.webviewRef}
+          preload="./preload.js"
+          className={cx(styles.device)}
+          src={browser.address || 'about:blank'}
+          style={{
+            width: device.width,
+            height: device.height,
+            transform: `scale(${browser.zoomLevel})`,
+          }}
+        />
+      </div>
     );
   }
 }

@@ -23,7 +23,8 @@ export type BrowserStateType = {
 export default function counter(
   state: BrowserStateType = {
     devices,
-    zoomLevel: 0.75,
+    address: 'https://www.github.com',
+    zoomLevel: 0.5,
     scrollPosition: {x: 0, y: 0},
   },
   action: Action
