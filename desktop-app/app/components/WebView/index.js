@@ -98,6 +98,7 @@ class WebView extends Component {
           preload="./preload.js"
           className={cx(styles.device)}
           src={browser.address || 'about:blank'}
+          useragent={device.useragent}
           style={{
             width: device.width,
             height: device.height,
