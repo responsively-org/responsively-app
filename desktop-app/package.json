@@ -60,6 +60,7 @@
     "productName": "ResponsivelyApp",
     "appId": "app.ResponsivelyApp",
     "files": [
+      "app/preload.js",
       "app/dist/",
       "app/app.html",
       "app/main.prod.js",

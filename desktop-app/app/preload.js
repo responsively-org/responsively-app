@@ -9,6 +9,5 @@ ipcRenderer.on('scroll', (event, args) => {
   window.scrollTo({
     top: args.y,
     left: args.x,
-    behavior: 'smooth',
   });
 });

@@ -61,36 +61,18 @@ class WebView extends Component {
   initEventTriggers = webview => {
     console.log('Initializing triggers');
     webview.getWebContents().executeJavaScript(`
-    // TODO Improve it to avoid the delay by not triggering a scroll event when it is triggered by message
-    var lastTimeScrolled = null;
-    var theElementYouCareAbout = document;
-    var intervalMilliSeconds = 100; // interval goes here
-    window.onscroll = function(){
-      if (performance.now() - lastTimeScrolled > intervalMilliSeconds){
-        var intervalScroll = setInterval(function(){
-          if (performance.now() - lastTimeScrolled > intervalMilliSeconds){
-            onScrollStop();
-            clearInterval(intervalScroll);
-          }
-        }.bind(intervalScroll).bind(intervalMilliSeconds), 100);
-      }
-      lastTimeScrolled = performance.now();
-    }.bind(intervalMilliSeconds);
-    
-    function onScrollStop (){
-      console.log('scroll stopped');
-      responsivelyApp.sendMessageToHost(
-        '${MESSAGE_TYPES.scroll}', 
-        {x: window.scrollX, y: window.scrollY}
-      );
-    }
-      /*window.addEventListener('scroll', (e) => {
-        console.log('e', e.originalEvent, e);
-          responsivelyApp.sendMessageToHost(
-            '${MESSAGE_TYPES.scroll}', 
-            {x: window.scrollX, y: window.scrollY}
-          );
-      })*/
+      document.body.addEventListener('mouseleave', () => responsivelyApp.mouseOn = false)
+      document.body.addEventListener('mouseenter', () => responsivelyApp.mouseOn = true)
+
+      window.addEventListener('scroll', (e) => {
+        if (!responsivelyApp.mouseOn) {
+          return;
+        }
+        responsivelyApp.sendMessageToHost(
+          '${MESSAGE_TYPES.scroll}', 
+          {x: window.scrollX, y: window.scrollY}
+        );
+      })
     `);
   };
 
