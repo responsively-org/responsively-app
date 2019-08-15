@@ -25,6 +25,11 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
     });
+
+    this.webviewRef.current.addEventListener('will-navigate', ({url}) => {
+      console.log('Navigating to ', url);
+      this.props.onAddressChange(url);
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
