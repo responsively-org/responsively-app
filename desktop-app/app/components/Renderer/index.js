@@ -10,7 +10,7 @@ class Renderer extends Component {
     console.log('Renderer this.props', this.props);
     return (
       <div className={cx(styles.container)}>
-        <h3>{this.props.device.name}</h3>
+        <h3 className={cx(styles.deviceTitle)}>{this.props.device.name}</h3>
         <div
           className={cx(styles.deviceWrapper)}
           style={{
