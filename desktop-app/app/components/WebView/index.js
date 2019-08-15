@@ -95,7 +95,7 @@ class WebView extends Component {
             className={cx(styles.webViewToolbarIcons)}
             onClick={this._toggleDevTools}
           >
-            <BugIcon width={20} color="#03ce6c" />
+            <BugIcon width={20} color="lightgrey" />
           </div>
         </div>
         <webview
