@@ -9,7 +9,7 @@ type Props = {
 };
 
 type State = {
-  userTypedAddress: string,
+  address: string,
 };
 
 class AddressBar extends React.Component<Props> {
@@ -19,8 +19,16 @@ class AddressBar extends React.Component<Props> {
   constructor(props) {
     super(props);
     this.state = {
-      userTypedAddress: null,
+      userTypedAddress: props.address,
+      previousAddress: props.address,
     };
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.address != state.previousAddress) {
+      return {userTypedAddress: props.address, previousAddress: props.address};
+    }
+    return null;
   }
 
   render() {
@@ -32,7 +40,7 @@ class AddressBar extends React.Component<Props> {
           name="name"
           className={styles.addressInput}
           placeholder="https://your-website.com"
-          value={this.state.userTypedAddress || this.props.address}
+          value={this.state.userTypedAddress}
           onKeyDown={this._handleKeyDown}
           onChange={e => this.setState({userTypedAddress: e.target.value})}
         />
