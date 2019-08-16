@@ -2,5 +2,9 @@
   margin: 10px;
 }
 
+.deviceTitle {
+  font-weight: normal;
+  font-size: 16px;
+}
 .deviceWrapper {
 }

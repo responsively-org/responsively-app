@@ -235,6 +235,7 @@
     "electron-log": "^3.0.7",
     "electron-updater": "^4.1.2",
     "history": "^4.7.2",
+    "pubsub.js": "^1.5.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-hot-loader": "^4.3.12",

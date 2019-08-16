@@ -1,6 +1,7 @@
 // @flow
 import React, {Component, createRef} from 'react';
 import {ipcRenderer} from 'electron';
+import pubsub from 'pubsub.js';
 import BugIcon from '../icons/Bug';
 import cx from 'classnames';
 
@@ -8,6 +9,7 @@ import styles from './style.module.css';
 
 const MESSAGE_TYPES = {
   scroll: 'scroll',
+  click: 'click',
 };
 
 class WebView extends Component {
@@ -21,6 +23,8 @@ class WebView extends Component {
       'ipc-message',
       this.messageHandler
     );
+    pubsub.subscribe('scroll', this.processScrollEvent);
+    pubsub.subscribe('click', this.processClickEvent);
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
@@ -32,33 +36,28 @@ class WebView extends Component {
     });
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    this.processIfScrollChange(prevProps);
-  }
-
-  processIfScrollChange = prevProps => {
-    const {
-      browser: {
-        scrollPosition: {x: prevX, y: prevY},
-      },
-    } = prevProps;
-    const {
-      browser: {
-        scrollPosition: {x, y},
-      },
-    } = this.props;
-    if (x === prevX && y === prevY) {
+  processScrollEvent = message => {
+    if (message.sourceDeviceId === this.props.device.id) {
       return;
     }
-    console.log('Scrolling to ', {x, y});
-    this.webviewRef.current.send('scroll', {x, y});
+    this.webviewRef.current.send('scrollMessage', message.position);
+  };
+
+  processClickEvent = message => {
+    if (message.sourceDeviceId === this.props.device.id) {
+      return;
+    }
+    this.webviewRef.current.send('clickMessage', message);
   };
 
   messageHandler = ({channel: type, args: [message]}) => {
     console.log('Message recieved', message);
     switch (type) {
       case MESSAGE_TYPES.scroll:
-        this.props.onScrollChange(message);
+        pubsub.publish('scroll', [message]);
+        return;
+      case MESSAGE_TYPES.click:
+        pubsub.publish('click', [message]);
         return;
     }
   };
@@ -66,6 +65,7 @@ class WebView extends Component {
   initEventTriggers = webview => {
     console.log('Initializing triggers');
     webview.getWebContents().executeJavaScript(`
+      responsivelyApp.deviceId = ${this.props.device.id};
       document.body.addEventListener('mouseleave', () => responsivelyApp.mouseOn = false)
       document.body.addEventListener('mouseenter', () => responsivelyApp.mouseOn = true)
 
@@ -73,11 +73,32 @@ class WebView extends Component {
         if (!responsivelyApp.mouseOn) {
           return;
         }
-        responsivelyApp.sendMessageToHost(
+        window.responsivelyApp.sendMessageToHost(
           '${MESSAGE_TYPES.scroll}', 
-          {x: window.scrollX, y: window.scrollY}
+          {
+            sourceDeviceId: window.responsivelyApp.deviceId,
+            position: {x: window.scrollX, y: window.scrollY},
+          }
         );
-      })
+      });
+
+      document.querySelectorAll('*')
+        .forEach(elem => {
+          elem.addEventListener('click', e => {
+            if (e.responsivelyAppProcessed) {
+              return;
+            }
+            e.responsivelyAppProcessed = true; 
+            console.log('clicked', e);
+            window.responsivelyApp.sendMessageToHost(
+              '${MESSAGE_TYPES.click}', 
+              {
+                sourceDeviceId: window.responsivelyApp.deviceId,
+                cssPath: window.responsivelyApp.cssPath(e.target),
+              }
+            );
+          });
+        });
     `);
   };
 

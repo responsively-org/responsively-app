@@ -9833,6 +9833,11 @@ public-encrypt@^4.0.0:
     randombytes "^2.0.1"
     safe-buffer "^5.1.2"
 
+pubsub.js@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/pubsub.js/-/pubsub.js-1.5.2.tgz#f7a6c5e12cabe5b48b24326e2e2d6cd6542f0a4b"
+  integrity sha1-96bF4Syr5bSLJDJuLi1s1lQvCks=
+
 pump@^2.0.0:
   version "2.0.1"
   resolved "https://registry.npmjs.org/pump/-/pump-2.0.1.tgz#12399add6e4cf7526d973cbc8b5ce2e2908b3909"
