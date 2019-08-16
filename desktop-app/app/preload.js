@@ -7,19 +7,14 @@ global.responsivelyApp = {
     var path = [];
     while (el.nodeType === Node.ELEMENT_NODE) {
       var selector = el.nodeName.toLowerCase();
-      if (selector === 'html') {
-      } else if (el.id) {
-        selector += '#' + el.id;
-      } else {
-        var sib = el,
-          nth = 1;
-        while (
-          sib.nodeType === Node.ELEMENT_NODE &&
-          (sib = sib.previousSibling) &&
-          nth++
-        );
-        selector += ':nth-child(' + nth + ')';
-      }
+      var sib = el,
+        nth = 1;
+      while (
+        sib.nodeType === Node.ELEMENT_NODE &&
+        (sib = sib.previousElementSibling) &&
+        nth++
+      );
+      selector += ':nth-child(' + nth + ')';
       path.unshift(selector);
       el = el.parentNode;
     }
@@ -50,6 +45,11 @@ ipcRenderer.on('clickMessage', (event, args) => {
   const elem = document.querySelector(args.cssPath);
   if (!elem) {
     console.log('Element to click is not found', args);
+    return;
+  }
+  window.responsivelyApp.lastClickElement = elem;
+  if (elem.click) {
+    elem.click();
     return;
   }
   window.responsivelyApp.eventFire(elem, 'click');

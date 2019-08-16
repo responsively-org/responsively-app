@@ -82,13 +82,15 @@ class WebView extends Component {
         );
       });
 
-      document.querySelectorAll('*')
-        .forEach(elem => {
-          elem.addEventListener('click', e => {
-            if (e.responsivelyAppProcessed) {
+        document.addEventListener(
+          'click', 
+          (e) => {
+            if (e.target === window.responsivelyApp.lastClickElement || e.responsivelyAppProcessed) {
+              window.responsivelyApp.lastClickElement = null;
+              e.responsivelyAppProcessed = true;
               return;
-            }
-            e.responsivelyAppProcessed = true; 
+            } 
+            e.responsivelyAppProcessed = true;
             console.log('clicked', e);
             window.responsivelyApp.sendMessageToHost(
               '${MESSAGE_TYPES.click}', 
@@ -97,8 +99,9 @@ class WebView extends Component {
                 cssPath: window.responsivelyApp.cssPath(e.target),
               }
             );
-          });
-        });
+          },
+          true
+        );
     `);
   };
 
