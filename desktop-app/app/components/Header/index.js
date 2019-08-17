@@ -2,8 +2,9 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 
-import ZoomContainer from '../../containers/ZoomContainer';
 import AddressBar from '../../containers/AddressBar';
+import ScrollControlsContainer from '../../containers/ScrollControlsContainer';
+import ZoomContainer from '../../containers/ZoomContainer';
 
 import styles from './style.module.css';
 
@@ -18,6 +19,9 @@ const Header = function() {
       >
         <Grid item>
           <AddressBar />
+        </Grid>
+        <Grid item>
+          <ScrollControlsContainer />
         </Grid>
         <Grid item>
           <ZoomContainer />

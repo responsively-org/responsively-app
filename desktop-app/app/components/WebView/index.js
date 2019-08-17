@@ -4,8 +4,10 @@ import {ipcRenderer} from 'electron';
 import pubsub from 'pubsub.js';
 import BugIcon from '../icons/Bug';
 import cx from 'classnames';
+import {iconsColor} from '../../constants/colors';
 
 import styles from './style.module.css';
+import {SCROLL_DOWN, SCROLL_UP} from '../../constants/pubsubEvents';
 
 const MESSAGE_TYPES = {
   scroll: 'scroll',
@@ -25,6 +27,8 @@ class WebView extends Component {
     );
     pubsub.subscribe('scroll', this.processScrollEvent);
     pubsub.subscribe('click', this.processClickEvent);
+    pubsub.subscribe(SCROLL_DOWN, this.processScrollDownEvent);
+    pubsub.subscribe(SCROLL_UP, this.processScrollUpEvent);
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
@@ -48,6 +52,15 @@ class WebView extends Component {
       return;
     }
     this.webviewRef.current.send('clickMessage', message);
+  };
+
+  processScrollDownEvent = message => {
+    console.log('processScrollDownEvent');
+    this.webviewRef.current.send('scrollDownMessage');
+  };
+
+  processScrollUpEvent = message => {
+    this.webviewRef.current.send('scrollUpMessage');
   };
 
   messageHandler = ({channel: type, args: [message]}) => {
@@ -119,7 +132,7 @@ class WebView extends Component {
             className={cx(styles.webViewToolbarIcons)}
             onClick={this._toggleDevTools}
           >
-            <BugIcon width={20} color="lightgrey" />
+            <BugIcon width={20} color={iconsColor} />
           </div>
         </div>
         <webview

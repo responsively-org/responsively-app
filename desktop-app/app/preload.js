@@ -54,3 +54,21 @@ ipcRenderer.on('clickMessage', (event, args) => {
   }
   window.responsivelyApp.eventFire(elem, 'click');
 });
+
+ipcRenderer.on('scrollDownMessage', (event, args) => {
+  console.log('Recieved click message from host', event, args);
+  window.scrollTo({
+    top: window.scrollY + 250,
+    left: window.scrollX + 250,
+    behavior: 'smooth',
+  });
+});
+
+ipcRenderer.on('scrollUpMessage', (event, args) => {
+  console.log('Recieved click message from host', event, args);
+  window.scrollTo({
+    top: window.scrollY - 250,
+    left: window.scrollX - 250,
+    behavior: 'smooth',
+  });
+});
