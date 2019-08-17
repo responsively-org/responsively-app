@@ -7,16 +7,15 @@ import ScrollControlsContainer from '../../containers/ScrollControlsContainer';
 import ZoomContainer from '../../containers/ZoomContainer';
 
 import styles from './style.module.css';
+import NavigationControlsContainer from '../../containers/NavigationControlsContainer';
 
 const Header = function() {
   return (
     <div className={styles.header}>
-      <Grid
-        container
-        direction="row"
-        justify="space-evenly"
-        alignItems="center"
-      >
+      <Grid container direction="row" justify="flex-start" alignItems="center">
+        <Grid item>
+          <NavigationControlsContainer />
+        </Grid>
         <Grid item>
           <AddressBar />
         </Grid>

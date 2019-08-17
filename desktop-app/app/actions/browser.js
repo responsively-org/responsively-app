@@ -1,7 +1,13 @@
 // @flow
 import type {Dispatch, BrowserStateType} from '../reducers/types';
 import pubsub from 'pubsub.js';
-import {SCROLL_DOWN, SCROLL_UP} from '../constants/pubsubEvents';
+import {
+  SCROLL_DOWN,
+  SCROLL_UP,
+  NAVIGATION_BACK,
+  NAVIGATION_FORWARD,
+  NAVIGATION_RELOAD,
+} from '../constants/pubsubEvents';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_ZOOM_LEVEL = 'NEW_ZOOM_LEVEL';
@@ -85,5 +91,23 @@ export function triggerScrollDown() {
 export function triggerScrollUp() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(SCROLL_UP);
+  };
+}
+
+export function triggerNavigationBack() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(NAVIGATION_BACK);
+  };
+}
+
+export function triggerNavigationForward() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(NAVIGATION_FORWARD);
+  };
+}
+
+export function triggerNavigationReload() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(NAVIGATION_RELOAD);
   };
 }

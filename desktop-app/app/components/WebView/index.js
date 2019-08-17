@@ -7,7 +7,13 @@ import cx from 'classnames';
 import {iconsColor} from '../../constants/colors';
 
 import styles from './style.module.css';
-import {SCROLL_DOWN, SCROLL_UP} from '../../constants/pubsubEvents';
+import {
+  SCROLL_DOWN,
+  SCROLL_UP,
+  NAVIGATION_BACK,
+  NAVIGATION_FORWARD,
+  NAVIGATION_RELOAD,
+} from '../../constants/pubsubEvents';
 
 const MESSAGE_TYPES = {
   scroll: 'scroll',
@@ -29,6 +35,9 @@ class WebView extends Component {
     pubsub.subscribe('click', this.processClickEvent);
     pubsub.subscribe(SCROLL_DOWN, this.processScrollDownEvent);
     pubsub.subscribe(SCROLL_UP, this.processScrollUpEvent);
+    pubsub.subscribe(NAVIGATION_BACK, this.processNavigationBackEvent);
+    pubsub.subscribe(NAVIGATION_FORWARD, this.processNavigationForwardEvent);
+    pubsub.subscribe(NAVIGATION_RELOAD, this.processNavigationReloadEvent);
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
@@ -39,6 +48,18 @@ class WebView extends Component {
       this.props.onAddressChange(url);
     });
   }
+
+  processNavigationBackEvent = () => {
+    this.webviewRef.current.goBack();
+  };
+
+  processNavigationForwardEvent = () => {
+    this.webviewRef.current.goForward();
+  };
+
+  processNavigationReloadEvent = () => {
+    this.webviewRef.current.reload();
+  };
 
   processScrollEvent = message => {
     if (message.sourceDeviceId === this.props.device.id) {
