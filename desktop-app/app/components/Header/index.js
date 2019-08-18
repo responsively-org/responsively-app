@@ -2,6 +2,7 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 
+import {ToastContainer} from 'react-toastify';
 import AddressBar from '../../containers/AddressBar';
 import ScrollControlsContainer from '../../containers/ScrollControlsContainer';
 import ZoomContainer from '../../containers/ZoomContainer';
@@ -26,6 +27,17 @@ const Header = function() {
           <ZoomContainer />
         </Grid>
       </Grid>
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnVisibilityChange
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 // @flow
 import React, {Component, createRef} from 'react';
 import {ipcRenderer} from 'electron';
+import {toast} from 'react-toastify';
 import os from 'os';
 import path from 'path';
 import pubsub from 'pubsub.js';
@@ -168,6 +169,7 @@ class WebView extends Component {
           .toUpperCase()}.png`
       );
       fs.writeFileSync(filePath, image.toPNG());
+      toast.info(`${this.props.device.name} screenshot taken!`);
     } catch (e) {
       console.log('err', e);
       alert('Failed to save the file !', e);
