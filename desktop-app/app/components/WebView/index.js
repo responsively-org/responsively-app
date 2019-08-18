@@ -1,9 +1,13 @@
 // @flow
 import React, {Component, createRef} from 'react';
 import {ipcRenderer} from 'electron';
+import os from 'os';
+import path from 'path';
 import pubsub from 'pubsub.js';
 import BugIcon from '../icons/Bug';
+import ScreenshotIcon from '../icons/Screenshot';
 import cx from 'classnames';
+import fs from 'fs-extra';
 import {iconsColor} from '../../constants/colors';
 
 import styles from './style.module.css';
@@ -143,6 +147,33 @@ class WebView extends Component {
     this.webviewRef.current.getWebContents().toggleDevTools();
   };
 
+  _takeSnapshot = async () => {
+    const image = await this.webviewRef.current.getWebContents().capturePage();
+    try {
+      const now = new Date();
+      const folder = path.join(
+        os.homedir(),
+        `Desktop/Responsively-Screenshots`
+      );
+      fs.ensureDirSync(folder);
+      const filePath = path.join(
+        folder,
+        `${this.props.device.name} - ${now
+          .toLocaleDateString()
+          .split('/')
+          .reverse()
+          .join('-')} at ${now
+          .toLocaleTimeString([], {hour12: true})
+          .replace(/\:/g, '.')
+          .toUpperCase()}.png`
+      );
+      fs.writeFileSync(filePath, image.toPNG());
+    } catch (e) {
+      console.log('err', e);
+      alert('Failed to save the file !', e);
+    }
+  };
+
   render() {
     console.log('WebView this.props', this.props);
     const {device, browser} = this.props;
@@ -154,6 +185,12 @@ class WebView extends Component {
             onClick={this._toggleDevTools}
           >
             <BugIcon width={20} color={iconsColor} />
+          </div>
+          <div
+            className={cx(styles.webViewToolbarIcons)}
+            onClick={this._takeSnapshot}
+          >
+            <ScreenshotIcon height={15} color={iconsColor} />
           </div>
         </div>
         <webview

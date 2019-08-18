@@ -6,10 +6,12 @@
 .webViewToolbar {
   padding: 5px;
   display: flex;
+  align-items: center;
 }
 
 .webViewToolbarIcons {
   cursor: pointer;
+  margin-right: 5px;
 }
 
 .device {
