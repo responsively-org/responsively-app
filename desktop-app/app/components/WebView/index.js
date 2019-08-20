@@ -2,6 +2,8 @@
 import React, {Component, createRef} from 'react';
 import {ipcRenderer} from 'electron';
 import {toast} from 'react-toastify';
+import mergeImg from 'merge-img';
+import {promisify} from 'util';
 import os from 'os';
 import path from 'path';
 import pubsub from 'pubsub.js';
@@ -148,32 +150,96 @@ class WebView extends Component {
     this.webviewRef.current.getWebContents().toggleDevTools();
   };
 
-  _takeSnapshot = async () => {
-    const image = await this.webviewRef.current.getWebContents().capturePage();
+  _takeFullPageSnapshot = async () => {
+    const images = [];
+    const scrollPosition = await this.webviewRef.current.executeJavaScript(`
+      var value = {left: window.scrollX, top: window.scrollY};
+      value;
+    `);
+
+    //scroll to top and get the windows's scroll details
+    let scrollY = 0;
+    const {scrollHeight, viewPortHeight} = await this.webviewRef.current
+      .executeJavaScript(`
+      window.scrollTo(0,0);
+      var value = {
+        scrollHeight: document.body.scrollHeight,
+        viewPortHeight: document.documentElement.clientHeight
+      };
+      value;
+    `);
+
+    do {
+      images.push(await this._takeSnapshot());
+      scrollY = scrollY + viewPortHeight;
+      await this.webviewRef.current.executeJavaScript(`
+        window.scrollTo(0, ${scrollY})
+      `);
+    } while (scrollHeight > scrollY + viewPortHeight);
+
+    this.webviewRef.current.executeJavaScript(`
+      window.scrollTo(${JSON.stringify(scrollPosition)})
+    `);
+
+    const mergedImage = await (await mergeImg(
+      images.map(img => ({src: img.toPNG()})),
+      {direction: true}
+    ))
+      .rgba(false)
+      .background(0xffffffff);
+    console.log('mergedImage', mergedImage.getBuffer);
+    const getBufferAsync = promisify(mergedImage.getBuffer.bind(mergedImage));
+    await this._writeScreenshotFile(
+      await getBufferAsync('image/png'),
+      this._getScreenshotFileName()
+    );
+  };
+
+  _delay(ms) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, ms);
+    });
+  }
+
+  _takeSnapshot = () => {
+    return this.webviewRef.current.getWebContents().capturePage();
+  };
+
+  _getScreenshotFileName(now = new Date()) {
+    return `${this.props.device.name} - ${now
+      .toLocaleDateString()
+      .split('/')
+      .reverse()
+      .join('-')} at ${now
+      .toLocaleTimeString([], {hour12: true})
+      .replace(/\:/g, '.')
+      .toUpperCase()}.png`;
+  }
+
+  _writeScreenshotFile = (content, name) => {
     try {
-      const now = new Date();
       const folder = path.join(
         os.homedir(),
         `Desktop/Responsively-Screenshots`
       );
       fs.ensureDirSync(folder);
-      const filePath = path.join(
-        folder,
-        `${this.props.device.name} - ${now
-          .toLocaleDateString()
-          .split('/')
-          .reverse()
-          .join('-')} at ${now
-          .toLocaleTimeString([], {hour12: true})
-          .replace(/\:/g, '.')
-          .toUpperCase()}.png`
-      );
-      fs.writeFileSync(filePath, image.toPNG());
+      const filePath = path.join(folder, name);
+      fs.writeFileSync(filePath, content);
       toast.info(`${this.props.device.name} screenshot taken!`);
     } catch (e) {
       console.log('err', e);
       alert('Failed to save the file !', e);
     }
+  };
+
+  _takeVisibleSectionSnapshot = async () => {
+    const image = this._takeSnapshot();
+    await this._writeScreenshotFile(
+      image.toPNG(),
+      this._getScreenshotFileName()
+    );
   };
 
   render() {
@@ -190,7 +256,7 @@ class WebView extends Component {
           </div>
           <div
             className={cx(styles.webViewToolbarIcons)}
-            onClick={this._takeSnapshot}
+            onClick={this._takeFullPageSnapshot}
           >
             <ScreenshotIcon height={15} color={iconsColor} />
           </div>
