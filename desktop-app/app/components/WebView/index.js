@@ -1,6 +1,6 @@
 // @flow
 import React, {Component, createRef} from 'react';
-import {ipcRenderer} from 'electron';
+import {ipcRenderer, shell} from 'electron';
 import {toast} from 'react-toastify';
 import mergeImg from 'merge-img';
 import {promisify} from 'util';
@@ -151,6 +151,10 @@ class WebView extends Component {
   };
 
   _takeFullPageSnapshot = async () => {
+    const toastId = toast.info(
+      `Taking ${this.props.device.name} screenshot...`,
+      {autoClose: false}
+    );
     const images = [];
     const scrollPosition = await this.webviewRef.current.executeJavaScript(`
       var value = {left: window.scrollX, top: window.scrollY};
@@ -193,6 +197,11 @@ class WebView extends Component {
       await getBufferAsync('image/png'),
       this._getScreenshotFileName()
     );
+    toast.update(toastId, {
+      render: `${this.props.device.name} screenshot taken!`,
+      type: toast.TYPE.INFO,
+      autoClose: 2000,
+    });
   };
 
   _delay(ms) {
@@ -227,7 +236,7 @@ class WebView extends Component {
       fs.ensureDirSync(folder);
       const filePath = path.join(folder, name);
       fs.writeFileSync(filePath, content);
-      toast.info(`${this.props.device.name} screenshot taken!`);
+      shell.showItemInFolder(filePath);
     } catch (e) {
       console.log('err', e);
       alert('Failed to save the file !', e);
