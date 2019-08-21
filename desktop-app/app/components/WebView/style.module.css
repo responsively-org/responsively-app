@@ -14,15 +14,25 @@
   margin-right: 5px;
 }
 
+.deviceContainer {
+  position: relative;
+}
+
 .device {
   transform-origin: top left;
   background: white;
 }
 
-.screenshotInProgress {
-  width: 100px;
+.screenshotOverlay {
+  transform-origin: top left;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  z-index: 2;
 }
 
-.screenshotInProgress::-webkit-scrollbar {
-  width: 0;
+.screenshotOverlay.screenshotInProgress {
+  display: block;
+  background: rgba(0, 0, 0, 0.6);
 }

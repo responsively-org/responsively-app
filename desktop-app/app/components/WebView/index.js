@@ -34,6 +34,9 @@ class WebView extends Component {
   constructor(props) {
     super(props);
     this.webviewRef = createRef();
+    this.state = {
+      screenshotInProgress: false,
+    };
   }
 
   componentDidMount() {
@@ -154,6 +157,7 @@ class WebView extends Component {
   };
 
   _takeFullPageSnapshot = async () => {
+    this.setState({screenshotInProgress: true});
     const toastId = toast.info(
       `Capturing ${this.props.device.name} screenshot...`,
       {autoClose: false}
@@ -272,6 +276,7 @@ class WebView extends Component {
       type: toast.TYPE.INFO,
       autoClose: 2000,
     });
+    this.setState({screenshotInProgress: false});
   };
 
   _delay = ms =>
@@ -320,6 +325,11 @@ class WebView extends Component {
 
   render() {
     const {device, browser} = this.props;
+    const deviceStyles = {
+      width: device.width,
+      height: device.height,
+      transform: `scale(${browser.zoomLevel})`,
+    };
     return (
       <div className={cx(styles.webViewContainer)}>
         <div className={cx(styles.webViewToolbar)}>
@@ -336,18 +346,22 @@ class WebView extends Component {
             <ScreenshotIcon height={15} color={iconsColor} />
           </div>
         </div>
-        <webview
-          ref={this.webviewRef}
-          preload="./preload.js"
-          className={cx(styles.device, {[styles.screenshotInProgress]: true})}
-          src={browser.address || 'about:blank'}
-          useragent={device.useragent}
-          style={{
-            width: device.width,
-            height: device.height,
-            transform: `scale(${browser.zoomLevel})`,
-          }}
-        />
+        <div className={cx(styles.deviceContainer)}>
+          <div
+            className={cx(styles.screenshotOverlay, {
+              [styles.screenshotInProgress]: this.state.screenshotInProgress,
+            })}
+            style={deviceStyles}
+          />
+          <webview
+            ref={this.webviewRef}
+            preload="./preload.js"
+            className={cx(styles.device)}
+            src={browser.address || 'about:blank'}
+            useragent={device.useragent}
+            style={deviceStyles}
+          />
+        </div>
       </div>
     );
   }
