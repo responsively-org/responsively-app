@@ -24,7 +24,7 @@ export default [
     useragent:
       'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/75.0.3770.70 Mobile/14E5239e Safari/602.1',
   },
-  /*{
+  {
     id: 3,
     width: 768,
     height: 1024,
@@ -47,5 +47,5 @@ export default [
     name: 'Laptop',
     useragent:
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
-  },*/
+  },
 ];

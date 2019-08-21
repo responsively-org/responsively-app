@@ -2,8 +2,9 @@
 import React, {Component, createRef} from 'react';
 import {ipcRenderer, shell} from 'electron';
 import {toast} from 'react-toastify';
-import mergeImg from 'merge-img';
+import _mergeImg from 'merge-img';
 import {promisify} from 'util';
+import Promise from 'bluebird';
 import os from 'os';
 import path from 'path';
 import pubsub from 'pubsub.js';
@@ -21,6 +22,8 @@ import {
   NAVIGATION_FORWARD,
   NAVIGATION_RELOAD,
 } from '../../constants/pubsubEvents';
+
+const mergeImg = Promise.promisifyAll(_mergeImg);
 
 const MESSAGE_TYPES = {
   scroll: 'scroll',
@@ -152,46 +155,113 @@ class WebView extends Component {
 
   _takeFullPageSnapshot = async () => {
     const toastId = toast.info(
-      `Taking ${this.props.device.name} screenshot...`,
+      `Capturing ${this.props.device.name} screenshot...`,
       {autoClose: false}
     );
-    const images = [];
-    const scrollPosition = await this.webviewRef.current.executeJavaScript(`
-      var value = {left: window.scrollX, top: window.scrollY};
-      value;
-    `);
-
-    //scroll to top and get the windows's scroll details
-    let scrollY = 0;
-    const {scrollHeight, viewPortHeight} = await this.webviewRef.current
-      .executeJavaScript(`
-      window.scrollTo(0,0);
-      var value = {
-        scrollHeight: document.body.scrollHeight,
-        viewPortHeight: document.documentElement.clientHeight
-      };
-      value;
-    `);
-
-    do {
-      images.push(await this._takeSnapshot());
-      scrollY = scrollY + viewPortHeight;
-      await this.webviewRef.current.executeJavaScript(`
-        window.scrollTo(0, ${scrollY})
+    //Hiding scrollbars in the screenshot
+    await this.webviewRef.current.insertCSS(`
+        .screenshotInProgress::-webkit-scrollbar {
+          display: none;
+        }
       `);
-    } while (scrollHeight > scrollY + viewPortHeight);
+
+    //Get the windows's scroll details
+    let scrollX = 0;
+    let scrollY = 0;
+    let pageX = 0;
+    let pageY = 0;
+    const {
+      previousScrollPosition,
+      scrollHeight,
+      viewPortHeight,
+      scrollWidth,
+      viewPortWidth,
+    } = await this.webviewRef.current.executeJavaScript(`
+      document.body.classList.add('screenshotInProgress');
+      responsivelyApp.screenshotVar = {
+        previousScrollPosition : {
+          left: window.scrollX, 
+          top: window.scrollY,
+        },
+        scrollHeight: document.body.scrollHeight,
+        scrollWidth: document.body.scrollWidth,
+        viewPortHeight: document.documentElement.clientHeight,
+        viewPortWidth: document.documentElement.clientWidth,
+      };
+      responsivelyApp.screenshotVar;
+    `);
+
+    let images = [];
+
+    for (
+      let pageY = 0;
+      scrollY < scrollHeight;
+      pageY++, scrollY = viewPortHeight * pageY
+    ) {
+      if (!images[pageY]) {
+        images[pageY] = [];
+      }
+      scrollX = 0;
+      for (
+        let pageX = 0;
+        scrollX < scrollWidth;
+        pageX++, scrollX = viewPortWidth * pageX
+      ) {
+        console.log(`scrolling to ${scrollX}, ${scrollY}`);
+        await this.webviewRef.current.executeJavaScript(`
+          window.scrollTo(${scrollX}, ${scrollY})
+        `);
+        await this._delay(200);
+        const options = {
+          x: 0,
+          y: 0,
+          width: viewPortWidth,
+          height: viewPortHeight,
+        };
+        if (scrollX + viewPortWidth > scrollWidth) {
+          options.width = scrollWidth - scrollX;
+          options.x = viewPortWidth - options.width;
+        }
+        if (scrollY + viewPortHeight > scrollHeight) {
+          options.height = scrollHeight - scrollY;
+          options.y = viewPortHeight - options.height;
+        }
+        console.log('Capture options', options);
+        const image = await this._takeSnapshot(options);
+        images[pageY].push(image);
+      }
+    }
 
     this.webviewRef.current.executeJavaScript(`
-      window.scrollTo(${JSON.stringify(scrollPosition)})
+      window.scrollTo(${JSON.stringify(previousScrollPosition)});
+      document.body.classList.remove('screenshotInProgress');
     `);
 
+    toast.update(toastId, {
+      render: `Processing ${this.props.device.name} screenshot...`,
+      type: toast.TYPE.INFO,
+    });
+
+    images = await Promise.map(images, columnImages => {
+      return mergeImg(
+        columnImages.map(img => ({src: img.toPNG()})),
+        {direction: false} //horizontal stitching
+      );
+    });
+
     const mergedImage = await (await mergeImg(
-      images.map(img => ({src: img.toPNG()})),
-      {direction: true}
+      await Promise.map(images, async img => {
+        const getBufferAsync = promisify(img.getBuffer.bind(img));
+        return {
+          src: await getBufferAsync('image/png'),
+        };
+      }),
+      {
+        direction: true,
+      }
     ))
       .rgba(false)
       .background(0xffffffff);
-    console.log('mergedImage', mergedImage.getBuffer);
     const getBufferAsync = promisify(mergedImage.getBuffer.bind(mergedImage));
     await this._writeScreenshotFile(
       await getBufferAsync('image/png'),
@@ -204,16 +274,13 @@ class WebView extends Component {
     });
   };
 
-  _delay(ms) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, ms);
+  _delay = ms =>
+    new Promise((resolve, reject) => {
+      setTimeout(() => resolve(), ms);
     });
-  }
 
-  _takeSnapshot = () => {
-    return this.webviewRef.current.getWebContents().capturePage();
+  _takeSnapshot = options => {
+    return this.webviewRef.current.getWebContents().capturePage(options);
   };
 
   _getScreenshotFileName(now = new Date()) {
@@ -227,7 +294,7 @@ class WebView extends Component {
       .toUpperCase()}.png`;
   }
 
-  _writeScreenshotFile = (content, name) => {
+  _writeScreenshotFile = (content, name = new Date().getTime() + '.png') => {
     try {
       const folder = path.join(
         os.homedir(),
@@ -252,7 +319,6 @@ class WebView extends Component {
   };
 
   render() {
-    console.log('WebView this.props', this.props);
     const {device, browser} = this.props;
     return (
       <div className={cx(styles.webViewContainer)}>
@@ -273,7 +339,7 @@ class WebView extends Component {
         <webview
           ref={this.webviewRef}
           preload="./preload.js"
-          className={cx(styles.device)}
+          className={cx(styles.device, {[styles.screenshotInProgress]: true})}
           src={browser.address || 'about:blank'}
           useragent={device.useragent}
           style={{

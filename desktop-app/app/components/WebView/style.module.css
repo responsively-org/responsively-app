@@ -18,3 +18,11 @@
   transform-origin: top left;
   background: white;
 }
+
+.screenshotInProgress {
+  width: 100px;
+}
+
+.screenshotInProgress::-webkit-scrollbar {
+  width: 0;
+}
