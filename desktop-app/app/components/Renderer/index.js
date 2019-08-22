@@ -11,13 +11,7 @@ class Renderer extends Component {
     return (
       <div className={cx(styles.container)}>
         <h3 className={cx(styles.deviceTitle)}>{this.props.device.name}</h3>
-        <div
-          className={cx(styles.deviceWrapper)}
-          style={{
-            width: this.props.device.width * this.props.zoomLevel,
-            heigth: this.props.device.height * this.props.zoomLevel,
-          }}
-        >
+        <div className={cx(styles.deviceWrapper)}>
           <WebViewContainer device={this.props.device} />
         </div>
       </div>

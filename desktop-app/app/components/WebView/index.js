@@ -1,6 +1,6 @@
 // @flow
 import React, {Component, createRef} from 'react';
-import {ipcRenderer, shell} from 'electron';
+import {ipcRenderer, shell, remote} from 'electron';
 import {toast} from 'react-toastify';
 import _mergeImg from 'merge-img';
 import {promisify} from 'util';
@@ -10,6 +10,7 @@ import path from 'path';
 import pubsub from 'pubsub.js';
 import BugIcon from '../icons/Bug';
 import ScreenshotIcon from '../icons/Screenshot';
+import DeviceRotateIcon from '../icons/DeviceRotate';
 import cx from 'classnames';
 import fs from 'fs-extra';
 import {iconsColor} from '../../constants/colors';
@@ -24,6 +25,7 @@ import {
 } from '../../constants/pubsubEvents';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
+const BrowserWindow = remote.BrowserWindow;
 
 const MESSAGE_TYPES = {
   scroll: 'scroll',
@@ -36,6 +38,7 @@ class WebView extends Component {
     this.webviewRef = createRef();
     this.state = {
       screenshotInProgress: false,
+      isTilted: false,
     };
   }
 
@@ -59,6 +62,14 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener('will-navigate', ({url}) => {
       console.log('Navigating to ', url);
       this.props.onAddressChange(url);
+    });
+
+    this.webviewRef.current.addEventListener('devtools-opened', () => {
+      this.webviewRef.current
+        .getWebContents()
+        .devToolsWebContents.executeJavaScript(
+          'DevToolsAPI.enterInspectElementMode()'
+        );
     });
   }
 
@@ -153,7 +164,17 @@ class WebView extends Component {
   };
 
   _toggleDevTools = () => {
-    this.webviewRef.current.getWebContents().toggleDevTools();
+    const devtools = new BrowserWindow({
+      fullscreen: false,
+      acceptFirstMouse: true,
+      show: true,
+    });
+
+    this.webviewRef.current
+      .getWebContents()
+      .setDevToolsWebContents(devtools.webContents);
+    this.webviewRef.current.getWebContents().openDevTools({mode: 'detach'});
+    //this.webviewRef.current.getWebContents().toggleDevTools();
   };
 
   _takeFullPageSnapshot = async () => {
@@ -323,11 +344,15 @@ class WebView extends Component {
     );
   };
 
+  _flipOrientation = () => {
+    this.setState({isTilted: !this.state.isTilted});
+  };
+
   render() {
     const {device, browser} = this.props;
     const deviceStyles = {
-      width: device.width,
-      height: device.height,
+      width: this.state.isTilted ? device.height : device.width,
+      height: this.state.isTilted ? device.width : device.height,
       transform: `scale(${browser.zoomLevel})`,
     };
     return (
@@ -345,8 +370,20 @@ class WebView extends Component {
           >
             <ScreenshotIcon height={15} color={iconsColor} />
           </div>
+          <div
+            className={cx(styles.webViewToolbarIcons)}
+            onClick={this._flipOrientation}
+          >
+            <DeviceRotateIcon height={15} color={iconsColor} />
+          </div>
         </div>
-        <div className={cx(styles.deviceContainer)}>
+        <div
+          className={cx(styles.deviceContainer)}
+          style={{
+            width: deviceStyles.width * browser.zoomLevel,
+            heigth: deviceStyles.height * browser.zoomLevel,
+          }}
+        >
           <div
             className={cx(styles.screenshotOverlay, {
               [styles.screenshotInProgress]: this.state.screenshotInProgress,
