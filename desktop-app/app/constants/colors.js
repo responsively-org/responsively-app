@@ -1,1 +1,1 @@
-export const iconsColor = 'lightgrey';
+export const iconsColor = 'white'; //'lightgrey';

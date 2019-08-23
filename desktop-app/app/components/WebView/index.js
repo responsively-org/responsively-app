@@ -64,6 +64,15 @@ class WebView extends Component {
       this.props.onAddressChange(url);
     });
 
+    this.webviewRef.current.addEventListener('did-navigate', ({url}) => {
+      if (this.props.transmitNavigatorStatus) {
+        this.props.updateNavigatorStatus({
+          backEnabled: this.webviewRef.current.canGoBack(),
+          forwardEnabled: this.webviewRef.current.canGoForward(),
+        });
+      }
+    });
+
     this.webviewRef.current.addEventListener('devtools-opened', () => {
       this.webviewRef.current
         .getWebContents()
@@ -169,6 +178,7 @@ class WebView extends Component {
       acceptFirstMouse: true,
       show: true,
     });
+    //devtools.hide();
 
     this.webviewRef.current
       .getWebContents()

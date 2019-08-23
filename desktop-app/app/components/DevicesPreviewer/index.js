@@ -13,12 +13,13 @@ class DevicesPreviewer extends Component {
     } = this.props;
     return (
       <div className={cx(styles.container)}>
-        {devices.map(device => (
+        {devices.map((device, index) => (
           <Renderer
             key={device.id}
             device={device}
             src={address}
             zoomLevel={zoomLevel}
+            transmitNavigatorStatus={index === 0}
           />
         ))}
       </div>

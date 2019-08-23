@@ -12,7 +12,10 @@ class Renderer extends Component {
       <div className={cx(styles.container)}>
         <h3 className={cx(styles.deviceTitle)}>{this.props.device.name}</h3>
         <div className={cx(styles.deviceWrapper)}>
-          <WebViewContainer device={this.props.device} />
+          <WebViewContainer
+            device={this.props.device}
+            transmitNavigatorStatus={this.props.transmitNavigatorStatus}
+          />
         </div>
       </div>
     );

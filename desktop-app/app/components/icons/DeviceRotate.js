@@ -1,11 +1,12 @@
 import React, {Fragment} from 'react';
 
-export default ({width, height, color}) => (
+export default ({width, height, color, padding}) => (
   <Fragment>
     <svg
       height={height}
       width={width}
       fill={color}
+      style={{padding}}
       version="1.1"
       id="Capa_1"
       xmlns="http://www.w3.org/2000/svg"

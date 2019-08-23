@@ -12,6 +12,7 @@ import {
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_ZOOM_LEVEL = 'NEW_ZOOM_LEVEL';
 export const NEW_SCROLL_POSITION = 'NEW_SCROLL_POSITION';
+export const NEW_NAVIGATOR_STATUS = 'NEW_NAVIGATOR_STATUS';
 
 export function newAddress(address) {
   return {
@@ -31,6 +32,13 @@ export function newScrollPosition(scrollPosition) {
   return {
     type: NEW_SCROLL_POSITION,
     scrollPosition,
+  };
+}
+
+export function newNavigatorStatus(navigatorStatus) {
+  return {
+    type: NEW_NAVIGATOR_STATUS,
+    navigatorStatus,
   };
 }
 
@@ -66,7 +74,6 @@ export function onZoomChange(newLevel) {
 
 export function onScrollChange({x: newX, y: newY}) {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    console.log('In onScrollChange', getState());
     const {
       browser: {
         scrollPosition: {x, y},
@@ -78,6 +85,33 @@ export function onScrollChange({x: newX, y: newY}) {
     }
 
     dispatch(newScrollPosition({x: newX, y: newY}));
+  };
+}
+
+export function updateNavigatorStatus({
+  backEnabled: newBackEnabled,
+  forwardEnabled: newForwardEnabled,
+}) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {
+        navigatorStatus: {backEnabled, forwardEnabled},
+      },
+    } = getState();
+
+    if (
+      newBackEnabled === backEnabled &&
+      newForwardEnabled === forwardEnabled
+    ) {
+      return;
+    }
+
+    dispatch(
+      newNavigatorStatus({
+        backEnabled: newBackEnabled,
+        forwardEnabled: newForwardEnabled,
+      })
+    );
   };
 }
 
