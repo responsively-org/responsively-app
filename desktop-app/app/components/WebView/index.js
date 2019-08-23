@@ -66,6 +66,13 @@ class WebView extends Component {
       this.initEventTriggers(this.webviewRef.current);
     });
 
+    this.webviewRef.current.addEventListener('did-start-loading', () => {
+      this.props.onLoadingStateChange(true);
+    });
+    this.webviewRef.current.addEventListener('did-stop-loading', () => {
+      this.props.onLoadingStateChange(false);
+    });
+
     this.webviewRef.current.addEventListener('will-navigate', ({url}) => {
       console.log('Navigating to ', url);
       this.props.onAddressChange(url);
@@ -335,7 +342,6 @@ class WebView extends Component {
   };
 
   _getScreenshotFileName(now = new Date(), createSeparateDir) {
-    console.log('createSeparateDir', createSeparateDir);
     const dateString = `${now
       .toLocaleDateString()
       .split('/')

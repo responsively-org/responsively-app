@@ -1,25 +1,28 @@
 // @flow
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import WebViewContainer from '../../containers/WebViewContainer';
 import cx from 'classnames';
+import Spinner from '../Spinner';
 
 import styles from './style.module.css';
 
-class Renderer extends Component {
-  render() {
-    console.log('Renderer this.props', this.props);
-    return (
-      <div className={cx(styles.container)}>
-        <h3 className={cx(styles.deviceTitle)}>{this.props.device.name}</h3>
-        <div className={cx(styles.deviceWrapper)}>
-          <WebViewContainer
-            device={this.props.device}
-            transmitNavigatorStatus={this.props.transmitNavigatorStatus}
-          />
-        </div>
+function Renderer(props) {
+  const [loading, setLoading] = useState(true);
+  return (
+    <div className={cx(styles.container)}>
+      <div className={styles.titleContainer}>
+        <h3 className={cx(styles.deviceTitle)}>{props.device.name}</h3>
+        {loading && <Spinner size={18} />}
       </div>
-    );
-  }
+      <div className={cx(styles.deviceWrapper)}>
+        <WebViewContainer
+          device={props.device}
+          transmitNavigatorStatus={props.transmitNavigatorStatus}
+          onLoadingStateChange={setLoading}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default Renderer;

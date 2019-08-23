@@ -5,6 +5,12 @@
 .deviceTitle {
   font-weight: normal;
   font-size: 16px;
+  margin-right: 5px;
 }
 .deviceWrapper {
+}
+
+.titleContainer {
+  display: flex;
+  align-items: center;
 }
