@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import ScrollDownIcon from '../icons/ScrollDown';
 import ScrollUpIcon from '../icons/ScrollUp';
 import ScreenshotIcon from '../icons/Screenshot';
+import DeviceRotateIcon from '../icons/DeviceRotate';
 
 import styles from './styles.module.css';
 import {iconsColor} from '../../constants/colors';
@@ -19,7 +20,7 @@ class ScrollControls extends Component {
     console.log('ScrollControls this.props', this.props);
     return (
       <div className={styles.scrollControls}>
-        <Grid container spacing={1}>
+        <Grid container spacing={1} alignItems="center">
           <Grid item className={cx(styles.icons, styles.enabled)}>
             <div onClick={this.props.triggerScrollDown}>
               <ScrollDownIcon {...iconProps} />
@@ -32,7 +33,12 @@ class ScrollControls extends Component {
           </Grid>
           <Grid item className={cx(styles.icons, styles.enabled)}>
             <div onClick={this.props.screenshotAllDevices}>
-              <ScreenshotIcon {...iconProps} height={25} width={25} />
+              <ScreenshotIcon {...iconProps} />
+            </div>
+          </Grid>
+          <Grid item className={cx(styles.icons, styles.enabled)}>
+            <div onClick={this.props.flipOrientationAllDevices}>
+              <DeviceRotateIcon {...iconProps} />
             </div>
           </Grid>
         </Grid>

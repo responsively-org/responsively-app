@@ -23,6 +23,7 @@ import {
   NAVIGATION_FORWARD,
   NAVIGATION_RELOAD,
   SCREENSHOT_ALL_DEVICES,
+  FLIP_ORIENTATION_ALL_DEVICES,
 } from '../../constants/pubsubEvents';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
@@ -56,6 +57,10 @@ class WebView extends Component {
     pubsub.subscribe(NAVIGATION_FORWARD, this.processNavigationForwardEvent);
     pubsub.subscribe(NAVIGATION_RELOAD, this.processNavigationReloadEvent);
     pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent);
+    pubsub.subscribe(
+      FLIP_ORIENTATION_ALL_DEVICES,
+      this.processFlipOrientationEvent
+    );
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
@@ -121,6 +126,10 @@ class WebView extends Component {
 
   processScreenshotEvent = ({now}) => {
     this._takeFullPageSnapshot(now != null, now);
+  };
+
+  processFlipOrientationEvent = () => {
+    this._flipOrientation();
   };
 
   messageHandler = ({channel: type, args: [message]}) => {

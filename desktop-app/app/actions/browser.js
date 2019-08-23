@@ -8,6 +8,7 @@ import {
   NAVIGATION_FORWARD,
   NAVIGATION_RELOAD,
   SCREENSHOT_ALL_DEVICES,
+  FLIP_ORIENTATION_ALL_DEVICES,
 } from '../constants/pubsubEvents';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
@@ -127,6 +128,13 @@ export function screenshotAllDevices() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     console.log('screenshotAllDevices');
     pubsub.publish(SCREENSHOT_ALL_DEVICES, [{now: new Date()}]);
+  };
+}
+
+export function flipOrientationAllDevices() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    console.log('flipOrientationAllDevices');
+    pubsub.publish(FLIP_ORIENTATION_ALL_DEVICES);
   };
 }
 
