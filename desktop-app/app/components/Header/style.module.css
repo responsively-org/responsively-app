@@ -1,5 +1,5 @@
 .header {
-  width: 100vw;
+  width: calc(100vw - 75px);
   padding-bottom: 10px;
   background: #00000042;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);

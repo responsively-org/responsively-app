@@ -17,7 +17,7 @@ const Header = function() {
         <Grid item>
           <NavigationControlsContainer />
         </Grid>
-        <Grid item>
+        <Grid item style={{flex: 1}}>
           <AddressBar />
         </Grid>
         <Grid item>

@@ -44,9 +44,11 @@ class AddressBar extends React.Component<Props> {
           onKeyDown={this._handleKeyDown}
           onChange={e => this.setState({userTypedAddress: e.target.value})}
         />
-        <button className={styles.goButton} onClick={this._onChange}>
-          <GoArrowIcon height={20} color="white" />
-        </button>
+        {/*
+          <button className={styles.goButton} onClick={this._onChange}>
+            <GoArrowIcon height={20} color="white" />
+          </button>
+        */}
       </div>
     );
   }
