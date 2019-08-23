@@ -4,3 +4,10 @@
   background: #00000042;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);
 }
+
+.darkToast {
+  background: #696969 !important;
+  border-radius: 5px !important;
+  font-size: 15px;
+  font-weight: lighter;
+}

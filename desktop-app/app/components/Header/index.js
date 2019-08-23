@@ -37,6 +37,7 @@ const Header = function() {
         pauseOnVisibilityChange
         draggable
         pauseOnHover
+        toastClassName={styles.darkToast}
       />
     </div>
   );
