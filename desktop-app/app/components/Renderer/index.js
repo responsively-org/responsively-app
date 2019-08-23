@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import WebViewContainer from '../../containers/WebViewContainer';
 import cx from 'classnames';
 import Spinner from '../Spinner';
+import TickAnimation from '../icons/TickAnimation';
 
 import styles from './style.module.css';
 

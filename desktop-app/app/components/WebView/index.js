@@ -2,6 +2,7 @@
 import React, {Component, createRef} from 'react';
 import {ipcRenderer, shell, remote} from 'electron';
 import {toast} from 'react-toastify';
+import NotificationMessage from '../NotificationMessage';
 import _mergeImg from 'merge-img';
 import {promisify} from 'util';
 import Promise from 'bluebird';
@@ -212,7 +213,10 @@ class WebView extends Component {
   _takeFullPageSnapshot = async (createSeparateDir, now) => {
     this.setState({screenshotInProgress: true});
     const toastId = toast.info(
-      `Capturing ${this.props.device.name} screenshot...`,
+      <NotificationMessage
+        spinner={true}
+        message={`Capturing ${this.props.device.name} screenshot...`}
+      />,
       {autoClose: false}
     );
     //Hiding scrollbars in the screenshot
@@ -295,7 +299,12 @@ class WebView extends Component {
     `);
 
     toast.update(toastId, {
-      render: `Processing ${this.props.device.name} screenshot...`,
+      render: (
+        <NotificationMessage
+          spinner={true}
+          message={`Processing ${this.props.device.name} screenshot...`}
+        />
+      ),
       type: toast.TYPE.INFO,
     });
 
@@ -325,7 +334,12 @@ class WebView extends Component {
       this._getScreenshotFileName(now, createSeparateDir)
     );
     toast.update(toastId, {
-      render: `${this.props.device.name} screenshot taken!`,
+      render: (
+        <NotificationMessage
+          tick={true}
+          message={`${this.props.device.name} screenshot taken!`}
+        />
+      ),
       type: toast.TYPE.INFO,
       autoClose: 2000,
     });
