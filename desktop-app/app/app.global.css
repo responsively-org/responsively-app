@@ -48,3 +48,8 @@ a:hover {
   text-decoration: none;
   cursor: pointer;
 }
+
+#titleBar {
+  height: 20px;
+  background: #00000042;
+}

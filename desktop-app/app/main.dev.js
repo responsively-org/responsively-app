@@ -77,6 +77,7 @@ app.on('ready', async () => {
       nodeIntegration: true,
       webviewTag: true,
     },
+    titleBarStyle: 'hidden',
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
