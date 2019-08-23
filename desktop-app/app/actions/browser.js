@@ -7,6 +7,7 @@ import {
   NAVIGATION_BACK,
   NAVIGATION_FORWARD,
   NAVIGATION_RELOAD,
+  SCREENSHOT_ALL_DEVICES,
 } from '../constants/pubsubEvents';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
@@ -119,6 +120,13 @@ export function triggerScrollDown() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     console.log('triggerScrollDown');
     pubsub.publish(SCROLL_DOWN);
+  };
+}
+
+export function screenshotAllDevices() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    console.log('screenshotAllDevices');
+    pubsub.publish(SCREENSHOT_ALL_DEVICES, [{now: new Date()}]);
   };
 }
 

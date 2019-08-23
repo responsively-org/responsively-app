@@ -22,6 +22,7 @@ import {
   NAVIGATION_BACK,
   NAVIGATION_FORWARD,
   NAVIGATION_RELOAD,
+  SCREENSHOT_ALL_DEVICES,
 } from '../../constants/pubsubEvents';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
@@ -54,6 +55,7 @@ class WebView extends Component {
     pubsub.subscribe(NAVIGATION_BACK, this.processNavigationBackEvent);
     pubsub.subscribe(NAVIGATION_FORWARD, this.processNavigationForwardEvent);
     pubsub.subscribe(NAVIGATION_RELOAD, this.processNavigationReloadEvent);
+    pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent);
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
@@ -115,6 +117,10 @@ class WebView extends Component {
 
   processScrollUpEvent = message => {
     this.webviewRef.current.send('scrollUpMessage');
+  };
+
+  processScreenshotEvent = ({now}) => {
+    this._takeFullPageSnapshot(now != null, now);
   };
 
   messageHandler = ({channel: type, args: [message]}) => {
@@ -187,7 +193,7 @@ class WebView extends Component {
     //this.webviewRef.current.getWebContents().toggleDevTools();
   };
 
-  _takeFullPageSnapshot = async () => {
+  _takeFullPageSnapshot = async (createSeparateDir, now) => {
     this.setState({screenshotInProgress: true});
     const toastId = toast.info(
       `Capturing ${this.props.device.name} screenshot...`,
@@ -300,7 +306,7 @@ class WebView extends Component {
     const getBufferAsync = promisify(mergedImage.getBuffer.bind(mergedImage));
     await this._writeScreenshotFile(
       await getBufferAsync('image/png'),
-      this._getScreenshotFileName()
+      this._getScreenshotFileName(now, createSeparateDir)
     );
     toast.update(toastId, {
       render: `${this.props.device.name} screenshot taken!`,
@@ -319,26 +325,35 @@ class WebView extends Component {
     return this.webviewRef.current.getWebContents().capturePage(options);
   };
 
-  _getScreenshotFileName(now = new Date()) {
-    return `${this._getWebsiteName()} - ${this.props.device.name} - ${now
+  _getScreenshotFileName(now = new Date(), createSeparateDir) {
+    console.log('createSeparateDir', createSeparateDir);
+    const dateString = `${now
       .toLocaleDateString()
       .split('/')
       .reverse()
       .join('-')} at ${now
       .toLocaleTimeString([], {hour12: true})
       .replace(/\:/g, '.')
-      .toUpperCase()}.png`;
+      .toUpperCase()}`;
+    const directoryPath = createSeparateDir ? `${dateString}/` : '';
+    return {
+      dir: directoryPath,
+      file: `${this._getWebsiteName()} - ${
+        this.props.device.name
+      } - ${dateString}.png`,
+    };
   }
 
-  _writeScreenshotFile = (content, name = new Date().getTime() + '.png') => {
+  _writeScreenshotFile = async (content, {dir, file}) => {
     try {
       const folder = path.join(
         os.homedir(),
-        `Desktop/Responsively-Screenshots`
+        `Desktop/Responsively-Screenshots`,
+        dir
       );
-      fs.ensureDirSync(folder);
-      const filePath = path.join(folder, name);
-      fs.writeFileSync(filePath, content);
+      await fs.ensureDir(folder);
+      const filePath = path.join(folder, file);
+      await fs.writeFile(filePath, content);
       shell.showItemInFolder(filePath);
     } catch (e) {
       console.log('err', e);
@@ -386,7 +401,7 @@ class WebView extends Component {
           </div>
           <div
             className={cx(styles.webViewToolbarIcons)}
-            onClick={this._takeFullPageSnapshot}
+            onClick={() => this._takeFullPageSnapshot()}
           >
             <ScreenshotIcon height={15} color={iconsColor} />
           </div>

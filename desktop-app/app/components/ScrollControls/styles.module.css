@@ -4,4 +4,11 @@
 
 .icons {
   cursor: pointer;
+  opacity: 0.8;
+}
+
+.icons.enabled:hover {
+  opacity: 1;
+  background: #8c8c8c42;
+  border-radius: 5px;
 }
