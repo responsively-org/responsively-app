@@ -320,7 +320,7 @@ class WebView extends Component {
   };
 
   _getScreenshotFileName(now = new Date()) {
-    return `${this.props.device.name} - ${now
+    return `${this._getWebsiteName()} - ${this.props.device.name} - ${now
       .toLocaleDateString()
       .split('/')
       .reverse()
@@ -356,6 +356,16 @@ class WebView extends Component {
 
   _flipOrientation = () => {
     this.setState({isTilted: !this.state.isTilted});
+  };
+
+  _getWebsiteName = () => {
+    let domain = new URL(this.props.browser.address).hostname;
+    domain = domain.replace('www.', '');
+    const dotIndex = domain.indexOf('.');
+    if (dotIndex > -1) {
+      domain = domain.substr(0, domain.indexOf('.'));
+    }
+    return domain.charAt(0).toUpperCase() + domain.slice(1);
   };
 
   render() {
