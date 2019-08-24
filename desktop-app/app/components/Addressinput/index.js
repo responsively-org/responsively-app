@@ -22,6 +22,7 @@ class AddressBar extends React.Component<Props> {
       userTypedAddress: props.address,
       previousAddress: props.address,
     };
+    this.inputRef = React.createRef();
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -35,6 +36,7 @@ class AddressBar extends React.Component<Props> {
     return (
       <div className={styles.addressBarContainer}>
         <input
+          ref={this.inputRef}
           type="text"
           id="name"
           name="name"
@@ -55,6 +57,7 @@ class AddressBar extends React.Component<Props> {
 
   _handleKeyDown = e => {
     if (e.key === 'Enter') {
+      this.inputRef.current.blur();
       this._onChange();
     }
   };

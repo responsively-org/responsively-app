@@ -6,6 +6,7 @@ import {ToastContainer} from 'react-toastify';
 import AddressBar from '../../containers/AddressBar';
 import ScrollControlsContainer from '../../containers/ScrollControlsContainer';
 import ZoomContainer from '../../containers/ZoomContainer';
+import HttpAuthDialog from '../HttpAuthDialog';
 
 import styles from './style.module.css';
 import NavigationControlsContainer from '../../containers/NavigationControlsContainer';
@@ -27,6 +28,7 @@ const Header = function() {
           <ZoomContainer />
         </Grid>
       </Grid>
+      <HttpAuthDialog />
       <ToastContainer
         position="top-right"
         autoClose={4000}

@@ -10,7 +10,7 @@
  *
  * @flow
  */
-import electron, {app, BrowserWindow} from 'electron';
+import electron, {app, BrowserWindow, ipcMain} from 'electron';
 import {autoUpdater} from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -24,6 +24,8 @@ export default class AppUpdater {
 }
 
 let mainWindow = null;
+
+let httpAuthCallbacks = {};
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -59,6 +61,17 @@ app.on('window-all-closed', () => {
   }
 });
 
+app.on('login', (event, webContents, request, authInfo, callback) => {
+  event.preventDefault();
+  const {url} = request;
+  console.log('Sending HTTP Auth Prompt', {url});
+  if (httpAuthCallbacks[url]) {
+    return httpAuthCallbacks[url].push(callback);
+  }
+  httpAuthCallbacks[url] = [callback];
+  mainWindow.webContents.send('http-auth-prompt', {url});
+});
+
 app.on('ready', async () => {
   if (
     process.env.NODE_ENV === 'development' ||
@@ -86,19 +99,18 @@ app.on('ready', async () => {
     mainWindow.show();
   });
 
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  /*mainWindow.webContents.on('did-finish-load', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
+  ipcMain.on('http-auth-promt-response', (event, ...args) => {
+    console.log('http-auth-promt-response', args);
+    if (!args[0].url) {
+      return;
     }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-      mainWindow.focus();
+    const {url, username, password} = args[0];
+    if (!httpAuthCallbacks[url]) {
+      return;
     }
-  });*/
+    httpAuthCallbacks[url].forEach(cb => cb(username, password));
+    httpAuthCallbacks[url] = null;
+  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;

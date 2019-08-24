@@ -74,6 +74,21 @@ class WebView extends Component {
       this.props.onLoadingStateChange(false);
     });
 
+    this.webviewRef.current.addEventListener(
+      'login',
+      (event, request, authInfo, callback) => {
+        console.log(
+          'event, request, authInfo, callback',
+          event,
+          request,
+          authInfo,
+          callback
+        );
+        event.preventDefault();
+        callback('username', 'secret');
+      }
+    );
+
     this.webviewRef.current.addEventListener('will-navigate', ({url}) => {
       console.log('Navigating to ', url);
       this.props.onAddressChange(url);

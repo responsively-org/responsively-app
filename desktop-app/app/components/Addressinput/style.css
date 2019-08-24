@@ -9,9 +9,15 @@
   padding: 5px 10px;
   border-radius: 20px;
   background: unset;
-  color: white;
-  border: solid 1px white;
+  color: #ffffffcc;
+  border: solid 1px #ffffff80;
   outline: none;
+  transition: border 500ms ease-out;
+}
+
+.addressInput:focus {
+  color: white;
+  border: solid 1px #ffffffcc;
 }
 
 .goButton {
