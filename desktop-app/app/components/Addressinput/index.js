@@ -38,8 +38,8 @@ class AddressBar extends React.Component<Props> {
         <input
           ref={this.inputRef}
           type="text"
-          id="name"
-          name="name"
+          id="adress"
+          name="address"
           className={styles.addressInput}
           placeholder="https://your-website.com"
           value={this.state.userTypedAddress}

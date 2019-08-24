@@ -30,7 +30,7 @@ export type BrowserStateType = {
 export default function counter(
   state: BrowserStateType = {
     devices,
-    address: 'https://joystagram-test.4oh.joybird.com:3011',
+    address: 'https://www.google.com',
     zoomLevel: 0.5,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
