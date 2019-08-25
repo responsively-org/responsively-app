@@ -1,16 +1,16 @@
 .iconsContainer {
   display: flex;
   flex-flow: column;
-  width: 75px;
 }
 
 .icon {
   display: flex;
   justify-content: center;
-  margin: 10px;
+  margin: 3px;
 }
 
 .logo {
   background: white;
   border-radius: 9%;
+  margin-bottom: 50px;
 }

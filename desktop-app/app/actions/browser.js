@@ -15,6 +15,8 @@ export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_ZOOM_LEVEL = 'NEW_ZOOM_LEVEL';
 export const NEW_SCROLL_POSITION = 'NEW_SCROLL_POSITION';
 export const NEW_NAVIGATOR_STATUS = 'NEW_NAVIGATOR_STATUS';
+export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
+export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 
 export function newAddress(address) {
   return {
@@ -41,6 +43,20 @@ export function newNavigatorStatus(navigatorStatus) {
   return {
     type: NEW_NAVIGATOR_STATUS,
     navigatorStatus,
+  };
+}
+
+export function newDrawerContent(drawer) {
+  return {
+    type: NEW_DRAWER_CONTENT,
+    drawer,
+  };
+}
+
+export function newPreviewerConfig(previewer) {
+  return {
+    type: NEW_PREVIEWER_CONFIG,
+    previewer,
   };
 }
 
@@ -112,6 +128,65 @@ export function updateNavigatorStatus({
       newNavigatorStatus({
         backEnabled: newBackEnabled,
         forwardEnabled: newForwardEnabled,
+      })
+    );
+  };
+}
+
+export function openDrawerAndSetContent(_newDrawerContent) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {
+        drawer: {drawerContent, open},
+      },
+    } = getState();
+
+    if (_newDrawerContent === drawerContent && open) {
+      return;
+    }
+
+    dispatch(
+      newDrawerContent({
+        content: _newDrawerContent,
+        open: true,
+      })
+    );
+  };
+}
+
+export function changeDrawerOpenState(newOpenState) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {drawer},
+    } = getState();
+
+    if (newOpenState === drawer.open) {
+      return;
+    }
+
+    dispatch(
+      newDrawerContent({
+        ...drawer,
+        open: newOpenState,
+      })
+    );
+  };
+}
+
+export function setPreviewLayout(newLayout) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {previewer},
+    } = getState();
+
+    if (previewer.layout === newLayout) {
+      return;
+    }
+
+    dispatch(
+      newPreviewerConfig({
+        ...previewer,
+        layout: newLayout,
       })
     );
   };

@@ -15,8 +15,34 @@ body {
   background-color: #232c39;
   background-image: linear-gradient(45deg, rgba(0, 216, 255, 0.5) 10%, rgba(0, 1, 127, 0.7));
   */
-  background: #232526; /* fallback for old browsers */
+  /*background: #232526;
   background: linear-gradient(to right, #414345, #232526);
+  background-color: #0cbaba;
+  background-image: linear-gradient(315deg, #0cbaba 0%, #380036 74%);
+  background-color: #7f5a83;
+  background-image: linear-gradient(315deg, #7f5a83 0%, #0d324d 74%);
+  background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(0, 0, 0, 0.15) 100%
+    ),
+    radial-gradient(
+        at top center,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(0, 0, 0, 0.4) 120%
+      )
+      #989898;
+  background-blend-mode: multiply, multiply;
+  background-image: linear-gradient(to right, #434343 0%, black 100%);
+  background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);*/
+  background: #352646; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #2f0743,
+    #41295a
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #1d0827, #352646);
+
   font-family: Arial, Helvetica, Helvetica Neue, serif;
   overflow: hidden;
 }

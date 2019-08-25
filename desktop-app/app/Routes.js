@@ -4,14 +4,14 @@ import routes from './constants/routes';
 import App from './containers/App';
 import Browser from './containers/Browser';
 import CounterPage from './containers/CounterPage';
-import LeftIconsPane from './components/LeftIconsPane';
+import LeftIconsPaneContainer from './containers/LeftIconsPaneContainer';
 import styles from './layout.css';
 
 export default () => (
   <App>
     <div className={styles.appRoot}>
       <div className={styles.iconColumn}>
-        <LeftIconsPane />
+        <LeftIconsPaneContainer />
       </div>
       <div className={styles.contentColumn}>
         <Switch>

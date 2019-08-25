@@ -1,6 +1,16 @@
 .container {
   display: flex;
   overflow: scroll;
+  width: 100%;
+  height: calc(100vh - 75px);
+}
+
+.container.flexigrid {
+  flex-wrap: wrap;
+}
+
+.container.horizontal {
+  flex-wrap: nowrap;
 }
 
 .device {

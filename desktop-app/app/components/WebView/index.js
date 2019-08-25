@@ -434,8 +434,15 @@ class WebView extends Component {
       height: this.state.isTilted ? device.width : device.height,
       transform: `scale(${browser.zoomLevel})`,
     };
+    console.log('width, height', {
+      width: deviceStyles.width * browser.zoomLevel,
+      heigth: deviceStyles.height * browser.zoomLevel,
+    });
     return (
-      <div className={cx(styles.webViewContainer)}>
+      <div
+        className={cx(styles.webViewContainer)}
+        style={{height: deviceStyles.height * browser.zoomLevel + 40}} //Hack, ref below TODO
+      >
         <div className={cx(styles.webViewToolbar)}>
           <div
             className={cx(styles.webViewToolbarIcons)}
@@ -460,7 +467,7 @@ class WebView extends Component {
           className={cx(styles.deviceContainer)}
           style={{
             width: deviceStyles.width * browser.zoomLevel,
-            heigth: deviceStyles.height * browser.zoomLevel,
+            height: deviceStyles.height * browser.zoomLevel, //TODO why is this height not getting set?
           }}
         >
           <div

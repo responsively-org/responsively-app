@@ -1,0 +1,2 @@
+export const HORIZONTAL_LAYOUT = 'HORIZONTAL';
+export const FLEXIGRID_LAYOUT = 'FLEXIGRID';

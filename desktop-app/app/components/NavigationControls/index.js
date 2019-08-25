@@ -7,6 +7,7 @@ import ArrowRightIcon from '../icons/ArrowRight';
 import ReloadIcon from '../icons/Reload';
 
 import styles from './styles.module.css';
+import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
 
 class NavigationControls extends Component {
@@ -22,14 +23,14 @@ class NavigationControls extends Component {
         <Grid container spacing={1} alignItems="center">
           <Grid
             item
-            className={cx(styles.icons, {
-              [styles.disabled]: !backEnabled,
-              [styles.enabled]: backEnabled,
+            className={cx(commonStyles.icons, {
+              [commonStyles.disabled]: !backEnabled,
+              [commonStyles.enabled]: backEnabled,
             })}
           >
             <div
-              className={cx(styles.iconDisabler, {
-                [styles.disabled]: !backEnabled,
+              className={cx(commonStyles.iconDisabler, {
+                [commonStyles.disabled]: !backEnabled,
               })}
             />
             <div onClick={this.props.triggerNavigationBack}>
@@ -38,21 +39,21 @@ class NavigationControls extends Component {
           </Grid>
           <Grid
             item
-            className={cx(styles.icons, {
-              [styles.disabled]: !forwardEnabled,
-              [styles.enabled]: forwardEnabled,
+            className={cx(commonStyles.icons, {
+              [commonStyles.disabled]: !forwardEnabled,
+              [commonStyles.enabled]: forwardEnabled,
             })}
           >
             <div
-              className={cx(styles.iconDisabler, {
-                [styles.disabled]: !forwardEnabled,
+              className={cx(commonStyles.iconDisabler, {
+                [commonStyles.disabled]: !forwardEnabled,
               })}
             />
             <div onClick={this.props.triggerNavigationForward}>
               <ArrowRightIcon {...iconProps} />
             </div>
           </Grid>
-          <Grid item className={cx(styles.icons, styles.enabled)}>
+          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
             <div onClick={this.props.triggerNavigationReload}>
               <ReloadIcon {...iconProps} height={15} width={15} padding={5} />
             </div>

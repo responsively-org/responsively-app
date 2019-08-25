@@ -8,6 +8,7 @@ import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
 
 import styles from './styles.module.css';
+import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
 
 class ScrollControls extends Component {
@@ -21,22 +22,22 @@ class ScrollControls extends Component {
     return (
       <div className={styles.scrollControls}>
         <Grid container spacing={1} alignItems="center">
-          <Grid item className={cx(styles.icons, styles.enabled)}>
+          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
             <div onClick={this.props.triggerScrollDown}>
               <ScrollDownIcon {...iconProps} />
             </div>
           </Grid>
-          <Grid item className={cx(styles.icons, styles.enabled)}>
+          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
             <div onClick={this.props.triggerScrollUp}>
               <ScrollUpIcon {...iconProps} height={30} width={30} />
             </div>
           </Grid>
-          <Grid item className={cx(styles.icons, styles.enabled)}>
+          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
             <div onClick={this.props.screenshotAllDevices}>
               <ScreenshotIcon {...iconProps} />
             </div>
           </Grid>
-          <Grid item className={cx(styles.icons, styles.enabled)}>
+          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
             <div onClick={this.props.flipOrientationAllDevices}>
               <DeviceRotateIcon {...iconProps} />
             </div>

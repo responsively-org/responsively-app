@@ -4,15 +4,28 @@ import Renderer from '../Renderer';
 import cx from 'classnames';
 
 import styles from './style.module.css';
+import {
+  HORIZONTAL_LAYOUT,
+  FLEXIGRID_LAYOUT,
+} from '../../constants/previewerLayouts';
 
 class DevicesPreviewer extends Component {
   render() {
-    console.log('DevicesPreviewer  props', this.props);
     const {
-      browser: {devices, address, zoomLevel},
+      browser: {
+        devices,
+        address,
+        zoomLevel,
+        previewer: {layout},
+      },
     } = this.props;
     return (
-      <div className={cx(styles.container)}>
+      <div
+        className={cx(styles.container, {
+          [styles.flexigrid]: layout === FLEXIGRID_LAYOUT,
+          [styles.horizontal]: layout === HORIZONTAL_LAYOUT,
+        })}
+      >
         {devices.map((device, index) => (
           <Renderer
             key={device.id}

@@ -4,7 +4,9 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import Header from '../../components/Header';
 import DevicePreviewerContainer from '../DevicePreviewerContainer';
+import DrawerContainer from '../DrawerContainer';
 import * as BrowserActions from '../../actions/browser';
+import Grid from '@material-ui/core/Grid';
 
 type Props = {};
 
@@ -16,7 +18,10 @@ class Browser extends React.Component<Props> {
     return (
       <Fragment>
         <Header />
-        <DevicePreviewerContainer />
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          <DrawerContainer />
+          <DevicePreviewerContainer />
+        </div>
       </Fragment>
     );
   }

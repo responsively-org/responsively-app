@@ -1,0 +1,10 @@
+.drawer {
+  width: 0;
+  overflow: hidden;
+  transition: width 1s;
+  background: #00000030;
+}
+
+.drawer.open {
+  width: 240px;
+}

@@ -1,0 +1,30 @@
+.icons {
+  cursor: pointer;
+  position: relative;
+  opacity: 0.8;
+}
+
+.icons.disabled {
+  opacity: 0.3;
+  cursor: auto;
+}
+
+.icons.enabled:hover {
+  opacity: 1;
+  background: #8c8c8c42;
+  border-radius: 5px;
+}
+
+.iconDisabler {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  z-index: 2;
+  height: 100%;
+  width: 100%;
+}
+
+.iconDisabler.disabled {
+  display: block;
+}

@@ -12,7 +12,7 @@ function Renderer(props) {
   return (
     <div className={cx(styles.container)}>
       <div className={styles.titleContainer}>
-        <h3 className={cx(styles.deviceTitle)}>{props.device.name}</h3>
+        <span className={cx(styles.deviceTitle)}>{props.device.name}</span>
         {loading && <Spinner size={18} />}
       </div>
       <div className={cx(styles.deviceWrapper)}>
