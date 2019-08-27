@@ -9,6 +9,7 @@ import {
   NAVIGATION_RELOAD,
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
+  ENABLE_INSPECTOR_ALL_DEVICES,
 } from '../constants/pubsubEvents';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
@@ -210,6 +211,13 @@ export function flipOrientationAllDevices() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     console.log('flipOrientationAllDevices');
     pubsub.publish(FLIP_ORIENTATION_ALL_DEVICES);
+  };
+}
+
+export function enableInpector() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    console.log('enableInpector');
+    pubsub.publish(ENABLE_INSPECTOR_ALL_DEVICES);
   };
 }
 

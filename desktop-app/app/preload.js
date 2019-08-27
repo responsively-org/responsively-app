@@ -1,7 +1,14 @@
 const {ipcRenderer} = require('electron');
-console.log('Preloader');
+const DomInspector = require('../lib/dom-inspector');
+
 global.responsivelyApp = {
-  sendMessageToHost: (type, message) => ipcRenderer.sendToHost(type, message),
+  sendMessageToHost: (type, message) => {
+    if (!message) {
+      message = {};
+    }
+    message.sourceDeviceId = window.responsivelyApp.deviceId;
+    ipcRenderer.sendToHost(type, message);
+  },
   cssPath: el => {
     if (!(el instanceof Element)) return;
     var path = [];
@@ -30,6 +37,7 @@ global.responsivelyApp = {
       el.dispatchEvent(evObj);
     }
   },
+  DomInspector: DomInspector,
 };
 
 ipcRenderer.on('scrollMessage', (event, args) => {
@@ -71,4 +79,16 @@ ipcRenderer.on('scrollUpMessage', (event, args) => {
     left: window.scrollX - 250,
     behavior: 'smooth',
   });
+});
+
+ipcRenderer.on('enableInspectorMessage', (event, args) => {
+  console.log('Recieved enableInpector message from host', event, args);
+  window.responsivelyApp.domInspector.enable();
+  window.responsivelyApp.domInspectorEnabled = true;
+});
+
+ipcRenderer.on('disableInspectorMessage', (event, args) => {
+  console.log('Recieved disableInspector message from host', event, args);
+  window.responsivelyApp.domInspector.disable();
+  window.responsivelyApp.domInspectorEnabled = false;
 });

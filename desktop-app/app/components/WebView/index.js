@@ -25,6 +25,8 @@ import {
   NAVIGATION_RELOAD,
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
+  ENABLE_INSPECTOR_ALL_DEVICES,
+  DISABLE_INSPECTOR_ALL_DEVICES,
 } from '../../constants/pubsubEvents';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
@@ -33,6 +35,8 @@ const BrowserWindow = remote.BrowserWindow;
 const MESSAGE_TYPES = {
   scroll: 'scroll',
   click: 'click',
+  openDevToolsInspector: 'openDevToolsInspector',
+  disableInspector: 'disableInspector',
 };
 
 class WebView extends Component {
@@ -61,6 +65,14 @@ class WebView extends Component {
     pubsub.subscribe(
       FLIP_ORIENTATION_ALL_DEVICES,
       this.processFlipOrientationEvent
+    );
+    pubsub.subscribe(
+      ENABLE_INSPECTOR_ALL_DEVICES,
+      this.processEnableInspectorEvent
+    );
+    pubsub.subscribe(
+      DISABLE_INSPECTOR_ALL_DEVICES,
+      this.processDisableInspectorEvent
     );
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
@@ -104,11 +116,11 @@ class WebView extends Component {
     });
 
     this.webviewRef.current.addEventListener('devtools-opened', () => {
-      this.webviewRef.current
+      /*this.webviewRef.current
         .getWebContents()
         .devToolsWebContents.executeJavaScript(
           'DevToolsAPI.enterInspectElementMode()'
-        );
+        );*/
     });
   }
 
@@ -155,6 +167,33 @@ class WebView extends Component {
     this._flipOrientation();
   };
 
+  processOpenDevToolsInspectorEvent = message => {
+    console.log('inspectElement', message, this.props.browser.zoomLevel);
+    const {
+      x: webViewX,
+      y: webViewY,
+    } = this.webviewRef.current.getBoundingClientRect();
+    const {x: deviceX, y: deviceY} = message;
+    const zoomFactor = this.props.browser.zoomLevel;
+    this.webviewRef.current
+      .getWebContents()
+      .inspectElement(
+        Math.round(webViewX + deviceX * zoomFactor),
+        Math.round(webViewY + deviceY * zoomFactor)
+      );
+  };
+
+  processEnableInspectorEvent = () => {
+    this.webviewRef.current.send('enableInspectorMessage');
+  };
+
+  processDisableInspectorEvent = message => {
+    if (message.sourceDeviceId === this.props.device.id) {
+      return;
+    }
+    this.webviewRef.current.send('disableInspectorMessage');
+  };
+
   messageHandler = ({channel: type, args: [message]}) => {
     console.log('Message recieved', message);
     switch (type) {
@@ -164,49 +203,82 @@ class WebView extends Component {
       case MESSAGE_TYPES.click:
         pubsub.publish('click', [message]);
         return;
+      case MESSAGE_TYPES.openDevToolsInspector:
+        this.processOpenDevToolsInspectorEvent(message);
+        return;
+      case MESSAGE_TYPES.disableInspector:
+        this.transmitDisableInspectorToAllDevices(message);
+        return;
     }
+  };
+
+  transmitDisableInspectorToAllDevices = message => {
+    pubsub.publish(DISABLE_INSPECTOR_ALL_DEVICES, [message]);
   };
 
   initEventTriggers = webview => {
     console.log('Initializing triggers');
     webview.getWebContents().executeJavaScript(`
       responsivelyApp.deviceId = ${this.props.device.id};
-      document.body.addEventListener('mouseleave', () => responsivelyApp.mouseOn = false)
-      document.body.addEventListener('mouseenter', () => responsivelyApp.mouseOn = true)
+      responsivelyApp.domInspector = new responsivelyApp.DomInspector();
+      document.body.addEventListener('mouseleave', () => {
+        window.responsivelyApp.mouseOn = false;
+        if (responsivelyApp.domInspectorEnabled) {
+          responsivelyApp.domInspector.disable();
+        }
+      });
+      document.body.addEventListener('mouseenter', () => {
+        responsivelyApp.mouseOn = true;
+        if (responsivelyApp.domInspectorEnabled) {
+          responsivelyApp.domInspector.enable();
+        }
+      });
 
       window.addEventListener('scroll', (e) => {
         if (!responsivelyApp.mouseOn) {
           return;
         }
         window.responsivelyApp.sendMessageToHost(
-          '${MESSAGE_TYPES.scroll}', 
+          '${MESSAGE_TYPES.scroll}',
           {
-            sourceDeviceId: window.responsivelyApp.deviceId,
             position: {x: window.scrollX, y: window.scrollY},
           }
         );
       });
 
-        document.addEventListener(
-          'click', 
-          (e) => {
-            if (e.target === window.responsivelyApp.lastClickElement || e.responsivelyAppProcessed) {
-              window.responsivelyApp.lastClickElement = null;
-              e.responsivelyAppProcessed = true;
-              return;
-            } 
+      document.addEventListener(
+        'click', 
+        (e) => {
+          if (e.target === window.responsivelyApp.lastClickElement || e.responsivelyAppProcessed) {
+            window.responsivelyApp.lastClickElement = null;
             e.responsivelyAppProcessed = true;
-            console.log('clicked', e);
+            return;
+          } 
+          if (window.responsivelyApp.domInspectorEnabled) {
+            e.preventDefault();
+            window.responsivelyApp.domInspector.disable();
+            window.responsivelyApp.domInspectorEnabled = false;
+            const targetRect = e.target.getBoundingClientRect();
             window.responsivelyApp.sendMessageToHost(
-              '${MESSAGE_TYPES.click}', 
-              {
-                sourceDeviceId: window.responsivelyApp.deviceId,
-                cssPath: window.responsivelyApp.cssPath(e.target),
-              }
+              '${MESSAGE_TYPES.disableInspector}'
             );
-          },
-          true
-        );
+            window.responsivelyApp.sendMessageToHost(
+              '${MESSAGE_TYPES.openDevToolsInspector}',
+              {x: targetRect.left, y: targetRect.top}
+            );
+            return;
+          }
+          e.responsivelyAppProcessed = true;
+          console.log('clicked', e);
+          window.responsivelyApp.sendMessageToHost(
+            '${MESSAGE_TYPES.click}', 
+            {
+              cssPath: window.responsivelyApp.cssPath(e.target),
+            }
+          );
+        },
+        true
+      );
     `);
   };
 

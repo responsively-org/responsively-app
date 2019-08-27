@@ -6,6 +6,7 @@ import ScrollDownIcon from '../icons/ScrollDown';
 import ScrollUpIcon from '../icons/ScrollUp';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
+import InspectElementIcon from '../icons/InspectElement';
 
 import styles from './styles.module.css';
 import commonStyles from '../common.styles.css';
@@ -40,6 +41,11 @@ class ScrollControls extends Component {
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
             <div onClick={this.props.flipOrientationAllDevices}>
               <DeviceRotateIcon {...iconProps} />
+            </div>
+          </Grid>
+          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+            <div onClick={this.props.enableInpector}>
+              <InspectElementIcon {...iconProps} />
             </div>
           </Grid>
         </Grid>
