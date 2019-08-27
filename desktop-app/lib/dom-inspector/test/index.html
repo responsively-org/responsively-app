@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .test {
+        border-style: solid;
+        border-color: #e5e5e5;
+        border-width: 10px 20px 30px 40px;
+        margin: 40px 30px 20px 10px;
+        padding: 10px 20px 30px 40px;
+        width: 500px;
+        height: 300px;
+        line-height: 50px;
+        position: fixed;
+        top: 100px;
+        left: 200px;
+        z-index: 100;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .exclude {
+        padding: 10px;
+    }
+    </style>
+</head>
+
+<body>
+    <p>这是一些测试文本</p>
+    <div id="asd" class="test as adqwe qwe qw zxf as asd qwe dfg ert ghj t jk yui jkl uio kl wer cv rty cvb rty x qwe fb rt g df hf grt">
+        <span>这是一个测试div</span>
+        <div>
+            <div>
+                <div>123</div>
+            </div>
+        </div>
+    </div>
+    <code>asd</code>
+    <code>asd</code>
+    <code>asd</code>
+    <code>asd</code>
+    <code>asd</code>
+    <div>123</div>
+    <div>123</div>
+    <div>123</div>
+    <div>123</div>
+    <div>123</div>
+    <div>123</div>
+    <div>123</div>
+    <div class="test111">
+        <p>123</p>
+        <span>this one will be exclude</span>
+    </div>
+
+    <div class="exclude">
+        <div>exclude child</div>
+        <div>exclude child</div>
+        <div>exclude child</div>
+        <div class="another">exclude child but new another inspector</div>
+    </div>
+    <script type="text/javascript" src="../dist/dom-inspector.js"></script>
+    <script type="text/javascript" src="./index.js"></script>
+</body>
+
+</html>
