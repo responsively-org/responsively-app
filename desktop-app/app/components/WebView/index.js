@@ -139,7 +139,7 @@ class WebView extends Component {
   };
 
   processScrollDownEvent = message => {
-    console.log('processScrollDownEvent');
+    console.log('processScrollDownEvent', this.webviewRef);
     this.webviewRef.current.send('scrollDownMessage');
   };
 

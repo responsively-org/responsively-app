@@ -4,6 +4,7 @@
  */
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~react-toastify/dist/ReactToastify.css';
+@import '~react-tabs/style/react-tabs.css';
 
 body {
   position: relative;

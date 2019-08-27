@@ -1,17 +1,28 @@
 .container {
   display: flex;
-  overflow: scroll;
-  width: 100%;
   height: calc(100vh - 75px);
+  width: 100%;
+  overflow: scroll;
+  flex-direction: column;
 }
 
-.container.flexigrid {
+.flexigrid {
   flex-wrap: wrap;
 }
 
-.container.horizontal {
+.horizontal {
   flex-wrap: nowrap;
 }
 
-.device {
+.devicesContainer {
+  display: flex;
+}
+
+.tab {
+  display: none;
+  margin: auto;
+}
+
+.tab.activeTab {
+  display: block;
 }

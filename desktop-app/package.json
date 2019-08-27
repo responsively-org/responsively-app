@@ -246,6 +246,7 @@
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-select": "^3.0.4",
+    "react-tabs": "^3.0.0",
     "react-toastify": "^5.3.2",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",

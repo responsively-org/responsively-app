@@ -3,11 +3,13 @@ import Select from 'react-select';
 import {
   HORIZONTAL_LAYOUT,
   FLEXIGRID_LAYOUT,
+  INDIVIDUAL_LAYOUT,
 } from '../../constants/previewerLayouts';
 
 const options = [
   {value: HORIZONTAL_LAYOUT, label: 'Horizontal'},
   {value: FLEXIGRID_LAYOUT, label: 'FlexiGrid'},
+  {value: INDIVIDUAL_LAYOUT, label: 'Individual'},
 ];
 
 const styles = {
