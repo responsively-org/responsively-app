@@ -11,8 +11,9 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #00000042;
+  background: #ffffff15;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);
+  padding-top: 20px;
 }
 
 .contentColumn {

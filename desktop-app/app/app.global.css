@@ -12,10 +12,8 @@ body {
   height: 100vh;
   margin: 0;
 
-  /*
-  background-color: #232c39;
-  background-image: linear-gradient(45deg, rgba(0, 216, 255, 0.5) 10%, rgba(0, 1, 127, 0.7));
-  */
+  background-color: #1e1e1e;
+
   /*background: #232526;
   background: linear-gradient(to right, #414345, #232526);
   background-color: #0cbaba;
@@ -33,17 +31,13 @@ body {
         rgba(0, 0, 0, 0.4) 120%
       )
       #989898;
-  background-blend-mode: multiply, multiply;
+  /*background-blend-mode: multiply, multiply;
   background-image: linear-gradient(to right, #434343 0%, black 100%);
-  background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);*/
-  background: #352646; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to right,
-    #2f0743,
-    #41295a
-  ); /* Chrome 10-25, Safari 5.1-6 */
+  background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
+  background: #352646;
+  background: -webkit-linear-gradient(to right, #2f0743, #41295a);
   background: linear-gradient(to right, #1d0827, #352646);
-
+*/
   font-family: Arial, Helvetica, Helvetica Neue, serif;
   overflow: hidden;
 }
@@ -76,7 +70,25 @@ a:hover {
   cursor: pointer;
 }
 
-#titleBar {
-  height: 20px;
-  background: #00000042;
+/*
+{
+	"$schema": "vscode://schemas/color-theme",
+	"name": "Dark Default Colors",
+	"colors": {
+		"editor.background": "#1E1E1E",
+		"editor.foreground": "#D4D4D4",
+		"editor.inactiveSelectionBackground": "#3A3D41",
+		"editorIndentGuide.background": "#404040",
+		"editorIndentGuide.activeBackground": "#707070",
+		"editor.selectionHighlightBackground": "#ADD6FF26",
+		"list.dropBackground": "#383B3D",
+		"activityBarBadge.background": "#007ACC",
+		"sideBarTitle.foreground": "#BBBBBB",
+		"input.placeholderForeground": "#A6A6A6",
+		"settings.textInputBackground": "#292929",
+		"settings.numberInputBackground": "#292929",
+		"menu.background": "#252526",
+		"menu.foreground": "#CCCCCC"
+	}
 }
+*/

@@ -1,7 +1,7 @@
 .header {
   width: calc(100vw - 50px);
-  padding-bottom: 10px;
-  background: #00000042;
+  padding: 20px 0 10px;
+  background: #252526;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);
 }
 
