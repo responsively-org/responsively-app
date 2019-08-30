@@ -1,0 +1,7 @@
+.listHolder {
+  padding: 20px;
+  background: #00000030;
+  border-radius: 20px;
+  border: 1px solid lightgrey;
+  height: 100%;
+}

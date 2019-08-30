@@ -18,6 +18,7 @@ export const NEW_SCROLL_POSITION = 'NEW_SCROLL_POSITION';
 export const NEW_NAVIGATOR_STATUS = 'NEW_NAVIGATOR_STATUS';
 export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
 export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
+export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
 
 export function newAddress(address) {
   return {
@@ -58,6 +59,13 @@ export function newPreviewerConfig(previewer) {
   return {
     type: NEW_PREVIEWER_CONFIG,
     previewer,
+  };
+}
+
+export function newActiveDevices(devices) {
+  return {
+    type: NEW_ACTIVE_DEVICES,
+    devices,
   };
 }
 
@@ -190,6 +198,21 @@ export function setPreviewLayout(newLayout) {
         layout: newLayout,
       })
     );
+  };
+}
+
+export function setActiveDevices(newDevices) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {devices},
+    } = getState();
+
+    if (false) {
+      //TODO verify the devices list and return if the order of the devices didn;t change;
+      return;
+    }
+
+    dispatch(newActiveDevices(newDevices));
   };
 }
 

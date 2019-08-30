@@ -1,0 +1,23 @@
+import React from 'react';
+import PreviewerLayoutSelector from '../PreviewerLayoutSelector';
+import DeviceManagerContainer from '../../containers/DeviceManagerContainer';
+import Divider from '@material-ui/core/Divider';
+
+import styles from './styles.css';
+
+export default function DeviceDrawer(props) {
+  console.log('DeviceManagerContainer props', props);
+  return (
+    <div className={styles.container}>
+      <div className={styles.label}>
+        Edit Devices List <DeviceManagerContainer />
+      </div>
+      <Divider variant="middle" />
+      <div className={styles.label}>Layout:</div>
+      <PreviewerLayoutSelector
+        value={props.browser.previewer.layout}
+        onChange={val => props.setPreviewLayout(val.value)}
+      />
+    </div>
+  );
+}

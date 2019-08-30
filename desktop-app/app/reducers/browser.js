@@ -6,11 +6,13 @@ import {
   NEW_NAVIGATOR_STATUS,
   NEW_DRAWER_CONTENT,
   NEW_PREVIEWER_CONFIG,
+  NEW_ACTIVE_DEVICES,
 } from '../actions/browser';
 import type {Action} from './types';
 import devices from '../constants/devices';
 import type {Device} from '../constants/devices';
 import {FLEXIGRID_LAYOUT} from '../constants/previewerLayouts';
+import {DEVICE_MANAGER} from '../constants/DrawerContents';
 
 type ScrollPositionType = {
   x: number,
@@ -41,14 +43,16 @@ export type BrowserStateType = {
   previewer: PreviewerType,
 };
 
+console.log('devices.filter(device => devices.added)', devices);
+
 export default function counter(
   state: BrowserStateType = {
-    devices,
+    devices: devices.filter(device => device.added),
     address: 'https://www.google.com',
     zoomLevel: 0.5,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
-    drawer: {open: false},
+    drawer: {open: true, content: DEVICE_MANAGER},
     previewer: {layout: FLEXIGRID_LAYOUT},
   },
   action: Action
@@ -66,6 +70,8 @@ export default function counter(
       return {...state, drawer: action.drawer};
     case NEW_PREVIEWER_CONFIG:
       return {...state, previewer: action.previewer};
+    case NEW_ACTIVE_DEVICES:
+      return {...state, devices: action.devices};
     default:
       return state;
   }

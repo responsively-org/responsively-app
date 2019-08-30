@@ -1,6 +1,7 @@
 // @flow
 export type Device = {
   id: number,
+  added: boolean,
   width: number,
   height: number,
   name: string,
@@ -10,6 +11,7 @@ export type Device = {
 export default [
   {
     id: 1,
+    added: true,
     width: 320,
     height: 568,
     name: 'iPhone SE',
@@ -18,6 +20,7 @@ export default [
   },
   {
     id: 2,
+    added: true,
     width: 375,
     height: 812,
     name: 'iPhone X',
@@ -26,6 +29,7 @@ export default [
   },
   {
     id: 3,
+    added: true,
     width: 768,
     height: 1024,
     name: 'iPad',
@@ -34,6 +38,7 @@ export default [
   },
   {
     id: 4,
+    added: false,
     width: 1024,
     height: 1366,
     name: 'iPad Pro',
@@ -42,6 +47,7 @@ export default [
   },
   {
     id: 5,
+    added: false,
     width: 1440,
     height: 900,
     name: 'Laptop',

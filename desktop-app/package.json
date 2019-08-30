@@ -61,6 +61,7 @@
     "appId": "app.ResponsivelyApp",
     "files": [
       "app/preload.js",
+      "lib",
       "app/dist/",
       "app/app.html",
       "app/main.prod.js",
@@ -240,6 +241,7 @@
     "merge-img": "^2.1.3",
     "pubsub.js": "^1.5.2",
     "react": "^16.9.0",
+    "react-beautiful-dnd": "^11.0.5",
     "react-dom": "^16.9.0",
     "react-hot-loader": "^4.8",
     "react-redux": "^7.1.0",

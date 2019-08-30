@@ -506,10 +506,6 @@ class WebView extends Component {
       height: this.state.isTilted ? device.width : device.height,
       transform: `scale(${browser.zoomLevel})`,
     };
-    console.log('width, height', {
-      width: deviceStyles.width * browser.zoomLevel,
-      heigth: deviceStyles.height * browser.zoomLevel,
-    });
     return (
       <div
         className={cx(styles.webViewContainer)}

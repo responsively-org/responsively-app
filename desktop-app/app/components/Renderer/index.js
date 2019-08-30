@@ -13,7 +13,7 @@ function Renderer(props) {
     <div className={cx(styles.container)}>
       <div className={styles.titleContainer}>
         <span className={cx(styles.deviceTitle)}>{props.device.name}</span>
-        {loading && <Spinner size={18} />}
+        {loading && <Spinner size={16} />}
       </div>
       <div className={cx(styles.deviceWrapper)}>
         <WebViewContainer

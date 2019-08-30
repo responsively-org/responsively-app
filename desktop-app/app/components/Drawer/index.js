@@ -5,7 +5,7 @@ import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import DeviceManagerContainer from '../../containers/DeviceManagerContainer';
+import DeviceDrawerContainer from '../../containers/DeviceDrawerContainer';
 import cx from 'classnames';
 
 import styles from './styles.css';
@@ -48,12 +48,12 @@ export function Drawer(props) {
   );
 }
 
-const deviceManagerComponent = <DeviceManagerContainer />;
+const deviceDrawerComponent = <DeviceDrawerContainer />;
 
 function getDrawerContent(type) {
   switch (type) {
     case DEVICE_MANAGER:
-      return deviceManagerComponent;
+      return deviceDrawerComponent;
   }
 }
 

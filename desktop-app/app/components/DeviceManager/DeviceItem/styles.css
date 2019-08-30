@@ -1,0 +1,21 @@
+.deviceHolder {
+  display: flex;
+  width: 100%;
+  border-radius: 20px;
+  height: 70px;
+  background: #2b2b2b;
+  border: 1px solid lightgrey;
+  padding: 20px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.deviceName {
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+.deviceDimensions {
+  font-size: 10px;
+  color: #ffffff90;
+}
