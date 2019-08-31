@@ -11,7 +11,7 @@ export default function(props) {
       color: '#ffffff00', //'#eef3fd',
     },
     bottom: {
-      color: '#ffffff80', //'#6798e5',
+      color: '#7587ec', //'#6798e5',
       animationDuration: '550ms',
       position: 'absolute',
       left: 0,

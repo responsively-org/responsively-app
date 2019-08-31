@@ -38,7 +38,7 @@ export default [
   },
   {
     id: 4,
-    added: false,
+    added: true,
     width: 1024,
     height: 1366,
     name: 'iPad Pro',
@@ -47,7 +47,7 @@ export default [
   },
   {
     id: 5,
-    added: false,
+    added: true,
     width: 1440,
     height: 900,
     name: 'Laptop',

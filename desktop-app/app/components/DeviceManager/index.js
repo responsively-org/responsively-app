@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from 'react';
+import React, {useState, Fragment, useEffect} from 'react';
 import allDevices from '../../constants/devices';
 import {makeStyles} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
@@ -15,6 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import LightBulbIcon from '../icons/LightBulb';
 import DeviceList from './DeviceList';
+import AddDeviceContainer from '../../containers/AddDeviceContainer';
 
 import styles from './styles.css';
 
@@ -26,34 +27,30 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
     flex: 1,
   },
-  fab: {
-    position: 'absolute',
-    top: theme.spacing(10),
-    right: theme.spacing(3),
-  },
-  extendedIcon: {
-    marginRight: theme.spacing(1),
-  },
 }));
 
 export default function DeviceManager(props) {
   const [open, setOpen] = useState(true);
   const classes = useStyles();
 
-  const closeDialog = () => setOpen(false);
-  const activeDevices = props.browser.devices;
-  const activeDevicesById = activeDevices.reduce((acc, val) => {
-    acc[val.id] = val;
-    return acc;
-  }, {});
-  const inactiveDevices = allDevices.filter(
-    device => !activeDevicesById[device.id]
-  );
-
   const [devices, setDevices] = useState({
-    active: activeDevices,
-    inactive: inactiveDevices,
+    active: [],
+    inactive: [],
   });
+
+  useEffect(() => {
+    const activeDevices = props.browser.devices;
+    const activeDevicesById = activeDevices.reduce((acc, val) => {
+      acc[val.id] = val;
+      return acc;
+    }, {});
+    const inactiveDevices = allDevices.filter(
+      device => !activeDevicesById[device.id]
+    );
+    setDevices({active: activeDevices, inactive: inactiveDevices});
+  }, props.browser.devices);
+
+  const closeDialog = () => setOpen(false);
 
   console.log('devices', devices);
 
@@ -83,14 +80,9 @@ export default function DeviceManager(props) {
         <EditIcon />
       </IconButton>
       <Dialog fullScreen open={open} onClose={closeDialog}>
-        <AppBar className={classes.appBar}>
+        <AppBar className={classes.appBar} color="secondary">
           <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={closeDialog}
-              aria-label="close"
-            >
+            <IconButton edge="start" onClick={closeDialog} aria-label="close">
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
@@ -102,6 +94,10 @@ export default function DeviceManager(props) {
           </Toolbar>
         </AppBar>
         <div className={styles.container}>
+          <p className={styles.toolTip}>
+            <span>✨</span>Drag and drop the devices across as needed to
+            re-order them.
+          </p>
           <DragDropContext onDragEnd={onDragEnd}>
             <Grid container spacing={3} className={styles.content}>
               <Grid item xs={3} className={styles.section}>
@@ -123,9 +119,7 @@ export default function DeviceManager(props) {
               </Grid>
             </Grid>
           </DragDropContext>
-          <Fab variant="extended" aria-label="add" className={classes.fab}>
-            <AddIcon className={classes.extendedIcon} /> New Device
-          </Fab>
+          <AddDeviceContainer />
         </div>
       </Dialog>
     </Fragment>

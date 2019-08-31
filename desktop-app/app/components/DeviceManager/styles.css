@@ -23,3 +23,14 @@
   margin-bottom: 10px;
   justify-content: center;
 }
+
+.toolTip {
+  background: #ffffff10;
+  padding: 10px 40px;
+  border-radius: 5px;
+  margin: 0 auto 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #dedede;
+  width: fit-content;
+}

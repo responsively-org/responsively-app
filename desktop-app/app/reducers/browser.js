@@ -7,6 +7,7 @@ import {
   NEW_DRAWER_CONTENT,
   NEW_PREVIEWER_CONFIG,
   NEW_ACTIVE_DEVICES,
+  NEW_ACTIVE_DEVICE,
 } from '../actions/browser';
 import type {Action} from './types';
 import devices from '../constants/devices';
@@ -72,6 +73,9 @@ export default function counter(
       return {...state, previewer: action.previewer};
     case NEW_ACTIVE_DEVICES:
       return {...state, devices: action.devices};
+    case NEW_ACTIVE_DEVICE:
+      const devices = [...state.devices, action.device];
+      return {...state, devices};
     default:
       return state;
   }

@@ -33,6 +33,7 @@ const LeftIconsPane = props => {
         </Grid>
         <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
           <div
+            id="headway"
             onClick={() => props.openDrawerAndSetContent(SCREENSHOT_MANAGER)}
           >
             <PhotoLibraryIcon {...iconProps} />

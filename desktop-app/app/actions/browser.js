@@ -19,6 +19,7 @@ export const NEW_NAVIGATOR_STATUS = 'NEW_NAVIGATOR_STATUS';
 export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
 export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
+export const NEW_ACTIVE_DEVICE = 'NEW_ACTIVE_DEVICE';
 
 export function newAddress(address) {
   return {
@@ -66,6 +67,13 @@ export function newActiveDevices(devices) {
   return {
     type: NEW_ACTIVE_DEVICES,
     devices,
+  };
+}
+
+export function newActiveDevice(device) {
+  return {
+    type: NEW_ACTIVE_DEVICE,
+    device,
   };
 }
 
@@ -213,6 +221,14 @@ export function setActiveDevices(newDevices) {
     }
 
     dispatch(newActiveDevices(newDevices));
+  };
+}
+
+export function addNewDevice(newDevice) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    if (newDevice.added) {
+      dispatch(newActiveDevice(newDevice));
+    }
   };
 }
 
