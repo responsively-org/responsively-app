@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import {Icon} from 'flwww';
 import Grid from '@material-ui/core/Grid';
 import Logo from '../icons/Logo';
 import DevicesIcon from '@material-ui/icons/Devices';
@@ -33,10 +34,14 @@ const LeftIconsPane = props => {
         </Grid>
         <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
           <div
-            id="headway"
             onClick={() => props.openDrawerAndSetContent(SCREENSHOT_MANAGER)}
           >
             <PhotoLibraryIcon {...iconProps} />
+          </div>
+        </Grid>
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <div id="headway">
+            <Icon type="gift" color={iconsColor} />
           </div>
         </Grid>
       </Grid>

@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import ArrowLeftIcon from '../icons/ArrowLeft';
 import ArrowRightIcon from '../icons/ArrowRight';
 import ReloadIcon from '../icons/Reload';
+import {Icon} from 'flwww';
 
 import styles from './styles.module.css';
 import commonStyles from '../common.styles.css';
@@ -34,7 +35,8 @@ class NavigationControls extends Component {
               })}
             />
             <div onClick={this.props.triggerNavigationBack}>
-              <ArrowLeftIcon {...iconProps} />
+              <Icon type="arrowLeft" size="30px" {...iconProps} />
+              {/*<ArrowLeftIcon {...iconProps} />*/}
             </div>
           </Grid>
           <Grid
@@ -50,12 +52,14 @@ class NavigationControls extends Component {
               })}
             />
             <div onClick={this.props.triggerNavigationForward}>
-              <ArrowRightIcon {...iconProps} />
+              <Icon type="arrowRight" size="30px" {...iconProps} />
+              {/*<ArrowRightIcon {...iconProps} />*/}
             </div>
           </Grid>
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
             <div onClick={this.props.triggerNavigationReload}>
-              <ReloadIcon {...iconProps} height={15} width={15} padding={5} />
+              <Icon type="rotate" {...iconProps} />
+              {/*<ReloadIcon {...iconProps} height={15} width={15} padding={5} />*/}
             </div>
           </Grid>
         </Grid>

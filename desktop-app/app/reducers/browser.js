@@ -74,7 +74,7 @@ export default function counter(
     zoomLevel: 0.5,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
-    drawer: {open: true, content: DEVICE_MANAGER},
+    drawer: {open: false, content: DEVICE_MANAGER},
     previewer: {layout: FLEXIGRID_LAYOUT},
   },
   action: Action
