@@ -1,4 +1,6 @@
 // @flow
+import chromeEmulatedDevices from './chromeEmulatedDevices';
+
 export type Device = {
   id: number,
   added: boolean,
@@ -6,52 +8,24 @@ export type Device = {
   height: number,
   name: string,
   useragent: string,
+  capabilities: Array<string>,
 };
+let idGen = 1;
 
-export default [
-  {
-    id: 1,
-    added: true,
-    width: 320,
-    height: 568,
-    name: 'iPhone SE',
-    useragent:
-      'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/75.0.3770.70 Mobile/14E5239e Safari/602.1',
-  },
-  {
-    id: 2,
-    added: true,
-    width: 375,
-    height: 812,
-    name: 'iPhone X',
-    useragent:
-      'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/75.0.3770.70 Mobile/14E5239e Safari/602.1',
-  },
-  {
-    id: 3,
-    added: true,
-    width: 768,
-    height: 1024,
-    name: 'iPad',
-    useragent:
-      'Mozilla/5.0 (iPad; CPU OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/75.0.3770.70 Mobile/13G36 Safari/602.1',
-  },
-  {
-    id: 4,
-    added: true,
-    width: 1024,
-    height: 1366,
-    name: 'iPad Pro',
-    useragent:
-      'Mozilla/5.0 (iPad; CPU OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/75.0.3770.70 Mobile/13G36 Safari/602.1',
-  },
-  {
-    id: 5,
-    added: true,
-    width: 1440,
-    height: 900,
-    name: 'Laptop',
-    useragent:
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
-  },
-];
+export default chromeEmulatedDevices.extensions
+  .sort((a, b) => a.order - b.order)
+  .map(({order, device}) => {
+    const dimension =
+      device.type === 'notebook'
+        ? device.screen.horizontal
+        : device.screen.vertical;
+    return {
+      id: idGen++,
+      name: device.title,
+      width: dimension.width,
+      height: dimension.height,
+      useragent: device['user-agent'],
+      capabilities: device.capabilities,
+      added: device['show-by-default'],
+    };
+  });
