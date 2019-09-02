@@ -236,6 +236,7 @@
     "electron-cookies": "heap/electron-cookies",
     "electron-debug": "^3.0.1",
     "electron-log": "^3.0.7",
+    "electron-settings": "^3.2.0",
     "electron-updater": "^4.1.2",
     "history": "^4.7.2",
     "merge-img": "^2.1.3",

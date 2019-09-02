@@ -12,8 +12,10 @@
  */
 import electron, {app, BrowserWindow, ipcMain} from 'electron';
 import {autoUpdater} from 'electron-updater';
+import settings from 'electron-settings';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import {ACTIVE_DEVICES} from './constants/settingKeys';
 
 export default class AppUpdater {
   constructor() {

@@ -48,11 +48,9 @@ export default function DeviceManager(props) {
       device => !activeDevicesById[device.id]
     );
     setDevices({active: activeDevices, inactive: inactiveDevices});
-  }, props.browser.devices);
+  }, props.browser.devices.map(JSON.stringify).join(','));
 
   const closeDialog = () => setOpen(false);
-
-  console.log('devices', devices);
 
   const onDragEnd = result => {
     console.log('DragResult', result);

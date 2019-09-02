@@ -11,9 +11,11 @@ import {
 } from '../actions/browser';
 import type {Action} from './types';
 import devices from '../constants/devices';
+import settings from 'electron-settings';
 import type {Device} from '../constants/devices';
 import {FLEXIGRID_LAYOUT} from '../constants/previewerLayouts';
 import {DEVICE_MANAGER} from '../constants/DrawerContents';
+import {ACTIVE_DEVICES} from '../constants/settingKeys';
 
 type ScrollPositionType = {
   x: number,
@@ -46,9 +48,28 @@ export type BrowserStateType = {
 
 console.log('devices.filter(device => devices.added)', devices);
 
+let _activeDevices = null;
+
+function _saveActiveDevices(devices) {
+  settings.set(ACTIVE_DEVICES, devices);
+  _activeDevices = devices;
+}
+
+function _getActiveDevices() {
+  if (_activeDevices) {
+    return _activeDevices;
+  }
+  let activeDevices = settings.get(ACTIVE_DEVICES);
+  if (!activeDevices) {
+    activeDevices = devices.filter(device => device.added);
+    _saveActiveDevices(activeDevices);
+  }
+  return activeDevices;
+}
+
 export default function counter(
   state: BrowserStateType = {
-    devices: devices.filter(device => device.added),
+    devices: _getActiveDevices(),
     address: 'https://www.google.com',
     zoomLevel: 0.5,
     scrollPosition: {x: 0, y: 0},
@@ -72,9 +93,11 @@ export default function counter(
     case NEW_PREVIEWER_CONFIG:
       return {...state, previewer: action.previewer};
     case NEW_ACTIVE_DEVICES:
+      _saveActiveDevices(action.devices);
       return {...state, devices: action.devices};
     case NEW_ACTIVE_DEVICE:
       const devices = [...state.devices, action.device];
+      _saveActiveDevices(devices);
       return {...state, devices};
     default:
       return state;
