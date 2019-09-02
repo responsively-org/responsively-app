@@ -10,8 +10,8 @@
 }
 
 .webViewToolbarIcons {
-  cursor: pointer;
-  margin-right: 5px;
+  margin-right: 2px;
+  padding: 0 2px;
 }
 
 .deviceContainer {

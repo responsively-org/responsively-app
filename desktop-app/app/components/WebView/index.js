@@ -15,8 +15,6 @@ import DeviceRotateIcon from '../icons/DeviceRotate';
 import cx from 'classnames';
 import fs from 'fs-extra';
 import {iconsColor} from '../../constants/colors';
-
-import styles from './style.module.css';
 import {
   SCROLL_DOWN,
   SCROLL_UP,
@@ -28,6 +26,10 @@ import {
   ENABLE_INSPECTOR_ALL_DEVICES,
   DISABLE_INSPECTOR_ALL_DEVICES,
 } from '../../constants/pubsubEvents';
+import {CAPABILITIES} from '../../constants/devices';
+
+import styles from './style.module.css';
+import commonStyles from '../common.styles.css';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 const BrowserWindow = remote.BrowserWindow;
@@ -164,6 +166,9 @@ class WebView extends Component {
   };
 
   processFlipOrientationEvent = () => {
+    if (!this.isMobile) {
+      return;
+    }
     this._flipOrientation();
   };
 
@@ -499,11 +504,17 @@ class WebView extends Component {
     return domain.charAt(0).toUpperCase() + domain.slice(1);
   };
 
+  get isMobile() {
+    return this.props.device.capabilities.indexOf(CAPABILITIES.mobile) > -1;
+  }
+
   render() {
     const {device, browser} = this.props;
     const deviceStyles = {
-      width: this.state.isTilted ? device.height : device.width,
-      height: this.state.isTilted ? device.width : device.height,
+      width:
+        this.isMobile && this.state.isTilted ? device.height : device.width,
+      height:
+        this.isMobile && this.state.isTilted ? device.width : device.height,
       transform: `scale(${browser.zoomLevel})`,
     };
     return (
@@ -513,19 +524,30 @@ class WebView extends Component {
       >
         <div className={cx(styles.webViewToolbar)}>
           <div
-            className={cx(styles.webViewToolbarIcons)}
+            className={cx(
+              styles.webViewToolbarIcons,
+              commonStyles.icons,
+              commonStyles.enabled
+            )}
             onClick={this._toggleDevTools}
           >
             <BugIcon width={20} color={iconsColor} />
           </div>
           <div
-            className={cx(styles.webViewToolbarIcons)}
+            className={cx(
+              styles.webViewToolbarIcons,
+              commonStyles.icons,
+              commonStyles.enabled
+            )}
             onClick={() => this._takeFullPageSnapshot()}
           >
             <ScreenshotIcon height={15} color={iconsColor} />
           </div>
           <div
-            className={cx(styles.webViewToolbarIcons)}
+            className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
+              [commonStyles.enabled]: this.isMobile,
+              [commonStyles.disabled]: !this.isMobile,
+            })}
             onClick={this._flipOrientation}
           >
             <DeviceRotateIcon height={15} color={iconsColor} />
