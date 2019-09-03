@@ -10,6 +10,7 @@ import {
   FLEXIGRID_LAYOUT,
   INDIVIDUAL_LAYOUT,
 } from '../../constants/previewerLayouts';
+import {isDeviceEligible} from '../../utils/filterUtils';
 
 export default function DevicesPreviewer(props) {
   const {
@@ -27,9 +28,14 @@ export default function DevicesPreviewer(props) {
       {layout === INDIVIDUAL_LAYOUT && (
         <Tabs onSelect={changeTab}>
           <TabList>
-            {devices.map(device => (
-              <Tab tabId={device.id}>{device.name}</Tab>
-            ))}
+            {devices
+              .map(device => {
+                if (!isDeviceEligible(device, props.browser.filters)) {
+                  return null;
+                }
+                return <Tab tabId={device.id}>{device.name}</Tab>;
+              })
+              .filter(Boolean)}
           </TabList>
         </Tabs>
       )}
@@ -49,6 +55,7 @@ export default function DevicesPreviewer(props) {
             })}
           >
             <Renderer
+              hidden={!isDeviceEligible(device, props.browser.filters)}
               device={device}
               src={address}
               zoomLevel={zoomLevel}

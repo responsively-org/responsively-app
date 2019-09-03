@@ -57,7 +57,10 @@ class NavigationControls extends Component {
             </div>
           </Grid>
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <div onClick={this.props.triggerNavigationReload}>
+            <div
+              onClick={this.props.triggerNavigationReload}
+              style={{transform: 'rotate(90deg)'}}
+            >
               <Icon type="rotate" {...iconProps} />
               {/*<ReloadIcon {...iconProps} height={15} width={15} padding={5} />*/}
             </div>

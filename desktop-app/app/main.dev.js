@@ -97,6 +97,22 @@ app.on('ready', async () => {
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
+  mainWindow.webContents.on('did-finish-load', function() {
+    if (process.platform === 'darwin') {
+      // Trick to make the transparent title bar draggable
+      mainWindow.webContents.executeJavaScript(`
+        var div = document.createElement("div");
+        div.style.position = "absolute";
+        div.style.top = 0;
+        div.style.height = "23px";
+        div.style.width = "100%";
+        div.style["-webkit-app-region"] = "drag";
+        div.style['-webkit-user-select'] = 'none';
+        document.body.appendChild(div);
+      `);
+    }
+  });
+
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
   });

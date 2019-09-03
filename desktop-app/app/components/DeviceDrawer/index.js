@@ -1,6 +1,7 @@
 import React from 'react';
 import PreviewerLayoutSelector from '../PreviewerLayoutSelector';
 import DeviceManagerContainer from '../../containers/DeviceManagerContainer';
+import QuickFilterDevicesContainer from '../../containers/QuickFilterDevicesContainer';
 import Divider from '@material-ui/core/Divider';
 
 import styles from './styles.css';
@@ -18,6 +19,8 @@ export default function DeviceDrawer(props) {
         value={props.browser.previewer.layout}
         onChange={val => props.setPreviewLayout(val.value)}
       />
+      <Divider />
+      <QuickFilterDevicesContainer />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   NEW_PREVIEWER_CONFIG,
   NEW_ACTIVE_DEVICES,
   NEW_ACTIVE_DEVICE,
+  NEW_FILTERS,
 } from '../actions/browser';
 import type {Action} from './types';
 import devices from '../constants/devices';
@@ -16,6 +17,11 @@ import type {Device} from '../constants/devices';
 import {FLEXIGRID_LAYOUT} from '../constants/previewerLayouts';
 import {DEVICE_MANAGER} from '../constants/DrawerContents';
 import {ACTIVE_DEVICES} from '../constants/settingKeys';
+
+export const FILTER_FIELDS = {
+  OS: 'OS',
+  TYPE: 'TYPE',
+};
 
 type ScrollPositionType = {
   x: number,
@@ -36,6 +42,10 @@ type PreviewerType = {
   layout: string,
 };
 
+type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.TYPE;
+
+type FilterType = {[key: FilterFieldType]: Array<string>};
+
 export type BrowserStateType = {
   devices: Array<Device>,
   address: string,
@@ -44,9 +54,8 @@ export type BrowserStateType = {
   navigatorStatus: NavigatorStatusType,
   drawer: DrawerType,
   previewer: PreviewerType,
+  filters: FilterType,
 };
-
-console.log('devices.filter(device => devices.added)', devices);
 
 let _activeDevices = null;
 
@@ -76,6 +85,7 @@ export default function counter(
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
     drawer: {open: false, content: DEVICE_MANAGER},
     previewer: {layout: FLEXIGRID_LAYOUT},
+    filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.TYPE]: []},
   },
   action: Action
 ) {
@@ -99,6 +109,8 @@ export default function counter(
       const devices = [...state.devices, action.device];
       _saveActiveDevices(devices);
       return {...state, devices};
+    case NEW_FILTERS:
+      return {...state, filters: action.filters};
     default:
       return state;
   }

@@ -2,6 +2,7 @@
   cursor: pointer;
   position: relative;
   opacity: 0.8;
+  border-radius: 5px;
 }
 
 .icons.disabled {
@@ -12,7 +13,10 @@
 .icons.enabled:hover {
   opacity: 1;
   background: #7587ec;
-  border-radius: 5px;
+}
+
+.icons.selected {
+  background: #7587ecba;
 }
 
 .iconDisabler {

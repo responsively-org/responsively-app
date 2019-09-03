@@ -1,24 +1,6 @@
 // @flow
 import chromeEmulatedDevices from './chromeEmulatedDevices';
 
-type OS = 'iOS' | 'Android' | 'Windows Phone' | 'PC';
-
-type DeviceType = 'phone' | 'tablet' | 'notebook';
-
-type Capability = 'mobile' | 'touch';
-
-export type Device = {
-  id: number,
-  added: boolean,
-  width: number,
-  height: number,
-  name: string,
-  useragent: string,
-  capabilities: Array<Capability>,
-  os: OS,
-  type: DeviceType,
-};
-
 export const OS: {[key: string]: OS} = {
   ios: 'iOS',
   android: 'Android',
@@ -37,18 +19,36 @@ export const CAPABILITIES: {[key: string]: Capability} = {
   touch: 'touch',
 };
 
+type OSType = OS.ios | OS.android | OS.windowsPhone | OS.pc;
+
+type DeviceType = DEVICE_TYPE.phone | DEVICE_TYPE.tablet | DEVICE_TYPE.desktop;
+
+type Capability = CAPABILITIES.mobile | CAPABILITIES.touch;
+
+export type Device = {
+  id: number,
+  added: boolean,
+  width: number,
+  height: number,
+  name: string,
+  useragent: string,
+  capabilities: Array<Capability>,
+  os: OSType,
+  type: DeviceType,
+};
+
 function getOS(device) {
   if (device.capabilities.indexOf('mobile') > -1) {
     const useragent = device['user-agent'];
     if (useragent.indexOf('like Mac OS X') > -1) {
-      return 'iOS';
+      return OS.ios;
     }
     if (useragent.indexOf('Lumia') > -1) {
-      return 'Windows Phone';
+      return OS.windowsPhone;
     }
-    return 'Android';
+    return OS.android;
   }
-  return 'PC';
+  return OS.pc;
 }
 
 let idGen = 1;
@@ -56,7 +56,7 @@ export default chromeEmulatedDevices.extensions
   .sort((a, b) => a.order - b.order)
   .map(({order, device}) => {
     const dimension =
-      device.type === 'notebook'
+      device.type === DEVICE_TYPE.desktop
         ? device.screen.horizontal
         : device.screen.vertical;
 

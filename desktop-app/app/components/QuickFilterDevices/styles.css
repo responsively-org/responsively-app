@@ -1,0 +1,12 @@
+.osIconsContainer {
+  display: flex;
+  align-items: center;
+}
+
+.osIcon {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  margin-right: 5px;
+  justify-content: center;
+}

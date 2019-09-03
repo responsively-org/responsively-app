@@ -20,6 +20,7 @@ export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
 export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
 export const NEW_ACTIVE_DEVICE = 'NEW_ACTIVE_DEVICE';
+export const NEW_FILTERS = 'NEW_FILTERS';
 
 export function newAddress(address) {
   return {
@@ -74,6 +75,13 @@ export function newActiveDevice(device) {
   return {
     type: NEW_ACTIVE_DEVICE,
     device,
+  };
+}
+
+export function newFilters(filters) {
+  return {
+    type: NEW_FILTERS,
+    filters,
   };
 }
 
@@ -229,6 +237,24 @@ export function addNewDevice(newDevice) {
     if (newDevice.added) {
       dispatch(newActiveDevice(newDevice));
     }
+  };
+}
+
+export function toggleFilter(filterField, value) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {filters},
+    } = getState();
+    if (!filters[filterField]) {
+      filters[filterField] = [];
+    }
+    const index = filters[filterField].indexOf(value);
+    if (index === -1) {
+      filters[filterField].push(value);
+    } else {
+      filters[filterField].splice(index, 1);
+    }
+    dispatch(newFilters(filters));
   };
 }
 
