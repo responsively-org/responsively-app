@@ -30,6 +30,7 @@ import {CAPABILITIES} from '../../constants/devices';
 
 import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
+import UnplugIcon from '../icons/Unplug';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 const BrowserWindow = remote.BrowserWindow;
@@ -48,6 +49,7 @@ class WebView extends Component {
     this.state = {
       screenshotInProgress: false,
       isTilted: false,
+      isUnplugged: false,
     };
   }
 
@@ -139,25 +141,37 @@ class WebView extends Component {
   };
 
   processScrollEvent = message => {
-    if (message.sourceDeviceId === this.props.device.id) {
+    if (
+      this.state.isUnplugged ||
+      message.sourceDeviceId === this.props.device.id
+    ) {
       return;
     }
     this.webviewRef.current.send('scrollMessage', message.position);
   };
 
   processClickEvent = message => {
-    if (message.sourceDeviceId === this.props.device.id) {
+    if (
+      this.state.isUnplugged ||
+      message.sourceDeviceId === this.props.device.id
+    ) {
       return;
     }
     this.webviewRef.current.send('clickMessage', message);
   };
 
   processScrollDownEvent = message => {
+    if (this.state.isUnplugged) {
+      return;
+    }
     console.log('processScrollDownEvent', this.webviewRef);
     this.webviewRef.current.send('scrollDownMessage');
   };
 
   processScrollUpEvent = message => {
+    if (this.state.isUnplugged) {
+      return;
+    }
     this.webviewRef.current.send('scrollUpMessage');
   };
 
@@ -201,6 +215,9 @@ class WebView extends Component {
 
   messageHandler = ({channel: type, args: [message]}) => {
     console.log('Message recieved', message);
+    if (this.state.isUnplugged) {
+      return;
+    }
     switch (type) {
       case MESSAGE_TYPES.scroll:
         pubsub.publish('scroll', [message]);
@@ -494,6 +511,10 @@ class WebView extends Component {
     this.setState({isTilted: !this.state.isTilted});
   };
 
+  _unPlug = () => {
+    this.setState({isUnplugged: !this.state.isUnplugged});
+  };
+
   _getWebsiteName = () => {
     let domain = new URL(this.props.browser.address).hostname;
     domain = domain.replace('www.', '');
@@ -547,10 +568,21 @@ class WebView extends Component {
             className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
               [commonStyles.enabled]: this.isMobile,
               [commonStyles.disabled]: !this.isMobile,
+              [commonStyles.selected]: this.state.isTilted,
             })}
             onClick={this._flipOrientation}
           >
             <DeviceRotateIcon height={15} color={iconsColor} />
+          </div>
+          <div
+            className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
+              [commonStyles.enabled]: this.isMobile,
+              [commonStyles.disabled]: !this.isMobile,
+              [commonStyles.selected]: this.state.isUnplugged,
+            })}
+            onClick={this._unPlug}
+          >
+            <UnplugIcon height={30} color={iconsColor} />
           </div>
         </div>
         <div
