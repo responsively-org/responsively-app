@@ -36,7 +36,7 @@ const styles = {
   input: styles => ({...styles}),
   placeholder: styles => ({...styles}),
   singleValue: (styles, {data}) => ({...styles, color: 'white'}),
-  menu: styles => ({...styles, background: '#ffffff10'}),
+  menu: styles => ({...styles, background: '#4b4b4b', zIndex: 100}),
 };
 
 export default function PreviewerLayoutSelector(props) {
