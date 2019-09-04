@@ -575,11 +575,14 @@ class WebView extends Component {
             <DeviceRotateIcon height={15} color={iconsColor} />
           </div>
           <div
-            className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
-              [commonStyles.enabled]: this.isMobile,
-              [commonStyles.disabled]: !this.isMobile,
-              [commonStyles.selected]: this.state.isUnplugged,
-            })}
+            className={cx(
+              styles.webViewToolbarIcons,
+              commonStyles.icons,
+              commonStyles.enabled,
+              {
+                [commonStyles.selected]: this.state.isUnplugged,
+              }
+            )}
             onClick={this._unPlug}
           >
             <UnplugIcon height={30} color={iconsColor} />
