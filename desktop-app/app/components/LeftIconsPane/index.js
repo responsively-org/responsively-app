@@ -18,33 +18,41 @@ import {
 const LeftIconsPane = props => {
   const iconProps = {
     color: iconsColor,
-    height: 25,
-    width: 25,
+    style: {fontSize: 30},
+    height: 30,
+    width: 30,
   };
   return (
     <div className={styles.iconsContainer}>
       <div className={cx(styles.icon, styles.logo)}>
         <Logo width={40} height={40} />
       </div>
-      <Grid container spacing={1} direction="column" alignItems="center">
+      <Grid
+        container
+        spacing={1}
+        direction="column"
+        alignItems="center"
+        className={cx(styles.utilitySection)}
+      >
         <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
           <div onClick={() => props.openDrawerAndSetContent(DEVICE_MANAGER)}>
             <DevicesIcon {...iconProps} />
           </div>
         </Grid>
-        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+        {/*<Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
           <div
             onClick={() => props.openDrawerAndSetContent(SCREENSHOT_MANAGER)}
           >
             <PhotoLibraryIcon {...iconProps} />
           </div>
-        </Grid>
-        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-          <div id="headway">
-            <Icon type="gift" color={iconsColor} />
-          </div>
-        </Grid>
+        </Grid>*/}
       </Grid>
+      <div
+        id="headway"
+        className={cx(styles.updates, commonStyles.icons, commonStyles.enabled)}
+      >
+        <Icon type="gift" color={iconsColor} />
+      </div>
     </div>
   );
 };

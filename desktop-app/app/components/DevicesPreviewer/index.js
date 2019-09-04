@@ -11,6 +11,7 @@ import {
   INDIVIDUAL_LAYOUT,
 } from '../../constants/previewerLayouts';
 import {isDeviceEligible} from '../../utils/filterUtils';
+import {getDeviceIcon} from '../../utils/iconUtils';
 
 export default function DevicesPreviewer(props) {
   const {
@@ -33,7 +34,12 @@ export default function DevicesPreviewer(props) {
                 if (!isDeviceEligible(device, props.browser.filters)) {
                   return null;
                 }
-                return <Tab tabId={device.id}>{device.name}</Tab>;
+                return (
+                  <Tab tabId={device.id}>
+                    {getDeviceIcon(device.type)}
+                    {device.name}
+                  </Tab>
+                );
               })
               .filter(Boolean)}
           </TabList>

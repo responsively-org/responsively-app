@@ -1,6 +1,7 @@
 .iconsContainer {
   display: flex;
   flex-flow: column;
+  flex: 1;
 }
 
 .icon {
@@ -9,8 +10,16 @@
   margin: 3px;
 }
 
+.utilitySection {
+  flex: 1;
+}
+
 .logo {
   background: white;
   border-radius: 9%;
   margin-bottom: 50px;
+}
+
+.updates {
+  text-align: center;
 }

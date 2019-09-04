@@ -36,8 +36,6 @@
           scripts.push('../dll/renderer.dev.dll.js');
         }
 
-        console.log('process.env.HOT', process.env.HOT);
-
         // Dynamically insert the bundled app script in the renderer process
         const port = process.env.PORT || 1212;
         scripts.push(
@@ -66,7 +64,7 @@
           'https://cdn.headwayapp.co/widget.js'
         );
         document.head.appendChild(headwayScript);
-      }, 1000);
+      }, 2000);
     </script>
   </body>
 </html>

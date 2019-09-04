@@ -71,6 +71,15 @@ a:hover {
   cursor: pointer;
 }
 
+.react-tabs__tab {
+  display: flex;
+  align-items: center;
+}
+
+.react-tabs__tab-list {
+  display: flex;
+}
+
 /*
 {
 	"$schema": "vscode://schemas/color-theme",
