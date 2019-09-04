@@ -74,7 +74,7 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
   mainWindow.webContents.send('http-auth-prompt', {url});
 });
 
-app.on('ready', async () => {
+const createWindow = async () => {
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -140,4 +140,13 @@ app.on('ready', async () => {
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
+};
+
+app.on('activate', (event, hasVisibleWindows) => {
+  if (hasVisibleWindows) {
+    return;
+  }
+  createWindow();
 });
+
+app.on('ready', createWindow);
