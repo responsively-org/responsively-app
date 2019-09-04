@@ -38,7 +38,8 @@ body {
   background: -webkit-linear-gradient(to right, #2f0743, #41295a);
   background: linear-gradient(to right, #1d0827, #352646);
 */
-  font-family: Arial, Helvetica, Helvetica Neue, serif;
+  /*font-family: Arial, Helvetica, Helvetica Neue, serif;*/
+  font-family: 'Roboto', sans-serif;
   overflow: hidden;
 }
 

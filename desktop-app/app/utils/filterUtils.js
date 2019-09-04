@@ -13,8 +13,8 @@ export const isDeviceEligible = (device, filterCriteria) => {
     }
   }
 
-  if (Object.keys(filterCriteria[FILTER_FIELDS.TYPE]).length > 0) {
-    if (filterCriteria[FILTER_FIELDS.TYPE].indexOf(device.type) === -1) {
+  if (Object.keys(filterCriteria[FILTER_FIELDS.DEVICE_TYPE]).length > 0) {
+    if (filterCriteria[FILTER_FIELDS.DEVICE_TYPE].indexOf(device.type) === -1) {
       return false;
     }
   }

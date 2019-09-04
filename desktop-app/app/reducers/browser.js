@@ -20,7 +20,7 @@ import {ACTIVE_DEVICES} from '../constants/settingKeys';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
-  TYPE: 'TYPE',
+  DEVICE_TYPE: 'DEVICE_TYPE',
 };
 
 type ScrollPositionType = {
@@ -42,7 +42,7 @@ type PreviewerType = {
   layout: string,
 };
 
-type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.TYPE;
+type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
 
 type FilterType = {[key: FilterFieldType]: Array<string>};
 
@@ -85,7 +85,7 @@ export default function counter(
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
     drawer: {open: false, content: DEVICE_MANAGER},
     previewer: {layout: FLEXIGRID_LAYOUT},
-    filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.TYPE]: []},
+    filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
   },
   action: Action
 ) {
