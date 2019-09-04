@@ -36,6 +36,8 @@
           scripts.push('../dll/renderer.dev.dll.js');
         }
 
+        console.log('process.env.HOT', process.env.HOT);
+
         // Dynamically insert the bundled app script in the renderer process
         const port = process.env.PORT || 1212;
         scripts.push(

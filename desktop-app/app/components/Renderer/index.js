@@ -9,7 +9,6 @@ import styles from './style.module.css';
 
 function Renderer(props) {
   const [loading, setLoading] = useState(true);
-  console.log('props.hidden', props.hidden);
   return (
     <div className={cx(styles.container, {[styles.hidden]: props.hidden})}>
       <div className={styles.titleContainer}>
