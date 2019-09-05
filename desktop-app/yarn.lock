@@ -1228,6 +1228,90 @@
   dependencies:
     any-observable "^0.3.0"
 
+"@sentry/browser@4.6.2 || ~4.6.4":
+  version "4.6.6"
+  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-4.6.6.tgz#58ac3de9956c8a7033f3830c3ee9e011c2bd133a"
+  integrity sha512-+9VsQ+oQYU+PYlLJG2ex7JCMSVQbnUvWPI2uZOofWdI9sWIPUub3boWItMzRQNQ1T4S3FZd4FqAWNFd3azdnBw==
+  dependencies:
+    "@sentry/core" "4.6.6"
+    "@sentry/types" "4.5.3"
+    "@sentry/utils" "4.6.5"
+    tslib "^1.9.3"
+
+"@sentry/core@4.6.2 || ~4.6.4", "@sentry/core@4.6.6":
+  version "4.6.6"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-4.6.6.tgz#dea96a88533a3bdbdcc86ae18e35272c57e0fd20"
+  integrity sha512-7z9HKLTNr3zVBR3tBRheTxkkkuK2IqISUc5Iyo3crN2OecOLtpptT96f5XjLndBEL2ab39eCBPpA5OFjbpzrIA==
+  dependencies:
+    "@sentry/hub" "4.6.5"
+    "@sentry/minimal" "4.6.5"
+    "@sentry/types" "4.5.3"
+    "@sentry/utils" "4.6.5"
+    tslib "^1.9.3"
+
+"@sentry/electron@^0.17.3":
+  version "0.17.3"
+  resolved "https://registry.yarnpkg.com/@sentry/electron/-/electron-0.17.3.tgz#64c860d81602cdfe83aaa6555ea5aa40defc12a2"
+  integrity sha512-9V3j+5tS8PPk4LQEfs8EoyjZSCs23R2fq9ImG6afBm7+shF/XwbT8ZIyALPIGdfOKSNoTqD8j6N11XMMl32hOQ==
+  dependencies:
+    "@sentry/browser" "4.6.2 || ~4.6.4"
+    "@sentry/core" "4.6.2 || ~4.6.4"
+    "@sentry/minimal" "^4.5.0"
+    "@sentry/node" "4.6.2 || ~4.6.4"
+    "@sentry/types" "^4.5.0"
+    "@sentry/utils" "4.6.2 || ~4.6.4"
+    electron-fetch "1.3.0"
+    form-data "2.3.2"
+    util.promisify "1.0.0"
+
+"@sentry/hub@4.6.5":
+  version "4.6.5"
+  resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-4.6.5.tgz#451def7bc8d90d9cc007f58f364b3ce305c4701a"
+  integrity sha512-v9vee8s8C1fK/DPtNOzv6r+AMbPDOWfnasouNcBUkbQUSN5wUNyCDvt51QbWaw5kMMY5TSqjdVqY6gXQZI0APQ==
+  dependencies:
+    "@sentry/types" "4.5.3"
+    "@sentry/utils" "4.6.5"
+    tslib "^1.9.3"
+
+"@sentry/minimal@4.6.5", "@sentry/minimal@^4.5.0":
+  version "4.6.5"
+  resolved "https://registry.yarnpkg.com/@sentry/minimal/-/minimal-4.6.5.tgz#64433d2c9fda69eedbb61855a7ff8905f7b19218"
+  integrity sha512-tf+J+uUNmSgzC7d9JSN8Ekw1HeBAX87Efa/jyFbzLvaw80oibvTiLSLqDjQ9PgvyIzBUuuPImkS2NpvPQGWFtg==
+  dependencies:
+    "@sentry/hub" "4.6.5"
+    "@sentry/types" "4.5.3"
+    tslib "^1.9.3"
+
+"@sentry/node@4.6.2 || ~4.6.4":
+  version "4.6.6"
+  resolved "https://registry.yarnpkg.com/@sentry/node/-/node-4.6.6.tgz#50531a1a857d836b7eaf94a5f90556bae3074435"
+  integrity sha512-+zZHE2uOwQTgypP6N9oBd0Io6BKXaJh6mdmZBauF0G46/8V28sBQ/dXBtJJNZ8tW7eVlLGpLSGuJb9Ai7c/rNw==
+  dependencies:
+    "@sentry/core" "4.6.6"
+    "@sentry/hub" "4.6.5"
+    "@sentry/types" "4.5.3"
+    "@sentry/utils" "4.6.5"
+    "@types/stack-trace" "0.0.29"
+    cookie "0.3.1"
+    https-proxy-agent "2.2.1"
+    lru_map "0.3.3"
+    lsmod "1.0.0"
+    stack-trace "0.0.10"
+    tslib "^1.9.3"
+
+"@sentry/types@4.5.3", "@sentry/types@^4.5.0":
+  version "4.5.3"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-4.5.3.tgz#3350dce2b7f9b936a8c327891c12e3aef7bd8852"
+  integrity sha512-7ll1PAFNjrBNX9rzy3P2qAQrpQwHaDO3uKj735qsnGw34OtAS8Xr8WYrjI14f9fMPa/XIeWvMPb4GMic28V/ag==
+
+"@sentry/utils@4.6.2 || ~4.6.4", "@sentry/utils@4.6.5":
+  version "4.6.5"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-4.6.5.tgz#4c960524914311eb76bbd6ca7f80f4d98c04db7f"
+  integrity sha512-rTISJtRRbWsd3UE+TkA3QG1C0VzPKPW8w74tieBwYhtTCGmOHNwz2nDC/MZGbGj4OgDmNKKl4CCyQr88EX08hA==
+  dependencies:
+    "@sentry/types" "4.5.3"
+    tslib "^1.9.3"
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
@@ -1327,6 +1411,11 @@
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-6.0.1.tgz#a984b405c702fa5a7ec6abc56b37f2ba35ef5af6"
   integrity sha512-ffCdcrEE5h8DqVxinQjo+2d1q+FV5z7iNtPofw3JsrltSoSVlOGaW0rY8XxtO9XukdTn8TaCGWmk2VFGhI70mg==
+
+"@types/stack-trace@0.0.29":
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/@types/stack-trace/-/stack-trace-0.0.29.tgz#eb7a7c60098edb35630ed900742a5ecb20cfcb4d"
+  integrity sha512-TgfOX+mGY/NyNxJLIbDWrO9DjGoVSW9+aB8H2yy1fy32jsvxijhmyJI9fDFgvz3YP4lvJaq9DzdR/M1bOgVc9g==
 
 "@webassemblyjs/ast@1.7.11":
   version "1.7.11"
@@ -3631,6 +3720,13 @@ colr@^1.2.2:
   dependencies:
     colr-convert "^1.0.5"
 
+combined-stream@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/combined-stream/-/combined-stream-1.0.6.tgz#723e7df6e801ac5613113a7e445a9b69cb632818"
+  integrity sha1-cj599ugBrFYTETp+RFqbactjKBg=
+  dependencies:
+    delayed-stream "~1.0.0"
+
 combined-stream@^1.0.6, combined-stream@~1.0.6:
   version "1.0.7"
   resolved "https://registry.npmjs.org/combined-stream/-/combined-stream-1.0.7.tgz#2d1d24317afb8abe95d6d2c0b07b57813539d828"
@@ -4730,6 +4826,13 @@ electron-download@^4.1.0:
     semver "^5.4.1"
     sumchecker "^2.0.2"
 
+electron-fetch@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/electron-fetch/-/electron-fetch-1.3.0.tgz#00d9bb1fe7a66ddc3fea538910e01b26fee9abb5"
+  integrity sha512-WzHnWZqKdiCKHqqHu+GphezoWRSUVH6BQ/f13vu16VwYKJRZNt2dUrx40eZJcyZcDGn6RJDTAHS6jVoHoglgNw==
+  dependencies:
+    encoding "^0.1.12"
+
 electron-is-accelerator@^0.1.0:
   version "0.1.2"
   resolved "https://registry.npmjs.org/electron-is-accelerator/-/electron-is-accelerator-0.1.2.tgz#509e510c26a56b55e17f863a4b04e111846ab27b"
@@ -4834,6 +4937,13 @@ emojis-list@^2.0.0:
 encodeurl@~1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/encodeurl/-/encodeurl-1.0.2.tgz#ad3ff4c86ec2d029322f5a02c3a9a606c95b3f59"
+
+encoding@^0.1.12:
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/encoding/-/encoding-0.1.12.tgz#538b66f3ee62cd1ab51ec323829d1f9480c74beb"
+  integrity sha1-U4tm8+5izRq1HsMjgp0flIDHS+s=
+  dependencies:
+    iconv-lite "~0.4.13"
 
 end-of-stream@^1.0.0, end-of-stream@^1.1.0:
   version "1.4.1"
@@ -5834,6 +5944,15 @@ forever-agent@~0.6.1:
   version "0.6.1"
   resolved "https://registry.npmjs.org/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
 
+form-data@2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/form-data/-/form-data-2.3.2.tgz#4970498be604c20c005d4f5c23aecd21d6b49099"
+  integrity sha1-SXBJi+YEwgwAXU9cI67NIda0kJk=
+  dependencies:
+    asynckit "^0.4.0"
+    combined-stream "1.0.6"
+    mime-types "^2.1.12"
+
 form-data@~2.3.2:
   version "2.3.3"
   resolved "https://registry.npmjs.org/form-data/-/form-data-2.3.3.tgz#dcce52c05f644f298c6a7ab936bd724ceffbf3a6"
@@ -6629,7 +6748,7 @@ https-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/https-browserify/-/https-browserify-1.0.0.tgz#ec06c10e0a34c0f2faf199f7fd7fc78fffd03c73"
 
-https-proxy-agent@^2.2.0:
+https-proxy-agent@2.2.1, https-proxy-agent@^2.2.0:
   version "2.2.1"
   resolved "https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-2.2.1.tgz#51552970fa04d723e04c56d04178c3f92592bbc0"
   dependencies:
@@ -6670,7 +6789,7 @@ iconv-lite@0.4.23:
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
-iconv-lite@0.4.24, iconv-lite@^0.4.17, iconv-lite@^0.4.24, iconv-lite@^0.4.4:
+iconv-lite@0.4.24, iconv-lite@^0.4.17, iconv-lite@^0.4.24, iconv-lite@^0.4.4, iconv-lite@~0.4.13:
   version "0.4.24"
   resolved "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.24.tgz#2022b4b25fbddc21d2f524974a474aafe733908b"
   dependencies:
@@ -8368,6 +8487,16 @@ lru-cache@4.1.x, lru-cache@^4.0.1, lru-cache@^4.1.3:
   dependencies:
     pseudomap "^1.0.2"
     yallist "^2.1.2"
+
+lru_map@0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/lru_map/-/lru_map-0.3.3.tgz#b5c8351b9464cbd750335a79650a0ec0e56118dd"
+  integrity sha1-tcg1G5Rky9dQM1p5ZQoOwOVhGN0=
+
+lsmod@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/lsmod/-/lsmod-1.0.0.tgz#9a00f76dca36eb23fa05350afe1b585d4299e64b"
+  integrity sha1-mgD3bco26yP6BTUK/htYXUKZ5ks=
 
 macos-release@^1.0.0:
   version "1.1.0"
@@ -11951,6 +12080,11 @@ stable@~0.1.6:
   version "0.1.8"
   resolved "https://registry.npmjs.org/stable/-/stable-0.1.8.tgz#836eb3c8382fe2936feaf544631017ce7d47a3cf"
 
+stack-trace@0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/stack-trace/-/stack-trace-0.0.10.tgz#547c70b347e8d32b4e108ea1a2a159e5fdde19c0"
+  integrity sha1-VHxws0fo0ytOEI6hoqFZ5f3eGcA=
+
 stack-utils@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/stack-utils/-/stack-utils-1.0.1.tgz#d4f33ab54e8e38778b0ca5cfd3b3afb12db68620"
@@ -13217,7 +13351,7 @@ util-extend@^1.0.1:
   version "1.0.3"
   resolved "https://registry.npmjs.org/util-extend/-/util-extend-1.0.3.tgz#a7c216d267545169637b3b6edc6ca9119e2ff93f"
 
-util.promisify@^1.0.0, util.promisify@~1.0.0:
+util.promisify@1.0.0, util.promisify@^1.0.0, util.promisify@~1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/util.promisify/-/util.promisify-1.0.0.tgz#440f7165a459c9a16dc145eb8e72f35687097030"
   dependencies:

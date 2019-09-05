@@ -16,6 +16,11 @@ import settings from 'electron-settings';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import {ACTIVE_DEVICES} from './constants/settingKeys';
+import * as Sentry from '@sentry/electron';
+
+Sentry.init({
+  dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
+});
 
 export default class AppUpdater {
   constructor() {

@@ -1,10 +1,16 @@
 import React from 'react';
+import {remote} from 'electron';
 import {render} from 'react-dom';
 import {AppContainer} from 'react-hot-loader';
 import Root from './containers/Root';
 import {configureStore, history} from './store/configureStore';
 import './app.global.css';
+import * as Sentry from '@sentry/electron';
 
+Sentry.init({
+  dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
+  environment: remote.getGlobal('process').env.NODE_ENV,
+});
 const store = configureStore();
 
 render(
