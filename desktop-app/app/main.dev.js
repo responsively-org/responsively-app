@@ -18,9 +18,11 @@ import MenuBuilder from './menu';
 import {ACTIVE_DEVICES} from './constants/settingKeys';
 import * as Sentry from '@sentry/electron';
 
-Sentry.init({
-  dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
-});
+if (process.env.NODE_ENV !== 'development') {
+  Sentry.init({
+    dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
+  });
+}
 
 export default class AppUpdater {
   constructor() {
@@ -123,7 +125,6 @@ const createWindow = async () => {
   });
 
   ipcMain.on('http-auth-promt-response', (event, ...args) => {
-    console.log('http-auth-promt-response', args);
     if (!args[0].url) {
       return;
     }

@@ -7,10 +7,12 @@ import {configureStore, history} from './store/configureStore';
 import './app.global.css';
 import * as Sentry from '@sentry/electron';
 
-Sentry.init({
-  dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
-  environment: remote.getGlobal('process').env.NODE_ENV,
-});
+if (remote.getGlobal('process').env.NODE_ENV !== 'development') {
+  Sentry.init({
+    dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
+    environment: remote.getGlobal('process').env.NODE_ENV,
+  });
+}
 const store = configureStore();
 
 render(

@@ -28,16 +28,21 @@
   background: white;
 }
 
-.screenshotOverlay {
+.deviceOverlay {
   transform-origin: top left;
   position: absolute;
   top: 0;
   left: 0;
   display: none;
   z-index: 2;
+  text-align: center;
 }
 
-.screenshotOverlay.screenshotInProgress {
+.deviceOverlay.overlayEnabled {
   display: block;
   background: rgba(0, 0, 0, 0.6);
+}
+
+.errorDesc {
+  font-size: 20px;
 }

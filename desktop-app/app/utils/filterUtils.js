@@ -1,7 +1,6 @@
 import {FILTER_FIELDS} from '../reducers/browser';
 
 export const isDeviceEligible = (device, filterCriteria) => {
-  console.log('device, filterCriteria', device, filterCriteria);
   if (Object.keys(filterCriteria[FILTER_FIELDS.OS]).length > 0) {
     console.log(
       'OS',

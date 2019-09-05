@@ -50,6 +50,8 @@ class WebView extends Component {
       screenshotInProgress: false,
       isTilted: false,
       isUnplugged: false,
+      errorCode: null,
+      errorDesc: null,
     };
   }
 
@@ -84,11 +86,18 @@ class WebView extends Component {
     });
 
     this.webviewRef.current.addEventListener('did-start-loading', () => {
+      this.setState({errorCode: null, errorDesc: null});
       this.props.onLoadingStateChange(true);
     });
     this.webviewRef.current.addEventListener('did-stop-loading', () => {
       this.props.onLoadingStateChange(false);
     });
+    this.webviewRef.current.addEventListener(
+      'did-fail-load',
+      ({errorCode, errorDescription}) => {
+        this.setState({errorCode: errorCode, errorDesc: errorDescription});
+      }
+    );
 
     this.webviewRef.current.addEventListener(
       'login',
@@ -239,7 +248,6 @@ class WebView extends Component {
   };
 
   initEventTriggers = webview => {
-    console.log('Initializing triggers');
     webview.getWebContents().executeJavaScript(`
       responsivelyApp.deviceId = ${this.props.device.id};
       responsivelyApp.domInspector = new responsivelyApp.DomInspector();
@@ -596,11 +604,20 @@ class WebView extends Component {
           }}
         >
           <div
-            className={cx(styles.screenshotOverlay, {
-              [styles.screenshotInProgress]: this.state.screenshotInProgress,
+            className={cx(styles.deviceOverlay, {
+              [styles.overlayEnabled]: this.state.screenshotInProgress,
             })}
             style={deviceStyles}
           />
+          <div
+            className={cx(styles.deviceOverlay, {
+              [styles.overlayEnabled]: this.state.errorCode,
+            })}
+            style={deviceStyles}
+          >
+            <p>ERROR: {this.state.errorCode}</p>
+            <p className={cx(styles.errorDesc)}>{this.state.errorDesc}</p>
+          </div>
           <webview
             ref={this.webviewRef}
             preload="./preload.js"
