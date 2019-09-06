@@ -1,0 +1,34 @@
+org: manojvivek
+app: responsively
+service: responsively-server
+
+custom:
+  webpack:
+    webpackConfig: ./sls-webpack.config.js
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  websocketsApiName: responsively-websocket
+  websocketsApiRouteSelectionExpression: $request.body.action # custom routes are selected by the value of the action property in the body
+
+functions:
+  websocket-connection-manager:
+    handler: src/websocket/lambda.connectionHandler
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+  defaultHandler:
+    handler: src/websocket/lambda.defaultHandler
+    events:
+      - websocket: $default #simple event definition without extra route property
+  pingHandler:
+    handler: src/websocket/lambda.pingHandler
+    events:
+      - websocket:
+          route: ping # will trigger if $request.body.action === "ping"
+
+plugins:
+  - serverless-webpack
