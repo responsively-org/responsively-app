@@ -6,7 +6,7 @@ const crypto=require('crypto')
 const emailService=require('../service/email.service')
 const InvalidEmailError=require('../exception/invalid-email-error.exception')
 const UserExistsError=require('../exception/user-exists-error.exception')
-cosnt InvalidLicenseError=require('../exception/invalid-license-error.exception')
+const InvalidLicenseError=require('../exception/invalid-license-error.exception')
 async function createUserAndEnableTrial(email){
 
     if(!emailService.validateEmailExistence(email)){
@@ -46,8 +46,8 @@ async function verifyLicenseKey(licenseKey){
     if(!user){
         throw new InvalidLicenseError('Invalid License:'+licenseKey)
     }
-
-    let licenseValid=user.subscription.license_key.getTime()-new Date().getTime()
+    console.log(user)
+    let licenseValid=user.subscription.valid_till.getTime()-new Date().getTime()
     if(licenseValid<0){
         return false
     }
@@ -60,5 +60,6 @@ function getLicenseKey(email){
 }
 
 module.exports={
-    createUserAndEnableTrial
+    createUserAndEnableTrial,
+    verifyLicenseKey
 }
