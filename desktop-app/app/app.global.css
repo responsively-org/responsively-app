@@ -6,6 +6,10 @@
 @import '~react-toastify/dist/ReactToastify.css';
 @import '~react-tabs/style/react-tabs.css';
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   position: relative;
   color: white;
@@ -78,6 +82,10 @@ a:hover {
 
 .react-tabs__tab-list {
   display: flex;
+}
+
+.spin::before {
+  animation: fa-spin 1s linear infinite;
 }
 
 /*

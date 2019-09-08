@@ -1,0 +1,20 @@
+image: node:8-jessie
+
+before_script:
+  - cd desktop-app
+
+stages:
+  - buildPublish
+
+cache:
+  paths:
+    - desktop-app/node_modules/
+
+install_dependencies:
+  stage: buildPublish
+  script:
+    - yarn && yarn run package-ci
+  artifacts:
+    paths:
+      - node_modules/
+

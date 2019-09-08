@@ -7,6 +7,8 @@ import Routes from '../Routes';
 import {createMuiTheme, makeStyles} from '@material-ui/core/styles';
 import {ThemeProvider} from '@material-ui/styles';
 import {grey} from '@material-ui/core/colors';
+import LicenseManager from '../components/LicenseManager';
+import {themeColor} from '../constants/colors';
 
 type Props = {
   store: Store,
@@ -17,7 +19,7 @@ const theme = createMuiTheme({
   palette: {
     type: 'dark',
     primary: {
-      main: '#7587ec',
+      main: themeColor,
     },
     secondary: {
       main: '#424242',
@@ -38,9 +40,11 @@ export default class Root extends Component<Props> {
     return (
       <Provider store={store}>
         <ThemeProvider theme={theme}>
-          <ConnectedRouter history={history}>
-            <Routes />
-          </ConnectedRouter>
+          <LicenseManager>
+            <ConnectedRouter history={history}>
+              <Routes />
+            </ConnectedRouter>
+          </LicenseManager>
         </ThemeProvider>
       </Provider>
     );

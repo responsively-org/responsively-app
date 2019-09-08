@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "A developer-friendly browser for developing responsive web apps",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -18,7 +18,7 @@
     "lint-styles-fix": "yarn --silent lint-styles --fix; exit 0",
     "package": "yarn build && electron-builder build --publish never",
     "package-all": "yarn build && electron-builder build -mwl",
-    "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
+    "package-ci": "yarn postinstall && yarn build && electron-builder build -mwl --publish always",
     "package-linux": "yarn build && electron-builder build --linux",
     "package-win": "yarn build && electron-builder build --win --x64",
     "postinstall": "yarn flow-typed && electron-builder install-app-deps package.json && yarn build-dll && opencollective-postinstall",
@@ -103,7 +103,8 @@
     },
     "publish": {
       "provider": "s3",
-      "bucket": "responsively-app-updates"
+      "bucket": "responsively-updates",
+      "path": "stable"
     }
   },
   "repository": {},
@@ -236,6 +237,7 @@
     "bluebird": "^3.5.5",
     "classnames": "^2.2.6",
     "devtron": "^1.4.0",
+    "dotenv": "^8.1.0",
     "electron-cookies": "heap/electron-cookies",
     "electron-debug": "^3.0.1",
     "electron-log": "^3.0.7",
