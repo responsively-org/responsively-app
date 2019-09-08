@@ -1,15 +1,63 @@
 // @flow
 import React, {useState} from 'react';
+import url from 'url';
+import {validateEmail} from '../../utils/generalUtils';
 import {shell} from 'electron';
 import cx from 'classnames';
 import styles from './style.css';
 
-export default function LicenseManager(props) {
+export default function WelcomeScreen(props) {
   const [activeSection, setActiveSection] = useState('license');
   const [licenseKey, setLicenseKey] = useState('');
   const [trialEmail, setTrialEmail] = useState('');
+  const [trialActivationStatus, setTrialActivationStatus] = useState('');
+  const [
+    trialActivationErrorMessage,
+    setTrialActivationErrorMessage,
+  ] = useState('');
+
   const isLicenseActive = activeSection === 'license';
   const isTrialActive = activeSection === 'trial';
+
+  const trialEmailChange = e => {
+    setTrialEmail(e.target.value);
+    setTrialActivationStatus('');
+    setTrialActivationErrorMessage('');
+  };
+
+  const activateTrial = async () => {
+    if (!validateEmail(trialEmail)) {
+      setTrialActivationStatus('false');
+      setTrialActivationErrorMessage(
+        'Invalid email address, please enter a valid one to proceed'
+      );
+      return;
+    }
+    setTrialActivationStatus('loading');
+    try {
+      const response = await fetch(
+        `${url.resolve(
+          process.env.REST_BASE_URL,
+          '/activate-trial'
+        )}?email=${trialEmail}`
+      );
+      console.log('activating trial', response);
+      if (response.state) {
+        setTrialActivationStatus('true');
+      } else {
+        setTrialActivationStatus('false');
+        setTrialActivationErrorMessage('Trial activation failed');
+      }
+    } catch (err) {
+      setTrialActivationStatus('false');
+      setTrialActivationErrorMessage('Trial activation failed');
+    }
+  };
+
+  const activateLicense = () => {
+    console.log('activating license');
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>Welcome, lets activate the app</div>
@@ -39,12 +87,13 @@ export default function LicenseManager(props) {
                 value={licenseKey}
                 onChange={e => setLicenseKey(e.target.value)}
               />
-              <i
+              <span
                 className={cx(
                   styles.inputIcon,
                   styles.iconButton,
                   'fa fa-arrow-right'
                 )}
+                onClick={activateLicense}
               />
             </div>
             <div
@@ -95,15 +144,31 @@ export default function LicenseManager(props) {
                 placeholder="Email address"
                 name="email"
                 value={trialEmail}
-                onChange={e => setTrialEmail(e.target.value)}
+                onChange={trialEmailChange}
               />
-              <i
-                className={cx(
-                  styles.inputIcon,
-                  styles.iconButton,
-                  'fa fa-arrow-right'
+
+              <span
+                className={cx(styles.inputIcon, styles.iconButton, {
+                  'fa fa-arrow-right': trialActivationStatus !== 'loading',
+                  'fa fa-circle-notch spin':
+                    trialActivationStatus === 'loading',
+                })}
+                onClick={activateTrial}
+              />
+            </div>
+            <div>
+              {trialActivationStatus === 'false' &&
+                trialActivationErrorMessage && (
+                  <div className={styles.errorMessage}>
+                    {trialActivationErrorMessage}
+                  </div>
                 )}
-              />
+              {trialActivationStatus === 'true' && (
+                <div className={styles.successMessage}>
+                  Trial Activated, please check your email for the trial license
+                  key
+                </div>
+              )}
             </div>
           </div>
         </div>

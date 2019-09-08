@@ -149,3 +149,11 @@
 .buyLicenseContainer.active .buyLicenseButton {
   background: var(--activeButtonBg);
 }
+
+.errorMessage {
+  color: red;
+}
+
+.successMessage {
+  color: green;
+}

@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A developer-friendly browser for developing responsive web apps",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -236,6 +236,7 @@
     "bluebird": "^3.5.5",
     "classnames": "^2.2.6",
     "devtron": "^1.4.0",
+    "dotenv": "^8.1.0",
     "electron-cookies": "heap/electron-cookies",
     "electron-debug": "^3.0.1",
     "electron-log": "^3.0.7",

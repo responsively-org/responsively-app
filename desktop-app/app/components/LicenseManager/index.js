@@ -5,7 +5,7 @@ import WelcomeScreen from '../WelcomeScreen';
 import styles from './style.css';
 
 export default function LicenseManager(props) {
-  const [status, setStatus] = useState(true);
+  const [status, setStatus] = useState(false);
 
   if (status) {
     return props.children;
