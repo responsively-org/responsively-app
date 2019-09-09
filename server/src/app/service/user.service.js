@@ -1,5 +1,4 @@
 const User=require('../model/user.model')
-const db=require('../../db/db')
 const subscriptionUtils=require('../utils/subscription.utils')
 const constants=require('../constants/constants')
 const crypto=require('crypto')
@@ -7,6 +6,7 @@ const emailService=require('../service/email.service')
 const InvalidEmailError=require('../exception/invalid-email-error.exception')
 const UserExistsError=require('../exception/user-exists-error.exception')
 const InvalidLicenseError=require('../exception/invalid-license-error.exception')
+
 async function createUserAndEnableTrial(email){
 
     if(!emailService.validateEmailExistence(email)){
@@ -19,7 +19,7 @@ async function createUserAndEnableTrial(email){
     })
 
     await insertUser(newUser)
-    emailService.sendLicenseKeyMail(email,newUser.license_key)
+    await emailService.sendLicenseKeyMail(email,newUser.license_key)
 }
 
 async function insertUser(newUser){
@@ -34,25 +34,31 @@ async function insertUser(newUser){
         }
         throw err
     }
+    console.log('userInserted')
     return newUser
 }
 
-async function verifyLicenseKey(licenseKey){
+async function validateLicenseKey(licenseKey){
 
     if(!licenseKey){
         throw new InvalidLicenseError('Invalid License :'+licenseKey)
     }
-    let user=await User.findOne({license_key: licenseKey}).exec()
-    if(!user){
-        throw new InvalidLicenseError('Invalid License:'+licenseKey)
+    try{
+        let user=await User.findOne({license_key: licenseKey}).exec()
+        if(!user){
+            throw new InvalidLicenseError('Invalid License:'+licenseKey)
+        }
+        let licenseValid=user.subscription.valid_till.getTime()-new Date().getTime()
+        if(licenseValid<0){
+            console.log('license expired!');
+            return false
+        }
+        console.log('license active!');
+        return true
+    }catch(err){
+        throw err
     }
-    console.log(user)
-    let licenseValid=user.subscription.valid_till.getTime()-new Date().getTime()
-    if(licenseValid<0){
-        return false
-    }
-    return true
-}
+}   
 
 function getLicenseKey(email){
     const key=crypto.randomBytes(20).toString('hex');
@@ -61,5 +67,5 @@ function getLicenseKey(email){
 
 module.exports={
     createUserAndEnableTrial,
-    verifyLicenseKey
+    validateLicenseKey
 }

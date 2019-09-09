@@ -1,5 +1,3 @@
-org: manojvivek
-app: responsively
 service: responsively-server
 
 custom:
@@ -10,11 +8,28 @@ provider:
   name: aws
   runtime: nodejs10.x
   websocketsApiName: responsively-websocket
+  apiName: dev-responsively-server
   websocketsApiRouteSelectionExpression: $request.body.action # custom routes are selected by the value of the action property in the body
+  environment: ${file(environment.yml)}
 
 functions:
+  activateTrial:
+    handler: src/http/lambda.activateTrial
+    timeout: 15
+    events:
+      - http:
+          path: activate-trial
+          method: get
+  validateLicenseHttp:
+    handler: src/http/lambda.validateLicense
+    timeout: 15
+    events:
+      - http:
+          path: validate-license
+          method: get
   websocket-connection-manager:
     handler: src/websocket/lambda.connectionHandler
+    timeout: 15
     events:
       - websocket:
           route: $connect
@@ -22,13 +37,21 @@ functions:
           route: $disconnect
   defaultHandler:
     handler: src/websocket/lambda.defaultHandler
+    timeout: 15
     events:
       - websocket: $default #simple event definition without extra route property
   pingHandler:
     handler: src/websocket/lambda.pingHandler
+    timeout: 15
     events:
       - websocket:
           route: ping # will trigger if $request.body.action === "ping"
+  validateLicense:
+    handler: src/websocket/lambda.validateLicense
+    timeout: 15
+    events:
+      - websocket:
+          route: validate # will trigger if $request.body.action === "validate"
 
 plugins:
   - serverless-webpack

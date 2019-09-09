@@ -11,8 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "@sendgrid/mail": "^6.4.0",
-    "dotenv": "^8.1.0",
-    "express": "^4.17.1",
     "mongoose": "^5.6.13",
     "serverless": "^1.51.0",
     "serverless-http": "^2.3.0"
