@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import url from 'url';
 import {validateEmail} from '../../utils/generalUtils';
 import {shell} from 'electron';
+import path from 'path';
 import cx from 'classnames';
 import styles from './style.css';
 
@@ -15,12 +16,23 @@ export default function WelcomeScreen(props) {
     trialActivationErrorMessage,
     setTrialActivationErrorMessage,
   ] = useState('');
+  const [licenseActivationStatus, setLicenseActivationStatus] = useState('');
+  const [
+    licenseActivationErrorMessage,
+    setLicenseActivationErrorMessage,
+  ] = useState('');
 
   const isLicenseActive = activeSection === 'license';
   const isTrialActive = activeSection === 'trial';
 
   const trialEmailChange = e => {
     setTrialEmail(e.target.value);
+    setTrialActivationStatus('');
+    setTrialActivationErrorMessage('');
+  };
+
+  const licenseKeyChange = e => {
+    setLicenseKey(e.target.value);
     setTrialActivationStatus('');
     setTrialActivationErrorMessage('');
   };
@@ -36,13 +48,14 @@ export default function WelcomeScreen(props) {
     setTrialActivationStatus('loading');
     try {
       const response = await fetch(
-        `${url.resolve(
+        `${path.join(
           process.env.REST_BASE_URL,
           '/activate-trial'
         )}?email=${trialEmail}`
       );
-      console.log('activating trial', response);
-      if (response.state) {
+      const body = await response.json();
+      console.log('activating trial', body);
+      if (body.status) {
         setTrialActivationStatus('true');
       } else {
         setTrialActivationStatus('false');
@@ -54,8 +67,37 @@ export default function WelcomeScreen(props) {
     }
   };
 
-  const activateLicense = () => {
-    console.log('activating license');
+  const activateLicense = async () => {
+    if (!licenseKey) {
+      setLicenseActivationStatus('false');
+      setLicenseActivationErrorMessage(
+        'License key cannot be empty, please enter a valid one.'
+      );
+      return;
+    }
+    setLicenseActivationStatus('loading');
+    try {
+      const response = await fetch(
+        `${path.join(
+          process.env.REST_BASE_URL,
+          '/validate-license'
+        )}?licenseKey=${licenseKey}`
+      );
+      const body = await response.json();
+      if (body.status) {
+        setLicenseActivationStatus('true');
+      } else {
+        setLicenseActivationStatus('false');
+        setLicenseActivationErrorMessage(
+          'Not a valid license key, please verify the key and try again.'
+        );
+      }
+    } catch (err) {
+      setLicenseActivationStatus('false');
+      setLicenseActivationErrorMessage(
+        'Unable to validate the license key, please try again.'
+      );
+    }
   };
 
   return (
@@ -85,16 +127,30 @@ export default function WelcomeScreen(props) {
                 type="text"
                 placeholder="License key"
                 value={licenseKey}
-                onChange={e => setLicenseKey(e.target.value)}
+                onChange={licenseKeyChange}
               />
               <span
-                className={cx(
-                  styles.inputIcon,
-                  styles.iconButton,
-                  'fa fa-arrow-right'
-                )}
+                className={cx(styles.inputIcon, styles.iconButton, {
+                  'fa fa-arrow-right': licenseActivationStatus !== 'loading',
+                  'fa fa-circle-notch spin':
+                    licenseActivationStatus === 'loading',
+                })}
                 onClick={activateLicense}
               />
+            </div>
+            <div>
+              {licenseActivationStatus === 'false' &&
+                licenseActivationErrorMessage && (
+                  <div className={styles.errorMessage}>
+                    {licenseActivationErrorMessage}
+                  </div>
+                )}
+              {licenseActivationStatus === 'true' && (
+                <div className={styles.successMessage}>
+                  License key validation successful, please wait a moment.{' '}
+                  <span className="fa fa-circle-notch spin" />
+                </div>
+              )}
             </div>
             <div
               className={cx(styles.buyLicenseContainer, {
