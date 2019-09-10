@@ -88,6 +88,10 @@ a:hover {
   animation: fa-spin 1s linear infinite;
 }
 
+#root {
+  height: 100%;
+}
+
 /*
 {
 	"$schema": "vscode://schemas/color-theme",

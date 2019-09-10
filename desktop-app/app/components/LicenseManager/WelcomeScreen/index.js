@@ -1,11 +1,12 @@
 // @flow
 import React, {useState} from 'react';
 import url from 'url';
-import {validateEmail} from '../../utils/generalUtils';
+import {validateEmail} from '../../../utils/generalUtils';
 import {shell} from 'electron';
 import path from 'path';
 import cx from 'classnames';
 import styles from './style.css';
+import {saveLicenseKey, validateLicenseKey} from '../../../utils/licenseUtils';
 
 export default function WelcomeScreen(props) {
   const [activeSection, setActiveSection] = useState('license');
@@ -33,8 +34,8 @@ export default function WelcomeScreen(props) {
 
   const licenseKeyChange = e => {
     setLicenseKey(e.target.value);
-    setTrialActivationStatus('');
-    setTrialActivationErrorMessage('');
+    setLicenseActivationStatus('');
+    setLicenseActivationErrorMessage('');
   };
 
   const activateTrial = async () => {
@@ -68,35 +69,15 @@ export default function WelcomeScreen(props) {
   };
 
   const activateLicense = async () => {
-    if (!licenseKey) {
-      setLicenseActivationStatus('false');
-      setLicenseActivationErrorMessage(
-        'License key cannot be empty, please enter a valid one.'
-      );
-      return;
-    }
+    console.log('activate license', licenseKey);
     setLicenseActivationStatus('loading');
-    try {
-      const response = await fetch(
-        `${path.join(
-          process.env.REST_BASE_URL,
-          '/validate-license'
-        )}?licenseKey=${licenseKey}`
-      );
-      const body = await response.json();
-      if (body.status) {
-        setLicenseActivationStatus('true');
-      } else {
-        setLicenseActivationStatus('false');
-        setLicenseActivationErrorMessage(
-          'Not a valid license key, please verify the key and try again.'
-        );
-      }
-    } catch (err) {
-      setLicenseActivationStatus('false');
-      setLicenseActivationErrorMessage(
-        'Unable to validate the license key, please try again.'
-      );
+    const {status, reason} = await validateLicenseKey(licenseKey);
+    console.log('response', {status, reason});
+    setLicenseActivationStatus(status.toString());
+    setLicenseActivationErrorMessage(reason);
+    if (status) {
+      saveLicenseKey(licenseKey);
+      setTimeout(props.onActivation, 2000);
     }
   };
 
