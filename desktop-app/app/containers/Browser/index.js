@@ -14,7 +14,6 @@ class Browser extends React.Component<Props> {
   props: Props;
 
   render() {
-    console.log('Props', this.props);
     return (
       <Fragment>
         <Header />
