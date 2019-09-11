@@ -1,6 +1,7 @@
 image: node:8-jessie
 
 before_script:
+  - apt-get install --no-install-recommends -y libopenjp2-tools
   - cd desktop-app
 
 stages:
@@ -9,5 +10,6 @@ stages:
 build_and_publish:
   stage: buildPublish
   script:
-    - yarn && yarn run package-ci
+    - yarn
+    - yarn run package-ci
 
