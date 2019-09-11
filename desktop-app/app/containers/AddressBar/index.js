@@ -3,7 +3,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
-import AddressInput from '../../components/AddressInput';
+import AddressInput from '../../components/Addressinput';
 import * as BrowserActions from '../../actions/browser';
 
 const AddressBar = function(props) {
