@@ -1,4 +1,4 @@
-image: node:8-jessie
+image: electronuserland/builder:wine
 
 before_script:
   - apt-get update
