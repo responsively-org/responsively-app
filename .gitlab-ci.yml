@@ -1,6 +1,7 @@
 image: node:8-jessie
 
 before_script:
+  - apt-get update
   - apt-get install --no-install-recommends -y libopenjp2-tools
   - cd desktop-app
 
