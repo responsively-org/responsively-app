@@ -1,0 +1,253 @@
+// 
+// 
+// dropdowns.scss
+//
+//
+
+.dropdown-toggle{
+  outline: none;
+  cursor: pointer;
+  &:after{
+    display: none !important;
+  }
+  &.btn{
+    > .icon{
+      &:last-child{
+        transform: rotateZ(-90deg);
+        margin: 0;
+      }
+    }
+  }
+}
+
+.dropright{
+  .dropdown-toggle{
+    &.btn{
+      > .icon{
+        &:last-child{
+          transform: rotateZ(180deg);
+        }
+      }
+    }
+  }
+}
+
+.dropup{
+  .dropdown-toggle{
+    &.btn{
+      > .icon{
+        &:last-child{
+          transform: rotateZ(90deg);
+        }
+      }
+    }
+  }
+}
+
+.dropleft{
+  .dropdown-toggle{
+    &:before{
+      display: none;
+    }
+    &.btn{
+      > .icon{
+        &:first-child{
+          transform: rotateZ(0deg);
+        }
+      }
+    }
+  }
+}
+
+.dropdown-item{
+  font-weight: $font-weight-bold;
+  transition: color $transition-time-fast ease;
+}
+
+.dropdown-header{
+  font-size: inherit;
+  padding-bottom: 0;
+}
+
+.dropdown-menu{
+  box-shadow: $box-shadow-sm;
+  h6{
+    margin-bottom: 1rem;
+  }
+  &.text-light{
+    .dropdown-item{
+      color: rgba($white,.5);
+      &:hover, &:active{
+        color: $white;
+      }
+    }
+  }
+}
+
+[data-dropdown-content] .dropdown-item{
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.dropdown-divider{
+  margin: 0;
+}
+
+// Grid Dropdowns
+
+[data-toggle="dropdown-grid"]{
+  + .dropdown-menu{
+    padding-top: 0;
+    padding-bottom: 0;
+    width: 100vw;
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    background: none;
+    margin-top: 0;
+    .dropdown-menu{
+      top: 0;
+      margin-top: 0;
+    }
+    .card{
+      margin-bottom: 0;
+      &.card-sm{
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+      }
+    }
+  }
+}
+
+.dropdown-menu{
+  &.row{
+    pointer-events: none;
+    &.show{
+      display: flex;
+    }
+  }
+}
+
+@include media-breakpoint-up(lg){
+  .dropdown-menu{
+    &.row{
+      [class*='col']{
+        padding-right: 0;
+        padding-left: 0;
+      }
+    }
+  }
+}
+
+[data-dropdown-content]{
+  pointer-events: all;
+}
+
+.dropdown-menu{
+  .dropdown{
+    position: relative;
+    .dropdown-toggle{
+      padding-right: $spacer*2;
+      .icon{
+        transition: opacity $transition-time ease, transform $transition-time ease;
+        position: absolute;
+        right: 0;
+        transform: rotateZ(180deg);
+      }
+      &:focus{
+        .icon{
+          opacity: 1;
+          transform: rotateZ(180deg) translateX(-4px);
+        }
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(md){
+  .navbar-expand-lg{
+    .dropdown-menu, [data-dropdown-content]{
+      left: 0 !important;
+    }
+    [data-toggle="dropdown-grid"]{
+      + .dropdown-menu{
+        top: auto;
+        width: auto;
+        position: relative;
+      }
+    }
+    .dropdown-menu{
+      .dropdown{
+        .dropdown-toggle{
+          .icon{
+            transform: rotateZ(270deg);
+          }
+        }
+      }
+    }
+  }
+}
+
+body[data-dropdown-grid-hover="true"] [data-toggle="dropdown-grid"], body[data-dropdown-grid-hover="true"] [data-dropdown-content]:not(.container), [data-toggle="dropdown-grid"][data-hover="true"]{
+    &:hover{
+      &:before{
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 3rem;
+        top: 100%;
+        left: 0;
+      }
+    }
+    + .dropdown-menu{
+      [data-toggle="dropdown-grid"]{
+        &:hover{
+          &:before{
+            width: 140%;
+            height: 110%;
+            top: 0;
+            left: -20%;
+          } 
+        }
+      }
+    }
+  }
+  [data-dropdown-content]:not(.container){
+    &:hover{
+      &:before{
+        top: -1.5rem;
+        left: -1.5rem;
+        width: calc(100% + 3rem);
+        height: calc(100% + 3rem);
+        padding: 3rem;      
+      }
+    }
+}
+
+// Grid Dropdown Menu
+
+@include media-breakpoint-up(lg) {
+  .dropdown-grid-menu {
+    background: $white;
+    border-radius: $border-radius;
+    border: $border-width solid $border-color;
+    padding: $spacer*.75 $spacer*.75;
+    box-shadow: $box-shadow;
+    min-width: $dropdown-min-width;
+  }
+}
+
+@include media-breakpoint-down(lg){
+  .dropdown-grid-menu{
+    padding-left: $spacer/2;
+    border-left: $border-width solid $border-color;
+  }
+  .navbar-dark{
+    .dropdown-grid-menu{
+      border-color: rgba($white,.25);
+    }
+  }
+}

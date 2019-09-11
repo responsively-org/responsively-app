@@ -1,0 +1,24 @@
+// 
+// 
+// prism.scss
+//
+//
+
+@import "CSS:../../components/plugins/prism";
+
+pre[class*='language-'], code[class*='language-']{
+  background: mix(white, theme-color('primary'), 93%);
+  color: $headings-color;
+  border: none;
+}
+
+article{
+  pre[class*='language-']{
+    margin: 1rem 0;
+    border-radius: $border-radius;
+  }
+}
+
+pre[class*='language-']{
+  padding: $spacer;
+}

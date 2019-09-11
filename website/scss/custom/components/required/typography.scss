@@ -1,0 +1,120 @@
+// 
+// 
+// typography.scss
+//
+//
+
+@import "CSS:../../components/plugins/inter-ui";
+
+html{
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,h2,h3,h4,.h1,.h2,.h3,.h4,.display-1,.display-2,.display-3,.display-4{
+  letter-spacing: -.03em;
+}
+
+h5,.h5{
+  line-height: 1.5;
+}
+
+@include media-breakpoint-down(lg){
+  html{
+    font-size: 0.9375rem;
+  }
+}
+
+@include media-breakpoint-down(sm){
+  html{
+    font-size: .875rem;
+  }
+}
+
+@include media-breakpoint-down(md){
+  .display-2{
+    font-size: $display4-size;
+  }
+}
+
+.display-1, .display-2, .display-3, .display-4{
+  color: $headings-color;
+}
+
+.display-1, .display-2, .display-3, .display-4{
+  margin-bottom: 1.5rem;
+  line-height: 1;
+}
+
+.display-4{
+  line-height: 1.1;
+}
+
+@include media-breakpoint-down(lg){
+  .display-3{
+    font-size: $display4-size;
+    line-height: 4rem;
+  }
+}
+
+@include media-breakpoint-down(sm){
+  .display-4{
+    font-size: $h1-font-size;
+    line-height: 3rem;
+  }
+}
+
+h5{
+  margin-bottom: $spacer/2;
+}
+
+h6{
+  line-height: 1.375rem;
+}
+
+a{
+  font-weight: 600;
+  &.lead{
+    font-weight: 600;
+  }
+  color: theme-color('primary');
+}
+
+small, .text-small{
+  font-weight: $font-weight-bold;
+}
+
+.text-small{
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+small{
+  display: inline-block;
+  line-height: 1.1875rem;
+  &.text-uppercase{
+    letter-spacing: .08em;
+  }
+}
+
+strong{
+  font-weight: $font-weight-bold;
+}
+
+.text-light{
+  a:not(.btn),h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6,.display-1, .display-2, .display-3, .display-4{
+    color: $white;
+  }
+  .text-muted{
+    color: rgba($white,.7) !important;
+  }
+}
+
+.highlight{
+  display: inline;
+  background: rgba(theme-color('primary-2'),.2);
+}
+
+.alert{
+  word-break: break-word;
+}

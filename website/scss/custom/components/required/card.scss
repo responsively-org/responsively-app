@@ -1,0 +1,117 @@
+// 
+// 
+// card.scss
+//
+//
+
+.card{
+  margin-bottom: $spacer;
+  &.card-sm{
+    &.card-body{
+      padding: $spacer;
+    }
+  }
+  &[class*='bg-primary']{
+    &:not([class*='hover-bg-primary']){
+      border-color: rgba(0,0,0,0);
+    }
+  }
+  &[class*='hover-']{
+    transition: background-color $transition-time ease, box-shadow $transition-time ease, transform $transition-time ease;
+  }
+  > .bg-image{
+    border-radius: $border-radius*2;
+  }
+}
+
+@include media-breakpoint-up(sm){
+  .card{
+    &.card-lg{
+      &.card-body{
+        padding: $spacer*2;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(sm){
+  .card{
+    margin-bottom: $spacer/2;
+  }
+}
+
+.card{
+  + .card{
+    margin-top: $spacer;
+  }
+  &.card-sm{
+    + .card-sm{
+      margin-top: $spacer/2;
+    }
+  }
+}
+
+a.card{
+  color: $body-color;
+  font-weight: $font-weight-normal;
+  transition: all $transition-time-fast ease;
+  &[class*='hover-shadow']{
+    &:hover{
+      transform: translate3d(-4px,-4px,0) rotateZ(-1deg);
+    }
+  }
+}
+
+@include media-breakpoint-up(md){
+  .card-icon-2{
+    min-height: 22rem;
+  }
+}
+
+.card-icon-3{
+  overflow: hidden;
+  h3{
+    margin-bottom: 1rem;
+  }
+  .badge{
+    position: absolute;
+    top: 3rem;
+    right: 3rem;
+    max-height: 1.5rem;
+  }
+}
+
+@include media-breakpoint-up(md){
+  .card-icon-3{
+    min-height: 28rem;
+    .icon-round{
+      transform: scale(2.5);
+      position: relative;
+      bottom: 1rem;
+      right: 1rem;
+    }
+  }
+}
+
+.card-customer-1{
+  h4{
+    margin-bottom: .75rem;
+  }
+}
+
+.card-article-wide{
+  overflow: hidden;
+  .card-img-top{
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+@include media-breakpoint-up(md){
+  .card-article-wide{
+    min-height: $spacer*15;
+    .card-img-top{
+      border-radius: $card-border-radius 0 0 $card-border-radius;
+    }
+  }
+}
