@@ -14,9 +14,13 @@ import type {Action} from './types';
 import devices from '../constants/devices';
 import settings from 'electron-settings';
 import type {Device} from '../constants/devices';
-import {FLEXIGRID_LAYOUT} from '../constants/previewerLayouts';
+import {
+  FLEXIGRID_LAYOUT,
+  INDIVIDUAL_LAYOUT,
+} from '../constants/previewerLayouts';
 import {DEVICE_MANAGER} from '../constants/DrawerContents';
 import {ACTIVE_DEVICES} from '../constants/settingKeys';
+import {isIfStatement} from 'typescript';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -81,6 +85,7 @@ export default function counter(
     devices: _getActiveDevices(),
     address: 'https://www.google.com',
     zoomLevel: 0.5,
+    previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
     drawer: {open: false, content: DEVICE_MANAGER},
@@ -101,7 +106,22 @@ export default function counter(
     case NEW_DRAWER_CONTENT:
       return {...state, drawer: action.drawer};
     case NEW_PREVIEWER_CONFIG:
-      return {...state, previewer: action.previewer};
+      const updateObject = {previewer: action.previewer};
+      if (
+        state.previewer.layout !== INDIVIDUAL_LAYOUT &&
+        action.previewer.layout === INDIVIDUAL_LAYOUT
+      ) {
+        updateObject.zoomLevel = 1;
+        updateObject.previousZoomLevel = state.zoomLevel;
+      }
+      if (
+        state.previewer.layout === INDIVIDUAL_LAYOUT &&
+        action.previewer.layout !== INDIVIDUAL_LAYOUT
+      ) {
+        updateObject.zoomLevel = state.previousZoomLevel;
+        updateObject.previousZoomLevel = null;
+      }
+      return {...state, ...updateObject};
     case NEW_ACTIVE_DEVICES:
       _saveActiveDevices(action.devices);
       return {...state, devices: action.devices};
