@@ -56,6 +56,7 @@ class WebView extends Component {
   }
 
   componentDidMount() {
+    //this.initDeviceEmulationParams();
     this.webviewRef.current.addEventListener(
       'ipc-message',
       this.messageHandler
@@ -137,6 +138,22 @@ class WebView extends Component {
     });
   }
 
+  initDeviceEmulationParams = () => {
+    try {
+      return;
+      this.webviewRef.current.getWebContents().enableDeviceEmulation({
+        screenPosition: this.isMobile ? 'mobile' : 'desktop',
+        screenSize: {
+          width: this.props.device.width,
+          height: this.props.device.height,
+        },
+        deviceScaleFactor: this.props.device.dpr,
+      });
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
+
   processNavigationBackEvent = () => {
     this.webviewRef.current.goBack();
   };
@@ -196,7 +213,6 @@ class WebView extends Component {
   };
 
   processOpenDevToolsInspectorEvent = message => {
-    console.log('inspectElement', message, this.props.browser.zoomLevel);
     const {
       x: webViewX,
       y: webViewY,
@@ -223,7 +239,6 @@ class WebView extends Component {
   };
 
   messageHandler = ({channel: type, args: [message]}) => {
-    console.log('Message recieved', message);
     if (this.state.isUnplugged) {
       return;
     }
