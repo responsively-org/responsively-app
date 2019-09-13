@@ -1,0 +1,59 @@
+// 
+// 
+// hover-effects.scss
+//
+// An optional include that controls the hover effects on certain elements
+
+[class*='hover-']{
+  transition: background-color $transition-time-fast ease, color $transition-time-fast ease, box-shadow $transition-time-fast ease, transform $transition-time-fast ease;
+}
+
+@each $name, $color in $theme-color-scheme {
+  .hover-bg-#{$name}{
+    &:hover{
+      background: $color;
+      border-color: $color;
+      color: color-yiq($color);
+      h1,h2,h3,h5,h6,h5,.h1,.h2,.h3,.h4,.h5,.h6{
+        color: color-yiq($color);
+      }
+      .icon-round{
+        background: rgba(color-yiq($color),.1) !important;
+      }
+      .icon{
+        *{
+          fill: color-yiq($color);
+        }
+      }
+    }
+  }
+}
+
+.hover-shadow-3d{
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+  &:hover{
+    box-shadow: $shadow-3d;
+    transform: translate3d(-4px,-4px,0) rotateZ(-1deg);
+  }
+}
+
+.hover-shadow-sm{
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+  &:hover{
+    box-shadow: $box-shadow-sm;
+  }
+}
+
+.hover-arrow{
+  &:after{
+    display: inline-block;
+    margin-left: .375rem;
+    transition: transform $transition-time ease;
+    content: '->';
+  }
+  &:hover{
+    &:after{
+      transform: translate3d(6px,0,0);
+    }
+  }
+}

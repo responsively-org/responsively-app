@@ -1,0 +1,102 @@
+//
+//
+// navs.scss
+//
+//
+
+.nav-link{
+  &.disabled{
+    opacity: .25;
+  }
+}
+
+section,footer{
+  .nav-link{
+    transition: opacity $transition-time linear;
+    &:not(.active){
+      &:not(.disabled){
+        &:not(:hover){
+          opacity: .5;
+        }
+      }
+    }
+    .icon{
+      transform: translate3d(0,0,0);
+    }
+    &[aria-expanded="true"]{
+      opacity: 1 !important;
+    }
+  }
+  &:not(.text-light){
+    .nav-link{
+      color: theme-color('dark');
+    }
+  }
+}
+
+// Buttons Nav
+
+.nav-link{
+  &.btn{
+    &.active{
+      background: theme-color('primary');
+      color: $white;
+    }
+  }
+  &.btn-light{
+    &.active, &:active{
+      background: $gray-100 !important;
+      border-color: $border-color !important;
+    }
+    &:not(.active){
+      background: none;
+      border-color: rgba(0,0,0,0);
+    }
+    .icon{
+      *{
+        fill: theme-color('primary');
+      }
+    }
+  }
+}
+
+// Icons Nav
+
+.nav-link{
+  .icon-round{
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: .75rem;
+  }
+  &:not(.active){
+    &:not(:active){
+      .icon-round{
+        background-color: transparent !important;
+      }
+    }
+  }
+}
+
+// Column Navs
+
+.nav{
+  &.flex-column{
+    .nav-link{
+      padding-left: 0;
+      padding-top: 0;
+    }
+    flex-flow: column;
+  }
+}
+
+// Nav Link Collapse
+
+.nav-link{
+  &[data-toggle="collapse"]{
+    > .icon{
+      transform: rotateZ(-90deg);
+      position: relative;
+      right: .25rem;
+    }
+  }
+}

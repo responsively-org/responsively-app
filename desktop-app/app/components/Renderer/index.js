@@ -15,7 +15,11 @@ function Renderer(props) {
       <div className={styles.titleContainer}>
         {getDeviceIcon(props.device.type)}
         <span className={cx(styles.deviceTitle)}>{props.device.name}</span>
-        {loading && <Spinner size={16} />}
+        {loading && (
+          <div>
+            <Spinner size={16} />
+          </div>
+        )}
       </div>
       <div className={cx(styles.deviceWrapper)}>
         <WebViewContainer

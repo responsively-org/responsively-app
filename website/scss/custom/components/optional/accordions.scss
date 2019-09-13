@@ -1,0 +1,35 @@
+// 
+// 
+// accordions.scss
+//
+//
+
+.accordion-panel-title{
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  > .icon{
+    transition: transform $transition-time-fast ease;
+  }
+  > *{
+    transition: color $transition-time-fast ease;
+  }
+  .h6 + .icon{
+    height: 1rem;
+  }
+  &[aria-expanded="true"]{
+    > .icon{
+      transform: rotateZ(45deg);
+    }
+  }
+  &[aria-expanded="true"], &:hover{
+    > *{
+      color: theme-color('primary');
+      path{
+        fill: theme-color('primary');
+      }
+    }
+  }
+}

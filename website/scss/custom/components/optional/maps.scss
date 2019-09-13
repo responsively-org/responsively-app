@@ -1,0 +1,25 @@
+// 
+// 
+// maps.scss
+//
+//
+
+div[data-maps-api-key] div.map-marker, div[data-maps-api-key] div.map-style {
+  display: none;
+}
+
+.gm-err-title, .gm-err-message{
+  color: #e0e0e0;
+  margin: 0;
+  &:after{
+    content: 'Enter a valid Google Maps API Key';
+    color: #616161;
+    display: block;
+  }
+}
+
+.gm-err-message{
+  &:after{
+    content: 'Please consult the Google Maps API documentation on how to obtain an API key.';
+  }
+}

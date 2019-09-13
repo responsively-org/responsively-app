@@ -1,0 +1,154 @@
+// 
+// 
+// buttons.scss
+//
+//
+
+.btn{
+  letter-spacing: -.02em;
+  &.btn-sm{
+    letter-spacing: 0;
+  }
+  > span{
+    display: inline-block;
+    vertical-align: middle;
+  }
+  > .icon{
+    &:first-child{
+      margin-right: .5rem;
+    }
+    &:last-child{
+      margin-left: .5rem;
+    }
+    &.d-block{
+      margin: 0 auto;
+      margin-bottom: .75rem;
+      height: 2rem;
+    }
+  }
+  &.btn-sm{
+    > .icon{
+      height: 1rem;
+    }
+  }
+  &:focus{
+    box-shadow: none !important;
+  }
+}
+
+[class*='-flex']{
+  >.btn{
+    flex-shrink: 0;
+  }
+}
+
+@each $name, $color in $theme-colors {
+  .btn{
+    &.btn-#{$name}{
+      *{
+        fill: color-yiq($color);
+      }
+    }
+  }
+  .btn-outline-#{$name}{
+    &:hover{
+      *{
+        fill: color-yiq($color);
+      }
+    }
+  }
+}
+
+.btn-light{
+  border-color: $border-color;
+  background: $gray-100;
+}
+
+.btn-white{
+  background: $white;
+  color: theme-color('primary');
+  > .icon{
+    path{
+      fill: theme-color('primary');
+    }
+  }
+  &:hover{
+    color: theme-color('primary');
+    background: rgba(255,255,255,.9);
+  }
+}
+
+.btn-outline-white{
+  border-color: $border-color;
+}
+
+.btn-round{
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  >.icon{
+    &:only-child{
+      margin: 0;
+    }
+    &.icon-sm{
+      height: 1rem;
+    }
+  }
+  &.btn-sm{
+    width: 2rem;
+    height: 2rem;
+  }
+  &.btn-lg{
+    width: 3.75rem;
+    height: 3.75rem;
+  }
+  &.btn-xlg{
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+  &.btn-lg, &.btn-xlg{
+    > .icon{
+      height: 2rem;
+    }
+  }
+}
+
+.btn-loading{
+  &:not(.btn-loading-animate){
+    > span{
+      vertical-align: baseline;
+    }
+  }
+  .icon{
+    display: none;
+  }
+  &.btn-loading-animate{
+    .icon{
+      path{
+        animation: spin .5s infinite linear;
+        transform-origin: 12px;
+      }
+      display: inline-block;
+    }
+  }
+}
+
+@keyframes spin{
+  0%{ transform: rotateZ(0deg); }
+  100%{ transform: rotateZ(360deg); }
+}
+
+// Back to top button
+
+.btn{
+  &.back-to-top{
+    position: fixed;
+    bottom: $spacer;
+    right: $spacer;
+    z-index: $zindex-sticky;
+  }
+}

@@ -1,0 +1,13 @@
+// 
+// 
+// page-transitions.scss
+// 
+//
+// An optional component for soft fading page transitions
+
+body{
+  transition: opacity $transition-time-slow ease;
+  &.fade-page{
+    opacity: 0;
+  }
+}

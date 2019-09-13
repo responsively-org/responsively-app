@@ -1,0 +1,159 @@
+.container {
+  margin: 100px;
+  --activeButtonBg: #fd2d55;
+  --inactiveButtonBg: #9e1d35 /*#be2240 #ff93a8*/;
+  --activeColor: white;
+  --inactiveColor: lightgrey;
+}
+
+.title {
+  font-size: 4.5rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.subTitle {
+  font-size: 2.5rem;
+  font-weight: 200;
+  text-align: center;
+  margin-bottom: 100px;
+}
+
+.mainSection {
+  display: flex;
+}
+
+.mainSectionBlock {
+  position: relative;
+  padding: 50px;
+  width: 50%;
+  height: 600px;
+  color: var(--inactiveColor);
+  z-index: 2;
+}
+
+.mainSectionBlock.active {
+  color: var(--activeColor);
+}
+
+.sectionDividerContainer {
+  position: relative;
+}
+
+.sectionDivider {
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
+  flex-direction: column;
+  position: absolute;
+  height: 100%;
+  width: 42px;
+  transform: translateX(-21px);
+}
+
+.orText {
+  margin: 10px 0;
+  color: var(--inactiveColor);
+}
+
+.sectionDividerLine {
+  content: '';
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  border-left: 1px solid var(--inactiveColor);
+  transform: translate(-50%);
+  height: 100% /*45%*/;
+}
+
+.inputContainer {
+  display: flex;
+  width: 100%;
+  margin: 20px 0;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+.inputIcon {
+  padding: 10px;
+  background: var(--inactiveButtonBg);
+  color: var(--inactiveColor);
+  min-width: 50px;
+  text-align: center;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.inputField {
+  width: 100%;
+  padding: 10px;
+  outline: none;
+  font-size: 1.5rem;
+  border: 2px solid var(--inactiveColor);
+  background: var(--inactiveColor);
+}
+
+.licenseField {
+  font-family: monospace;
+  font-size: 1.75rem;
+}
+
+.inputContainer.active .inputIcon {
+  color: var(--activeColor);
+  background: var(--activeButtonBg);
+}
+
+.inputContainer.active .inputField {
+  background: var(--activeColor);
+  border: 2px solid var(--activeColor);
+}
+
+.iconButton {
+  cursor: pointer;
+}
+
+.desc {
+  margin: 10px 0 20px;
+  font-size: 1.25rem;
+}
+
+.buyLicenseContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  color: var(--inactiveColor);
+}
+
+.buyLicenseContainer.active {
+  color: var(--activeColor);
+}
+
+.afterDesc {
+  color: var(--inactiveColor);
+  text-align: center;
+  margin-top: 50px;
+}
+
+.buyLicenseButton {
+  width: fit-content;
+  text-transform: capitalize;
+  background: var(--inactiveButtonBg);
+  padding: 10px 30px;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.buyLicenseContainer.active .buyLicenseButton {
+  background: var(--activeButtonBg);
+}
+
+.errorMessage {
+  color: red;
+}
+
+.successMessage {
+  color: green;
+}

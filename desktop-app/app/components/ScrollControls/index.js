@@ -19,7 +19,6 @@ class ScrollControls extends Component {
       height: 25,
       width: 25,
     };
-    console.log('ScrollControls this.props', this.props);
     return (
       <div className={styles.scrollControls}>
         <Grid container spacing={1} alignItems="center">

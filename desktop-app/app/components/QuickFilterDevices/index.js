@@ -4,7 +4,7 @@ import AppleIcon from '../icons/Apple';
 import WindowsIcon from '../icons/Windows';
 import AndroidIcon from '@material-ui/icons/Android';
 import DesktopIcon from '@material-ui/icons/DesktopWindows';
-import MobileIcon from '@material-ui/icons/SmartPhone';
+import MobileIcon from '@material-ui/icons/Smartphone';
 import TabletIcon from '@material-ui/icons/TabletMac';
 import {Icon} from 'flwww';
 

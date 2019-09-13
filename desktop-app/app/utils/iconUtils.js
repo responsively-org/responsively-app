@@ -1,6 +1,6 @@
 import React from 'react';
 import DesktopIcon from '@material-ui/icons/DesktopWindows';
-import MobileIcon from '@material-ui/icons/SmartPhone';
+import MobileIcon from '@material-ui/icons/Smartphone';
 import TabletIcon from '@material-ui/icons/TabletMac';
 import {DEVICE_TYPE} from '../constants/devices';
 import {iconsColor} from '../constants/colors';

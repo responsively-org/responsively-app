@@ -1,0 +1,136 @@
+- 
+   files: "clipboard.min.js"
+   from: "node_modules/clipboard/dist"
+   to: "pages/assets/js"
+- 
+   files: "jquery.min.js"
+   from: "node_modules/jquery/dist"
+   to: "pages/assets/js"
+- 
+   files: "jquery.countdown.min.js"
+   from: "node_modules/jquery-countdown/dist"
+   to: "pages/assets/js"
+-
+   files: "flatpickr.min.js"
+   from: "node_modules/flatpickr/dist"
+   to: "pages/assets/js"
+- 
+   files: "flatpickr.min.css"
+   from: "node_modules/flatpickr/dist"
+   to: "scss/custom/components/plugins"
+- 
+   files: "flickity.pkgd.min.js"
+   from: "node_modules/flickity/dist"
+   to: "pages/assets/js"
+- 
+   files: "flickity.css"
+   from: "node_modules/flickity/dist"
+   to: "scss/custom/components/plugins"
+-
+   files: "ion.rangeSlider.min.js"
+   from: "node_modules/ion-rangeslider/js"
+   to: "pages/assets/js"
+-
+   files: "ion.rangeSlider.css"
+   from: "node_modules/ion-rangeslider/css"
+   to: "scss/custom/components/plugins"
+- 
+   files: "isotope.pkgd.min.js"
+   from: "node_modules/isotope-layout/dist"
+   to: "pages/assets/js"
+- 
+   files: "jquery.fancybox.min.css"
+   from: "node_modules/@fancyapps/fancybox/dist"
+   to: "scss/custom/components/plugins"
+- 
+   files: "jquery.fancybox.min.js"
+   from: "node_modules/@fancyapps/fancybox/dist"
+   to: "pages/assets/js"
+- 
+   files: "popper.min.js"
+   from: "node_modules/popper.js/dist/umd"
+   to: "pages/assets/js"
+- 
+   files: "popper.min.js.map"
+   from: "node_modules/popper.js/dist/umd"
+   to: "pages/assets/js"
+- 
+   files: "prism.js"
+   from: "node_modules/prismjs"
+   to: "pages/assets/js"
+- 
+   files: "prism.css"
+   from: "node_modules/prismjs/themes"
+   to: "scss/custom/components/plugins"
+- 
+   files: "prism-okaidia.css"
+   from: "node_modules/prismjs/themes"
+   to: "scss/custom/components/plugins"
+- 
+   files:
+     - "scrollMonitor.js"
+     - "scrollMonitor.js.map"
+   from: "node_modules/scrollmonitor"
+   to: "pages/assets/js"
+- 
+   files: "smooth-scroll.polyfills.min.js"
+   from: "node_modules/smooth-scroll/dist"
+   to: "pages/assets/js"
+-
+   files: 
+     - "svg-injector.umd.production.js"
+     - "svg-injector.umd.production.js.map"
+   from: "node_modules/@tanem/svg-injector/dist"
+   to: "pages/assets/js"
+- 
+   files: 
+     - "typed.min.js"
+     - "typed.min.js.map"
+   from: "node_modules/typed.js/lib"
+   to: "pages/assets/js"
+- 
+   files: "aos.css"
+   from: "node_modules/aos/dist"
+   to: "scss/custom/components/plugins"
+- 
+   files: "aos.js"
+   from: "node_modules/aos/dist"
+   to: "pages/assets/js"
+- 
+   files: "twitterFetcher_min.js"
+   from: "node_modules/twitter-fetcher/js"
+   to: "pages/assets/js"
+- 
+   files: 
+     - "jarallax.min.js"
+     - "jarallax-video.min.js"
+     - "jarallax-element.min.js"
+     - "jarallax.min.js.map"
+     - "jarallax-video.min.js.map"
+     - "jarallax-element.min.js.map"
+   from: "node_modules/jarallax/dist"
+   to: "pages/assets/js"
+- 
+   files: "jarallax.css"
+   from: "node_modules/jarallax/dist"
+   to: "scss/custom/components/plugins"
+- 
+   files: "plyr.css"
+   from: "node_modules/plyr/dist"
+   to: "scss/custom/components/plugins"
+- 
+   files: 
+     - "plyr.polyfilled.min.js"
+     - "plyr.polyfilled.min.js.map"
+   from: "node_modules/plyr/dist"
+   to: "pages/assets/js"
+-
+   files:
+     - "*.woff"
+     - "*.woff2"
+   from: "node_modules/inter-ui/Inter UI (web)"
+   to: "assets/fonts"
+-
+  files: "jquery.smartWizard.min.js"
+  from: "node_modules/smartwizard/dist/js"
+  to: "pages/assets/js"

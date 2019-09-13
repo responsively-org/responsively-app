@@ -7,7 +7,6 @@ import Divider from '@material-ui/core/Divider';
 import styles from './styles.css';
 
 export default function DeviceDrawer(props) {
-  console.log('DeviceManagerContainer props', props);
   return (
     <div className={styles.container}>
       <div className={styles.label}>

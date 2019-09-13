@@ -10,6 +10,7 @@
  *
  * @flow
  */
+require('dotenv').config();
 import electron, {app, BrowserWindow, ipcMain} from 'electron';
 import {autoUpdater} from 'electron-updater';
 import settings from 'electron-settings';

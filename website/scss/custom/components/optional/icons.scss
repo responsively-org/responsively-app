@@ -1,0 +1,75 @@
+// 
+// 
+// icons.scss
+//
+//
+
+.icon {
+  flex-shrink: 0;
+  width: auto;
+  height: $spacer;
+  &.icon-md{
+    height: $spacer*1.5;
+  }
+  &.icon-lg {
+    height: $spacer*2;
+  }
+  &.icon-sm {
+    height: $spacer/2;
+  }
+}
+
+.icon-round {
+  flex-shrink: 0;
+  width: $spacer*3;
+  height: $spacer*3;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  >.icon {
+    height: $spacer*1.5;
+  }
+  @each $name,
+  $color in $theme-color-scheme {
+    &.bg-#{$name} {
+      background: rgba($color, .1) !important;
+    }
+  }
+  &.bg-white {
+    background: rgba($white, .1) !important;
+  }
+  &.icon-round-xs{
+    width: $spacer*1.5;
+    height: $spacer*1.5;
+    > .icon{
+      height: $spacer;
+    }
+  }
+  &.icon-round-sm {
+    width: $spacer*2;
+    height: $spacer*2;
+    >.icon {
+      height: $spacer;
+    }
+  }
+  &.icon-round-xs {
+    width: $spacer;
+    height: $spacer;
+    >.icon {
+      height: $spacer/1.5;
+    }
+  }
+}
+
+@include media-breakpoint-up(lg){
+  .icon-round{
+    &.icon-round-lg{
+      width: $spacer*4;
+      height: $spacer*4;
+      > .icon{
+        height: $spacer*2;
+      }
+    }
+  }
+}

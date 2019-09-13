@@ -1,0 +1,70 @@
+// 
+// 
+// wizard.scss
+//
+//
+
+.step-circles{
+    border-bottom: none;
+    .nav-link{
+        border: 0;
+        position: relative;
+        padding: 0;
+        width: $spacer*2;
+        height: $spacer*2;
+        background: rgba($primary,.1);
+        border-radius: 50%;
+        color: $primary !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1 !important;
+        transition: background-color $transition-time ease;
+        &:hover{
+            background: rgba($primary,.15);
+        }
+    }
+    .nav-item{
+        margin: 0 $spacer;
+        opacity: .5;
+        &.active{
+            .nav-link{
+                background: $primary;
+                color: $white !important;
+            }
+        }
+        &.active, &.done{
+            opacity: 1;
+        }
+        &:not(:last-child){
+            .nav-link{
+                &:after{
+                    content: '';
+                    width: $spacer*2;
+                    height: 4px;
+                    position: absolute;
+                    left: 100%;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: rgba($primary,.1);
+                    pointer-events: none;
+                }
+            }
+        }
+    }
+}
+
+.wizard{
+    > ul:not(.step-circles){
+        .btn{
+            border-radius: $border-radius $border-radius 0 0;
+        }
+        > li.active{
+            .btn{
+                opacity: 1 !important;
+                background: $primary;
+                color: $white;
+            }
+        }
+    }
+}

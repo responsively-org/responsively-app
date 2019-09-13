@@ -1,0 +1,38 @@
+// 
+// 
+// popovers.scss
+//
+//
+
+.popover{
+  font-weight: $font-weight-bold;
+  box-shadow: $box-shadow-lg;
+}
+
+.popover-header{
+  padding-bottom: 0;
+  border-bottom: none;
+  font-size: $font-size-sm;
+}
+
+.popover-body{
+  padding-top: .5rem;
+}
+
+.popover-image{
+  position: relative;
+}
+
+.popover-hotspot{
+  cursor: pointer;
+  height: $spacer*1.5;
+  width: $spacer*1.5;
+  border-radius: 50%;
+  position: absolute;
+  animation: hotspotPulse 2s ease infinite alternate;
+}
+
+@keyframes hotspotPulse{
+  0%{ transform: scale(1); opacity: 1; }
+  100%{ transform: scale(1.3); opacity: 0.5; }
+}

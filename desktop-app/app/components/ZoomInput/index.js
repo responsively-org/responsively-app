@@ -27,32 +27,26 @@ const marks = [
   },
 ];
 
-class BrowserZoom extends Component {
-  render() {
-    return (
-      <div className={styles.zoomSlider}>
-        <Grid container spacing={1}>
-          <Grid item>
-            <ZoomOutIcon />
-          </Grid>
-          <Grid item xs>
-            <Slider
-              defaultValue={this.props.value}
-              valueLabelDisplay="auto"
-              min={10}
-              max={100}
-              onChange={(_, value) =>
-                this.props.onChange && this.props.onChange(value)
-              }
-            />
-          </Grid>
-          <Grid item>
-            <ZoomInIcon />
-          </Grid>
+export default function BrowserZoom(props) {
+  return (
+    <div className={styles.zoomSlider}>
+      <Grid container spacing={1}>
+        <Grid item>
+          <ZoomOutIcon />
         </Grid>
-      </div>
-    );
-  }
+        <Grid item xs>
+          <Slider
+            value={props.value}
+            valueLabelDisplay="auto"
+            min={10}
+            max={100}
+            onChange={(_, value) => props.onChange && props.onChange(value)}
+          />
+        </Grid>
+        <Grid item>
+          <ZoomInIcon />
+        </Grid>
+      </Grid>
+    </div>
+  );
 }
-
-export default BrowserZoom;
