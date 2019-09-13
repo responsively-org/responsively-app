@@ -9,7 +9,7 @@ export async function activateTrial(event, context, callback) {
   let statusCode=0
   context.callbackWaitsForEmptyEventLoop = false;
   try{
-      const email=event["queryStringParameters"]['email']
+      const email=event['queryStringParameters']['email']
       if(!email){
         throw new InvalidEmailError('email is empty')
       }
@@ -40,12 +40,11 @@ export async function activateTrial(event, context, callback) {
 }
 
 export async function validateLicense(event, context, callback) {
-    let responseBody={}
-    let statusCode=0
-    context.callbackWaitsForEmptyEventLoop = false;
-    console.log(event)
-    try{
-      const licenseKey=event["queryStringParameters"]['licenseKey']
+  let responseBody={}
+  let statusCode=0
+  context.callbackWaitsForEmptyEventLoop = false;
+  try{
+      const licenseKey=event['queryStringParameters']['licenseKey']
       if(!licenseKey){
         throw new InvalidLicenseError('licenseKey is empty')
       }
