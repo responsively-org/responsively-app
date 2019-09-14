@@ -92,6 +92,18 @@ a:hover {
   height: 100%;
 }
 
+#HW_badge_cont.HW_visible {
+  background-image: url("data:image/svg+xml,%3Csvg width='30px' height='30px' viewBox='0 0 1240 1240' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' style='height: 22.4px; width: 22.4px;'%3E%3Cdesc%3Egift%3C/desc%3E%3Ctitle%3Egift%3C/title%3E%3Cg id='gift' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='Group' transform='translate(280.826367, 309.000000)' stroke='white' stroke-width='50'%3E%3Crect id='Rectangle' x='25.1736334' y='155' width='629' height='134'%3E%3C/rect%3E%3Crect id='Rectangle' transform='translate(339.673633, 471.500000) scale(1, -1) translate(-339.673633, -471.500000) ' x='78.1736334' y='292' width='523' height='359'%3E%3C/rect%3E%3Cpath d='M339.173633,150 C326.714456,34.4086022 278.746623,-14.3759394 195.270134,3.6463753 C111.793646,21.66869 101.826304,70.4532316 165.368109,150' id='Path-13'%3E%3C/path%3E%3Cpath d='M555.173633,150 C542.714456,34.4086022 494.746623,-14.3759394 411.270134,3.6463753 C327.793646,21.66869 317.826304,70.4532316 381.368109,150' id='Path-13' transform='translate(447.673633, 75.000000) scale(-1, 1) translate(-447.673633, -75.000000) '%3E%3C/path%3E%3Cpath d='M339.673633,150 L339.673633,651' id='Path-14'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#HW_badge.HW_softHidden {
+  position: absolute;
+  left: 20px;
+  top: 0px;
+}
+
 /*
 {
 	"$schema": "vscode://schemas/color-theme",

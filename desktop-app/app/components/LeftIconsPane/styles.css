@@ -21,5 +21,9 @@
 }
 
 .updates {
-  text-align: center;
+  position: relative;
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
 }

@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, {useRef} from 'react';
 import {Icon} from 'flwww';
 import Grid from '@material-ui/core/Grid';
 import Logo from '../icons/Logo';
@@ -16,6 +16,7 @@ import {
 } from '../../constants/DrawerContents';
 
 const LeftIconsPane = props => {
+  const headwayRef = useRef();
   const iconProps = {
     color: iconsColor,
     style: {fontSize: 30},
@@ -47,11 +48,16 @@ const LeftIconsPane = props => {
           </div>
         </Grid>*/}
       </Grid>
-      <div
-        id="headway"
-        className={cx(styles.updates, commonStyles.icons, commonStyles.enabled)}
-      >
-        <Icon type="gift" color={iconsColor} />
+      <div style={{position: 'relative'}}>
+        <div
+          id="headway"
+          ref={headwayRef}
+          className={cx(
+            styles.updates,
+            commonStyles.icons,
+            commonStyles.enabled
+          )}
+        />
       </div>
     </div>
   );
