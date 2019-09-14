@@ -9,7 +9,7 @@ export default function DevicesOverview(props) {
   return (
     <div className={cx(commonStyles.sidebarContentSection)}>
       <div className={cx(commonStyles.sidebarContentSectionTitleBar)}>
-        <DevicesIcon color="white" width={25} /> Devices
+        <DevicesIcon color="white" width={26} margin={2} /> Devices
       </div>
       <div className={cx(commonStyles.sidebarContentSectionContainer)}>
         <div

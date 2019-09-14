@@ -77,7 +77,7 @@ export default function DeviceManager(props) {
         className={styles.editButton}
       >
         Customize
-        <EditIcon style={{fontSize: 'inherit'}} />
+        {/*<EditIcon style={{fontSize: 'inherit'}} />*/}
       </Button>
       <Dialog fullScreen open={open} onClose={closeDialog}>
         <AppBar className={classes.appBar} color="secondary">

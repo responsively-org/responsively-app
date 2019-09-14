@@ -13,7 +13,7 @@ import DevicesOverviewContainer from '../../containers/DevicesOverviewContainer'
 
 export default function DeviceDrawer(props) {
   return (
-    <div className={styles.container}>
+    <div>
       <DevicesOverviewContainer />
       <PreviewerLayoutSelector
         value={props.browser.previewer.layout}
