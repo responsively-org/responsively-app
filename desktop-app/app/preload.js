@@ -1,5 +1,31 @@
-const {ipcRenderer} = require('electron');
+const {ipcRenderer, remote} = require('electron');
 const DomInspector = require('../lib/dom-inspector');
+
+const Menu = remote.Menu;
+const MenuItem = remote.MenuItem;
+
+var menu = new Menu();
+menu.append(
+  new MenuItem({
+    label: 'MenuItem1',
+    click: function() {
+      console.log('item 1 clicked');
+    },
+  })
+);
+menu.append(new MenuItem({type: 'separator'}));
+menu.append(
+  new MenuItem({label: 'MenuItem2', type: 'checkbox', checked: true})
+);
+
+window.addEventListener(
+  'contextmenu',
+  function(e) {
+    e.preventDefault();
+    menu.popup(remote.getCurrentWindow());
+  },
+  false
+);
 
 global.responsivelyApp = {
   sendMessageToHost: (type, message) => {

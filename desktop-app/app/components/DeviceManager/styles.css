@@ -34,3 +34,8 @@
   color: #dedede;
   width: fit-content;
 }
+
+.editButton {
+  font-size: 10px !important;
+  padding: 5px !important;
+}

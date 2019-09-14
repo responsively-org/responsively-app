@@ -88,7 +88,7 @@ export default function counter(
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
-    drawer: {open: false, content: DEVICE_MANAGER},
+    drawer: {open: true, content: DEVICE_MANAGER},
     previewer: {layout: FLEXIGRID_LAYOUT},
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
   },

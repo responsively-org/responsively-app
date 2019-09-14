@@ -1,10 +1,14 @@
 import React from 'react';
+import cx from 'classnames';
 import Select from 'react-select';
+import LayoutIcon from '../icons/Layout';
 import {
   HORIZONTAL_LAYOUT,
   FLEXIGRID_LAYOUT,
   INDIVIDUAL_LAYOUT,
 } from '../../constants/previewerLayouts';
+
+import commonStyles from '../common.styles.css';
 
 const options = [
   {value: HORIZONTAL_LAYOUT, label: 'Horizontal'},
@@ -41,11 +45,19 @@ const styles = {
 
 export default function PreviewerLayoutSelector(props) {
   return (
-    <Select
-      options={options}
-      value={options.find(option => option.value === props.value)}
-      onChange={props.onChange}
-      styles={styles}
-    />
+    <div className={cx(commonStyles.sidebarContentSection)}>
+      <div className={cx(commonStyles.sidebarContentSectionTitleBar)}>
+        <LayoutIcon height={18} margin={6} color="white" />
+        Layout
+      </div>
+      <div className={cx(commonStyles.sidebarContentSectionContainer)}>
+        <Select
+          options={options}
+          value={options.find(option => option.value === props.value)}
+          onChange={props.onChange}
+          styles={styles}
+        />
+      </div>
+    </div>
   );
 }

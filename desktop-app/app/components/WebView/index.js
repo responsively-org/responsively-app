@@ -280,6 +280,7 @@ class WebView extends Component {
       });
 
       window.addEventListener('scroll', (e) => {
+        console.log('event', e);
         if (!responsivelyApp.mouseOn) {
           return;
         }

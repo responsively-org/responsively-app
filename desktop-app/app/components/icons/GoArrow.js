@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 
-export default ({width, height, color, padding}) => (
+export default ({width, height, color, padding, margin}) => (
   <Fragment>
     <svg
       width={width}

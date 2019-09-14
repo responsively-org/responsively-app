@@ -53,7 +53,6 @@ export default function DeviceManager(props) {
   const closeDialog = () => setOpen(false);
 
   const onDragEnd = result => {
-    console.log('DragResult', result);
     const {source, destination} = result;
 
     const sourceList = devices[source.droppableId];
@@ -69,14 +68,17 @@ export default function DeviceManager(props) {
   };
   return (
     <Fragment>
-      <IconButton
+      <Button
+        variant="contained"
         color="primary"
         aria-label="upload picture"
         component="span"
         onClick={() => setOpen(true)}
+        className={styles.editButton}
       >
-        <EditIcon />
-      </IconButton>
+        Customize
+        <EditIcon style={{fontSize: 'inherit'}} />
+      </Button>
       <Dialog fullScreen open={open} onClose={closeDialog}>
         <AppBar className={classes.appBar} color="secondary">
           <Toolbar>
