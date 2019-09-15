@@ -16,6 +16,7 @@ import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import LightBulbIcon from '../icons/LightBulb';
 import DeviceList from './DeviceList';
 import AddDeviceContainer from '../../containers/AddDeviceContainer';
+import ErrorBoundary from '../ErrorBoundary';
 
 import styles from './styles.css';
 
@@ -38,17 +39,20 @@ export default function DeviceManager(props) {
     inactive: [],
   });
 
-  useEffect(() => {
-    const activeDevices = props.browser.devices;
-    const activeDevicesById = activeDevices.reduce((acc, val) => {
-      acc[val.id] = val;
-      return acc;
-    }, {});
-    const inactiveDevices = allDevices.filter(
-      device => !activeDevicesById[device.id]
-    );
-    setDevices({active: activeDevices, inactive: inactiveDevices});
-  }, props.browser.devices.map(JSON.stringify).join(','));
+  useEffect(
+    () => {
+      const activeDevices = props.browser.devices;
+      const activeDevicesById = activeDevices.reduce((acc, val) => {
+        acc[val.id] = val;
+        return acc;
+      }, {});
+      const inactiveDevices = allDevices.filter(
+        device => !activeDevicesById[device.id]
+      );
+      setDevices({active: activeDevices, inactive: inactiveDevices});
+    },
+    [props.browser.devices.map(JSON.stringify).join(',')]
+  );
 
   const closeDialog = () => setOpen(false);
 

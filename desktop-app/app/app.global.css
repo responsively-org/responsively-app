@@ -98,10 +98,10 @@ a:hover {
   background-position: center;
 }
 
-#HW_badge.HW_softHidden {
-  position: absolute;
-  left: 20px;
-  top: 0px;
+#HW_badge {
+  position: absolute !important;
+  left: 20px !important;
+  top: 0px !important;
 }
 
 /*

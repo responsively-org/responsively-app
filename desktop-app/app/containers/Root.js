@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import {Provider} from 'react-redux';
 import {ConnectedRouter} from 'connected-react-router';
+import log from 'electron-log';
 import type {Store} from '../reducers/types';
 import Routes from '../Routes';
 import {createMuiTheme, makeStyles} from '@material-ui/core/styles';
