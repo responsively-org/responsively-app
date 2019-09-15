@@ -3,7 +3,7 @@ const webpack = require('webpack');
 
 process.env.NODE_ENV = slsw.lib.options.stage || 'development';
 const mode =
-  process.env.NODE_ENV === 'development' ? 'development' : 'production';
+process.env.NODE_ENV === 'development' ? 'development' : 'production';
 
 module.exports = {
   entry: slsw.lib.entries,
