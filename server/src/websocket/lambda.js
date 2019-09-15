@@ -74,16 +74,30 @@ export async function validateLicense(event, context, callback) {
   console.log(event)
   try{
     const body=JSON.parse(event.body)
-    if(!body['data'] || !body['data']['licenseKey']){
+    if(!body.data || !body.data.licenseKey){
       throw new InvalidLicenseError('licenseKey is empty')
     }
     const licenseKey=body['data']['licenseKey']
-    responseBody=await subscriptionService.constructLicenseValidationResponse(licenseKey)
+    let connectionStatus=await activeConnectionService.checkIfValidConnection(licenseKey,connectionId)
+    responseBody.status=connectionStatus
+    if(connectionStatus){
+      responseBody.statusCode=200
+      responseBody.message='valid'
+    }else{
+      responseBody.statusCode=403
+      responseBody.message='not found in active users'
+    }
   }catch(err){
     console.log(err)
-    responseBody.status=false
-    responseBody.statusCode=500
-    responseBody.message='internal server error'
+    if(err instanceof InvalidLicenseError){
+      responseBody.status=false
+      responseBody.statusCode=403
+      responseBody.message='invalid license error'  
+    }else{
+      responseBody.status=false
+      responseBody.statusCode=500
+      responseBody.message='internal server error'
+    }
   }
   await activeConnectionService.publish(event,connectionId,responseBody)
   let response= {
