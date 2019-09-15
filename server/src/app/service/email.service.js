@@ -4,6 +4,9 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const SYSTEM_MAIL='noreply@responsively.app'
 async function sendLicenseKeyMail(email,licenseKey){
+    if(process.env.SEND_MAIL==='false'){
+        return
+    }
     console.log('sending license key to email:'+email)
     const msg = {
         to: email,

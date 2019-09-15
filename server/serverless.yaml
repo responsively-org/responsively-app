@@ -8,7 +8,7 @@ provider:
   name: aws
   runtime: nodejs10.x
   websocketsApiName: responsively-websocket
-  apiName: dev-responsively-server
+  apiName: responsively-server
   websocketsApiRouteSelectionExpression: $request.body.action # custom routes are selected by the value of the action property in the body
   environment: ${file(environment.yml)}
 
