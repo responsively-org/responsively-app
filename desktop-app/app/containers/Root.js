@@ -41,11 +41,11 @@ export default class Root extends Component<Props> {
     return (
       <Provider store={store}>
         <ThemeProvider theme={theme}>
-          {/*<LicenseManager>*/}
-          <ConnectedRouter history={history}>
-            <Routes />
-          </ConnectedRouter>
-          {/*</LicenseManager>*/}
+          <LicenseManager>
+            <ConnectedRouter history={history}>
+              <Routes />
+            </ConnectedRouter>
+          </LicenseManager>
         </ThemeProvider>
       </Provider>
     );

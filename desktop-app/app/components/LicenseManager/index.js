@@ -1,64 +1,109 @@
-// @flow
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import WelcomeScreen from './WelcomeScreen';
 import Spinner from '../Spinner';
 
 import styles from './style.css';
 import {getLicensekey, validateLicenseKey} from '../../utils/licenseUtils';
-import {initWS} from './ws';
+import {initWS, cleanUp} from './ws';
+import {DEACTIVATION_REASON} from '../../constants/license';
 
 const LICENSE_STATUS = {
   VALIDATING: 'VALIDATING',
   VALID: 'VALID',
   INVALID: 'INVALID',
 };
+export default class LicenseManager extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      status: LICENSE_STATUS.VALIDATING,
+      deactivationReason: null,
+    };
+  }
 
-export default function LicenseManager(props) {
-  const [initialValidationStatus, setInitialValidationStatus] = useState(false);
-  const [status, setStatus] = useState(LICENSE_STATUS.VALIDATING);
-  const [socket, setSocket] = useState(null);
+  componentDidMount() {
+    this.init();
+  }
 
-  useEffect(() => {
-    (async () => {
-      if (initialValidationStatus) {
-        return;
-      }
-      const licenseKey = getLicensekey();
-      const {status} = await validateLicenseKey(licenseKey);
-      if (status) {
-        onActivation();
-      } else {
-        setStatus(LICENSE_STATUS.INVALID);
-      }
-      setInitialValidationStatus(true);
-    })();
-  });
+  componentWillUnmount() {
+    this.cleanUpState();
+  }
 
-  const onMessage = (type, message) => {
-    if (type === 'LICENSE_STATUS') {
-      if (message.status === LICENSE_STATUS.INVALID) {
-        setStatus(LICENSE_STATUS.INVALID);
-      }
+  init = async () => {
+    const {status} = await validateLicenseKey(getLicensekey());
+    if (!status) {
+      return this.setState({status: LICENSE_STATUS.INVALID});
     }
+    this.onActivation();
   };
 
-  const onActivation = () => {
-    console.log('onActivation');
-    setStatus(LICENSE_STATUS.VALID);
+  initializeWS = () => {
     try {
-      setSocket(initWS(process.env.WEBSOCKET_URL, onMessage));
+      const {socket, sendMessage} = initWS(
+        `${process.env.WEBSOCKET_URL}?licenseKey=${getLicensekey()}`,
+        this.onWSMessage
+      );
+      this.sendMessage = sendMessage;
+      this.socket = socket;
+      this.setState({status: LICENSE_STATUS.VALID});
+      this.intervalHandle = setInterval(this.periodicPing, 20000);
     } catch (err) {
       console.log('err', err);
     }
   };
 
-  if (status === LICENSE_STATUS.VALIDATING) {
-    return <Spinner size={50} />;
-  }
+  periodicPing = () => {
+    this.sendMessage('validate', {
+      licenseKey: getLicensekey(),
+    });
+  };
 
-  if (status === LICENSE_STATUS.VALID) {
-    return props.children;
-  }
+  onWSMessage = (type, message) => {
+    if (type === 'validate_response') {
+      if (!message.status) {
+        this.deactivate();
+      }
+    }
+  };
 
-  return <WelcomeScreen onActivation={onActivation} />;
+  deactivate = () => {
+    this.cleanUpState();
+    this.setState({
+      status: LICENSE_STATUS.INVALID,
+      deactivationReason: DEACTIVATION_REASON.REVALIDATION,
+    });
+  };
+
+  cleanUpState = () => {
+    cleanUp(this.socket);
+    this.socket = null;
+    this.sendMessage = null;
+
+    this.intervalHandle &&
+      window.clearInterval(this.intervalHandle) &&
+      (this.intervalHandle = null);
+  };
+
+  onActivation = () => {
+    this.setState({status: LICENSE_STATUS.VALID, deactivationReason: null});
+    this.initializeWS();
+  };
+
+  render() {
+    if (this.state.status === LICENSE_STATUS.VALIDATING) {
+      return <Spinner size={50} />;
+    }
+
+    if (this.state.status === LICENSE_STATUS.VALID) {
+      return this.props.children;
+    }
+
+    return (
+      <WelcomeScreen
+        onActivation={this.onActivation}
+        reason={this.state.deactivationReason}
+        licenseKey={getLicensekey()}
+      />
+    );
+  }
 }

@@ -12,17 +12,30 @@ export function initWS(url, onMessage) {
     isOpen = false;
   };
 
-  const sendMessage = (type, message) => {
+  const sendMessage = (action, data) => {
     if (!isOpen) {
-      throw new Error('WS connection not open');
+      console.log('WS connection not open', socket.readyState);
+      throw new Error('WS connection not open', socket.readyState);
     }
-    socket.send(JSON.stringify({type, message}));
+    socket.send(JSON.stringify({action, data}));
   };
-  socket.onmessage = data => {
-    const {type, message} = JSON.parse(data);
-    onMessage(type, message);
+
+  socket.onmessage = ({data: messageString}) => {
+    console.log('newMessage', messageString);
+    const message = JSON.parse(messageString);
+    const {action, data} = message;
+    onMessage(action, data);
   };
   return {socket, sendMessage};
+}
+
+export function cleanUp(socketInstance) {
+  if (!socketInstance) {
+    return;
+  }
+  if (socketInstance.readyState === 1) {
+    socketInstance.close();
+  }
 }
 
 export function destroyWS(ws) {}

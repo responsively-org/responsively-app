@@ -7,10 +7,11 @@ import path from 'path';
 import cx from 'classnames';
 import styles from './style.css';
 import {saveLicenseKey, validateLicenseKey} from '../../../utils/licenseUtils';
+import {DEACTIVATION_REASON} from '../../../constants/license';
 
 export default function WelcomeScreen(props) {
   const [activeSection, setActiveSection] = useState('license');
-  const [licenseKey, setLicenseKey] = useState('');
+  const [licenseKey, setLicenseKey] = useState(props.licenseKey);
   const [trialEmail, setTrialEmail] = useState('');
   const [trialActivationStatus, setTrialActivationStatus] = useState('');
   const [
@@ -81,9 +82,18 @@ export default function WelcomeScreen(props) {
     }
   };
 
+  const getMainTitle = () => {
+    switch (props.reason) {
+      case DEACTIVATION_REASON.REVALIDATION:
+        return 'Sorry, we need to re-validate the license key';
+      default:
+        return 'Welcome, lets activate the app';
+    }
+  };
+
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Welcome, lets activate the app</div>
+      <div className={styles.title}>{getMainTitle()}</div>
       <div className={styles.mainSection}>
         <div
           className={cx(styles.mainSectionBlock, {

@@ -18,8 +18,8 @@ export default function DevicesOverview(props) {
             commonStyles.flexContainerSpaceBetween
           )}
         >
-          {props.browser.devices.length} device
-          {props.browser.devices.length > 1 && 's'} active
+          {props.browser.devices.length} active device
+          {props.browser.devices.length !== 1 && 's'}
           <DeviceManagerContainer />
         </div>
       </div>
