@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import ArrowLeftIcon from '../icons/ArrowLeft';
 import ArrowRightIcon from '../icons/ArrowRight';
 import ReloadIcon from '../icons/Reload';
+import HomeIcon from '../icons/Home';
 import {Icon} from 'flwww';
 
 import styles from './styles.module.css';
@@ -63,6 +64,14 @@ class NavigationControls extends Component {
             >
               <Icon type="rotate" {...iconProps} />
               {/*<ReloadIcon {...iconProps} height={15} width={15} padding={5} />*/}
+            </div>
+          </Grid>
+          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+            <div
+              className={commonStyles.flexAlignVerticalMiddle}
+              onClick={this.props.goToHomepage}
+            >
+              <HomeIcon {...iconProps} padding={5} />
             </div>
           </Grid>
         </Grid>

@@ -1,6 +1,11 @@
 // @flow
 import React from 'react';
+import cx from 'classnames';
 import GoArrowIcon from '../icons/GoArrow';
+import HomePlusIcon from '../icons/HomePlus';
+import {iconsColor} from '../../constants/colors';
+
+import commonStyles from '../common.styles.css';
 import styles from './style.css';
 
 type Props = {
@@ -46,11 +51,24 @@ class AddressBar extends React.Component<Props> {
           onKeyDown={this._handleKeyDown}
           onChange={e => this.setState({userTypedAddress: e.target.value})}
         />
-        {/*
-          <button className={styles.goButton} onClick={this._onChange}>
-            <GoArrowIcon height={20} color="white" />
-          </button>
-        */}
+        <div
+          className={cx(styles.goButton, commonStyles.icons, {
+            [commonStyles.enabled]: this.props.address !== this.props.homepage,
+            [commonStyles.disabled]: this.props.address == this.props.homepage,
+          })}
+        >
+          <div
+            className={cx(commonStyles.flexAlignVerticalMiddle)}
+            onClick={this.props.setHomepage}
+          >
+            <HomePlusIcon
+              height={25}
+              width={25}
+              color={iconsColor}
+              padding={5}
+            />
+          </div>
+        </div>
       </div>
     );
   }

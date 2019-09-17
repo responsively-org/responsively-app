@@ -17,7 +17,7 @@ class Browser extends React.Component<Props> {
     return (
       <Fragment>
         <Header />
-        <div style={{display: 'flex', flexDirection: 'row'}}>
+        <div style={{display: 'flex', flexDirection: 'row', height: '100%'}}>
           <DrawerContainer />
           <DevicePreviewerContainer />
         </div>

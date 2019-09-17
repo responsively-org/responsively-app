@@ -11,6 +11,8 @@ const AddressBar = function(props) {
     <AddressInput
       address={props.browser.address}
       onChange={props.onAddressChange}
+      homepage={props.browser.homepage}
+      setHomepage={props.setCurrentAddressAsHomepage}
     />
   );
 };

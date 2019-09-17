@@ -13,6 +13,7 @@ import {
 } from '../constants/pubsubEvents';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
+export const NEW_HOMEPAGE = 'NEW_HOMEPAGE';
 export const NEW_ZOOM_LEVEL = 'NEW_ZOOM_LEVEL';
 export const NEW_SCROLL_POSITION = 'NEW_SCROLL_POSITION';
 export const NEW_NAVIGATOR_STATUS = 'NEW_NAVIGATOR_STATUS';
@@ -26,6 +27,13 @@ export function newAddress(address) {
   return {
     type: NEW_ADDRESS,
     address,
+  };
+}
+
+export function newHomepage(homepage) {
+  return {
+    type: NEW_HOMEPAGE,
+    homepage,
   };
 }
 
@@ -255,6 +263,34 @@ export function toggleFilter(filterField, value) {
       filters[filterField].splice(index, 1);
     }
     dispatch(newFilters(filters));
+  };
+}
+
+export function goToHomepage() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {homepage, address},
+    } = getState();
+
+    if (homepage === address) {
+      return;
+    }
+
+    dispatch(newAddress(homepage));
+  };
+}
+
+export function setCurrentAddressAsHomepage() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {homepage, address},
+    } = getState();
+
+    if (homepage === address) {
+      return;
+    }
+
+    dispatch(newHomepage(address));
   };
 }
 

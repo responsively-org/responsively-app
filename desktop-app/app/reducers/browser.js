@@ -9,6 +9,7 @@ import {
   NEW_ACTIVE_DEVICES,
   NEW_ACTIVE_DEVICE,
   NEW_FILTERS,
+  NEW_HOMEPAGE,
 } from '../actions/browser';
 import type {Action} from './types';
 import devices from '../constants/devices';
@@ -21,6 +22,7 @@ import {
 import {DEVICE_MANAGER} from '../constants/DrawerContents';
 import {ACTIVE_DEVICES} from '../constants/settingKeys';
 import {isIfStatement} from 'typescript';
+import {getHomepage, saveHomepage} from '../utils/navigatorUtils';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -52,6 +54,7 @@ type FilterType = {[key: FilterFieldType]: Array<string>};
 
 export type BrowserStateType = {
   devices: Array<Device>,
+  homepage: string,
   address: string,
   zoomLevel: number,
   scrollPosition: ScrollPositionType,
@@ -83,7 +86,8 @@ function _getActiveDevices() {
 export default function counter(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
-    address: 'https://www.google.com',
+    homepage: getHomepage(),
+    address: getHomepage(),
     zoomLevel: 0.5,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
@@ -97,6 +101,10 @@ export default function counter(
   switch (action.type) {
     case NEW_ADDRESS:
       return {...state, address: action.address};
+    case NEW_HOMEPAGE:
+      const {homepage} = action;
+      saveHomepage(homepage);
+      return {...state, homepage};
     case NEW_ZOOM_LEVEL:
       return {...state, zoomLevel: action.zoomLevel};
     case NEW_SCROLL_POSITION:

@@ -1,5 +1,7 @@
 .addressBarContainer {
   display: flex;
+  position: relative;
+  align-items: center;
 }
 
 .addressInput {
@@ -21,8 +23,7 @@
 }
 
 .goButton {
-  background: unset;
-  border: none;
-  cursor: pointer;
-  outline: none;
+  position: absolute;
+  right: 10px;
+  border-radius: 50%;
 }

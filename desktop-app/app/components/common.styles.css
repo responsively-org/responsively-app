@@ -61,3 +61,8 @@
 .flexContainerSpaceBetween {
   justify-content: space-between;
 }
+
+.flexAlignVerticalMiddle {
+  align-items: center;
+  display: flex;
+}
