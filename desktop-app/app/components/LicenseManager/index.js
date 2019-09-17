@@ -54,7 +54,7 @@ export default class LicenseManager extends React.Component {
 
   periodicPing = () => {
     this.sendMessage('validate', {
-      licenseKey: '123' + getLicensekey(),
+      licenseKey: getLicensekey(),
     });
   };
 

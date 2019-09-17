@@ -35,18 +35,29 @@ const theme = createMuiTheme({
   },
 });
 
+const getApp = history => {
+  if (process.env.NODE_ENV !== 'development') {
+    return (
+      <LicenseManager>
+        <ConnectedRouter history={history}>
+          <Routes />
+        </ConnectedRouter>
+      </LicenseManager>
+    );
+  }
+  return (
+    <ConnectedRouter history={history}>
+      <Routes />
+    </ConnectedRouter>
+  );
+};
+
 export default class Root extends Component<Props> {
   render() {
     const {store, history} = this.props;
     return (
       <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <LicenseManager>
-            <ConnectedRouter history={history}>
-              <Routes />
-            </ConnectedRouter>
-          </LicenseManager>
-        </ThemeProvider>
+        <ThemeProvider theme={theme}>{getApp(history)}</ThemeProvider>
       </Provider>
     );
   }
