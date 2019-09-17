@@ -18,4 +18,9 @@
   margin-right: 5px;
   justify-content: center;
   align-items: center;
+  background: #000000b0;
+}
+
+.optionIcon svg {
+  padding: 5px;
 }
