@@ -354,8 +354,12 @@ class WebView extends Component {
     );
     //Hiding scrollbars in the screenshot
     await this.webviewRef.current.insertCSS(`
-        .screenshotInProgress::-webkit-scrollbar {
+        .responsivelyApp__ScreenshotInProgress::-webkit-scrollbar {
           display: none;
+        }
+
+        .responsivelyApp__HiddenForScreenshot {
+          display: none !important;
         }
       `);
 
@@ -371,7 +375,7 @@ class WebView extends Component {
       scrollWidth,
       viewPortWidth,
     } = await this.webviewRef.current.executeJavaScript(`
-      document.body.classList.add('screenshotInProgress');
+      document.body.classList.add('responsivelyApp__ScreenshotInProgress');
       responsivelyApp.screenshotVar = {
         previousScrollPosition : {
           left: window.scrollX, 
@@ -404,6 +408,7 @@ class WebView extends Component {
         console.log(`scrolling to ${scrollX}, ${scrollY}`);
         await this.webviewRef.current.executeJavaScript(`
           window.scrollTo(${scrollX}, ${scrollY})
+          responsivelyApp.hideFixedPositionElementsForScreenshot();
         `);
         await this._delay(200);
         const options = {
@@ -428,7 +433,8 @@ class WebView extends Component {
 
     this.webviewRef.current.executeJavaScript(`
       window.scrollTo(${JSON.stringify(previousScrollPosition)});
-      document.body.classList.remove('screenshotInProgress');
+      document.body.classList.remove('responsivelyApp__ScreenshotInProgress');
+      responsivelyApp.unHideElementsHiddenForScreenshot();
     `);
 
     toast.update(toastId, {
@@ -500,9 +506,10 @@ class WebView extends Component {
     const directoryPath = createSeparateDir ? `${dateString}/` : '';
     return {
       dir: directoryPath,
-      file: `${this._getWebsiteName()} - ${
-        this.props.device.name
-      } - ${dateString}.png`,
+      file: `${this._getWebsiteName()} - ${this.props.device.name.replace(
+        '/',
+        '-'
+      )} - ${dateString}.png`,
     };
   }
 

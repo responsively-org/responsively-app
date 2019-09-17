@@ -28,6 +28,7 @@ window.addEventListener(
 );
 
 global.responsivelyApp = {
+  DomInspector: DomInspector,
   sendMessageToHost: (type, message) => {
     if (!message) {
       message = {};
@@ -63,7 +64,23 @@ global.responsivelyApp = {
       el.dispatchEvent(evObj);
     }
   },
-  DomInspector: DomInspector,
+  hideFixedPositionElementsForScreenshot: () => {
+    const elems = document.body.getElementsByTagName('*');
+    for (const elem of elems) {
+      const computedStyle = window.getComputedStyle(elem, null);
+      if (computedStyle.getPropertyValue('position') == 'fixed') {
+        elem.classList.add('responsivelyApp__HiddenForScreenshot');
+      }
+    }
+  },
+  unHideElementsHiddenForScreenshot: () => {
+    const elems = document.body.querySelectorAll(
+      '.responsivelyApp__HiddenForScreenshot'
+    );
+    for (const elem of elems) {
+      elem.classList.remove('responsivelyApp__HiddenForScreenshot');
+    }
+  },
 };
 
 ipcRenderer.on('scrollMessage', (event, args) => {
