@@ -593,7 +593,7 @@ class WebView extends Component {
             )}
             onClick={() => this._takeFullPageSnapshot()}
           >
-            <ScreenshotIcon height={15} color={iconsColor} />
+            <ScreenshotIcon height={18} color={iconsColor} />
           </div>
           <div
             className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
@@ -603,7 +603,7 @@ class WebView extends Component {
             })}
             onClick={this._flipOrientation}
           >
-            <DeviceRotateIcon height={15} color={iconsColor} />
+            <DeviceRotateIcon height={17} color={iconsColor} />
           </div>
           <div
             className={cx(
