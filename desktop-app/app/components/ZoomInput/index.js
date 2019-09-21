@@ -36,11 +36,13 @@ export default function BrowserZoom(props) {
         </Grid>
         <Grid item xs>
           <Slider
-            value={props.value}
+            value={Math.round(props.browser.zoomLevel * 100)}
             valueLabelDisplay="auto"
             min={10}
             max={100}
-            onChange={(_, value) => props.onChange && props.onChange(value)}
+            onChange={(_, value) =>
+              props.onZoomChange && props.onZoomChange(value / 100)
+            }
           />
         </Grid>
         <Grid item>
