@@ -86,14 +86,14 @@ export default function DeviceManager(props) {
       <Dialog fullScreen open={open} onClose={closeDialog}>
         <AppBar className={classes.appBar} color="secondary">
           <Toolbar>
-            <IconButton edge="start" onClick={closeDialog} aria-label="close">
+            {/*<IconButton edge="start" onClick={closeDialog} aria-label="close">
               <CloseIcon />
-            </IconButton>
+             </IconButton>*/}
             <Typography variant="h6" className={classes.title}>
               Manage Devices
             </Typography>
             <Button color="inherit" onClick={closeDialog}>
-              save
+              close
             </Button>
           </Toolbar>
         </AppBar>

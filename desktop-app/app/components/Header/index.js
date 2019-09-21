@@ -24,9 +24,6 @@ const Header = function() {
         <Grid item>
           <ScrollControlsContainer />
         </Grid>
-        <Grid item>
-          <ZoomContainer />
-        </Grid>
       </Grid>
       <HttpAuthDialog />
       <ToastContainer

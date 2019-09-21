@@ -1,5 +1,14 @@
 .zoomSlider {
-  width: 150px;
+}
+
+.zoomControls {
+  position: absolute;
+  right: 0;
+}
+
+.zoomValue {
+  width: 75px;
+  color: white !important;
 }
 
 .label {

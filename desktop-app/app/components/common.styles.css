@@ -66,3 +66,7 @@
   align-items: center;
   display: flex;
 }
+
+.hidden {
+  display: none;
+}

@@ -11,6 +11,7 @@ import InspectElementIcon from '../icons/InspectElement';
 import styles from './styles.module.css';
 import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
+import ZoomContainer from '../../containers/ZoomContainer';
 
 class ScrollControls extends Component {
   render() {
@@ -47,6 +48,7 @@ class ScrollControls extends Component {
               <InspectElementIcon {...iconProps} />
             </div>
           </Grid>
+          <ZoomContainer />
         </Grid>
       </div>
     );

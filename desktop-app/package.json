@@ -230,6 +230,7 @@
     "@fortawesome/fontawesome-free": "^5.5.0",
     "@material-ui/core": "^4.3.2",
     "@material-ui/icons": "^4.2.1",
+    "@material-ui/lab": "^4.0.0-alpha.26",
     "@sentry/electron": "^0.17.3",
     "bluebird": "^3.5.5",
     "classnames": "^2.2.6",
