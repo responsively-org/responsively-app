@@ -1,0 +1,3 @@
+npm run build
+aws s3 sync ./dist s3://dev.responsively.app --delete
+aws cloudfront create-invalidation --distribution-id E1H2GQ4VMDZLXT --paths /*
