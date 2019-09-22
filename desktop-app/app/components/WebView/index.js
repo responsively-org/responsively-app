@@ -96,6 +96,10 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener(
       'did-fail-load',
       ({errorCode, errorDescription}) => {
+        if (errorCode === -3) {
+          //Aborted error, can be ignored
+          return;
+        }
         this.setState({errorCode: errorCode, errorDesc: errorDescription});
       }
     );
