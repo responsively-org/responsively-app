@@ -3076,8 +3076,7 @@ input[type="button"].btn-block {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.5rem; }
+  justify-content: space-between; }
   .navbar > .container,
   .navbar > .container-fluid {
     display: flex;
@@ -3090,7 +3089,7 @@ input[type="button"].btn-block {
   padding-top: 0.3125rem;
   padding-bottom: 0.3125rem;
   margin-right: 1.5rem;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   line-height: inherit;
   white-space: nowrap; }
   .navbar-brand:hover, .navbar-brand:focus {
@@ -14041,6 +14040,10 @@ article table {
   opacity: 0; }
 
 .video-preview {
-  border-radius: 5px; }
+  border-radius: 5px;
+  width: 100%; }
+
+.navbar-links-container {
+  padding: 1rem 1.5rem;}
 
 /*# sourceMappingURL=theme-desktop-app.css.map */
