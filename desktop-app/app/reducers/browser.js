@@ -88,7 +88,7 @@ export default function counter(
     devices: _getActiveDevices(),
     homepage: getHomepage(),
     address: getHomepage(),
-    zoomLevel: 0.5,
+    zoomLevel: 0.6,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},

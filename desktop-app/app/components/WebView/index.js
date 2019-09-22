@@ -284,7 +284,6 @@ class WebView extends Component {
       });
 
       window.addEventListener('scroll', (e) => {
-        console.log('event', e);
         if (!responsivelyApp.mouseOn) {
           return;
         }
@@ -319,7 +318,6 @@ class WebView extends Component {
             return;
           }
           e.responsivelyAppProcessed = true;
-          console.log('clicked', e);
           window.responsivelyApp.sendMessageToHost(
             '${MESSAGE_TYPES.click}', 
             {

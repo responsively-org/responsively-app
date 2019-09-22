@@ -84,7 +84,6 @@ global.responsivelyApp = {
 };
 
 ipcRenderer.on('scrollMessage', (event, args) => {
-  console.log('Recieved scroll message from host', event, args);
   window.scrollTo({
     top: args.y,
     left: args.x,
@@ -92,10 +91,8 @@ ipcRenderer.on('scrollMessage', (event, args) => {
 });
 
 ipcRenderer.on('clickMessage', (event, args) => {
-  console.log('Recieved click message from host', event, args);
   const elem = document.querySelector(args.cssPath);
   if (!elem) {
-    console.log('Element to click is not found', args);
     return;
   }
   window.responsivelyApp.lastClickElement = elem;
@@ -107,7 +104,6 @@ ipcRenderer.on('clickMessage', (event, args) => {
 });
 
 ipcRenderer.on('scrollDownMessage', (event, args) => {
-  console.log('Recieved click message from host', event, args);
   window.scrollTo({
     top: window.scrollY + 250,
     left: window.scrollX + 250,
@@ -116,7 +112,6 @@ ipcRenderer.on('scrollDownMessage', (event, args) => {
 });
 
 ipcRenderer.on('scrollUpMessage', (event, args) => {
-  console.log('Recieved click message from host', event, args);
   window.scrollTo({
     top: window.scrollY - 250,
     left: window.scrollX - 250,
@@ -125,13 +120,13 @@ ipcRenderer.on('scrollUpMessage', (event, args) => {
 });
 
 ipcRenderer.on('enableInspectorMessage', (event, args) => {
-  console.log('Recieved enableInpector message from host', event, args);
+  responsivelyApp.domInspector = new responsivelyApp.DomInspector();
   window.responsivelyApp.domInspector.enable();
   window.responsivelyApp.domInspectorEnabled = true;
 });
 
 ipcRenderer.on('disableInspectorMessage', (event, args) => {
-  console.log('Recieved disableInspector message from host', event, args);
-  window.responsivelyApp.domInspector.disable();
+  window.responsivelyApp.domInspector.destroy();
+  window.responsivelyApp.domInspector = null;
   window.responsivelyApp.domInspectorEnabled = false;
 });
