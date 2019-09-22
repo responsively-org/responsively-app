@@ -14040,4 +14040,7 @@ article table {
 .docs-graphic:not(:hover) .btn {
   opacity: 0; }
 
+.video-preview {
+  border-radius: 5px; }
+
 /*# sourceMappingURL=theme-desktop-app.css.map */
