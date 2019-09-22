@@ -7,6 +7,7 @@
   "main": "gulpfile.js",
   "scripts": {
     "start": "./node_modules/.bin/gulp",
+    "build": "./node_modules/.bin/gulp build",
     "postinstall": "gulp deps"
   },
   "browserslist": "Safari > 10, Firefox > 40, Chrome > 40, ie >= 11",
