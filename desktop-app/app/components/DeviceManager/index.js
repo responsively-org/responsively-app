@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DeviceManager(props) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const classes = useStyles();
 
   const [devices, setDevices] = useState({
