@@ -104,6 +104,18 @@ a:hover {
   top: 0px !important;
 }
 
+/*--start
+Add device form styles*/
+.padded-input input {
+  padding: 20px 14px;
+}
+
+.input-adornment p {
+  color: #ffffff90;
+}
+
+/*Add device form styles 
+--End*/
 /*
 {
 	"$schema": "vscode://schemas/color-theme",

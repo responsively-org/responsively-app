@@ -15,17 +15,17 @@ export default ({width, height, color, padding, margin}) => (
       <g
         id="chevronsLeft"
         stroke="none"
-        stroke-width="1"
+        strokeWidth="1"
         fill="none"
-        fill-rule="evenodd"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        fillRule="evenodd"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <g
           id="Group"
           transform="translate(619.500000, 620.000000) rotate(90.000000) translate(-619.500000, -620.000000) translate(409.000000, 406.000000)"
           stroke="white"
-          stroke-width="50"
+          strokeWidth="50"
         >
           <polyline
             id="Path"
