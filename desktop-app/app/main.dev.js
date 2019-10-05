@@ -98,6 +98,7 @@ const createWindow = async () => {
     height,
     webPreferences: {
       nodeIntegration: true,
+      nodeIntegrationInWorker: true,
       webviewTag: true,
     },
     titleBarStyle: 'hidden',

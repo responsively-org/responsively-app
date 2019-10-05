@@ -9,6 +9,7 @@ import {promisify} from 'util';
 import Promise from 'bluebird';
 import path from 'path';
 import fs from 'fs-extra';
+import PromiseWorker from 'promise-worker';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 
@@ -19,6 +20,8 @@ export const captureFullPage = async (
   createSeparateDir,
   now
 ) => {
+  const worker = new Worker('./imageWorker.js');
+  const promiseWorker = new PromiseWorker(worker);
   const toastId = toast.info(
     <NotificationMessage
       spinner={true}
@@ -70,16 +73,13 @@ export const captureFullPage = async (
     scrollY < scrollHeight;
     pageY++, scrollY = viewPortHeight * pageY
   ) {
-    if (!images[pageY]) {
-      images[pageY] = [];
-    }
     scrollX = 0;
+    const columnImages = [];
     for (
       let pageX = 0;
       scrollX < scrollWidth;
       pageX++, scrollX = viewPortWidth * pageX
     ) {
-      console.log(`scrolling to ${scrollX}, ${scrollY}`);
       await webView.executeJavaScript(`
         window.scrollTo(${scrollX}, ${scrollY})
         responsivelyApp.hideFixedPositionElementsForScreenshot();
@@ -99,10 +99,19 @@ export const captureFullPage = async (
         options.height = scrollHeight - scrollY;
         options.y = viewPortHeight - options.height;
       }
-      console.log('Capture options', options);
       const image = await _takeSnapshot(webView, options);
-      images[pageY].push(image);
+      columnImages.push(image);
     }
+    const pngs = columnImages.map(img => img.toPNG());
+    images.push(
+      await promiseWorker.postMessage(
+        {
+          images: pngs,
+          direction: 'horizontal',
+        },
+        [...pngs]
+      )
+    );
   }
 
   webView.executeJavaScript(`
@@ -120,32 +129,17 @@ export const captureFullPage = async (
     ),
     type: toast.TYPE.INFO,
   });
-
-  images = await Promise.map(images, columnImages => {
-    return mergeImg(
-      columnImages.map(img => ({src: img.toPNG()})),
-      {direction: false} //horizontal stitching
-    );
-  });
-
-  const mergedImage = await (await mergeImg(
-    await Promise.map(images, async img => {
-      const getBufferAsync = promisify(img.getBuffer.bind(img));
-      return {
-        src: await getBufferAsync('image/png'),
-      };
-    }),
-    {
-      direction: true,
-    }
-  ))
-    .rgba(false)
-    .background(0xffffffff);
-  const getBufferAsync = promisify(mergedImage.getBuffer.bind(mergedImage));
-  await _writeScreenshotFile(
-    await getBufferAsync('image/png'),
-    _getScreenshotFileName(address, device, now, createSeparateDir)
+  const resultFilename = _getScreenshotFileName(
+    address,
+    device,
+    now,
+    createSeparateDir
   );
+  const mergedImage = await promiseWorker.postMessage({
+    images,
+    direction: 'vertical',
+    resultFilename,
+  });
   toast.update(toastId, {
     render: (
       <NotificationMessage
@@ -156,6 +150,8 @@ export const captureFullPage = async (
     type: toast.TYPE.INFO,
     autoClose: 2000,
   });
+  await _delay(250);
+  shell.showItemInFolder(path.join(resultFilename.dir, resultFilename.file));
 };
 
 const _delay = ms =>
@@ -183,30 +179,17 @@ function _getScreenshotFileName(
     .toUpperCase()}`;
   const directoryPath = createSeparateDir ? `${dateString}/` : '';
   return {
-    dir: directoryPath,
+    dir: path.join(
+      os.homedir(),
+      `Desktop/Responsively-Screenshots`,
+      directoryPath
+    ),
     file: `${_getWebsiteName(address)} - ${device.name.replace(
-      '/',
+      /\//g,
       '-'
     )} - ${dateString}.png`,
   };
 }
-
-const _writeScreenshotFile = async (content, {dir, file}) => {
-  try {
-    const folder = path.join(
-      os.homedir(),
-      `Desktop/Responsively-Screenshots`,
-      dir
-    );
-    await fs.ensureDir(folder);
-    const filePath = path.join(folder, file);
-    await fs.writeFile(filePath, content);
-    shell.showItemInFolder(filePath);
-  } catch (e) {
-    console.log('err', e);
-    alert('Failed to save the file !', e);
-  }
-};
 
 const _getWebsiteName = address => {
   let domain = new URL(address).hostname;
