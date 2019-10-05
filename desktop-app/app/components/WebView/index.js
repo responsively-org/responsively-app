@@ -1,19 +1,11 @@
 // @flow
 import React, {Component, createRef} from 'react';
-import {ipcRenderer, shell, remote} from 'electron';
-import {toast} from 'react-toastify';
-import NotificationMessage from '../NotificationMessage';
-import _mergeImg from 'merge-img';
-import {promisify} from 'util';
-import Promise from 'bluebird';
-import os from 'os';
-import path from 'path';
+import {ipcRenderer, remote} from 'electron';
 import pubsub from 'pubsub.js';
 import BugIcon from '../icons/Bug';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
 import cx from 'classnames';
-import fs from 'fs-extra';
 import {iconsColor} from '../../constants/colors';
 import {
   SCROLL_DOWN,
@@ -31,8 +23,8 @@ import {CAPABILITIES} from '../../constants/devices';
 import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
+import {captureFullPage} from './screenshotUtil';
 
-const mergeImg = Promise.promisifyAll(_mergeImg);
 const BrowserWindow = remote.BrowserWindow;
 
 const MESSAGE_TYPES = {
@@ -205,8 +197,16 @@ class WebView extends Component {
     this.webviewRef.current.send('scrollUpMessage');
   };
 
-  processScreenshotEvent = ({now}) => {
-    this._takeFullPageSnapshot(now != null, now);
+  processScreenshotEvent = async ({now}) => {
+    this.setState({screenshotInProgress: true});
+    await captureFullPage(
+      this.props.browser.address,
+      this.props.device,
+      this.webviewRef.current,
+      now != null,
+      now
+    );
+    this.setState({screenshotInProgress: false});
   };
 
   processFlipOrientationEvent = () => {
@@ -344,217 +344,12 @@ class WebView extends Component {
     //this.webviewRef.current.getWebContents().toggleDevTools();
   };
 
-  _takeFullPageSnapshot = async (createSeparateDir, now) => {
-    this.setState({screenshotInProgress: true});
-    const toastId = toast.info(
-      <NotificationMessage
-        spinner={true}
-        message={`Capturing ${this.props.device.name} screenshot...`}
-      />,
-      {autoClose: false}
-    );
-    //Hiding scrollbars in the screenshot
-    await this.webviewRef.current.insertCSS(`
-        .responsivelyApp__ScreenshotInProgress::-webkit-scrollbar {
-          display: none;
-        }
-
-        .responsivelyApp__HiddenForScreenshot {
-          display: none !important;
-        }
-      `);
-
-    //Get the windows's scroll details
-    let scrollX = 0;
-    let scrollY = 0;
-    let pageX = 0;
-    let pageY = 0;
-    const {
-      previousScrollPosition,
-      scrollHeight,
-      viewPortHeight,
-      scrollWidth,
-      viewPortWidth,
-    } = await this.webviewRef.current.executeJavaScript(`
-      document.body.classList.add('responsivelyApp__ScreenshotInProgress');
-      responsivelyApp.screenshotVar = {
-        previousScrollPosition : {
-          left: window.scrollX, 
-          top: window.scrollY,
-        },
-        scrollHeight: document.body.scrollHeight,
-        scrollWidth: document.body.scrollWidth,
-        viewPortHeight: document.documentElement.clientHeight,
-        viewPortWidth: document.documentElement.clientWidth,
-      };
-      responsivelyApp.screenshotVar;
-    `);
-
-    let images = [];
-
-    for (
-      let pageY = 0;
-      scrollY < scrollHeight;
-      pageY++, scrollY = viewPortHeight * pageY
-    ) {
-      if (!images[pageY]) {
-        images[pageY] = [];
-      }
-      scrollX = 0;
-      for (
-        let pageX = 0;
-        scrollX < scrollWidth;
-        pageX++, scrollX = viewPortWidth * pageX
-      ) {
-        console.log(`scrolling to ${scrollX}, ${scrollY}`);
-        await this.webviewRef.current.executeJavaScript(`
-          window.scrollTo(${scrollX}, ${scrollY})
-          responsivelyApp.hideFixedPositionElementsForScreenshot();
-        `);
-        await this._delay(200);
-        const options = {
-          x: 0,
-          y: 0,
-          width: viewPortWidth,
-          height: viewPortHeight,
-        };
-        if (scrollX + viewPortWidth > scrollWidth) {
-          options.width = scrollWidth - scrollX;
-          options.x = viewPortWidth - options.width;
-        }
-        if (scrollY + viewPortHeight > scrollHeight) {
-          options.height = scrollHeight - scrollY;
-          options.y = viewPortHeight - options.height;
-        }
-        console.log('Capture options', options);
-        const image = await this._takeSnapshot(options);
-        images[pageY].push(image);
-      }
-    }
-
-    this.webviewRef.current.executeJavaScript(`
-      window.scrollTo(${JSON.stringify(previousScrollPosition)});
-      document.body.classList.remove('responsivelyApp__ScreenshotInProgress');
-      responsivelyApp.unHideElementsHiddenForScreenshot();
-    `);
-
-    toast.update(toastId, {
-      render: (
-        <NotificationMessage
-          spinner={true}
-          message={`Processing ${this.props.device.name} screenshot...`}
-        />
-      ),
-      type: toast.TYPE.INFO,
-    });
-
-    images = await Promise.map(images, columnImages => {
-      return mergeImg(
-        columnImages.map(img => ({src: img.toPNG()})),
-        {direction: false} //horizontal stitching
-      );
-    });
-
-    const mergedImage = await (await mergeImg(
-      await Promise.map(images, async img => {
-        const getBufferAsync = promisify(img.getBuffer.bind(img));
-        return {
-          src: await getBufferAsync('image/png'),
-        };
-      }),
-      {
-        direction: true,
-      }
-    ))
-      .rgba(false)
-      .background(0xffffffff);
-    const getBufferAsync = promisify(mergedImage.getBuffer.bind(mergedImage));
-    await this._writeScreenshotFile(
-      await getBufferAsync('image/png'),
-      this._getScreenshotFileName(now, createSeparateDir)
-    );
-    toast.update(toastId, {
-      render: (
-        <NotificationMessage
-          tick={true}
-          message={`${this.props.device.name} screenshot taken!`}
-        />
-      ),
-      type: toast.TYPE.INFO,
-      autoClose: 2000,
-    });
-    this.setState({screenshotInProgress: false});
-  };
-
-  _delay = ms =>
-    new Promise((resolve, reject) => {
-      setTimeout(() => resolve(), ms);
-    });
-
-  _takeSnapshot = options => {
-    return this.webviewRef.current.getWebContents().capturePage(options);
-  };
-
-  _getScreenshotFileName(now = new Date(), createSeparateDir) {
-    const dateString = `${now
-      .toLocaleDateString()
-      .split('/')
-      .reverse()
-      .join('-')} at ${now
-      .toLocaleTimeString([], {hour12: true})
-      .replace(/\:/g, '.')
-      .toUpperCase()}`;
-    const directoryPath = createSeparateDir ? `${dateString}/` : '';
-    return {
-      dir: directoryPath,
-      file: `${this._getWebsiteName()} - ${this.props.device.name.replace(
-        '/',
-        '-'
-      )} - ${dateString}.png`,
-    };
-  }
-
-  _writeScreenshotFile = async (content, {dir, file}) => {
-    try {
-      const folder = path.join(
-        os.homedir(),
-        `Desktop/Responsively-Screenshots`,
-        dir
-      );
-      await fs.ensureDir(folder);
-      const filePath = path.join(folder, file);
-      await fs.writeFile(filePath, content);
-      shell.showItemInFolder(filePath);
-    } catch (e) {
-      console.log('err', e);
-      alert('Failed to save the file !', e);
-    }
-  };
-
-  _takeVisibleSectionSnapshot = async () => {
-    const image = this._takeSnapshot();
-    await this._writeScreenshotFile(
-      image.toPNG(),
-      this._getScreenshotFileName()
-    );
-  };
-
   _flipOrientation = () => {
     this.setState({isTilted: !this.state.isTilted});
   };
 
   _unPlug = () => {
     this.setState({isUnplugged: !this.state.isUnplugged});
-  };
-
-  _getWebsiteName = () => {
-    let domain = new URL(this.props.browser.address).hostname;
-    domain = domain.replace('www.', '');
-    const dotIndex = domain.indexOf('.');
-    if (dotIndex > -1) {
-      domain = domain.substr(0, domain.indexOf('.'));
-    }
-    return domain.charAt(0).toUpperCase() + domain.slice(1);
   };
 
   get isMobile() {
@@ -592,7 +387,7 @@ class WebView extends Component {
               commonStyles.icons,
               commonStyles.enabled
             )}
-            onClick={() => this._takeFullPageSnapshot()}
+            onClick={() => this.processScreenshotEvent({})}
           >
             <ScreenshotIcon height={18} color={iconsColor} />
           </div>
