@@ -24,6 +24,7 @@ import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
 import {captureFullPage} from './screenshotUtil';
+import {Tooltip} from '@material-ui/core';
 
 const BrowserWindow = remote.BrowserWindow;
 
@@ -371,49 +372,57 @@ class WebView extends Component {
         style={{height: deviceStyles.height * browser.zoomLevel + 40}} //Hack, ref below TODO
       >
         <div className={cx(styles.webViewToolbar)}>
-          <div
-            className={cx(
-              styles.webViewToolbarIcons,
-              commonStyles.icons,
-              commonStyles.enabled
-            )}
-            onClick={this._toggleDevTools}
-          >
-            <BugIcon width={20} color={iconsColor} />
-          </div>
-          <div
-            className={cx(
-              styles.webViewToolbarIcons,
-              commonStyles.icons,
-              commonStyles.enabled
-            )}
-            onClick={() => this.processScreenshotEvent({})}
-          >
-            <ScreenshotIcon height={18} color={iconsColor} />
-          </div>
-          <div
-            className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
-              [commonStyles.enabled]: this.isMobile,
-              [commonStyles.disabled]: !this.isMobile,
-              [commonStyles.selected]: this.state.isTilted,
-            })}
-            onClick={this._flipOrientation}
-          >
-            <DeviceRotateIcon height={17} color={iconsColor} />
-          </div>
-          <div
-            className={cx(
-              styles.webViewToolbarIcons,
-              commonStyles.icons,
-              commonStyles.enabled,
-              {
-                [commonStyles.selected]: this.state.isUnplugged,
-              }
-            )}
-            onClick={this._unPlug}
-          >
-            <UnplugIcon height={30} color={iconsColor} />
-          </div>
+          <Tooltip title="Open DevTools">
+            <div
+              className={cx(
+                styles.webViewToolbarIcons,
+                commonStyles.icons,
+                commonStyles.enabled
+              )}
+              onClick={this._toggleDevTools}
+            >
+              <BugIcon width={20} color={iconsColor} />
+            </div>
+          </Tooltip>
+          <Tooltip title="Take Screenshot">
+            <div
+              className={cx(
+                styles.webViewToolbarIcons,
+                commonStyles.icons,
+                commonStyles.enabled
+              )}
+              onClick={() => this.processScreenshotEvent({})}
+            >
+              <ScreenshotIcon height={18} color={iconsColor} />
+            </div>
+          </Tooltip>
+          <Tooltip title="Tilt Device">
+            <div
+              className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
+                [commonStyles.enabled]: this.isMobile,
+                [commonStyles.disabled]: !this.isMobile,
+                [commonStyles.selected]: this.state.isTilted,
+              })}
+              onClick={this._flipOrientation}
+            >
+              <DeviceRotateIcon height={17} color={iconsColor} />
+            </div>
+          </Tooltip>
+          <Tooltip title="Disable event mirroring">
+            <div
+              className={cx(
+                styles.webViewToolbarIcons,
+                commonStyles.icons,
+                commonStyles.enabled,
+                {
+                  [commonStyles.selected]: this.state.isUnplugged,
+                }
+              )}
+              onClick={this._unPlug}
+            >
+              <UnplugIcon height={30} color={iconsColor} />
+            </div>
+          </Tooltip>
         </div>
         <div
           className={cx(styles.deviceContainer)}

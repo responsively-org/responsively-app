@@ -7,6 +7,7 @@ import {iconsColor} from '../../constants/colors';
 
 import commonStyles from '../common.styles.css';
 import styles from './style.css';
+import {Tooltip} from '@material-ui/core';
 
 type Props = {
   address: string,
@@ -57,17 +58,19 @@ class AddressBar extends React.Component<Props> {
             [commonStyles.disabled]: this.props.address == this.props.homepage,
           })}
         >
-          <div
-            className={cx(commonStyles.flexAlignVerticalMiddle)}
-            onClick={this.props.setHomepage}
-          >
-            <HomePlusIcon
-              height={25}
-              width={25}
-              color={iconsColor}
-              padding={5}
-            />
-          </div>
+          <Tooltip title="Set a Homepage">
+            <div
+              className={cx(commonStyles.flexAlignVerticalMiddle)}
+              onClick={this.props.setHomepage}
+            >
+              <HomePlusIcon
+                height={22}
+                width={22}
+                color={iconsColor}
+                padding={5}
+              />
+            </div>
+          </Tooltip>
         </div>
       </div>
     );

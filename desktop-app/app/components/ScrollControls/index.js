@@ -12,6 +12,7 @@ import styles from './styles.module.css';
 import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
 import ZoomContainer from '../../containers/ZoomContainer';
+import Tooltip from '@material-ui/core/Tooltip';
 
 class ScrollControls extends Component {
   render() {
@@ -24,29 +25,39 @@ class ScrollControls extends Component {
       <div className={styles.scrollControls}>
         <Grid container spacing={1} alignItems="center">
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <div onClick={this.props.triggerScrollDown}>
-              <ScrollDownIcon {...iconProps} />
-            </div>
+            <Tooltip title="Scroll Down">
+              <div onClick={this.props.triggerScrollDown}>
+                <ScrollDownIcon {...iconProps} />
+              </div>
+            </Tooltip>
           </Grid>
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <div onClick={this.props.triggerScrollUp}>
-              <ScrollUpIcon {...iconProps} height={30} width={30} />
-            </div>
+            <Tooltip title="Scroll Up">
+              <div onClick={this.props.triggerScrollUp}>
+                <ScrollUpIcon {...iconProps} height={30} width={30} />
+              </div>
+            </Tooltip>
           </Grid>
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <div onClick={this.props.screenshotAllDevices}>
-              <ScreenshotIcon {...iconProps} />
-            </div>
+            <Tooltip title="Take Screenshot">
+              <div onClick={this.props.screenshotAllDevices}>
+                <ScreenshotIcon {...iconProps} />
+              </div>
+            </Tooltip>
           </Grid>
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <div onClick={this.props.flipOrientationAllDevices}>
-              <DeviceRotateIcon {...iconProps} />
-            </div>
+            <Tooltip title="Tilt Devices">
+              <div onClick={this.props.flipOrientationAllDevices}>
+                <DeviceRotateIcon {...iconProps} />
+              </div>
+            </Tooltip>
           </Grid>
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <div onClick={this.props.enableInpector}>
-              <InspectElementIcon {...iconProps} />
-            </div>
+            <Tooltip title="Inspect Element">
+              <div onClick={this.props.enableInpector}>
+                <InspectElementIcon {...iconProps} />
+              </div>
+            </Tooltip>
           </Grid>
           <ZoomContainer />
         </Grid>

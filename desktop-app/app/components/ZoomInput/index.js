@@ -15,6 +15,7 @@ import styles from './styles.module.css';
 import commonStyles from '../common.styles.css';
 import './otherStyles.css';
 import {iconsColor} from '../../constants/colors';
+import {Tooltip} from '@material-ui/core';
 
 const marks = [
   {
@@ -77,10 +78,11 @@ export default function BrowserZoom(props) {
         'MuiGrid-root'
       )}
     >
-      <div onClick={() => setShowExpanded(!showExpanded)}>
-        <ZoomIcon width={25} color={iconsColor} />
-      </div>
-
+      <Tooltip title="Zoom In/Out">
+        <div onClick={() => setShowExpanded(!showExpanded)}>
+          <ZoomIcon width={25} color={iconsColor} />
+        </div>
+      </Tooltip>
       {/*<Grid container spacing={1}>
         <Grid item>
           <ZoomOutIcon />
