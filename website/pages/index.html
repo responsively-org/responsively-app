@@ -181,7 +181,7 @@
           </div>
           <div class="col-lg-5 col-md-6" data-aos="fade-right">
             <h3 class="h2">Extensive Built-in Device Profiles</h3>
-            <p class="lead">Has 33 built-in device profiles convering all major devices. You can even add new custom device profiles as you like.</p>
+            <p class="lead">Has 30+ built-in device profiles convering all major devices. You can even add new custom device profiles as you like.</p>
             <a href="#" class="lead hover-arrow">Start Discovering</a>
           </div>
         </div>
@@ -630,7 +630,15 @@
     return updatePrice;
   })();
 </script>
-
+<script>
+  function initFreshChat() {
+    window.fcWidget.init({
+      token: "d025854c-9eaf-42f4-8ab4-d346ae8f8f17",
+      host: "https://wchat.freshchat.com"
+    });
+  }
+  function initialize(i,t){var e;i.getElementById(t)?initFreshChat():((e=i.createElement("script")).id=t,e.async=!0,e.src="https://wchat.freshchat.com/js/widget.js",e.onload=initFreshChat,i.head.appendChild(e))}function initiateCall(){initialize(document,"freshchat-js-sdk")}window.addEventListener?window.addEventListener("load",initiateCall,!1):window.attachEvent("load",initiateCall,!1);
+</script>
   </body>
 
 </html>
