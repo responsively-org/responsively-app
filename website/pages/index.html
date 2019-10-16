@@ -379,11 +379,16 @@
               </div>
               <div class="d-flex justify-content-center my-3">
                 <span class="h3 pt-1 mr-1 js-dollar-sign">$</span>
-                <span class="display-3 js-price-per-month">120</span>
+                <span class="display-3 js-price-per-month">4.99</span>
                 <span class="h3 pt-1 mr-1 js-dollar-sign text-muted per-device-text">&nbsp;/device/month</span>
               </div>
-              <div class="text-small text-muted js-pricing-charge-description"><span>Total charge per month: $</span><span class="total-price-per-month"></span></div>
-              <button class="btn btn-lg btn-primary mt-3 js-pricing-submit-button" type="submit" id="buyButton">Buy Responsively</button>
+              <div class="js-pricing-charge-description-container">
+                <div class="text-small text-muted js-pricing-charge-description">
+                  <span>Total charge per month: $</span>
+                  <span class="total-price-per-month">4.99</span>
+                </div>
+              </div>
+              <button class="btn btn-lg btn-primary mt-3 js-pricing-submit-button" type="submit" id="buyButton">Buy subscription</button>
             </div>
           </form>
           </div>
@@ -617,7 +622,7 @@
       window.addEventListener("load", function () {    document.querySelector('body').classList.add('loaded');  });
     </script>
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script1 src="https://checkout.razorpay.com/v1/checkout.js"></script1>
 <script type="text/javascript">
   var paymentDevices = 1;
   var paymentPricePerDevice = 4.99;
@@ -626,11 +631,15 @@
     var hideSignup = document.querySelectorAll('.js-pricing-charge-description');
     var dollarSign = document.querySelectorAll('.js-dollar-sign');
     var totalPricePerMonth = document.querySelectorAll('.total-price-per-month');
+    var deviceCount = document.querySelectorAll('.js-users-per-month');
+    var deviceText = document.querySelectorAll('.js-users-word');
+    var payButton = document.querySelectorAll('.js-pricing-submit-button');
     var prices = ['Free','99','120','169','209','239','279','299','329','369','Contact us'];
     var updatePrice = function(data){
       // Hide or show dollar sign based on value "FREE" or "Contact us"
-      const quantity = data;//.from;
-      let price = 4.99;
+      var quantity = data;//.from;
+      var maxDevices = 50;
+      var price = 4.99;
       if (quantity > 1 && quantity < 10) {
         price = 3.99;
       }
@@ -643,12 +652,25 @@
       paymentDevices = quantity;
       paymentPricePerDevice = price;
 
+
       theme.mrUtil.forEach(dollarSign, function(index, element) {
-        element.classList[quantity > 50 ? 'add' : 'remove']('d-none');
+        element.classList[quantity > maxDevices ? 'add' : 'remove']('d-none');
       });
       
       theme.mrUtil.forEach(hideSignup, function(index, element) {
-        element.classList[quantity > 50 ? 'add' : 'remove']('d-none');
+        element.classList[quantity > maxDevices ? 'add' : 'remove']('d-none');
+      });
+
+      theme.mrUtil.forEach(deviceCount, function(index, element) {
+        element.textContent = quantity <= maxDevices ? quantity : `${maxDevices}+`;
+      });
+
+      theme.mrUtil.forEach(deviceText, function(index, element) {
+        element.textContent = quantity == 1 ? 'Device' : 'Devices';
+      });
+
+      theme.mrUtil.forEach(payButton, function(index, element) {
+        element.textContent = quantity <= maxDevices ? 'Buy Subscription' : 'Get in touch';
       });
   
       theme.mrUtil.forEach(priceElements, function(index, element) {
@@ -707,7 +729,7 @@
 </script>
 
   <button id="rzp-button1">Pay</button>
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script1 src="https://checkout.razorpay.com/v1/checkout.js"></script1>
 <script>
 var options = {
   "key": "rzp_test_3HiVJQ1tQfSSoC",

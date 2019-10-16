@@ -14084,7 +14084,20 @@ article table {
 
 
 .seats-slider::-webkit-slider-thumb {
-  background-image: url("/assets/img/icons/custom/RangeSliderIcon.svg") !important ;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2rem;
+  height: 2rem;
+  background-image: url("/assets/img/icons/custom/RangeSliderIcon.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  border-radius: 100%;
+  -webkit-box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.2);
+  cursor: move;
+  cursor: grab;
+  cursor: -webkit-grab;
 }
 
 .seats-slider-wrapper input {
@@ -14106,15 +14119,21 @@ article table {
 }
 
 .seats-slider-wrapper i:nth-child(2) {
-  left: 18%;
+  left: 3%;
 }
 
 .seats-slider-wrapper i:nth-child(3) {
-  left: 37%;
+  left: 18.5%;
 }
 
 .seats-slider-wrapper i:nth-child(4) {
   right: 1px;
   left: auto;
 }
+
+.js-pricing-charge-description-container {
+  min-height: 1.25rem;
+}
+
 /*# sourceMappingURL=theme-desktop-app.css.map */
+
