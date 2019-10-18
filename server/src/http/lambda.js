@@ -72,7 +72,7 @@ export async function createSubscription(event, context, callback) {
     headers: {
       "Access-Control-Allow-Origin" : '*',
       "Access-Control-Allow-Credentials" : true
-  }
+    },
     body: JSON.stringify(responseBody)
   }
   callback(null, response)
