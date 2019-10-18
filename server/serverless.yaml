@@ -27,6 +27,16 @@ functions:
       - http:
           path: validate-license
           method: get
+  createSubscription:
+    handler: src/http/lambda.createSubscription
+    timeout: 15
+    events:
+      - http:
+          path: create-subscription
+          method: post
+          cors:
+            origins:
+              - "*"
   websocket-connection-manager:
     handler: src/websocket/lambda.connectionHandler
     timeout: 15

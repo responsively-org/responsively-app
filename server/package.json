@@ -13,6 +13,7 @@
     "@sendgrid/mail": "^6.4.0",
     "aws-sdk": "^2.528.0",
     "mongoose": "^5.6.13",
+    "razorpay": "^2.0.5",
     "serverless": "^1.51.0",
     "serverless-http": "^2.3.0"
   },

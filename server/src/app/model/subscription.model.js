@@ -4,6 +4,7 @@ let Schema=mongoose.Schema
 const subscriptionSchema=new Schema({
     user_id: {type: String},
     plan_id: {type: String},
+    users_count: {type: Number},
     start_date:Date,
     status: {type: String},
     c_ts: Date,
