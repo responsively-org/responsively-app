@@ -2,9 +2,9 @@ const mongoose = require('mongoose')
 let Schema=mongoose.Schema
 
 const planSchema=new Schema({
+    _id: {type: String},
     name: {type: String},
     user_limit: {type: Number},
-    duration:{type: String},
     c_ts: {type: Date},
     u_ts: {type: Date},
     price: {type: String}

@@ -11,7 +11,7 @@ export async function connectionHandler(event, context, callback) {
   try {
     console.log(event);
     if (event.requestContext.eventType === 'CONNECT') {
-      const {licenseKey} = event.queryStringParameters;
+      const { licenseKey } = event.queryStringParameters;
       await activeConnectionService.addNewConnection(licenseKey, connectionId);
       responseBody.status = true;
       responseBody.statusCode = 200;
@@ -66,7 +66,7 @@ export async function pingHandler(event, context, callback) {
 }
 
 export async function validateLicense(event, context, callback) {
-  let responseBody = {action: 'validate_response'};
+  let responseBody = { action: 'validate_response' };
   let statusCode = 0;
   context.callbackWaitsForEmptyEventLoop = false;
   const connectionId = event.requestContext.connectionId;
@@ -77,17 +77,35 @@ export async function validateLicense(event, context, callback) {
       throw new InvalidLicenseError('licenseKey is empty');
     }
     const licenseKey = body['data']['licenseKey'];
-    const data = await subscriptionService.constructLicenseValidationResponse(
-      licenseKey
-    );
+    let connectionStatus = await activeConnectionService.checkIfValidConnection(licenseKey, connectionId)
+    let data = {
+      status: false,
+      statusCode: 403,
+      message: 'not found in active users'
+    }
+    if (connectionStatus) {
+      data = {
+        status: true,
+        statusCode: 200,
+        message: 'valid'
+      }
+    }
     responseBody.data = data;
   } catch (err) {
-    console.log(err);
-    responseBody.data = {
-      status: true, //Considering the license valid in-case of internal server error to logout valid users;
-      statusCode: 500,
-      message: 'internal server error',
-    };
+    console.log(err)
+    if (err instanceof InvalidLicenseError) {
+      responseBody.data = {
+        status: false,
+        statusCode: 403,
+        message: 'invalid license error',
+      };
+    } else {
+      responseBody.data = {
+        status: true, //Considering the license valid in-case of internal server error to logout valid users;
+        statusCode: 500,
+        message: 'internal server error',
+      };
+    }
   }
   await activeConnectionService.publish(event, connectionId, responseBody);
   const response = {

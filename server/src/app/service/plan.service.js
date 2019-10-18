@@ -15,6 +15,22 @@ async function getPlanByName(planName){
     return plan
 }
 
+async function getPlanByNumberOfUsers(quantity){
+    console.log('fetching plan for userCount:'+quantity)
+    let planList=await Plan.find({user_limit:{"$gte":quantity}}).sort({user_limit:1}).limit(1).exec()
+
+    console.log('plan fetched:'+planList)
+    if(planList.length==0){
+        planList=await Plan.find().sort({user_limit:1}).limit(1).exec()
+        console.log('plan fetched:'+planList)
+    }
+
+    if(planList.length==0){
+        return {}
+    }
+    return planList[0]
+}
+
 async function checkIfPlanStillValidForDate(startDate, planId){
 
     let plan=await getPlan(planId)
@@ -41,11 +57,12 @@ async function getCurrentUserLimitForPlan(startDate,planId){
         return plan.user_limit
     }
     return 0
-
 }
+
 module.exports={
     getPlan,
     getPlanByName,
     checkIfPlanStillValidForDate,
-    getCurrentUserLimitForPlan
+    getCurrentUserLimitForPlan,
+    getPlanByNumberOfUsers
 }

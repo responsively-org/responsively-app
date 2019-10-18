@@ -51,6 +51,15 @@ async function closeConnection(connectionId){
     console.log('disconnecting:'+connectionId+' done')
 }
 
+async function checkIfValidConnection(licenseKey,connectionId){
+
+    let connection=await ActiveConnection.findOne({_id: licenseKey, 'connections.connection_id':connectionId}).exec()
+    if(connection){
+        return true
+    }
+    return false
+}
+
 async function publish(event,connectionId,data){
     console.log('publishing data to client connection:'+connectionId+',data:'+JSON.stringify(data))
     const apigwManagementApi = new AWS.ApiGatewayManagementApi({
@@ -66,7 +75,8 @@ async function publish(event,connectionId,data){
 module.exports={
     addNewConnection,
     closeConnection,
-    publish
+    publish,
+    checkIfValidConnection
 }
 // addNewConnection("asd","aasd").then(res=>{
 //     console.log('done')

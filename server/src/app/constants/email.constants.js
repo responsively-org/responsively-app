@@ -1,0 +1,3 @@
+export const TRIAL_ACTIVATION_EMAIL_TEMPLATE=`
+
+`
