@@ -74,7 +74,7 @@
         </div>
         <div class="row justify-content-center mt-6" data-aos="fade-up" data-delay="100">
           <div class="col-lg-10">
-            <img src="assets/img/screenshot.png" alt="Image" class="rounded shadow-lg">
+            <img src="assets/img/screenshot.png" alt="Image" class="rounded screenshot-img">
           </div>
         </div>
       </div>
@@ -176,13 +176,12 @@
     <section class="pt-0">
       <div class="container">
         <div class="row align-items-center justify-content-around flex-row-reverse o-hidden">
-          <div class="col-md-6 col-lg-5 mb-4 mb-md-0" data-aos="fade-left">
-            <img src="assets/img/desktop-app-2.jpg" alt="Image" class="rounded shadow">
+          <div class="col-md-6 col-lg-8 mb-4 mb-md-0" data-aos="fade-left">
+            <video class="video-preview" autoplay loop name="media"><source src="assets/video/extensible-devices.mp4" type="video/mp4"></video>
           </div>
-          <div class="col-lg-5 col-md-6" data-aos="fade-right">
+          <div class="col-lg-4 col-md-6" data-aos="fade-right">
             <h3 class="h2">Extensive Built-in Device Profiles</h3>
             <p class="lead">Has 30+ built-in device profiles convering all major devices. You can even add new custom device profiles as you like.</p>
-            <a href="#" class="lead hover-arrow">Start Discovering</a>
           </div>
         </div>
       </div>
@@ -196,7 +195,6 @@
           <div class="col-lg-4 col-md-6" data-aos="fade-left">
             <h3 class="h2">One-Click Screenshot</h3>
             <p class="lead">Get instant feedback on the pages that you develop with the powerful screenshots tool. Take full page screenshot of all devices or a specific device with just a single click!</p>
-            <a href="#" class="lead hover-arrow">Start Discovering</a>
           </div>
         </div>
       </div>
@@ -204,13 +202,12 @@
     <section class="pt-0">
       <div class="container">
         <div class="row align-items-center justify-content-around flex-row-reverse o-hidden">
-          <div class="col-md-6 col-lg-5 mb-4 mb-md-0" data-aos="fade-left">
-            <img src="assets/img/desktop-app-2.jpg" alt="Image" class="rounded shadow">
+          <div class="col-md-6 col-lg-8 mb-4 mb-md-0" data-aos="fade-right">
+            <video class="video-preview" autoplay loop name="media"><source src="assets/video/hot-reloading.mp4" type="video/mp4"></video>
           </div>
-          <div class="col-lg-5 col-md-6" data-aos="fade-right">
+          <div class="col-lg-4 col-md-6" data-aos="fade-right">
             <h3 class="h2">Hot Reloading Supported</h3>
             <p class="lead">Does you development server support Hot-Reloading? then we do too! Hot-Reload all devices in real-time for every save.</p>
-            <a href="#" class="lead hover-arrow">Start Discovering</a>
           </div>
         </div>
       </div>
@@ -622,7 +619,7 @@
       window.addEventListener("load", function () {    document.querySelector('body').classList.add('loaded');  });
     </script>
 
-<script1 src="https://checkout.razorpay.com/v1/checkout.js"></script1>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script type="text/javascript">
   var paymentDevices = 1;
   var paymentPricePerDevice = 4.99;
@@ -699,21 +696,49 @@
     console.log('postPaymentHandler response:', response);
   }
 
-  function triggerPayment() {
+  function getSubscriptionId(quantity) {
+    return postData('https://n7mfai4l76.execute-api.us-east-1.amazonaws.com/dev/create-subscription', {quantity: quantity})
+      .then(resp => resp.subscriptionId);
+  }
+
+  function postData(url = '', data = {}) {
+  // Default options are marked with *
+  return fetch(url, {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    headers: {
+      'Content-Type': 'application/json'
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: 'follow', // manual, *follow, error
+    referrer: 'no-referrer', // no-referrer, *client
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+  }).then(response => response.json());
+}
+
+  function triggerPayment(e) {
+    e.preventDefault();
     console.log('paymentDevices, paymentPricePerDevice', paymentDevices, paymentPricePerDevice);
     const planName = findPlanFromQuantity(paymentDevices);
-    //get subscription id;
-    let razorpay  = new Razorpay({
-      "key": "rzp_test_3HiVJQ1tQfSSoC",
-      "subscription_id": "sub_DTyCryQEnUyDr6",
-      "name": "Responsively App",
-      "description": `plan: ${planName}`,
-      "image": "/assets/img/responsively-logo.png",
-      "handler": postPaymentHandler,
+    getSubscriptionId(paymentDevices).then(subscriptionId => {
+      let razorpay  = new Razorpay({
+        "key": "rzp_test_DVeigAo0o0my9U",
+        "subscription_id": subscriptionId,
+        "name": "Responsively App",
+        "description": `plan: ${planName}`,
+        "image": "/assets/img/responsively-logo.png",
+        "handler": postPaymentHandler,
+        "modal": {
+          "ondismiss": function() {
+              console.log('Model closed');
+          }
+        },  
+        prefill: {
+          name: "Gaurav Kumar",
+        },
+      });
+      razorpay.open();
     });
-
-
-
     return false;
   }
   document.getElementById('buyButton').onclick = triggerPayment;
@@ -726,37 +751,6 @@
     });
   }
   function initialize(i,t){var e;i.getElementById(t)?initFreshChat():((e=i.createElement("script")).id=t,e.async=!0,e.src="https://wchat.freshchat.com/js/widget.js",e.onload=initFreshChat,i.head.appendChild(e))}function initiateCall(){initialize(document,"freshchat-js-sdk")}window.addEventListener?window.addEventListener("load",initiateCall,!1):window.attachEvent("load",initiateCall,!1);
-</script>
-
-  <button id="rzp-button1">Pay</button>
-  <script1 src="https://checkout.razorpay.com/v1/checkout.js"></script1>
-<script>
-var options = {
-  "key": "rzp_test_3HiVJQ1tQfSSoC",
-  "subscription_id": "sub_DTyCryQEnUyDr6",
-  "name": "Responsively App",
-  "description": "Monthly Test Plan",
-  "image": "/assets/img/responsively-logo.png",
-  "handler": function (response){
-      alert(response.razorpay_payment_id);
-  },
-  "prefill": {
-      "name": "Gaurav Kumar",
-      "email": "gaurav.kumar@example.com"
-  },
-  "notes": {
-      "note_key": "Tea. Earl Grey. Hot"
-  },
-  "theme": {
-      "color": "#F37254"
-  }
-};
-var rzp1 = new Razorpay(options);
-
-document.getElementById('rzp-button1').onclick = function(e){
-    rzp1.open();
-    e.preventDefault();
-}
 </script>
   </body>
 

@@ -14135,5 +14135,9 @@ article table {
   min-height: 1.25rem;
 }
 
+.screenshot-img {
+  box-shadow: 0px 0px 5px 2px rgb(84, 84, 84);
+}
+
 /*# sourceMappingURL=theme-desktop-app.css.map */
 
