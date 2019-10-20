@@ -14139,5 +14139,9 @@ article table {
   box-shadow: 0px 0px 5px 2px rgb(84, 84, 84);
 }
 
+.light-link {
+  color: var(--primary) !important;
+}
+
 /*# sourceMappingURL=theme-desktop-app.css.map */
 
