@@ -62,6 +62,8 @@
     "gulp-clean-css": "~4.2.0",
     "gulp-eslint": "~6.0.0",
     "gulp-file-include": "^2.1.0",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-minify-inline": "^1.1.0",
     "gulp-newer": "~1.4.0",
     "gulp-rename": "~1.4.0",
     "gulp-sass": "~4.0.2",
