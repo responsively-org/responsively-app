@@ -99,8 +99,7 @@ export default function DeviceManager(props) {
         </AppBar>
         <div className={styles.container}>
           <p className={styles.toolTip}>
-            <span>✨</span>Drag and drop the devices across as needed to
-            re-order them.
+            <span>✨</span>Drag and drop the devices across to re-order them.
           </p>
           <DragDropContext onDragEnd={onDragEnd}>
             <Grid container spacing={3} className={styles.content}>

@@ -28,12 +28,12 @@ const Header = function() {
       <HttpAuthDialog />
       <ToastContainer
         position="top-right"
-        autoClose={4000}
+        autoClose={3000}
         hideProgressBar
         newestOnTop={false}
         closeOnClick
+        pauseOnFocusLoss={false}
         rtl={false}
-        pauseOnVisibilityChange
         draggable
         pauseOnHover
         toastClassName={styles.darkToast}

@@ -93,7 +93,11 @@ class AddressBar extends React.Component<Props> {
 
   _normalize = address => {
     if (!address.startsWith('http')) {
-      address = 'https://' + address;
+      let protocol = 'https://';
+      if (address.startsWith('localhost') || address.startsWith('127.0.0.1')) {
+        protocol = 'http://';
+      }
+      address = `${protocol}${address}`;
     }
     return address;
   };
