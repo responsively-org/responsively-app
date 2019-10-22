@@ -9,10 +9,8 @@ export async function processEvent(eventData){
     try{
         if(data.entity==='event'){
 
-            if(data.event==='subscription.activated'){
+            if(data.event==='subscription.activated' || data.event==='subscription.charged'){
                 subscriptionService.processSubscriptionActivatedEvent(data)
-            }else if(data.event==='subscription.halted'){
-                subscriptionService.processSubscriptionHaltEvent(data)
             }
         }
     }catch(err){

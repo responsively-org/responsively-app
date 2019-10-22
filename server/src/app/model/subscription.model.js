@@ -5,6 +5,7 @@ const subscriptionSchema=new Schema({
     user_id: {type: String},
     plan_id: {type: String},
     quantity: {type: Number},
+    end_date: {type: Date},
     status: {type: String},
     razorpay_id: {type: String},
     c_ts: Date,
