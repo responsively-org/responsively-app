@@ -1,0 +1,19 @@
+{
+  "linux-x64-prod": {
+    "update": "https://responsively-updates.s3.amazonaws.com/stable/ResponsivelyApp-0.0.10.AppImage",
+    "install": "https://responsively-updates.s3.amazonaws.com/stable/ResponsivelyApp-0.0.10.AppImage",
+    "version": "0.0.10"
+  },
+  "darwin-x64-prod": {
+    "readme": "Release",
+    "update": "https://github.com/megahertz/electron-simple-updater/releases/download/darwin-x64-prod-v0.0.2/release.json",
+    "install": "https://github.com/megahertz/electron-simple-updater/releases/download/darwin-x64-prod-v0.0.2/Simple.Updater.Example-0.0.2.dmg",
+    "version": "0.0.9"
+  },
+  "win32-x64-prod": {
+    "readme": "release",
+    "update": "https://responsively-updates.s3.amazonaws.com/stable/ResponsivelyApp+Setup+0.0.9.exe",
+    "install": "https://responsively-updates.s3.amazonaws.com/stable/ResponsivelyApp+Setup+0.0.9.exe",
+    "version": "0.0.11"
+  }
+}

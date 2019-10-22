@@ -1,6 +1,5 @@
 const ActiveConnection=require('../model/active-connections.model')
 const subscriptionService=require('../service/subscription.service')
-const planService=require('../service/plan.service')
 const InvalidSubscriptionError=require('../exception/invalid-subscription.exception')
 const InvalidLicenseError=require('../exception/invalid-license-error.exception')
 const AWS=require('aws-sdk')
@@ -13,8 +12,7 @@ async function addNewConnection(licenseKey,connectionId){
         if(!subscription){
             throw new Error('no active subscriptions found')
         }
-        const allowedUsers=await planService.getCurrentUserLimitForPlan(subscription.start_date,subscription.plan_id)
-        if(allowedUsers && allowedUsers>0){        
+        if(subscription && subscription.quantity>0){
             const connectionObj={
                 connection_id: connectionId,
                 start_time: new Date()
@@ -25,7 +23,7 @@ async function addNewConnection(licenseKey,connectionId){
                 $setOnInsert:{c_ts: new Date()}
             }
             let existingConnection=await ActiveConnection.findOneAndUpdate({_id: licenseKey},updateObj,{upsert:true})
-            await removeOldConnection(allowedUsers,existingConnection)
+            await removeOldConnection(subscription.quantity,existingConnection)
 
         }else{
             throw new InvalidSubscriptionError('0 user limit found for plan')
