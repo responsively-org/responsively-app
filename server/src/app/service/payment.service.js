@@ -2,12 +2,7 @@ const planService=require('../service/plan.service')
 const constants=require('../constants/constants')
 const paymentConstants=require('../constants/payment.constant')
 const https = require('https')
-const Razorpay=require('razorpay')
-
-var razorPayInstance = new Razorpay({
-    key_id: process.env.RAZOR_PAY_API_KEY,
-    key_secret: process.env.RAZOR_API_SECRET_KEY
-  })
+const razorpay=require('../../razorpay/razorpay')
 
 async function createSubscription(quantity){
 
@@ -21,7 +16,7 @@ async function createSubscription(quantity){
             total_count: paymentConstants.SUBSCRIPTION_DURATION_MONTHS
         }
         console.log(payload)
-        let subscriptionResponse=await razorPayInstance.subscriptions.create(payload)
+        let subscriptionResponse=await razorpay.instance.subscriptions.create(payload)
         return {subscriptionId: subscriptionResponse.id}
         
     }catch(err){

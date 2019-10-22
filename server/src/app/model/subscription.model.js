@@ -4,9 +4,9 @@ let Schema=mongoose.Schema
 const subscriptionSchema=new Schema({
     user_id: {type: String},
     plan_id: {type: String},
-    users_count: {type: Number},
-    start_date:Date,
+    quantity: {type: Number},
     status: {type: String},
+    razorpay_id: {type: String},
     c_ts: Date,
     u_ts: Date
 })

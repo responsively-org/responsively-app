@@ -6,9 +6,10 @@ const crypto=require('crypto')
 const emailService=require('../service/email.service')
 const InvalidEmailError=require('../exception/invalid-email-error.exception')
 const UserExistsError=require('../exception/user-exists-error.exception')
-const mongoose=require('mongoose')
+const axios=require('axios')
+const Razorpay=require('razorpay')
 
-async function createUser(email){
+async function createUser(email, razorPayCustomerId){
 
     if(!emailService.validateEmailExistence(email)){
         throw new InvalidEmailError('Invalid Email:'+email)
@@ -17,6 +18,10 @@ async function createUser(email){
         email: email,
         license_key:getLicenseKey()
     })
+
+    if(razorPayCustomerId){
+        newUser.razorpay_id=razorPayCustomerId
+    }
 
     await insertUser(newUser)
     return newUser
@@ -43,6 +48,11 @@ async function getUserByEmail(email){
     return await User.findOne({email: email})
 }
 
+async function getUserByRazorpayId(id){
+
+    return await User.findOne({razorpay_id: id})
+}
+
 async function checkIfUserExists(email){
 
     let user=await getUserByEmail(email)
@@ -53,6 +63,13 @@ async function checkIfUserExists(email){
     return false
 }
 
+async function getUserFromRazorPay(customerId){
+
+    let user=await Razorpay.customers.fetch(customerId)
+    console.log(user)
+    return user
+}
+
 function getLicenseKey(email){
     const key=crypto.randomBytes(20).toString('hex');
     return key;
@@ -61,5 +78,7 @@ function getLicenseKey(email){
 module.exports={
     createUser,
     getUserByEmail,
-    checkIfUserExists
+    checkIfUserExists,
+    getUserByRazorpayId,
+    getUserFromRazorPay
 }

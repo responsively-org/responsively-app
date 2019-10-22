@@ -10,7 +10,7 @@ provider:
   websocketsApiName: responsively-websocket
   apiName: responsively-server
   websocketsApiRouteSelectionExpression: $request.body.action # custom routes are selected by the value of the action property in the body
-  environment: ${file(environment.yml)}
+  environment: ${file(environment-${self:provider.stage}.yml)}
 
 functions:
   activateTrial:
@@ -34,9 +34,13 @@ functions:
       - http:
           path: create-subscription
           method: post
-          cors:
-            origins:
-              - "*"
+  webhookHandler:
+    handler: src/http/lambda.webhookHandler
+    timeout: 15
+    events:
+      - http:
+        path: razor-pay-webhooks
+        method: post
   websocket-connection-manager:
     handler: src/websocket/lambda.connectionHandler
     timeout: 15

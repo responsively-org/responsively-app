@@ -4,7 +4,8 @@ let Schema=mongoose.Schema
 const userSchema=new Schema({
     name: {type: String},
     email: {type: String},
-    license_key:{type: String},
+    license_key: {type: String},
+    razorpay_id: {type: String},
     c_ts: Date,
     u_ts: Date
 })

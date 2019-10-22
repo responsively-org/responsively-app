@@ -8,9 +8,9 @@ async function getPlan(planId){
     return plan
 }
 
-async function getPlanByName(planName){
-    console.log('fetching from db - planName:'+planName)
-    const plan=await Plan.findOne({name: planName}).exec()
+async function getPlanById(planId){
+    console.log('fetching from db - planId:'+planId)
+    const plan=await Plan.findOne({_id: planId}).exec()
     console.log('plan:'+plan)
     return plan
 }
@@ -61,7 +61,7 @@ async function getCurrentUserLimitForPlan(startDate,planId){
 
 module.exports={
     getPlan,
-    getPlanByName,
+    getPlanById,
     checkIfPlanStillValidForDate,
     getCurrentUserLimitForPlan,
     getPlanByNumberOfUsers
