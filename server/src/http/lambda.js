@@ -97,12 +97,11 @@ export async function validateLicense(event, context, callback) {
   }
 
   export async function webhookHandler(event, context, callback) {
-    let responseBody={}
     let statusCode=0
     context.callbackWaitsForEmptyEventLoop = false;
     try{
-      console.log('webhook event received:'+event)
-      responseBody=await razorpayWebhooks.processEvent(event)
+      console.log(event)
+      await razorpayWebhooks.processEvent(event)
     }catch(err){
       console.log(err)
     }

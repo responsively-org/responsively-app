@@ -39,8 +39,8 @@ functions:
     timeout: 15
     events:
       - http:
-        path: razor-pay-webhooks
-        method: post
+          path: razor-pay-webhooks
+          method: post
   websocket-connection-manager:
     handler: src/websocket/lambda.connectionHandler
     timeout: 15

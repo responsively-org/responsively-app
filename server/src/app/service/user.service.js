@@ -7,7 +7,7 @@ const emailService=require('../service/email.service')
 const InvalidEmailError=require('../exception/invalid-email-error.exception')
 const UserExistsError=require('../exception/user-exists-error.exception')
 const axios=require('axios')
-const Razorpay=require('razorpay')
+const Razorpay=require('../../razorpay/razorpay')
 
 async function createUser(email, razorPayCustomerId){
 
@@ -48,8 +48,12 @@ async function getUserByEmail(email){
     return await User.findOne({email: email})
 }
 
-async function getUserByRazorpayId(id){
+async function setRazorpayId(email,razorpayId){
+    await User.update({email: email},{$set:{razorpay_id: razorpayId}})
+}
 
+async function getUserByRazorpayId(id){
+    console.log('fetching user by razorpay id:'+id)
     return await User.findOne({razorpay_id: id})
 }
 
@@ -65,7 +69,8 @@ async function checkIfUserExists(email){
 
 async function getUserFromRazorPay(customerId){
 
-    let user=await Razorpay.customers.fetch(customerId)
+    console.log('fetching user from razorpay:'+customerId)
+    let user=await Razorpay.instance.customers.fetch(customerId)
     console.log(user)
     return user
 }
@@ -80,5 +85,6 @@ module.exports={
     getUserByEmail,
     checkIfUserExists,
     getUserByRazorpayId,
-    getUserFromRazorPay
+    getUserFromRazorPay,
+    setRazorpayId
 }

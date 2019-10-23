@@ -6,6 +6,7 @@ const constants=require('../constants/constants')
 const emailService=require('../service/email.service')
 const InvalidLicenseError=require('../exception/invalid-license-error.exception')
 const UserExistsError=require('../exception/user-exists-error.exception')
+const mongoose=require('mongoose')
 
 async function createUserAndActivateTrial(email){
 
@@ -16,6 +17,7 @@ async function createUserAndActivateTrial(email){
         let user=await userService.createUser(email, null)
     
         let subscription=new Subscription({
+            _id: new mongoose.Types.ObjectId(),
             user_id: user._id,
             plan_id: constants.TRIAL_PLAN_ID,
             end_date: getTrialEndDate(new Date()),
@@ -44,7 +46,7 @@ async function insertSubscription(subscription){
     subscription.c_ts=new Date()
     subscription.u_ts=new Date()
     try{
-        await subscription.save()
+        await Subscription.create(subscription)
     }catch(err){
         console.log('error saving subscription'+subscription);
         throw err
@@ -54,12 +56,13 @@ async function insertSubscription(subscription){
 async function upsertSubscriptionByRazorpayId(subscription){
 
     const setOnInsertObj={
+        _id: new mongoose.Types.ObjectId(),
         c_ts:new Date()
     }
 
     subscription.u_ts=new Date()
     try{
-        await subscription.update({razorpay_id: subscription.razorpay_id},{$set:{subscription},$setOnInsert:{setOnInsertObj}},{upsert:true})
+        await Subscription.update({razorpay_id: subscription.razorpay_id},{$set:subscription,$setOnInsert:setOnInsertObj},{upsert:true})
     }catch(err){
         console.log('error saving subscription'+subscription);
         throw err
@@ -69,7 +72,7 @@ async function upsertSubscriptionByRazorpayId(subscription){
 async function disableTrial(userId){
     try{
         console.log('disabiling trial for user:'+userId)
-        await Subscription.update({user_id: userId, plan_id: constants.TRIAL_PLAN_ID, status: SUBSCRIPTION_STATUS.ACTIVE.id},{$set:{status:SUBSCRIPTION_STATUS.EXPIRED.id,u_ts: new Date()}})
+        await Subscription.update({user_id: userId, plan_id: constants.TRIAL_PLAN_ID, status: constants.SUBSCRIPTION_STATUS.ACTIVE.id},{$set:{status: constants.SUBSCRIPTION_STATUS.EXPIRED.id,u_ts: new Date()}})
     }catch(err){
         console.log(err)
         throw err
@@ -142,17 +145,23 @@ async function processSubscriptionActivatedEvent(data){
     try{
         let subscriptionData= data.payload.subscription.entity
 
-        let user=userService.getUserByRazorpayId(subscriptionData.customer_id)
+        let user=await userService.getUserByRazorpayId(subscriptionData.customer_id)
 
         if(!user){
-            let userData=userService.getUserFromRazorPay(subscriptionData.customer_id)
-            user=userService.createUser(userData.email,userData.id)
+            let razorpayUserData=await userService.getUserFromRazorPay(subscriptionData.customer_id)
+            let userData=await userService.getUserByEmail(razorpayUserData.email)
+            if(userData){
+                user=userData
+                await userService.setRazorpayId(userData.email,razorpayUserData.id)
+            }else{
+                user=await userService.createUser(razorpayUserData.email,razorpayUserData.id)
+            }
         }
-        disableTrial(user._id)
+        await disableTrial(user._id)
         let subscription=new Subscription({
             user_id: user._id,
             plan_id: subscriptionData.plan_id,
-            end_date: subscriptionData.current_end,
+            end_date: subscriptionData.current_end*1000+86400000,
             quantity: subscriptionData.quantity,
             status: constants.SUBSCRIPTION_STATUS.ACTIVE.id,
             razorpay_id: subscriptionData.id
@@ -169,6 +178,5 @@ module.exports={
     validateLicenseKey,
     constructLicenseValidationResponse,
     getSubscriptionByLicenseKey,
-    processSubscriptionActivatedEvent,
-    processSubscriptionHaltEvent
+    processSubscriptionActivatedEvent
 }
