@@ -1,4 +1,4 @@
-const TRIAL_PLAN='TRIAL'
+const TRIAL_PLAN_ID='TRIAL'
 
 const SUBSCRIPTION_STATUS=Object.freeze({
     ACTIVE:{
@@ -19,6 +19,6 @@ const SUBSCRIPTION_DURATION=Object.freeze({
 })
 
 module.exports={
-    TRIAL_PLAN: TRIAL_PLAN,
+    TRIAL_PLAN_ID: TRIAL_PLAN_ID,
     SUBSCRIPTION_STATUS: SUBSCRIPTION_STATUS
 }

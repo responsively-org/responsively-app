@@ -19,6 +19,9 @@ import MenuBuilder from './menu';
 import {ACTIVE_DEVICES} from './constants/settingKeys';
 import * as Sentry from '@sentry/electron';
 
+const path = require('path')
+const updater = require('electron-simple-updater');
+
 if (process.env.NODE_ENV !== 'development') {
   Sentry.init({
     dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
@@ -27,9 +30,13 @@ if (process.env.NODE_ENV !== 'development') {
 
 export default class AppUpdater {
   constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
+    if(process.platform=== 'darwin'){
+      log.transports.file.level = 'info';
+      autoUpdater.logger = log;
+      autoUpdater.checkForUpdatesAndNotify();
+    }else{
+      updater.init('https://responsively-updates.s3.amazonaws.com/updates.json');
+    }
   }
 }
 
@@ -92,6 +99,7 @@ const createWindow = async () => {
 
   const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
 
+  let iconPath=path.resolve(__dirname, '../resources/icons/64x64.png')
   mainWindow = new BrowserWindow({
     show: false,
     width,
@@ -102,6 +110,7 @@ const createWindow = async () => {
       webviewTag: true,
     },
     titleBarStyle: 'hidden',
+    icon: iconPath
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);

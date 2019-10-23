@@ -5,6 +5,7 @@ const UserExistsError=require('../app/exception/user-exists-error.exception')
 const PlanNotFoundError=require('../app/exception/plan-not-found-error.exception')
 const InvalidLicenseError=require('../app/exception/invalid-license-error.exception')
 const InvalidEmailError=require('../app/exception/invalid-email-error.exception')
+const razorpayWebhooks=require('../app/webhooks/main.webhooks')
 
 export async function activateTrial(event, context, callback) {
   let responseBody={}
@@ -79,18 +80,35 @@ export async function createSubscription(event, context, callback) {
 }
 
 export async function validateLicense(event, context, callback) {
-  let responseBody={}
-  let statusCode=0
-  context.callbackWaitsForEmptyEventLoop = false;
-  try{
-    const {licenseKey}=event.queryStringParameters
-    responseBody=await subscriptionService.constructLicenseValidationResponse(licenseKey)
-  }catch(err){
-    console.log(err)
+    let responseBody={}
+    let statusCode=0
+    context.callbackWaitsForEmptyEventLoop = false;
+    try{
+      const {licenseKey}=event.queryStringParameters
+      responseBody=await subscriptionService.constructLicenseValidationResponse(licenseKey)
+    }catch(err){
+      console.log(err)
+    }
+    let response= {
+      statusCode: 200,
+      body: JSON.stringify(responseBody)
+    }
+    callback(null, response)
   }
-  let response= {
-    statusCode: 200,
-    body: JSON.stringify(responseBody)
-  }
-  callback(null, response)
+
+  export async function webhookHandler(event, context, callback) {
+    let responseBody={}
+    let statusCode=0
+    context.callbackWaitsForEmptyEventLoop = false;
+    try{
+      console.log('webhook event received:'+event)
+      responseBody=await razorpayWebhooks.processEvent(event)
+    }catch(err){
+      console.log(err)
+    }
+    let response= {
+      statusCode: 200,
+      body: 'event received'
+    }
+    callback(null, response)
   }
