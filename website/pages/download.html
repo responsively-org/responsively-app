@@ -2,6 +2,18 @@
 <html lang="en">
 
 <head>
+  <script>
+      var environment = 'development';
+    </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-150751006-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+  
+      gtag('config', 'UA-150751006-2');
+    </script>
   <meta charset="utf-8">
   <title>Responsively App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,6 +40,10 @@
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="/assets/img/favicons/ms-icon-144x144.png">
   <meta name="theme-color" content="#ffffff">
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("4003482642");
+  </script>
 </head>
 
 <body class="loaded">
@@ -114,7 +130,7 @@
             <div class="icon-round bg-primary mx-auto mb-4">
               <img class="icon bg-primary" src="assets/img/logos/brand/apple.svg" alt="icon" data-inject-svg />
             </div>
-            <a id="macOs" href="https://responsively-updates.s3.amazonaws.com/stable/ResponsivelyApp-0.0.10-mac.zip" target="_blank" class="m-1 btn btn-white border">
+            <a id="macOs" href="https://responsively-updates.s3.amazonaws.com/stable/ResponsivelyApp-0.0.10-mac.zip" class="m-1 btn btn-white border">
               <h4 class="m-1">Download for Mac</h4>
             </a>
           </div>
@@ -122,7 +138,7 @@
             <div class="icon-round bg-primary mx-auto mb-4">
               <img class="icon bg-primary" src="assets/img/icons/custom/windows-icon.svg" alt="icon" data-inject-svg />
             </div>
-            <a id="windowsOs" href="https://responsively-updates.s3.amazonaws.com/stable/ResponsivelyApp+Setup+0.0.10.exe" target="_blank" class="m-1 btn btn-white border">
+            <a id="windowsOs" href="https://responsively-updates.s3.amazonaws.com/stable/ResponsivelyApp+Setup+0.0.10.exe" class="m-1 btn btn-white border">
               <h4 class="m-1">Download for Windows</h4>
             </a>
           </div>
@@ -130,7 +146,7 @@
             <div class="icon-round bg-primary mx-auto mb-4">
               <img class="icon bg-primary" src="assets/img/icons/custom/linux-icon.svg" alt="icon" data-inject-svg />
             </div>
-            <a id="linuxOs" href="https://responsively-updates.s3.amazonaws.com/stable/ResponsivelyApp-0.0.10.AppImage" target="_blank" class="m-1 btn btn-white border">
+            <a id="linuxOs" href="https://responsively-updates.s3.amazonaws.com/stable/ResponsivelyApp-0.0.10.AppImage" class="m-1 btn btn-white border">
               <h4 class="m-1">Download for Linux</h4>
             </a>
           </div>
@@ -178,6 +194,11 @@
         </div>
       </div>
     </footer>
+    <script src="https://browser.sentry-cdn.com/5.7.1/bundle.min.js" integrity="sha384-KMv6bBTABABhv0NI+rVWly6PIRvdippFEgjpKyxUcpEmDWZTkDOiueL5xW+cztZZ" crossorigin="anonymous">
+    </script>
+    <script>
+      Sentry.init({ dsn: 'https://915a075be4c74f569758e0e3cceb89c2@sentry.io/1793834', environment });
+    </script>
   <!-- Required vendor scripts (Do not remove) -->
   <script type="text/javascript" src="assets/js/jquery.min.js"></script>
   <script type="text/javascript" src="assets/js/popper.min.js"></script>
@@ -256,7 +277,6 @@
 
     window.addEventListener('load', () => {
       setTimeout(() => {
-        console.log('Downloading file');
         var os = getOS();
         var downloadLink = document.getElementById(os);
         if (downloadLink) {
@@ -269,6 +289,7 @@
     function triggerFC() {
       window.fcWidget.open();
       window.fcWidget.show();
+      window.heap.track('freshChatOpened');
       return false;
     }
     

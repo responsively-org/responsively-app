@@ -2,6 +2,18 @@
 <html lang="en">
 
 <head>
+  <script>
+    var environment = 'development';
+  </script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-150751006-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-150751006-2');
+  </script>
   <meta charset="utf-8">
   <title>Responsively App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,6 +40,10 @@
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="/assets/img/favicons/ms-icon-144x144.png">
   <meta name="theme-color" content="#ffffff">
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("4003482642");
+  </script>
 </head>
 
 <body  class="loaded">
@@ -69,7 +85,7 @@
                     aria-expanded="false" aria-haspopup="true">How it works</a>
                 </li>
                 <li class="nav-item dropdown">
-                  <a href="/#Pricing" class="nav-link dropdown-toggle" data-toggle="dropdown-grid" aria-expanded="false"
+                  <a id="pricingHeaderLink" href="/#Pricing" class="nav-link dropdown-toggle" data-toggle="dropdown-grid" aria-expanded="false"
                     aria-haspopup="true">Pricing</a>
                 </li>
                 <li class="nav-item dropdown">
@@ -78,7 +94,7 @@
                 </li>
               </ul>
             </div>
-            <a href="/download.html" class="btn btn-primary ml-lg-3">Try for Free</a>
+            <a id="tryForFreeHeaderLink" href="/download.html" class="btn btn-primary ml-lg-3">Try for Free</a>
           </div>
         </div>
       </div>
@@ -92,8 +108,8 @@
           <h1 class="display-3">Develop responsive web-apps 5x faster!</h1>
           <p class="lead">A must-have DevTool for all Front-End developers that will make your job easier.</p>
           <div class="d-flex flex-column flex-sm-row justify-content-center mt-4">
-            <a href="/download.html" class="btn btn-lg btn-primary mx-2 mb-2 mb-sm-0">Try for Free</a>
-            <a href="#Pricing" class="btn btn-lg btn-outline-primary mx-2">
+            <a id="tryForFreeMainCTA" href="/download.html" class="btn btn-lg btn-primary mx-2 mb-2 mb-sm-0">Try for Free</a>
+            <a id="buyMainCTA" href="#Pricing" class="btn btn-lg btn-outline-primary mx-2">
               <span>Buy Now</span>
             </a>
           </div>
@@ -280,8 +296,7 @@
         </div>
       </div>
     </div>
-    <div class="controls-light arrows-inside highlight-selected mb-6"
-      data-flickity='{ "autoPlay": true, "imagesLoaded": true, "wrapAround": true }'>
+    <div class="controls-light arrows-inside highlight-selected mb-6">
       <div class="carousel-cell col-xl-3 col-lg-4 col-md-5 col-9 pb-1">
         <div class="card card-body">
           <div class="mb-3 mb-md-4">
@@ -496,6 +511,11 @@
       </div>
     </div>
   </footer>
+  <script src="https://browser.sentry-cdn.com/5.7.1/bundle.min.js" integrity="sha384-KMv6bBTABABhv0NI+rVWly6PIRvdippFEgjpKyxUcpEmDWZTkDOiueL5xW+cztZZ" crossorigin="anonymous">
+  </script>
+  <script>
+    Sentry.init({ dsn: 'https://915a075be4c74f569758e0e3cceb89c2@sentry.io/1793834', environment });
+  </script>
   <!-- Required vendor scripts (Do not remove) -->
   <script type="text/javascript" src="assets/js/jquery.min.js"></script>
   <script type="text/javascript" src="assets/js/popper.min.js"></script>
@@ -546,12 +566,15 @@
     window.addEventListener("load", function () { document.querySelector('body').classList.add('loaded'); });
   </script>
   <script>
+    var flkty = new Flickity( '.controls-light', { "autoPlay": true, "imagesLoaded": true, "wrapAround": true });
+  </script>
+  <script>
     function triggerFC() {
       window.fcWidget.open();
       window.fcWidget.show();
       return false;
     }
-    
+  
     theme.mrUtil.forEach(document.getElementsByClassName('contactUsLink'), function (index, element) {
       element.onclick = triggerFC;
     });
@@ -575,6 +598,8 @@
       var updatePrice = function (data) {
         // Hide or show dollar sign based on value "FREE" or "Contact us"
         var quantity = data;//.from;
+        window.heap.track('buySliderInteracted', {"quantity": quantity});
+        window.heap.addUserProperties({'buySliderInteracted': 'true'});
         var price = 4.99;
         if (quantity > 1 && quantity < 10) {
           price = 3.99;
@@ -688,8 +713,10 @@
       e.preventDefault();
       setLoading(true);
       console.log('paymentDevices, paymentPricePerDevice', paymentDevices, paymentPricePerDevice);
+      window.heap.track('subscribeButtonClicked', {"quantity": paymentDevices});
       const planName = findPlanFromQuantity(paymentDevices);
       getSubscriptionId(paymentDevices).then(subscriptionId => {
+        window.heap.track('subscriptionCreated', {'subscriptionId': subscriptionId});
         let razorpay = new Razorpay({
           "key": "rzp_test_DVeigAo0o0my9U",
           "subscription_id": subscriptionId,
@@ -699,11 +726,13 @@
           "handler": postPaymentHandler,
           "modal": {
             "ondismiss": function () {
+              window.heap.track('paymentWindowClosed');
               setLoading(false);
             }
           },
         });
         razorpay.open();
+        window.heap.track('paymentWindowOpened');
       });
       return false;
     }
