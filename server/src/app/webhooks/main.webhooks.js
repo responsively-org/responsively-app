@@ -1,18 +1,24 @@
 const subscriptionService=require('../service/subscription.service')
 const crypto=require('crypto')
 const razorpay=require('../../razorpay/razorpay')
+const mongoose=require('mongoose')
 
 export async function processEvent(eventData){
 
-    data=JSON.parse(eventData.body)
-    razorpay.instance.validateWebhookSignature(data,eventData.X-Razorpay-Signature,process.env.RAZOR_PAY_WEBHOOK_SECRET)
+    //const signatureValid=razorpay.instance.validateWebhookSignature(data,eventData.X-Razorpay-Signature,process.env.RAZOR_PAY_WEBHOOK_SECRET)
+    //console.log(signatureValid)
+    const data=JSON.parse(eventData.body)
     try{
-        if(data.entity==='event'){
+        let eventData={
+            event_data: data,
+            c_ts: new Date()
+        }
 
-            if(data.event==='subscription.activated'){
-                subscriptionService.processSubscriptionActivatedEvent(data)
-            }else if(data.event==='subscription.halted'){
-                subscriptionService.processSubscriptionHaltEvent(data)
+        console.log('inserting webhook event in db')
+        await mongoose.connection.collection('webhook_events').insert(eventData)
+        if(data.entity==='event'){
+            if(data.event==='subscription.activated' || data.event==='subscription.charged'){
+                await subscriptionService.processSubscriptionActivatedEvent(data)
             }
         }
     }catch(err){

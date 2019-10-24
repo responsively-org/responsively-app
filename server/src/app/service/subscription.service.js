@@ -6,22 +6,25 @@ const constants=require('../constants/constants')
 const emailService=require('../service/email.service')
 const InvalidLicenseError=require('../exception/invalid-license-error.exception')
 const UserExistsError=require('../exception/user-exists-error.exception')
+const mongoose=require('mongoose')
 
 async function createUserAndActivateTrial(email){
 
     try{
-        let trialPlan=await planService.getPlanById(constants.TRIAL_PLAN_ID)
-
         if(await userService.checkIfUserExists(email)){
             throw new UserExistsError('User exists')
         }
         let user=await userService.createUser(email, null)
     
         let subscription=new Subscription({
+            _id: new mongoose.Types.ObjectId(),
             user_id: user._id,
-            plan_id: trialPlan._id,
-            start_date: new Date(),
+            plan_id: constants.TRIAL_PLAN_ID,
+            end_date: getTrialEndDate(new Date()),
             status: constants.SUBSCRIPTION_STATUS.ACTIVE.id,
+            quantity: 1,
+            c_ts: new Date(),
+            u_ts: new Date()
         })
         await insertSubscription(subscription)
         await emailService.sendLicenseKeyMail(email,user.license_key)
@@ -31,12 +34,19 @@ async function createUserAndActivateTrial(email){
     }
 }
 
+function getTrialEndDate(startDate){
+    let endDate=new Date(startDate)
+    endDate.setMonth(endDate.getMonth()+1)
+    console.log('endDate for trial:'+endDate)
+    return endDate
+}
+
 async function insertSubscription(subscription){
 
     subscription.c_ts=new Date()
     subscription.u_ts=new Date()
     try{
-        await subscription.save()
+        await Subscription.create(subscription)
     }catch(err){
         console.log('error saving subscription'+subscription);
         throw err
@@ -46,12 +56,13 @@ async function insertSubscription(subscription){
 async function upsertSubscriptionByRazorpayId(subscription){
 
     const setOnInsertObj={
+        _id: new mongoose.Types.ObjectId(),
         c_ts:new Date()
     }
 
     subscription.u_ts=new Date()
     try{
-        await subscription.update({razorpay_id: subscription.razorpay_id},{$set:{subscription},$setOnInsert:{setOnInsertObj}},{upsert:true})
+        await Subscription.update({razorpay_id: subscription.razorpay_id},{$set:subscription,$setOnInsert:setOnInsertObj},{upsert:true})
     }catch(err){
         console.log('error saving subscription'+subscription);
         throw err
@@ -61,7 +72,7 @@ async function upsertSubscriptionByRazorpayId(subscription){
 async function disableTrial(userId){
     try{
         console.log('disabiling trial for user:'+userId)
-        await Subscription.update({user_id: userId, plan_id: constants.TRIAL_PLAN_ID},{$set:{status:SUBSCRIPTION_STATUS.EXPIRED.id}})
+        await Subscription.update({user_id: userId, plan_id: constants.TRIAL_PLAN_ID, status: constants.SUBSCRIPTION_STATUS.ACTIVE.id},{$set:{status: constants.SUBSCRIPTION_STATUS.EXPIRED.id,u_ts: new Date()}})
     }catch(err){
         console.log(err)
         throw err
@@ -77,7 +88,7 @@ async function getSubscriptionByLicenseKey(licenseKey){
         if(!user){
             throw new InvalidLicenseError('Invalid License:'+licenseKey)
         }
-        let subscription= await Subscription.findOne({user_id: user._id,status: constants.SUBSCRIPTION_STATUS.ACTIVE.id}).exec()
+        let subscription= await Subscription.findOne({user_id: user._id,status: constants.SUBSCRIPTION_STATUS.ACTIVE.id,end_date:{$gt:new Date()}}).exec()
         return subscription
     }catch(err){
         console.log(err)
@@ -89,10 +100,9 @@ async function validateLicenseKey(licenseKey){
 
     try{
         let subscription= await getSubscriptionByLicenseKey(licenseKey)
-        let licenseValid=await planService.checkIfPlanStillValidForDate(subscription.start_date,subscription.plan_id)
-        if(licenseValid){
+        if(subscription && subscription.quantity>0){
             console.log('license active!');
-            return true
+            return true;
         }
         console.log('license expired!');
         return false
@@ -135,38 +145,26 @@ async function processSubscriptionActivatedEvent(data){
     try{
         let subscriptionData= data.payload.subscription.entity
 
-        let user=userService.getUserByRazorpayId(subscriptionData.customer_id)
+        let user=await userService.getUserByRazorpayId(subscriptionData.customer_id)
 
         if(!user){
-            let userData=userService.getUserFromRazorPay(subscriptionData.customer_id)
-            user=userService.createUser(userData.email,userData.id)
+            let razorpayUserData=await userService.getUserFromRazorPay(subscriptionData.customer_id)
+            let userData=await userService.getUserByEmail(razorpayUserData.email)
+            if(userData){
+                user=userData
+                await userService.setRazorpayId(userData.email,razorpayUserData.id)
+            }else{
+                user=await userService.createUser(razorpayUserData.email,razorpayUserData.id)
+            }
         }
-        disableTrial(user._id)
+        await disableTrial(user._id)
         let subscription=new Subscription({
             user_id: user._id,
             plan_id: subscriptionData.plan_id,
-            start_date: new Date(),
+            end_date: subscriptionData.current_end*1000+86400000,
             quantity: subscriptionData.quantity,
             status: constants.SUBSCRIPTION_STATUS.ACTIVE.id,
             razorpay_id: subscriptionData.id
-        })
-        await upsertSubscriptionByRazorpayId(subscription)
-    }catch(err){
-        console.log(err)
-        throw err
-    }
-}
-
-async function processSubscriptionHaltEvent(data){
-
-    try{
-        let subscriptionData= data.payload.subscription.entity
-
-        let user=userService.getUserByRazorpayId(subscriptionData.customer_id)
-
-        let subscription=new Subscription({
-            razorpay_id: subscriptionData.id,
-            status: constants.SUBSCRIPTION_STATUS.EXPIRED.id,
         })
         await upsertSubscriptionByRazorpayId(subscription)
     }catch(err){
@@ -180,6 +178,5 @@ module.exports={
     validateLicenseKey,
     constructLicenseValidationResponse,
     getSubscriptionByLicenseKey,
-    processSubscriptionActivatedEvent,
-    processSubscriptionHaltEvent
+    processSubscriptionActivatedEvent
 }
