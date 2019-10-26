@@ -43,6 +43,21 @@
   <script type="text/javascript">
     window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
     heap.load("4003482642");
+    window.addEventListener('DOMContentLoaded', function() {
+      var scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var quarterHeight = scrollHeight / 4;
+      var quarters = 0;
+      var scrollDistance, divisible, percent;
+      document.addEventListener("scroll", function() {
+        scrollDistance = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
+        divisible =  Math.trunc(scrollDistance / quarterHeight);
+        if (quarters < divisible && divisible !== Infinity){
+          scrollPercent = divisible * 25;
+          heap.track('Scroll Depth', {percent: scrollPercent});
+          quarters++;
+        }
+      });
+    });
   </script>
 </head>
 
@@ -68,28 +83,28 @@
           <div class="collapse navbar-collapse justify-content-end">
             <div class="py-2 py-lg-0">
               <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                  <a href="/#Home" class="nav-link dropdown-toggle" data-toggle="dropdown-grid" aria-expanded="false"
+                <li class="nav-item">
+                  <a href="/#Home" class="nav-link"  aria-expanded="false"
                     aria-haspopup="true">Home</a>
                 </li>
-                <li class="nav-item dropdown">
-                  <a href="/#Benefits" class="nav-link dropdown-toggle" data-toggle="dropdown-grid" aria-expanded="false"
+                <li class="nav-item">
+                  <a href="/#Benefits" class="nav-link"  aria-expanded="false"
                     aria-haspopup="true">Benefits</a>
                 </li>
-                <li class="nav-item dropdown">
-                  <a href="/#Features" class="nav-link dropdown-toggle" data-toggle="dropdown-grid" aria-expanded="false"
+                <li class="nav-item">
+                  <a href="/#Features" class="nav-link"  aria-expanded="false"
                     aria-haspopup="true">Features</a>
                 </li>
-                <li class="nav-item dropdown">
-                  <a href="/#How-It-Works" class="nav-link dropdown-toggle" data-toggle="dropdown-grid"
+                <li class="nav-item">
+                  <a href="/#How-It-Works" class="nav-link" 
                     aria-expanded="false" aria-haspopup="true">How it works</a>
                 </li>
-                <li class="nav-item dropdown">
-                  <a id="pricingHeaderLink" href="/#Pricing" class="nav-link dropdown-toggle" data-toggle="dropdown-grid" aria-expanded="false"
+                <li class="nav-item">
+                  <a id="pricingHeaderLink" href="/#Pricing" class="nav-link"  aria-expanded="false"
                     aria-haspopup="true">Pricing</a>
                 </li>
-                <li class="nav-item dropdown">
-                  <a href="/#Contact-Us" class="nav-link dropdown-toggle" data-toggle="dropdown-grid"
+                <li class="nav-item">
+                  <a href="/#Contact-Us" class="nav-link" 
                     aria-expanded="false" aria-haspopup="true">Contact Us</a>
                 </li>
               </ul>
@@ -455,7 +470,7 @@
             </div>
             <div class="row">
                 <div class="col text-center">
-                  <span>Interested in a custom plan? <a href="javascript:;" class="hover-arrow contactUsLink">Get in
+                  <span>Interested in a custom plan? <a href="#" class="hover-arrow contactUsLink">Get in
                       touch</a>
                   </span>
                 </div>
@@ -503,7 +518,7 @@
             <li class="mb-3 d-flex">
                 <img class="icon" src="assets/img/icons/theme/communication/chat-6.svg" alt="chat icon" data-inject-svg />
                 <div class="ml-3">
-                  <a href="javascript:;" class="contactUsLink">Chat with us</a>
+                  <a href="#" class="contactUsLink">Chat with us</a>
                 </div>
               </li>
           </ul>
@@ -572,6 +587,7 @@
     function triggerFC() {
       window.fcWidget.open();
       window.fcWidget.show();
+      window.heap.track('freshChatOpened');
       return false;
     }
   
