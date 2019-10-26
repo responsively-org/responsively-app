@@ -7,6 +7,7 @@ const emailService=require('../service/email.service')
 const InvalidLicenseError=require('../exception/invalid-license-error.exception')
 const UserExistsError=require('../exception/user-exists-error.exception')
 const mongoose=require('mongoose')
+const emailTemplates=require('../utils/email.template')
 
 async function createUserAndActivateTrial(email){
 
@@ -27,7 +28,7 @@ async function createUserAndActivateTrial(email){
             u_ts: new Date()
         })
         await insertSubscription(subscription)
-        await emailService.sendLicenseKeyMail(email,user.license_key)
+        await sendSubscriptionActivationEmail(subscription.quantity,subscription.plan_id,user)
     }catch(err){
         console.log(err)
         throw err
@@ -161,16 +162,32 @@ async function processSubscriptionActivatedEvent(data){
         let subscription=new Subscription({
             user_id: user._id,
             plan_id: subscriptionData.plan_id,
-            end_date: subscriptionData.current_end*1000+86400000,
+            end_date: subscriptionData.current_end*1000+86400000*2,
             quantity: subscriptionData.quantity,
             status: constants.SUBSCRIPTION_STATUS.ACTIVE.id,
             razorpay_id: subscriptionData.id
         })
         await upsertSubscriptionByRazorpayId(subscription)
+
+        if(data.event==='subscription.activated'){
+            await sendSubscriptionActivationEmail(subscription.quantity,subscription.plan_id,user)
+        }
     }catch(err){
         console.log(err)
         throw err
     }
+}
+
+async function sendSubscriptionActivationEmail(quantity,planId,user){
+    let plan=await planService.getPlanById(planId)
+    let options={
+        'WEBSITE':process.env.WEBSITE_URL,
+        'maxConcurrentDevices': quantity,
+        'licenseKey':user.license_key,
+        'planName': plan.name
+    }
+    const content=emailTemplates.getSubscriptionEmailContent(options)
+    await emailService.sendMail(user.email,'Responsively - License Activation',content)
 }
 
 module.exports={

@@ -3,16 +3,16 @@ const emailUtils=require('../utils/email.utils')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const SYSTEM_MAIL='noreply@responsively.app'
-async function sendLicenseKeyMail(email,licenseKey){
+async function sendMail(email,subject,content){
     if(process.env.SEND_MAIL==='false'){
         return
     }
-    console.log('sending license key to email:'+email)
+    console.log('sending mail to email:'+email+', subject:'+subject)
     const msg = {
         to: email,
         from: SYSTEM_MAIL,
-        subject: 'Responsively - License Key',
-        html: 'Please find your license key - <strong>'+licenseKey+'</strong>',
+        subject: subject,
+        html: content,
       };
       await sgMail.send(msg);
 }
@@ -26,6 +26,6 @@ function validateEmailExistence(email){
 }
 
 module.exports={
-    sendLicenseKeyMail,
+    sendMail,
     validateEmailExistence
 }
