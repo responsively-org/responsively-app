@@ -9,7 +9,9 @@ const autoprefixer = require('gulp-autoprefixer'),
   del = require('del'),
   eslint = require('gulp-eslint'),
   gulp = require('gulp'),
+  htmlmin = require('gulp-htmlmin'),
   log = require('fancy-log'),
+  minifyInline = require('gulp-minify-inline');
   newer = require('gulp-newer'),
   path = require('path'),
   reload = browserSync.reload,
@@ -156,6 +158,19 @@ gulp.task('html', function () {
       base: paths.pages.folder
     })
     .pipe(newer(paths.dist.folder))
+    .pipe(gulp.dest(paths.dist.folder))
+    .pipe(reload({
+      stream: true
+    }));
+});
+
+gulp.task('html-minify', function () {
+  return gulp.src(paths.pages.all, {
+      base: paths.pages.folder
+    })
+    .pipe(newer(paths.dist.folder))
+    .pipe(htmlmin({ collapseWhitespace: true, removeComments: true }))
+    .pipe(minifyInline())
     .pipe(gulp.dest(paths.dist.folder))
     .pipe(reload({
       stream: true
@@ -380,4 +395,4 @@ gulp.task('watch', function (done) {
 
 gulp.task('default', gulp.series('clean:dist', 'copy-assets', gulp.series('html', 'sass', 'sass-min', 'bootstrapjs', 'mrarejs'), gulp.series('serve', 'watch')));
 
-gulp.task('build', gulp.series('clean:dist', 'copy-assets', gulp.series('html', 'sass', 'sass-min', 'bootstrapjs', 'mrarejs')));
+gulp.task('build', gulp.series('clean:dist', 'copy-assets', gulp.series('html-minify', 'sass', 'sass-min', 'bootstrapjs', 'mrarejs')));

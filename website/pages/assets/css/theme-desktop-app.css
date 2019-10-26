@@ -14046,4 +14046,102 @@ article table {
 .navbar-links-container {
   padding: 1rem 1.5rem;}
 
+.per-device-text {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 2rem;}
+
+.seats-slider-wrapper {
+  height: 2rem;
+  position: relative;
+}
+
+.seats-slider-wrapper::before {
+  content: '';
+  background-color: rgba(12,8,32,0.15);
+  width: 100%;
+  height: .5rem;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  left: 0;
+  border-radius: .3125rem;
+}
+
+.seats-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 2rem;
+  position: relative;
+  z-index: 1;
+  border-radius: 10rem;
+  background-color: transparent;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+.seats-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2rem;
+  height: 2rem;
+  background-image: url("/assets/img/icons/custom/RangeSliderIcon.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  border-radius: 100%;
+  -webkit-box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.2);
+  cursor: move;
+  cursor: grab;
+  cursor: -webkit-grab;
+}
+
+.seats-slider-wrapper input {
+  width: calc(100% + 14px) !important;
+  margin-left: -.4375rem !important;
+  position: relative;
+  z-index: 20;
+}
+
+.seats-slider-wrapper i {
+  position: absolute;
+  display: block;
+  width: .375rem;
+  height: .375rem;
+  border-radius: 4px;
+  background-color: #fff;
+  top: calc(50% - 3px);
+  left: 1px;
+}
+
+.seats-slider-wrapper i:nth-child(2) {
+  left: 3%;
+}
+
+.seats-slider-wrapper i:nth-child(3) {
+  left: 18.5%;
+}
+
+.seats-slider-wrapper i:nth-child(4) {
+  right: 1px;
+  left: auto;
+}
+
+.js-pricing-charge-description-container {
+  min-height: 1.25rem;
+}
+
+.screenshot-img {
+  box-shadow: 0px 0px 5px 2px rgb(84, 84, 84);
+}
+
+.light-link {
+  color: var(--primary) !important;
+}
+
 /*# sourceMappingURL=theme-desktop-app.css.map */
+

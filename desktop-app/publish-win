@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "Publishing..."
+yarn run publish-win
+echo "Publishing... Done"
+
+echo "Linking current version in S3..."
+aws s3 cp s3://responsively-updates/stable/ResponsivelyApp\ Setup\ `node -p "require('./package.json').version"`.exe s3://responsively-updates/stable/ResponsivelyApp-Setup.exe  --acl public-read
+echo "Linking current version in S3... Done"
+
