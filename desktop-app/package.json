@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A developer-friendly browser for developing responsive web apps",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -20,7 +20,11 @@
     "package-all": "yarn build && electron-builder build -mwl",
     "package-ci": "yarn postinstall && yarn build && electron-builder build -mwl --publish always",
     "package-linux": "yarn build && electron-builder build --linux",
+    "publish-linux": "yarn build && electron-builder build --linux --publish always",
+    "package-mac": "yarn build && electron-builder build --mac",
+    "publish-mac": "yarn build && electron-builder build --mac --publish always",
     "package-win": "yarn build && electron-builder build --win --x64",
+    "publish-win": "yarn build && electron-builder build --win --x64 --publish always",
     "postinstall": "electron-builder install-app-deps package.json && yarn build-dll && opencollective-postinstall",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{*{js,jsx,json},babelrc,eslintrc,prettierrc,stylelintrc}'",
     "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
