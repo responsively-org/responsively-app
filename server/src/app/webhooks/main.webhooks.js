@@ -1,13 +1,16 @@
 const subscriptionService=require('../service/subscription.service')
 const crypto=require('crypto')
-const razorpay=require('../../razorpay/razorpay')
+const Razorpay=require('razorpay')
 const mongoose=require('mongoose')
 
 export async function processEvent(eventData){
 
-    //const signatureValid=razorpay.instance.validateWebhookSignature(data,eventData.X-Razorpay-Signature,process.env.RAZOR_PAY_WEBHOOK_SECRET)
-    //console.log(signatureValid)
     const data=JSON.parse(eventData.body)
+    const signatureValid=Razorpay.validateWebhookSignature(eventData.body,eventData.headers["X-Razorpay-Signature"],process.env.RAZOR_PAY_WEBHOOK_SECRET)
+    if(!signatureValid){
+        console.log('invalid request:signature does not match');
+        return
+    }
     try{
         let eventData={
             event_data: data,

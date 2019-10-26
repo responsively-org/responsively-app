@@ -34,6 +34,9 @@ functions:
       - http:
           path: create-subscription
           method: post
+          cors:
+            origins:
+              - "*"
   webhookHandler:
     handler: src/http/lambda.webhookHandler
     timeout: 15
