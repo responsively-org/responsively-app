@@ -347,7 +347,7 @@ class WebView extends Component {
   };
 
   _toggleDevTools = () => {
-    const devtools = new BrowserWindow({
+    /*const devtools = new BrowserWindow({
       fullscreen: false,
       acceptFirstMouse: true,
       show: true,
@@ -357,8 +357,8 @@ class WebView extends Component {
     this.webviewRef.current
       .getWebContents()
       .setDevToolsWebContents(devtools.webContents);
-    this.webviewRef.current.getWebContents().openDevTools({mode: 'detach'});
-    //this.webviewRef.current.getWebContents().toggleDevTools();
+    this.webviewRef.current.getWebContents().openDevTools({mode: 'detach'});*/
+    this.webviewRef.current.getWebContents().toggleDevTools();
   };
 
   _flipOrientation = () => {

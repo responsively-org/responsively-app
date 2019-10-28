@@ -30,7 +30,6 @@ menu.append(
     type: 'checkbox',
     checked: true,
     click: function(menuItem, browserWindow, event) {
-      console.log('Event mirror clicked');
       window.responsivelyApp.sendMessageToHost('toggleEventMirroring');
     },
   })
@@ -173,6 +172,5 @@ ipcRenderer.on('disableInspectorMessage', (event, args) => {
 });
 
 ipcRenderer.on('eventsMirroringState', (event, args) => {
-  console.log('eventsMirroringState', event, args);
   menu.getMenuItemById('mirror-events').checked = args;
 });
