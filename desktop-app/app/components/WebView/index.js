@@ -33,6 +33,10 @@ const MESSAGE_TYPES = {
   click: 'click',
   openDevToolsInspector: 'openDevToolsInspector',
   disableInspector: 'disableInspector',
+  openConsole: 'openConsole',
+  tiltDevice: 'tiltDevice',
+  takeScreenshot: 'takeScreenshot',
+  toggleEventMirroring: 'toggleEventMirroring',
 };
 
 class WebView extends Component {
@@ -244,7 +248,7 @@ class WebView extends Component {
   };
 
   messageHandler = ({channel: type, args: [message]}) => {
-    if (this.state.isUnplugged) {
+    if (type !== MESSAGE_TYPES.toggleEventMirroring && this.state.isUnplugged) {
       return;
     }
     switch (type) {
@@ -259,6 +263,18 @@ class WebView extends Component {
         return;
       case MESSAGE_TYPES.disableInspector:
         this.transmitDisableInspectorToAllDevices(message);
+        return;
+      case MESSAGE_TYPES.openConsole:
+        this._toggleDevTools();
+        return;
+      case MESSAGE_TYPES.tiltDevice:
+        this._flipOrientation();
+        return;
+      case MESSAGE_TYPES.takeScreenshot:
+        this.processScreenshotEvent({});
+        return;
+      case MESSAGE_TYPES.toggleEventMirroring:
+        this._unPlug();
         return;
     }
   };
@@ -350,7 +366,12 @@ class WebView extends Component {
   };
 
   _unPlug = () => {
-    this.setState({isUnplugged: !this.state.isUnplugged});
+    this.setState({isUnplugged: !this.state.isUnplugged}, () => {
+      this.webviewRef.current.send(
+        'eventsMirroringState',
+        !this.state.isUnplugged
+      );
+    });
   };
 
   get isMobile() {

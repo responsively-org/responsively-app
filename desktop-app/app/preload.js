@@ -5,23 +5,64 @@ const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;
 
 var menu = new Menu();
+var rightClickPosition = null;
+
 menu.append(
   new MenuItem({
-    label: 'MenuItem1',
-    click: function() {
-      console.log('item 1 clicked');
+    label: 'Take Screenshot',
+    click: function(menuItem, browserWindow, event) {
+      window.responsivelyApp.sendMessageToHost('takeScreenshot');
     },
   })
 );
-menu.append(new MenuItem({type: 'separator'}));
 menu.append(
-  new MenuItem({label: 'MenuItem2', type: 'checkbox', checked: true})
+  new MenuItem({
+    label: 'Tilt Device',
+    click: function(menuItem, browserWindow, event) {
+      window.responsivelyApp.sendMessageToHost('tiltDevice');
+    },
+  })
+);
+menu.append(
+  new MenuItem({
+    id: 'mirror-events',
+    label: 'Mirror Events',
+    type: 'checkbox',
+    checked: true,
+    click: function(menuItem, browserWindow, event) {
+      console.log('Event mirror clicked');
+      window.responsivelyApp.sendMessageToHost('toggleEventMirroring');
+    },
+  })
+);
+
+menu.append(new MenuItem({type: 'separator'}));
+
+menu.append(
+  new MenuItem({
+    label: 'Inspect',
+    click: function(menuItem, browserWindow, event) {
+      window.responsivelyApp.sendMessageToHost(
+        'openDevToolsInspector',
+        rightClickPosition
+      );
+    },
+  })
+);
+menu.append(
+  new MenuItem({
+    label: 'Open console',
+    click: function(menuItem, browserWindow, event) {
+      window.responsivelyApp.sendMessageToHost('openConsole');
+    },
+  })
 );
 
 window.addEventListener(
   'contextmenu',
   function(e) {
     e.preventDefault();
+    rightClickPosition = {x: e.x, y: e.y};
     menu.popup(remote.getCurrentWindow());
   },
   false
@@ -129,4 +170,9 @@ ipcRenderer.on('disableInspectorMessage', (event, args) => {
   window.responsivelyApp.domInspector.destroy();
   window.responsivelyApp.domInspector = null;
   window.responsivelyApp.domInspectorEnabled = false;
+});
+
+ipcRenderer.on('eventsMirroringState', (event, args) => {
+  console.log('eventsMirroringState', event, args);
+  menu.getMenuItemById('mirror-events').checked = args;
 });
