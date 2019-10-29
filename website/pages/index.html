@@ -683,7 +683,13 @@
 
     function getSubscriptionId(quantity) {
       return postData('https://n7mfai4l76.execute-api.us-east-1.amazonaws.com/dev/create-subscription', { quantity: quantity })
-        .then(resp => resp.subscriptionId);
+        .then(resp => {
+          if(!resp.status) {
+            window.heap.track('subscribeCreationFailed', {"response": JSON.stringify(resp)});
+            return null;
+          }
+          return resp.subscriptionId
+        });
     }
 
     function postData(url = '', data = {}) {
@@ -732,6 +738,11 @@
       window.heap.track('subscribeButtonClicked', {"quantity": paymentDevices});
       const planName = findPlanFromQuantity(paymentDevices);
       getSubscriptionId(paymentDevices).then(subscriptionId => {
+        if (!subscriptionId) {
+          alert(`The request couldn't be processed, please try again`);
+          setLoading(false);
+          return;
+        }
         window.heap.track('subscriptionCreated', {'subscriptionId': subscriptionId});
         let razorpay = new Razorpay({
           "key": "rzp_test_DVeigAo0o0my9U",

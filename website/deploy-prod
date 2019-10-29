@@ -14,6 +14,8 @@ find ./dist/ -iname *.html -exec sed -i '' -e 's/4003482642/3340058302/g' {} \;
 find ./dist/ -iname *.html -exec sed -i '' -e 's/UA-150751006-2/UA-150751006-1/g' {} \;
 ## Razorpay
 find ./dist/ -iname *.html -exec sed -i '' -e 's/rzp_test_DVeigAo0o0my9U/rzp_live_KeUvdjN006L82W/g' {} \;
+## API URL
+find ./dist/ -iname *.html -exec sed -i '' -e 's|https://n7mfai4l76.execute-api.us-east-1.amazonaws.com/dev/|https://prod-api.responsively.app/|g' {} \;
 
 
 # Upload to S3
