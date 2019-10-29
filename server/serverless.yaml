@@ -10,7 +10,7 @@ provider:
   websocketsApiName: responsively-websocket
   apiName: responsively-server
   websocketsApiRouteSelectionExpression: $request.body.action # custom routes are selected by the value of the action property in the body
-  environment: ${file(environment-${self:provider.stage}.yml)}
+  environment: ${file(environment-${opt:stage}.yml)}
 
 functions:
   activateTrial:
