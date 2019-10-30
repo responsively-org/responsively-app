@@ -20,7 +20,6 @@ import {ACTIVE_DEVICES} from './constants/settingKeys';
 import * as Sentry from '@sentry/electron';
 
 const path = require('path')
-const updater = require('electron-simple-updater');
 
 if (process.env.NODE_ENV !== 'development') {
   Sentry.init({
@@ -30,13 +29,9 @@ if (process.env.NODE_ENV !== 'development') {
 
 export default class AppUpdater {
   constructor() {
-    if(process.platform=== 'darwin'){
-      log.transports.file.level = 'info';
-      autoUpdater.logger = log;
-      autoUpdater.checkForUpdatesAndNotify();
-    }else{
-      updater.init('https://responsively-updates.s3.amazonaws.com/updates.json');
-    }
+    log.transports.file.level = 'info';
+    autoUpdater.logger = log;
+    autoUpdater.checkForUpdatesAndNotify();
   }
 }
 
