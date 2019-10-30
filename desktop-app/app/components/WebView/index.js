@@ -50,6 +50,7 @@ class WebView extends Component {
       errorCode: null,
       errorDesc: null,
     };
+    this.subscriptions = [];
   }
 
   componentDidMount() {
@@ -58,25 +59,45 @@ class WebView extends Component {
       'ipc-message',
       this.messageHandler
     );
-    pubsub.subscribe('scroll', this.processScrollEvent);
-    pubsub.subscribe('click', this.processClickEvent);
-    pubsub.subscribe(SCROLL_DOWN, this.processScrollDownEvent);
-    pubsub.subscribe(SCROLL_UP, this.processScrollUpEvent);
-    pubsub.subscribe(NAVIGATION_BACK, this.processNavigationBackEvent);
-    pubsub.subscribe(NAVIGATION_FORWARD, this.processNavigationForwardEvent);
-    pubsub.subscribe(NAVIGATION_RELOAD, this.processNavigationReloadEvent);
-    pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent);
-    pubsub.subscribe(
-      FLIP_ORIENTATION_ALL_DEVICES,
-      this.processFlipOrientationEvent
+    this.subscriptions.push(
+      pubsub.subscribe('scroll', this.processScrollEvent)
     );
-    pubsub.subscribe(
-      ENABLE_INSPECTOR_ALL_DEVICES,
-      this.processEnableInspectorEvent
+    this.subscriptions.push(pubsub.subscribe('click', this.processClickEvent));
+    this.subscriptions.push(
+      pubsub.subscribe(SCROLL_DOWN, this.processScrollDownEvent)
     );
-    pubsub.subscribe(
-      DISABLE_INSPECTOR_ALL_DEVICES,
-      this.processDisableInspectorEvent
+    this.subscriptions.push(
+      pubsub.subscribe(SCROLL_UP, this.processScrollUpEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(NAVIGATION_BACK, this.processNavigationBackEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(NAVIGATION_FORWARD, this.processNavigationForwardEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(NAVIGATION_RELOAD, this.processNavigationReloadEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(
+        FLIP_ORIENTATION_ALL_DEVICES,
+        this.processFlipOrientationEvent
+      )
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(
+        ENABLE_INSPECTOR_ALL_DEVICES,
+        this.processEnableInspectorEvent
+      )
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(
+        DISABLE_INSPECTOR_ALL_DEVICES,
+        this.processDisableInspectorEvent
+      )
     );
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
@@ -137,6 +158,10 @@ class WebView extends Component {
           'DevToolsAPI.enterInspectElementMode()'
         );*/
     });
+  }
+
+  componentWillUnmount() {
+    this.subscriptions.forEach(pubsub.unsubscribe);
   }
 
   initDeviceEmulationParams = () => {
