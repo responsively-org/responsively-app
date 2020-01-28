@@ -19,6 +19,13 @@ export async function validateLicenseKey(licenseKey) {
     };
   }
   try {
+    console.log(
+      `${path.join(
+        process.env.REST_BASE_URL,
+        '/validate-license'
+      )}?licenseKey=${licenseKey}`
+    );
+    alert(`URL changed: ${process.env.REST_BASE_URL}`);
     const responseBody = await fetch(
       `${path.join(
         process.env.REST_BASE_URL,
@@ -34,6 +41,7 @@ export async function validateLicenseKey(licenseKey) {
       };
     }
   } catch (err) {
+    console.log('Error', err);
     return {
       status: false,
       reason: 'Unable to validate the license key, please try again.',

@@ -91,6 +91,8 @@ export default function WelcomeScreen(props) {
     }
   };
 
+  alert('process.env.REST_BASE_URL', process.env.REST_BASE_URL);
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>{getMainTitle()}</div>

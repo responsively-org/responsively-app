@@ -10,6 +10,7 @@ import {ThemeProvider} from '@material-ui/styles';
 import {grey} from '@material-ui/core/colors';
 import LicenseManager from '../components/LicenseManager';
 import {themeColor} from '../constants/colors';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 type Props = {
   store: Store,
@@ -36,13 +37,15 @@ const theme = createMuiTheme({
 });
 
 const getApp = history => {
-  if (process.env.NODE_ENV !== 'development') {
+  if (true || process.env.NODE_ENV !== 'development') {
     return (
-      <LicenseManager>
-        <ConnectedRouter history={history}>
-          <Routes />
-        </ConnectedRouter>
-      </LicenseManager>
+      <ErrorBoundary>
+        <LicenseManager>
+          <ConnectedRouter history={history}>
+            <Routes />
+          </ConnectedRouter>
+        </LicenseManager>
+      </ErrorBoundary>
     );
   }
   return (

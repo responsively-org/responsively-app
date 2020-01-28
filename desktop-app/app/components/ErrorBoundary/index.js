@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -8,7 +8,7 @@ export default class ErrorBoundary extends React.Component {
 
   static getDerivedStateFromError(error) {
     // Update state so the next render will show the fallback UI.
-    return {hasError: true};
+    return {hasError: true, error};
   }
 
   componentDidCatch(error, errorInfo) {
@@ -19,7 +19,12 @@ export default class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       // You can render any custom fallback UI
-      return <h1>Something went wrong.</h1>;
+      return (
+        <Fragment>
+          <h1>Something went wrong.</h1>
+          <div>JSON.stringify(error)</div>
+        </Fragment>
+      );
     }
 
     return this.props.children;

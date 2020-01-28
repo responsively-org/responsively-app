@@ -50,7 +50,7 @@ menu.append(
 );
 menu.append(
   new MenuItem({
-    label: 'Open console',
+    label: 'Open Console',
     click: function(menuItem, browserWindow, event) {
       window.responsivelyApp.sendMessageToHost('openConsole');
     },
