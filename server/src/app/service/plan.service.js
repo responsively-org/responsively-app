@@ -1,4 +1,5 @@
 const Plan=require('../model/plan.model')
+const constants=require('../constants/constants')
 
 async function getPlan(planId){
     console.log('fetching from db - planId:'+planId)
@@ -16,7 +17,7 @@ async function getPlanById(planId){
 
 async function getPlanByNumberOfUsers(quantity){
     console.log('fetching plan for userCount:'+quantity)
-    let planList=await Plan.find({user_limit:{"$gte":quantity}}).sort({user_limit:1}).limit(1).exec()
+    let planList=await Plan.find({_id:{$ne: constants.TRIAL_PLAN_ID},user_limit:{"$gte":quantity}}).sort({user_limit:1}).limit(1).exec()
 
     console.log('plan fetched:'+planList)
     if(planList.length==0){

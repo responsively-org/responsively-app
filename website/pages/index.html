@@ -749,7 +749,7 @@
     }
 
     function getSubscriptionId(quantity) {
-      return postData('https://n7mfai4l76.execute-api.us-east-1.amazonaws.com/dev/create-subscription', { quantity: quantity })
+      return postData('https://dev-api.responsively.app/create-subscription', { quantity: quantity })
         .then(resp => {
           if(!resp.status) {
             window.heap.track('subscribeCreationFailed', {"response": JSON.stringify(resp)});

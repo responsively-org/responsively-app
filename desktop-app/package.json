@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "A developer-friendly browser for developing responsive web apps",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -260,7 +260,6 @@
     "electron-log": "^3.0.7",
     "electron-notarize": "^0.2.1",
     "electron-settings": "^3.2.0",
-    "electron-simple-updater": "^1.5.0",
     "electron-updater": "^4.1.2",
     "flwww": "^2.0.10",
     "history": "^4.7.2",
