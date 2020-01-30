@@ -116,12 +116,13 @@
       "output": "release"
     },
     "publish": {
-      "provider": "s3",
-      "bucket": "responsively-updates",
-      "path": "stable"
+      "provider": "github"
     }
   },
-  "repository": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/manojVivek/responsively-app.git"
+  },
   "author": {
     "name": "Responsively",
     "email": "p.manoj.vivek@gmail.com"
