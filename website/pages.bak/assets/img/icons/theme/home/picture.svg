@@ -1,0 +1,10 @@
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icon For Picture</title>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <polygon points="0 0 24 0 24 24 0 24" opacity="0"></polygon>
+        <rect fill="#000000" opacity="0.3" x="2" y="4" width="20" height="16" rx="2"></rect>
+        <polygon fill="#000000" opacity="0.3" points="4 20 10.5 11 17 20"></polygon>
+        <polygon fill="#000000" points="11 20 15.5 14 20 20"></polygon>
+        <circle fill="#000000" opacity="0.3" cx="18.5" cy="8.5" r="1.5"></circle>
+    </g>
+</svg>
