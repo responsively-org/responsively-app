@@ -53,3 +53,4 @@ npm-debug.log.*
 
 # local configs
 setCreds.sh
+embedded.provisionprofile
