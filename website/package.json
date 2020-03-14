@@ -1,13 +1,12 @@
 {
-  "author": "Medium Rare",
-  "private": true,
-  "name": "leap",
+  "name": "responsively-website",
   "version": "2.0.0",
   "description": "Software and SaaS Bootstrap Theme",
   "main": "gulpfile.js",
   "scripts": {
     "start": "./node_modules/.bin/gulp",
     "build": "./node_modules/.bin/gulp build",
+    "deploy": "gh-pages -d dist",
     "postinstall": "gulp deps"
   },
   "browserslist": "Safari > 10, Firefox > 40, Chrome > 40, ie >= 11",
@@ -31,6 +30,7 @@
     "countup.js": "~2.0.2",
     "flatpickr": "~4.6.1",
     "flickity": "~2.2.0",
+    "gh-pages": "^2.2.0",
     "inter-ui": "^3.9.0",
     "ion-rangeslider": "~2.3.0",
     "isotope-layout": "~3.0.6",
