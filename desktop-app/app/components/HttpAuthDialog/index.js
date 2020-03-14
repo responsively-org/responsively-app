@@ -9,89 +9,85 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default function HttpAuthDialog() {
-    const [open, setOpen] = useState(false);
-    const [url, setUrl] = useState('');
-    const usernameRef = useRef(null);
-    const passwordRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [url, setUrl] = useState('');
+  const usernameRef = useRef(null);
+  const passwordRef = useRef(null);
 
-    ipcRenderer.on('http-auth-prompt', (event, args) => {
-        console.log('HTTP msg', event, args);
-        setUrl(args.url);
-        setOpen(true);
-    });
+  ipcRenderer.on('http-auth-prompt', (event, args) => {
+    console.log('HTTP msg', event, args);
+    setUrl(args.url);
+    setOpen(true);
+  });
 
-    function handleClose(status) {
-        if (!status) {
-            ipcRenderer.send('http-auth-promt-response', {url});
-        }
-        ipcRenderer.send('http-auth-promt-response', {
-            url,
-            username: usernameRef.current.querySelector('input').value,
-            password: passwordRef.current.querySelector('input').value,
-        });
-        setOpen(false);
+  function handleClose(status) {
+    if (!status) {
+      ipcRenderer.send('http-auth-promt-response', {url});
     }
+    ipcRenderer.send('http-auth-promt-response', {
+      url,
+      username: usernameRef.current.querySelector('input').value,
+      password: passwordRef.current.querySelector('input').value,
+    });
+    setOpen(false);
+  }
 
-    return (
-        <div>
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                disableBackdropClick={true}
-                aria-labelledby="form-dialog-title"
+  return (
+    <div>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        disableBackdropClick={true}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">Sign-in</DialogTitle>
+        <form
+          id="my-form-id"
+          onSubmit={e => {
+            e.preventDefault();
+            handleClose(true);
+          }}
+        >
+          <DialogContent>
+            <DialogContentText>
+              {url ? <strong>{url}</strong> : 'The webpage'} requires HTTP Basic
+              authentication to connect, please enter the details to continue.
+            </DialogContentText>
+
+            <TextField
+              ref={usernameRef}
+              autoFocus
+              margin="dense"
+              id="username"
+              label="Username"
+              type="text"
+              fullWidth
+            />
+            <TextField
+              ref={passwordRef}
+              margin="dense"
+              id="password"
+              label="Password"
+              type="password"
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => handleClose(false)} color="secondary">
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => handleClose(true)}
+              color="primary"
+              type="submit"
+              primary={true}
             >
-                <DialogTitle id="form-dialog-title">Sign-in</DialogTitle>
-                <form
-                    id="my-form-id"
-                    onSubmit={e => {
-                        e.preventDefault();
-                        handleClose(true);
-                    }}
-                >
-                    <DialogContent>
-                        <DialogContentText>
-                            {url ? <strong>{url}</strong> : 'The webpage'}{' '}
-                            requires HTTP Basic authentication to connect,
-                            please enter the details to continue.
-                        </DialogContentText>
-
-                        <TextField
-                            ref={usernameRef}
-                            autoFocus
-                            margin="dense"
-                            id="username"
-                            label="Username"
-                            type="text"
-                            fullWidth
-                        />
-                        <TextField
-                            ref={passwordRef}
-                            margin="dense"
-                            id="password"
-                            label="Password"
-                            type="password"
-                            fullWidth
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            onClick={() => handleClose(false)}
-                            color="secondary"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="contained"
-                            onClick={() => handleClose(true)}
-                            color="primary"
-                            type="submit"
-                            primary={true}
-                        >
-                            Sign In
-                        </Button>
-                    </DialogActions>
-                </form>
-            </Dialog>
-        </div>
-    );
+              Sign In
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+    </div>
+  );
 }

@@ -6,23 +6,19 @@ import cx from 'classnames';
 import styles from './styles.css';
 
 export default function DeviceList({droppableId, devices}) {
-    return (
-        <Droppable droppableId={droppableId}>
-            {provided => (
-                <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className={cx(styles.listHolder)}
-                >
-                    {devices.map((device, index) => (
-                        <DeviceItem
-                            device={device}
-                            index={index}
-                            key={device.id}
-                        />
-                    ))}
-                </div>
-            )}
-        </Droppable>
-    );
+  return (
+    <Droppable droppableId={droppableId}>
+      {provided => (
+        <div
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          className={cx(styles.listHolder)}
+        >
+          {devices.map((device, index) => (
+            <DeviceItem device={device} index={index} key={device.id} />
+          ))}
+        </div>
+      )}
+    </Droppable>
+  );
 }

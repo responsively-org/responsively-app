@@ -8,14 +8,14 @@ import styles from './Home.css';
 type Props = {};
 
 export default class Home extends Component<Props> {
-    props: Props;
+  props: Props;
 
-    render() {
-        return (
-            <div className={styles.container} data-tid="container">
-                <AddressBar address="https://www.google.com" />
-                <h2>Home</h2>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className={styles.container} data-tid="container">
+        <AddressBar address="https://www.google.com" />
+        <h2>Home</h2>
+      </div>
+    );
+  }
 }

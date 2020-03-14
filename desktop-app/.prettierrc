@@ -1,14 +1,13 @@
 {
-    "overrides": [
-        {
-            "files": [".prettierrc", ".babelrc", ".eslintrc", ".stylelintrc"],
-            "options": {
-                "parser": "json"
-            }
-        }
-    ],
-    "tabWidth": 4,
-    "singleQuote": true,
-    "bracketSpacing": false,
-    "trailingComma": "es5"
+  "overrides": [
+    {
+      "files": [".prettierrc", ".babelrc", ".eslintrc", ".stylelintrc"],
+      "options": {
+        "parser": "json"
+      }
+    }
+  ],
+  "singleQuote": true,
+  "bracketSpacing": false,
+  "trailingComma": "es5"
 }

@@ -1,9 +1,9 @@
 {
-    "extends": ["config:base"],
-    "rangeStrategy": "bump",
-    "baseBranches": ["next"],
-    "automerge": true,
-    "major": {
-        "automerge": false
-    }
+  "extends": ["config:base"],
+  "rangeStrategy": "bump",
+  "baseBranches": ["next"],
+  "automerge": true,
+  "major": {
+    "automerge": false
+  }
 }

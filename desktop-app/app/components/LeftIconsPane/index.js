@@ -11,63 +11,56 @@ import styles from './styles.css';
 import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
 import {
-    DEVICE_MANAGER,
-    SCREENSHOT_MANAGER,
+  DEVICE_MANAGER,
+  SCREENSHOT_MANAGER,
 } from '../../constants/DrawerContents';
 
 const LeftIconsPane = props => {
-    const headwayRef = useRef();
-    const iconProps = {
-        color: iconsColor,
-        style: {fontSize: 30},
-        height: 30,
-        width: 30,
-    };
-    return (
-        <div className={styles.iconsContainer}>
-            <div className={cx(styles.icon, styles.logo)}>
-                <Logo width={40} height={40} />
-            </div>
-            <Grid
-                container
-                spacing={1}
-                direction="column"
-                alignItems="center"
-                className={cx(styles.utilitySection)}
-            >
-                <Grid
-                    item
-                    className={cx(commonStyles.icons, commonStyles.enabled)}
-                >
-                    <div
-                        onClick={() =>
-                            props.openDrawerAndSetContent(DEVICE_MANAGER)
-                        }
-                    >
-                        <DevicesIcon {...iconProps} />
-                    </div>
-                </Grid>
-                {/*<Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+  const headwayRef = useRef();
+  const iconProps = {
+    color: iconsColor,
+    style: {fontSize: 30},
+    height: 30,
+    width: 30,
+  };
+  return (
+    <div className={styles.iconsContainer}>
+      <div className={cx(styles.icon, styles.logo)}>
+        <Logo width={40} height={40} />
+      </div>
+      <Grid
+        container
+        spacing={1}
+        direction="column"
+        alignItems="center"
+        className={cx(styles.utilitySection)}
+      >
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <div onClick={() => props.openDrawerAndSetContent(DEVICE_MANAGER)}>
+            <DevicesIcon {...iconProps} />
+          </div>
+        </Grid>
+        {/*<Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
           <div
             onClick={() => props.openDrawerAndSetContent(SCREENSHOT_MANAGER)}
           >
             <PhotoLibraryIcon {...iconProps} />
           </div>
         </Grid>*/}
-            </Grid>
-            <div style={{position: 'relative'}}>
-                <div
-                    id="headway"
-                    ref={headwayRef}
-                    className={cx(
-                        styles.updates,
-                        commonStyles.icons,
-                        commonStyles.enabled
-                    )}
-                />
-            </div>
-        </div>
-    );
+      </Grid>
+      <div style={{position: 'relative'}}>
+        <div
+          id="headway"
+          ref={headwayRef}
+          className={cx(
+            styles.updates,
+            commonStyles.icons,
+            commonStyles.enabled
+          )}
+        />
+      </div>
+    </div>
+  );
 };
 
 export default LeftIconsPane;

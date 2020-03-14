@@ -9,29 +9,29 @@ import './app.global.css';
 import * as Sentry from '@sentry/electron';
 
 if (remote.getGlobal('process').env.NODE_ENV !== 'development') {
-    Sentry.init({
-        dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
-        environment: remote.getGlobal('process').env.NODE_ENV,
-    });
+  Sentry.init({
+    dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
+    environment: remote.getGlobal('process').env.NODE_ENV,
+  });
 }
 const store = configureStore();
 
 render(
-    <AppContainer>
-        <Root store={store} history={history} />
-    </AppContainer>,
-    document.getElementById('root')
+  <AppContainer>
+    <Root store={store} history={history} />
+  </AppContainer>,
+  document.getElementById('root')
 );
 
 if (module.hot) {
-    module.hot.accept('./containers/Root', () => {
-        // eslint-disable-next-line global-require
-        const NextRoot = require('./containers/Root').default;
-        render(
-            <AppContainer>
-                <NextRoot store={store} history={history} />
-            </AppContainer>,
-            document.getElementById('root')
-        );
-    });
+  module.hot.accept('./containers/Root', () => {
+    // eslint-disable-next-line global-require
+    const NextRoot = require('./containers/Root').default;
+    render(
+      <AppContainer>
+        <NextRoot store={store} history={history} />
+      </AppContainer>,
+      document.getElementById('root')
+    );
+  });
 }

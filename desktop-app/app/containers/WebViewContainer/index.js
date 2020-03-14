@@ -6,16 +6,16 @@ import WebView from '../../components/WebView';
 import * as BrowserActions from '../../actions/browser';
 
 function mapStateToProps(state) {
-    return {
-        browser: state.browser,
-    };
+  return {
+    browser: state.browser,
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators(BrowserActions, dispatch);
+  return bindActionCreators(BrowserActions, dispatch);
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(WebView);

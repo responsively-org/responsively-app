@@ -1,72 +1,70 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link
-            href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
-            rel="stylesheet"
-        />
-        <meta charset="utf-8" />
-        <title>Responsively</title>
-        <script type="text/javascript">
-            // prettier-ignore
-            window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
-            heap.load('3453744655');
-        </script>
-        <script>
-            (function() {
-                if (!process.env.HOT) {
-                    const link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = './dist/style.css';
-                    // HACK: Writing the script path should be done with webpack
-                    document.getElementsByTagName('head')[0].appendChild(link);
-                }
-            })();
-        </script>
-    </head>
-    <body>
-        <div id="root"></div>
-        <script>
-            {
-                const scripts = [];
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="utf-8" />
+    <title>Responsively</title>
+    <script type="text/javascript">
+      // prettier-ignore
+      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+      heap.load('3453744655');
+    </script>
+    <script>
+      (function() {
+        if (!process.env.HOT) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = './dist/style.css';
+          // HACK: Writing the script path should be done with webpack
+          document.getElementsByTagName('head')[0].appendChild(link);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      {
+        const scripts = [];
 
-                // Dynamically insert the DLL script in development env in the
-                // renderer process
-                if (process.env.NODE_ENV === 'development') {
-                    scripts.push('../dll/renderer.dev.dll.js');
-                }
+        // Dynamically insert the DLL script in development env in the
+        // renderer process
+        if (process.env.NODE_ENV === 'development') {
+          scripts.push('../dll/renderer.dev.dll.js');
+        }
 
-                // Dynamically insert the bundled app script in the renderer process
-                const port = process.env.PORT || 1212;
-                scripts.push(
-                    process.env.HOT
-                        ? 'http://localhost:' + port + '/dist/renderer.dev.js'
-                        : './dist/renderer.prod.js'
-                );
+        // Dynamically insert the bundled app script in the renderer process
+        const port = process.env.PORT || 1212;
+        scripts.push(
+          process.env.HOT
+            ? 'http://localhost:' + port + '/dist/renderer.dev.js'
+            : './dist/renderer.prod.js'
+        );
 
-                document.write(
-                    scripts
-                        .map(
-                            script => `<script defer src="${script}"><\/script>`
-                        )
-                        .join('')
-                );
-            }
-        </script>
-        <script>
-            // @see https://docs.headwayapp.co/widget for more configuration options.
-            var HW_config = {
-                selector: '#headway', // CSS selector where to inject the badge
-                account: 'xdYpn7',
-            };
-            setTimeout(() => {
-                var headwayScript = document.createElement('script');
-                headwayScript.setAttribute(
-                    'src',
-                    'https://cdn.headwayapp.co/widget.js'
-                );
-                document.head.appendChild(headwayScript);
-            }, 4000);
-        </script>
-    </body>
+        document.write(
+          scripts
+            .map(script => `<script defer src="${script}"><\/script>`)
+            .join('')
+        );
+      }
+    </script>
+    <script>
+      // @see https://docs.headwayapp.co/widget for more configuration options.
+      var HW_config = {
+        selector: '#headway', // CSS selector where to inject the badge
+        account: 'xdYpn7',
+      };
+      setTimeout(() => {
+        var headwayScript = document.createElement('script');
+        headwayScript.setAttribute(
+          'src',
+          'https://cdn.headwayapp.co/widget.js'
+        );
+        document.head.appendChild(headwayScript);
+      }, 4000);
+    </script>
+  </body>
 </html>

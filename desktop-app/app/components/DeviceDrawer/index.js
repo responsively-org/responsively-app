@@ -12,14 +12,14 @@ import commonStyles from '../common.styles.css';
 import DevicesOverviewContainer from '../../containers/DevicesOverviewContainer';
 
 export default function DeviceDrawer(props) {
-    return (
-        <div>
-            <DevicesOverviewContainer />
-            <PreviewerLayoutSelector
-                value={props.browser.previewer.layout}
-                onChange={val => props.setPreviewLayout(val.value)}
-            />
-            <QuickFilterDevicesContainer />
-        </div>
-    );
+  return (
+    <div>
+      <DevicesOverviewContainer />
+      <PreviewerLayoutSelector
+        value={props.browser.previewer.layout}
+        onChange={val => props.setPreviewLayout(val.value)}
+      />
+      <QuickFilterDevicesContainer />
+    </div>
+  );
 }
