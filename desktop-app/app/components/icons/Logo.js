@@ -3,5 +3,5 @@ import React from 'react';
 import logoImage from '../../../resources/logo.svg';
 
 export default ({width, height, color, padding, margin}) => (
-  <img src={logoImage} height={height} width={width} alt="" />
+    <img src={logoImage} height={height} width={width} alt="" />
 );

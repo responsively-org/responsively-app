@@ -14,23 +14,23 @@ import PromiseWorker from 'promise-worker';
 const mergeImg = Promise.promisifyAll(_mergeImg);
 
 export const captureFullPage = async (
-  address,
-  device,
-  webView,
-  createSeparateDir,
-  now
+    address,
+    device,
+    webView,
+    createSeparateDir,
+    now
 ) => {
-  const worker = new Worker('./imageWorker.js');
-  const promiseWorker = new PromiseWorker(worker);
-  const toastId = toast.info(
-    <NotificationMessage
-      spinner={true}
-      message={`Capturing ${device.name} screenshot...`}
-    />,
-    {autoClose: false}
-  );
-  //Hiding scrollbars in the screenshot
-  await webView.insertCSS(`
+    const worker = new Worker('./imageWorker.js');
+    const promiseWorker = new PromiseWorker(worker);
+    const toastId = toast.info(
+        <NotificationMessage
+            spinner={true}
+            message={`Capturing ${device.name} screenshot...`}
+        />,
+        {autoClose: false}
+    );
+    //Hiding scrollbars in the screenshot
+    await webView.insertCSS(`
       .responsivelyApp__ScreenshotInProgress::-webkit-scrollbar {
         display: none;
       }
@@ -40,18 +40,18 @@ export const captureFullPage = async (
       }
     `);
 
-  //Get the windows's scroll details
-  let scrollX = 0;
-  let scrollY = 0;
-  let pageX = 0;
-  let pageY = 0;
-  const {
-    previousScrollPosition,
-    scrollHeight,
-    viewPortHeight,
-    scrollWidth,
-    viewPortWidth,
-  } = await webView.executeJavaScript(`
+    //Get the windows's scroll details
+    let scrollX = 0;
+    let scrollY = 0;
+    let pageX = 0;
+    let pageY = 0;
+    const {
+        previousScrollPosition,
+        scrollHeight,
+        viewPortHeight,
+        scrollWidth,
+        viewPortWidth,
+    } = await webView.executeJavaScript(`
     document.body.classList.add('responsivelyApp__ScreenshotInProgress');
     responsivelyApp.screenshotVar = {
       previousScrollPosition : {
@@ -66,137 +66,137 @@ export const captureFullPage = async (
     responsivelyApp.screenshotVar;
   `);
 
-  let images = [];
+    let images = [];
 
-  for (
-    let pageY = 0;
-    scrollY < scrollHeight;
-    pageY++, scrollY = viewPortHeight * pageY
-  ) {
-    scrollX = 0;
-    const columnImages = [];
     for (
-      let pageX = 0;
-      scrollX < scrollWidth;
-      pageX++, scrollX = viewPortWidth * pageX
+        let pageY = 0;
+        scrollY < scrollHeight;
+        pageY++, scrollY = viewPortHeight * pageY
     ) {
-      await webView.executeJavaScript(`
+        scrollX = 0;
+        const columnImages = [];
+        for (
+            let pageX = 0;
+            scrollX < scrollWidth;
+            pageX++, scrollX = viewPortWidth * pageX
+        ) {
+            await webView.executeJavaScript(`
         window.scrollTo(${scrollX}, ${scrollY})
         responsivelyApp.hideFixedPositionElementsForScreenshot();
       `);
-      await _delay(200);
-      const options = {
-        x: 0,
-        y: 0,
-        width: viewPortWidth,
-        height: viewPortHeight,
-      };
-      if (scrollX + viewPortWidth > scrollWidth) {
-        options.width = scrollWidth - scrollX;
-        options.x = viewPortWidth - options.width;
-      }
-      if (scrollY + viewPortHeight > scrollHeight) {
-        options.height = scrollHeight - scrollY;
-        options.y = viewPortHeight - options.height;
-      }
-      const image = await _takeSnapshot(webView, options);
-      columnImages.push(image);
+            await _delay(200);
+            const options = {
+                x: 0,
+                y: 0,
+                width: viewPortWidth,
+                height: viewPortHeight,
+            };
+            if (scrollX + viewPortWidth > scrollWidth) {
+                options.width = scrollWidth - scrollX;
+                options.x = viewPortWidth - options.width;
+            }
+            if (scrollY + viewPortHeight > scrollHeight) {
+                options.height = scrollHeight - scrollY;
+                options.y = viewPortHeight - options.height;
+            }
+            const image = await _takeSnapshot(webView, options);
+            columnImages.push(image);
+        }
+        const pngs = columnImages.map(img => img.toPNG());
+        images.push(
+            await promiseWorker.postMessage(
+                {
+                    images: pngs,
+                    direction: 'horizontal',
+                },
+                [...pngs]
+            )
+        );
     }
-    const pngs = columnImages.map(img => img.toPNG());
-    images.push(
-      await promiseWorker.postMessage(
-        {
-          images: pngs,
-          direction: 'horizontal',
-        },
-        [...pngs]
-      )
-    );
-  }
 
-  webView.executeJavaScript(`
+    webView.executeJavaScript(`
     window.scrollTo(${JSON.stringify(previousScrollPosition)});
     document.body.classList.remove('responsivelyApp__ScreenshotInProgress');
     responsivelyApp.unHideElementsHiddenForScreenshot();
   `);
 
-  toast.update(toastId, {
-    render: (
-      <NotificationMessage
-        spinner={true}
-        message={`Processing ${device.name} screenshot...`}
-      />
-    ),
-    type: toast.TYPE.INFO,
-  });
-  const resultFilename = _getScreenshotFileName(
-    address,
-    device,
-    now,
-    createSeparateDir
-  );
-  const mergedImage = await promiseWorker.postMessage({
-    images,
-    direction: 'vertical',
-    resultFilename,
-  });
-  toast.update(toastId, {
-    render: (
-      <NotificationMessage
-        tick={true}
-        message={`${device.name} screenshot taken!`}
-      />
-    ),
-    type: toast.TYPE.INFO,
-    autoClose: 2000,
-  });
-  await _delay(250);
-  shell.showItemInFolder(path.join(resultFilename.dir, resultFilename.file));
+    toast.update(toastId, {
+        render: (
+            <NotificationMessage
+                spinner={true}
+                message={`Processing ${device.name} screenshot...`}
+            />
+        ),
+        type: toast.TYPE.INFO,
+    });
+    const resultFilename = _getScreenshotFileName(
+        address,
+        device,
+        now,
+        createSeparateDir
+    );
+    const mergedImage = await promiseWorker.postMessage({
+        images,
+        direction: 'vertical',
+        resultFilename,
+    });
+    toast.update(toastId, {
+        render: (
+            <NotificationMessage
+                tick={true}
+                message={`${device.name} screenshot taken!`}
+            />
+        ),
+        type: toast.TYPE.INFO,
+        autoClose: 2000,
+    });
+    await _delay(250);
+    shell.showItemInFolder(path.join(resultFilename.dir, resultFilename.file));
 };
 
 const _delay = ms =>
-  new Promise((resolve, reject) => {
-    setTimeout(() => resolve(), ms);
-  });
+    new Promise((resolve, reject) => {
+        setTimeout(() => resolve(), ms);
+    });
 
 const _takeSnapshot = (webView, options) => {
-  return webView.getWebContents().capturePage(options);
+    return webView.getWebContents().capturePage(options);
 };
 
 function _getScreenshotFileName(
-  address,
-  device,
-  now = new Date(),
-  createSeparateDir
+    address,
+    device,
+    now = new Date(),
+    createSeparateDir
 ) {
-  const dateString = `${now
-    .toLocaleDateString()
-    .split('/')
-    .reverse()
-    .join('-')} at ${now
-    .toLocaleTimeString([], {hour12: true})
-    .replace(/\:/g, '.')
-    .toUpperCase()}`;
-  const directoryPath = createSeparateDir ? `${dateString}/` : '';
-  return {
-    dir: path.join(
-      os.homedir(),
-      `Desktop/Responsively-Screenshots`,
-      directoryPath
-    ),
-    file: `${_getWebsiteName(address)} - ${device.name.replace(
-      /\//g,
-      '-'
-    )} - ${dateString}.png`,
-  };
+    const dateString = `${now
+        .toLocaleDateString()
+        .split('/')
+        .reverse()
+        .join('-')} at ${now
+        .toLocaleTimeString([], {hour12: true})
+        .replace(/\:/g, '.')
+        .toUpperCase()}`;
+    const directoryPath = createSeparateDir ? `${dateString}/` : '';
+    return {
+        dir: path.join(
+            os.homedir(),
+            `Desktop/Responsively-Screenshots`,
+            directoryPath
+        ),
+        file: `${_getWebsiteName(address)} - ${device.name.replace(
+            /\//g,
+            '-'
+        )} - ${dateString}.png`,
+    };
 }
 
 const _getWebsiteName = address => {
-  let domain = new URL(address).hostname;
-  domain = domain.replace('www.', '');
-  const dotIndex = domain.indexOf('.');
-  if (dotIndex > -1) {
-    domain = domain.substr(0, domain.indexOf('.'));
-  }
-  return domain.charAt(0).toUpperCase() + domain.slice(1);
+    let domain = new URL(address).hostname;
+    domain = domain.replace('www.', '');
+    const dotIndex = domain.indexOf('.');
+    if (dotIndex > -1) {
+        domain = domain.substr(0, domain.indexOf('.'));
+    }
+    return domain.charAt(0).toUpperCase() + domain.slice(1);
 };

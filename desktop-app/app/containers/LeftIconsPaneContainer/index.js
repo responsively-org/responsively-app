@@ -7,16 +7,16 @@ import LeftIconsPane from '../../components/LeftIconsPane';
 import * as BrowserActions from '../../actions/browser';
 
 function mapStateToProps(state) {
-  return {
-    drawer: state.browser.drawer,
-  };
+    return {
+        drawer: state.browser.drawer,
+    };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(BrowserActions, dispatch);
+    return bindActionCreators(BrowserActions, dispatch);
 }
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(LeftIconsPane);

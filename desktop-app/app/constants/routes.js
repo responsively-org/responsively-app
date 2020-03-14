@@ -1,4 +1,4 @@
 export default {
-  HOME: '/',
-  COUNTER: '/counter',
+    HOME: '/',
+    COUNTER: '/counter',
 };

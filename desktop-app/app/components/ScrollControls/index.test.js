@@ -8,20 +8,20 @@ import BrowserZoom from './';
 import Slider from '@material-ui/core/Slider';
 
 describe('<BrowserZoom />', () => {
-  it('Renders label and the slider component ', () => {
-    const wrapper = shallow(<BrowserZoom />);
-    expect(wrapper.find(Slider)).to.have.lengthOf(1);
-  });
+    it('Renders label and the slider component ', () => {
+        const wrapper = shallow(<BrowserZoom />);
+        expect(wrapper.find(Slider)).to.have.lengthOf(1);
+    });
 
-  it('Calls the callback on slider change', () => {
-    const onChange = sinon.spy();
-    const wrapper = mount(<BrowserZoom onChange={onChange} />);
-    wrapper.find('.MuiSlider-thumb').simulate('mousedown');
-    wrapper.find('.MuiSlider-thumb').simulate('mouseup');
-    expect(onChange).to.have.property('callCount', 1);
-  });
+    it('Calls the callback on slider change', () => {
+        const onChange = sinon.spy();
+        const wrapper = mount(<BrowserZoom onChange={onChange} />);
+        wrapper.find('.MuiSlider-thumb').simulate('mousedown');
+        wrapper.find('.MuiSlider-thumb').simulate('mouseup');
+        expect(onChange).to.have.property('callCount', 1);
+    });
 
-  /*it('Calls the callback with a number value', () => {
+    /*it('Calls the callback with a number value', () => {
     const onChange = sinon.spy();
     const wrapper = mount(<BrowserZoom onChange={onChange} />);
     wrapper.find('.MuiSlider-thumb').simulate('mousedown');

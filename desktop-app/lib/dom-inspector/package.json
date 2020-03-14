@@ -1,46 +1,46 @@
 {
-  "name": "dom-inspector",
-  "version": "1.2.1",
-  "description": "dom inspect like chrom dev tools.",
-  "author": "luoye <luoyefe@gmail.com>",
-  "main": "dist/dom-inspector.min.js",
-  "scripts": {
-    "dev": "rollup -w -m -c build/config.js --env=dev",
-    "build": "node build/build.js"
-  },
-  "files": [
-    "src",
-    "dist/*.js"
-  ],
-  "devDependencies": {
-    "babel-core": "^6.22.1",
-    "babel-eslint": "^7.2.2",
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-preset-latest": "^6.16.0",
-    "eslint": "^3.14.1",
-    "eslint-config-airbnb-base": "^11.0.1",
-    "eslint-friendly-formatter": "^2.0.7",
-    "eslint-plugin-import": "^2.2.0",
-    "minimist": "^1.2.0",
-    "rollup": "^0.36.3",
-    "rollup-plugin-babel": "^2.6.1",
-    "rollup-plugin-eslint": "^3.0.0",
-    "rollup-plugin-postcss": "^0.4.1",
-    "rollup-watch": "^2.5.0",
-    "uglify-js": "^2.7.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/luoye-fe/dom-inspector.git"
-  },
-  "keywords": [
-    "dom-inspector",
-    "chrome",
-    "dev-tool"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/luoye-fe/dom-inspector/issues"
-  },
-  "homepage": "https://github.com/luoye-fe/dom-inspector#readme"
+    "name": "dom-inspector",
+    "version": "1.2.1",
+    "description": "dom inspect like chrom dev tools.",
+    "author": "luoye <luoyefe@gmail.com>",
+    "main": "dist/dom-inspector.min.js",
+    "scripts": {
+        "dev": "rollup -w -m -c build/config.js --env=dev",
+        "build": "node build/build.js"
+    },
+    "files": [
+        "src",
+        "dist/*.js"
+    ],
+    "devDependencies": {
+        "babel-core": "^6.22.1",
+        "babel-eslint": "^7.2.2",
+        "babel-plugin-external-helpers": "^6.22.0",
+        "babel-preset-latest": "^6.16.0",
+        "eslint": "^3.14.1",
+        "eslint-config-airbnb-base": "^11.0.1",
+        "eslint-friendly-formatter": "^2.0.7",
+        "eslint-plugin-import": "^2.2.0",
+        "minimist": "^1.2.0",
+        "rollup": "^0.36.3",
+        "rollup-plugin-babel": "^2.6.1",
+        "rollup-plugin-eslint": "^3.0.0",
+        "rollup-plugin-postcss": "^0.4.1",
+        "rollup-watch": "^2.5.0",
+        "uglify-js": "^2.7.3"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/luoye-fe/dom-inspector.git"
+    },
+    "keywords": [
+        "dom-inspector",
+        "chrome",
+        "dev-tool"
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/luoye-fe/dom-inspector/issues"
+    },
+    "homepage": "https://github.com/luoye-fe/dom-inspector#readme"
 }

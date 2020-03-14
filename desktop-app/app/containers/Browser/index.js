@@ -11,32 +11,38 @@ import Grid from '@material-ui/core/Grid';
 type Props = {};
 
 class Browser extends React.Component<Props> {
-  props: Props;
+    props: Props;
 
-  render() {
-    return (
-      <Fragment>
-        <Header />
-        <div style={{display: 'flex', flexDirection: 'row', height: '100%'}}>
-          <DrawerContainer />
-          <DevicePreviewerContainer />
-        </div>
-      </Fragment>
-    );
-  }
+    render() {
+        return (
+            <Fragment>
+                <Header />
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        height: '100%',
+                    }}
+                >
+                    <DrawerContainer />
+                    <DevicePreviewerContainer />
+                </div>
+            </Fragment>
+        );
+    }
 }
 
 function mapStateToProps(state) {
-  return {
-    browser: state.browser,
-  };
+    return {
+        browser: state.browser,
+    };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(BrowserActions, dispatch);
+    return bindActionCreators(BrowserActions, dispatch);
 }
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(Browser);

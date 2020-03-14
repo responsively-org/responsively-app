@@ -7,27 +7,27 @@ import AddressInput from '../../components/Addressinput';
 import * as BrowserActions from '../../actions/browser';
 
 const AddressBar = function(props) {
-  return (
-    <AddressInput
-      address={props.browser.address}
-      onChange={props.onAddressChange}
-      homepage={props.browser.homepage}
-      setHomepage={props.setCurrentAddressAsHomepage}
-    />
-  );
+    return (
+        <AddressInput
+            address={props.browser.address}
+            onChange={props.onAddressChange}
+            homepage={props.browser.homepage}
+            setHomepage={props.setCurrentAddressAsHomepage}
+        />
+    );
 };
 
 function mapStateToProps(state) {
-  return {
-    browser: state.browser,
-  };
+    return {
+        browser: state.browser,
+    };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(BrowserActions, dispatch);
+    return bindActionCreators(BrowserActions, dispatch);
 }
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(AddressBar);

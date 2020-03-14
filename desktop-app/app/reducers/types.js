@@ -4,15 +4,15 @@ import type {BrowserStateType as _BrowserStateType} from './browser';
 export type BrowserStateType = _BrowserStateType;
 
 export type counterStateType = {
-  +counter: number,
+    +counter: number,
 };
 
 export type RootStateType = {
-  browser: BrowserStateType,
+    browser: BrowserStateType,
 };
 
 export type Action = {
-  +type: string,
+    +type: string,
 };
 
 export type GetState = () => RootStateType;

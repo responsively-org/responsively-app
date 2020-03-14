@@ -9,27 +9,29 @@ import styles from './style.module.css';
 import {getDeviceIcon} from '../../utils/iconUtils';
 
 function Renderer(props) {
-  const [loading, setLoading] = useState(true);
-  return (
-    <div className={cx(styles.container, {[styles.hidden]: props.hidden})}>
-      <div className={styles.titleContainer}>
-        {getDeviceIcon(props.device.type)}
-        <span className={cx(styles.deviceTitle)}>{props.device.name}</span>
-        {loading && (
-          <div>
-            <Spinner size={16} />
-          </div>
-        )}
-      </div>
-      <div className={cx(styles.deviceWrapper)}>
-        <WebViewContainer
-          device={props.device}
-          transmitNavigatorStatus={props.transmitNavigatorStatus}
-          onLoadingStateChange={setLoading}
-        />
-      </div>
-    </div>
-  );
+    const [loading, setLoading] = useState(true);
+    return (
+        <div className={cx(styles.container, {[styles.hidden]: props.hidden})}>
+            <div className={styles.titleContainer}>
+                {getDeviceIcon(props.device.type)}
+                <span className={cx(styles.deviceTitle)}>
+                    {props.device.name}
+                </span>
+                {loading && (
+                    <div>
+                        <Spinner size={16} />
+                    </div>
+                )}
+            </div>
+            <div className={cx(styles.deviceWrapper)}>
+                <WebViewContainer
+                    device={props.device}
+                    transmitNavigatorStatus={props.transmitNavigatorStatus}
+                    onLoadingStateChange={setLoading}
+                />
+            </div>
+        </div>
+    );
 }
 
 export default Renderer;

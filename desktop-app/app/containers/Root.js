@@ -12,53 +12,53 @@ import {themeColor} from '../constants/colors';
 import ErrorBoundary from '../components/ErrorBoundary';
 
 type Props = {
-  store: Store,
-  history: {},
+    store: Store,
+    history: {},
 };
 
 const theme = createMuiTheme({
-  palette: {
-    type: 'dark',
-    primary: {
-      main: themeColor,
+    palette: {
+        type: 'dark',
+        primary: {
+            main: themeColor,
+        },
+        secondary: {
+            main: '#424242',
+        },
+        ternary: {
+            main: '#C4C5CE',
+        },
+        divider: grey[500],
+        background: {
+            main: '#252526',
+        },
     },
-    secondary: {
-      main: '#424242',
-    },
-    ternary: {
-      main: '#C4C5CE',
-    },
-    divider: grey[500],
-    background: {
-      main: '#252526',
-    },
-  },
 });
 
 const getApp = history => {
-  if (true || process.env.NODE_ENV !== 'development') {
+    if (true || process.env.NODE_ENV !== 'development') {
+        return (
+            <ErrorBoundary>
+                <ConnectedRouter history={history}>
+                    <Routes />
+                </ConnectedRouter>
+            </ErrorBoundary>
+        );
+    }
     return (
-      <ErrorBoundary>
         <ConnectedRouter history={history}>
-          <Routes />
+            <Routes />
         </ConnectedRouter>
-      </ErrorBoundary>
     );
-  }
-  return (
-    <ConnectedRouter history={history}>
-      <Routes />
-    </ConnectedRouter>
-  );
 };
 
 export default class Root extends Component<Props> {
-  render() {
-    const {store, history} = this.props;
-    return (
-      <Provider store={store}>
-        <ThemeProvider theme={theme}>{getApp(history)}</ThemeProvider>
-      </Provider>
-    );
-  }
+    render() {
+        const {store, history} = this.props;
+        return (
+            <Provider store={store}>
+                <ThemeProvider theme={theme}>{getApp(history)}</ThemeProvider>
+            </Provider>
+        );
+    }
 }

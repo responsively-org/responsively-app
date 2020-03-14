@@ -1,10 +1,10 @@
 const inspector = new DomInspector({
-	root: 'body',
-	exclude: ['.test111>span', document.querySelector('.exclude')]
+    root: 'body',
+    exclude: ['.test111>span', document.querySelector('.exclude')],
 });
 
 const anotherInspector = new DomInspector({
-	root: '.another'
+    root: '.another',
 });
 
 // inspector.destroy();

@@ -7,16 +7,16 @@ import LeftIconsPaneContainer from './containers/LeftIconsPaneContainer';
 import styles from './layout.css';
 
 export default () => (
-  <App>
-    <div className={styles.appRoot}>
-      <div className={styles.iconColumn}>
-        <LeftIconsPaneContainer />
-      </div>
-      <div className={styles.contentColumn}>
-        <Switch>
-          <Route path={routes.HOME} component={Browser} />
-        </Switch>
-      </div>
-    </div>
-  </App>
+    <App>
+        <div className={styles.appRoot}>
+            <div className={styles.iconColumn}>
+                <LeftIconsPaneContainer />
+            </div>
+            <div className={styles.contentColumn}>
+                <Switch>
+                    <Route path={routes.HOME} component={Browser} />
+                </Switch>
+            </div>
+        </div>
+    </App>
 );

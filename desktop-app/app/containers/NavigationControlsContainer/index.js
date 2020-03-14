@@ -7,17 +7,17 @@ import * as BrowserActions from '../../actions/browser';
 import NavigationControls from '../../components/NavigationControls';
 
 function mapStateToProps(state) {
-  const {
-    navigatorStatus: {backEnabled, forwardEnabled},
-  } = state.browser;
-  return {backEnabled, forwardEnabled};
+    const {
+        navigatorStatus: {backEnabled, forwardEnabled},
+    } = state.browser;
+    return {backEnabled, forwardEnabled};
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(BrowserActions, dispatch);
+    return bindActionCreators(BrowserActions, dispatch);
 }
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(NavigationControls);
