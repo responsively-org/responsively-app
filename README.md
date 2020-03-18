@@ -1,20 +1,30 @@
-<h1> Responsive Browser </h1>
+# Responsively Browser
 
 A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development. 
 
-![Responsively](https://raw.githubusercontent.com/manojVivek/responsively-app/readme-updated/desktop-app/resources/screenshot.png)
+![Screenshot](https://manojvivek.github.io/responsively-app/assets/img/screenshot.png)
 
-<h2>How to:</h2>
+## Features
+Please visit the website to know more about the application - https://manojvivek.github.io/responsively-app
 
-**Local** - ```yarn dev```
+## Download
+The application is available for Mac, Windows and Linux platforms. Please download it from here - https://github.com/manojVivek/responsively-app/releases
+
+
+## Development
+1. Goto `desktop-app` folder
+2. Run `yarn dev`. This will start the app for local development with live realoding functionality.
+
+## Distribution
+You can build the app for distrbution by runing:
+```yarn package-all```
+
+This will build the binaries for all the platforms and place it in the `releases` folder.
+
+If you want to build the binary for a specific platform, run one of the following commands:
+
+**Mac** - ```yarn package-mac```
 
 **Windows(NSIS)** - ```yarn package-win```
 
 **Linux(AppImage)** - ```yarn package-linux```
-
-**Mac** - ```yarn package-mac```
-
-build will be available at ./release
-
-Other build options available in package.json
-
