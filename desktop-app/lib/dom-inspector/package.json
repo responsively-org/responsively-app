@@ -17,7 +17,7 @@
     "babel-eslint": "^7.2.2",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-latest": "^6.16.0",
-    "eslint": "^3.14.1",
+    "eslint": "^4.18.2",
     "eslint-config-airbnb-base": "^11.0.1",
     "eslint-friendly-formatter": "^2.0.7",
     "eslint-plugin-import": "^2.2.0",
