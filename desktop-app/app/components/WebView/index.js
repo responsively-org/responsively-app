@@ -141,7 +141,9 @@ class WebView extends Component {
     );
 
     const urlChangeHandler = ({url}) => {
-      console.log('Navigating to ', url);
+      if (url === this.props.browser.address) {
+        return;
+      }
       this.props.onAddressChange(url);
     };
 
@@ -153,7 +155,6 @@ class WebView extends Component {
     );
 
     this.webviewRef.current.addEventListener('did-navigate', ({url}) => {
-      console.log('did-navigate', url);
       if (this.props.transmitNavigatorStatus) {
         this.props.updateNavigatorStatus({
           backEnabled: this.webviewRef.current.canGoBack(),

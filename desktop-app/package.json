@@ -66,6 +66,7 @@
     "appId": "app.responsively",
     "files": [
       "app/preload.js",
+      "app/imageWorker.js",
       "lib",
       "app/dist/",
       "resources/icons",

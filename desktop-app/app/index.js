@@ -12,6 +12,16 @@ if (remote.getGlobal('process').env.NODE_ENV !== 'development') {
   Sentry.init({
     dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
     environment: remote.getGlobal('process').env.NODE_ENV,
+    beforeSend: (event, hint) => {
+      if (
+        hint &&
+        hint.originalException &&
+        (hint.originalException.message || '').indexOf('ERR_ABORTED') > -1
+      ) {
+        return null;
+      }
+      return event;
+    },
   });
 }
 const store = configureStore();
