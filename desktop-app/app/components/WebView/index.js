@@ -140,12 +140,20 @@ class WebView extends Component {
       }
     );
 
-    this.webviewRef.current.addEventListener('will-navigate', ({url}) => {
+    const urlChangeHandler = ({url}) => {
       console.log('Navigating to ', url);
       this.props.onAddressChange(url);
-    });
+    };
+
+    this.webviewRef.current.addEventListener('will-navigate', urlChangeHandler);
+
+    this.webviewRef.current.addEventListener(
+      'did-navigate-in-page',
+      urlChangeHandler
+    );
 
     this.webviewRef.current.addEventListener('did-navigate', ({url}) => {
+      console.log('did-navigate', url);
       if (this.props.transmitNavigatorStatus) {
         this.props.updateNavigatorStatus({
           backEnabled: this.webviewRef.current.canGoBack(),
