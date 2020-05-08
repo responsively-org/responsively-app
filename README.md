@@ -3,7 +3,7 @@ website: https://github.com/manojVivek/responsively-app
 
 A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development. 
 
-![Screenshot](https://manojvivek.github.io/responsively-app/assets/img/screenshot.png)
+![Quick Demo](https://manojvivek.github.io/responsively-app/assets/img/responsively-app.gif)
 
 ## Features
 1. Mirrored User-interactions across all devices.
