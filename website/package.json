@@ -1,12 +1,13 @@
 {
   "name": "responsively-website",
   "version": "2.0.0",
-  "description": "Software and SaaS Bootstrap Theme",
+  "description": "Responsively app website",
   "main": "gulpfile.js",
   "scripts": {
     "start": "./node_modules/.bin/gulp",
     "build": "./node_modules/.bin/gulp build",
     "deploy": "gh-pages -d dist",
+    "predeploy": "yarn build",
     "postinstall": "gulp deps"
   },
   "browserslist": "Safari > 10, Firefox > 40, Chrome > 40, ie >= 11",
@@ -19,7 +20,7 @@
     }
   },
   "license": "SEE LICENSE IN LICENSE.md",
-  "homepage": "http://leap.mediumra.re/index.html",
+  "homepage": "https://manojvivek.github.io/responsively-app",
   "dependencies": {
     "@fancyapps/fancybox": "3.5.2",
     "@tanem/svg-injector": "~8.0.12",
