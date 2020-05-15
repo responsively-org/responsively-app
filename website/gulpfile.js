@@ -26,6 +26,7 @@ const autoprefixer = require('gulp-autoprefixer'),
   themeYaml = './theme.yml',
   year = new Date().getFullYear(),
   yaml = require('yamljs');
+const server = require('gulp-server-livereload');
 
 let copyDeps = yaml.load(copyDepsYaml);
 let theme = yaml.load(themeYaml);
@@ -335,13 +336,18 @@ gulp.task('deps', async (done) => {
 
 // watch files for changes and reload
 gulp.task('serve', function (done) {
-  browserSync({
+  /*browserSync({
     port: 4001,
     server: {
       baseDir: './dist',
       index: "index.html"
     }
-  });
+  });*/
+  gulp.src('./dist')
+    .pipe(server({
+      livereload: true,
+      open: true
+    }));
   done();
 });
 
