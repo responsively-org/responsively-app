@@ -343,7 +343,7 @@ class Collapse {
         ...typeof config === 'object' && config ? config : {}
       }
 
-      if (!data && _config.toggle && /show|hide/.test(config)) {
+      if (!data && _config.toggle && /show|hide/.test(_config)) {
         _config.toggle = false
       }
 

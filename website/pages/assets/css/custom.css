@@ -6,3 +6,19 @@
 /*  in your page by adding a reference to assets/css/custom.css in the head of each page.
 /*
 */
+
+.navbar {
+  padding: .5rem 1rem;
+}
+
+@media (min-width: 992px) {
+  .container {
+      max-width: 980px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+      max-width: 1140px;
+  }
+}
