@@ -2917,11 +2917,13 @@ input[type="button"].btn-block {
     background-color: #fff;
     border: 1px solid #dee2e6;
     border-radius: 1rem;
+    -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     -webkit-appearance: none;
             appearance: none; }
     @media (prefers-reduced-motion: reduce) {
       .custom-range::-webkit-slider-thumb {
+        -webkit-transition: none;
         transition: none; } }
     .custom-range::-webkit-slider-thumb:active {
       background-color: #3755BE; }
@@ -2939,11 +2941,13 @@ input[type="button"].btn-block {
     background-color: #fff;
     border: 1px solid #dee2e6;
     border-radius: 1rem;
+    -moz-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     -moz-appearance: none;
          appearance: none; }
     @media (prefers-reduced-motion: reduce) {
       .custom-range::-moz-range-thumb {
+        -moz-transition: none;
         transition: none; } }
     .custom-range::-moz-range-thumb:active {
       background-color: #3755BE; }
@@ -2964,10 +2968,12 @@ input[type="button"].btn-block {
     background-color: #fff;
     border: 1px solid #dee2e6;
     border-radius: 1rem;
+    -ms-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     appearance: none; }
     @media (prefers-reduced-motion: reduce) {
       .custom-range::-ms-thumb {
+        -ms-transition: none;
         transition: none; } }
     .custom-range::-ms-thumb:active {
       background-color: #3755BE; }
@@ -12862,6 +12868,7 @@ a.plyr__control {
     border: 0;
     border-radius: 3px;
     height: 6px;
+    -webkit-transition: box-shadow 0.3s ease;
     transition: box-shadow 0.3s ease;
     -webkit-user-select: none;
             user-select: none;
@@ -12873,6 +12880,7 @@ a.plyr__control {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(47, 52, 61, 0.2);
     height: 14px;
     position: relative;
+    -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
     width: 14px;
     -webkit-appearance: none;
@@ -12883,6 +12891,7 @@ a.plyr__control {
     border: 0;
     border-radius: 3px;
     height: 6px;
+    -moz-transition: box-shadow 0.3s ease;
     transition: box-shadow 0.3s ease;
     -moz-user-select: none;
          user-select: none; }
@@ -12893,6 +12902,7 @@ a.plyr__control {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(47, 52, 61, 0.2);
     height: 14px;
     position: relative;
+    -moz-transition: all 0.2s ease;
     transition: all 0.2s ease;
     width: 14px; }
   .plyr--full-ui input[type='range']::-moz-range-progress {
@@ -12904,6 +12914,7 @@ a.plyr__control {
     border: 0;
     border-radius: 3px;
     height: 6px;
+    -ms-transition: box-shadow 0.3s ease;
     transition: box-shadow 0.3s ease;
     -ms-user-select: none;
         user-select: none;
@@ -12913,6 +12924,7 @@ a.plyr__control {
     border: 0;
     border-radius: 3px;
     height: 6px;
+    -ms-transition: box-shadow 0.3s ease;
     transition: box-shadow 0.3s ease;
     -ms-user-select: none;
         user-select: none; }
@@ -12921,6 +12933,7 @@ a.plyr__control {
     border: 0;
     border-radius: 3px;
     height: 6px;
+    -ms-transition: box-shadow 0.3s ease;
     transition: box-shadow 0.3s ease;
     -ms-user-select: none;
         user-select: none;
@@ -12932,6 +12945,7 @@ a.plyr__control {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(47, 52, 61, 0.2);
     height: 14px;
     position: relative;
+    -ms-transition: all 0.2s ease;
     transition: all 0.2s ease;
     width: 14px;
     margin-top: 0; }
@@ -13133,6 +13147,7 @@ a.plyr__control {
   top: 50%; }
   .plyr__progress__buffer::-webkit-progress-bar {
     background: transparent;
+    -webkit-transition: width 0.2s ease;
     transition: width 0.2s ease; }
   .plyr__progress__buffer::-webkit-progress-value {
     background: currentColor;
@@ -13142,9 +13157,11 @@ a.plyr__control {
     background: currentColor;
     border-radius: 100px;
     min-width: 6px;
+    -moz-transition: width 0.2s ease;
     transition: width 0.2s ease; }
   .plyr__progress__buffer::-ms-fill {
     border-radius: 100px;
+    -ms-transition: width 0.2s ease;
     transition: width 0.2s ease; }
 
 .plyr--video .plyr__progress__buffer {
@@ -13537,6 +13554,10 @@ pre[class*="language-"] {
 
 pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
 code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+  text-shadow: none;
+  background: #b3d4fc; }
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection, code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
   text-shadow: none;
   background: #b3d4fc; }
 
