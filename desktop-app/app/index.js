@@ -20,6 +20,7 @@ if (remote.getGlobal('process').env.NODE_ENV !== 'development') {
       ) {
         return null;
       }
+      event.tags = {appVersion: remote.app.getVersion()};
       return event;
     },
   });
