@@ -154,29 +154,23 @@ export default class MenuBuilder {
       label: 'Help',
       submenu: [
         {
-          label: 'Learn More',
-          click() {
-            shell.openExternal('http://electron.atom.io');
-          },
-        },
-        {
-          label: 'Documentation',
+          label: 'Website',
           click() {
             shell.openExternal(
-              'https://github.com/atom/electron/tree/master/docs#readme'
+              'https://manojvivek.github.io/responsively-app/'
             );
           },
         },
         {
-          label: 'Community Discussions',
+          label: 'Open Source',
           click() {
-            shell.openExternal('https://discuss.atom.io/c/electron');
+            shell.openExternal('https://github.com/manojVivek/responsively-app');
           },
         },
         {
-          label: 'Search Issues',
+          label: 'Report Issues',
           click() {
-            shell.openExternal('https://github.com/atom/electron/issues');
+            shell.openExternal('https://github.com/manojVivek/responsively-app/issues');
           },
         },
       ],
