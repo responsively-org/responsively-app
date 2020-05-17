@@ -23,7 +23,7 @@ If you face any problems while using the application, please open an issue here 
 
 ## Contribute
 1. Goto `desktop-app` folder
-2. Run `yarn dev`. This will start the app for local development with live relaoding.
+2. Run `yarn dev`. This will start the app for local development with live reloading.
 
 ## Distribution
 You can build the app for distrbution by runing:
