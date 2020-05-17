@@ -16,7 +16,7 @@ if (remote.getGlobal('process').env.NODE_ENV !== 'development') {
       if (
         hint &&
         hint.originalException &&
-        (hint.originalException.message || '').indexOf('ERR_ABORTED') > -1
+        (hint.originalException.message || '').indexOf(') loading ') > -1
       ) {
         return null;
       }
