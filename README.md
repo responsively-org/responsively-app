@@ -1,5 +1,8 @@
-# Responsively Browser
-website: https://github.com/manojVivek/responsively-app
+# Responsively App
+[![PH](https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=200375&theme=light&period=daily)](https://www.producthunt.com/posts/responsively?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-responsively)
+
+Website: https://github.com/manojVivek/responsively-app
+
 
 A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development. 
 
