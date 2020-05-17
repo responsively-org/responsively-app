@@ -1,11 +1,58 @@
 // @flow
-import {app, Menu, shell, BrowserWindow} from 'electron';
+import {app, dialog, Menu, shell, BrowserWindow} from 'electron';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
 
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
+  }
+
+  subMenuHelp = {
+    label: 'Help',
+    submenu: [
+      {
+        label: 'Website',
+        click() {
+          shell.openExternal(
+            'https://manojvivek.github.io/responsively-app/'
+          );
+        },
+      },
+      {
+        label: 'Open Source',
+        click() {
+          shell.openExternal('https://github.com/manojVivek/responsively-app');
+        },
+      },
+      {
+        label: 'Report Issues',
+        click() {
+          shell.openExternal('https://github.com/manojVivek/responsively-app/issues');
+        },
+      },
+    ],
+  };
+  
+  subMenuFile = {
+    label: 'File',
+    submenu: [
+      {
+        label: 'Open HTML file',
+        accelerator: 'Command+O',
+        click: () => {
+          const selected = dialog.showOpenDialogSync({
+            filters: [
+              { name: 'HTML', extensions: ['htm', 'html'] },
+            ]
+          });
+          if (!selected || !selected.length) {
+            return;
+          }
+          this.mainWindow.webContents.send('address-change', selected[0]);
+        },
+      }
+    ]
   }
 
   buildMenu() {
@@ -45,7 +92,7 @@ export default class MenuBuilder {
 
   buildDarwinTemplate() {
     const subMenuAbout = {
-      label: 'Electron',
+      label: 'Responsively',
       submenu: [
         {
           label: 'About ResponsivelyApp',
@@ -150,56 +197,16 @@ export default class MenuBuilder {
         {label: 'Bring All to Front', selector: 'arrangeInFront:'},
       ],
     };
-    const subMenuHelp = {
-      label: 'Help',
-      submenu: [
-        {
-          label: 'Website',
-          click() {
-            shell.openExternal(
-              'https://manojvivek.github.io/responsively-app/'
-            );
-          },
-        },
-        {
-          label: 'Open Source',
-          click() {
-            shell.openExternal('https://github.com/manojVivek/responsively-app');
-          },
-        },
-        {
-          label: 'Report Issues',
-          click() {
-            shell.openExternal('https://github.com/manojVivek/responsively-app/issues');
-          },
-        },
-      ],
-    };
 
     const subMenuView =
       process.env.NODE_ENV === 'development' ? subMenuViewDev : subMenuViewProd;
 
-    return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+    return [subMenuAbout, this.subMenuFile, subMenuEdit, subMenuView, subMenuWindow, this.subMenuHelp];
   }
 
   buildDefaultTemplate() {
     const templateDefault = [
-      {
-        label: '&File',
-        submenu: [
-          {
-            label: '&Open',
-            accelerator: 'Ctrl+O',
-          },
-          {
-            label: '&Close',
-            accelerator: 'Ctrl+W',
-            click: () => {
-              this.mainWindow.close();
-            },
-          },
-        ],
-      },
+      this.subMenuFile,
       {
         label: '&View',
         submenu:
@@ -241,37 +248,7 @@ export default class MenuBuilder {
                 },
               ],
       },
-      {
-        label: 'Help',
-        submenu: [
-          {
-            label: 'Learn More',
-            click() {
-              shell.openExternal('http://electron.atom.io');
-            },
-          },
-          {
-            label: 'Documentation',
-            click() {
-              shell.openExternal(
-                'https://github.com/atom/electron/tree/master/docs#readme'
-              );
-            },
-          },
-          {
-            label: 'Community Discussions',
-            click() {
-              shell.openExternal('https://discuss.atom.io/c/electron');
-            },
-          },
-          {
-            label: 'Search Issues',
-            click() {
-              shell.openExternal('https://github.com/atom/electron/issues');
-            },
-          },
-        ],
-      },
+      this.subMenuHelp
     ];
 
     return templateDefault;

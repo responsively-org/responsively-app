@@ -99,8 +99,6 @@ export function onAddressChange(newURL) {
       browser: {address},
     } = getState();
 
-    console.log('newURL', newURL);
-
     if (newURL === address) {
       return;
     }
