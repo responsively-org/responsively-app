@@ -40,7 +40,7 @@ export default {
       type: 'emulated-device',
       order: 30,
       device: {
-        'show-by-default': true,
+        'show-by-default': false,
         title: 'iPhone 5/SE',
         screen: {
           horizontal: {
@@ -518,7 +518,7 @@ export default {
       type: 'emulated-device',
       order: 20,
       device: {
-        'show-by-default': true,
+        'show-by-default': false,
         title: 'Pixel 2',
         screen: {
           horizontal: {
@@ -553,7 +553,7 @@ export default {
       type: 'emulated-device',
       order: 21,
       device: {
-        'show-by-default': true,
+        'show-by-default': false,
         title: 'Pixel 2 XL',
         screen: {
           horizontal: {
@@ -792,7 +792,7 @@ export default {
       type: 'emulated-device',
       order: 10,
       device: {
-        'show-by-default': true,
+        'show-by-default': false,
         title: 'Galaxy S5',
         screen: {
           horizontal: {
