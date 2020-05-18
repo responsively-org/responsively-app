@@ -2,9 +2,7 @@
 import React, {Component} from 'react';
 import cx from 'classnames';
 import Grid from '@material-ui/core/Grid';
-import ArrowLeftIcon from '../icons/ArrowLeft';
-import ArrowRightIcon from '../icons/ArrowRight';
-import ReloadIcon from '../icons/Reload';
+import {ipcRenderer} from 'electron';
 import HomeIcon from '../icons/Home';
 import {Icon} from 'flwww';
 
@@ -14,6 +12,11 @@ import {iconsColor} from '../../constants/colors';
 import {Tooltip} from '@material-ui/core';
 
 class NavigationControls extends Component {
+  
+  componentDidMount() {
+    ipcRenderer.on('reload-url',  this.props.triggerNavigationReload);
+  }
+
   render() {
     const iconProps = {
       color: iconsColor,

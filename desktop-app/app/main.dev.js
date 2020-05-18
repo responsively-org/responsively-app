@@ -11,7 +11,7 @@
  * @flow
  */
 require('dotenv').config();
-import electron, {app, BrowserWindow, ipcMain} from 'electron';
+import electron, {app, BrowserWindow, globalShortcut, ipcMain} from 'electron';
 import {autoUpdater} from 'electron-updater';
 import settings from 'electron-settings';
 import log from 'electron-log';
@@ -128,6 +128,9 @@ const createWindow = async () => {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
+    globalShortcut.register('CommandOrControl+R', () => {
+      mainWindow.webContents.send('reload-url');
+    })
   });
 
   ipcMain.on('http-auth-promt-response', (event, ...args) => {
