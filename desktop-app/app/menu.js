@@ -238,6 +238,13 @@ export default class MenuBuilder {
               ]
             : [
                 {
+                  label: '&Reload',
+                  accelerator: 'CommandOrControl+R',
+                  click: () => {
+                    this.mainWindow.webContents.send('reload-url');
+                  },
+                },
+                {
                   label: 'Toggle &Full Screen',
                   accelerator: 'F11',
                   click: () => {
