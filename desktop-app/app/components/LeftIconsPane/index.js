@@ -37,7 +37,7 @@ const LeftIconsPane = props => {
       >
         <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
           <div onClick={() => props.openDrawerAndSetContent(DEVICE_MANAGER)}>
-            <DevicesIcon {...iconProps} />
+            <DevicesIcon {...iconProps} className="deviceManagerIcon" />
           </div>
         </Grid>
         {/*<Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>

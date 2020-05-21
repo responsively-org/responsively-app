@@ -65,6 +65,7 @@ export default ({width, height, color, padding, margin}) => (
       viewBox="0 0 100 100"
       x="0px"
       y="0px"
+      className="deviceRotateIcon"
     >
       <g data-name="Group">
         <path

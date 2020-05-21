@@ -10,6 +10,7 @@ export default ({width, height, color, padding, margin}) => (
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox="563.5 323.5 162.599 156.526"
+      className="inspectElementIcon"
     >
       <path
         d=" M 595 340 L 665 340 C 673.279 340 680 346.721 680 355 L 680 425 C 680 433.279 673.279 440 665 440 L 595 440 C 586.721 440 580 433.279 580 425 L 580 355 C 580 346.721 586.721 340 595 340 Z "

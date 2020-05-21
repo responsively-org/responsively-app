@@ -42,7 +42,6 @@ class NavigationControls extends Component {
             <Tooltip title="Back">
               <div onClick={this.props.triggerNavigationBack}>
                 <Icon type="arrowLeft" size="30px" {...iconProps} />
-                {/*<ArrowLeftIcon {...iconProps} />*/}
               </div>
             </Tooltip>
           </Grid>
@@ -71,7 +70,7 @@ class NavigationControls extends Component {
                 onClick={this.props.triggerNavigationReload}
                 style={{transform: 'rotate(90deg)'}}
               >
-                <Icon type="rotate" {...iconProps} />
+                <Icon type="rotate" {...iconProps} className="reloadIcon"/>
                 {/*<ReloadIcon {...iconProps} height={15} width={15} padding={5} />*/}
               </div>
             </Tooltip>
