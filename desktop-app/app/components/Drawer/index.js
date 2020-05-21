@@ -7,7 +7,7 @@ import cx from 'classnames';
 
 import styles from './styles.css';
 import commonStyles from '../common.styles.css';
-import {DEVICE_MANAGER, SETTINGS} from '../../constants/DrawerContents';
+import {DEVICE_MANAGER, USER_PREFERENCES} from '../../constants/DrawerContents';
 import {iconsColor} from '../../constants/colors';
 import DoubleLeftArrowIcon from '../icons/DoubleLeftArrow';
 
@@ -61,7 +61,7 @@ function getDrawerContent(type) {
   switch (type) {
     case DEVICE_MANAGER:
       return <DeviceDrawerContainer />;
-    case SETTINGS:
+    case USER_PREFERENCES:
       return <UserPreferencesContainer />;
   }
 }

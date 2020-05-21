@@ -51,6 +51,7 @@ type PreviewerType = {
 
 type UserPreferenceType = {
   disableSSLValidation: boolean,
+  drawerState: boolean,
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
@@ -89,6 +90,14 @@ function _getActiveDevices() {
   return activeDevices;
 }
 
+function _getUserPreferences(): UserPreferenceType {
+  return settings.get(USER_PREFERENCES) || {};
+}
+
+function _setUserPreferences(userPreferences) {
+  settings.set(USER_PREFERENCES, userPreferences);
+}
+
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
@@ -98,10 +107,16 @@ export default function browser(
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
-    drawer: {open: true, content: DEVICE_MANAGER},
+    drawer: {
+      open:
+        _getUserPreferences().drawerState === null
+          ? true
+          : _getUserPreferences().drawerState,
+      content: DEVICE_MANAGER,
+    },
     previewer: {layout: FLEXIGRID_LAYOUT},
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
-    userPreferences: settings.get(USER_PREFERENCES) || {},
+    userPreferences: _getUserPreferences(),
   },
   action: Action
 ) {
@@ -119,6 +134,10 @@ export default function browser(
     case NEW_NAVIGATOR_STATUS:
       return {...state, navigatorStatus: action.navigatorStatus};
     case NEW_DRAWER_CONTENT:
+      _setUserPreferences({
+        ...state.userPreferences,
+        drawerState: action.drawer.open,
+      });
       return {...state, drawer: action.drawer};
     case NEW_PREVIEWER_CONFIG:
       const updateObject = {previewer: action.previewer};

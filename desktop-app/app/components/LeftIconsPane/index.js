@@ -14,7 +14,7 @@ import {iconsColor} from '../../constants/colors';
 import {
   DEVICE_MANAGER,
   SCREENSHOT_MANAGER,
-  SETTINGS,
+  USER_PREFERENCES,
 } from '../../constants/DrawerContents';
 
 const LeftIconsPane = props => {
@@ -24,6 +24,13 @@ const LeftIconsPane = props => {
     style: {fontSize: 30},
     height: 30,
     width: 30,
+  };
+  const toggleState = content => {
+    if (props.drawer.open && props.drawer.content === content) {
+      return props.changeDrawerOpenState(false);
+    }
+
+    props.openDrawerAndSetContent(content);
   };
   return (
     <div className={styles.iconsContainer}>
@@ -37,23 +44,30 @@ const LeftIconsPane = props => {
         alignItems="center"
         className={cx(styles.utilitySection)}
       >
-        <Grid item className={cx(commonStyles.icons, styles.icon, commonStyles.enabled)}>
-          <div onClick={() => props.openDrawerAndSetContent(DEVICE_MANAGER)}>
+        <Grid
+          item
+          className={cx(commonStyles.icons, styles.icon, commonStyles.enabled, {
+            [commonStyles.selected]:
+              props.drawer.open && props.drawer.content === DEVICE_MANAGER,
+          })}
+          onClick={() => toggleState(DEVICE_MANAGER)}
+        >
+          <div>
             <DevicesIcon {...iconProps} className="deviceManagerIcon" />
           </div>
         </Grid>
-        <Grid item className={cx(commonStyles.icons, styles.icon, commonStyles.enabled)}>
-          <div onClick={() => props.openDrawerAndSetContent(SETTINGS)}>
+        <Grid
+          item
+          className={cx(commonStyles.icons, styles.icon, commonStyles.enabled, {
+            [commonStyles.selected]:
+              props.drawer.open && props.drawer.content === USER_PREFERENCES,
+          })}
+          onClick={() => toggleState(USER_PREFERENCES)}
+        >
+          <div>
             <SettingsIcon {...iconProps} className="settingsIcon" />
           </div>
         </Grid>
-        {/*<Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-          <div
-            onClick={() => props.openDrawerAndSetContent(SCREENSHOT_MANAGER)}
-          >
-            <PhotoLibraryIcon {...iconProps} />
-          </div>
-        </Grid>*/}
       </Grid>
       <div style={{position: 'relative'}}>
         <div

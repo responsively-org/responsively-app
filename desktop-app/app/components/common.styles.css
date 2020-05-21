@@ -12,11 +12,11 @@
 
 .icons.enabled:hover {
   opacity: 1;
-  background: #7587ec;
+  background: #6075ef;
 }
 
 .icons.selected {
-  background: #7587ecf5;
+  background: #7587ec;
 }
 
 .iconDisabler {
