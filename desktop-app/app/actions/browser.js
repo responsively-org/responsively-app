@@ -101,13 +101,16 @@ export function newFilters(filters) {
   };
 }
 
-export function onAddressChange(newURL) {
+export function onAddressChange(newURL, force) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {address},
     } = getState();
 
     if (newURL === address) {
+      if (force) {
+        pubsub.publish(NAVIGATION_RELOAD);
+      }
       return;
     }
 
