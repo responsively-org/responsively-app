@@ -16,7 +16,7 @@ import {autoUpdater} from 'electron-updater';
 import settings from 'electron-settings';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import {ACTIVE_DEVICES} from './constants/settingKeys';
+import {USER_PREFERENCES} from './constants/settingKeys';
 import * as Sentry from '@sentry/electron';
 
 const path = require('path');
@@ -72,6 +72,16 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+app.on(
+  'certificate-error',
+  (event, webContents, url, error, certificate, callback) => {
+    if ((settings.get(USER_PREFERENCES) || {}).disableSSLValidation === true) {
+      event.preventDefault();
+      callback(true);
+    }
+  }
+);
 
 app.on('login', (event, webContents, request, authInfo, callback) => {
   event.preventDefault();

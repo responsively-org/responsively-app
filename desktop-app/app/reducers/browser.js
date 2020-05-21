@@ -50,7 +50,7 @@ type PreviewerType = {
 };
 
 type UserPreferenceType = {
-  disableSSLCAValidation: boolean,
+  disableSSLValidation: boolean,
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;

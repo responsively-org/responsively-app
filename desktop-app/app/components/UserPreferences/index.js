@@ -21,17 +21,17 @@ export default function UserPreference(props) {
           <FormControlLabel
             control={
               <Checkbox
-                checked={props.userPreferences.disableSSLCAValidation || false}
+                checked={props.userPreferences.disableSSLValidation || false}
                 onChange={e =>
-                  onChange('disableSSLCAValidation', e.target.checked)
+                  onChange('disableSSLValidation', e.target.checked)
                 }
-                name="Diable SSL CA Validation"
+                name="Diable SSL Validation"
                 color="primary"
               />
             }
             label={
               <span className={cx(styles.preferenceName)}>
-                Disable SSL CA Validation
+                Disable SSL Validation
               </span>
             }
           />

@@ -228,7 +228,6 @@ class WebView extends Component {
     if (this.state.isUnplugged) {
       return;
     }
-    console.log('processScrollDownEvent', this.webviewRef);
     this.webviewRef.current.send('scrollDownMessage');
   };
 
