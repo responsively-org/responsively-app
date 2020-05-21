@@ -128,9 +128,6 @@ const createWindow = async () => {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
-    globalShortcut.register('CommandOrControl+R', () => {
-      mainWindow.webContents.send('reload-url');
-    })
   });
 
   ipcMain.on('http-auth-promt-response', (event, ...args) => {
