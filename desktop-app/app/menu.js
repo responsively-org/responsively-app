@@ -14,9 +14,7 @@ export default class MenuBuilder {
       {
         label: 'Website',
         click() {
-          shell.openExternal(
-            'https://manojvivek.github.io/responsively-app/'
-          );
+          shell.openExternal('https://manojvivek.github.io/responsively-app/');
         },
       },
       {
@@ -28,12 +26,14 @@ export default class MenuBuilder {
       {
         label: 'Report Issues',
         click() {
-          shell.openExternal('https://github.com/manojVivek/responsively-app/issues');
+          shell.openExternal(
+            'https://github.com/manojVivek/responsively-app/issues'
+          );
         },
       },
     ],
   };
-  
+
   subMenuFile = {
     label: 'File',
     submenu: [
@@ -42,18 +42,16 @@ export default class MenuBuilder {
         accelerator: 'Command+O',
         click: () => {
           const selected = dialog.showOpenDialogSync({
-            filters: [
-              { name: 'HTML', extensions: ['htm', 'html'] },
-            ]
+            filters: [{name: 'HTML', extensions: ['htm', 'html']}],
           });
           if (!selected || !selected.length) {
             return;
           }
           this.mainWindow.webContents.send('address-change', selected[0]);
         },
-      }
-    ]
-  }
+      },
+    ],
+  };
 
   buildMenu() {
     if (
@@ -172,6 +170,13 @@ export default class MenuBuilder {
       label: 'View',
       submenu: [
         {
+          label: 'Reload',
+          accelerator: 'CommandOrControl+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-url');
+          },
+        },
+        {
           label: 'Toggle Full Screen',
           accelerator: 'Ctrl+Command+F',
           click: () => {
@@ -201,7 +206,14 @@ export default class MenuBuilder {
     const subMenuView =
       process.env.NODE_ENV === 'development' ? subMenuViewDev : subMenuViewProd;
 
-    return [subMenuAbout, this.subMenuFile, subMenuEdit, subMenuView, subMenuWindow, this.subMenuHelp];
+    return [
+      subMenuAbout,
+      this.subMenuFile,
+      subMenuEdit,
+      subMenuView,
+      subMenuWindow,
+      this.subMenuHelp,
+    ];
   }
 
   buildDefaultTemplate() {
@@ -255,7 +267,7 @@ export default class MenuBuilder {
                 },
               ],
       },
-      this.subMenuHelp
+      this.subMenuHelp,
     ];
 
     return templateDefault;
