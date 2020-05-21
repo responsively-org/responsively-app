@@ -1,17 +1,13 @@
 // @flow
 import React from 'react';
-import MaterialDrawer from '@material-ui/core/Drawer';
-import {makeStyles, useTheme} from '@material-ui/core/styles';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import {makeStyles} from '@material-ui/core/styles';
 import DeviceDrawerContainer from '../../containers/DeviceDrawerContainer';
+import UserPreferencesContainer from '../../containers/UserPreferencesContainer';
 import cx from 'classnames';
-import {Icon} from 'flwww';
 
 import styles from './styles.css';
 import commonStyles from '../common.styles.css';
-import {DEVICE_MANAGER} from '../../constants/DrawerContents';
+import {DEVICE_MANAGER, SETTINGS} from '../../constants/DrawerContents';
 import {iconsColor} from '../../constants/colors';
 import DoubleLeftArrowIcon from '../icons/DoubleLeftArrow';
 
@@ -61,12 +57,12 @@ export function Drawer(props) {
   );
 }
 
-const deviceDrawerComponent = <DeviceDrawerContainer />;
-
 function getDrawerContent(type) {
   switch (type) {
     case DEVICE_MANAGER:
-      return deviceDrawerComponent;
+      return <DeviceDrawerContainer />;
+    case SETTINGS:
+      return <UserPreferencesContainer />;
   }
 }
 

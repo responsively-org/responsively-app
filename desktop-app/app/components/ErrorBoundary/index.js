@@ -13,7 +13,7 @@ export default class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     // You can also log the error to an error reporting service
-    alert(JSON.stringify({error, erroInfo}));
+    this.setState({error, errorInfo});
   }
 
   render() {
@@ -22,7 +22,7 @@ export default class ErrorBoundary extends React.Component {
       return (
         <Fragment>
           <h1>Something went wrong.</h1>
-          <div>JSON.stringify(error)</div>
+          <div>{JSON.stringify(this.state, null, 2)}</div>
         </Fragment>
       );
     }

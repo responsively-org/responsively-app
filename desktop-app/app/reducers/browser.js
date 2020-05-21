@@ -10,6 +10,7 @@ import {
   NEW_ACTIVE_DEVICE,
   NEW_FILTERS,
   NEW_HOMEPAGE,
+  NEW_USER_PREFERENCES,
 } from '../actions/browser';
 import type {Action} from './types';
 import devices from '../constants/devices';
@@ -20,7 +21,7 @@ import {
   INDIVIDUAL_LAYOUT,
 } from '../constants/previewerLayouts';
 import {DEVICE_MANAGER} from '../constants/DrawerContents';
-import {ACTIVE_DEVICES} from '../constants/settingKeys';
+import {ACTIVE_DEVICES, USER_PREFERENCES} from '../constants/settingKeys';
 import {isIfStatement} from 'typescript';
 import {getHomepage, saveHomepage} from '../utils/navigatorUtils';
 
@@ -48,6 +49,10 @@ type PreviewerType = {
   layout: string,
 };
 
+type UserPreferenceType = {
+  disableSSLCAValidation: boolean,
+};
+
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
 
 type FilterType = {[key: FilterFieldType]: Array<string>};
@@ -62,6 +67,7 @@ export type BrowserStateType = {
   drawer: DrawerType,
   previewer: PreviewerType,
   filters: FilterType,
+  userPreferences: UserPreferenceType,
 };
 
 let _activeDevices = null;
@@ -83,7 +89,7 @@ function _getActiveDevices() {
   return activeDevices;
 }
 
-export default function counter(
+export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
     homepage: getHomepage(),
@@ -95,6 +101,7 @@ export default function counter(
     drawer: {open: true, content: DEVICE_MANAGER},
     previewer: {layout: FLEXIGRID_LAYOUT},
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
+    userPreferences: settings.get(USER_PREFERENCES) || {},
   },
   action: Action
 ) {
@@ -139,6 +146,9 @@ export default function counter(
       return {...state, devices};
     case NEW_FILTERS:
       return {...state, filters: action.filters};
+    case NEW_USER_PREFERENCES:
+      settings.set(USER_PREFERENCES, action.userPreferences);
+      return {...state, userPreferences: action.userPreferences};
     default:
       return state;
   }

@@ -22,6 +22,7 @@ export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
 export const NEW_ACTIVE_DEVICE = 'NEW_ACTIVE_DEVICE';
 export const NEW_FILTERS = 'NEW_FILTERS';
+export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
 
 export function newAddress(address) {
   return {
@@ -34,6 +35,13 @@ export function newHomepage(homepage) {
   return {
     type: NEW_HOMEPAGE,
     homepage,
+  };
+}
+
+export function newUserPreferences(userPreferences) {
+  return {
+    type: NEW_USER_PREFERENCES,
+    userPreferences,
   };
 }
 
@@ -289,6 +297,12 @@ export function setCurrentAddressAsHomepage() {
     }
 
     dispatch(newHomepage(address));
+  };
+}
+
+export function onUserPreferencesChange(userPreferences) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(newUserPreferences(userPreferences));
   };
 }
 
