@@ -1,4 +1,4 @@
-# Responsively App
+# Responsively App ![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)
 [![PH](https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=200375&theme=light&period=daily)](https://www.producthunt.com/posts/responsively?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-responsively)
 
 Website: https://github.com/manojVivek/responsively-app
@@ -20,6 +20,8 @@ Please visit the website to know more about the application - https://manojvivek
 
 ## Download
 The application is available for Mac, Windows and Linux platforms. Please download it from here - https://github.com/manojVivek/responsively-app/releases
+
+Follow on Twitter for future updates - ![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)
 
 ## Issues
 If you face any problems while using the application, please open an issue here - https://github.com/manojVivek/responsively-app/issues
