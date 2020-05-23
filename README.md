@@ -18,15 +18,14 @@ A modified browser built using [Electron](https://www.electronjs.org/) that help
 
 Please visit the website to know more about the application - https://manojvivek.github.io/responsively-app
 
-## Install
-### Homebrew on macOS
-
-```bash
-brew cask install responsively
-```
 
 ## Download
 The application is available for Mac, Windows and Linux platforms. Please download it from here - https://github.com/manojVivek/responsively-app/releases
+
+Alternatively, MacOS users can use brew to install it:
+```bash
+brew cask install responsively
+```
 
 Follow on Twitter for future updates - ![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)
 
