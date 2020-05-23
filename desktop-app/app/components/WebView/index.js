@@ -200,7 +200,10 @@ class WebView extends Component {
     this.webviewRef.current.goForward();
   };
 
-  processNavigationReloadEvent = () => {
+  processNavigationReloadEvent = ({ignoreCache}) => {
+    if (ignoreCache) {
+      return this.webviewRef.current.reloadIgnoringCache();
+    }
     this.webviewRef.current.reload();
   };
 
