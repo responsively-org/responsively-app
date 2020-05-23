@@ -31,6 +31,18 @@ export default class MenuBuilder {
           );
         },
       },
+      {
+        label: 'Find on ProductHunt',
+        click() {
+          shell.openExternal('https://www.producthunt.com/posts/responsively');
+        },
+      },
+      {
+        label: 'Follow on Twitter',
+        click() {
+          shell.openExternal('https://twitter.com/ResponsivelyApp');
+        },
+      },
     ],
   };
 

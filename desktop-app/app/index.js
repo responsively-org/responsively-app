@@ -25,6 +25,10 @@ if (remote.getGlobal('process').env.NODE_ENV !== 'development') {
     },
   });
 }
+
+window.heap &&
+  window.heap.addUserProperties({appVersion: remote.app.getVersion()});
+
 const store = configureStore();
 
 render(
