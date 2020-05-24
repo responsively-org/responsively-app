@@ -20,6 +20,7 @@ const AddressBar = function(props) {
       homepage={props.browser.homepage}
       setHomepage={props.setCurrentAddressAsHomepage}
       deleteCookies={props.deleteCookies}
+      deleteStorage={props.deleteStorage}
     />
   );
 };

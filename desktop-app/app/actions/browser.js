@@ -364,3 +364,22 @@ export function deleteCookies() {
     pubsub.publish(DELETE_STORAGE, [{storages: ['cookies']}]);
   };
 }
+
+export function deleteStorage() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(DELETE_STORAGE, [
+      {
+        storages: [
+          'appcache',
+          'filesystem',
+          'indexdb',
+          'localstorage',
+          'shadercache',
+          'websql',
+          'serviceworkers',
+          'cachestorage',
+        ],
+      },
+    ]);
+  };
+}

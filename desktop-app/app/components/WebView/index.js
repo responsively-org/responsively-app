@@ -220,7 +220,6 @@ class WebView extends Component {
   };
 
   processDeleteStorageEvent = ({storages}) => {
-    console.log('Deleting storage');
     this.getWebContents().session.clearStorageData({storages});
   };
 

@@ -3,6 +3,7 @@ import React from 'react';
 import cx from 'classnames';
 import HomePlusIcon from '../icons/HomePlus';
 import DeleteCookieIcon from '../icons/DeleteCookie';
+import DeleteStorageIcon from '../icons/DeleteStorage';
 import {iconsColor} from '../../constants/colors';
 
 import commonStyles from '../common.styles.css';
@@ -56,6 +57,25 @@ class AddressBar extends React.Component<Props> {
           onChange={e => this.setState({userTypedAddress: e.target.value})}
         />
         <div className={cx(styles.floatingOptionsContainer)}>
+          <div
+            className={cx(commonStyles.icons, commonStyles.roundIcon, {
+              [commonStyles.enabled]: true,
+            })}
+          >
+            <Tooltip title="Delete Storage">
+              <div
+                className={cx(commonStyles.flexAlignVerticalMiddle)}
+                onClick={this.props.deleteStorage}
+              >
+                <DeleteStorageIcon
+                  height={22}
+                  width={22}
+                  color={iconsColor}
+                  padding={5}
+                />
+              </div>
+            </Tooltip>
+          </div>
           <div
             className={cx(commonStyles.icons, commonStyles.roundIcon, {
               [commonStyles.enabled]: true,

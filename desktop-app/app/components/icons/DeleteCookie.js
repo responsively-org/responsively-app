@@ -19,7 +19,7 @@ export default ({width, height, color, padding, margin}) => (
           <rect width="512" height="512" />
         </clipPath>
       </defs>
-      <g clip-path="url(#_clipPath_pH9XtWjIaRon0vADT01aeJAr0MOn4OX2)">
+      <g clipPath="url(#_clipPath_pH9XtWjIaRon0vADT01aeJAr0MOn4OX2)">
         <path
           d=" M 136 216 L 106 216 C 103.348 216 100.804 217.054 98.929 218.929 L 68.929 248.929 C 65.024 252.834 65.024 259.166 68.929 263.072 L 98.929 293.072 C 100.804 294.947 103.348 296.001 106 296.001 L 166 296.001 C 169.466 296.001 172.685 294.206 174.506 291.258 C 176.328 288.311 176.494 284.629 174.944 281.529 L 144.944 221.529 C 143.25 218.14 139.788 216 136 216 Z  M 110.142 276 L 90.142 256 L 110.142 236 L 129.82 236 L 149.82 276 L 110.142 276 Z "
           fill="rgb(255,255,255)"
@@ -41,7 +41,7 @@ export default ({width, height, color, padding, margin}) => (
           fill="rgb(255,255,255)"
         />
         <circle
-          vector-effect="non-scaling-stroke"
+          vectorEffect="non-scaling-stroke"
           cx="468"
           cy="378"
           r="10"
