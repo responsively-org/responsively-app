@@ -22,8 +22,8 @@
   border: solid 1px #7587ec;
 }
 
-.goButton {
+.floatingOptionsContainer {
   position: absolute;
+  display: flex;
   right: 5px;
-  border-radius: 50%;
 }

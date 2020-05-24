@@ -19,6 +19,7 @@ const AddressBar = function(props) {
       onChange={props.onAddressChange}
       homepage={props.browser.homepage}
       setHomepage={props.setCurrentAddressAsHomepage}
+      deleteCookies={props.deleteCookies}
     />
   );
 };
@@ -33,7 +34,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(BrowserActions, dispatch);
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AddressBar);
+export default connect(mapStateToProps, mapDispatchToProps)(AddressBar);
