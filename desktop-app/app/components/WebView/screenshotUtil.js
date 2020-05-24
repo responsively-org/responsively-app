@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import {shell} from 'electron';
+import {shell, remote} from 'electron';
 import {toast} from 'react-toastify';
 import NotificationMessage from '../NotificationMessage';
 import _mergeImg from 'merge-img';
@@ -160,7 +160,9 @@ const _delay = ms =>
   });
 
 const _takeSnapshot = (webView, options) => {
-  return webView.getWebContents().capturePage(options);
+  return remote.webContents
+    .fromId(webView.getWebContentsId())
+    .capturePage(options);
 };
 
 function _getScreenshotFileName(

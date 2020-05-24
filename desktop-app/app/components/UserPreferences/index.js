@@ -14,7 +14,7 @@ export default function UserPreference(props) {
   return (
     <div className={cx(commonStyles.sidebarContentSection)}>
       <div className={cx(commonStyles.sidebarContentSectionTitleBar)}>
-        <SettingsIcon color="white" width={26} margin={2} /> User Preferences
+        <SettingsIcon width={26} margin={2} /> User Preferences
       </div>
       <div className={cx(commonStyles.sidebarContentSectionContainer)}>
         <div>
