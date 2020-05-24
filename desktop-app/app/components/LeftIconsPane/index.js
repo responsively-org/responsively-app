@@ -20,7 +20,6 @@ import {
 const LeftIconsPane = props => {
   const headwayRef = useRef();
   const iconProps = {
-    color: iconsColor,
     style: {fontSize: 30},
     height: 30,
     width: 30,

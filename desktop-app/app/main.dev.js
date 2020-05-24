@@ -18,6 +18,11 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import {USER_PREFERENCES} from './constants/settingKeys';
 import * as Sentry from '@sentry/electron';
+import installExtension, {
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
+} from 'electron-devtools-installer';
+import devtron from 'devtron';
 
 const path = require('path');
 
@@ -52,13 +57,14 @@ if (
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
-
-  return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload))
-  ).catch(console.log);
+  const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
+  try {
+    const statuses = await installExtension(extensions);
+    devtron.install();
+  } catch (err) {
+    console.log('Error installing extensions', err);
+  }
 };
 
 /**
@@ -113,6 +119,7 @@ const createWindow = async () => {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
       webviewTag: true,
+      enableRemoteModule: true,
     },
     titleBarStyle: 'hidden',
     icon: iconPath,

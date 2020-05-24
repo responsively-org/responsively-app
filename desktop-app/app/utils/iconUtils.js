@@ -10,7 +10,6 @@ import AndroidIcon from '@material-ui/icons/Android';
 
 export const getDeviceIcon = deviceType => {
   const iconProps = {
-    color: iconsColor,
     style: {fontSize: 'inherit', paddingRight: 2},
   };
   switch (deviceType) {

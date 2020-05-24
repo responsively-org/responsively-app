@@ -47,7 +47,7 @@ export default function QuickFilterDevices(props) {
               })}
               onClick={() => props.toggleFilter(FILTER_FIELDS.OS, OS.android)}
             >
-              <AndroidIcon color={iconsColor} style={{fontSize: 40}} />
+              <AndroidIcon style={{fontSize: 40}} />
             </div>
             <div
               className={cx(styles.optionIcon, commonStyles.icons, {
@@ -73,7 +73,7 @@ export default function QuickFilterDevices(props) {
               })}
               onClick={() => props.toggleFilter(FILTER_FIELDS.OS, OS.pc)}
             >
-              <DesktopIcon color={iconsColor} style={{fontSize: 40}} />
+              <DesktopIcon style={{fontSize: 40}} />
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default function QuickFilterDevices(props) {
                 props.toggleFilter(FILTER_FIELDS.DEVICE_TYPE, DEVICE_TYPE.phone)
               }
             >
-              <MobileIcon color={iconsColor} style={{fontSize: 35}} />
+              <MobileIcon style={{fontSize: 35}} />
             </div>
             <div
               className={cx(styles.optionIcon, commonStyles.icons, {
@@ -111,7 +111,7 @@ export default function QuickFilterDevices(props) {
                 )
               }
             >
-              <TabletIcon color={iconsColor} style={{fontSize: 35}} />
+              <TabletIcon style={{fontSize: 35}} />
             </div>
             <div
               className={cx(styles.optionIcon, commonStyles.icons, {
@@ -129,7 +129,7 @@ export default function QuickFilterDevices(props) {
                 )
               }
             >
-              <DesktopIcon color={iconsColor} style={{fontSize: 40}} />
+              <DesktopIcon style={{fontSize: 40}} />
             </div>
           </div>
         </div>
