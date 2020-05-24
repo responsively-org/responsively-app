@@ -157,9 +157,16 @@ export default class MenuBuilder {
       submenu: [
         {
           label: 'Reload',
-          accelerator: 'Command+R',
+          accelerator: 'CommandOrControl+R',
           click: () => {
             this.mainWindow.webContents.reload();
+          },
+        },
+        {
+          label: 'Reload Ignoring Cache',
+          accelerator: 'CommandOrControl+Shift+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-url', {ignoreCache: true});
           },
         },
         {
@@ -186,6 +193,13 @@ export default class MenuBuilder {
           accelerator: 'CommandOrControl+R',
           click: () => {
             this.mainWindow.webContents.send('reload-url');
+          },
+        },
+        {
+          label: 'Reload Ignoring Cache',
+          accelerator: 'CommandOrControl+Shift+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-url', {ignoreCache: true});
           },
         },
         {
@@ -244,6 +258,15 @@ export default class MenuBuilder {
                   },
                 },
                 {
+                  label: 'Reload Ignoring Cache',
+                  accelerator: 'CommandOrControl+Shift+R',
+                  click: () => {
+                    this.mainWindow.webContents.send('reload-url', {
+                      ignoreCache: true,
+                    });
+                  },
+                },
+                {
                   label: 'Toggle &Full Screen',
                   accelerator: 'F11',
                   click: () => {
@@ -266,6 +289,15 @@ export default class MenuBuilder {
                   accelerator: 'CommandOrControl+R',
                   click: () => {
                     this.mainWindow.webContents.send('reload-url');
+                  },
+                },
+                {
+                  label: 'Reload Ignoring Cache',
+                  accelerator: 'CommandOrControl+Shift+R',
+                  click: () => {
+                    this.mainWindow.webContents.send('reload-url', {
+                      ignoreCache: true,
+                    });
                   },
                 },
                 {

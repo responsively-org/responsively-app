@@ -351,8 +351,9 @@ export function triggerNavigationForward() {
   };
 }
 
-export function triggerNavigationReload() {
+export function triggerNavigationReload(_, args) {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    pubsub.publish(NAVIGATION_RELOAD);
+    const ignoreCache = (args || {}).ignoreCache;
+    pubsub.publish(NAVIGATION_RELOAD, [{ignoreCache}]);
   };
 }
