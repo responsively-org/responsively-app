@@ -17,6 +17,7 @@ import {
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
   DISABLE_INSPECTOR_ALL_DEVICES,
+  DELETE_STORAGE,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -77,6 +78,9 @@ class WebView extends Component {
     );
     this.subscriptions.push(
       pubsub.subscribe(NAVIGATION_RELOAD, this.processNavigationReloadEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(DELETE_STORAGE, this.processDeleteStorageEvent)
     );
     this.subscriptions.push(
       pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
@@ -213,6 +217,10 @@ class WebView extends Component {
       return this.webviewRef.current.reloadIgnoringCache();
     }
     this.webviewRef.current.reload();
+  };
+
+  processDeleteStorageEvent = ({storages}) => {
+    this.getWebContents().session.clearStorageData({storages});
   };
 
   processScrollEvent = message => {

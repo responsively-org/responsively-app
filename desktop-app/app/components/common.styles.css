@@ -5,6 +5,10 @@
   border-radius: 5px;
 }
 
+.roundIcon {
+  border-radius: 50%;
+}
+
 .icons.disabled {
   opacity: 0.3;
   cursor: auto;

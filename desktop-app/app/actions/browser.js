@@ -10,6 +10,7 @@ import {
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
+  DELETE_STORAGE,
 } from '../constants/pubsubEvents';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
@@ -355,5 +356,30 @@ export function triggerNavigationReload(_, args) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const ignoreCache = (args || {}).ignoreCache;
     pubsub.publish(NAVIGATION_RELOAD, [{ignoreCache}]);
+  };
+}
+
+export function deleteCookies() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(DELETE_STORAGE, [{storages: ['cookies']}]);
+  };
+}
+
+export function deleteStorage() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(DELETE_STORAGE, [
+      {
+        storages: [
+          'appcache',
+          'filesystem',
+          'indexdb',
+          'localstorage',
+          'shadercache',
+          'websql',
+          'serviceworkers',
+          'cachestorage',
+        ],
+      },
+    ]);
   };
 }

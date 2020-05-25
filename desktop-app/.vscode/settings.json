@@ -32,5 +32,6 @@
     "npm-debug.log.*": true,
     "test/**/__snapshots__": true,
     "yarn.lock": true
-  }
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
