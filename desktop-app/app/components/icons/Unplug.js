@@ -15,6 +15,7 @@ export default ({width, height, color, padding, margin}) => (
       viewBox="0 0 100 100"
       enableBackground="new 0 0 100 100"
       xmlSpace="preserve"
+      className="unPlugIcon"
     >
       <g>
         <g>

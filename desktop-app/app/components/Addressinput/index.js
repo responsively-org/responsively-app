@@ -1,8 +1,9 @@
 // @flow
 import React from 'react';
 import cx from 'classnames';
-import GoArrowIcon from '../icons/GoArrow';
 import HomePlusIcon from '../icons/HomePlus';
+import DeleteCookieIcon from '../icons/DeleteCookie';
+import DeleteStorageIcon from '../icons/DeleteStorage';
 import {iconsColor} from '../../constants/colors';
 
 import commonStyles from '../common.styles.css';
@@ -55,25 +56,67 @@ class AddressBar extends React.Component<Props> {
           onKeyDown={this._handleKeyDown}
           onChange={e => this.setState({userTypedAddress: e.target.value})}
         />
-        <div
-          className={cx(styles.goButton, commonStyles.icons, {
-            [commonStyles.enabled]: this.props.address !== this.props.homepage,
-            [commonStyles.disabled]: this.props.address == this.props.homepage,
-          })}
-        >
-          <Tooltip title="Set a Homepage">
-            <div
-              className={cx(commonStyles.flexAlignVerticalMiddle)}
-              onClick={this.props.setHomepage}
-            >
-              <HomePlusIcon
-                height={22}
-                width={22}
-                color={iconsColor}
-                padding={5}
-              />
-            </div>
-          </Tooltip>
+        <div className={cx(styles.floatingOptionsContainer)}>
+          <div
+            className={cx(commonStyles.icons, commonStyles.roundIcon, {
+              [commonStyles.enabled]: true,
+            })}
+          >
+            <Tooltip title="Delete Storage">
+              <div
+                className={cx(commonStyles.flexAlignVerticalMiddle)}
+                onClick={this.props.deleteStorage}
+              >
+                <DeleteStorageIcon
+                  height={22}
+                  width={22}
+                  color={iconsColor}
+                  padding={5}
+                />
+              </div>
+            </Tooltip>
+          </div>
+          <div
+            className={cx(commonStyles.icons, commonStyles.roundIcon, {
+              [commonStyles.enabled]: true,
+            })}
+          >
+            <Tooltip title="Delete Cookies">
+              <div
+                className={cx(commonStyles.flexAlignVerticalMiddle)}
+                onClick={this.props.deleteCookies}
+              >
+                <DeleteCookieIcon
+                  height={22}
+                  width={22}
+                  color={iconsColor}
+                  padding={5}
+                />
+              </div>
+            </Tooltip>
+          </div>
+          <div
+            className={cx(commonStyles.icons, commonStyles.roundIcon, {
+              [commonStyles.enabled]:
+                this.props.address !== this.props.homepage,
+              [commonStyles.disabled]:
+                this.props.address == this.props.homepage,
+            })}
+          >
+            <Tooltip title="Set a Homepage">
+              <div
+                className={cx(commonStyles.flexAlignVerticalMiddle)}
+                onClick={this.props.setHomepage}
+              >
+                <HomePlusIcon
+                  height={22}
+                  width={22}
+                  color={iconsColor}
+                  padding={5}
+                />
+              </div>
+            </Tooltip>
+          </div>
         </div>
       </div>
     );
@@ -91,7 +134,7 @@ class AddressBar extends React.Component<Props> {
       return;
     }
     this.props.onChange &&
-      this.props.onChange(this._normalize(this.state.userTypedAddress));
+      this.props.onChange(this._normalize(this.state.userTypedAddress), true);
   };
 
   _normalize = address => {

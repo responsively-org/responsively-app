@@ -13,6 +13,7 @@ export default ({width, height, color, padding, margin}) => (
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 63.699 63.699"
       xmlSpace="preserve"
+      className="gotoHomeIcon"
     >
       <g>
         <path

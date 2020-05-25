@@ -11,6 +11,7 @@ export default ({width, height, color, padding, margin}) => (
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 66 66"
+      className="setHomeIcon"
     >
       <defs>
         <clipPath id="_clipPath_1jbp17xur21ul8z5IuRkxmo4gJ5cDGqz">

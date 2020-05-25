@@ -35,7 +35,7 @@ export default function DevicesPreviewer(props) {
                   return null;
                 }
                 return (
-                  <Tab tabId={device.id}>
+                  <Tab tabId={device.id} key={device.id}>
                     {getDeviceIcon(device.type)}
                     {device.name}
                   </Tab>

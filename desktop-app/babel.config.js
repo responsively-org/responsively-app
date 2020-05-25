@@ -29,6 +29,7 @@ module.exports = api => {
           targets: {
             electron: require('electron/package.json').version,
           },
+          corejs: '2',
           useBuiltIns: 'usage',
         },
       ],

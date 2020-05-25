@@ -14,9 +14,7 @@ export default class MenuBuilder {
       {
         label: 'Website',
         click() {
-          shell.openExternal(
-            'https://manojvivek.github.io/responsively-app/'
-          );
+          shell.openExternal('https://manojvivek.github.io/responsively-app/');
         },
       },
       {
@@ -28,12 +26,26 @@ export default class MenuBuilder {
       {
         label: 'Report Issues',
         click() {
-          shell.openExternal('https://github.com/manojVivek/responsively-app/issues');
+          shell.openExternal(
+            'https://github.com/manojVivek/responsively-app/issues'
+          );
+        },
+      },
+      {
+        label: 'Find on ProductHunt',
+        click() {
+          shell.openExternal('https://www.producthunt.com/posts/responsively');
+        },
+      },
+      {
+        label: 'Follow on Twitter',
+        click() {
+          shell.openExternal('https://twitter.com/ResponsivelyApp');
         },
       },
     ],
   };
-  
+
   subMenuFile = {
     label: 'File',
     submenu: [
@@ -42,18 +54,16 @@ export default class MenuBuilder {
         accelerator: 'Command+O',
         click: () => {
           const selected = dialog.showOpenDialogSync({
-            filters: [
-              { name: 'HTML', extensions: ['htm', 'html'] },
-            ]
+            filters: [{name: 'HTML', extensions: ['htm', 'html']}],
           });
           if (!selected || !selected.length) {
             return;
           }
           this.mainWindow.webContents.send('address-change', selected[0]);
         },
-      }
-    ]
-  }
+      },
+    ],
+  };
 
   buildMenu() {
     if (
@@ -147,9 +157,16 @@ export default class MenuBuilder {
       submenu: [
         {
           label: 'Reload',
-          accelerator: 'Command+R',
+          accelerator: 'CommandOrControl+R',
           click: () => {
             this.mainWindow.webContents.reload();
+          },
+        },
+        {
+          label: 'Reload Ignoring Cache',
+          accelerator: 'CommandOrControl+Shift+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-url', {ignoreCache: true});
           },
         },
         {
@@ -171,6 +188,20 @@ export default class MenuBuilder {
     const subMenuViewProd = {
       label: 'View',
       submenu: [
+        {
+          label: 'Reload',
+          accelerator: 'CommandOrControl+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-url');
+          },
+        },
+        {
+          label: 'Reload Ignoring Cache',
+          accelerator: 'CommandOrControl+Shift+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-url', {ignoreCache: true});
+          },
+        },
         {
           label: 'Toggle Full Screen',
           accelerator: 'Ctrl+Command+F',
@@ -201,7 +232,14 @@ export default class MenuBuilder {
     const subMenuView =
       process.env.NODE_ENV === 'development' ? subMenuViewDev : subMenuViewProd;
 
-    return [subMenuAbout, this.subMenuFile, subMenuEdit, subMenuView, subMenuWindow, this.subMenuHelp];
+    return [
+      subMenuAbout,
+      this.subMenuFile,
+      subMenuEdit,
+      subMenuView,
+      subMenuWindow,
+      this.subMenuHelp,
+    ];
   }
 
   buildDefaultTemplate() {
@@ -224,6 +262,15 @@ export default class MenuBuilder {
                   accelerator: 'Alt+R',
                   click: () => {
                     this.mainWindow.webContents.send('reload-css');
+                  }
+                },
+                {
+                  label: 'Reload Ignoring Cache',
+                  accelerator: 'CommandOrControl+Shift+R',
+                  click: () => {
+                    this.mainWindow.webContents.send('reload-url', {
+                      ignoreCache: true,
+                    });
                   },
                 },
                 {
@@ -256,6 +303,15 @@ export default class MenuBuilder {
                   accelerator: 'Alt+R',
                   click: () => {
                     this.mainWindow.webContents.send('reload-css');
+                  }
+                },
+                {
+                  label: 'Reload Ignoring Cache',
+                  accelerator: 'CommandOrControl+Shift+R',
+                  click: () => {
+                    this.mainWindow.webContents.send('reload-url', {
+                      ignoreCache: true,
+                    });
                   },
                 },
                 {
@@ -269,7 +325,7 @@ export default class MenuBuilder {
                 },
               ],
       },
-      this.subMenuHelp
+      this.subMenuHelp,
     ];
 
     return templateDefault;

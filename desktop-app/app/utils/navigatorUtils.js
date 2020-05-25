@@ -8,5 +8,5 @@ export function saveHomepage(url) {
 }
 
 export function getHomepage() {
-  return settings.get(HOME_PAGE) || 'https://www.google.com';
+  return settings.get(HOME_PAGE) || 'https://www.google.com/';
 }

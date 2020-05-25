@@ -13,6 +13,7 @@ export default ({width, height, color, padding, margin}) => (
       version="1.1"
       x="0px"
       y="0px"
+      className="scrollUpIcon"
     >
       <g stroke="none" strokeWidth="1" fillRule="evenodd">
         <g>

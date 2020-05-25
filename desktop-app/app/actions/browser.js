@@ -11,6 +11,7 @@ import {
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
   RELOAD_CSS,
+  DELETE_STORAGE
 } from '../constants/pubsubEvents';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
@@ -23,6 +24,7 @@ export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
 export const NEW_ACTIVE_DEVICE = 'NEW_ACTIVE_DEVICE';
 export const NEW_FILTERS = 'NEW_FILTERS';
+export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
 
 export function newAddress(address) {
   return {
@@ -35,6 +37,13 @@ export function newHomepage(homepage) {
   return {
     type: NEW_HOMEPAGE,
     homepage,
+  };
+}
+
+export function newUserPreferences(userPreferences) {
+  return {
+    type: NEW_USER_PREFERENCES,
+    userPreferences,
   };
 }
 
@@ -94,13 +103,16 @@ export function newFilters(filters) {
   };
 }
 
-export function onAddressChange(newURL) {
+export function onAddressChange(newURL, force) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {address},
     } = getState();
 
     if (newURL === address) {
+      if (force) {
+        pubsub.publish(NAVIGATION_RELOAD);
+      }
       return;
     }
 
@@ -293,6 +305,12 @@ export function setCurrentAddressAsHomepage() {
   };
 }
 
+export function onUserPreferencesChange(userPreferences) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(newUserPreferences(userPreferences));
+  };
+}
+
 export function triggerScrollDown() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(SCROLL_DOWN);
@@ -335,9 +353,35 @@ export function triggerNavigationForward() {
   };
 }
 
-export function triggerNavigationReload() {
+export function triggerNavigationReload(_, args) {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    pubsub.publish(NAVIGATION_RELOAD);
+    const ignoreCache = (args || {}).ignoreCache;
+    pubsub.publish(NAVIGATION_RELOAD, [{ignoreCache}]);
+  };
+}
+
+export function deleteCookies() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(DELETE_STORAGE, [{storages: ['cookies']}]);
+  };
+}
+
+export function deleteStorage() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(DELETE_STORAGE, [
+      {
+        storages: [
+          'appcache',
+          'filesystem',
+          'indexdb',
+          'localstorage',
+          'shadercache',
+          'websql',
+          'serviceworkers',
+          'cachestorage',
+        ],
+      },
+    ]);
   };
 }
 

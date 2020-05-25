@@ -18,6 +18,7 @@ import {
   ENABLE_INSPECTOR_ALL_DEVICES,
   DISABLE_INSPECTOR_ALL_DEVICES,
   RELOAD_CSS,
+  DELETE_STORAGE
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -80,8 +81,13 @@ class WebView extends Component {
       pubsub.subscribe(NAVIGATION_RELOAD, this.processNavigationReloadEvent)
     );
     this.subscriptions.push(
+<<<<<<< HEAD
       pubsub.subscribe(RELOAD_CSS, this.processReloadCSSEvent)
     )
+=======
+      pubsub.subscribe(DELETE_STORAGE, this.processDeleteStorageEvent)
+    );
+>>>>>>> d464c1780dfc1cd7d053c8f08473f77e4e3aeeeb
     this.subscriptions.push(
       pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
     );
@@ -176,6 +182,14 @@ class WebView extends Component {
     });
   }
 
+  getWebContents() {
+    return this.getWebContentForId(this.webviewRef.current.getWebContentsId());
+  }
+
+  getWebContentForId(id) {
+    return remote.webContents.fromId(id);
+  }
+
   componentWillUnmount() {
     this.subscriptions.forEach(pubsub.unsubscribe);
   }
@@ -183,7 +197,7 @@ class WebView extends Component {
   initDeviceEmulationParams = () => {
     try {
       return;
-      this.webviewRef.current.getWebContents().enableDeviceEmulation({
+      this.getWebContents().enableDeviceEmulation({
         screenPosition: this.isMobile ? 'mobile' : 'desktop',
         screenSize: {
           width: this.props.device.width,
@@ -204,10 +218,14 @@ class WebView extends Component {
     this.webviewRef.current.goForward();
   };
 
-  processNavigationReloadEvent = () => {
+  processNavigationReloadEvent = ({ignoreCache}) => {
+    if (ignoreCache) {
+      return this.webviewRef.current.reloadIgnoringCache();
+    }
     this.webviewRef.current.reload();
   };
 
+<<<<<<< HEAD
   processReloadCSSEvent = () => {
 
       this.webviewRef.current.executeJavaScript(`
@@ -220,6 +238,10 @@ class WebView extends Component {
           }
         }
     `);
+=======
+  processDeleteStorageEvent = ({storages}) => {
+    this.getWebContents().session.clearStorageData({storages});
+>>>>>>> d464c1780dfc1cd7d053c8f08473f77e4e3aeeeb
   };
 
   processScrollEvent = message => {
@@ -246,7 +268,6 @@ class WebView extends Component {
     if (this.state.isUnplugged) {
       return;
     }
-    console.log('processScrollDownEvent', this.webviewRef);
     this.webviewRef.current.send('scrollDownMessage');
   };
 
@@ -283,12 +304,10 @@ class WebView extends Component {
     } = this.webviewRef.current.getBoundingClientRect();
     const {x: deviceX, y: deviceY} = message;
     const zoomFactor = this.props.browser.zoomLevel;
-    this.webviewRef.current
-      .getWebContents()
-      .inspectElement(
-        Math.round(webViewX + deviceX * zoomFactor),
-        Math.round(webViewY + deviceY * zoomFactor)
-      );
+    this.getWebContents().inspectElement(
+      Math.round(webViewX + deviceX * zoomFactor),
+      Math.round(webViewY + deviceY * zoomFactor)
+    );
   };
 
   processEnableInspectorEvent = () => {
@@ -339,7 +358,7 @@ class WebView extends Component {
   };
 
   initEventTriggers = webview => {
-    webview.getWebContents().executeJavaScript(`
+    this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
       responsivelyApp.deviceId = ${this.props.device.id};
       document.body.addEventListener('mouseleave', () => {
         window.responsivelyApp.mouseOn = false;
@@ -412,8 +431,8 @@ class WebView extends Component {
     this.webviewRef.current
       .getWebContents()
       .setDevToolsWebContents(devtools.webContents);
-    this.webviewRef.current.getWebContents().openDevTools({mode: 'detach'});*/
-    this.webviewRef.current.getWebContents().toggleDevTools();
+    this.getWebContents().openDevTools({mode: 'detach'});*/
+    this.getWebContents().toggleDevTools();
   };
 
   _flipOrientation = () => {

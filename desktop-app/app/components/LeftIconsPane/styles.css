@@ -5,19 +5,21 @@
 }
 
 .icon {
-  display: flex;
-  justify-content: center;
-  margin: 3px;
+  margin-bottom: 10px !important;
 }
 
 .utilitySection {
   flex: 1;
+  margin-top: 50px !important;
 }
 
 .logo {
   background: white;
   border-radius: 9%;
   margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
+  margin: 3px;
 }
 
 .updates {
