@@ -17,6 +17,7 @@ import {
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
   DISABLE_INSPECTOR_ALL_DEVICES,
+  RELOAD_CSS,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -78,6 +79,9 @@ class WebView extends Component {
     this.subscriptions.push(
       pubsub.subscribe(NAVIGATION_RELOAD, this.processNavigationReloadEvent)
     );
+    this.subscriptions.push(
+      pubsub.subscribe(RELOAD_CSS, this.processReloadCSSEvent)
+    )
     this.subscriptions.push(
       pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
     );
@@ -202,6 +206,20 @@ class WebView extends Component {
 
   processNavigationReloadEvent = () => {
     this.webviewRef.current.reload();
+  };
+
+  processReloadCSSEvent = () => {
+
+      this.webviewRef.current.executeJavaScript(`
+        var elements = document.querySelectorAll('link[rel=stylesheet][href]');
+        for (var i = 0, element; element = elements[i]; i++) {
+          var href = element.href;
+          if(href){
+            var href = href.replace(/[?&]invalidateCacheParam=([^&$]*)/,'');
+            element.href = href + (href.indexOf('?')>=0?'&':'?') + 'invalidateCacheParam=' + (new Date().valueOf());
+          }
+        }
+    `);
   };
 
   processScrollEvent = message => {
@@ -505,6 +523,7 @@ class WebView extends Component {
             <p className={cx(styles.errorDesc)}>{this.state.errorDesc}</p>
           </div>
           <webview
+            id="test121"
             ref={this.webviewRef}
             preload="./preload.js"
             className={cx(styles.device)}

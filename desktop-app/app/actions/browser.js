@@ -10,6 +10,7 @@ import {
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
+  RELOAD_CSS,
 } from '../constants/pubsubEvents';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
@@ -337,5 +338,12 @@ export function triggerNavigationForward() {
 export function triggerNavigationReload() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(NAVIGATION_RELOAD);
+  };
+}
+
+export function reloadCSS() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    console.log('Im here-1');
+    pubsub.publish(RELOAD_CSS);
   };
 }
