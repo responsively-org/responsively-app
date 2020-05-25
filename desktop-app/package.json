@@ -97,6 +97,16 @@
       "category": "public.app-category.developer-tools",
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
+      "extendInfo": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "responsively"
+            ],
+            "CFBundleURLName": "app.responsively"
+          }
+        ]
+      },
       "icon": "resources/icon.icns",
       "target": [
         "dmg"
