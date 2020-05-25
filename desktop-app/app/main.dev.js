@@ -23,6 +23,7 @@ import installExtension, {
   REDUX_DEVTOOLS,
 } from 'electron-devtools-installer';
 import devtron from 'devtron';
+import fs from 'fs';
 
 const path = require('path');
 
@@ -41,6 +42,7 @@ export default class AppUpdater {
 }
 
 let mainWindow = null;
+let urlToOpen = null;
 
 let httpAuthCallbacks = {};
 
@@ -67,11 +69,44 @@ const installExtensions = async () => {
   }
 };
 
+const openUrl = url => {
+  mainWindow.webContents.send(
+    'address-change',
+    url.replace('responsively://', '')
+  );
+  mainWindow.show();
+};
+
 /**
  * Add event listeners...
  */
 
+app.on('will-finish-launching', () => {
+  if (['win32', 'darwin'].includes(process.platform)) {
+    if (process.argv.length >= 2) {
+      app.setAsDefaultProtocolClient('responsively', process.execPath, [
+        path.resolve(process.argv[1]),
+      ]);
+    } else {
+      app.setAsDefaultProtocolClient('responsively');
+    }
+  }
+});
+
+app.on('open-url', async (event, url) => {
+  log.info('Open-url', url);
+  if (mainWindow) {
+    openUrl(url);
+  } else {
+    urlToOpen = url;
+  }
+});
+
 app.on('window-all-closed', () => {
+  if (process.env.NODE_ENV === 'development') {
+    ['win32', 'darwin'].includes(process.platform) &&
+      app.removeAsDefaultProtocolClient('responsively');
+  }
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   if (process.platform !== 'darwin') {
@@ -144,6 +179,10 @@ const createWindow = async () => {
   });
 
   mainWindow.once('ready-to-show', () => {
+    if (urlToOpen) {
+      openUrl(urlToOpen);
+      urlToOpen = null;
+    }
     mainWindow.show();
   });
 
