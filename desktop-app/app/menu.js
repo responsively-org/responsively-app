@@ -221,7 +221,7 @@ export default class MenuBuilder {
                 },
                 {
                   label: '&ReloadCSS',
-                  accelerator: 'CommandOrControl+I',
+                  accelerator: 'Alt+R',
                   click: () => {
                     this.mainWindow.webContents.send('reload-css');
                   },
@@ -249,6 +249,13 @@ export default class MenuBuilder {
                   accelerator: 'CommandOrControl+R',
                   click: () => {
                     this.mainWindow.webContents.send('reload-url');
+                  },
+                },
+                {
+                  label: '&ReloadCSS',
+                  accelerator: 'Alt+R',
+                  click: () => {
+                    this.mainWindow.webContents.send('reload-css');
                   },
                 },
                 {
