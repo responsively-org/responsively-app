@@ -227,13 +227,13 @@ class WebView extends Component {
 
       this.webviewRef.current.executeJavaScript(`
         var elements = document.querySelectorAll('link[rel=stylesheet][href]');
-        for (var i = 0, element; element = elements[i]; i++) {
+        elements.forEach(element=>{
           var href = element.href;
           if(href){
             var href = href.replace(/[?&]invalidateCacheParam=([^&$]*)/,'');
             element.href = href + (href.indexOf('?')>=0?'&':'?') + 'invalidateCacheParam=' + (new Date().valueOf());
           }
-        }
+        })
     `);
   }
 
