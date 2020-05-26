@@ -81,13 +81,11 @@ class WebView extends Component {
       pubsub.subscribe(NAVIGATION_RELOAD, this.processNavigationReloadEvent)
     );
     this.subscriptions.push(
-<<<<<<< HEAD
       pubsub.subscribe(RELOAD_CSS, this.processReloadCSSEvent)
-    )
-=======
+    );
+    this.subscriptions.push(
       pubsub.subscribe(DELETE_STORAGE, this.processDeleteStorageEvent)
     );
->>>>>>> d464c1780dfc1cd7d053c8f08473f77e4e3aeeeb
     this.subscriptions.push(
       pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
     );
@@ -225,7 +223,6 @@ class WebView extends Component {
     this.webviewRef.current.reload();
   };
 
-<<<<<<< HEAD
   processReloadCSSEvent = () => {
 
       this.webviewRef.current.executeJavaScript(`
@@ -238,10 +235,9 @@ class WebView extends Component {
           }
         }
     `);
-=======
+
   processDeleteStorageEvent = ({storages}) => {
     this.getWebContents().session.clearStorageData({storages});
->>>>>>> d464c1780dfc1cd7d053c8f08473f77e4e3aeeeb
   };
 
   processScrollEvent = message => {
