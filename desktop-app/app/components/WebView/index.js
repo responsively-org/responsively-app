@@ -539,7 +539,6 @@ class WebView extends Component {
             <p className={cx(styles.errorDesc)}>{this.state.errorDesc}</p>
           </div>
           <webview
-            id="test121"
             ref={this.webviewRef}
             preload="./preload.js"
             className={cx(styles.device)}

@@ -387,7 +387,6 @@ export function deleteStorage() {
 
 export function reloadCSS() {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    console.log('Im here-1');
     pubsub.publish(RELOAD_CSS);
   };
 }
