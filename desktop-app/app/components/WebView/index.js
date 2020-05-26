@@ -235,6 +235,7 @@ class WebView extends Component {
           }
         }
     `);
+  }
 
   processDeleteStorageEvent = ({storages}) => {
     this.getWebContents().session.clearStorageData({storages});
