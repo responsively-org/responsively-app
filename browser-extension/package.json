@@ -1,0 +1,56 @@
+{
+	"name": "Responsively-Helper",
+	"version": "0.0.1",
+  "description": "An extension to open current browser page in Responsively app",
+	"private": true,
+	"scripts": {
+		"lint": "run-p lint:*",
+		"lint:js": "xo",
+		"lint:css": "stylelint source/**/*.css",
+		"lint-fix": "run-p 'lint:* -- --fix'",
+		"test": "run-s lint:* build",
+		"build": "webpack --mode=production",
+		"start": "webpack --mode=development --watch",
+		"version": "dot-json distribution/manifest.json version $VER",
+		"release:cws": "webstore upload --source=distribution --auto-publish",
+		"release:amo": "web-ext-submit --source-dir distribution",
+		"release": "VER=$(daily-version) run-s build version release:*"
+	},
+	"devDependencies": {
+		"@ianwalter/web-ext-webpack-plugin": "^0.1.0",
+		"chrome-webstore-upload-cli": "^1.2.0",
+		"copy-webpack-plugin": "^5.0.3",
+		"daily-version": "^0.12.0",
+		"dot-json": "^1.1.0",
+		"eslint": "^6.1.0",
+		"eslint-config-xo": "^0.26.0",
+		"npm-run-all": "^4.1.5",
+		"size-plugin": "^1.2.0",
+		"stylelint": "^10.1.0",
+		"stylelint-config-xo": "^0.15.0",
+		"terser-webpack-plugin": "^1.3.0",
+		"web-ext": "^4.2.0",
+		"web-ext-submit": "^4.2.0",
+		"webpack": "^4.36.1",
+		"webpack-cli": "^3.3.6",
+		"xo": "^0.24.0"
+	},
+	"dependencies": {
+		"webext-options-sync": "^0.21.2",
+		"webextension-polyfill": "^0.4.0"
+	},
+	"xo": {
+		"envs": [
+			"browser"
+		],
+		"ignores": [
+			"dist"
+		],
+		"globals": [
+			"browser"
+		]
+	},
+	"stylelint": {
+		"extends": "stylelint-config-xo"
+	}
+}
