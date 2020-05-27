@@ -56,7 +56,7 @@ export default class MenuBuilder {
           const selected = dialog.showOpenDialogSync({
             filters: [{name: 'HTML', extensions: ['htm', 'html']}],
           });
-          if (!selected || !selected.length) {
+          if (!selected || !selected.length || !selected[0]) {
             return;
           }
           let filePath=selected[0];
