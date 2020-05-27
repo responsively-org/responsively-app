@@ -1,7 +1,7 @@
 {
 	"name": "Responsively-Helper",
 	"version": "0.0.1",
-  "description": "An extension to open current browser page in Responsively app",
+	"description": "An extension to open current browser page in Responsively app",
 	"private": true,
 	"scripts": {
 		"lint": "run-p lint:*",
@@ -11,10 +11,9 @@
 		"test": "run-s lint:* build",
 		"build": "webpack --mode=production",
 		"start": "webpack --mode=development --watch",
-		"version": "dot-json distribution/manifest.json version $VER",
 		"release:cws": "webstore upload --source=distribution --auto-publish",
 		"release:amo": "web-ext-submit --source-dir distribution",
-		"release": "VER=$(daily-version) run-s build version release:*"
+		"release": "run-s build release:*"
 	},
 	"devDependencies": {
 		"@ianwalter/web-ext-webpack-plugin": "^0.1.0",
@@ -36,6 +35,7 @@
 		"xo": "^0.24.0"
 	},
 	"dependencies": {
+		"custom-protocol-check": "^1.1.0",
 		"webextension-polyfill": "^0.4.0"
 	},
 	"xo": {

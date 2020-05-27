@@ -9,6 +9,7 @@ module.exports = {
 	stats: 'errors-only',
 	entry: {
 		background: './src/background',
+		openURL: './src/openURL',
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),
@@ -20,7 +21,6 @@ module.exports = {
 			{
 				from: '**/*',
 				context: 'public',
-				ignore: ['*.js']
 			},
 			{
 				from: 'node_modules/webextension-polyfill/dist/browser-polyfill.min.js'
