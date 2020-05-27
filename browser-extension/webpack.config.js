@@ -9,7 +9,6 @@ module.exports = {
 	stats: 'errors-only',
 	entry: {
 		background: './src/background',
-		options: './src/options'
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),

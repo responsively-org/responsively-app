@@ -36,7 +36,6 @@
 		"xo": "^0.24.0"
 	},
 	"dependencies": {
-		"webext-options-sync": "^0.21.2",
 		"webextension-polyfill": "^0.4.0"
 	},
 	"xo": {

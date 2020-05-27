@@ -15,5 +15,12 @@
 			"browser-polyfill.min.js",
 			"background.js"
 		]
-	}
+	},
+	"browser_action": {
+    "default_icon": "logo_128.png",
+    "default_title": "Open page in Responsively app"
+	},
+	"permissions": [
+		"activeTab"
+ ]
 }
