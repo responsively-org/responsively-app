@@ -252,8 +252,12 @@ export function setActiveDevices(newDevices) {
 
 export function addNewDevice(newDevice) {
   return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {devices},
+    } = getState();
+
     if (newDevice.added) {
-      dispatch(newActiveDevice(newDevice));
+      dispatch(newActiveDevices([...devices, newDevice]));
     }
   };
 }
