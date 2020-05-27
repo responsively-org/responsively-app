@@ -59,7 +59,11 @@ export default class MenuBuilder {
           if (!selected || !selected.length) {
             return;
           }
-          this.mainWindow.webContents.send('address-change', selected[0]);
+          let filePath=selected[0];
+          if(!filePath.startsWith("file://")){
+            filePath="file://"+filePath;
+          }
+          this.mainWindow.webContents.send('address-change', filePath);
         },
       },
     ],
