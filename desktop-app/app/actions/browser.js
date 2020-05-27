@@ -10,7 +10,8 @@ import {
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
-  DELETE_STORAGE,
+  RELOAD_CSS,
+  DELETE_STORAGE
 } from '../constants/pubsubEvents';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
@@ -385,5 +386,11 @@ export function deleteStorage() {
         ],
       },
     ]);
+  };
+}
+
+export function reloadCSS() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(RELOAD_CSS);
   };
 }

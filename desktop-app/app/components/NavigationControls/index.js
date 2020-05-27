@@ -15,6 +15,7 @@ class NavigationControls extends Component {
   
   componentDidMount() {
     ipcRenderer.on('reload-url',  this.props.triggerNavigationReload);
+    ipcRenderer.on('reload-css',  this.props.reloadCSS);
   }
 
   render() {

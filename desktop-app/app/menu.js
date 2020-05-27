@@ -258,6 +258,13 @@ export default class MenuBuilder {
                   },
                 },
                 {
+                  label: '&ReloadCSS',
+                  accelerator: 'Alt+R',
+                  click: () => {
+                    this.mainWindow.webContents.send('reload-css');
+                  }
+                },
+                {
                   label: 'Reload Ignoring Cache',
                   accelerator: 'CommandOrControl+Shift+R',
                   click: () => {
@@ -290,6 +297,13 @@ export default class MenuBuilder {
                   click: () => {
                     this.mainWindow.webContents.send('reload-url');
                   },
+                },
+                {
+                  label: '&ReloadCSS',
+                  accelerator: 'Alt+R',
+                  click: () => {
+                    this.mainWindow.webContents.send('reload-css');
+                  }
                 },
                 {
                   label: 'Reload Ignoring Cache',

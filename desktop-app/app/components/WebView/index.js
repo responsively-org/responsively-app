@@ -17,7 +17,8 @@ import {
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
   DISABLE_INSPECTOR_ALL_DEVICES,
-  DELETE_STORAGE,
+  RELOAD_CSS,
+  DELETE_STORAGE
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -78,6 +79,9 @@ class WebView extends Component {
     );
     this.subscriptions.push(
       pubsub.subscribe(NAVIGATION_RELOAD, this.processNavigationReloadEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(RELOAD_CSS, this.processReloadCSSEvent)
     );
     this.subscriptions.push(
       pubsub.subscribe(DELETE_STORAGE, this.processDeleteStorageEvent)
@@ -218,6 +222,20 @@ class WebView extends Component {
     }
     this.webviewRef.current.reload();
   };
+
+  processReloadCSSEvent = () => {
+
+      this.webviewRef.current.executeJavaScript(`
+        var elements = document.querySelectorAll('link[rel=stylesheet][href]');
+        elements.forEach(element=>{
+          var href = element.href;
+          if(href){
+            var href = href.replace(/[?&]invalidateCacheParam=([^&$]*)/,'');
+            element.href = href + (href.indexOf('?')>=0?'&':'?') + 'invalidateCacheParam=' + (new Date().valueOf());
+          }
+        })
+    `);
+  }
 
   processDeleteStorageEvent = ({storages}) => {
     this.getWebContents().session.clearStorageData({storages});
