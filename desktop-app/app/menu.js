@@ -56,10 +56,14 @@ export default class MenuBuilder {
           const selected = dialog.showOpenDialogSync({
             filters: [{name: 'HTML', extensions: ['htm', 'html']}],
           });
-          if (!selected || !selected.length) {
+          if (!selected || !selected.length || !selected[0]) {
             return;
           }
-          this.mainWindow.webContents.send('address-change', selected[0]);
+          let filePath = selected[0];
+          if (!filePath.startsWith('file://')) {
+            filePath = 'file://' + filePath;
+          }
+          this.mainWindow.webContents.send('address-change', filePath);
         },
       },
     ],
@@ -262,7 +266,7 @@ export default class MenuBuilder {
                   accelerator: 'Alt+R',
                   click: () => {
                     this.mainWindow.webContents.send('reload-css');
-                  }
+                  },
                 },
                 {
                   label: 'Reload Ignoring Cache',
@@ -303,7 +307,7 @@ export default class MenuBuilder {
                   accelerator: 'Alt+R',
                   click: () => {
                     this.mainWindow.webContents.send('reload-css');
-                  }
+                  },
                 },
                 {
                   label: 'Reload Ignoring Cache',

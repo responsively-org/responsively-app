@@ -194,11 +194,21 @@ function _getScreenshotFileName(
 }
 
 const _getWebsiteName = address => {
-  let domain = new URL(address).hostname;
-  domain = domain.replace('www.', '');
-  const dotIndex = domain.indexOf('.');
-  if (dotIndex > -1) {
-    domain = domain.substr(0, domain.indexOf('.'));
+  let domain = '';
+  if (address.startsWith('file://')) {
+    let fileNameStartingIndex = address.lastIndexOf('/') + 1;
+    let htmIndex = address.indexOf('.htm');
+    if (htmIndex == -1) {
+      htmIndex = address.length;
+    }
+    domain = address.substring(fileNameStartingIndex, htmIndex);
+  } else {
+    domain = new URL(address).hostname;
+    domain = domain.replace('www.', '');
+    const dotIndex = domain.indexOf('.');
+    if (dotIndex > -1) {
+      domain = domain.substr(0, domain.indexOf('.'));
+    }
   }
   return domain.charAt(0).toUpperCase() + domain.slice(1);
 };

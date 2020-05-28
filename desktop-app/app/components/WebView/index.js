@@ -18,7 +18,7 @@ import {
   ENABLE_INSPECTOR_ALL_DEVICES,
   DISABLE_INSPECTOR_ALL_DEVICES,
   RELOAD_CSS,
-  DELETE_STORAGE
+  DELETE_STORAGE,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -224,8 +224,7 @@ class WebView extends Component {
   };
 
   processReloadCSSEvent = () => {
-
-      this.webviewRef.current.executeJavaScript(`
+    this.webviewRef.current.executeJavaScript(`
         var elements = document.querySelectorAll('link[rel=stylesheet][href]');
         elements.forEach(element=>{
           var href = element.href;
@@ -235,7 +234,7 @@ class WebView extends Component {
           }
         })
     `);
-  }
+  };
 
   processDeleteStorageEvent = ({storages}) => {
     this.getWebContents().session.clearStorageData({storages});

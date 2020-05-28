@@ -11,7 +11,7 @@ import {
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
   RELOAD_CSS,
-  DELETE_STORAGE
+  DELETE_STORAGE,
 } from '../constants/pubsubEvents';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';

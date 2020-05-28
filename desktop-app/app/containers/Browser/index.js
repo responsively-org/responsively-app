@@ -42,7 +42,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(BrowserActions, dispatch);
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Browser);
+export default connect(mapStateToProps, mapDispatchToProps)(Browser);
