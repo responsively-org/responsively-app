@@ -202,7 +202,6 @@ const _getWebsiteName = address => {
       htmIndex = address.length;
     }
     domain = address.substring(fileNameStartingIndex, htmIndex);
-    console.log(domain);
   } else {
     domain = new URL(address).hostname;
     domain = domain.replace('www.', '');
