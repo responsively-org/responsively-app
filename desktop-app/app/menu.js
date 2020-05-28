@@ -59,9 +59,9 @@ export default class MenuBuilder {
           if (!selected || !selected.length || !selected[0]) {
             return;
           }
-          let filePath=selected[0];
-          if(!filePath.startsWith("file://")){
-            filePath="file://"+filePath;
+          let filePath = selected[0];
+          if (!filePath.startsWith('file://')) {
+            filePath = 'file://' + filePath;
           }
           this.mainWindow.webContents.send('address-change', filePath);
         },
@@ -266,7 +266,7 @@ export default class MenuBuilder {
                   accelerator: 'Alt+R',
                   click: () => {
                     this.mainWindow.webContents.send('reload-css');
-                  }
+                  },
                 },
                 {
                   label: 'Reload Ignoring Cache',
@@ -307,7 +307,7 @@ export default class MenuBuilder {
                   accelerator: 'Alt+R',
                   click: () => {
                     this.mainWindow.webContents.send('reload-css');
-                  }
+                  },
                 },
                 {
                   label: 'Reload Ignoring Cache',

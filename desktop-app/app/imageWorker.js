@@ -17,9 +17,12 @@ registerPromiseWorker(({images, direction, resultFilename}) => {
 });
 
 async function stitchHorizontally(images) {
-  const result = await mergeImg(images.map(img => ({src: Buffer.from(img)})), {
-    direction: false,
-  });
+  const result = await mergeImg(
+    images.map(img => ({src: Buffer.from(img)})),
+    {
+      direction: false,
+    }
+  );
   const tempPath = await writeToTempFile(result);
   return tempPath;
 }
@@ -38,19 +41,21 @@ async function writeToTempFile(image) {
 }
 
 async function stitchVertically(images, {dir, file}) {
-  const result = (await mergeImg(
-    await Promise.all(
-      images.map(async img => {
-        const JimpImg = await Jimp.read(img);
-        return {
-          src: await JimpImg.getBufferAsync('image/png'),
-        };
-      })
-    ),
-    {
-      direction: true,
-    }
-  ))
+  const result = (
+    await mergeImg(
+      await Promise.all(
+        images.map(async img => {
+          const JimpImg = await Jimp.read(img);
+          return {
+            src: await JimpImg.getBufferAsync('image/png'),
+          };
+        })
+      ),
+      {
+        direction: true,
+      }
+    )
+  )
     .rgba(false)
     .background(0xffffffff);
   await fs.ensureDir(dir);
