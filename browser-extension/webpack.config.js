@@ -9,11 +9,40 @@ module.exports = {
 	stats: 'errors-only',
 	entry: {
 		background: './src/background',
-		openURL: './src/openURL',
+		popup: './src/popup',
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),
 		filename: '[name].js'
+	},
+	module: {
+    rules: [
+      {
+        test: /\.js$/,
+        include: [
+          path.resolve(__dirname, "src")
+        ],
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ["@babel/preset-env", { modules: false }],
+              "@babel/preset-react"
+            ],
+            plugins: [
+              "@babel/plugin-transform-react-constant-elements",
+              "@babel/plugin-proposal-object-rest-spread",
+              "@babel/plugin-proposal-class-properties",
+              "@babel/plugin-transform-runtime",
+            ],
+          },
+        },
+			},
+			{
+        test: /\.(svg|gif|png|jpg)$/,
+        use: 'url-loader',
+      }
+		],
 	},
 	plugins: [
 		new SizePlugin(),

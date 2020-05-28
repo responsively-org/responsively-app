@@ -18,7 +18,8 @@
 	},
 	"browser_action": {
     "default_icon": "logo_128.png",
-    "default_title": "Open page in Responsively app"
+		"default_title": "Open page in Responsively app",
+		"default_popup": "popup.html"
 	},
 	"permissions": [
 		"activeTab"

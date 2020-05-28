@@ -16,7 +16,15 @@
 		"release": "run-s build release:*"
 	},
 	"devDependencies": {
+		"@babel/core": "^7.10.1",
+		"@babel/plugin-proposal-class-properties": "^7.10.1",
+		"@babel/plugin-proposal-object-rest-spread": "^7.10.1",
+		"@babel/plugin-transform-react-constant-elements": "^7.10.1",
+		"@babel/plugin-transform-runtime": "^7.10.1",
+		"@babel/preset-env": "^7.10.1",
+		"@babel/preset-react": "^7.10.1",
 		"@ianwalter/web-ext-webpack-plugin": "^0.1.0",
+		"babel-loader": "^8.1.0",
 		"chrome-webstore-upload-cli": "^1.2.0",
 		"copy-webpack-plugin": "^5.0.3",
 		"daily-version": "^0.12.0",
@@ -36,6 +44,9 @@
 	},
 	"dependencies": {
 		"custom-protocol-check": "^1.1.0",
+		"react": "^16.13.1",
+		"react-dom": "^16.13.1",
+		"url-loader": "^4.1.0",
 		"webextension-polyfill": "^0.4.0"
 	},
 	"xo": {
