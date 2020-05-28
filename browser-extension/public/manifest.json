@@ -2,7 +2,7 @@
 	"name": "Responsively Helper",
 	"version": "0.0.1",
 	"description": "An extension to open current browser page in Responsively app",
-	"homepage_url": "http://manojvivek.github.io/responsively-app",
+	"homepage_url": "https://manojvivek.github.io/responsively-app",
 	"manifest_version": 2,
 	"icons": {
 		"128": "logo_128.png",

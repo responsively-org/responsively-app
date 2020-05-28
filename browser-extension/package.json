@@ -11,8 +11,8 @@
 		"test": "run-s lint:* build",
 		"build": "webpack --mode=production",
 		"start": "webpack --mode=development --watch",
-		"release:cws": "webstore upload --source=distribution --auto-publish",
-		"release:amo": "web-ext-submit --source-dir distribution",
+		"release:cws": "webstore upload --source=dist --auto-publish",
+		"release:amo": "web-ext-submit --source-dir dist",
 		"release": "run-s build release:*"
 	},
 	"devDependencies": {
