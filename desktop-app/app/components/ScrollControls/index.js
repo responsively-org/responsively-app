@@ -39,7 +39,7 @@ class ScrollControls extends Component {
             </Tooltip>
           </Grid>
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <Tooltip title="Take Screenshot">
+            <Tooltip title="Take Multiple Screenshot">
               <div onClick={this.props.screenshotAllDevices}>
                 <ScreenshotIcon {...iconProps} />
               </div>

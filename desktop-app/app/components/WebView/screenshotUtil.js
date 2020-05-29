@@ -22,6 +22,13 @@ export const captureFullPage = async (
 ) => {
   const worker = new Worker('./imageWorker.js');
   const promiseWorker = new PromiseWorker(worker);
+  toast.info(
+    <NotificationMessage
+      spinner={true}
+      message={`Running multiple screenshot in Horizontal Layout`}
+    />,
+    {autoClose: 3000}
+  );
   const toastId = toast.info(
     <NotificationMessage
       spinner={true}

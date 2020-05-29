@@ -12,6 +12,7 @@ import {
   ENABLE_INSPECTOR_ALL_DEVICES,
   DELETE_STORAGE,
 } from '../constants/pubsubEvents';
+import { HORIZONTAL_LAYOUT } from '../constants/previewerLayouts';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_HOMEPAGE = 'NEW_HOMEPAGE';
@@ -322,6 +323,19 @@ export function triggerScrollDown() {
 
 export function screenshotAllDevices() {
   return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {previewer}
+    } = getState();
+
+    if (previewer.layout !== HORIZONTAL_LAYOUT) {
+      dispatch(
+        newPreviewerConfig({
+          ...previewer,
+          layout: HORIZONTAL_LAYOUT,
+        })
+      );
+    }
+
     pubsub.publish(SCREENSHOT_ALL_DEVICES, [{now: new Date()}]);
   };
 }
