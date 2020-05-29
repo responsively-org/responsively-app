@@ -66,7 +66,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/esprush"><img src="https://avatars0.githubusercontent.com/u/26249498?v=4" width="100px;" alt=""/><br /><sub><b>Suresh P</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=esprush" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/sprabowo"><img src="https://avatars2.githubusercontent.com/u/11748183?v=4" width="100px;" alt=""/><br /><sub><b>Sigit Prabowo</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=sprabowo" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/leon0707"><img src="https://avatars1.githubusercontent.com/u/523684?v=4" width="100px;" alt=""/><br /><sub><b>Leon Feng</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=leon0707" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://kishore.io"><img src="https://avatars2.githubusercontent.com/u/30261988?v=4" width="100px;" alt=""/><br /><sub><b>Kishore S</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=kishoreio" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/kishoreio"><img src="https://avatars2.githubusercontent.com/u/30261988?v=4" width="100px;" alt=""/><br /><sub><b>Kishore S</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=kishoreio" title="Code">💻</a></td>
   </tr>
 </table>
 
