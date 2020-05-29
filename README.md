@@ -1,4 +1,7 @@
 # Responsively App ![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![PH](https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=200375&theme=light&period=daily)](https://www.producthunt.com/posts/responsively?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-responsively)
 
 Website: https://github.com/manojVivek/responsively-app
@@ -49,3 +52,22 @@ If you want to build the binary for a specific platform, run one of the followin
 **Windows(NSIS)** - ```yarn package-win```
 
 **Linux(AppImage)** - ```yarn package-linux```
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/esprush"><img src="https://avatars0.githubusercontent.com/u/26249498?v=4" width="100px;" alt=""/><br /><sub><b>Suresh P</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=esprush" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
