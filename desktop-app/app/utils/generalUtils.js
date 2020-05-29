@@ -1,4 +1,5 @@
 import {app} from 'electron';
+
 const path = require('path');
 const fs = require('fs')
 
