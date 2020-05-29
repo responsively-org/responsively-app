@@ -63,6 +63,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="http://twitter.com/vivek_jonam"><img src="https://avatars1.githubusercontent.com/u/1283424?v=4" width="100px;" alt=""/><br /><sub><b>Manoj Vivek</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=manojVivek" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/esprush"><img src="https://avatars0.githubusercontent.com/u/26249498?v=4" width="100px;" alt=""/><br /><sub><b>Suresh P</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=esprush" title="Code">💻</a></td>
   </tr>
 </table>
 
