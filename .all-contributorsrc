@@ -40,6 +40,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "kishoreio",
+      "name": "Kishore S",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/30261988?v=4",
+      "profile": "http://kishore.io",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
