@@ -5,8 +5,22 @@
 .deviceTitle {
   font-weight: normal;
   font-size: 16px;
+  margin-right: 2px;
+}
+
+.deviceSize {
+  font-size: 9px;
+  display: flex;
+  height: 15px;
+  align-items: flex-end;
+  color: lightgrey;
   margin-right: 5px;
 }
+
+.loaderContainer {
+  width: 20px;
+}
+
 .deviceWrapper {
 }
 

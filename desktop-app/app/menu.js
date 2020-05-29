@@ -40,7 +40,9 @@ export default class MenuBuilder {
       {
         label: 'Follow on Twitter',
         click() {
-          shell.openExternal('https://twitter.com/ResponsivelyApp');
+          shell.openExternal(
+            'https://twitter.com/intent/follow?original_referer=app&ref_src=twsrc%5Etfw&region=follow_link&screen_name=ResponsivelyApp&tw_p=followbutton'
+          );
         },
       },
     ],
