@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "manojVivek",
+      "name": "Manoj Vivek",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/1283424?v=4",
+      "profile": "http://twitter.com/vivek_jonam",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "responsively-app",
+  "projectOwner": "manojVivek",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
