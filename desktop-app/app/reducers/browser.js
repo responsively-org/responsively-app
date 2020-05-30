@@ -13,7 +13,7 @@ import {
   NEW_USER_PREFERENCES,
 } from '../actions/browser';
 import type {Action} from './types';
-import devices from '../constants/devices';
+import allDevices from '../constants/devices';
 import settings from 'electron-settings';
 import type {Device} from '../constants/devices';
 import {
@@ -82,9 +82,15 @@ function _getActiveDevices() {
   if (_activeDevices) {
     return _activeDevices;
   }
-  let activeDevices = settings.get(ACTIVE_DEVICES);
-  if (!activeDevices) {
-    activeDevices = devices.filter(device => device.added);
+  let activeDeviceNames = settings.get(ACTIVE_DEVICES);
+  let activeDevices = null;
+  if (activeDeviceNames && activeDeviceNames.length) {
+    activeDevices = activeDeviceNames.map(name =>
+      allDevices.find(device => device.name === name)
+    );
+  }
+  if (!activeDevices || !activeDevices.length) {
+    activeDevices = allDevices.filter(device => device.added);
     _saveActiveDevices(activeDevices);
   }
   return activeDevices;

@@ -1,5 +1,7 @@
 // @flow
 import chromeEmulatedDevices from './chromeEmulatedDevices';
+import settings from 'electron-settings';
+import {ACTIVE_DEVICES, CUSTOM_DEVICES} from './settingKeys';
 
 export const OS: {[key: string]: OS} = {
   ios: 'iOS',
@@ -51,17 +53,16 @@ function getOS(device) {
   return OS.pc;
 }
 
-let idGen = 1;
-export default chromeEmulatedDevices.extensions
+const chromeDefaultDevices = chromeEmulatedDevices.extensions
   .sort((a, b) => a.order - b.order)
-  .map(({order, device}) => {
+  .map(({id, order, device}) => {
     const dimension =
       device.type === DEVICE_TYPE.desktop
         ? device.screen.horizontal
         : device.screen.vertical;
 
     return {
-      id: idGen++,
+      id: id,
       name: device.title,
       width: dimension.width,
       height: dimension.height,
@@ -72,3 +73,7 @@ export default chromeEmulatedDevices.extensions
       type: device.type,
     };
   });
+
+const userCustomDevices = settings.get(CUSTOM_DEVICES) || [];
+
+export default [...userCustomDevices, ...chromeDefaultDevices];

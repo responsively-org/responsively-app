@@ -24,8 +24,11 @@ import installExtension, {
 } from 'electron-devtools-installer';
 import devtron from 'devtron';
 import fs from 'fs';
+import {migrateDeviceSchema} from './settings/migration';
 
 const path = require('path');
+
+migrateDeviceSchema();
 
 if (process.env.NODE_ENV !== 'development') {
   Sentry.init({

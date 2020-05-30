@@ -37,7 +37,12 @@ export default function DeviceList({droppableId, devices, enableFiltering}) {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment>
-                      <IconButton onClick={() => setSearchOpen(false)}>
+                      <IconButton
+                        onClick={() => {
+                          setSearchOpen(false);
+                          setSearchText('');
+                        }}
+                      >
                         <CancelIcon />
                       </IconButton>
                     </InputAdornment>
