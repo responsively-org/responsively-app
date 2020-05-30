@@ -46,7 +46,6 @@ export const captureFullPage = async (
   let scrollY = 0;
   let pageX = 0;
   let pageY = 0;
-  let isMobile = (device.capabilities.indexOf(CAPABILITIES.mobile) > -1 && device.type.indexOf(DEVICE_TYPE.tablet) == -1);
 
   const {
     previousScrollPosition,
@@ -87,11 +86,10 @@ export const captureFullPage = async (
   `);
 
   let images = [];
-  let scrollHeightScreen = (isMobile) ? (scrollHeight - viewPortHeight) : scrollHeight;
 
   for (
     let pageY = 0;
-    scrollY < scrollHeightScreen;
+    scrollY < scrollHeight;
     pageY++, scrollY = viewPortHeight * pageY
   ) {
     scrollX = 0;

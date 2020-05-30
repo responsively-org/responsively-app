@@ -13,6 +13,7 @@ import {
   DELETE_STORAGE,
 } from '../constants/pubsubEvents';
 import { FLEXIGRID_LAYOUT } from '../constants/previewerLayouts';
+import { FILTER_FIELDS } from '../reducers/browser';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_HOMEPAGE = 'NEW_HOMEPAGE';
@@ -326,9 +327,19 @@ export function screenshotAllDevices() {
     const {
       browser: {
         zoomLevel,
-        previewer
+        previewer,
+        filters
       }
     } = getState();
+
+    // force reset filters
+    dispatch(
+      newFilters({
+        ...filters,
+        [FILTER_FIELDS.OS]: [],
+        [FILTER_FIELDS.DEVICE_TYPE]: []
+      })
+    )
 
     if (previewer.layout != FLEXIGRID_LAYOUT) {
       dispatch(
