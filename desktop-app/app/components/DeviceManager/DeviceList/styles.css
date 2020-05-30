@@ -7,3 +7,14 @@
   width: 340px;
   overflow: scroll;
 }
+
+.searchContainer {
+  height: 50px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.searchIcon {
+  margin: 0 14px 0 !important;
+}

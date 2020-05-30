@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DeviceManager(props) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const classes = useStyles();
 
   const [devices, setDevices] = useState({
@@ -115,6 +115,7 @@ export default function DeviceManager(props) {
                 <DeviceList
                   droppableId={'inactive'}
                   devices={devices.inactive}
+                  enableFiltering={true}
                 />
               </Grid>
             </Grid>

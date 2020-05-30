@@ -1,24 +1,74 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Droppable} from 'react-beautiful-dnd';
 import DeviceItem from '../DeviceItem';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import SearchIcon from '@material-ui/icons/Search';
+import TextField from '@material-ui/core/TextField';
+import CancelIcon from '@material-ui/icons/Cancel';
 import cx from 'classnames';
 
 import styles from './styles.css';
 
-export default function DeviceList({droppableId, devices}) {
+export default function DeviceList({droppableId, devices, enableFiltering}) {
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchText, setSearchText] = useState('');
   return (
-    <Droppable droppableId={droppableId}>
-      {provided => (
-        <div
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-          className={cx(styles.listHolder)}
-        >
-          {devices.map((device, index) => (
-            <DeviceItem device={device} index={index} key={device.id} />
-          ))}
-        </div>
-      )}
-    </Droppable>
+    <>
+      <div className={cx(styles.searchContainer)}>
+        {enableFiltering && (
+          <>
+            {!searchOpen ? (
+              <IconButton
+                className={styles.searchIcon}
+                onClick={() => setSearchOpen(true)}
+              >
+                <SearchIcon fontSize="default" />
+              </IconButton>
+            ) : null}
+            {searchOpen ? (
+              <TextField
+                autoFocus
+                fullWidth
+                variant="outlined"
+                placeholder="Search..."
+                value={searchText}
+                onChange={e => setSearchText(e.target.value.toLowerCase())}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment>
+                      <IconButton onClick={() => setSearchOpen(false)}>
+                        <CancelIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            ) : null}
+          </>
+        )}
+      </div>
+      <Droppable droppableId={droppableId}>
+        {provided => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className={cx(styles.listHolder)}
+          >
+            {devices
+              .filter(device => {
+                if (!searchText) {
+                  return true;
+                }
+                return device.name.toLowerCase().indexOf(searchText) > -1;
+              })
+              .map((device, index) => (
+                <DeviceItem device={device} index={index} key={device.id} />
+              ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </>
   );
 }
