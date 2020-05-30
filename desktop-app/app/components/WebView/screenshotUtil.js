@@ -10,7 +10,6 @@ import Promise from 'bluebird';
 import path from 'path';
 import fs from 'fs-extra';
 import PromiseWorker from 'promise-worker';
-import {CAPABILITIES, DEVICE_TYPE} from '../../constants/devices';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 
