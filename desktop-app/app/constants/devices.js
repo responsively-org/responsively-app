@@ -53,27 +53,29 @@ function getOS(device) {
   return OS.pc;
 }
 
-const chromeDefaultDevices = chromeEmulatedDevices.extensions
-  .sort((a, b) => a.order - b.order)
-  .map(({id, order, device}) => {
-    const dimension =
-      device.type === DEVICE_TYPE.desktop
-        ? device.screen.horizontal
-        : device.screen.vertical;
+export default function getAllDevices() {
+  const chromeDefaultDevices = chromeEmulatedDevices.extensions
+    .sort((a, b) => a.order - b.order)
+    .map(({id, order, device}) => {
+      const dimension =
+        device.type === DEVICE_TYPE.desktop
+          ? device.screen.horizontal
+          : device.screen.vertical;
 
-    return {
-      id: id,
-      name: device.title,
-      width: dimension.width,
-      height: dimension.height,
-      useragent: device['user-agent'],
-      capabilities: device.capabilities,
-      added: device['show-by-default'],
-      os: getOS(device),
-      type: device.type,
-    };
-  });
+      return {
+        id: id,
+        name: device.title,
+        width: dimension.width,
+        height: dimension.height,
+        useragent: device['user-agent'],
+        capabilities: device.capabilities,
+        added: device['show-by-default'],
+        os: getOS(device),
+        type: device.type,
+      };
+    });
 
-const userCustomDevices = settings.get(CUSTOM_DEVICES) || [];
+  const userCustomDevices = settings.get(CUSTOM_DEVICES) || [];
 
-export default [...userCustomDevices, ...chromeDefaultDevices];
+  return [...userCustomDevices, ...chromeDefaultDevices];
+}

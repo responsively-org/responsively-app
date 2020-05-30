@@ -1,5 +1,4 @@
 import React, {useState, Fragment, useEffect} from 'react';
-import allDevices from '../../constants/devices';
 import {makeStyles} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
@@ -37,6 +36,7 @@ export default function DeviceManager(props) {
   const [devices, setDevices] = useState({
     active: [],
     inactive: [],
+    inactiveFiltered: [],
   });
 
   useEffect(() => {
@@ -45,11 +45,15 @@ export default function DeviceManager(props) {
       acc[val.id] = val;
       return acc;
     }, {});
-    const inactiveDevices = allDevices.filter(
+    const inactiveDevices = props.browser.allDevices.filter(
       device => !activeDevicesById[device.id]
     );
     setDevices({active: activeDevices, inactive: inactiveDevices});
-  }, [props.browser.devices.map(JSON.stringify).join(',')]);
+  }, [props.browser.devices, props.browser.allDevices]);
+
+  const onInactiveListFiltering = inactiveFiltered => {
+    setDevices({...devices, inactiveFiltered});
+  };
 
   const closeDialog = () => setOpen(false);
 
@@ -60,13 +64,20 @@ export default function DeviceManager(props) {
     const destinationList = devices[destination.droppableId];
 
     const itemDragged = sourceList[source.index];
-    sourceList.splice(source.index, 1);
+    sourceList.splice(sourceList.indexOf(itemDragged), 1);
 
     destinationList.splice(destination.index, 0, itemDragged);
 
-    setDevices({...devices});
-    props.setActiveDevices(devices.active);
+    updateDevices(devices);
   };
+
+  const updateDevices = devices => {
+    const active = [...devices.active];
+    const inactive = [...devices.inactive];
+    setDevices({active, inactive});
+    props.setActiveDevices(active);
+  };
+
   return (
     <Fragment>
       <Button
@@ -116,6 +127,7 @@ export default function DeviceManager(props) {
                   droppableId={'inactive'}
                   devices={devices.inactive}
                   enableFiltering={true}
+                  onFiltering={onInactiveListFiltering}
                 />
               </Grid>
             </Grid>

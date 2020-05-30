@@ -22,7 +22,7 @@ export const NEW_NAVIGATOR_STATUS = 'NEW_NAVIGATOR_STATUS';
 export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
 export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
-export const NEW_ACTIVE_DEVICE = 'NEW_ACTIVE_DEVICE';
+export const NEW_CUSTOM_DEVICE = 'NEW_CUSTOM_DEVICE';
 export const NEW_FILTERS = 'NEW_FILTERS';
 export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
 
@@ -89,9 +89,9 @@ export function newActiveDevices(devices) {
   };
 }
 
-export function newActiveDevice(device) {
+export function newCustomDevice(device) {
   return {
-    type: NEW_ACTIVE_DEVICE,
+    type: NEW_CUSTOM_DEVICE,
     device,
   };
 }
@@ -251,11 +251,13 @@ export function setActiveDevices(newDevices) {
   };
 }
 
-export function addNewDevice(newDevice) {
+export function addCustomDevice(newDevice) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {devices},
     } = getState();
+
+    dispatch(newCustomDevice(newDevice));
 
     if (newDevice.added) {
       dispatch(newActiveDevices([...devices, newDevice]));

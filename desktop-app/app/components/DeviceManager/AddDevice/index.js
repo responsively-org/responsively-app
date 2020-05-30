@@ -75,8 +75,8 @@ const useStyles = makeStyles(theme => ({
 export default function AddDevice(props) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
+  const [width, setWidth] = useState(400);
+  const [height, setHeight] = useState(600);
   const [userAgentString, setUserAgentString] = useState('');
   const [previewState, setPreviewState] = useState(true);
   const [capabilities, setCapabilities] = useState({
@@ -88,7 +88,6 @@ export default function AddDevice(props) {
   const classes = useStyles();
 
   const updateUserAgent = () => {
-    console.log(os, deviceType);
     let userAgent =
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36';
     if (os === OS.android) {
@@ -157,7 +156,7 @@ export default function AddDevice(props) {
   const closeDialog = () => setOpen(false);
 
   const saveDevice = () => {
-    props.addNewDevice({
+    props.addCustomDevice({
       name,
       width: parseInt(width, 10),
       height: parseInt(height, 10),
@@ -170,7 +169,6 @@ export default function AddDevice(props) {
     });
     closeDialog();
   };
-  console.log('capabilities', capabilities);
   return (
     <Fragment>
       <Fab

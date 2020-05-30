@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Droppable} from 'react-beautiful-dnd';
 import DeviceItem from '../DeviceItem';
 import IconButton from '@material-ui/core/IconButton';
@@ -10,9 +10,26 @@ import cx from 'classnames';
 
 import styles from './styles.css';
 
-export default function DeviceList({droppableId, devices, enableFiltering}) {
+export default function DeviceList({
+  droppableId,
+  devices,
+  enableFiltering,
+  onFiltering,
+}) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
+  const [filteredDevices, setFilteredList] = useState(devices);
+  useEffect(() => {
+    const filteredDevices = devices.filter(device => {
+      if (!searchText) {
+        return true;
+      }
+      return device.name.toLowerCase().indexOf(searchText) > -1;
+    });
+
+    setFilteredList(filteredDevices);
+    onFiltering && onFiltering(filteredDevices);
+  }, [searchText, devices]);
   return (
     <>
       <div className={cx(styles.searchContainer)}>
@@ -60,16 +77,9 @@ export default function DeviceList({droppableId, devices, enableFiltering}) {
             {...provided.droppableProps}
             className={cx(styles.listHolder)}
           >
-            {devices
-              .filter(device => {
-                if (!searchText) {
-                  return true;
-                }
-                return device.name.toLowerCase().indexOf(searchText) > -1;
-              })
-              .map((device, index) => (
-                <DeviceItem device={device} index={index} key={device.id} />
-              ))}
+            {filteredDevices.map((device, index) => (
+              <DeviceItem device={device} index={index} key={device.id} />
+            ))}
             {provided.placeholder}
           </div>
         )}

@@ -97,7 +97,6 @@ app.on('will-finish-launching', () => {
 });
 
 app.on('open-url', async (event, url) => {
-  log.info('Open-url', url);
   if (mainWindow) {
     openUrl(url);
   } else {
