@@ -4,5 +4,6 @@
   border-radius: 10px;
   border: 1px solid lightgrey;
   height: 70vh;
+  width: 340px;
   overflow: scroll;
 }

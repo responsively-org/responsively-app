@@ -99,15 +99,15 @@ export default function DeviceManager(props) {
             <span>✨</span>Drag and drop the devices across to re-order them.
           </p>
           <DragDropContext onDragEnd={onDragEnd}>
-            <Grid container spacing={3} className={styles.content}>
-              <Grid item xs={3} className={styles.section}>
+            <Grid container className={styles.content}>
+              <Grid item className={styles.section}>
                 <div className={styles.listTitle}>
                   <LightBulbIcon height={30} color="#FFD517" />
                   Active Devices
                 </div>
                 <DeviceList droppableId={'active'} devices={devices.active} />
               </Grid>
-              <Grid item xs={3} className={styles.section}>
+              <Grid item className={styles.section}>
                 <div className={styles.listTitle}>
                   <LightBulbIcon height={30} color="darkgrey" />
                   Inactive Devices
