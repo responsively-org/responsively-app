@@ -10,6 +10,7 @@ import Promise from 'bluebird';
 import path from 'path';
 import fs from 'fs-extra';
 import PromiseWorker from 'promise-worker';
+import {CAPABILITIES, DEVICE_TYPE} from '../../constants/devices';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 
@@ -45,6 +46,8 @@ export const captureFullPage = async (
   let scrollY = 0;
   let pageX = 0;
   let pageY = 0;
+  let isMobile = (device.capabilities.indexOf(CAPABILITIES.mobile) > -1 && device.type.indexOf(DEVICE_TYPE.tablet) == -1);
+
   const {
     previousScrollPosition,
     scrollHeight,
@@ -53,6 +56,23 @@ export const captureFullPage = async (
     viewPortWidth,
   } = await webView.executeJavaScript(`
     document.body.classList.add('responsivelyApp__ScreenshotInProgress');
+
+    // add shadow div to make it fit with totalHeight
+    responsivelyApp.__shadowConfig = {
+      viewportHeight: document.documentElement.clientHeight,
+      restToViewport: document.body.scrollHeight % document.documentElement.clientHeight,
+      shadowDivID: 'shadowdiv'
+    }
+
+    if (responsivelyApp.__shadowConfig.restToViewport != 0) {
+      let div = document.createElement("div");
+      div.setAttribute('id', responsivelyApp.__shadowConfig.shadowDivID);
+      div.innerHTML = '&nbsp;';
+      div.style.width = '100%';
+      div.style.height = (responsivelyApp.__shadowConfig.viewportHeight - responsivelyApp.__shadowConfig.restToViewport) + "px";
+      document.body.appendChild(div);
+    }
+
     responsivelyApp.screenshotVar = {
       previousScrollPosition : {
         left: window.scrollX, 
@@ -67,10 +87,11 @@ export const captureFullPage = async (
   `);
 
   let images = [];
+  let scrollHeightScreen = (isMobile) ? (scrollHeight - viewPortHeight) : scrollHeight;
 
   for (
     let pageY = 0;
-    scrollY < scrollHeight;
+    scrollY < scrollHeightScreen;
     pageY++, scrollY = viewPortHeight * pageY
   ) {
     scrollX = 0;
@@ -115,6 +136,8 @@ export const captureFullPage = async (
   }
 
   webView.executeJavaScript(`
+    // to remove shadow div
+    document.body.removeChild(document.body.lastChild);
     window.scrollTo(${JSON.stringify(previousScrollPosition)});
     document.body.classList.remove('responsivelyApp__ScreenshotInProgress');
     responsivelyApp.unHideElementsHiddenForScreenshot();
