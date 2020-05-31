@@ -56,7 +56,7 @@ export default class MenuBuilder {
             parent: BrowserWindow.getFocusedWindow(),
             modal: true,
             frame: false,
-            height: 900,
+            height: 800,
             webPreferences: {
               devTools: false,
               nodeIntegration: true,
@@ -253,6 +253,13 @@ export default class MenuBuilder {
           },
         },
         {
+          label: '&ReloadCSS',
+          accelerator: 'Alt+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-css');
+          },
+        },
+        {
           label: 'Toggle Full Screen',
           accelerator: 'Ctrl+Command+F',
           click: () => {
@@ -283,6 +290,13 @@ export default class MenuBuilder {
           accelerator: 'CommandOrControl+Shift+R',
           click: () => {
             this.mainWindow.webContents.send('reload-url', {ignoreCache: true});
+          },
+        },
+        {
+          label: '&ReloadCSS',
+          accelerator: 'Alt+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-css');
           },
         },
         {
@@ -338,13 +352,6 @@ export default class MenuBuilder {
                   accelerator: 'Ctrl+R',
                   click: () => {
                     this.mainWindow.webContents.reload();
-                  },
-                },
-                {
-                  label: '&ReloadCSS',
-                  accelerator: 'Alt+R',
-                  click: () => {
-                    this.mainWindow.webContents.send('reload-css');
                   },
                 },
                 {
