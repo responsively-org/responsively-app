@@ -377,7 +377,7 @@ export function triggerNavigationForward() {
 
 export function triggerNavigationReload(_, args) {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    const ignoreCache = (args || {}).ignoreCache;
+    const ignoreCache = (args || {}).ignoreCache || false;
     pubsub.publish(NAVIGATION_RELOAD, [{ignoreCache}]);
   };
 }
