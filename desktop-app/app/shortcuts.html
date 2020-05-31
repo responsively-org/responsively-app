@@ -1,0 +1,130 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="app.global.css" />
+    <style>
+      body {
+        background-color: #313131;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        font-family: 'Roboto', sans-serif;
+      }
+      ul {
+        margin: 50px;
+      }
+      li {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 5px;
+      }
+      .label {
+        width: 250px;
+        font-size: large;
+      }
+      .key {
+        display: flex;
+        text-align: right;
+        padding: 7px;
+        margin-left: 10px;
+        justify-content: center;
+        align-items: center;
+        font-size: large;
+        background-color: black;
+        border-radius: 5px;
+      }
+      .btn-wrapper {
+        display: flex;
+        justify-content: center;
+        background-color: transparent;
+        padding-bottom: 50px;
+      }
+      #close-btn {
+        font-family: 'Roboto', sans-serif;
+        font-size: x-large;
+        padding: 10 20 10 20px;
+        border: 0;
+        border-radius: 5px;
+        background-color: black;
+        color: gray;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="list"></ul>
+    <div class="btn-wrapper">
+      <button id="close-btn">Ok</button>
+    </div>
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const platform = urlParams.get('platform');
+      const shortcuts =
+        platform !== 'darwin'
+          ? [
+              ['Hide ResponsivelyApp', ['Cmd', 'H']],
+              ['Hide Others', ['Cmd', 'Shift', 'H']],
+              ['Quit', ['Cmd', 'Q']],
+              ['Open HTML file', ['Cmd', 'O']],
+              ['Undo', ['Cmd', 'Z']],
+              ['Redo', ['Shift', 'Cmd', 'Z']],
+              ['Cut', ['Cmd', 'X']],
+              ['Copy', ['Cmd', 'C']],
+              ['Paste', ['Cmd', 'V']],
+              ['Select All', ['Cmd', 'A']],
+              ['Reload', ['Cmd/Ctrl', 'R']],
+              ['Reload Ignoring Cache', ['Cmd/Ctrl', 'H']],
+              ['Toggle Full Screen', ['Ctrl', 'Cmd', 'F']],
+              ['Toggle Developer Tools', ['Alt', 'Cmd', 'I']],
+              ['Minimize', ['Cmd', 'M']],
+              ['Close', ['Cmd', 'W']],
+            ]
+          : [
+              ['Open HTML File', ['Ctrl', 'O']],
+              ['Reload', ['Ctrl', 'R']],
+              ['Reload CSS', ['Ctrl', 'Alt', 'R']],
+              ['Reload Ignoring Cache', ['Ctrl', 'Shift', 'R']],
+              ['Toggle Full Screen', ['F11']],
+              ['Toggle Developer tools', ['Alt', 'Ctrl', 'I']],
+            ];
+
+      const shortcutNodes = shortcuts.map(([label, keys]) => {
+        const liElem = document.createElement('li');
+
+        const labelElem = document.createElement('div');
+        const labelTextNode = document.createTextNode(label);
+        labelElem.classList.add('label');
+        labelElem.appendChild(labelTextNode);
+
+        liElem.appendChild(labelElem);
+
+        keys.forEach(k => {
+          const keyElem = document.createElement('div');
+          const keyTextNode = document.createTextNode(k);
+          keyElem.classList.add('key');
+          keyElem.appendChild(keyTextNode);
+
+          liElem.appendChild(keyElem);
+        });
+
+        return liElem;
+      });
+
+      shortcutNodes.forEach(node => {
+        document.getElementById('list').append(node);
+      });
+
+      const remote = require('electron').remote;
+      const BrowserWindow = remote.BrowserWindow;
+
+      document.onreadystatechange = () => {
+        if (document.readyState === 'complete') {
+          document.getElementById('close-btn').addEventListener('click', () => {
+            const window = BrowserWindow.getFocusedWindow();
+            window.hide();
+          });
+        }
+      };
+    </script>
+  </body>
+</html>

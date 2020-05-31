@@ -1,7 +1,7 @@
 // @flow
 import {app, dialog, Menu, shell, BrowserWindow, clipboard} from 'electron';
 import * as os from 'os';
-import { pkg } from './utils/generalUtils'
+import {pkg} from './utils/generalUtils';
 
 const path = require('path');
 
@@ -50,9 +50,64 @@ export default class MenuBuilder {
         },
       },
       {
+        label: 'Shortcuts',
+        click: () => {
+          /*
+          //helper function which gets all shortcuts as array of strings
+          const generateShortcuts = () => {
+            const template =
+              process.platform !== 'darwin'
+                ? this.buildDarwinTemplate()
+                : this.buildDefaultTemplate();
+
+            const shortcuts = template
+              .map(({submenu}) =>
+                submenu
+                  .filter(({accelerator}) => accelerator)
+                  .map(({accelerator, label}) => [
+                    label.replace('&', ''),
+                    accelerator,
+                  ])
+              )
+              .flat();
+
+            return shortcuts;
+          };
+          console.log(generateShortcuts());
+          */
+
+          let win = new BrowserWindow({
+            parent: BrowserWindow.getFocusedWindow(),
+            modal: true,
+            frame: false,
+            height: 900,
+            webPreferences: {
+              devTools: false,
+              nodeIntegration: true,
+            },
+          });
+
+          win.loadFile('./shortcuts.html', {
+            query: {platform: process.platform},
+          });
+
+          win.once('ready-to-show', () => {
+            win.show();
+          });
+
+          win.on('blur', () => {
+            win.close();
+          });
+
+          win.on('close', () => {
+            win = null;
+          });
+        },
+      },
+      {
         label: 'About',
         click() {
-          const iconPath = path.join(__dirname, '../resources/icons/64x64.png')
+          const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
           const title = 'Responsively';
           const description = pkg.description;
           const version = pkg.version || 'Unknown';
@@ -60,18 +115,22 @@ export default class MenuBuilder {
           const chrome = process.versions['chrome'] || 'Unknown';
           const node = process.versions['node'] || 'Unknown';
           const v8 = process.versions['v8'] || 'Unknown';
-          const osText = `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
+          const osText =
+            `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
           const usefulInfo = `Version: ${version}\nElectron: ${electron}\nChrome: ${chrome}\nNode.js: ${node}\nV8: ${v8}\nOS: ${osText}`;
-          const detail = description? `${description}\n\n${usefulInfo}` : usefulInfo;
+          const detail = description
+            ? `${description}\n\n${usefulInfo}`
+            : usefulInfo;
           let buttons = ['OK', 'Copy'];
           let cancelId = 0;
           let defaultId = 1;
           if (process.platform === 'linux') {
-            buttons =  ['Copy', 'OK'];
+            buttons = ['Copy', 'OK'];
             cancelId = 1;
             defaultId = 0;
           }
-          dialog.showMessageBox(BrowserWindow.getAllWindows()[0], {
+          dialog
+            .showMessageBox(BrowserWindow.getAllWindows()[0], {
               type: 'none',
               buttons,
               title,
@@ -80,12 +139,13 @@ export default class MenuBuilder {
               noLink: true,
               icon: iconPath,
               cancelId,
-              defaultId
-            }).then(({response }) => {
+              defaultId,
+            })
+            .then(({response}) => {
               if (response === defaultId) {
                 clipboard.writeText(usefulInfo, 'clipboard');
               }
-          });
+            });
         },
       },
     ],
