@@ -52,9 +52,11 @@ export default class MenuBuilder {
       {
         label: 'Shortcuts',
         click: () => {
-          const generateMessage = () => {
+          /*
+          //helper function which gets all shortcuts as array of strings
+          const generateShortcuts = () => {
             const template =
-              process.platform === 'darwin'
+              process.platform !== 'darwin'
                 ? this.buildDarwinTemplate()
                 : this.buildDefaultTemplate();
 
@@ -69,16 +71,27 @@ export default class MenuBuilder {
               )
               .flat();
 
-            const paddedShortcuts = shortcuts.map(([l, a]) => l.padEnd(40) + a);
-            return paddedShortcuts.join('\n');
+            return shortcuts;
           };
+          console.log(generateShortcuts());
+          */
 
-          dialog.showMessageBox(BrowserWindow.getAllWindows()[0], {
-            type: 'none',
-            buttons: ['ok'],
-            index: 0,
-            title: 'Shortcuts',
-            message: generateMessage(),
+          let win = new BrowserWindow({
+            parent: BrowserWindow.getFocusedWindow(),
+            modal: true,
+            frame: false,
+            height: 800,
+            webPreferences: {
+              devTools: false,
+            },
+          });
+
+          win.loadFile('./shortcuts.html', {
+            query: {platform: process.platform},
+          });
+
+          win.on('blur', () => {
+            win.close();
           });
         },
       },
