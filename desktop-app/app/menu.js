@@ -63,7 +63,7 @@ export default class MenuBuilder {
             },
           });
 
-          win.loadFile('./shortcuts.html');
+          win.loadURL(`file://${__dirname}/shortcuts.html`);
 
           win.once('ready-to-show', () => {
             win.show();

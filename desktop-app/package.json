@@ -72,6 +72,7 @@
       "app/dist/",
       "resources/icons",
       "app/app.html",
+      "app/shortcuts.html",
       "app/main.prod.js",
       "app/main.prod.js.map",
       "package.json"
