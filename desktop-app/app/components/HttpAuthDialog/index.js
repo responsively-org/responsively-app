@@ -15,7 +15,6 @@ export default function HttpAuthDialog() {
   const passwordRef = useRef(null);
 
   ipcRenderer.on('http-auth-prompt', (event, args) => {
-    console.log('HTTP msg', event, args);
     setUrl(args.url);
     setOpen(true);
   });

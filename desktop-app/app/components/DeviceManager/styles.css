@@ -1,6 +1,6 @@
 .container {
   margin: 50px;
-  height: 100%;
+  height: calc(100vh - 200px);
 }
 
 .content {
@@ -10,6 +10,7 @@
 
 .section {
   position: relative;
+  padding: 0 20px;
 }
 
 .listTitle {
