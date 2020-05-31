@@ -80,9 +80,10 @@ export default class MenuBuilder {
             parent: BrowserWindow.getFocusedWindow(),
             modal: true,
             frame: false,
-            height: 800,
+            height: 900,
             webPreferences: {
               devTools: false,
+              nodeIntegration: true,
             },
           });
 
@@ -90,8 +91,16 @@ export default class MenuBuilder {
             query: {platform: process.platform},
           });
 
+          win.once('ready-to-show', () => {
+            win.show();
+          });
+
           win.on('blur', () => {
             win.close();
+          });
+
+          win.on('close', () => {
+            win = null;
           });
         },
       },

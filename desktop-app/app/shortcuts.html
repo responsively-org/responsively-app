@@ -5,12 +5,12 @@
       body {
         background-color: #313131;
         display: flex;
-        margin: 50px;
-
+        justify-content: space-between;
+        flex-direction: column;
         font-family: 'Roboto', sans-serif;
       }
       ul {
-        margin: 0px;
+        margin: 50px;
       }
       li {
         display: flex;
@@ -34,15 +34,33 @@
         background-color: black;
         border-radius: 5px;
       }
+      .btn-wrapper {
+        display: flex;
+        justify-content: center;
+        background-color: transparent;
+        padding-bottom: 50px;
+      }
+      #close-btn {
+        font-family: 'Roboto', sans-serif;
+        font-size: x-large;
+        padding: 10 20 10 20px;
+        border: 0;
+        border-radius: 5px;
+        background-color: black;
+        color: gray;
+      }
     </style>
   </head>
   <body>
     <ul id="list"></ul>
+    <div class="btn-wrapper">
+      <button id="close-btn">Ok</button>
+    </div>
     <script>
       const urlParams = new URLSearchParams(window.location.search);
       const platform = urlParams.get('platform');
       const shortcuts =
-        platform === 'darwin'
+        platform !== 'darwin'
           ? [
               ['Hide ResponsivelyApp', ['Cmd', 'H']],
               ['Hide Others', ['Cmd', 'Shift', 'H']],
@@ -95,6 +113,18 @@
       shortcutNodes.forEach(node => {
         document.getElementById('list').append(node);
       });
+
+      const remote = require('electron').remote;
+      const BrowserWindow = remote.BrowserWindow;
+
+      document.onreadystatechange = () => {
+        if (document.readyState === 'complete') {
+          document.getElementById('close-btn').addEventListener('click', () => {
+            const window = BrowserWindow.getFocusedWindow();
+            window.hide();
+          });
+        }
+      };
     </script>
   </body>
 </html>
