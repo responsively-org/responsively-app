@@ -50,32 +50,8 @@ export default class MenuBuilder {
         },
       },
       {
-        label: 'Shortcuts',
+        label: 'Keyboard Shortcuts',
         click: () => {
-          /*
-          //helper function which gets all shortcuts as array of strings
-          const generateShortcuts = () => {
-            const template =
-              process.platform !== 'darwin'
-                ? this.buildDarwinTemplate()
-                : this.buildDefaultTemplate();
-
-            const shortcuts = template
-              .map(({submenu}) =>
-                submenu
-                  .filter(({accelerator}) => accelerator)
-                  .map(({accelerator, label}) => [
-                    label.replace('&', ''),
-                    accelerator,
-                  ])
-              )
-              .flat();
-
-            return shortcuts;
-          };
-          console.log(generateShortcuts());
-          */
-
           let win = new BrowserWindow({
             parent: BrowserWindow.getFocusedWindow(),
             modal: true,
@@ -87,9 +63,7 @@ export default class MenuBuilder {
             },
           });
 
-          win.loadFile('./shortcuts.html', {
-            query: {platform: process.platform},
-          });
+          win.loadFile('./shortcuts.html');
 
           win.once('ready-to-show', () => {
             win.show();

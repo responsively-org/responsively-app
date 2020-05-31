@@ -3,14 +3,14 @@
     <link rel="stylesheet" type="text/css" href="app.global.css" />
     <style>
       body {
-        background-color: #313131;
+        background-color: #1e1e1e;
         display: flex;
         justify-content: space-between;
         flex-direction: column;
         font-family: 'Roboto', sans-serif;
       }
       ul {
-        margin: 50px;
+        margin: 20px 50px;
       }
       li {
         display: flex;
@@ -18,6 +18,12 @@
         flex-wrap: wrap;
         align-items: center;
         padding: 5px;
+      }
+      .header {
+        font-size: 2em;
+        display: flex;
+        justify-content: center;
+        margin: 100px 0 50px;
       }
       .label {
         width: 250px;
@@ -27,7 +33,7 @@
         display: flex;
         text-align: right;
         padding: 7px;
-        margin-left: 10px;
+        margin: 0 10px;
         justify-content: center;
         align-items: center;
         font-size: large;
@@ -47,46 +53,24 @@
         border: 0;
         border-radius: 5px;
         background-color: black;
-        color: gray;
+        color: white;
+        cursor: pointer;
       }
     </style>
   </head>
   <body>
+    <div class="header">Keyboard Shortcuts</div>
     <ul id="list"></ul>
     <div class="btn-wrapper">
-      <button id="close-btn">Ok</button>
+      <button id="close-btn">Close</button>
     </div>
     <script>
-      const urlParams = new URLSearchParams(window.location.search);
-      const platform = urlParams.get('platform');
-      const shortcuts =
-        platform !== 'darwin'
-          ? [
-              ['Hide ResponsivelyApp', ['Cmd', 'H']],
-              ['Hide Others', ['Cmd', 'Shift', 'H']],
-              ['Quit', ['Cmd', 'Q']],
-              ['Open HTML file', ['Cmd', 'O']],
-              ['Undo', ['Cmd', 'Z']],
-              ['Redo', ['Shift', 'Cmd', 'Z']],
-              ['Cut', ['Cmd', 'X']],
-              ['Copy', ['Cmd', 'C']],
-              ['Paste', ['Cmd', 'V']],
-              ['Select All', ['Cmd', 'A']],
-              ['Reload', ['Cmd/Ctrl', 'R']],
-              ['Reload Ignoring Cache', ['Cmd/Ctrl', 'H']],
-              ['Toggle Full Screen', ['Ctrl', 'Cmd', 'F']],
-              ['Toggle Developer Tools', ['Alt', 'Cmd', 'I']],
-              ['Minimize', ['Cmd', 'M']],
-              ['Close', ['Cmd', 'W']],
-            ]
-          : [
-              ['Open HTML File', ['Ctrl', 'O']],
-              ['Reload', ['Ctrl', 'R']],
-              ['Reload CSS', ['Ctrl', 'Alt', 'R']],
-              ['Reload Ignoring Cache', ['Ctrl', 'Shift', 'R']],
-              ['Toggle Full Screen', ['F11']],
-              ['Toggle Developer tools', ['Alt', 'Ctrl', 'I']],
-            ];
+      const shortcuts = [
+        ['Open HTML File', ['Cmd/Ctrl', 'O']],
+        ['Reload', ['Cmd/Ctrl', 'R']],
+        ['Reload Ignoring Cache', ['Cmd/Ctrl', 'Shift', 'R']],
+        ['Re-Apply CSS file', ['Alt', 'R']],
+      ];
 
       const shortcutNodes = shortcuts.map(([label, keys]) => {
         const liElem = document.createElement('li');
@@ -98,12 +82,14 @@
 
         liElem.appendChild(labelElem);
 
-        keys.forEach(k => {
+        keys.forEach((k, idx) => {
           const keyElem = document.createElement('div');
           const keyTextNode = document.createTextNode(k);
           keyElem.classList.add('key');
           keyElem.appendChild(keyTextNode);
-
+          if (idx != 0) {
+            liElem.append('+');
+          }
           liElem.appendChild(keyElem);
         });
 
