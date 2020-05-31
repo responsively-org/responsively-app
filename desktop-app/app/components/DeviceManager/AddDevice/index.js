@@ -32,7 +32,12 @@ import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import {DEVICE_TYPE, CAPABILITIES, OS} from '../../../constants/devices';
+import {
+  DEVICE_TYPE,
+  CAPABILITIES,
+  OS,
+  SOURCE,
+} from '../../../constants/devices';
 import {lightIconsColor, themeColor} from '../../../constants/colors';
 import Switch from 'react-switch';
 
@@ -166,8 +171,13 @@ export default function AddDevice(props) {
       type: deviceType,
       capabilities: Object.keys(capabilities).filter(val => capabilities[val]),
       os,
+      source: SOURCE.custom,
     });
     closeDialog();
+    setName('');
+    setWidth(400);
+    setHeight(600);
+    setPreviewState(true);
   };
   return (
     <Fragment>

@@ -1,15 +1,24 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Draggable} from 'react-beautiful-dnd';
 import DragIndicator from '@material-ui/icons/DragIndicator';
 import PhoneIcon from '@material-ui/icons/PhoneIphone';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import Tooltip from '@material-ui/core/Tooltip';
 import cx from 'classnames';
 
 import styles from './styles.css';
 import commonStyles from '../../common.styles.css';
-import {DEVICE_TYPE} from '../../../constants/devices';
+import {DEVICE_TYPE, SOURCE} from '../../../constants/devices';
 import {getDeviceIcon, getOSIcon} from '../../../utils/iconUtils';
 
-export default function DeviceItem({device, index}) {
+export default function DeviceItem({
+  device,
+  index,
+  enableCustomDeviceDeletion,
+  deleteDevice,
+}) {
+  const [showDeleteIcon, setShowDeleteIcon] = useState(false);
   return (
     <Draggable draggableId={device.id} index={index}>
       {provided => (
@@ -18,11 +27,14 @@ export default function DeviceItem({device, index}) {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          onMouseEnter={() => setShowDeleteIcon(true)}
+          onMouseLeave={() => setShowDeleteIcon(false)}
         >
           <div
             className={cx(
               commonStyles.flexAlignVerticalMiddle,
-              commonStyles.fullWidth
+              commonStyles.fullWidth,
+              styles.content
             )}
           >
             <DragIndicator style={{color: 'grey'}} />
@@ -41,6 +53,18 @@ export default function DeviceItem({device, index}) {
               </div>
               <div>{getOSIcon(device.os, '#ffffff90')}</div>
             </div>
+            {enableCustomDeviceDeletion &&
+            device.source === SOURCE.custom &&
+            showDeleteIcon ? (
+              <Tooltip title="Delete Device Profile">
+                <IconButton
+                  className={styles.deleteIcon}
+                  onClick={() => deleteDevice(device)}
+                >
+                  <DeleteForeverIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            ) : null}
           </div>
         </div>
       )}

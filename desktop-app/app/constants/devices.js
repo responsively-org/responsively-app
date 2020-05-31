@@ -21,11 +21,18 @@ export const CAPABILITIES: {[key: string]: Capability} = {
   touch: 'touch',
 };
 
+export const SOURCE: {[key: string]: Source} = {
+  chrome: 'chrome',
+  custom: 'custom',
+};
+
 type OSType = OS.ios | OS.android | OS.windowsPhone | OS.pc;
 
 type DeviceType = DEVICE_TYPE.phone | DEVICE_TYPE.tablet | DEVICE_TYPE.desktop;
 
 type Capability = CAPABILITIES.mobile | CAPABILITIES.touch;
+
+type Source = SOURCE.chrome | SOURCE.custom;
 
 export type Device = {
   id: number,
@@ -37,6 +44,7 @@ export type Device = {
   capabilities: Array<Capability>,
   os: OSType,
   type: DeviceType,
+  source: Source,
 };
 
 function getOS(device) {
@@ -72,6 +80,7 @@ export default function getAllDevices() {
         added: device['show-by-default'],
         os: getOS(device),
         type: device.type,
+        source: SOURCE.chrome,
       };
     });
 

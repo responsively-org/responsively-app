@@ -23,6 +23,7 @@ export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
 export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
 export const NEW_CUSTOM_DEVICE = 'NEW_CUSTOM_DEVICE';
+export const DELETE_CUSTOM_DEVICE = 'DELETE_CUSTOM_DEVICE';
 export const NEW_FILTERS = 'NEW_FILTERS';
 export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
 
@@ -92,6 +93,13 @@ export function newActiveDevices(devices) {
 export function newCustomDevice(device) {
   return {
     type: NEW_CUSTOM_DEVICE,
+    device,
+  };
+}
+
+export function deleteCustomDevice(device) {
+  return {
+    type: DELETE_CUSTOM_DEVICE,
     device,
   };
 }
@@ -262,6 +270,12 @@ export function addCustomDevice(newDevice) {
     if (newDevice.added) {
       dispatch(newActiveDevices([...devices, newDevice]));
     }
+  };
+}
+
+export function deleteDevice(device) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(deleteCustomDevice(device));
   };
 }
 

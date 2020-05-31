@@ -11,6 +11,7 @@ import {
   NEW_FILTERS,
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
+  DELETE_CUSTOM_DEVICE,
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
@@ -174,8 +175,15 @@ export default function browser(
       _saveActiveDevices(action.devices);
       return {...state, devices: action.devices};
     case NEW_CUSTOM_DEVICE:
+      const existingDevices = settings.get(CUSTOM_DEVICES) || [];
+      settings.set(CUSTOM_DEVICES, [action.device, ...existingDevices]);
+      return {...state, allDevices: getAllDevices()};
+    case DELETE_CUSTOM_DEVICE:
       const existingCustomDevices = settings.get(CUSTOM_DEVICES) || [];
-      settings.set(CUSTOM_DEVICES, [action.device, ...existingCustomDevices]);
+      settings.set(
+        CUSTOM_DEVICES,
+        existingCustomDevices.filter(device => device.id != action.device.id)
+      );
       return {...state, allDevices: getAllDevices()};
     case NEW_FILTERS:
       return {...state, filters: action.filters};

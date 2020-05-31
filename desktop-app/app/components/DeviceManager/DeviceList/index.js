@@ -15,6 +15,8 @@ export default function DeviceList({
   devices,
   enableFiltering,
   onFiltering,
+  enableCustomDeviceDeletion,
+  deleteDevice,
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -78,7 +80,13 @@ export default function DeviceList({
             className={cx(styles.listHolder)}
           >
             {filteredDevices.map((device, index) => (
-              <DeviceItem device={device} index={index} key={device.id} />
+              <DeviceItem
+                device={device}
+                index={index}
+                key={device.id}
+                enableCustomDeviceDeletion={enableCustomDeviceDeletion}
+                deleteDevice={deleteDevice}
+              />
             ))}
             {provided.placeholder}
           </div>

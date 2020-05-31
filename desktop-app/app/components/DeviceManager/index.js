@@ -63,7 +63,10 @@ export default function DeviceManager(props) {
     const sourceList = devices[source.droppableId];
     const destinationList = devices[destination.droppableId];
 
-    const itemDragged = sourceList[source.index];
+    const itemDragged =
+      source.droppableId === 'inactive'
+        ? devices.inactiveFiltered[source.index]
+        : sourceList[source.index];
     sourceList.splice(sourceList.indexOf(itemDragged), 1);
 
     destinationList.splice(destination.index, 0, itemDragged);
@@ -128,6 +131,8 @@ export default function DeviceManager(props) {
                   devices={devices.inactive}
                   enableFiltering={true}
                   onFiltering={onInactiveListFiltering}
+                  enableCustomDeviceDeletion={true}
+                  deleteDevice={props.deleteDevice}
                 />
               </Grid>
             </Grid>
