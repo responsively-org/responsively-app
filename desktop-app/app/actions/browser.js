@@ -116,8 +116,26 @@ export function onAddressChange(newURL, force) {
       return;
     }
 
+    const isHashDiff = isHashOnlyChange(newURL, address);
+
+    if (isHashDiff) {
+      return;
+    }
+
     dispatch(newAddress(newURL));
   };
+}
+
+function isHashOnlyChange(newURL, oldURL) {
+  if (!newURL || !oldURL) {
+    return false;
+  }
+  let diff = newURL.replace(oldURL, '').trim();
+  if (diff.startsWith('/')) {
+    diff = diff.substring(1);
+  }
+
+  return diff.startsWith('#');
 }
 
 export function onZoomChange(newLevel) {
