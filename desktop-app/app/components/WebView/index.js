@@ -136,13 +136,6 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener(
       'login',
       (event, request, authInfo, callback) => {
-        console.log(
-          'event, request, authInfo, callback',
-          event,
-          request,
-          authInfo,
-          callback
-        );
         event.preventDefault();
         callback('username', 'secret');
       }

@@ -19,3 +19,14 @@
   font-size: 10px;
   color: #ffffff90;
 }
+
+.content {
+  padding: 0.8em 1em 0.8em 0;
+  position: relative;
+}
+
+.deleteIcon {
+  position: absolute !important;
+  right: -25px;
+  top: -10px;
+}
