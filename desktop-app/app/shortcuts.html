@@ -1,0 +1,117 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="app.global.css" />
+    <style>
+      body {
+        background-color: #1e1e1e;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        font-family: 'Roboto', sans-serif;
+      }
+      ul {
+        margin: 20px 50px;
+      }
+      li {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 5px;
+      }
+      .header {
+        font-size: 2em;
+        display: flex;
+        justify-content: center;
+        margin: 100px 0 50px;
+      }
+      .label {
+        width: 250px;
+        font-size: large;
+      }
+      .key {
+        display: flex;
+        text-align: right;
+        padding: 7px;
+        margin: 0 10px;
+        justify-content: center;
+        align-items: center;
+        font-size: large;
+        background-color: black;
+        border-radius: 5px;
+      }
+      .btn-wrapper {
+        display: flex;
+        justify-content: center;
+        background-color: transparent;
+        padding-bottom: 50px;
+      }
+      #close-btn {
+        font-family: 'Roboto', sans-serif;
+        font-size: x-large;
+        padding: 10 20 10 20px;
+        border: 0;
+        border-radius: 5px;
+        background-color: black;
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">Keyboard Shortcuts</div>
+    <ul id="list"></ul>
+    <div class="btn-wrapper">
+      <button id="close-btn">Close</button>
+    </div>
+    <script>
+      const shortcuts = [
+        ['Open HTML File', ['Cmd/Ctrl', 'O']],
+        ['Reload', ['Cmd/Ctrl', 'R']],
+        ['Reload Ignoring Cache', ['Cmd/Ctrl', 'Shift', 'R']],
+        ['Reload CSS Files In-place', ['Alt', 'R']],
+      ];
+
+      const shortcutNodes = shortcuts.map(([label, keys]) => {
+        const liElem = document.createElement('li');
+
+        const labelElem = document.createElement('div');
+        const labelTextNode = document.createTextNode(label);
+        labelElem.classList.add('label');
+        labelElem.appendChild(labelTextNode);
+
+        liElem.appendChild(labelElem);
+
+        keys.forEach((k, idx) => {
+          const keyElem = document.createElement('div');
+          const keyTextNode = document.createTextNode(k);
+          keyElem.classList.add('key');
+          keyElem.appendChild(keyTextNode);
+          if (idx != 0) {
+            liElem.append('+');
+          }
+          liElem.appendChild(keyElem);
+        });
+
+        return liElem;
+      });
+
+      shortcutNodes.forEach(node => {
+        document.getElementById('list').append(node);
+      });
+
+      const remote = require('electron').remote;
+      const BrowserWindow = remote.BrowserWindow;
+
+      document.onreadystatechange = () => {
+        if (document.readyState === 'complete') {
+          document.getElementById('close-btn').addEventListener('click', () => {
+            const window = BrowserWindow.getFocusedWindow();
+            window.hide();
+          });
+        }
+      };
+    </script>
+  </body>
+</html>

@@ -1,2 +1,3 @@
 export const ACTIVE_DEVICES = 'activeDevices';
-export const USER_PREFERENCES = 'USER_PREFERENCES';
+export const CUSTOM_DEVICES = 'customDevices';
+export const USER_PREFERENCES = 'userPreferences';

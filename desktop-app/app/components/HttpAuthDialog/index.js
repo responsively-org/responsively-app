@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {ipcRenderer} from 'electron';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -14,11 +14,16 @@ export default function HttpAuthDialog() {
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
 
-  ipcRenderer.on('http-auth-prompt', (event, args) => {
-    console.log('HTTP msg', event, args);
-    setUrl(args.url);
-    setOpen(true);
-  });
+  useEffect(() => {
+    const handler = (event, args) => {
+      setUrl(args.url);
+      setOpen(true);
+    };
+    ipcRenderer.on('http-auth-prompt', handler);
+    return () => {
+      ipcRenderer.removeListener('http-auth-prompt', handler);
+    };
+  }, []);
 
   function handleClose(status) {
     if (!status) {
