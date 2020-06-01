@@ -50,46 +50,20 @@ export default class MenuBuilder {
         },
       },
       {
-        label: 'Shortcuts',
+        label: 'Keyboard Shortcuts',
         click: () => {
-          /*
-          //helper function which gets all shortcuts as array of strings
-          const generateShortcuts = () => {
-            const template =
-              process.platform !== 'darwin'
-                ? this.buildDarwinTemplate()
-                : this.buildDefaultTemplate();
-
-            const shortcuts = template
-              .map(({submenu}) =>
-                submenu
-                  .filter(({accelerator}) => accelerator)
-                  .map(({accelerator, label}) => [
-                    label.replace('&', ''),
-                    accelerator,
-                  ])
-              )
-              .flat();
-
-            return shortcuts;
-          };
-          console.log(generateShortcuts());
-          */
-
           let win = new BrowserWindow({
             parent: BrowserWindow.getFocusedWindow(),
             modal: true,
             frame: false,
-            height: 900,
+            height: 800,
             webPreferences: {
               devTools: false,
               nodeIntegration: true,
             },
           });
 
-          win.loadFile('./shortcuts.html', {
-            query: {platform: process.platform},
-          });
+          win.loadURL(`file://${__dirname}/shortcuts.html`);
 
           win.once('ready-to-show', () => {
             win.show();
@@ -279,6 +253,13 @@ export default class MenuBuilder {
           },
         },
         {
+          label: '&ReloadCSS',
+          accelerator: 'Alt+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-css');
+          },
+        },
+        {
           label: 'Toggle Full Screen',
           accelerator: 'Ctrl+Command+F',
           click: () => {
@@ -309,6 +290,13 @@ export default class MenuBuilder {
           accelerator: 'CommandOrControl+Shift+R',
           click: () => {
             this.mainWindow.webContents.send('reload-url', {ignoreCache: true});
+          },
+        },
+        {
+          label: '&ReloadCSS',
+          accelerator: 'Alt+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-css');
           },
         },
         {
@@ -364,13 +352,6 @@ export default class MenuBuilder {
                   accelerator: 'Ctrl+R',
                   click: () => {
                     this.mainWindow.webContents.reload();
-                  },
-                },
-                {
-                  label: '&ReloadCSS',
-                  accelerator: 'Alt+R',
-                  click: () => {
-                    this.mainWindow.webContents.send('reload-css');
                   },
                 },
                 {

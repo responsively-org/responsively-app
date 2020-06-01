@@ -27,17 +27,16 @@ export const getDeviceIcon = deviceType => {
 export const getOSIcon = (os, _color) => {
   const color = _color || iconsColor;
   const iconProps = {
-    color,
     style: {fontSize: 'inherit', paddingRight: 2, color},
     height: '1em',
   };
   switch (os) {
     case OS.ios:
-      return <AppleIcon {...iconProps} />;
+      return <AppleIcon {...iconProps} color={color} />;
     case OS.android:
       return <AndroidIcon {...iconProps} />;
     case OS.windowsPhone:
-      return <WindowsIcon {...iconProps} height="0.8em" />;
+      return <WindowsIcon {...iconProps} height="0.8em" color={color} />;
     case OS.pc:
       return <DesktopIcon {...iconProps} />;
     default:

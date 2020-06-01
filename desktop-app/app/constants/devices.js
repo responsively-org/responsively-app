@@ -1,5 +1,7 @@
 // @flow
 import chromeEmulatedDevices from './chromeEmulatedDevices';
+import settings from 'electron-settings';
+import {ACTIVE_DEVICES, CUSTOM_DEVICES} from './settingKeys';
 
 export const OS: {[key: string]: OS} = {
   ios: 'iOS',
@@ -19,11 +21,18 @@ export const CAPABILITIES: {[key: string]: Capability} = {
   touch: 'touch',
 };
 
+export const SOURCE: {[key: string]: Source} = {
+  chrome: 'chrome',
+  custom: 'custom',
+};
+
 type OSType = OS.ios | OS.android | OS.windowsPhone | OS.pc;
 
 type DeviceType = DEVICE_TYPE.phone | DEVICE_TYPE.tablet | DEVICE_TYPE.desktop;
 
 type Capability = CAPABILITIES.mobile | CAPABILITIES.touch;
+
+type Source = SOURCE.chrome | SOURCE.custom;
 
 export type Device = {
   id: number,
@@ -35,6 +44,7 @@ export type Device = {
   capabilities: Array<Capability>,
   os: OSType,
   type: DeviceType,
+  source: Source,
 };
 
 function getOS(device) {
@@ -51,24 +61,30 @@ function getOS(device) {
   return OS.pc;
 }
 
-let idGen = 1;
-export default chromeEmulatedDevices.extensions
-  .sort((a, b) => a.order - b.order)
-  .map(({order, device}) => {
-    const dimension =
-      device.type === DEVICE_TYPE.desktop
-        ? device.screen.horizontal
-        : device.screen.vertical;
+export default function getAllDevices() {
+  const chromeDefaultDevices = chromeEmulatedDevices.extensions
+    .sort((a, b) => a.order - b.order)
+    .map(({id, order, device}) => {
+      const dimension =
+        device.type === DEVICE_TYPE.desktop
+          ? device.screen.horizontal
+          : device.screen.vertical;
 
-    return {
-      id: idGen++,
-      name: device.title,
-      width: dimension.width,
-      height: dimension.height,
-      useragent: device['user-agent'],
-      capabilities: device.capabilities,
-      added: device['show-by-default'],
-      os: getOS(device),
-      type: device.type,
-    };
-  });
+      return {
+        id: id,
+        name: device.title,
+        width: dimension.width,
+        height: dimension.height,
+        useragent: device['user-agent'],
+        capabilities: device.capabilities,
+        added: device['show-by-default'],
+        os: getOS(device),
+        type: device.type,
+        source: SOURCE.chrome,
+      };
+    });
+
+  const userCustomDevices = settings.get(CUSTOM_DEVICES) || [];
+
+  return [...userCustomDevices, ...chromeDefaultDevices];
+}

@@ -24,14 +24,21 @@ import installExtension, {
 } from 'electron-devtools-installer';
 import devtron from 'devtron';
 import fs from 'fs';
+import {migrateDeviceSchema} from './settings/migration';
 
 const path = require('path');
+
+migrateDeviceSchema();
 
 if (process.env.NODE_ENV !== 'development') {
   Sentry.init({
     dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
   });
 }
+
+const protocol = 'responsively';
+
+let hasActiveWindow = false;
 
 export default class AppUpdater {
   constructor() {
@@ -72,7 +79,7 @@ const installExtensions = async () => {
 const openUrl = url => {
   mainWindow.webContents.send(
     'address-change',
-    url.replace('responsively://', '')
+    url.replace(`${protocol}://`, '')
   );
   mainWindow.show();
 };
@@ -84,31 +91,34 @@ const openUrl = url => {
 app.on('will-finish-launching', () => {
   if (['win32', 'darwin'].includes(process.platform)) {
     if (process.argv.length >= 2) {
-      app.setAsDefaultProtocolClient('responsively', process.execPath, [
+      app.setAsDefaultProtocolClient(protocol, process.execPath, [
         path.resolve(process.argv[1]),
       ]);
     } else {
-      app.setAsDefaultProtocolClient('responsively');
+      app.setAsDefaultProtocolClient(protocol);
     }
   }
 });
 
 app.on('open-url', async (event, url) => {
-  log.info('Open-url', url);
   if (mainWindow) {
     openUrl(url);
   } else {
     urlToOpen = url;
+    if (!hasActiveWindow) {
+      createWindow();
+    }
   }
 });
 
 app.on('window-all-closed', () => {
-  if (process.env.NODE_ENV === 'development') {
+  if (false && process.env.NODE_ENV === 'development') {
     ['win32', 'darwin'].includes(process.platform) &&
-      app.removeAsDefaultProtocolClient('responsively');
+      app.removeAsDefaultProtocolClient(protocol);
   }
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
+  hasActiveWindow = false;
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -136,6 +146,7 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
 });
 
 const createWindow = async () => {
+  hasActiveWindow = true;
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'

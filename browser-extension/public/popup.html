@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        width: 340px;
+        background-color: #1d1b26;
+        box-sizing: border-box;
+      }
+
+      .header {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0 20px;
+      }
+
+      .logo {
+        height: 48px;
+      }
+
+      .anchorButton {
+        color: #fd2d55;
+        border-color: #fd2d55;
+        display: flex;
+        justify-content: center;
+        border: 1px solid;
+        padding: 5px;
+        border-radius: 3px;
+        text-decoration: none;
+      }
+
+      .popup {
+        height: 200px;
+        color: #fff;
+        padding: 25px;
+      }
+
+      .flexCenter {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .textJustify {
+        text-align: justify;
+      }
+
+      .loadingSpinner {
+        height: 50px;
+      }
+    </style>
+    <script src="browser-polyfill.min.js"></script>
+  </head>
+  <body>
+    <div class="header">
+      <img class="logo" src="logo_128.png" alt="Responsively App" />
+    </div>
+    <div id="app"></div>
+    <script src="popup.js"></script>
+  </body>
+</html>
