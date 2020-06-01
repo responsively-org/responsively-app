@@ -1,5 +1,13 @@
 // @flow
-import {app, dialog, Menu, shell, BrowserWindow, clipboard} from 'electron';
+import {
+  app,
+  dialog,
+  Menu,
+  shell,
+  BrowserWindow,
+  clipboard,
+  screen,
+} from 'electron';
 import * as os from 'os';
 import {pkg} from './utils/generalUtils';
 
@@ -52,16 +60,21 @@ export default class MenuBuilder {
       {
         label: 'Keyboard Shortcuts',
         click: () => {
+          const {getCursorScreenPoint, getDisplayNearestPoint} = screen;
+
           let win = new BrowserWindow({
             parent: BrowserWindow.getFocusedWindow(),
-            modal: true,
             frame: false,
-            height: 800,
             webPreferences: {
               devTools: false,
               nodeIntegration: true,
             },
           });
+
+          const currentScreen = getDisplayNearestPoint(getCursorScreenPoint());
+          win.setPosition(currentScreen.workArea.x, currentScreen.workArea.y);
+
+          win.center();
 
           win.loadURL(`file://${__dirname}/shortcuts.html`);
 
@@ -70,10 +83,10 @@ export default class MenuBuilder {
           });
 
           win.on('blur', () => {
-            win.close();
+            win.hide();
           });
 
-          win.on('close', () => {
+          win.on('closed', () => {
             win = null;
           });
         },
