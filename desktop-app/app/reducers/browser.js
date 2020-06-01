@@ -93,9 +93,9 @@ function _getActiveDevices() {
   let activeDeviceNames = settings.get(ACTIVE_DEVICES);
   let activeDevices = null;
   if (activeDeviceNames && activeDeviceNames.length) {
-    activeDevices = activeDeviceNames.map(name =>
-      getAllDevices().find(device => device.name === name)
-    );
+    activeDevices = activeDeviceNames
+      .map(name => getAllDevices().find(device => device.name === name))
+      .filter(Boolean);
   }
   if (!activeDevices || !activeDevices.length) {
     activeDevices = getAllDevices().filter(device => device.added);
