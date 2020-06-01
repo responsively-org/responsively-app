@@ -36,7 +36,24 @@ export default function UserPreference(props) {
             }
           />
         </div>
+        <FormControlLabel
+            control={
+              <Checkbox
+                checked={props.userPreferences.disableURLSync || false}
+                onChange={e =>
+                  onChange('disableURLSync', e.target.checked)
+                }
+                name="Diable URL Sync"
+                color="primary"
+              />
+            }
+            label={
+              <span className={cx(styles.preferenceName)}>
+                Disable URL Syncing
+              </span>
+            }
+          />
+        </div>
       </div>
-    </div>
   );
 }

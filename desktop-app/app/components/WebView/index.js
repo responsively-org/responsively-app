@@ -7,6 +7,8 @@ import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
 import cx from 'classnames';
 import {iconsColor} from '../../constants/colors';
+import settings from 'electron-settings';
+import {USER_PREFERENCES} from '../../constants/settingKeys';
 import {
   SCROLL_DOWN,
   SCROLL_UP,
@@ -152,7 +154,10 @@ class WebView extends Component {
       if (url === this.props.browser.address) {
         return;
       }
-      this.props.onAddressChange(url);
+      console.log(settings.get(USER_PREFERENCES))
+      if(!(settings.get(USER_PREFERENCES) || {}).disableURLSync){
+        this.props.onAddressChange(url);
+      }
     };
 
     this.webviewRef.current.addEventListener('will-navigate', urlChangeHandler);
@@ -257,6 +262,8 @@ class WebView extends Component {
     ) {
       return;
     }
+    const elem = document.querySelector(message.cssPath);
+    console.log(message.cssPath);
     this.webviewRef.current.send('clickMessage', message);
   };
 

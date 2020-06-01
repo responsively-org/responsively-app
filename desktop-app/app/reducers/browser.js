@@ -51,6 +51,7 @@ type PreviewerType = {
 
 type UserPreferenceType = {
   disableSSLValidation: boolean,
+  disableURLSync: boolean,
   drawerState: boolean,
 };
 
