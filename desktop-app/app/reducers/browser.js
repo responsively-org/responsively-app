@@ -30,6 +30,7 @@ import {
 } from '../constants/settingKeys';
 import {isIfStatement} from 'typescript';
 import {getHomepage, saveHomepage} from '../utils/navigatorUtils';
+import {getWebsiteName} from '../components/WebView/screenshotUtil'
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -64,7 +65,10 @@ type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
 
 type FilterType = {[key: FilterFieldType]: Array<string>};
 
-type BookmarksType = Array<string>;
+type BookmarksType = {
+  title: string,
+  url: string
+}
 
 export type BrowserStateType = {
   devices: Array<Device>,
@@ -205,10 +209,14 @@ export default function browser(
       return {...state, userPreferences: action.userPreferences};
     case TOGGLE_BOOKMARK:
       let bookmarks = state.bookmarks
+      const bookmark = {
+        title: getWebsiteName(action.url),
+        url: action.url
+      }
       if (bookmarks.includes(action.url)) {
-        bookmarks = bookmarks.filter(b => b !== action.url)
+        bookmarks = bookmarks.filter(b => b.url !== bookmark.url)
       } else {
-        bookmarks = [...bookmarks, action.url]
+        bookmarks = [...bookmarks, bookmark]
       }
       _setBookmarks(bookmarks)
       return {...state, bookmarks}

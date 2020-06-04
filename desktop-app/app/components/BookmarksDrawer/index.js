@@ -3,12 +3,11 @@ import cx from 'classnames'
 import FavIcon from '@material-ui/icons/Star';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import commonStyles from '../common.styles.css'
 
-export default function BookmarksDrawer({bookmarks}) {
+export default function BookmarksDrawer({bookmarks, gotoUrl}) {
   return (
     <div className={cx(commonStyles.sidebarContentSection)}>
       <div className={cx(commonStyles.sidebarContentSectionTitleBar)}>
@@ -18,8 +17,8 @@ export default function BookmarksDrawer({bookmarks}) {
         <div>
           <List component="nav" dense={true}>
             {bookmarks.map(bookmark => (
-              <ListItem button>
-                <ListItemText primary={bookmark} />
+              <ListItem button onClick={() => gotoUrl(bookmark.url)}>
+                <ListItemText primary={bookmark.title} />
               </ListItem>
             ))}
           </List>

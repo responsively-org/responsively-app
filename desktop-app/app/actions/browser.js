@@ -330,6 +330,20 @@ export function goToHomepage() {
   };
 }
 
+export function gotoUrl(url) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {address},
+    } = getState();
+
+    if (url === address) {
+      return;
+    }
+
+    dispatch(newAddress(url));
+  };
+}
+
 export function setCurrentAddressAsHomepage() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
@@ -431,7 +445,6 @@ export function reloadCSS() {
 }
 
 export function toggleBookmark(url) {
-  console.log('URRRRLR', url)
   return {
     type: TOGGLE_BOOKMARK,
     url,
