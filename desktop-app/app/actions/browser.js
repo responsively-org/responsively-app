@@ -1,5 +1,6 @@
 // @flow
 import type {Dispatch, BrowserStateType} from '../reducers/types';
+import {ipcRenderer, remote} from 'electron';
 import pubsub from 'pubsub.js';
 import {
   SCROLL_DOWN,
@@ -15,6 +16,7 @@ import {
 } from '../constants/pubsubEvents';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
+export const NEW_DEV_TOOLS_CONFIG = 'NEW_DEV_TOOLS_CONFIG';
 export const NEW_HOMEPAGE = 'NEW_HOMEPAGE';
 export const NEW_ZOOM_LEVEL = 'NEW_ZOOM_LEVEL';
 export const NEW_SCROLL_POSITION = 'NEW_SCROLL_POSITION';
@@ -31,6 +33,13 @@ export function newAddress(address) {
   return {
     type: NEW_ADDRESS,
     address,
+  };
+}
+
+export function newDevToolsConfig(config) {
+  return {
+    type: NEW_DEV_TOOLS_CONFIG,
+    config,
   };
 }
 
@@ -326,6 +335,62 @@ export function goToHomepage() {
     }
 
     dispatch(newAddress(homepage));
+  };
+}
+
+export function onDevToolsResize(size) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {devToolsConfig},
+    } = getState();
+
+    const {size: devToolsSize} = devToolsConfig;
+
+    if (
+      devToolsSize.width === size.width &&
+      devToolsSize.height === size.height
+    ) {
+      return;
+    }
+    ipcRenderer.send('resize-devtools', {
+      size,
+    });
+
+    dispatch(newDevToolsConfig({...devToolsConfig, size}));
+  };
+}
+
+export function onDevToolsOpen() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {devToolsConfig},
+    } = getState();
+
+    const {open} = devToolsConfig;
+
+    if (open) {
+      return;
+    }
+
+    dispatch(newDevToolsConfig({...devToolsConfig, open: true}));
+  };
+}
+
+export function onDevToolsClose() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {devToolsConfig},
+    } = getState();
+
+    const {open} = devToolsConfig;
+
+    if (!open) {
+      return;
+    }
+
+    ipcRenderer.send('close-devtools');
+
+    dispatch(newDevToolsConfig({...devToolsConfig, open: false}));
   };
 }
 

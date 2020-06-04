@@ -12,9 +12,11 @@ import {
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
   DELETE_CUSTOM_DEVICE,
+  NEW_DEV_TOOLS_CONFIG,
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
+import {ipcRenderer, remote} from 'electron';
 import settings from 'electron-settings';
 import type {Device} from '../constants/devices';
 import {
@@ -43,6 +45,16 @@ type ScrollPositionType = {
 type NavigatorStatusType = {
   backEnabled: boolean,
   forwardEnabled: boolean,
+};
+
+type WindowSizeType = {
+  width: number,
+  height: number,
+};
+
+type DevToolsConfigType = {
+  size: WindowSizeType,
+  open: Boolean,
 };
 
 type DrawerType = {
@@ -74,6 +86,7 @@ export type BrowserStateType = {
   previewer: PreviewerType,
   filters: FilterType,
   userPreferences: UserPreferenceType,
+  devToolsConfig: DevToolsConfigType,
 };
 
 let _activeDevices = null;
@@ -112,6 +125,8 @@ function _setUserPreferences(userPreferences) {
   settings.set(USER_PREFERENCES, userPreferences);
 }
 
+const {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
+
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
@@ -132,6 +147,7 @@ export default function browser(
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
     userPreferences: _getUserPreferences(),
     allDevices: getAllDevices(),
+    devToolsConfig: {size: {width, height: height * 0.3}, open: false},
   },
   action: Action
 ) {
@@ -190,6 +206,8 @@ export default function browser(
     case NEW_USER_PREFERENCES:
       settings.set(USER_PREFERENCES, action.userPreferences);
       return {...state, userPreferences: action.userPreferences};
+    case NEW_DEV_TOOLS_CONFIG:
+      return {...state, devToolsConfig: action.config};
     default:
       return state;
   }

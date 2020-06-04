@@ -11,7 +11,14 @@
  * @flow
  */
 require('dotenv').config();
-import electron, {app, BrowserWindow, globalShortcut, ipcMain} from 'electron';
+import electron, {
+  app,
+  BrowserWindow,
+  BrowserView,
+  globalShortcut,
+  ipcMain,
+  webContents,
+} from 'electron';
 import {autoUpdater} from 'electron-updater';
 import settings from 'electron-settings';
 import log from 'electron-log';
@@ -50,6 +57,7 @@ export default class AppUpdater {
 
 let mainWindow = null;
 let urlToOpen = null;
+let bottomDevTools = null;
 
 let httpAuthCallbacks = {};
 
@@ -170,6 +178,8 @@ const createWindow = async () => {
     titleBarStyle: 'hidden',
     icon: iconPath,
   });
+  bottomDevTools = new BrowserView();
+  mainWindow.setBrowserView(bottomDevTools);
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
@@ -207,6 +217,50 @@ const createWindow = async () => {
     }
     httpAuthCallbacks[url].forEach(cb => cb(username, password));
     httpAuthCallbacks[url] = null;
+  });
+
+  ipcMain.on('open-devtools-global', (event, ...args) => {
+    const {webViewId} = args[0];
+    if (!webViewId) {
+      return;
+    }
+    const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
+
+    let viewHeight = Math.round(height * 0.3);
+    console.log('viewHeight', viewHeight);
+    bottomDevTools.setBounds({
+      x: 0,
+      y: height - viewHeight,
+      width: width,
+      height: viewHeight,
+    });
+
+    const webView = webContents.fromId(webViewId);
+    webView.setDevToolsWebContents(bottomDevTools.webContents);
+    webView.openDevTools();
+  });
+
+  ipcMain.on('close-devtools', (event, ...args) => {
+    if (!bottomDevTools) {
+      return;
+    }
+    bottomDevTools.setBounds({...bottomDevTools.getBounds(), y: 0, height: 0});
+    bottomDevTools.webContents.loadURL('about:blank');
+  });
+
+  ipcMain.on('resize-devtools', (event, ...args) => {
+    const {size} = args[0];
+    console.log('size, bottomDevTools', size, bottomDevTools);
+    if (!size || !bottomDevTools) {
+      return;
+    }
+    const viewHeight = Math.round(size.height);
+    bottomDevTools.setBounds({
+      x: 0,
+      y: height - viewHeight,
+      width: width,
+      height: viewHeight,
+    });
   });
 
   mainWindow.on('closed', () => {

@@ -45,6 +45,7 @@ class WebView extends Component {
   constructor(props) {
     super(props);
     this.webviewRef = createRef();
+    this.devToolsWebviewRef = createRef();
     this.state = {
       screenshotInProgress: false,
       isTilted: false,
@@ -293,6 +294,7 @@ class WebView extends Component {
     } = this.webviewRef.current.getBoundingClientRect();
     const {x: deviceX, y: deviceY} = message;
     const zoomFactor = this.props.browser.zoomLevel;
+    this._toggleDevTools();
     this.getWebContents().inspectElement(
       Math.round(webViewX + deviceX * zoomFactor),
       Math.round(webViewY + deviceY * zoomFactor)
@@ -421,6 +423,16 @@ class WebView extends Component {
       .getWebContents()
       .setDevToolsWebContents(devtools.webContents);
     this.getWebContents().openDevTools({mode: 'detach'});*/
+    this.props.onDevToolsOpen();
+    ipcRenderer.send('open-devtools-global', {
+      webViewId: this.webviewRef.current.getWebContentsId(),
+    });
+    return;
+    this.getWebContents().setDevToolsWebContents(
+      this.getWebContentForId(
+        this.props.devToolBottomRef.current.getWebContentsId()
+      )
+    );
     this.getWebContents().toggleDevTools();
   };
 
