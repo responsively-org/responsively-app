@@ -9,7 +9,7 @@ import HttpAuthDialog from '../HttpAuthDialog';
 
 import styles from './style.module.css';
 import NavigationControlsContainer from '../../containers/NavigationControlsContainer';
-import BookmarksBar from '../../containers/BookmarksBarContainer'
+import BookmarksBar from '../../containers/BookmarksBarContainer';
 
 const Header = function() {
   return (
