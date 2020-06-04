@@ -4,6 +4,7 @@ import cx from 'classnames';
 import HomePlusIcon from '../icons/HomePlus';
 import DeleteCookieIcon from '../icons/DeleteCookie';
 import DeleteStorageIcon from '../icons/DeleteStorage';
+import FavIcon from '@material-ui/icons/StarBorder';
 import {iconsColor} from '../../constants/colors';
 
 import commonStyles from '../common.styles.css';
@@ -57,6 +58,25 @@ class AddressBar extends React.Component<Props> {
           onChange={e => this.setState({userTypedAddress: e.target.value})}
         />
         <div className={cx(styles.floatingOptionsContainer)}>
+          <div
+            className={cx(commonStyles.icons, commonStyles.roundIcon, {
+              [commonStyles.enabled]: true,
+            })}
+          >
+            <Tooltip title="Bookmark">
+              <div
+                className={cx(commonStyles.flexAlignVerticalMiddle)}
+                onClick={() => this.props.toggleBookmark(this.state.userTypedAddress)}
+              >
+                <FavIcon
+                  height={22}
+                  width={22}
+                  padding={5}
+                  color={iconsColor}
+                />
+              </div>
+            </Tooltip>
+          </div>
           <div
             className={cx(commonStyles.icons, commonStyles.roundIcon, {
               [commonStyles.enabled]: true,

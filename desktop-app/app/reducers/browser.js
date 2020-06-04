@@ -11,8 +11,8 @@ import {
   NEW_FILTERS,
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
-  DELETE_CUSTOM_DEVICE,
-} from '../actions/browser';
+  DELETE_CUSTOM_DEVICE, TOGGLE_BOOKMARK
+} from '../actions/browser'
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
 import settings from 'electron-settings';
@@ -26,6 +26,7 @@ import {
   ACTIVE_DEVICES,
   USER_PREFERENCES,
   CUSTOM_DEVICES,
+  BOOKMARKS,
 } from '../constants/settingKeys';
 import {isIfStatement} from 'typescript';
 import {getHomepage, saveHomepage} from '../utils/navigatorUtils';
@@ -63,6 +64,8 @@ type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
 
 type FilterType = {[key: FilterFieldType]: Array<string>};
 
+type BookmarksType = Array<string>;
+
 export type BrowserStateType = {
   devices: Array<Device>,
   homepage: string,
@@ -74,6 +77,7 @@ export type BrowserStateType = {
   previewer: PreviewerType,
   filters: FilterType,
   userPreferences: UserPreferenceType,
+  bookmarks: BookmarksType
 };
 
 let _activeDevices = null;
@@ -112,6 +116,14 @@ function _setUserPreferences(userPreferences) {
   settings.set(USER_PREFERENCES, userPreferences);
 }
 
+function _getBookmarks(): BookmarksType {
+  return settings.get(BOOKMARKS) || [];
+}
+
+function _setBookmarks(bookmarks) {
+  settings.set(BOOKMARKS, bookmarks);
+}
+
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
@@ -132,6 +144,7 @@ export default function browser(
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
     userPreferences: _getUserPreferences(),
     allDevices: getAllDevices(),
+    bookmarks: _getBookmarks(),
   },
   action: Action
 ) {
@@ -190,6 +203,15 @@ export default function browser(
     case NEW_USER_PREFERENCES:
       settings.set(USER_PREFERENCES, action.userPreferences);
       return {...state, userPreferences: action.userPreferences};
+    case TOGGLE_BOOKMARK:
+      let bookmarks = state.bookmarks
+      if (bookmarks.includes(action.url)) {
+        bookmarks = bookmarks.filter(b => b !== action.url)
+      } else {
+        bookmarks = [...bookmarks, action.url]
+      }
+      _setBookmarks(bookmarks)
+      return {...state, bookmarks}
     default:
       return state;
   }

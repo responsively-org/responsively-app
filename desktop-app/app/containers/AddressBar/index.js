@@ -19,6 +19,7 @@ const AddressBar = function(props) {
       onChange={props.onAddressChange}
       homepage={props.browser.homepage}
       setHomepage={props.setCurrentAddressAsHomepage}
+      toggleBookmark={props.toggleBookmark}
       deleteCookies={props.deleteCookies}
       deleteStorage={props.deleteStorage}
     />

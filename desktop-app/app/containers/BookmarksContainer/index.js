@@ -8,6 +8,7 @@ import * as BrowserActions from '../../actions/browser';
 
 function mapStateToProps(state) {
   return {
+    bookmarks: state.browser.bookmarks,
   };
 }
 
