@@ -5,11 +5,11 @@ import Grid from '@material-ui/core/Grid';
 import {ToastContainer} from 'react-toastify';
 import AddressBar from '../../containers/AddressBar';
 import ScrollControlsContainer from '../../containers/ScrollControlsContainer';
-import ZoomContainer from '../../containers/ZoomContainer';
 import HttpAuthDialog from '../HttpAuthDialog';
 
 import styles from './style.module.css';
 import NavigationControlsContainer from '../../containers/NavigationControlsContainer';
+import BookmarksBar from '../../containers/BookmarksBarContainer'
 
 const Header = function() {
   return (
@@ -25,6 +25,7 @@ const Header = function() {
           <ScrollControlsContainer />
         </Grid>
       </Grid>
+      <BookmarksBar />
       <HttpAuthDialog />
       <ToastContainer
         position="top-right"

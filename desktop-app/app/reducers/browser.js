@@ -213,8 +213,8 @@ export default function browser(
         title: getWebsiteName(action.url),
         url: action.url
       }
-      if (bookmarks.includes(action.url)) {
-        bookmarks = bookmarks.filter(b => b.url !== bookmark.url)
+      if (bookmarks.find(b => b.url === action.url)) {
+        bookmarks = bookmarks.filter(b => b.url !== action.url)
       } else {
         bookmarks = [...bookmarks, bookmark]
       }
