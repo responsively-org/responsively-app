@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Logo from '../icons/Logo';
 import DevicesIcon from '@material-ui/icons/Devices';
 import SettingsIcon from '@material-ui/icons/Settings';
+import FavIcon from '@material-ui/icons/Star';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibraryOutlined';
 import cx from 'classnames';
 
@@ -13,6 +14,7 @@ import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
 import {
   DEVICE_MANAGER,
+  BOOKMARKS,
   SCREENSHOT_MANAGER,
   USER_PREFERENCES,
 } from '../../constants/DrawerContents';
@@ -65,6 +67,18 @@ const LeftIconsPane = props => {
         >
           <div>
             <SettingsIcon {...iconProps} className="settingsIcon" />
+          </div>
+        </Grid>
+        <Grid
+          item
+          className={cx(commonStyles.icons, styles.icon, commonStyles.enabled, {
+            [commonStyles.selected]:
+            props.drawer.open && props.drawer.content === BOOKMARKS,
+          })}
+          onClick={() => toggleState(BOOKMARKS)}
+        >
+          <div>
+            <FavIcon {...iconProps} className="favIcon" />
           </div>
         </Grid>
       </Grid>
