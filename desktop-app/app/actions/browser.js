@@ -26,6 +26,7 @@ export const NEW_CUSTOM_DEVICE = 'NEW_CUSTOM_DEVICE';
 export const DELETE_CUSTOM_DEVICE = 'DELETE_CUSTOM_DEVICE';
 export const NEW_FILTERS = 'NEW_FILTERS';
 export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
+export const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
 
 export function newAddress(address) {
   return {
@@ -441,4 +442,11 @@ export function reloadCSS() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(RELOAD_CSS);
   };
+}
+
+export function toggleBookmark(url) {		
+  return {		
+    type: TOGGLE_BOOKMARK,		
+    url,		
+  };		
 }

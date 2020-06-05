@@ -11,7 +11,8 @@ import {
   NEW_FILTERS,
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
-  DELETE_CUSTOM_DEVICE
+  DELETE_CUSTOM_DEVICE,
+  TOGGLE_BOOKMARK,
 } from '../actions/browser'
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
