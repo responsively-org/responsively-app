@@ -4,12 +4,12 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![PH](https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=200375&theme=light&period=daily)](https://www.producthunt.com/posts/responsively?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-responsively)
 
-Website: https://github.com/manojVivek/responsively-app
+Website: https://responsively.app
 
 
 A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development. 
 
-![Quick Demo](https://manojvivek.github.io/responsively-app/assets/img/responsively-app.gif)
+![Quick Demo](https://responsively.app/assets/img/responsively-app.gif)
 
 ## Features
 1. Mirrored User-interactions across all devices.
@@ -19,7 +19,7 @@ A modified browser built using [Electron](https://www.electronjs.org/) that help
 5. One-click screenshot all your devices.
 6. Hot reloading supported for developers.
 
-Please visit the website to know more about the application - https://manojvivek.github.io/responsively-app
+Please visit the website to know more about the application - https://responsively.app
 
 
 ## Download
