@@ -10,7 +10,8 @@ import {ThemeProvider} from '@material-ui/styles';
 import {grey} from '@material-ui/core/colors';
 import {themeColor} from '../constants/colors';
 import ErrorBoundary from '../components/ErrorBoundary';
-
+import {initRendererShortcutManager, registerShortcut, clearShortcuts} from '../shotcut-manager/renderer-shortcut-manager';
+import {onZoomChange} from '../actions/browser';
 type Props = {
   store: Store,
   history: {},
@@ -53,6 +54,25 @@ const getApp = history => {
 };
 
 export default class Root extends Component<Props> {
+  componentDidMount() {
+    initRendererShortcutManager();
+    const {store} = this.props;
+    
+    registerShortcut({id: 'ZoomIn', title: 'Zoom In', accelerator: 'CommandOrControl+numadd'}, () => {
+      store.dispatch(onZoomChange(store.getState().browser.zoomLevel + 0.1))
+    });
+
+    registerShortcut({id: 'ZoomOut', title: 'Zoom Out', accelerator: 'CommandOrControl+numsub'}, () => {
+      store.dispatch(onZoomChange(store.getState().browser.zoomLevel - 0.1))
+    });
+
+    registerShortcut({id: 'ZoomReset', title: 'Zoom Reset', accelerator: 'CommandOrControl+num0'}, () => {
+      store.dispatch(onZoomChange(0.6))
+    });
+  }
+  componentWillUnmount() {
+    clearShortcuts();
+  }
   render() {
     const {store, history} = this.props;
     return (
