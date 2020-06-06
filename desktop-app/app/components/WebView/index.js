@@ -21,6 +21,7 @@ import {
   DISABLE_INSPECTOR_ALL_DEVICES,
   RELOAD_CSS,
   DELETE_STORAGE,
+  NAVIGATION_INAPP,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -55,6 +56,15 @@ class WebView extends Component {
       errorDesc: null,
     };
     this.subscriptions = [];
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+
+    if(nextProps.browser.address===this.webviewRef.current.src || nextProps.browser.address===this.props.browser.address){
+      return false;
+    }
+
+    return true;
   }
 
   componentDidMount() {
@@ -143,14 +153,12 @@ class WebView extends Component {
       }
     );
 
-    const urlChangeHandler = ({url}) => {
+    const urlChangeHandler =async({url}) => {
       if (url === this.props.browser.address) {
         return;
       }
-      console.log(settings.get(USER_PREFERENCES))
-      if(!(settings.get(USER_PREFERENCES) || {}).disableURLSync){
-        this.props.onAddressChange(url);
-      }
+      await new Promise(r => setTimeout(r, 200));
+      this.props.onAddressChange(url);
     };
 
     this.webviewRef.current.addEventListener('will-navigate', urlChangeHandler);
@@ -255,8 +263,6 @@ class WebView extends Component {
     ) {
       return;
     }
-    const elem = document.querySelector(message.cssPath);
-    console.log(message.cssPath);
     this.webviewRef.current.send('clickMessage', message);
   };
 
@@ -277,8 +283,8 @@ class WebView extends Component {
   processScreenshotEvent = async ({now}) => {
     this.setState({screenshotInProgress: true});
     await captureFullPage(
-      this.props.browser.address,
       this.props.device,
+      this.props.browser.address,
       this.webviewRef.current,
       now != null,
       now
