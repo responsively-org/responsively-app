@@ -6,6 +6,7 @@ import {bindActionCreators} from 'redux';
 
 import AddressInput from '../../components/Addressinput';
 import * as BrowserActions from '../../actions/browser';
+import {toggleBookmarkUrl} from '../../actions/bookmarks'
 
 const AddressBar = function(props) {
   useEffect(() => {
@@ -19,7 +20,7 @@ const AddressBar = function(props) {
       onChange={props.onAddressChange}
       homepage={props.browser.homepage}
       setHomepage={props.setCurrentAddressAsHomepage}
-      toggleBookmark={props.toggleBookmark}
+      toggleBookmark={props.toggleBookmarkUrl}
       deleteCookies={props.deleteCookies}
       deleteStorage={props.deleteStorage}
     />
@@ -33,7 +34,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(BrowserActions, dispatch);
+  return bindActionCreators({...BrowserActions, toggleBookmarkUrl}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddressBar);

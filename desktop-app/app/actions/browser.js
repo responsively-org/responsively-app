@@ -443,10 +443,3 @@ export function reloadCSS() {
     pubsub.publish(RELOAD_CSS);
   };
 }
-
-export function toggleBookmark(url) {		
-  return {		
-    type: TOGGLE_BOOKMARK,		
-    url,		
-  };		
-}

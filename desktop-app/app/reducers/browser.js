@@ -26,8 +26,7 @@ import {DEVICE_MANAGER} from '../constants/DrawerContents';
 import {
   ACTIVE_DEVICES,
   USER_PREFERENCES,
-  CUSTOM_DEVICES,
-  BOOKMARKS,
+  CUSTOM_DEVICES
 } from '../constants/settingKeys';
 import {isIfStatement} from 'typescript';
 import {getHomepage, saveHomepage} from '../utils/navigatorUtils';
@@ -65,11 +64,6 @@ type UserPreferenceType = {
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
 
 type FilterType = {[key: FilterFieldType]: Array<string>};
-
-type BookmarksType = {
-  title: string,
-  url: string
-}
 
 export type BrowserStateType = {
   devices: Array<Device>,
@@ -121,14 +115,6 @@ function _setUserPreferences(userPreferences) {
   settings.set(USER_PREFERENCES, userPreferences);
 }
 
-function _getBookmarks(): BookmarksType {
-  return settings.get(BOOKMARKS) || [];
-}
-
-function _setBookmarks(bookmarks) {
-  settings.set(BOOKMARKS, bookmarks);
-}
-
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
@@ -149,7 +135,6 @@ export default function browser(
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
     userPreferences: _getUserPreferences(),
     allDevices: getAllDevices(),
-    bookmarks: _getBookmarks(),
   },
   action: Action
 ) {
@@ -208,19 +193,6 @@ export default function browser(
     case NEW_USER_PREFERENCES:
       settings.set(USER_PREFERENCES, action.userPreferences);
       return {...state, userPreferences: action.userPreferences};
-    case TOGGLE_BOOKMARK:
-      let bookmarks = state.bookmarks
-      const bookmark = {
-        title: getWebsiteName(action.url),
-        url: action.url
-      }
-      if (bookmarks.find(b => b.url === action.url)) {
-        bookmarks = bookmarks.filter(b => b.url !== action.url)
-      } else {
-        bookmarks = [...bookmarks, bookmark]
-      }
-      _setBookmarks(bookmarks)
-      return {...state, bookmarks}
     default:
       return state;
   }

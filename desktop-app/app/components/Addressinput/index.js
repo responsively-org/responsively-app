@@ -69,8 +69,8 @@ class AddressBar extends React.Component<Props> {
                 onClick={() => this.props.toggleBookmark(this.state.userTypedAddress)}
               >
                 <FavIcon
-                  height={22}
-                  width={22}
+                  height={18}
+                  width={18}
                   padding={5}
                   color={iconsColor}
                 />

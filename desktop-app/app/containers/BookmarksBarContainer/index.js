@@ -4,7 +4,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
 import * as BrowserActions from '../../actions/browser';
-import {BookmarksBar} from '../../components/BookmarksBar'
+import * as BookmarksActions from '../../actions/bookmarks';
+import {BookmarksBar} from '../../components/BookmarksBar';
 
 const BookmarksBarContainer = function(props) {
 
@@ -12,19 +13,26 @@ const BookmarksBarContainer = function(props) {
     props.onAddressChange(bookmark.url)
   }, [])
 
+  const handleBookmarkDelete = useCallback(function (bookmark) {
+    props.toggleBookmarkUrl(bookmark.url)
+  }, [])
+
   return (
-    <BookmarksBar bookmarks={props.browser.bookmarks} onBookmarkClick={handleBookmarkClick}/>
+    <BookmarksBar bookmarks={props.bookmarks} onBookmarkClick={handleBookmarkClick} onBookmarkDelete={handleBookmarkDelete} onBookmarkRename={props.renameBookmark}/>
   );
 };
 
 function mapStateToProps(state) {
   return {
-    browser: state.browser,
+    bookmarks: state.bookmarks.bookmarks
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(BrowserActions, dispatch);
+  return bindActionCreators({
+    onAddressChange: BrowserActions.onAddressChange,
+    ...BookmarksActions
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BookmarksBarContainer);
