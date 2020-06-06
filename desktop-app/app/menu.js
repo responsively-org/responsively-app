@@ -85,7 +85,7 @@ export default class MenuBuilder {
           });
 
           win.on('blur', () => {
-             win.hide();
+            win.hide();
           });
 
           win.on('closed', () => {
