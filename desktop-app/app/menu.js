@@ -10,6 +10,7 @@ import {
 } from 'electron';
 import * as os from 'os';
 import {pkg} from './utils/generalUtils';
+import {getAllShortcuts} from './shotcut-manager/main-shortcut-manager';
 
 const path = require('path');
 
@@ -68,6 +69,7 @@ export default class MenuBuilder {
             webPreferences: {
               devTools: false,
               nodeIntegration: true,
+              additionalArguments: [JSON.stringify(getAllShortcuts())]
             },
           });
 
@@ -83,7 +85,7 @@ export default class MenuBuilder {
           });
 
           win.on('blur', () => {
-            win.hide();
+             win.hide();
           });
 
           win.on('closed', () => {
