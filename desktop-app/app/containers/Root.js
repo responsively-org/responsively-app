@@ -56,19 +56,19 @@ const getApp = history => {
 export default class Root extends Component<Props> {
   componentDidMount() {
     initRendererShortcutManager();
-    const {store} = this.props;
+    // const {store} = this.props;
     
-    registerShortcut({id: 'ZoomIn', title: 'Zoom In', accelerators: ['CommandOrControl+numadd', 'CommandOrControl+plus']}, () => {
-      store.dispatch(onZoomChange(store.getState().browser.zoomLevel + 0.1))
-    });
+    // registerShortcut({id: 'ZoomIn', title: 'Zoom In', accelerators: ['CommandOrControl+numadd', 'CommandOrControl+plus']}, () => {
+    //   store.dispatch(onZoomChange(store.getState().browser.zoomLevel + 0.1))
+    // });
 
-    registerShortcut({id: 'ZoomOut', title: 'Zoom Out', accelerators: ['CommandOrControl+numsub']}, () => {
-      store.dispatch(onZoomChange(store.getState().browser.zoomLevel - 0.1))
-    });
+    // registerShortcut({id: 'ZoomOut', title: 'Zoom Out', accelerators: ['CommandOrControl+numsub']}, () => {
+    //   store.dispatch(onZoomChange(store.getState().browser.zoomLevel - 0.1))
+    // });
 
-    registerShortcut({id: 'ZoomReset', title: 'Zoom Reset', accelerators: ['CommandOrControl+num0', 'CommandOrControl+0']}, () => {
-      store.dispatch(onZoomChange(0.6))
-    });
+    // registerShortcut({id: 'ZoomReset', title: 'Zoom Reset', accelerators: ['CommandOrControl+num0', 'CommandOrControl+0']}, () => {
+    //   store.dispatch(onZoomChange(0.6))
+    // });
   }
 
   componentWillUnmount() {
