@@ -298,7 +298,9 @@ class WebView extends Component {
     } = this.webviewRef.current.getBoundingClientRect();
     const {x: deviceX, y: deviceY} = message;
     const zoomFactor = this.props.browser.zoomLevel;
-    this._toggleDevTools();
+    if (!this._isDevToolsOpen()) {
+      this._toggleDevTools();
+    }
     this.getWebContents().inspectElement(
       Math.round(webViewX + deviceX * zoomFactor),
       Math.round(webViewY + deviceY * zoomFactor)

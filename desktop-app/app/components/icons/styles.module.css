@@ -1,0 +1,12 @@
+.chromeIcon {
+  fill: rgb(165, 165, 165);
+  margin-right: 5px;
+  height: 12px;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: light) {
+  .chromeIcon {
+    fill: #555;
+  }
+}

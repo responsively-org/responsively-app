@@ -1,19 +1,22 @@
 .toolbarContainer {
   height: 20px;
   color: rgb(165, 165, 165);
-  border-bottom-color: rgb(61, 61, 61);
+  border-bottom: 1px solid rgb(61, 61, 61);
   background-color: #333333;
+  display: flex;
+  justify-content: space-between;
 }
 
 @media (prefers-color-scheme: light) {
   .toolbarContainer {
     background: #f3f3f3;
     color: #555;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #d0d0d0;
   }
 }
 
-.rightSideTools {
+.toolsGroup {
+  height: 19px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
