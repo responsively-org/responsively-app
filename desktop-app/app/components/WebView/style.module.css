@@ -21,6 +21,11 @@
 
 .deviceContainer {
   position: relative;
+  border: 3px solid #687cee00;
+}
+
+.devToolsActive {
+  border: 3px solid #6075ef;
 }
 
 .device {

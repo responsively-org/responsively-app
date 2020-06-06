@@ -1,9 +1,38 @@
 .toolbarContainer {
+  height: 20px;
+  color: rgb(165, 165, 165);
+  border-bottom-color: rgb(61, 61, 61);
+  background-color: #333333;
+}
+
+@media (prefers-color-scheme: light) {
+  .toolbarContainer {
+    background: #f3f3f3;
+    color: #555;
+    border-bottom: 1px solid #ccc;
+  }
 }
 
 .rightSideTools {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-right: 20px;
+  margin-right: 5px;
+}
+
+.icon {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  cursor: pointer;
+}
+
+.icon svg {
+  fill: rgb(165, 165, 165);
+}
+
+@media (prefers-color-scheme: light) {
+  .icon svg {
+    fill: #555;
+  }
 }

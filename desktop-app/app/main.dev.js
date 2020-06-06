@@ -178,8 +178,6 @@ const createWindow = async () => {
     titleBarStyle: 'hidden',
     icon: iconPath,
   });
-  bottomDevTools = new BrowserView();
-  mainWindow.setBrowserView(bottomDevTools);
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
@@ -219,15 +217,14 @@ const createWindow = async () => {
     httpAuthCallbacks[url] = null;
   });
 
-  ipcMain.on('open-devtools-global', (event, ...args) => {
-    const {webViewId} = args[0];
+  ipcMain.on('open-devtools', (event, ...args) => {
+    const {webViewId, size} = args[0];
     if (!webViewId) {
       return;
     }
-    const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
-
-    let viewHeight = Math.round(height * 0.3);
-    console.log('viewHeight', viewHeight);
+    bottomDevTools = new BrowserView();
+    mainWindow.setBrowserView(bottomDevTools);
+    let viewHeight = Math.round(size.height) - 20;
     bottomDevTools.setBounds({
       x: 0,
       y: height - viewHeight,
@@ -241,20 +238,21 @@ const createWindow = async () => {
   });
 
   ipcMain.on('close-devtools', (event, ...args) => {
-    if (!bottomDevTools) {
+    const {webViewId} = args[0];
+    if (!bottomDevTools || !webViewId) {
       return;
     }
     bottomDevTools.setBounds({...bottomDevTools.getBounds(), y: 0, height: 0});
-    bottomDevTools.webContents.loadURL('about:blank');
+    webContents.fromId(webViewId).closeDevTools();
+    mainWindow.removeBrowserView(bottomDevTools);
   });
 
   ipcMain.on('resize-devtools', (event, ...args) => {
     const {size} = args[0];
-    console.log('size, bottomDevTools', size, bottomDevTools);
     if (!size || !bottomDevTools) {
       return;
     }
-    const viewHeight = Math.round(size.height);
+    const viewHeight = Math.round(size.height) - 20;
     bottomDevTools.setBounds({
       x: 0,
       y: height - viewHeight,

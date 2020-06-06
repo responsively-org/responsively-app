@@ -174,8 +174,12 @@ class WebView extends Component {
     });
   }
 
+  getWebContentsId() {
+    return this.webviewRef.current.getWebContentsId();
+  }
+
   getWebContents() {
-    return this.getWebContentForId(this.webviewRef.current.getWebContentsId());
+    return this.getWebContentForId(this.getWebContentsId());
   }
 
   getWebContentForId(id) {
@@ -411,29 +415,17 @@ class WebView extends Component {
     `);
   };
 
-  _toggleDevTools = () => {
-    /*const devtools = new BrowserWindow({
-      fullscreen: false,
-      acceptFirstMouse: true,
-      show: true,
-    });
-    //devtools.hide();
+  _isDevToolsOpen = () =>
+    this.props.browser.devToolsConfig.deviceId === this.props.device.id;
 
-    this.webviewRef.current
-      .getWebContents()
-      .setDevToolsWebContents(devtools.webContents);
-    this.getWebContents().openDevTools({mode: 'detach'});*/
-    this.props.onDevToolsOpen();
-    ipcRenderer.send('open-devtools-global', {
-      webViewId: this.webviewRef.current.getWebContentsId(),
-    });
-    return;
-    this.getWebContents().setDevToolsWebContents(
-      this.getWebContentForId(
-        this.props.devToolBottomRef.current.getWebContentsId()
-      )
-    );
-    this.getWebContents().toggleDevTools();
+  _toggleDevTools = () => {
+    if (this._isDevToolsOpen()) {
+      return this.props.onDevToolsClose(
+        this.props.device.id,
+        this.getWebContentsId()
+      );
+    }
+    this.props.onDevToolsOpen(this.props.device.id, this.getWebContentsId());
   };
 
   _flipOrientation = () => {
@@ -473,7 +465,10 @@ class WebView extends Component {
               className={cx(
                 styles.webViewToolbarIcons,
                 commonStyles.icons,
-                commonStyles.enabled
+                commonStyles.enabled,
+                {
+                  [commonStyles.selected]: this._isDevToolsOpen(),
+                }
               )}
               onClick={this._toggleDevTools}
             >
@@ -521,10 +516,12 @@ class WebView extends Component {
           </Tooltip>
         </div>
         <div
-          className={cx(styles.deviceContainer)}
+          className={cx(styles.deviceContainer, {
+            [styles.devToolsActive]: this._isDevToolsOpen(),
+          })}
           style={{
-            width: deviceStyles.width * browser.zoomLevel,
-            height: deviceStyles.height * browser.zoomLevel, //TODO why is this height not getting set?
+            width: deviceStyles.width * browser.zoomLevel + 6,
+            height: deviceStyles.height * browser.zoomLevel + 6, //TODO why is this height not getting set?
           }}
         >
           <div

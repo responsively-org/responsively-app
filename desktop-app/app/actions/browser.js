@@ -360,19 +360,32 @@ export function onDevToolsResize(size) {
   };
 }
 
-export function onDevToolsOpen() {
+export function onDevToolsOpen(newDeviceId, newWebViewId) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {devToolsConfig},
     } = getState();
 
-    const {open} = devToolsConfig;
+    const {open, deviceId, webViewId} = devToolsConfig;
 
-    if (open) {
+    if (open && deviceId === newDeviceId) {
       return;
     }
 
-    dispatch(newDevToolsConfig({...devToolsConfig, open: true}));
+    if (open && deviceId && webViewId) {
+      ipcRenderer.send('close-devtools', devToolsConfig);
+    }
+
+    const newData = {
+      ...devToolsConfig,
+      open: true,
+      deviceId: newDeviceId,
+      webViewId: newWebViewId,
+    };
+
+    ipcRenderer.send('open-devtools', newData);
+
+    dispatch(newDevToolsConfig(newData));
   };
 }
 
@@ -388,9 +401,16 @@ export function onDevToolsClose() {
       return;
     }
 
-    ipcRenderer.send('close-devtools');
+    ipcRenderer.send('close-devtools', devToolsConfig);
 
-    dispatch(newDevToolsConfig({...devToolsConfig, open: false}));
+    dispatch(
+      newDevToolsConfig({
+        ...devToolsConfig,
+        open: false,
+        deviceId: null,
+        webViewId: null,
+      })
+    );
   };
 }
 
