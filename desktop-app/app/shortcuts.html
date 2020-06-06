@@ -106,9 +106,9 @@
       let registeredShortcuts = [];
       try {
         registeredShortcuts = JSON.parse(window.process.argv.slice(-1)).reduce((arr, def) => {
-        arr.push([def.title, mapAccelerator(def.accelerators[0])]);
-        def.accelerators.slice(1).forEach(acc => arr.push(['', mapAccelerator(acc)]))
-        return arr;
+          arr.push([def.title, mapAccelerator(def.accelerators[0])]);
+          def.accelerators.slice(1).forEach(acc => arr.push(['', mapAccelerator(acc)]))
+          return arr;
         }, []);
       } catch { }
 
