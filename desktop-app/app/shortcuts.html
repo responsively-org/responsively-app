@@ -84,19 +84,19 @@
       function getKeyName(k) {
         const lo = k.toLowerCase();
         if (lo === 'commandorcontrol' || lo === 'cmdorctrl')
-        return 'Cmd/Ctrl';
+          return 'Cmd/Ctrl';
         if (lo === 'command')
-        return 'Cmd';
+          return 'Cmd';
         if (lo === 'control')
-        return 'Ctrl';
+          return 'Ctrl';
         if (lo === 'plus')
-        return '+';
+          return '+';
         if (lo === 'return')
-        return 'Enter';
+          return 'Enter';
         if (lo === 'escape')
-        return 'Esc';
+          return 'Esc';
         if (lo.startsWith('num'))
-        return getNumPadName(k.slice(3));
+          return getNumPadName(k.slice(3));
         return firstToUpperCase(k);
       }
       function mapAccelerator(acc) {
