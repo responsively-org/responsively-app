@@ -4,6 +4,7 @@ import {
     UNREGISTER_CHANNEL,
     REGISTER_REPLY_CHANNEL,
     UNREGISTER_REPLY_CHANNEL,
+    GET_ALL_CHANNEL,
     CLEAR_CHANNEL,
     ShortcutDefinition,
     validateDefinition
@@ -18,16 +19,21 @@ function validate(shortcut: ShortcutDefinition, checkUnique = false) {
 
 export function registerShortcut(shortcut: ShortcutDefinition): boolean {
     if (!validate(shortcut, true)) return false;
-    const { id, accelerator } = shortcut;
+    const { id, accelerators } = shortcut;
     shortcuts.set(id, shortcut);
-    return globalShortcut.register(accelerator, () => mainWindow.webContents.send(id));
+    let ok = true;
+    accelerators.forEach(acc => {
+        ok = ok && globalShortcut.register(acc, () => mainWindow.webContents.send(id));
+    });
+    return ok;
 }
 
 export function unregisterShortcut(id: string): boolean {
     if (id == null || !shortcuts.has(id)) return false;
-    const sc = shortcuts.get(id);
+    const { accelerators } = shortcuts.get(id);
     shortcuts.delete(id);
-    return globalShortcut.unregister(sc.accelerator);
+    accelerators.forEach(acc => globalShortcut.unregister(acc));
+    return true;
 }
 
 export function getAllShortcuts(): ShortcutDefinition[] {
@@ -47,6 +53,10 @@ export function initMainShortcutManager(mWdw) {
     ipcMain.on(UNREGISTER_CHANNEL, (event, id: string) => {
         const ok = unregisterShortcut(id);
         event.reply(UNREGISTER_REPLY_CHANNEL, { ok, id });
+    });
+
+    ipcMain.handle(GET_ALL_CHANNEL, () => {
+        return getAllShortcuts();
     });
 
     ipcMain.on(CLEAR_CHANNEL, () => {

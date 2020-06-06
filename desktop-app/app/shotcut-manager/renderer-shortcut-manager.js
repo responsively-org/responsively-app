@@ -4,6 +4,7 @@ import {
     UNREGISTER_CHANNEL,
     REGISTER_REPLY_CHANNEL,
     UNREGISTER_REPLY_CHANNEL,
+    GET_ALL_CHANNEL,
     CLEAR_CHANNEL,
     ShortcutDefinition,
     validateDefinition,
@@ -25,6 +26,10 @@ export function registerShortcut(definition: ShortcutDefinition, callback: Funct
 
 export function unregisterShortcut(id: string) {
     ipcRenderer.send(UNREGISTER_CHANNEL, id);
+}
+
+export function getAllShortcuts() {
+    return ipcRenderer.invoke(GET_ALL_CHANNEL);
 }
 
 export function clearShortcuts() {

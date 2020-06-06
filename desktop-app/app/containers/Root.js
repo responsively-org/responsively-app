@@ -58,21 +58,23 @@ export default class Root extends Component<Props> {
     initRendererShortcutManager();
     const {store} = this.props;
     
-    registerShortcut({id: 'ZoomIn', title: 'Zoom In', accelerator: 'CommandOrControl+numadd'}, () => {
+    registerShortcut({id: 'ZoomIn', title: 'Zoom In', accelerators: ['CommandOrControl+numadd', 'CommandOrControl+plus']}, () => {
       store.dispatch(onZoomChange(store.getState().browser.zoomLevel + 0.1))
     });
 
-    registerShortcut({id: 'ZoomOut', title: 'Zoom Out', accelerator: 'CommandOrControl+numsub'}, () => {
+    registerShortcut({id: 'ZoomOut', title: 'Zoom Out', accelerators: ['CommandOrControl+numsub']}, () => {
       store.dispatch(onZoomChange(store.getState().browser.zoomLevel - 0.1))
     });
 
-    registerShortcut({id: 'ZoomReset', title: 'Zoom Reset', accelerator: 'CommandOrControl+num0'}, () => {
+    registerShortcut({id: 'ZoomReset', title: 'Zoom Reset', accelerators: ['CommandOrControl+num0', 'CommandOrControl+0']}, () => {
       store.dispatch(onZoomChange(0.6))
     });
   }
+
   componentWillUnmount() {
     clearShortcuts();
   }
+
   render() {
     const {store, history} = this.props;
     return (
