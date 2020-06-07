@@ -57,7 +57,7 @@ export default class AppUpdater {
 
 let mainWindow = null;
 let urlToOpen = null;
-let bottomDevTools = null;
+let devToolsView = null;
 
 let httpAuthCallbacks = {};
 
@@ -222,31 +222,47 @@ const createWindow = async () => {
     if (!webViewId) {
       return;
     }
-    bottomDevTools = new BrowserView();
-    mainWindow.setBrowserView(bottomDevTools);
-    bottomDevTools.setBounds(bounds);
+    devToolsView = new BrowserView();
+    mainWindow.setBrowserView(devToolsView);
+    devToolsView.setBounds(bounds);
 
     const webView = webContents.fromId(webViewId);
-    webView.setDevToolsWebContents(bottomDevTools.webContents);
+    webView.setDevToolsWebContents(devToolsView.webContents);
     webView.openDevTools();
+    devToolsView.webContents.executeJavaScript(`
+      (async function () {
+        const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+        var retryCount = 0;
+        var done = false;
+        while(retryCount < 10 && !done) {
+          try {
+            retryCount++;
+            document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
+            done = true
+          } catch(err){
+            await sleep(100);
+          }
+        }
+      })()
+    `);
   });
 
   ipcMain.on('close-devtools', (event, ...args) => {
     const {webViewId} = args[0];
-    if (!bottomDevTools || !webViewId) {
+    if (!devToolsView || !webViewId) {
       return;
     }
-    bottomDevTools.setBounds({...bottomDevTools.getBounds(), y: 0, height: 0});
+    devToolsView.setBounds({...devToolsView.getBounds(), y: 0, height: 0});
     webContents.fromId(webViewId).closeDevTools();
-    mainWindow.removeBrowserView(bottomDevTools);
+    mainWindow.removeBrowserView(devToolsView);
   });
 
   ipcMain.on('resize-devtools', (event, ...args) => {
     const {bounds} = args[0];
-    if (!bounds || !bottomDevTools) {
+    if (!bounds || !devToolsView) {
       return;
     }
-    bottomDevTools.setBounds(bounds);
+    devToolsView.setBounds(bounds);
   });
 
   mainWindow.on('closed', () => {
