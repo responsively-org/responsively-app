@@ -58,11 +58,11 @@ export default class Root extends Component<Props> {
     initRendererShortcutManager();
     // const {store} = this.props;
     
-    // registerShortcut({id: 'ZoomIn', title: 'Zoom In', accelerators: ['CommandOrControl+numadd', 'CommandOrControl+plus']}, () => {
+    // registerShortcut({id: 'ZoomIn', title: 'Zoom In', accelerators: ['CommandOrControl+numadd', 'CommandOrControl+plus', 'CommandOrControl+Shift+=']}, () => {
     //   store.dispatch(onZoomChange(store.getState().browser.zoomLevel + 0.1))
     // });
 
-    // registerShortcut({id: 'ZoomOut', title: 'Zoom Out', accelerators: ['CommandOrControl+numsub']}, () => {
+    // registerShortcut({id: 'ZoomOut', title: 'Zoom Out', accelerators: ['CommandOrControl+numsub', 'CommandOrControl+-']}, () => {
     //   store.dispatch(onZoomChange(store.getState().browser.zoomLevel - 0.1))
     // });
 

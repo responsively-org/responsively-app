@@ -1,4 +1,4 @@
-import { ipcMain, globalShortcut } from 'electron';
+import { ipcMain } from 'electron';
 import {
     REGISTER_CHANNEL,
     UNREGISTER_CHANNEL,
@@ -9,6 +9,8 @@ import {
     ShortcutDefinition,
     validateDefinition
 } from './shared';
+
+const localShortcut = require('./local-shortcut/electron-localshortcut');
 
 let shortcuts: Map<string, ShortcutDefinition>;
 let mainWindow;
@@ -21,18 +23,15 @@ export function registerShortcut(shortcut: ShortcutDefinition): boolean {
     if (!validate(shortcut, true)) return false;
     const { id, accelerators } = shortcut;
     shortcuts.set(id, shortcut);
-    let ok = true;
-    accelerators.forEach(acc => {
-        ok = ok && globalShortcut.register(acc, () => mainWindow.webContents.send(id));
-    });
-    return ok;
+    accelerators.forEach(acc => localShortcut.register(mainWindow, acc, () => mainWindow.webContents.send(id)));
+    return true;
 }
 
 export function unregisterShortcut(id: string): boolean {
     if (id == null || !shortcuts.has(id)) return false;
     const { accelerators } = shortcuts.get(id);
     shortcuts.delete(id);
-    accelerators.forEach(acc => globalShortcut.unregister(acc));
+    accelerators.forEach(acc => localShortcut.unregister(mainWindow, acc));
     return true;
 }
 
@@ -60,7 +59,7 @@ export function initMainShortcutManager(mWdw) {
     });
 
     ipcMain.on(CLEAR_CHANNEL, () => {
-        globalShortcut.unregisterAll();
+        localShortcut.unregisterAll();
         shortcuts.clear();
     });
 }

@@ -278,6 +278,7 @@
     "flwww": "^2.0.10",
     "history": "^4.7.2",
     "jimp": "^0.12.1",
+    "keyboardevents-areequal": "^0.2.2",
     "merge-img": "^2.1.3",
     "promise-worker": "^2.0.1",
     "pubsub.js": "^1.5.2",
