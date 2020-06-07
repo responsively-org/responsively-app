@@ -1,4 +1,5 @@
 import React from 'react';
+import cx from 'classnames';
 
 import styles from './styles.module.css';
 
@@ -9,6 +10,7 @@ export default function InspectElementChrome({
   padding,
   margin,
   style,
+  selected,
 }) {
   return (
     <svg
@@ -19,7 +21,7 @@ export default function InspectElementChrome({
       height={height}
       fill={color}
       style={{isolation: 'isolate', padding, margin, ...style}}
-      className={styles.chromeIcon}
+      className={cx(styles.chromeIcon, {[styles.selected]: selected})}
     >
       <defs>
         <clipPath id="_clipPath_NlBZVvucrUfAyfaqZqVDKpIaZEkvYgwZ">

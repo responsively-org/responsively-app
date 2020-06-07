@@ -11,6 +11,7 @@ import {
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
+  DISABLE_INSPECTOR_ALL_DEVICES,
   RELOAD_CSS,
   DELETE_STORAGE,
 } from '../constants/pubsubEvents';
@@ -22,6 +23,7 @@ export const NEW_HOMEPAGE = 'NEW_HOMEPAGE';
 export const NEW_ZOOM_LEVEL = 'NEW_ZOOM_LEVEL';
 export const NEW_SCROLL_POSITION = 'NEW_SCROLL_POSITION';
 export const NEW_NAVIGATOR_STATUS = 'NEW_NAVIGATOR_STATUS';
+export const NEW_INSPECTOR_STATUS = 'NEW_INSPECTOR_STATUS';
 export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
 export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
@@ -48,6 +50,13 @@ export function newHomepage(homepage) {
   return {
     type: NEW_HOMEPAGE,
     homepage,
+  };
+}
+
+export function newInspectorState(status) {
+  return {
+    type: NEW_INSPECTOR_STATUS,
+    status,
   };
 }
 
@@ -482,9 +491,19 @@ export function flipOrientationAllDevices() {
   };
 }
 
-export function enableInpector() {
+export function toggleInspector() {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    pubsub.publish(ENABLE_INSPECTOR_ALL_DEVICES);
+    const {
+      browser: {isInspecting},
+    } = getState();
+
+    pubsub.publish(
+      !isInspecting
+        ? ENABLE_INSPECTOR_ALL_DEVICES
+        : DISABLE_INSPECTOR_ALL_DEVICES
+    );
+
+    dispatch(newInspectorState(!isInspecting));
   };
 }
 

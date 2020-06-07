@@ -13,6 +13,7 @@ import {
   NEW_USER_PREFERENCES,
   DELETE_CUSTOM_DEVICE,
   NEW_DEV_TOOLS_CONFIG,
+  NEW_INSPECTOR_STATUS,
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
@@ -106,6 +107,7 @@ export type BrowserStateType = {
   filters: FilterType,
   userPreferences: UserPreferenceType,
   devToolsConfig: DevToolsConfigType,
+  isInspecting: boolean,
 };
 
 let _activeDevices = null;
@@ -200,6 +202,7 @@ export default function browser(
       mode: DEVTOOLS_MODES.BOTTOM,
       bounds: getBounds(DEVTOOLS_MODES.BOTTOM),
     },
+    isInspecting: false,
   },
   action: Action
 ) {
@@ -260,6 +263,8 @@ export default function browser(
       return {...state, userPreferences: action.userPreferences};
     case NEW_DEV_TOOLS_CONFIG:
       return {...state, devToolsConfig: action.config};
+    case NEW_INSPECTOR_STATUS:
+      return {...state, isInspecting: action.status};
     default:
       return state;
   }

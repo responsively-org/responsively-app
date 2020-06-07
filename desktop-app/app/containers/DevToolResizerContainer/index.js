@@ -9,6 +9,7 @@ import * as BrowserActions from '../../actions/browser';
 function mapStateToProps(state) {
   return {
     ...state.browser.devToolsConfig,
+    isInspecting: state.browser.isInspecting,
   };
 }
 

@@ -298,6 +298,9 @@ class WebView extends Component {
     } = this.webviewRef.current.getBoundingClientRect();
     const {x: deviceX, y: deviceY} = message;
     const zoomFactor = this.props.browser.zoomLevel;
+    if (this.props.browser.isInspecting) {
+      this.props.toggleInspector();
+    }
     if (!this._isDevToolsOpen()) {
       this._toggleDevTools();
     }
@@ -312,9 +315,6 @@ class WebView extends Component {
   };
 
   processDisableInspectorEvent = message => {
-    if (message.sourceDeviceId === this.props.device.id) {
-      return;
-    }
     this.webviewRef.current.send('disableInspectorMessage');
   };
 

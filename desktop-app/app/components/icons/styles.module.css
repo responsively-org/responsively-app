@@ -5,6 +5,10 @@
   cursor: pointer;
 }
 
+.chromeIcon.selected {
+  fill: #7587ec;
+}
+
 @media (prefers-color-scheme: light) {
   .chromeIcon {
     fill: #555;

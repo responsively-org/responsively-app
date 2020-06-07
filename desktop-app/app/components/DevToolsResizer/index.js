@@ -35,10 +35,11 @@ const DevToolsResizer = ({
   open,
   mode,
   bounds,
+  isInspecting,
   onDevToolsResize,
   onDevToolsClose,
   onDevToolsModeChange,
-  enableInpector,
+  toggleInspector,
 }) => {
   if (!open) {
     return null;
@@ -61,8 +62,11 @@ const DevToolsResizer = ({
           style={{width: '100%', ...getToolbarPosition(mode, bounds)}}
         >
           <div className={styles.toolsGroup}>
-            <span onClick={enableInpector}>
-              <InspectElementChrome style={{height: 16}} />
+            <span onClick={toggleInspector}>
+              <InspectElementChrome
+                style={{height: 16}}
+                selected={isInspecting}
+              />
             </span>
           </div>
           <div className={styles.toolsGroup}>
