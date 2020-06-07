@@ -25,6 +25,7 @@ import installExtension, {
 import devtron from 'devtron';
 import fs from 'fs';
 import {migrateDeviceSchema} from './settings/migration';
+import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
 
 const path = require('path');
 
@@ -188,6 +189,8 @@ const createWindow = async () => {
       `);
     }
   });
+
+  initMainShortcutManager();
 
   mainWindow.once('ready-to-show', () => {
     if (urlToOpen) {
