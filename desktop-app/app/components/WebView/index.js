@@ -247,6 +247,7 @@ class WebView extends Component {
   };
 
   processScrollEvent = message => {
+
     if (
       this.state.isUnplugged ||
       message.sourceDeviceId === this.props.device.id
@@ -283,8 +284,8 @@ class WebView extends Component {
   processScreenshotEvent = async ({now}) => {
     this.setState({screenshotInProgress: true});
     await captureFullPage(
-      this.props.device,
       this.props.browser.address,
+      this.props.device,
       this.webviewRef.current,
       now != null,
       now
@@ -361,7 +362,7 @@ class WebView extends Component {
 
   initEventTriggers = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-      responsivelyApp.deviceId = ${this.props.device.id};
+      responsivelyApp.deviceId = "${this.props.device.id}";
       document.body.addEventListener('mouseleave', () => {
         window.responsivelyApp.mouseOn = false;
         if (responsivelyApp.domInspectorEnabled) {
