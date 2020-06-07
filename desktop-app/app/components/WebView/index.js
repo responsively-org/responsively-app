@@ -21,7 +21,6 @@ import {
   DISABLE_INSPECTOR_ALL_DEVICES,
   RELOAD_CSS,
   DELETE_STORAGE,
-  NAVIGATION_INAPP,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
