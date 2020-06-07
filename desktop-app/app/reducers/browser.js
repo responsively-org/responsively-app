@@ -37,6 +37,12 @@ export const FILTER_FIELDS = {
   DEVICE_TYPE: 'DEVICE_TYPE',
 };
 
+export const DEVTOOLS_MODES = {
+  BOTTOM: 'BOTTOM',
+  RIGHT: 'RIGHT',
+  UNDOCKER: 'UNDOCKED',
+};
+
 type ScrollPositionType = {
   x: number,
   y: number,
@@ -52,9 +58,22 @@ type WindowSizeType = {
   height: number,
 };
 
+type DevToolsOpenModeType = DEVTOOLS_MODES.BOTTOM | DEVTOOLS_MODES.RIGHT;
+
+type WindowBoundsType = {
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+};
+
 type DevToolsConfigType = {
   size: WindowSizeType,
   open: Boolean,
+  deviceId: string,
+  webViewId: number,
+  mode: DevToolsOpenModeType,
+  bounds: WindowBoundsType,
 };
 
 type DrawerType = {
@@ -127,6 +146,34 @@ function _setUserPreferences(userPreferences) {
 
 const {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
 
+export function getBounds(mode, _size) {
+  const size = _size || getDefaultDevToolsWindowSize(mode);
+  if (mode === DEVTOOLS_MODES.RIGHT) {
+    const viewWidth = Math.round(size.width);
+    const viewHeight = size.height - 64 - 20;
+    return {
+      x: width - viewWidth,
+      y: height - viewHeight,
+      width: viewWidth,
+      height: viewHeight,
+    };
+  }
+  const viewHeight = Math.round(size.height) - 20;
+  return {
+    x: 0,
+    y: height - viewHeight,
+    width: width,
+    height: viewHeight,
+  };
+}
+
+export function getDefaultDevToolsWindowSize(mode) {
+  if (mode === DEVTOOLS_MODES.RIGHT) {
+    return {width: width * 0.33, height};
+  }
+  return {width, height: height * 0.33};
+}
+
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
@@ -147,7 +194,12 @@ export default function browser(
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
     userPreferences: _getUserPreferences(),
     allDevices: getAllDevices(),
-    devToolsConfig: {size: {width, height: height * 0.3}, open: false},
+    devToolsConfig: {
+      size: getDefaultDevToolsWindowSize(DEVTOOLS_MODES.BOTTOM),
+      open: false,
+      mode: DEVTOOLS_MODES.BOTTOM,
+      bounds: getBounds(DEVTOOLS_MODES.BOTTOM),
+    },
   },
   action: Action
 ) {

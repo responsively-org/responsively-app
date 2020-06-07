@@ -14,6 +14,7 @@ import {
   RELOAD_CSS,
   DELETE_STORAGE,
 } from '../constants/pubsubEvents';
+import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_DEV_TOOLS_CONFIG = 'NEW_DEV_TOOLS_CONFIG';
@@ -338,13 +339,41 @@ export function goToHomepage() {
   };
 }
 
+export function onDevToolsModeChange(_mode) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {devToolsConfig},
+    } = getState();
+
+    const {mode} = devToolsConfig;
+
+    if (mode === _mode) {
+      return;
+    }
+    const size = getDefaultDevToolsWindowSize(_mode);
+    const newBounds = getBounds(_mode, size);
+    ipcRenderer.send('resize-devtools', {
+      bounds: newBounds,
+    });
+
+    dispatch(
+      newDevToolsConfig({
+        ...devToolsConfig,
+        size,
+        bounds: newBounds,
+        mode: _mode,
+      })
+    );
+  };
+}
+
 export function onDevToolsResize(size) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {devToolsConfig},
     } = getState();
 
-    const {size: devToolsSize} = devToolsConfig;
+    const {size: devToolsSize, bounds, mode} = devToolsConfig;
 
     if (
       devToolsSize.width === size.width &&
@@ -352,11 +381,12 @@ export function onDevToolsResize(size) {
     ) {
       return;
     }
+    const newBounds = getBounds(mode, size);
     ipcRenderer.send('resize-devtools', {
-      size,
+      bounds: newBounds,
     });
 
-    dispatch(newDevToolsConfig({...devToolsConfig, size}));
+    dispatch(newDevToolsConfig({...devToolsConfig, size, bounds: newBounds}));
   };
 }
 
@@ -366,7 +396,7 @@ export function onDevToolsOpen(newDeviceId, newWebViewId) {
       browser: {devToolsConfig},
     } = getState();
 
-    const {open, deviceId, webViewId} = devToolsConfig;
+    const {open, deviceId, webViewId, bounds} = devToolsConfig;
 
     if (open && deviceId === newDeviceId) {
       return;

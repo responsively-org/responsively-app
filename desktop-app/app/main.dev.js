@@ -218,19 +218,13 @@ const createWindow = async () => {
   });
 
   ipcMain.on('open-devtools', (event, ...args) => {
-    const {webViewId, size} = args[0];
+    const {webViewId, bounds} = args[0];
     if (!webViewId) {
       return;
     }
     bottomDevTools = new BrowserView();
     mainWindow.setBrowserView(bottomDevTools);
-    let viewHeight = Math.round(size.height) - 20;
-    bottomDevTools.setBounds({
-      x: 0,
-      y: height - viewHeight,
-      width: width,
-      height: viewHeight,
-    });
+    bottomDevTools.setBounds(bounds);
 
     const webView = webContents.fromId(webViewId);
     webView.setDevToolsWebContents(bottomDevTools.webContents);
@@ -248,17 +242,11 @@ const createWindow = async () => {
   });
 
   ipcMain.on('resize-devtools', (event, ...args) => {
-    const {size} = args[0];
-    if (!size || !bottomDevTools) {
+    const {bounds} = args[0];
+    if (!bounds || !bottomDevTools) {
       return;
     }
-    const viewHeight = Math.round(size.height) - 20;
-    bottomDevTools.setBounds({
-      x: 0,
-      y: height - viewHeight,
-      width: width,
-      height: viewHeight,
-    });
+    bottomDevTools.setBounds(bounds);
   });
 
   mainWindow.on('closed', () => {
