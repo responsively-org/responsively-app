@@ -145,7 +145,7 @@ export default class MenuBuilder {
     submenu: [
       {
         label: 'Open HTML file',
-        accelerator: 'Command+O',
+        accelerator: 'CommandOrControl+O',
         click: () => {
           const selected = dialog.showOpenDialogSync({
             filters: [{name: 'HTML', extensions: ['htm', 'html']}],
