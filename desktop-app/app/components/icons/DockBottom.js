@@ -16,13 +16,13 @@ export default function DockBottom({width, height, color, padding, margin}) {
       className={styles.chromeIcon}
     >
       <defs>
-        <clipPath id="_clipPath_K7J0VnL39Cs1RDRy3hjLgKHHcmSs1prC">
-          <rect width="14.14" height={height} />
+        <clipPath id="_clipPath_oN17WILa5750lHQzygNFwNgKorN1U9tL">
+          <rect width="14.14" height="12" />
         </clipPath>
       </defs>
-      <g clipPath="url(#_clipPath_K7J0VnL39Cs1RDRy3hjLgKHHcmSs1prC)">
+      <g clipPath="url(#_clipPath_oN17WILa5750lHQzygNFwNgKorN1U9tL)">
         <path
-          d=" M 0 0 L 14.14 0 L 14.14 12 L 0 12 L 0 0 Z  M 2.221 2 L 12.221 2 L 12.221 7 L 2.221 7 L 2.221 2 Z "
+          d=" M 0 0 L 14.14 0 L 14.14 12 L 0 12 L 0 0 Z  M 2.07 2.052 L 12.07 2.052 L 12.07 7.052 L 2.07 7.052 L 2.07 2.052 Z "
           fillRule="evenodd"
           fill={color}
         />

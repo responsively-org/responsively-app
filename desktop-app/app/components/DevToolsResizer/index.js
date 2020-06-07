@@ -16,16 +16,16 @@ const getResizingDirections = mode => {
   return {top: true};
 };
 
-const getResizerPosition = mode => {
+const getResizerPosition = (mode, bounds) => {
   if (mode === DEVTOOLS_MODES.RIGHT) {
-    return {right: 0};
+    return {right: 0, top: 0};
   }
   return {bottom: 0};
 };
 
 const getToolbarPosition = (mode, bounds) => {
   if (mode === DEVTOOLS_MODES.RIGHT) {
-    return {position: 'absolute', top: -(bounds.height + 20)};
+    return {position: 'absolute', top: bounds.y - 20};
   }
   return {};
 };
@@ -38,13 +38,15 @@ const DevToolsResizer = ({
   onDevToolsResize,
   onDevToolsClose,
   onDevToolsModeChange,
+  enableInpector,
 }) => {
   if (!open) {
     return null;
   }
   return (
-    <div style={{position: 'absolute', ...getResizerPosition(mode)}}>
+    <div style={{position: 'absolute', ...getResizerPosition(mode, bounds)}}>
       <Resizable
+        className={styles.resizable}
         size={{width: size.width, height: size.height}}
         onResizeStop={(e, direction, ref, d) => {
           onDevToolsResize({
@@ -59,7 +61,9 @@ const DevToolsResizer = ({
           style={{width: '100%', ...getToolbarPosition(mode, bounds)}}
         >
           <div className={styles.toolsGroup}>
-            <InspectElementChrome style={{height: 16}} />
+            <span onClick={enableInpector}>
+              <InspectElementChrome style={{height: 16}} />
+            </span>
           </div>
           <div className={styles.toolsGroup}>
             {mode !== DEVTOOLS_MODES.RIGHT ? (

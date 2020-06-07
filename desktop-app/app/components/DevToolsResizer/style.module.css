@@ -5,6 +5,7 @@
   background-color: #333333;
   display: flex;
   justify-content: space-between;
+  z-index: 1000;
 }
 
 @media (prefers-color-scheme: light) {
@@ -38,4 +39,8 @@
   .icon svg {
     fill: #555;
   }
+}
+
+.resizable {
+  color: white;
 }
