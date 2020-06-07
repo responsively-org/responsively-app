@@ -36,7 +36,7 @@ export default function UserPreference(props) {
             }
           />
         </div>
-        </div>
       </div>
+    </div>
   );
 }
