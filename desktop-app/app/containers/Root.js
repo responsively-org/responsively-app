@@ -111,14 +111,6 @@ export default class Root extends Component<Props> {
       store.dispatch(enableInpector());
     }, true);
 
-    registerShortcut({id: 'OpenHome', title: 'Go Homepage', accelerators: ['alt+home']}, () => {
-      store.dispatch(goToHomepage());
-    }, true);
-
-    registerShortcut({id: 'OpenHome', title: 'Go to Homepage', accelerators: ['alt+home']}, () => {
-      store.dispatch(goToHomepage());
-    }, true);
-
     registerShortcut({id: 'OpenHome', title: 'Go to Homepage', accelerators: ['alt+home']}, () => {
       store.dispatch(goToHomepage());
     }, true);
