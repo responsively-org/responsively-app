@@ -14,6 +14,10 @@ import {
 import Mousetrap from 'mousetrap';
 import 'mousetrap/plugins/global-bind/mousetrap-global-bind';
 
+Mousetrap.addKeycodes({
+    44: 'prtsc'
+});
+
 const reg: Map<string, string[]> = new Map();
 
 function validate(shortcut: ShortcutDefinition, checkUnique = true) {

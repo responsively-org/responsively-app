@@ -95,6 +95,7 @@ export default class MenuBuilder {
       },
       {
         label: 'About',
+        accelerator: 'F1',
         click() {
           const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
           const title = 'Responsively';
@@ -284,7 +285,7 @@ export default class MenuBuilder {
         },
         {
           label: 'Toggle Developer Tools',
-          accelerator: 'Alt+Command+I',
+          accelerator: 'Command+Shift+I',
           click: () => {
             this.mainWindow.toggleDevTools();
           },

@@ -97,6 +97,8 @@
           return 'Enter';
         if (lo === 'escape')
           return 'Esc';
+        if (lo === 'prtsc')
+          return 'PrtSc';
         if (lo.startsWith('num'))
           return getNumPadName(k.slice(3));
         return firstToUpperCase(k);
