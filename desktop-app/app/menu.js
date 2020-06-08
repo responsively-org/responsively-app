@@ -10,6 +10,7 @@ import {
 } from 'electron';
 import * as os from 'os';
 import {pkg} from './utils/generalUtils';
+import {getAllShortcuts, registerShortcut} from './shortcut-manager/main-shortcut-manager';
 
 const path = require('path');
 
@@ -61,13 +62,14 @@ export default class MenuBuilder {
         label: 'Keyboard Shortcuts',
         click: () => {
           const {getCursorScreenPoint, getDisplayNearestPoint} = screen;
-
+          
           let win = new BrowserWindow({
             parent: BrowserWindow.getFocusedWindow(),
             frame: false,
             webPreferences: {
               devTools: false,
               nodeIntegration: true,
+              additionalArguments: [JSON.stringify(getAllShortcuts())]
             },
           });
 
@@ -83,7 +85,7 @@ export default class MenuBuilder {
           });
 
           win.on('blur', () => {
-            win.hide();
+            win.close();
           });
 
           win.on('closed', () => {
@@ -143,7 +145,7 @@ export default class MenuBuilder {
     submenu: [
       {
         label: 'Open HTML file',
-        accelerator: 'Command+O',
+        accelerator: 'CommandOrControl+O',
         click: () => {
           const selected = dialog.showOpenDialogSync({
             filters: [{name: 'HTML', extensions: ['htm', 'html']}],
@@ -174,6 +176,7 @@ export default class MenuBuilder {
         ? this.buildDarwinTemplate()
         : this.buildDefaultTemplate();
 
+    this.registerMenuShortcuts(template);
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 
@@ -200,12 +203,12 @@ export default class MenuBuilder {
     const subMenuAbout = {
       label: 'Responsively',
       submenu: [
-        {
-          label: 'About ResponsivelyApp',
-          selector: 'orderFrontStandardAboutPanel:',
-        },
+        // {
+        //   label: 'About ResponsivelyApp',
+        //   selector: 'orderFrontStandardAboutPanel:',
+        // },
         {type: 'separator'},
-        {label: 'Services', submenu: []},
+        // {label: 'Services', submenu: []},
         {type: 'separator'},
         {
           label: 'Hide ResponsivelyApp',
@@ -432,5 +435,27 @@ export default class MenuBuilder {
     ];
 
     return templateDefault;
+  }
+
+  registerMenuShortcuts(template: Array<(MenuItemConstructorOptions) | (MenuItem)>, id:string='Menu') {
+    if ((template || []).length === 0) return;
+    
+    for(let i = 0; i < template.length; i++) {
+      const item = template[i];
+      if (item == null) continue;
+
+      const label = (item.label || `submenu${i}`).split('&').join('');
+      const levelId = `${id}_${label}`;
+      
+      if (item.accelerator != null)
+        registerShortcut({id: levelId, title: label, accelerators: [item.accelerator]});
+      
+      if (item.submenu == null) continue;
+      
+      if (Array.isArray(item.submenu))
+        this.registerMenuShortcuts(item.submenu, levelId);
+      else
+        this.registerMenuShortcuts([item.submenu], levelId);
+    }
   }
 }
