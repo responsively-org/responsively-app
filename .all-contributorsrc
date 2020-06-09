@@ -68,6 +68,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "RomainFrancony",
+      "name": "Romain Francony",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/22396965?v=4",
+      "profile": "https://github.com/RomainFrancony",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
