@@ -1,20 +1,21 @@
 export const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
-export const RENAME_BOOKMARK = 'RENAME_BOOKMARK';
+export const EDIT_BOOKMARK = 'EDIT_BOOKMARK';
 
 // Add or Remove an URL from the bookmark list
-export function toggleBookmarkUrl(url, title = null) {		
-  return {		
-    type: TOGGLE_BOOKMARK,		
-    url,		
+export function toggleBookmarkUrl(url, title = null) {
+  return {
+    type: TOGGLE_BOOKMARK,
+    url,
     title
-  };		
+  };
 }
 
 // Updates bookmark title
-export function renameBookmark(bookmark, title) {
+export function editBookmark(bookmark, {title, url}) {
   return {
-    type: RENAME_BOOKMARK,
+    type: EDIT_BOOKMARK,
     title,
+    url,
     bookmark
   }
 }

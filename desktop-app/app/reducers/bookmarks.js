@@ -1,5 +1,5 @@
 import settings from 'electron-settings';
-import {TOGGLE_BOOKMARK, RENAME_BOOKMARK} from '../actions/bookmarks'
+import {TOGGLE_BOOKMARK, EDIT_BOOKMARK} from '../actions/bookmarks'
 import {BOOKMARKS} from '../constants/settingKeys'
 import { getWebsiteName } from '../components/WebView/screenshotUtil';
 
@@ -36,8 +36,8 @@ export default function browser(
       }
       persistBookmarks(bookmarks)
       return {...state, bookmarks}
-    case RENAME_BOOKMARK:
-      const updatedBookmarks = state.bookmarks.map(b => b === action.bookmark ? {...b, title: action.title} : b)
+    case EDIT_BOOKMARK:
+      const updatedBookmarks = state.bookmarks.map(b => b === action.bookmark ? {...b, title: action.title, url: action.url} : b)
       persistBookmarks(updatedBookmarks)
       return {...state, bookmarks: updatedBookmarks}
     default:

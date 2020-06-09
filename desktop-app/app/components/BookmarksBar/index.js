@@ -4,14 +4,13 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Modal from '@material-ui/core/Modal';
-import BookmarkRenameDialog from './BookmarkRenameDialog'
+import BookmarkEditDialog from './BookmarkEditDialog'
 import styles from './style.css';
 
-export const BookmarksBar = function ({bookmarks, onBookmarkClick, onBookmarkDelete, onBookmarkRename}) {
+export const BookmarksBar = function ({bookmarks, onBookmarkClick, onBookmarkDelete, onBookmarkEdit}) {
   return <Grid container direction="row" justify="flex-start" alignItems="center" className={styles.bookmarks} spacing={1}>
     {bookmarks.map((bookmark, k) => (
-      <BookmarkItem bookmark={bookmark} onClick={onBookmarkClick} key={'bookmark' + k} onDelete={onBookmarkDelete} onRename={onBookmarkRename}/>
+      <BookmarkItem bookmark={bookmark} onClick={onBookmarkClick} key={'bookmark' + k} onDelete={onBookmarkDelete} onEdit={onBookmarkEdit}/>
     ))}
     </Grid>
 };
@@ -25,7 +24,7 @@ const useToggle = function () {
   ]
 }
 
-function BookmarkItem ({bookmark, onClick, onDelete, onRename}) {
+function BookmarkItem ({bookmark, onClick, onDelete, onEdit}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [renameDialog, openRenameDialog, closeRenameDialog] = useToggle(null)
 
@@ -46,8 +45,8 @@ function BookmarkItem ({bookmark, onClick, onDelete, onRename}) {
     onDelete(bookmark)
   };
 
-  const handleRename = function (title) {
-    onRename(bookmark, title)
+  const handleRename = function (title, url) {
+    onEdit(bookmark, {title, url})
     setAnchorEl(null)
   }
 
@@ -70,6 +69,6 @@ function BookmarkItem ({bookmark, onClick, onDelete, onRename}) {
       <MenuItem onClick={openRenameDialog}>Rename</MenuItem>
       <MenuItem onClick={handleDelete}>Delete</MenuItem>
     </Menu>
-    <BookmarkRenameDialog open={renameDialog} onSubmit={handleRename} onClose={closeDialog} defaultValue={bookmark.title}/>
+    <BookmarkEditDialog open={renameDialog} onSubmit={handleRename} onClose={closeDialog} bookmark={bookmark}/>
   </Grid>
 }

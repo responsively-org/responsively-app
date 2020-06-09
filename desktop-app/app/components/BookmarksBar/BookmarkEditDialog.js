@@ -4,14 +4,17 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-export default function BookmarkRenameDialog({open, onClose, onSubmit, defaultValue}) {
-  const input = useRef(null)
+export default function BookmarkEditDialog({open, onClose, onSubmit, bookmark}) {
+  const titleInput = useRef(null)
+  const urlInput = useRef(null)
 
   const handleSubmit = function (e) {
-    onSubmit(input.current.querySelector('input').value)
+    onSubmit(
+      titleInput.current.querySelector('input').value,
+      urlInput.current.querySelector('input').value
+    )
     onClose()
   }
 
@@ -29,13 +32,25 @@ export default function BookmarkRenameDialog({open, onClose, onSubmit, defaultVa
         <DialogContent>
           <TextField
             autoFocus
-            ref={input}
+            ref={titleInput}
             margin="dense"
-            id="name"
+            id="title"
             label="Title"
             type="text"
             onKeyPress={handleKeyPress}
-            defaultValue={defaultValue}
+            defaultValue={bookmark.title}
+            fullWidth
+          />
+          <TextField
+            style={{marginTop: '16px'}}
+            autoFocus
+            ref={urlInput}
+            margin="dense"
+            id="url"
+            label="URL"
+            type="text"
+            onKeyPress={handleKeyPress}
+            defaultValue={bookmark.url}
             fullWidth
           />
         </DialogContent>

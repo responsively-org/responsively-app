@@ -18,7 +18,7 @@ const BookmarksBarContainer = function(props) {
   }, [])
 
   return (
-    <BookmarksBar bookmarks={props.bookmarks} onBookmarkClick={handleBookmarkClick} onBookmarkDelete={handleBookmarkDelete} onBookmarkRename={props.renameBookmark}/>
+    <BookmarksBar bookmarks={props.bookmarks} onBookmarkClick={handleBookmarkClick} onBookmarkDelete={handleBookmarkDelete} onBookmarkEdit={props.editBookmark}/>
   );
 };
 
