@@ -11,7 +11,7 @@
  * @flow
  */
 require('dotenv').config();
-import electron, {app, BrowserWindow, globalShortcut, ipcMain} from 'electron';
+import electron, {app, BrowserWindow, globalShortcut, ipcMain, nativeTheme} from 'electron';
 import {autoUpdater} from 'electron-updater';
 import settings from 'electron-settings';
 import log from 'electron-log';
@@ -210,6 +210,10 @@ const createWindow = async () => {
     }
     httpAuthCallbacks[url].forEach(cb => cb(username, password));
     httpAuthCallbacks[url] = null;
+  });
+
+  ipcMain.on('prefers-color-scheme-select', (event, scheme) => {
+    nativeTheme.themeSource = scheme || 'system';
   });
 
   mainWindow.on('closed', () => {
