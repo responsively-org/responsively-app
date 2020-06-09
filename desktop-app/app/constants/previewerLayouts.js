@@ -1,3 +1,9 @@
 export const HORIZONTAL_LAYOUT = 'HORIZONTAL';
 export const FLEXIGRID_LAYOUT = 'FLEXIGRID';
 export const INDIVIDUAL_LAYOUT = 'INDIVIDUAL';
+
+export const DEVTOOLS_MODES = {
+  BOTTOM: 'BOTTOM',
+  RIGHT: 'RIGHT',
+  UNDOCKED: 'UNDOCKED',
+};

@@ -32,6 +32,7 @@ import installExtension, {
 import devtron from 'devtron';
 import fs from 'fs';
 import {migrateDeviceSchema} from './settings/migration';
+import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 
 const path = require('path');
 
@@ -218,15 +219,19 @@ const createWindow = async () => {
   });
 
   ipcMain.on('open-devtools', (event, ...args) => {
-    const {webViewId, bounds} = args[0];
+    const {webViewId, bounds, mode} = args[0];
     if (!webViewId) {
       return;
     }
+    const webView = webContents.fromId(webViewId);
+
+    if (mode === DEVTOOLS_MODES.UNDOCKED) {
+      return webView.openDevTools();
+    }
+
     devToolsView = new BrowserView();
     mainWindow.setBrowserView(devToolsView);
     devToolsView.setBounds(bounds);
-
-    const webView = webContents.fromId(webViewId);
     webView.setDevToolsWebContents(devToolsView.webContents);
     webView.openDevTools();
     devToolsView.webContents.executeJavaScript(`
@@ -252,7 +257,6 @@ const createWindow = async () => {
     if (!devToolsView || !webViewId) {
       return;
     }
-    devToolsView.setBounds({...devToolsView.getBounds(), y: 0, height: 0});
     webContents.fromId(webViewId).closeDevTools();
     mainWindow.removeBrowserView(devToolsView);
   });

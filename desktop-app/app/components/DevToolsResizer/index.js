@@ -7,7 +7,7 @@ import Cross from '../icons/Cross';
 import DockRight from '../icons/DockRight';
 import DockBottom from '../icons/DockBottom';
 import InspectElementChrome from '../icons/InspectElementChrome';
-import {DEVTOOLS_MODES} from '../../reducers/browser';
+import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 
 const getResizingDirections = mode => {
   if (mode === DEVTOOLS_MODES.RIGHT) {
@@ -41,7 +41,7 @@ const DevToolsResizer = ({
   onDevToolsModeChange,
   toggleInspector,
 }) => {
-  if (!open) {
+  if (!open || mode === DEVTOOLS_MODES.UNDOCKED) {
     return null;
   }
   return (
@@ -92,7 +92,7 @@ const DevToolsResizer = ({
             ) : null}
             <span
               className={styles.icon}
-              onClick={() => console.log('Close') || onDevToolsClose()}
+              onClick={() => onDevToolsClose(null, true)}
             >
               <Cross width={18} color="inherit" />
             </span>

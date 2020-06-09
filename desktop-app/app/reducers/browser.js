@@ -23,6 +23,7 @@ import type {Device} from '../constants/devices';
 import {
   FLEXIGRID_LAYOUT,
   INDIVIDUAL_LAYOUT,
+  DEVTOOLS_MODES,
 } from '../constants/previewerLayouts';
 import {DEVICE_MANAGER} from '../constants/DrawerContents';
 import {
@@ -36,12 +37,6 @@ import {getHomepage, saveHomepage} from '../utils/navigatorUtils';
 export const FILTER_FIELDS = {
   OS: 'OS',
   DEVICE_TYPE: 'DEVICE_TYPE',
-};
-
-export const DEVTOOLS_MODES = {
-  BOTTOM: 'BOTTOM',
-  RIGHT: 'RIGHT',
-  UNDOCKER: 'UNDOCKED',
 };
 
 type ScrollPositionType = {
@@ -68,11 +63,15 @@ type WindowBoundsType = {
   height: number,
 };
 
+type DevToolInfo = {
+  deviceId: string,
+  webViewId: number,
+};
+
 type DevToolsConfigType = {
   size: WindowSizeType,
   open: Boolean,
-  deviceId: string,
-  webViewId: number,
+  activeDevTools: Array<DevToolInfo>,
   mode: DevToolsOpenModeType,
   bounds: WindowBoundsType,
 };
@@ -200,6 +199,7 @@ export default function browser(
       size: getDefaultDevToolsWindowSize(DEVTOOLS_MODES.BOTTOM),
       open: false,
       mode: DEVTOOLS_MODES.BOTTOM,
+      activeDevTools: [],
       bounds: getBounds(DEVTOOLS_MODES.BOTTOM),
     },
     isInspecting: false,

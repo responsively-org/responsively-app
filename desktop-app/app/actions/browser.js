@@ -16,6 +16,7 @@ import {
   DELETE_STORAGE,
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
+import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_DEV_TOOLS_CONFIG = 'NEW_DEV_TOOLS_CONFIG';
@@ -359,11 +360,17 @@ export function onDevToolsModeChange(_mode) {
     if (mode === _mode) {
       return;
     }
+
+    if (_mode === DEVTOOLS_MODES.UNDOCKED) {
+      ipcRenderer.send('close-devtools', devToolsConfig);
+      const newConfig = {...devToolsConfig, mode: _mode};
+      ipcRenderer.send('open-devtools', newConfig);
+      return dispatch(newDevToolsConfig(newConfig));
+    }
+
     const size = getDefaultDevToolsWindowSize(_mode);
     const newBounds = getBounds(_mode, size);
-    ipcRenderer.send('resize-devtools', {
-      bounds: newBounds,
-    });
+    ipcRenderer.send('resize-devtools', {bounds: newBounds});
 
     dispatch(
       newDevToolsConfig({
@@ -405,49 +412,75 @@ export function onDevToolsOpen(newDeviceId, newWebViewId) {
       browser: {devToolsConfig},
     } = getState();
 
-    const {open, deviceId, webViewId, bounds} = devToolsConfig;
+    const {open, activeDevTools, bounds, mode} = devToolsConfig;
 
-    if (open && deviceId === newDeviceId) {
+    if (
+      open &&
+      !!activeDevTools.find(({deviceId}) => deviceId === newDeviceId)
+    ) {
       return;
     }
 
-    if (open && deviceId && webViewId) {
-      ipcRenderer.send('close-devtools', devToolsConfig);
+    let newActiveDevices = [...activeDevTools];
+
+    if (open && activeDevTools[0] && mode !== DEVTOOLS_MODES.UNDOCKED) {
+      activeDevTools.forEach(({webViewId}) => {
+        ipcRenderer.send('close-devtools', {webViewId});
+        newActiveDevices = newActiveDevices.filter(
+          ({webViewId: _webViewId}) => webViewId !== _webViewId
+        );
+      });
     }
+
+    ipcRenderer.send('open-devtools', {bounds, mode, webViewId: newWebViewId});
 
     const newData = {
       ...devToolsConfig,
       open: true,
-      deviceId: newDeviceId,
-      webViewId: newWebViewId,
+      activeDevTools: [
+        ...newActiveDevices,
+        {deviceId: newDeviceId, webViewId: newWebViewId},
+      ],
     };
-
-    ipcRenderer.send('open-devtools', newData);
 
     dispatch(newDevToolsConfig(newData));
   };
 }
 
-export function onDevToolsClose() {
+export function onDevToolsClose(devToolsInfo, closeAll) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {devToolsConfig},
     } = getState();
 
-    const {open} = devToolsConfig;
+    const {open, activeDevTools} = devToolsConfig;
 
     if (!open) {
       return;
     }
 
-    ipcRenderer.send('close-devtools', devToolsConfig);
+    let devToolsToClose = [];
+
+    if (closeAll) {
+      devToolsToClose = [...activeDevTools];
+    } else {
+      devToolsToClose = [devToolsInfo];
+    }
+
+    let newActiveDevTools = [...activeDevTools];
+
+    devToolsToClose.forEach(({webViewId}) => {
+      ipcRenderer.send('close-devtools', {webViewId});
+      newActiveDevTools = newActiveDevTools.filter(
+        ({webViewId: _webViewId}) => _webViewId != webViewId
+      );
+    });
 
     dispatch(
       newDevToolsConfig({
         ...devToolsConfig,
-        open: false,
-        deviceId: null,
-        webViewId: null,
+        open: newActiveDevTools.length > 0,
+        activeDevTools: newActiveDevTools,
       })
     );
   };

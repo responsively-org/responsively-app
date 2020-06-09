@@ -418,14 +418,16 @@ class WebView extends Component {
   };
 
   _isDevToolsOpen = () =>
-    this.props.browser.devToolsConfig.deviceId === this.props.device.id;
+    !!this.props.browser.devToolsConfig.activeDevTools.find(
+      ({deviceId}) => deviceId === this.props.device.id
+    );
 
   _toggleDevTools = () => {
     if (this._isDevToolsOpen()) {
-      return this.props.onDevToolsClose(
-        this.props.device.id,
-        this.getWebContentsId()
-      );
+      return this.props.onDevToolsClose({
+        deviceId: this.props.device.id,
+        webViewId: this.getWebContentsId(),
+      });
     }
     this.props.onDevToolsOpen(this.props.device.id, this.getWebContentsId());
   };
