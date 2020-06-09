@@ -13,18 +13,19 @@ import ErrorBoundary from '../components/ErrorBoundary';
 
 import {registerShortcut, clearAllShortcuts, unregisterShortcut} from '../shortcut-manager/renderer-shortcut-manager';
 import {
-  onZoomChange, 
-  triggerScrollUp, 
-  triggerScrollDown, 
-  screenshotAllDevices, 
-  flipOrientationAllDevices, 
-  enableInpector, 
-  goToHomepage, 
-  triggerNavigationBack, 
+  onZoomChange,
+  triggerScrollUp,
+  triggerScrollDown,
+  screenshotAllDevices,
+  flipOrientationAllDevices,
+  enableInpector,
+  goToHomepage,
+  triggerNavigationBack,
   triggerNavigationForward,
   deleteCookies,
   deleteStorage
 } from '../actions/browser';
+import {toggleBookmarkUrl} from '../actions/bookmarks'
 
 type Props = {
   store: Store,
@@ -106,7 +107,7 @@ export default class Root extends Component<Props> {
     registerShortcut({id: 'TiltDevices', title: 'Tilt Devices', accelerators: ['mod+tab']}, () => {
       store.dispatch(flipOrientationAllDevices());
     }, true);
-    
+
     registerShortcut({id: 'ToggleInspector', title: 'Toggle Inspector', accelerators: ['mod+i']}, () => {
       store.dispatch(enableInpector());
     }, true);
@@ -129,6 +130,10 @@ export default class Root extends Component<Props> {
 
     registerShortcut({id: 'DeleteCookies', title: 'Delete Cookies', accelerators: ['mod+shift+del']}, () => {
       store.dispatch(deleteCookies());
+    }, true);
+
+    registerShortcut({id: 'AddBookmark', title: 'Add Bookmark', accelerators: ['mod+d']}, () => {
+      store.dispatch(toggleBookmarkUrl(store.getState().browser.address));
     }, true);
   }
 
