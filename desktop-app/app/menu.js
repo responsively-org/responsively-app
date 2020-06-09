@@ -11,6 +11,7 @@ import {
 import * as os from 'os';
 import {pkg} from './utils/generalUtils';
 import {getAllShortcuts, registerShortcut} from './shortcut-manager/main-shortcut-manager';
+import {autoUpdater} from 'electron-updater';
 
 const path = require('path');
 
@@ -90,6 +91,21 @@ export default class MenuBuilder {
 
           win.on('closed', () => {
             win = null;
+          });
+        },
+      },
+      {
+        label: 'Check for Updates...',
+        click() {
+          autoUpdater.checkForUpdatesAndNotify().then(r => {
+            if (r == null || r.updateInfo == null || r.updateInfo.version === pkg.version) {
+              dialog
+                .showMessageBox(BrowserWindow.getAllWindows()[0], {
+                  type: 'info',
+                  title: 'Responsively',
+                  message: 'There are currently no updates available'
+                });
+            }
           });
         },
       },
