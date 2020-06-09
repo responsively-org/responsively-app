@@ -27,6 +27,7 @@ import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
 import {captureFullPage} from './screenshotUtil';
 import {Tooltip} from '@material-ui/core';
+import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 
 const BrowserWindow = remote.BrowserWindow;
 
@@ -165,12 +166,13 @@ class WebView extends Component {
       }
     });
 
-    this.webviewRef.current.addEventListener('devtools-opened', () => {
-      /*this.webviewRef.current
-        .getWebContents()
-        .devToolsWebContents.executeJavaScript(
-          'DevToolsAPI.enterInspectElementMode()'
-        );*/
+    this.webviewRef.current.addEventListener('devtools-closed', () => {
+      if (
+        this.props.browser.devToolsConfig.mode === DEVTOOLS_MODES.UNDOCKED &&
+        this._isDevToolsOpen()
+      ) {
+        this._toggleDevTools();
+      }
     });
   }
 
