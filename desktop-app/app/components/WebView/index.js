@@ -141,7 +141,7 @@ class WebView extends Component {
       }
     );
 
-    const urlChangeHandler = ({url, isMainFrame}) => {
+    const urlChangeHandler = ({url, isMainFrame = true}) => {
       if (!isMainFrame || url === this.props.browser.address) {
         return;
       }
