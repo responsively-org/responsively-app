@@ -348,7 +348,7 @@ class WebView extends Component {
 
   initEventTriggers = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-      responsivelyApp.deviceId = ${this.props.device.id};
+      responsivelyApp.deviceId = '${this.props.device.id}';
       document.body.addEventListener('mouseleave', () => {
         window.responsivelyApp.mouseOn = false;
         if (responsivelyApp.domInspectorEnabled) {
