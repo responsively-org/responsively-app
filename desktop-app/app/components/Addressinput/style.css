@@ -2,9 +2,6 @@
   display: flex;
   position: relative;
   align-items: center;
-}
-
-.addressInput {
   font-size: 16px;
   height: 20px;
   width: 100%;
@@ -17,7 +14,19 @@
   transition: border 500ms ease-out;
 }
 
-.addressInput:focus {
+.addressInput {
+height: 20px;
+padding: 14px 10px;
+  background: unset;
+  color: #ffffffcc;
+  border:none;
+  width:92%;
+  margin:0;
+  outline: none;
+text-overflow: ellipsis;
+}
+
+.addressBarContainer:focus-within {
   color: white;
   border: solid 1px #7587ec;
 }
