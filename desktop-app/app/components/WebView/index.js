@@ -83,7 +83,7 @@ class WebView extends Component {
       pubsub.subscribe(DELETE_STORAGE, this.processDeleteStorageEvent)
     );
     this.subscriptions.push(
-      pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
+      pubsub.subscribe(SCREENSHOT_ALL_DEVICES, [this.preScreenshotEvent, this.processScreenshotEvent])
     );
     this.subscriptions.push(
       pubsub.subscribe(
@@ -257,6 +257,14 @@ class WebView extends Component {
     this.webviewRef.current.send('scrollUpMessage');
   };
 
+  preScreenshotEvent = async () => {
+    await this.props.preScreenshotAllDevices();
+  };
+  
+  postScreenshotEvent = () => {
+    this.props.postScreenshotAllDevices();
+  };
+
   processScreenshotEvent = async ({now}) => {
     this.setState({screenshotInProgress: true});
     await captureFullPage(
@@ -267,6 +275,7 @@ class WebView extends Component {
       now
     );
     this.setState({screenshotInProgress: false});
+    this.postScreenshotEvent();
   };
 
   processFlipOrientationEvent = () => {

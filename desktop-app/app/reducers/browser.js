@@ -11,6 +11,7 @@ import {
   NEW_FILTERS,
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
+  TMP_SCREENSHOT_CONFIG,
 } from '../actions/browser';
 import type {Action} from './types';
 import devices from '../constants/devices';
@@ -58,6 +59,12 @@ type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
 
 type FilterType = {[key: FilterFieldType]: Array<string>};
 
+type TmpScreenshotConfigType = {
+  filters: FilterFieldType,
+  previewer: PreviewerType,
+  zoomLevel: number,
+};
+
 export type BrowserStateType = {
   devices: Array<Device>,
   homepage: string,
@@ -69,6 +76,7 @@ export type BrowserStateType = {
   previewer: PreviewerType,
   filters: FilterType,
   userPreferences: UserPreferenceType,
+  tmpScreenshotConfig: TmpScreenshotConfigType,
 };
 
 let _activeDevices = null;
@@ -117,6 +125,7 @@ export default function browser(
     previewer: {layout: FLEXIGRID_LAYOUT},
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
     userPreferences: _getUserPreferences(),
+    tmpScreenshotConfig: {},
   },
   action: Action
 ) {
@@ -168,6 +177,11 @@ export default function browser(
     case NEW_USER_PREFERENCES:
       settings.set(USER_PREFERENCES, action.userPreferences);
       return {...state, userPreferences: action.userPreferences};
+    case TMP_SCREENSHOT_CONFIG:
+      return {
+        ...state,
+        tmpScreenshotConfig: action.tmpScreenshotConfig,
+      };
     default:
       return state;
   }

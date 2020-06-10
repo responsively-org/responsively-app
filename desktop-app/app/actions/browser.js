@@ -12,8 +12,8 @@ import {
   ENABLE_INSPECTOR_ALL_DEVICES,
   DELETE_STORAGE,
 } from '../constants/pubsubEvents';
-import { FLEXIGRID_LAYOUT } from '../constants/previewerLayouts';
-import { FILTER_FIELDS } from '../reducers/browser';
+import {FLEXIGRID_LAYOUT} from '../constants/previewerLayouts';
+import {FILTER_FIELDS} from '../reducers/browser';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_HOMEPAGE = 'NEW_HOMEPAGE';
@@ -26,6 +26,7 @@ export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
 export const NEW_ACTIVE_DEVICE = 'NEW_ACTIVE_DEVICE';
 export const NEW_FILTERS = 'NEW_FILTERS';
 export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
+export const TMP_SCREENSHOT_CONFIG = 'TMP_SCREENSHOT_CONFIG';
 
 export function newAddress(address) {
   return {
@@ -52,6 +53,13 @@ export function newZoomLevel(zoomLevel) {
   return {
     type: NEW_ZOOM_LEVEL,
     zoomLevel,
+  };
+}
+
+export function newTmpScreenshotConfig(tmpScreenshotConfig) {
+  return {
+    type: TMP_SCREENSHOT_CONFIG,
+    tmpScreenshotConfig,
   };
 }
 
@@ -124,7 +132,7 @@ export function onAddressChange(newURL, force) {
 export function onZoomChange(newLevel) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
-      browser: {zoomLevel},
+      browser: {zoomLevel, tmpScreenshotConfig},
     } = getState();
 
     if (newLevel === zoomLevel) {
@@ -132,6 +140,12 @@ export function onZoomChange(newLevel) {
     }
 
     dispatch(newZoomLevel(newLevel));
+    dispatch(
+      newTmpScreenshotConfig({
+        ...tmpScreenshotConfig,
+        zoomLevel: newLevel,
+      })
+    );
   };
 }
 
@@ -221,7 +235,7 @@ export function changeDrawerOpenState(newOpenState) {
 export function setPreviewLayout(newLayout) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
-      browser: {previewer},
+      browser: {previewer, tmpScreenshotConfig},
     } = getState();
 
     if (previewer.layout === newLayout) {
@@ -232,6 +246,14 @@ export function setPreviewLayout(newLayout) {
       newPreviewerConfig({
         ...previewer,
         layout: newLayout,
+      })
+    );
+    dispatch(
+      newTmpScreenshotConfig({
+        ...tmpScreenshotConfig,
+        previewer: {
+          layout: newLayout
+        },
       })
     );
   };
@@ -267,7 +289,7 @@ export function addNewDevice(newDevice) {
 export function toggleFilter(filterField, value) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
-      browser: {filters},
+      browser: {filters, tmpScreenshotConfig},
     } = getState();
     if (!filters[filterField]) {
       filters[filterField] = [];
@@ -279,6 +301,12 @@ export function toggleFilter(filterField, value) {
       filters[filterField].splice(index, 1);
     }
     dispatch(newFilters(filters));
+    dispatch(
+      newTmpScreenshotConfig({
+        ...tmpScreenshotConfig,
+        filters: filters,
+      })
+    );
   };
 }
 
@@ -322,24 +350,47 @@ export function triggerScrollDown() {
   };
 }
 
-export function screenshotAllDevices() {
+export function postScreenshotAllDevices() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
-      browser: {
-        zoomLevel,
-        previewer,
-        filters
-      }
+      browser: {zoomLevel, previewer, filters, tmpScreenshotConfig},
     } = getState();
 
-    // force reset filters
-    dispatch(
-      newFilters({
-        ...filters,
-        [FILTER_FIELDS.OS]: [],
-        [FILTER_FIELDS.DEVICE_TYPE]: []
-      })
-    )
+    if (
+      JSON.stringify(filters) != JSON.stringify(tmpScreenshotConfig.filters) ||
+      zoomLevel != tmpScreenshotConfig.zoomLevel ||
+      JSON.stringify(previewer) != JSON.stringify(tmpScreenshotConfig.previewer)
+    ) {
+      dispatch(newFilters(tmpScreenshotConfig.filters));
+      dispatch(newZoomLevel(tmpScreenshotConfig.zoomLevel));
+      dispatch(newPreviewerConfig(tmpScreenshotConfig.previewer));
+    }
+  };
+}
+
+export function preScreenshotAllDevices() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {zoomLevel, previewer, filters, tmpScreenshotConfig},
+    } = getState();
+
+    // only apply for first device
+    if (Object.keys(tmpScreenshotConfig).length == 0) {
+      dispatch(newTmpScreenshotConfig({zoomLevel, previewer, filters}));
+    }
+
+    if (
+      filters[FILTER_FIELDS.OS].length != 0 ||
+      filters[FILTER_FIELDS.DEVICE_TYPE].length != 0
+    ) {
+      dispatch(
+        newFilters({
+          ...filters,
+          [FILTER_FIELDS.OS]: [],
+          [FILTER_FIELDS.DEVICE_TYPE]: [],
+        })
+      );
+    }
 
     if (previewer.layout != FLEXIGRID_LAYOUT) {
       dispatch(
@@ -354,7 +405,14 @@ export function screenshotAllDevices() {
     if (minZoomLevel != zoomLevel) {
       dispatch(newZoomLevel(minZoomLevel));
     }
-    
+  };
+}
+
+export function screenshotAllDevices() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {tmpScreenshotConfig},
+    } = getState();
     pubsub.publish(SCREENSHOT_ALL_DEVICES, [{now: new Date()}]);
   };
 }
