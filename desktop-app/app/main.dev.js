@@ -82,6 +82,9 @@ const openUrl = url => {
  */
 
 app.on('will-finish-launching', () => {
+  if (process.platform === 'win32') {
+    urlToOpen = process.argv.filter(i => /^responsively/.test(i))[0];
+  }
   if (['win32', 'darwin'].includes(process.platform)) {
     if (process.argv.length >= 2) {
       app.setAsDefaultProtocolClient(protocol, process.execPath, [
@@ -188,8 +191,9 @@ const createWindow = async () => {
     if (urlToOpen) {
       openUrl(urlToOpen);
       urlToOpen = null;
+    } else {
+      mainWindow.show();
     }
-    mainWindow.show();
   });
 
   ipcMain.on('http-auth-promt-response', (event, ...args) => {

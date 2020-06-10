@@ -10,8 +10,14 @@ import {
 } from 'electron';
 import * as os from 'os';
 import {pkg} from './utils/generalUtils';
-import {getAllShortcuts, registerShortcut} from './shortcut-manager/main-shortcut-manager';
-import {appUpdater, AppUpdaterState} from './app-updater';
+import {
+  getAllShortcuts,
+  registerShortcut,
+} from './shortcut-manager/main-shortcut-manager';
+import {
+  appUpdater, 
+  AppUpdaterState
+} from './app-updater';
 
 const path = require('path');
 
@@ -28,7 +34,7 @@ export default class MenuBuilder {
       {
         label: 'Website',
         click() {
-          shell.openExternal('https://manojvivek.github.io/responsively-app/');
+          shell.openExternal('https://responsively.app/');
         },
       },
       {
@@ -63,14 +69,14 @@ export default class MenuBuilder {
         label: 'Keyboard Shortcuts',
         click: () => {
           const {getCursorScreenPoint, getDisplayNearestPoint} = screen;
-          
+
           let win = new BrowserWindow({
             parent: BrowserWindow.getFocusedWindow(),
             frame: false,
             webPreferences: {
               devTools: false,
               nodeIntegration: true,
-              additionalArguments: [JSON.stringify(getAllShortcuts())]
+              additionalArguments: [JSON.stringify(getAllShortcuts())],
             },
           });
 
@@ -482,25 +488,31 @@ export default class MenuBuilder {
     return templateDefault;
   }
 
-  registerMenuShortcuts(template: Array<(MenuItemConstructorOptions) | (MenuItem)>, id:string='Menu') {
+  registerMenuShortcuts(
+    template: Array<MenuItemConstructorOptions | MenuItem>,
+    id: string = 'Menu'
+  ) {
     if ((template || []).length === 0) return;
-    
-    for(let i = 0; i < template.length; i++) {
+
+    for (let i = 0; i < template.length; i++) {
       const item = template[i];
       if (item == null) continue;
 
       const label = (item.label || `submenu${i}`).split('&').join('');
       const levelId = `${id}_${label}`;
-      
+
       if (item.accelerator != null)
-        registerShortcut({id: levelId, title: label, accelerators: [item.accelerator]});
-      
+        registerShortcut({
+          id: levelId,
+          title: label,
+          accelerators: [item.accelerator],
+        });
+
       if (item.submenu == null) continue;
-      
+
       if (Array.isArray(item.submenu))
         this.registerMenuShortcuts(item.submenu, levelId);
-      else
-        this.registerMenuShortcuts([item.submenu], levelId);
+      else this.registerMenuShortcuts([item.submenu], levelId);
     }
   }
 }
