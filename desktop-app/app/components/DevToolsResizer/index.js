@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+import {ipcRenderer} from 'electron';
 import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
 
@@ -39,11 +40,24 @@ const DevToolsResizer = ({
   onDevToolsResize,
   onDevToolsClose,
   onDevToolsModeChange,
+  onWindowResize,
   toggleInspector,
 }) => {
+  useEffect(() => {
+    const handler = (event, args) => {
+      const {height, width} = args;
+      onWindowResize({height, width});
+    };
+    ipcRenderer.on('window-resize', handler);
+    return () => {
+      ipcRenderer.removeListener('window-resize', handler);
+    };
+  }, []);
+
   if (!open || mode === DEVTOOLS_MODES.UNDOCKED) {
     return null;
   }
+
   return (
     <div style={{position: 'absolute', ...getResizerPosition(mode, bounds)}}>
       <Resizable

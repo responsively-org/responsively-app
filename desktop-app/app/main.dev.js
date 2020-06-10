@@ -198,6 +198,11 @@ const createWindow = async () => {
     }
   });
 
+  mainWindow.on('resize', function() {
+    const [width, height] = mainWindow.getSize();
+    mainWindow.webContents.send('window-resize', {height, width});
+  });
+
   mainWindow.once('ready-to-show', () => {
     if (urlToOpen) {
       openUrl(urlToOpen);

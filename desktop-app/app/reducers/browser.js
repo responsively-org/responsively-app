@@ -107,6 +107,7 @@ export type BrowserStateType = {
   userPreferences: UserPreferenceType,
   devToolsConfig: DevToolsConfigType,
   isInspecting: boolean,
+  windowSize: WindowSizeType,
 };
 
 let _activeDevices = null;
@@ -145,10 +146,9 @@ function _setUserPreferences(userPreferences) {
   settings.set(USER_PREFERENCES, userPreferences);
 }
 
-const {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
-
-export function getBounds(mode, _size) {
-  const size = _size || getDefaultDevToolsWindowSize(mode);
+export function getBounds(mode, _size, windowSize) {
+  const size = _size || getDefaultDevToolsWindowSize(mode, windowSize);
+  const {width, height} = windowSize;
   if (mode === DEVTOOLS_MODES.RIGHT) {
     const viewWidth = Math.round(size.width);
     const viewHeight = size.height - 64 - 20;
@@ -168,11 +168,16 @@ export function getBounds(mode, _size) {
   };
 }
 
-export function getDefaultDevToolsWindowSize(mode) {
+export function getDefaultDevToolsWindowSize(mode, windowSize) {
+  const {width, height} = windowSize;
   if (mode === DEVTOOLS_MODES.RIGHT) {
     return {width: width * 0.33, height};
   }
   return {width, height: height * 0.33};
+}
+
+function getWindowSize() {
+  return remote.screen.getPrimaryDisplay().workAreaSize;
 }
 
 export default function browser(
@@ -196,13 +201,17 @@ export default function browser(
     userPreferences: _getUserPreferences(),
     allDevices: getAllDevices(),
     devToolsConfig: {
-      size: getDefaultDevToolsWindowSize(DEVTOOLS_MODES.BOTTOM),
+      size: getDefaultDevToolsWindowSize(
+        DEVTOOLS_MODES.BOTTOM,
+        getWindowSize()
+      ),
       open: false,
       mode: DEVTOOLS_MODES.BOTTOM,
       activeDevTools: [],
-      bounds: getBounds(DEVTOOLS_MODES.BOTTOM),
+      bounds: getBounds(DEVTOOLS_MODES.BOTTOM, null, getWindowSize()),
     },
     isInspecting: false,
+    windowSize: getWindowSize(),
   },
   action: Action
 ) {

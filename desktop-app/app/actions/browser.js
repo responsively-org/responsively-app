@@ -32,11 +32,19 @@ export const NEW_CUSTOM_DEVICE = 'NEW_CUSTOM_DEVICE';
 export const DELETE_CUSTOM_DEVICE = 'DELETE_CUSTOM_DEVICE';
 export const NEW_FILTERS = 'NEW_FILTERS';
 export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
+export const NEW_WINDOW_SIZE = 'NEW_WINDOW_SIZE';
 
 export function newAddress(address) {
   return {
     type: NEW_ADDRESS,
     address,
+  };
+}
+
+export function newWindowSize(size) {
+  return {
+    type: NEW_WINDOW_SIZE,
+    size,
   };
 }
 
@@ -352,7 +360,7 @@ export function goToHomepage() {
 export function onDevToolsModeChange(_mode) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
-      browser: {devToolsConfig},
+      browser: {devToolsConfig, windowSize},
     } = getState();
 
     const {mode} = devToolsConfig;
@@ -368,8 +376,8 @@ export function onDevToolsModeChange(_mode) {
       return dispatch(newDevToolsConfig(newConfig));
     }
 
-    const size = getDefaultDevToolsWindowSize(_mode);
-    const newBounds = getBounds(_mode, size);
+    const size = getDefaultDevToolsWindowSize(_mode, windowSize);
+    const newBounds = getBounds(_mode, size, windowSize);
     ipcRenderer.send('resize-devtools', {bounds: newBounds});
 
     dispatch(
@@ -383,10 +391,42 @@ export function onDevToolsModeChange(_mode) {
   };
 }
 
+export function onWindowResize(size) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {
+        windowSize: {width, height},
+        devToolsConfig,
+      },
+    } = getState();
+
+    if (width === size.width && height === size.height) {
+      return;
+    }
+
+    dispatch(newWindowSize(size));
+    const devToolsSize = getDefaultDevToolsWindowSize(
+      devToolsConfig.mode,
+      size
+    );
+    const newBounds = getBounds(devToolsConfig.mode, devToolsSize, size);
+    ipcRenderer.send('resize-devtools', {
+      bounds: newBounds,
+    });
+    dispatch(
+      newDevToolsConfig({
+        ...devToolsConfig,
+        size: devToolsSize,
+        bounds: newBounds,
+      })
+    );
+  };
+}
+
 export function onDevToolsResize(size) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
-      browser: {devToolsConfig},
+      browser: {devToolsConfig, windowSize},
     } = getState();
 
     const {size: devToolsSize, bounds, mode} = devToolsConfig;
@@ -397,7 +437,7 @@ export function onDevToolsResize(size) {
     ) {
       return;
     }
-    const newBounds = getBounds(mode, size);
+    const newBounds = getBounds(mode, size, windowSize);
     ipcRenderer.send('resize-devtools', {
       bounds: newBounds,
     });
