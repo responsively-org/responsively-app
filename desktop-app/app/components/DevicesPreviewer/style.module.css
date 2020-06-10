@@ -18,6 +18,11 @@
   display: flex;
 }
 
+.customTabPanel {
+  display: flex !important;
+  justify-content: center;
+}
+
 .tab {
   display: none;
   margin: auto;

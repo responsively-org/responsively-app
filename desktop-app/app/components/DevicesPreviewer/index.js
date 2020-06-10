@@ -35,7 +35,7 @@ export default function DevicesPreviewer(props) {
                   return null;
                 }
                 return (
-                  <Tab tabId={device.id} key={device.id}>
+                  <Tab tabid={device.id} key={device.id}>
                     {getDeviceIcon(device.type)}
                     {device.name}
                   </Tab>
@@ -43,33 +43,59 @@ export default function DevicesPreviewer(props) {
               })
               .filter(Boolean)}
           </TabList>
+
+          {devices
+            .map((device, index) => {
+              if (!isDeviceEligible(device, props.browser.filters)) {
+                return null;
+              }
+              return (
+                <TabPanel
+                  selectedClassName={styles.customTabPanel}
+                  key={device.id}
+                >
+                  <div
+                    key={device.id}
+                    className={cx({
+                      [styles.tab]: layout === INDIVIDUAL_LAYOUT,
+                      [styles.activeTab]:
+                        layout === INDIVIDUAL_LAYOUT && activeTab === index,
+                    })}
+                  >
+                    <Renderer
+                      hidden={!isDeviceEligible(device, props.browser.filters)}
+                      device={device}
+                      src={address}
+                      zoomLevel={zoomLevel}
+                      transmitNavigatorStatus={index === 0}
+                    />
+                  </div>
+                </TabPanel>
+              );
+            })
+            .filter(Boolean)}
         </Tabs>
       )}
-      <div
-        className={cx(styles.devicesContainer, {
-          [styles.flexigrid]: layout === FLEXIGRID_LAYOUT,
-          [styles.horizontal]: layout === HORIZONTAL_LAYOUT,
-        })}
-      >
-        {devices.map((device, index) => (
-          <div
-            key={device.id}
-            className={cx({
-              [styles.tab]: layout === INDIVIDUAL_LAYOUT,
-              [styles.activeTab]:
-                layout === INDIVIDUAL_LAYOUT && activeTab === index,
-            })}
-          >
-            <Renderer
-              hidden={!isDeviceEligible(device, props.browser.filters)}
-              device={device}
-              src={address}
-              zoomLevel={zoomLevel}
-              transmitNavigatorStatus={index === 0}
-            />
-          </div>
-        ))}
-      </div>
+      {(layout === FLEXIGRID_LAYOUT || layout === HORIZONTAL_LAYOUT) && (
+        <div
+          className={cx(styles.devicesContainer, {
+            [styles.flexigrid]: layout === FLEXIGRID_LAYOUT,
+            [styles.horizontal]: layout === HORIZONTAL_LAYOUT,
+          })}
+        >
+          {devices.map((device, index) => (
+            <div key={device.id}>
+              <Renderer
+                hidden={!isDeviceEligible(device, props.browser.filters)}
+                device={device}
+                src={address}
+                zoomLevel={zoomLevel}
+                transmitNavigatorStatus={index === 0}
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
