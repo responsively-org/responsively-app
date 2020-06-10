@@ -3,6 +3,7 @@
 export default {
   extensions: [
     {
+      id: '1',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -37,6 +38,7 @@ export default {
       },
     },
     {
+      id: '2',
       type: 'emulated-device',
       order: 30,
       device: {
@@ -90,6 +92,7 @@ export default {
       },
     },
     {
+      id: '3',
       type: 'emulated-device',
       order: 31,
       device: {
@@ -143,6 +146,7 @@ export default {
       },
     },
     {
+      id: '4',
       type: 'emulated-device',
       order: 32,
       device: {
@@ -196,6 +200,7 @@ export default {
       },
     },
     {
+      id: '5',
       type: 'emulated-device',
       order: 33,
       device: {
@@ -231,6 +236,7 @@ export default {
       },
     },
     {
+      id: '6',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -265,6 +271,7 @@ export default {
       },
     },
     {
+      id: '7',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -299,6 +306,7 @@ export default {
       },
     },
     {
+      id: '8',
       type: 'emulated-device',
       device: {
         title: 'Nexus 5',
@@ -365,6 +373,7 @@ export default {
       },
     },
     {
+      id: '9',
       type: 'emulated-device',
       device: {
         title: 'Nexus 5X',
@@ -439,6 +448,7 @@ export default {
       },
     },
     {
+      id: '10',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -473,6 +483,7 @@ export default {
       },
     },
     {
+      id: '11',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -515,6 +526,7 @@ export default {
       },
     },
     {
+      id: '12',
       type: 'emulated-device',
       order: 20,
       device: {
@@ -550,6 +562,7 @@ export default {
       },
     },
     {
+      id: '13',
       type: 'emulated-device',
       order: 21,
       device: {
@@ -585,6 +598,7 @@ export default {
       },
     },
     {
+      id: '14',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -619,6 +633,7 @@ export default {
       },
     },
     {
+      id: '15',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -653,6 +668,7 @@ export default {
       },
     },
     {
+      id: '16',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -687,6 +703,7 @@ export default {
       },
     },
     {
+      id: '17',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -721,6 +738,7 @@ export default {
       },
     },
     {
+      id: '18',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -755,6 +773,7 @@ export default {
       },
     },
     {
+      id: '19',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -789,6 +808,7 @@ export default {
       },
     },
     {
+      id: '20',
       type: 'emulated-device',
       order: 10,
       device: {
@@ -824,6 +844,7 @@ export default {
       },
     },
     {
+      id: '21',
       type: 'emulated-device',
       order: 1,
       device: {
@@ -859,6 +880,7 @@ export default {
       },
     },
     {
+      id: '22',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -893,6 +915,7 @@ export default {
       },
     },
     {
+      id: '23',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -927,6 +950,7 @@ export default {
       },
     },
     {
+      id: '24',
       type: 'emulated-device',
       order: 40,
       device: {
@@ -980,6 +1004,7 @@ export default {
       },
     },
     {
+      id: '25',
       type: 'emulated-device',
       order: 41,
       device: {
@@ -1015,6 +1040,7 @@ export default {
       },
     },
     {
+      id: '26',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -1049,6 +1075,7 @@ export default {
       },
     },
     {
+      id: '27',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -1083,6 +1110,7 @@ export default {
       },
     },
     {
+      id: '28',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -1117,6 +1145,7 @@ export default {
       },
     },
     {
+      id: '29',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -1151,6 +1180,7 @@ export default {
       },
     },
     {
+      id: '30',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -1185,6 +1215,7 @@ export default {
       },
     },
     {
+      id: '31',
       type: 'emulated-device',
       device: {
         'show-by-default': true,
@@ -1213,6 +1244,7 @@ export default {
       },
     },
     {
+      id: '32',
       type: 'emulated-device',
       device: {
         'show-by-default': false,
@@ -1241,6 +1273,7 @@ export default {
       },
     },
     {
+      id: '33',
       type: 'emulated-device',
       device: {
         'show-by-default': false,

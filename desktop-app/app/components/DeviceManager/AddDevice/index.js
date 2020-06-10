@@ -32,7 +32,12 @@ import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import {DEVICE_TYPE, CAPABILITIES, OS} from '../../../constants/devices';
+import {
+  DEVICE_TYPE,
+  CAPABILITIES,
+  OS,
+  SOURCE,
+} from '../../../constants/devices';
 import {lightIconsColor, themeColor} from '../../../constants/colors';
 import Switch from 'react-switch';
 
@@ -75,8 +80,8 @@ const useStyles = makeStyles(theme => ({
 export default function AddDevice(props) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
+  const [width, setWidth] = useState(400);
+  const [height, setHeight] = useState(600);
   const [userAgentString, setUserAgentString] = useState('');
   const [previewState, setPreviewState] = useState(true);
   const [capabilities, setCapabilities] = useState({
@@ -88,7 +93,6 @@ export default function AddDevice(props) {
   const classes = useStyles();
 
   const updateUserAgent = () => {
-    console.log(os, deviceType);
     let userAgent =
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36';
     if (os === OS.android) {
@@ -157,7 +161,7 @@ export default function AddDevice(props) {
   const closeDialog = () => setOpen(false);
 
   const saveDevice = () => {
-    props.addNewDevice({
+    props.addCustomDevice({
       name,
       width: parseInt(width, 10),
       height: parseInt(height, 10),
@@ -167,10 +171,14 @@ export default function AddDevice(props) {
       type: deviceType,
       capabilities: Object.keys(capabilities).filter(val => capabilities[val]),
       os,
+      source: SOURCE.custom,
     });
     closeDialog();
+    setName('');
+    setWidth(400);
+    setHeight(600);
+    setPreviewState(true);
   };
-  console.log('capabilities', capabilities);
   return (
     <Fragment>
       <Fab

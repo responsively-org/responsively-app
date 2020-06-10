@@ -103,7 +103,7 @@ class AddressBar extends React.Component<Props> {
                 this.props.address == this.props.homepage,
             })}
           >
-            <Tooltip title="Set a Homepage">
+            <Tooltip title="Set as Homepage">
               <div
                 className={cx(commonStyles.flexAlignVerticalMiddle)}
                 onClick={this.props.setHomepage}

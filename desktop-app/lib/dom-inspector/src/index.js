@@ -432,9 +432,10 @@ class DomInspector {
     $('.class', this.overlay.tips).innerHTML = [...this.target.classList]
       .map(item => `.${item}`)
       .join('');
-    $('.size', this.overlay.tips).innerHTML = `${marginLevel.width}x${
-      marginLevel.height
-    }`;
+    $(
+      '.size',
+      this.overlay.tips
+    ).innerHTML = `${marginLevel.width}x${marginLevel.height}`;
 
     let tipsTop = 0;
     if (elementInfo.top >= 24 + 8) {

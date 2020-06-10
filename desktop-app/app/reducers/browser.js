@@ -7,14 +7,15 @@ import {
   NEW_DRAWER_CONTENT,
   NEW_PREVIEWER_CONFIG,
   NEW_ACTIVE_DEVICES,
-  NEW_ACTIVE_DEVICE,
+  NEW_CUSTOM_DEVICE,
   NEW_FILTERS,
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
+  DELETE_CUSTOM_DEVICE,
   TMP_SCREENSHOT_CONFIG,
 } from '../actions/browser';
 import type {Action} from './types';
-import devices from '../constants/devices';
+import getAllDevices from '../constants/devices';
 import settings from 'electron-settings';
 import type {Device} from '../constants/devices';
 import {
@@ -22,7 +23,11 @@ import {
   INDIVIDUAL_LAYOUT,
 } from '../constants/previewerLayouts';
 import {DEVICE_MANAGER} from '../constants/DrawerContents';
-import {ACTIVE_DEVICES, USER_PREFERENCES} from '../constants/settingKeys';
+import {
+  ACTIVE_DEVICES,
+  USER_PREFERENCES,
+  CUSTOM_DEVICES,
+} from '../constants/settingKeys';
 import {isIfStatement} from 'typescript';
 import {getHomepage, saveHomepage} from '../utils/navigatorUtils';
 
@@ -82,7 +87,10 @@ export type BrowserStateType = {
 let _activeDevices = null;
 
 function _saveActiveDevices(devices) {
-  settings.set(ACTIVE_DEVICES, devices);
+  settings.set(
+    ACTIVE_DEVICES,
+    devices.map(device => device.name)
+  );
   _activeDevices = devices;
 }
 
@@ -90,9 +98,15 @@ function _getActiveDevices() {
   if (_activeDevices) {
     return _activeDevices;
   }
-  let activeDevices = settings.get(ACTIVE_DEVICES);
-  if (!activeDevices) {
-    activeDevices = devices.filter(device => device.added);
+  let activeDeviceNames = settings.get(ACTIVE_DEVICES);
+  let activeDevices = null;
+  if (activeDeviceNames && activeDeviceNames.length) {
+    activeDevices = activeDeviceNames
+      .map(name => getAllDevices().find(device => device.name === name))
+      .filter(Boolean);
+  }
+  if (!activeDevices || !activeDevices.length) {
+    activeDevices = getAllDevices().filter(device => device.added);
     _saveActiveDevices(activeDevices);
   }
   return activeDevices;
@@ -125,6 +139,7 @@ export default function browser(
     previewer: {layout: FLEXIGRID_LAYOUT},
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
     userPreferences: _getUserPreferences(),
+    allDevices: getAllDevices(),
     tmpScreenshotConfig: {},
   },
   action: Action
@@ -168,10 +183,17 @@ export default function browser(
     case NEW_ACTIVE_DEVICES:
       _saveActiveDevices(action.devices);
       return {...state, devices: action.devices};
-    case NEW_ACTIVE_DEVICE:
-      const devices = [...state.devices, action.device];
-      _saveActiveDevices(devices);
-      return {...state, devices};
+    case NEW_CUSTOM_DEVICE:
+      const existingDevices = settings.get(CUSTOM_DEVICES) || [];
+      settings.set(CUSTOM_DEVICES, [action.device, ...existingDevices]);
+      return {...state, allDevices: getAllDevices()};
+    case DELETE_CUSTOM_DEVICE:
+      const existingCustomDevices = settings.get(CUSTOM_DEVICES) || [];
+      settings.set(
+        CUSTOM_DEVICES,
+        existingCustomDevices.filter(device => device.id != action.device.id)
+      );
+      return {...state, allDevices: getAllDevices()};
     case NEW_FILTERS:
       return {...state, filters: action.filters};
     case NEW_USER_PREFERENCES:

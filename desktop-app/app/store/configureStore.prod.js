@@ -8,9 +8,13 @@ import createRootReducer from '../reducers';
 const history = createHashHistory();
 const rootReducer = createRootReducer(history);
 const router = routerMiddleware(history);
-const heap = () => (next) => (action) => {
+const heap = () => next => action => {
   window.requestIdleCallback(() => {
-    window.heap && window.heap.track(`ACTION-${action.type}`, {type: action.type, payload: JSON.stringify(action)});
+    window.heap &&
+      window.heap.track(`ACTION-${action.type}`, {
+        type: action.type,
+        payload: JSON.stringify(action),
+      });
   });
   return next(action);
 };

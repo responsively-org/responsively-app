@@ -10,6 +10,7 @@ import {
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
+  RELOAD_CSS,
   DELETE_STORAGE,
 } from '../constants/pubsubEvents';
 import {FLEXIGRID_LAYOUT} from '../constants/previewerLayouts';
@@ -23,7 +24,8 @@ export const NEW_NAVIGATOR_STATUS = 'NEW_NAVIGATOR_STATUS';
 export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
 export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
-export const NEW_ACTIVE_DEVICE = 'NEW_ACTIVE_DEVICE';
+export const NEW_CUSTOM_DEVICE = 'NEW_CUSTOM_DEVICE';
+export const DELETE_CUSTOM_DEVICE = 'DELETE_CUSTOM_DEVICE';
 export const NEW_FILTERS = 'NEW_FILTERS';
 export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
 export const TMP_SCREENSHOT_CONFIG = 'TMP_SCREENSHOT_CONFIG';
@@ -98,9 +100,16 @@ export function newActiveDevices(devices) {
   };
 }
 
-export function newActiveDevice(device) {
+export function newCustomDevice(device) {
   return {
-    type: NEW_ACTIVE_DEVICE,
+    type: NEW_CUSTOM_DEVICE,
+    device,
+  };
+}
+
+export function deleteCustomDevice(device) {
+  return {
+    type: DELETE_CUSTOM_DEVICE,
     device,
   };
 }
@@ -125,8 +134,26 @@ export function onAddressChange(newURL, force) {
       return;
     }
 
+    const isHashDiff = isHashOnlyChange(newURL, address);
+
+    if (isHashDiff) {
+      return;
+    }
+
     dispatch(newAddress(newURL));
   };
+}
+
+function isHashOnlyChange(newURL, oldURL) {
+  if (!newURL || !oldURL) {
+    return false;
+  }
+  let diff = newURL.replace(oldURL, '').trim();
+  if (diff.startsWith('/')) {
+    diff = diff.substring(1);
+  }
+
+  return diff.startsWith('#');
 }
 
 export function onZoomChange(newLevel) {
@@ -274,15 +301,23 @@ export function setActiveDevices(newDevices) {
   };
 }
 
-export function addNewDevice(newDevice) {
+export function addCustomDevice(newDevice) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {devices},
     } = getState();
 
+    dispatch(newCustomDevice(newDevice));
+
     if (newDevice.added) {
       dispatch(newActiveDevices([...devices, newDevice]));
     }
+  };
+}
+
+export function deleteDevice(device) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(deleteCustomDevice(device));
   };
 }
 
@@ -449,7 +484,7 @@ export function triggerNavigationForward() {
 
 export function triggerNavigationReload(_, args) {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    const ignoreCache = (args || {}).ignoreCache;
+    const ignoreCache = (args || {}).ignoreCache || false;
     pubsub.publish(NAVIGATION_RELOAD, [{ignoreCache}]);
   };
 }
@@ -476,5 +511,11 @@ export function deleteStorage() {
         ],
       },
     ]);
+  };
+}
+
+export function reloadCSS() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(RELOAD_CSS);
   };
 }

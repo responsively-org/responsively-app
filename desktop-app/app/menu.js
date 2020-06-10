@@ -1,5 +1,18 @@
 // @flow
-import {app, dialog, Menu, shell, BrowserWindow} from 'electron';
+import {
+  app,
+  dialog,
+  Menu,
+  shell,
+  BrowserWindow,
+  clipboard,
+  screen,
+} from 'electron';
+import * as os from 'os';
+import {pkg} from './utils/generalUtils';
+import {getAllShortcuts, registerShortcut} from './shortcut-manager/main-shortcut-manager';
+
+const path = require('path');
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -40,7 +53,89 @@ export default class MenuBuilder {
       {
         label: 'Follow on Twitter',
         click() {
-          shell.openExternal('https://twitter.com/ResponsivelyApp');
+          shell.openExternal(
+            'https://twitter.com/intent/follow?original_referer=app&ref_src=twsrc%5Etfw&region=follow_link&screen_name=ResponsivelyApp&tw_p=followbutton'
+          );
+        },
+      },
+      {
+        label: 'Keyboard Shortcuts',
+        click: () => {
+          const {getCursorScreenPoint, getDisplayNearestPoint} = screen;
+          
+          let win = new BrowserWindow({
+            parent: BrowserWindow.getFocusedWindow(),
+            frame: false,
+            webPreferences: {
+              devTools: false,
+              nodeIntegration: true,
+              additionalArguments: [JSON.stringify(getAllShortcuts())]
+            },
+          });
+
+          const currentScreen = getDisplayNearestPoint(getCursorScreenPoint());
+          win.setPosition(currentScreen.workArea.x, currentScreen.workArea.y);
+
+          win.center();
+
+          win.loadURL(`file://${__dirname}/shortcuts.html`);
+
+          win.once('ready-to-show', () => {
+            win.show();
+          });
+
+          win.on('blur', () => {
+            win.close();
+          });
+
+          win.on('closed', () => {
+            win = null;
+          });
+        },
+      },
+      {
+        label: 'About',
+        accelerator: 'F1',
+        click() {
+          const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
+          const title = 'Responsively';
+          const description = pkg.description;
+          const version = pkg.version || 'Unknown';
+          const electron = process.versions['electron'] || 'Unknown';
+          const chrome = process.versions['chrome'] || 'Unknown';
+          const node = process.versions['node'] || 'Unknown';
+          const v8 = process.versions['v8'] || 'Unknown';
+          const osText =
+            `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
+          const usefulInfo = `Version: ${version}\nElectron: ${electron}\nChrome: ${chrome}\nNode.js: ${node}\nV8: ${v8}\nOS: ${osText}`;
+          const detail = description
+            ? `${description}\n\n${usefulInfo}`
+            : usefulInfo;
+          let buttons = ['OK', 'Copy'];
+          let cancelId = 0;
+          let defaultId = 1;
+          if (process.platform === 'linux') {
+            buttons = ['Copy', 'OK'];
+            cancelId = 1;
+            defaultId = 0;
+          }
+          dialog
+            .showMessageBox(BrowserWindow.getAllWindows()[0], {
+              type: 'none',
+              buttons,
+              title,
+              message: title,
+              detail,
+              noLink: true,
+              icon: iconPath,
+              cancelId,
+              defaultId,
+            })
+            .then(({response}) => {
+              if (response === defaultId) {
+                clipboard.writeText(usefulInfo, 'clipboard');
+              }
+            });
         },
       },
     ],
@@ -51,15 +146,19 @@ export default class MenuBuilder {
     submenu: [
       {
         label: 'Open HTML file',
-        accelerator: 'Command+O',
+        accelerator: 'CommandOrControl+O',
         click: () => {
           const selected = dialog.showOpenDialogSync({
             filters: [{name: 'HTML', extensions: ['htm', 'html']}],
           });
-          if (!selected || !selected.length) {
+          if (!selected || !selected.length || !selected[0]) {
             return;
           }
-          this.mainWindow.webContents.send('address-change', selected[0]);
+          let filePath = selected[0];
+          if (!filePath.startsWith('file://')) {
+            filePath = 'file://' + filePath;
+          }
+          this.mainWindow.webContents.send('address-change', filePath);
         },
       },
     ],
@@ -78,6 +177,7 @@ export default class MenuBuilder {
         ? this.buildDarwinTemplate()
         : this.buildDefaultTemplate();
 
+    this.registerMenuShortcuts(template);
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 
@@ -104,12 +204,12 @@ export default class MenuBuilder {
     const subMenuAbout = {
       label: 'Responsively',
       submenu: [
-        {
-          label: 'About ResponsivelyApp',
-          selector: 'orderFrontStandardAboutPanel:',
-        },
+        // {
+        //   label: 'About ResponsivelyApp',
+        //   selector: 'orderFrontStandardAboutPanel:',
+        // },
         {type: 'separator'},
-        {label: 'Services', submenu: []},
+        // {label: 'Services', submenu: []},
         {type: 'separator'},
         {
           label: 'Hide ResponsivelyApp',
@@ -170,6 +270,13 @@ export default class MenuBuilder {
           },
         },
         {
+          label: '&ReloadCSS',
+          accelerator: 'Alt+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-css');
+          },
+        },
+        {
           label: 'Toggle Full Screen',
           accelerator: 'Ctrl+Command+F',
           click: () => {
@@ -178,7 +285,7 @@ export default class MenuBuilder {
         },
         {
           label: 'Toggle Developer Tools',
-          accelerator: 'Alt+Command+I',
+          accelerator: 'Command+Shift+I',
           click: () => {
             this.mainWindow.toggleDevTools();
           },
@@ -200,6 +307,13 @@ export default class MenuBuilder {
           accelerator: 'CommandOrControl+Shift+R',
           click: () => {
             this.mainWindow.webContents.send('reload-url', {ignoreCache: true});
+          },
+        },
+        {
+          label: '&ReloadCSS',
+          accelerator: 'Alt+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload-css');
           },
         },
         {
@@ -292,6 +406,13 @@ export default class MenuBuilder {
                   },
                 },
                 {
+                  label: '&ReloadCSS',
+                  accelerator: 'Alt+R',
+                  click: () => {
+                    this.mainWindow.webContents.send('reload-css');
+                  },
+                },
+                {
                   label: 'Reload Ignoring Cache',
                   accelerator: 'CommandOrControl+Shift+R',
                   click: () => {
@@ -315,5 +436,27 @@ export default class MenuBuilder {
     ];
 
     return templateDefault;
+  }
+
+  registerMenuShortcuts(template: Array<(MenuItemConstructorOptions) | (MenuItem)>, id:string='Menu') {
+    if ((template || []).length === 0) return;
+    
+    for(let i = 0; i < template.length; i++) {
+      const item = template[i];
+      if (item == null) continue;
+
+      const label = (item.label || `submenu${i}`).split('&').join('');
+      const levelId = `${id}_${label}`;
+      
+      if (item.accelerator != null)
+        registerShortcut({id: levelId, title: label, accelerators: [item.accelerator]});
+      
+      if (item.submenu == null) continue;
+      
+      if (Array.isArray(item.submenu))
+        this.registerMenuShortcuts(item.submenu, levelId);
+      else
+        this.registerMenuShortcuts([item.submenu], levelId);
+    }
   }
 }

@@ -17,6 +17,7 @@ import {
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
   DISABLE_INSPECTOR_ALL_DEVICES,
+  RELOAD_CSS,
   DELETE_STORAGE,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
@@ -80,6 +81,9 @@ class WebView extends Component {
       pubsub.subscribe(NAVIGATION_RELOAD, this.processNavigationReloadEvent)
     );
     this.subscriptions.push(
+      pubsub.subscribe(RELOAD_CSS, this.processReloadCSSEvent)
+    );
+    this.subscriptions.push(
       pubsub.subscribe(DELETE_STORAGE, this.processDeleteStorageEvent)
     );
     this.subscriptions.push(
@@ -132,20 +136,13 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener(
       'login',
       (event, request, authInfo, callback) => {
-        console.log(
-          'event, request, authInfo, callback',
-          event,
-          request,
-          authInfo,
-          callback
-        );
         event.preventDefault();
         callback('username', 'secret');
       }
     );
 
-    const urlChangeHandler = ({url}) => {
-      if (url === this.props.browser.address) {
+    const urlChangeHandler = ({url, isMainFrame = true}) => {
+      if (!isMainFrame || url === this.props.browser.address) {
         return;
       }
       this.props.onAddressChange(url);
@@ -217,6 +214,19 @@ class WebView extends Component {
       return this.webviewRef.current.reloadIgnoringCache();
     }
     this.webviewRef.current.reload();
+  };
+
+  processReloadCSSEvent = () => {
+    this.webviewRef.current.executeJavaScript(`
+        var elements = document.querySelectorAll('link[rel=stylesheet][href]');
+        elements.forEach(element=>{
+          var href = element.href;
+          if(href){
+            var href = href.replace(/[?&]invalidateCacheParam=([^&$]*)/,'');
+            element.href = href + (href.indexOf('?')>=0?'&':'?') + 'invalidateCacheParam=' + (new Date().valueOf());
+          }
+        })
+    `);
   };
 
   processDeleteStorageEvent = ({storages}) => {
@@ -374,13 +384,13 @@ class WebView extends Component {
       });
 
       document.addEventListener(
-        'click', 
+        'click',
         (e) => {
           if (e.target === window.responsivelyApp.lastClickElement || e.responsivelyAppProcessed) {
             window.responsivelyApp.lastClickElement = null;
             e.responsivelyAppProcessed = true;
             return;
-          } 
+          }
           if (window.responsivelyApp.domInspectorEnabled) {
             e.preventDefault();
             window.responsivelyApp.domInspector.disable();
@@ -397,7 +407,7 @@ class WebView extends Component {
           }
           e.responsivelyAppProcessed = true;
           window.responsivelyApp.sendMessageToHost(
-            '${MESSAGE_TYPES.click}', 
+            '${MESSAGE_TYPES.click}',
             {
               cssPath: window.responsivelyApp.cssPath(e.target),
             }

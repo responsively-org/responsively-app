@@ -1,5 +1,4 @@
 import React, {useState, Fragment, useEffect} from 'react';
-import allDevices from '../../constants/devices';
 import {makeStyles} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
@@ -37,22 +36,24 @@ export default function DeviceManager(props) {
   const [devices, setDevices] = useState({
     active: [],
     inactive: [],
+    inactiveFiltered: [],
   });
 
-  useEffect(
-    () => {
-      const activeDevices = props.browser.devices;
-      const activeDevicesById = activeDevices.reduce((acc, val) => {
-        acc[val.id] = val;
-        return acc;
-      }, {});
-      const inactiveDevices = allDevices.filter(
-        device => !activeDevicesById[device.id]
-      );
-      setDevices({active: activeDevices, inactive: inactiveDevices});
-    },
-    [props.browser.devices.map(JSON.stringify).join(',')]
-  );
+  useEffect(() => {
+    const activeDevices = props.browser.devices;
+    const activeDevicesById = activeDevices.reduce((acc, val) => {
+      acc[val.id] = val;
+      return acc;
+    }, {});
+    const inactiveDevices = props.browser.allDevices.filter(
+      device => !activeDevicesById[device.id]
+    );
+    setDevices({active: activeDevices, inactive: inactiveDevices});
+  }, [props.browser.devices, props.browser.allDevices]);
+
+  const onInactiveListFiltering = inactiveFiltered => {
+    setDevices({...devices, inactiveFiltered});
+  };
 
   const closeDialog = () => setOpen(false);
 
@@ -62,14 +63,24 @@ export default function DeviceManager(props) {
     const sourceList = devices[source.droppableId];
     const destinationList = devices[destination.droppableId];
 
-    const itemDragged = sourceList[source.index];
-    sourceList.splice(source.index, 1);
+    const itemDragged =
+      source.droppableId === 'inactive'
+        ? devices.inactiveFiltered[source.index]
+        : sourceList[source.index];
+    sourceList.splice(sourceList.indexOf(itemDragged), 1);
 
     destinationList.splice(destination.index, 0, itemDragged);
 
-    setDevices({...devices});
-    props.setActiveDevices(devices.active);
+    updateDevices(devices);
   };
+
+  const updateDevices = devices => {
+    const active = [...devices.active];
+    const inactive = [...devices.inactive];
+    setDevices({active, inactive});
+    props.setActiveDevices(active);
+  };
+
   return (
     <Fragment>
       <Button
@@ -102,15 +113,15 @@ export default function DeviceManager(props) {
             <span>✨</span>Drag and drop the devices across to re-order them.
           </p>
           <DragDropContext onDragEnd={onDragEnd}>
-            <Grid container spacing={3} className={styles.content}>
-              <Grid item xs={3} className={styles.section}>
+            <Grid container className={styles.content}>
+              <Grid item className={styles.section}>
                 <div className={styles.listTitle}>
                   <LightBulbIcon height={30} color="#FFD517" />
                   Active Devices
                 </div>
                 <DeviceList droppableId={'active'} devices={devices.active} />
               </Grid>
-              <Grid item xs={3} className={styles.section}>
+              <Grid item className={styles.section}>
                 <div className={styles.listTitle}>
                   <LightBulbIcon height={30} color="darkgrey" />
                   Inactive Devices
@@ -118,6 +129,10 @@ export default function DeviceManager(props) {
                 <DeviceList
                   droppableId={'inactive'}
                   devices={devices.inactive}
+                  enableFiltering={true}
+                  onFiltering={onInactiveListFiltering}
+                  enableCustomDeviceDeletion={true}
+                  deleteDevice={props.deleteDevice}
                 />
               </Grid>
             </Grid>

@@ -15,7 +15,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(BrowserActions, dispatch);
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(DevicesPreviewer);
+export default connect(mapStateToProps, mapDispatchToProps)(DevicesPreviewer);
