@@ -1,6 +1,6 @@
 # Responsively App [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![Gitter chat](https://img.shields.io/gitter/room/badges/shields.svg)](https://gitter.im/responsively-app) [![xscode](https://img.shields.io/badge/Available%20on-xs%3Acode-blue?style=?style=plastic&logo=appveyor&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////////VXz1bAAAAAJ0Uk5T/wDltzBKAAAAlUlEQVR42uzXSwqAMAwE0Mn9L+3Ggtgkk35QwcnSJo9S+yGwM9DCooCbgn4YrJ4CIPUcQF7/XSBbx2TEz4sAZ2q1RAECBAiYBlCtvwN+KiYAlG7UDGj59MViT9hOwEqAhYCtAsUZvL6I6W8c2wcbd+LIWSCHSTeSAAECngN4xxIDSK9f4B9t377Wd7H5Nt7/Xz8eAgwAvesLRjYYPuUAAAAASUVORK5CYII=)](https://xscode.com/manojvivek/responsively-app)
 
@@ -74,6 +74,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/RomainFrancony"><img src="https://avatars3.githubusercontent.com/u/22396965?v=4" width="100px;" alt=""/><br /><sub><b>Romain Francony</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=RomainFrancony" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/AARYAN-MAHENDRA"><img src="https://avatars1.githubusercontent.com/u/64866670?v=4" width="100px;" alt=""/><br /><sub><b>AARYAN-MAHENDRA</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=AARYAN-MAHENDRA" title="Code">💻</a></td>
   </tr>
 </table>
 
