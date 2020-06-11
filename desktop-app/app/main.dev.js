@@ -18,6 +18,7 @@ import electron, {
   globalShortcut,
   ipcMain,
   webContents,
+  nativeTheme,
 } from 'electron';
 import {autoUpdater} from 'electron-updater';
 import settings from 'electron-settings';
@@ -33,6 +34,7 @@ import devtron from 'devtron';
 import fs from 'fs';
 import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
+import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
 
 const path = require('path');
 
@@ -98,6 +100,9 @@ const openUrl = url => {
  */
 
 app.on('will-finish-launching', () => {
+  if (process.platform === 'win32') {
+    urlToOpen = process.argv.filter(i => /^responsively/.test(i))[0];
+  }
   if (['win32', 'darwin'].includes(process.platform)) {
     if (process.argv.length >= 2) {
       app.setAsDefaultProtocolClient(protocol, process.execPath, [
@@ -198,6 +203,8 @@ const createWindow = async () => {
     }
   });
 
+  initMainShortcutManager();
+
   mainWindow.on('resize', function() {
     const [width, height] = mainWindow.getSize();
     mainWindow.webContents.send('window-resize', {height, width});
@@ -207,8 +214,9 @@ const createWindow = async () => {
     if (urlToOpen) {
       openUrl(urlToOpen);
       urlToOpen = null;
+    } else {
+      mainWindow.show();
     }
-    mainWindow.show();
   });
 
   ipcMain.on('http-auth-promt-response', (event, ...args) => {
@@ -221,6 +229,10 @@ const createWindow = async () => {
     }
     httpAuthCallbacks[url].forEach(cb => cb(username, password));
     httpAuthCallbacks[url] = null;
+  });
+
+  ipcMain.on('prefers-color-scheme-select', (event, scheme) => {
+    nativeTheme.themeSource = scheme || 'system';
   });
 
   ipcMain.on('open-devtools', (event, ...args) => {
