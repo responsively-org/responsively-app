@@ -1,7 +1,9 @@
 .toolbarContainer {
-  height: 21px;
+  height: 20px;
   color: rgb(165, 165, 165);
-  border-bottom: 1px solid rgb(61, 61, 61);
+  border-color: rgb(61, 61, 61);
+  border-style: solid;
+  border-width: 1px 0;
   background-color: #333333;
   display: flex;
   justify-content: space-between;
@@ -12,7 +14,7 @@
   .toolbarContainer {
     background: #f3f3f3;
     color: #555;
-    border-bottom: 1px solid #d0d0d0;
+    border-color: #d0d0d0;
   }
 }
 

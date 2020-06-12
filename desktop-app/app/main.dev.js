@@ -19,6 +19,7 @@ import electron, {
   ipcMain,
   webContents,
   nativeTheme,
+  ipcRenderer,
 } from 'electron';
 import {autoUpdater} from 'electron-updater';
 import settings from 'electron-settings';
@@ -184,6 +185,8 @@ const createWindow = async () => {
     titleBarStyle: 'hidden',
     icon: iconPath,
   });
+
+  ipcMain.removeAllListeners();
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 

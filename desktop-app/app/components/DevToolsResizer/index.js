@@ -76,7 +76,7 @@ const DevToolsResizer = ({
           style={{width: '100%', ...getToolbarPosition(mode, bounds)}}
         >
           <div className={styles.toolsGroup}>
-            <span onClick={toggleInspector}>
+            <span className={styles.icon} onClick={toggleInspector}>
               <InspectElementChrome
                 style={{height: 16}}
                 selected={isInspecting}
