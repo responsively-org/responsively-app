@@ -14,6 +14,10 @@ import {
   getAllShortcuts,
   registerShortcut,
 } from './shortcut-manager/main-shortcut-manager';
+import {
+  appUpdater, 
+  AppUpdaterState
+} from './app-updater';
 
 const path = require('path');
 
@@ -97,6 +101,22 @@ export default class MenuBuilder {
         },
       },
       {
+        label: 'Check for Updates...',
+        id: 'CHECK_FOR_UPDATES',
+        click() {
+          appUpdater.checkForUpdatesAndNotify().then(r => {
+            if (r == null || r.updateInfo == null || r.updateInfo.version === pkg.version) {
+              dialog
+                .showMessageBox(BrowserWindow.getAllWindows()[0], {
+                  type: 'info',
+                  title: 'Responsively',
+                  message: 'There are currently no updates available'
+                });
+            }
+          });
+        },
+      },
+      {
         label: 'About',
         accelerator: 'F1',
         click() {
@@ -167,7 +187,32 @@ export default class MenuBuilder {
     ],
   };
 
-  buildMenu() {
+  getCheckForUpdatesMenuState() {
+    const updaterState = appUpdater.getCurrentState();
+    let label = 'Check for Updates...';
+    let enabled = true;
+    
+    if (updaterState === AppUpdaterState.Checking) {
+      enabled = false;
+      label = 'Checking for Updates...';
+    }
+    else if (updaterState === AppUpdaterState.Downloading) {
+      enabled = false;
+      label = 'Downloading Update...';
+    }
+
+    return {label, enabled};
+  }
+
+  buildMenu(isUpdate: boolean = false) {
+
+    if (isUpdate) {
+      const chkUpdtMenu = this.subMenuHelp.submenu.find(x => x.id === 'CHECK_FOR_UPDATES');
+      const {label, enabled} = this.getCheckForUpdatesMenuState(); 
+      chkUpdtMenu.label = label;
+      chkUpdtMenu.enabled = enabled;
+    }
+
     if (
       process.env.NODE_ENV === 'development' ||
       process.env.DEBUG_PROD === 'true'
@@ -180,7 +225,9 @@ export default class MenuBuilder {
         ? this.buildDarwinTemplate()
         : this.buildDefaultTemplate();
 
-    this.registerMenuShortcuts(template);
+    if (!isUpdate) {
+      this.registerMenuShortcuts(template);
+    }
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 
