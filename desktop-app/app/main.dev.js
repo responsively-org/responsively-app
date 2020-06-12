@@ -35,6 +35,7 @@ import fs from 'fs';
 import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
+import console from 'electron-timber';
 
 const path = require('path');
 

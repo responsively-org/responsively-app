@@ -28,6 +28,7 @@ import UnplugIcon from '../icons/Unplug';
 import {captureFullPage} from './screenshotUtil';
 import {Tooltip} from '@material-ui/core';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
+import console from 'electron-timber';
 
 const BrowserWindow = remote.BrowserWindow;
 

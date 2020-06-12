@@ -22,7 +22,7 @@ import {
   triggerScrollDown,
   screenshotAllDevices,
   flipOrientationAllDevices,
-  enableInpector,
+  toggleInspector,
   goToHomepage,
   triggerNavigationBack,
   triggerNavigationForward,
@@ -151,7 +151,7 @@ export default class Root extends Component<Props> {
         accelerators: ['mod+i'],
       },
       () => {
-        store.dispatch(enableInpector());
+        store.dispatch(toggleInspector());
       },
       true
     );
