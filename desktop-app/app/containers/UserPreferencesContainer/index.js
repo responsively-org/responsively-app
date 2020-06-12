@@ -9,6 +9,7 @@ import * as BrowserActions from '../../actions/browser';
 function mapStateToProps(state) {
   return {
     userPreferences: state.browser.userPreferences,
+    devToolsConfig: state.browser.devToolsConfig,
   };
 }
 

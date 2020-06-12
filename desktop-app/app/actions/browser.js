@@ -363,16 +363,31 @@ export function onDevToolsModeChange(_mode) {
       browser: {devToolsConfig, windowSize},
     } = getState();
 
-    const {mode} = devToolsConfig;
+    const {mode, activeDevTools, open} = devToolsConfig;
 
     if (mode === _mode) {
       return;
     }
 
+    let newActiveDevTools = [...activeDevTools];
+    let newOpen = open;
+
+    if (_mode === DEVTOOLS_MODES.UNDOCKED || mode === DEVTOOLS_MODES.UNDOCKED) {
+      newActiveDevTools.forEach(({webViewId}) => {
+        ipcRenderer.send('close-devtools', {webViewId});
+      });
+      newActiveDevTools = [];
+      dispatch(onDevToolsClose(null, true));
+      newOpen = false;
+    }
+
     if (_mode === DEVTOOLS_MODES.UNDOCKED) {
-      ipcRenderer.send('close-devtools', devToolsConfig);
-      const newConfig = {...devToolsConfig, mode: _mode};
-      ipcRenderer.send('open-devtools', newConfig);
+      const newConfig = {
+        ...devToolsConfig,
+        mode: _mode,
+        activeDevTools: newActiveDevTools,
+        open: newOpen,
+      };
       return dispatch(newDevToolsConfig(newConfig));
     }
 
@@ -386,6 +401,8 @@ export function onDevToolsModeChange(_mode) {
         size,
         bounds: newBounds,
         mode: _mode,
+        activeDevTools: newActiveDevTools,
+        open: newOpen,
       })
     );
   };

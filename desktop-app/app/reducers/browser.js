@@ -33,6 +33,7 @@ import {
 } from '../constants/settingKeys';
 import {isIfStatement} from 'typescript';
 import {getHomepage, saveHomepage} from '../utils/navigatorUtils';
+import console from 'electron-timber';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -88,6 +89,7 @@ type PreviewerType = {
 type UserPreferenceType = {
   disableSSLValidation: boolean,
   drawerState: boolean,
+  devToolsOpenMode: DevToolsOpenModeType,
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
@@ -180,6 +182,10 @@ function getWindowSize() {
   return remote.screen.getPrimaryDisplay().workAreaSize;
 }
 
+function _getUserPreferencesDevToolsMode() {
+  return _getUserPreferences().devToolsOpenMode || DEVTOOLS_MODES.BOTTOM;
+}
+
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
@@ -202,13 +208,17 @@ export default function browser(
     allDevices: getAllDevices(),
     devToolsConfig: {
       size: getDefaultDevToolsWindowSize(
-        DEVTOOLS_MODES.BOTTOM,
+        _getUserPreferencesDevToolsMode(),
         getWindowSize()
       ),
       open: false,
-      mode: DEVTOOLS_MODES.BOTTOM,
+      mode: _getUserPreferencesDevToolsMode(),
       activeDevTools: [],
-      bounds: getBounds(DEVTOOLS_MODES.BOTTOM, null, getWindowSize()),
+      bounds: getBounds(
+        _getUserPreferencesDevToolsMode(),
+        null,
+        getWindowSize()
+      ),
     },
     isInspecting: false,
     windowSize: getWindowSize(),
@@ -268,10 +278,19 @@ export default function browser(
     case NEW_FILTERS:
       return {...state, filters: action.filters};
     case NEW_USER_PREFERENCES:
-      settings.set(USER_PREFERENCES, action.userPreferences);
+      _setUserPreferences(action.userPreferences);
       return {...state, userPreferences: action.userPreferences};
     case NEW_DEV_TOOLS_CONFIG:
-      return {...state, devToolsConfig: action.config};
+      const newState = {...state, devToolsConfig: action.config};
+      if (state.devToolsConfig.mode !== action.config.mode) {
+        const newUserPreferences = {
+          ...state.userPreferences,
+          devToolsOpenMode: action.config.mode,
+        };
+        _setUserPreferences(newUserPreferences);
+        newState.userPreferences = newUserPreferences;
+      }
+      return newState;
     case NEW_INSPECTOR_STATUS:
       return {...state, isInspecting: action.status};
     default:

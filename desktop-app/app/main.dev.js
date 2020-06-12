@@ -152,7 +152,6 @@ app.on(
 app.on('login', (event, webContents, request, authInfo, callback) => {
   event.preventDefault();
   const {url} = request;
-  console.log('Sending HTTP Auth Prompt', {url});
   if (httpAuthCallbacks[url]) {
     return httpAuthCallbacks[url].push(callback);
   }
@@ -272,11 +271,16 @@ const createWindow = async () => {
 
   ipcMain.on('close-devtools', (event, ...args) => {
     const {webViewId} = args[0];
-    if (!devToolsView || !webViewId) {
+    if (!webViewId) {
       return;
     }
     webContents.fromId(webViewId).closeDevTools();
+    if (!devToolsView) {
+      return;
+    }
     mainWindow.removeBrowserView(devToolsView);
+    devToolsView.destroy();
+    devToolsView = null;
   });
 
   ipcMain.on('resize-devtools', (event, ...args) => {
