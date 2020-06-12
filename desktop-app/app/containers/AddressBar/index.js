@@ -20,6 +20,7 @@ const AddressBar = function(props) {
       onChange={props.onAddressChange}
       homepage={props.browser.homepage}
       setHomepage={props.setCurrentAddressAsHomepage}
+      isBookmarked={props.isBookmarked}
       toggleBookmark={props.toggleBookmarkUrl}
       deleteCookies={props.deleteCookies}
       deleteStorage={props.deleteStorage}
@@ -30,6 +31,7 @@ const AddressBar = function(props) {
 function mapStateToProps(state) {
   return {
     browser: state.browser,
+    isBookmarked: state.bookmarks.bookmarks.some(b => b.url === state.browser.address)
   };
 }
 
