@@ -17,11 +17,9 @@ import electron, {
   BrowserView,
   globalShortcut,
   ipcMain,
-  webContents,
   nativeTheme,
-  ipcRenderer,
+  webContents,
 } from 'electron';
-import {autoUpdater} from 'electron-updater';
 import settings from 'electron-settings';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -37,6 +35,7 @@ import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
 import console from 'electron-timber';
+import {appUpdater} from './app-updater';
 
 const path = require('path');
 
@@ -51,14 +50,6 @@ if (process.env.NODE_ENV !== 'development') {
 const protocol = 'responsively';
 
 let hasActiveWindow = false;
-
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
 
 let mainWindow = null;
 let urlToOpen = null;
@@ -301,9 +292,12 @@ const createWindow = async () => {
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
+  appUpdater.on('status-changed', nextStatus => {
+    menuBuilder.buildMenu(true);
+    // update status bar info
+  });
   // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
+  appUpdater.checkForUpdatesAndNotify();
 };
 
 app.on('activate', (event, hasVisibleWindows) => {
