@@ -14,6 +14,7 @@ import {
   DELETE_CUSTOM_DEVICE,
   NEW_DEV_TOOLS_CONFIG,
   NEW_INSPECTOR_STATUS,
+  NEW_WINDOW_SIZE,
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
@@ -152,7 +153,7 @@ export function getBounds(mode, _size, windowSize) {
   const size = _size || getDefaultDevToolsWindowSize(mode, windowSize);
   const {width, height} = windowSize;
   if (mode === DEVTOOLS_MODES.RIGHT) {
-    const viewWidth = Math.round(size.width);
+    const viewWidth = size.width;
     const viewHeight = size.height - 64 - 20;
     return {
       x: width - viewWidth,
@@ -161,7 +162,7 @@ export function getBounds(mode, _size, windowSize) {
       height: viewHeight,
     };
   }
-  const viewHeight = Math.round(size.height) - 20;
+  const viewHeight = size.height - 20;
   return {
     x: 0,
     y: height - viewHeight,
@@ -173,9 +174,9 @@ export function getBounds(mode, _size, windowSize) {
 export function getDefaultDevToolsWindowSize(mode, windowSize) {
   const {width, height} = windowSize;
   if (mode === DEVTOOLS_MODES.RIGHT) {
-    return {width: width * 0.33, height};
+    return {width: Math.round(width * 0.33), height};
   }
-  return {width, height: height * 0.33};
+  return {width, height: Math.round(height * 0.33)};
 }
 
 function getWindowSize() {
@@ -293,6 +294,8 @@ export default function browser(
       return newState;
     case NEW_INSPECTOR_STATUS:
       return {...state, isInspecting: action.status};
+    case NEW_WINDOW_SIZE:
+      return {...state, windowSize: action.size};
     default:
       return state;
   }
