@@ -17,6 +17,7 @@ import {
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
+import console from 'electron-timber';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_DEV_TOOLS_CONFIG = 'NEW_DEV_TOOLS_CONFIG';
@@ -357,7 +358,7 @@ export function goToHomepage() {
   };
 }
 
-export function onDevToolsModeChange(_mode) {
+export function onDevToolsModeChange(newMode) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {devToolsConfig, windowSize},
@@ -365,46 +366,57 @@ export function onDevToolsModeChange(_mode) {
 
     const {mode, activeDevTools, open} = devToolsConfig;
 
-    if (mode === _mode) {
+    if (mode === newMode) {
       return;
     }
 
     let newActiveDevTools = [...activeDevTools];
     let newOpen = open;
 
-    if (_mode === DEVTOOLS_MODES.UNDOCKED || mode === DEVTOOLS_MODES.UNDOCKED) {
-      newActiveDevTools.forEach(({webViewId}) => {
-        ipcRenderer.send('close-devtools', {webViewId});
-      });
-      newActiveDevTools = [];
+    if (
+      newMode === DEVTOOLS_MODES.UNDOCKED ||
+      mode === DEVTOOLS_MODES.UNDOCKED
+    ) {
       dispatch(onDevToolsClose(null, true));
-      newOpen = false;
+      if (newActiveDevTools.length > 0) {
+        newActiveDevTools = [newActiveDevTools[0]];
+        newOpen = true;
+      } else {
+        newActiveDevTools = [];
+        newOpen = false;
+      }
     }
 
-    if (_mode === DEVTOOLS_MODES.UNDOCKED) {
-      const newConfig = {
-        ...devToolsConfig,
-        mode: _mode,
-        activeDevTools: newActiveDevTools,
-        open: newOpen,
-      };
-      return dispatch(newDevToolsConfig(newConfig));
-    }
-
-    const size = getDefaultDevToolsWindowSize(_mode, windowSize);
-    const newBounds = getBounds(_mode, size, windowSize);
-    ipcRenderer.send('resize-devtools', {bounds: newBounds});
-
-    dispatch(
-      newDevToolsConfig({
-        ...devToolsConfig,
+    let newConfig = {
+      ...devToolsConfig,
+      activeDevTools: newActiveDevTools,
+      mode: newMode,
+      open: newOpen,
+    };
+    if (newMode != DEVTOOLS_MODES.UNDOCKED) {
+      const size = getDefaultDevToolsWindowSize(newMode, windowSize);
+      const bounds = getBounds(newMode, size, windowSize);
+      newConfig = {
+        ...newConfig,
         size,
-        bounds: newBounds,
-        mode: _mode,
-        activeDevTools: newActiveDevTools,
-        open: newOpen,
-      })
-    );
+        bounds,
+      };
+    }
+
+    if (
+      newMode === DEVTOOLS_MODES.UNDOCKED ||
+      mode === DEVTOOLS_MODES.UNDOCKED
+    ) {
+      newConfig.activeDevTools.forEach(({webViewId, deviceId}) =>
+        setTimeout(() => {
+          dispatch(onDevToolsOpen(deviceId, webViewId, true));
+        })
+      );
+    } else {
+      ipcRenderer.send('resize-devtools', {bounds: newConfig.bounds});
+    }
+
+    dispatch(newDevToolsConfig(newConfig));
   };
 }
 
@@ -463,7 +475,7 @@ export function onDevToolsResize(size) {
   };
 }
 
-export function onDevToolsOpen(newDeviceId, newWebViewId) {
+export function onDevToolsOpen(newDeviceId, newWebViewId, force) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {devToolsConfig},
@@ -475,6 +487,13 @@ export function onDevToolsOpen(newDeviceId, newWebViewId) {
       open &&
       !!activeDevTools.find(({deviceId}) => deviceId === newDeviceId)
     ) {
+      if (force) {
+        ipcRenderer.send('open-devtools', {
+          bounds,
+          mode,
+          webViewId: newWebViewId,
+        });
+      }
       return;
     }
 

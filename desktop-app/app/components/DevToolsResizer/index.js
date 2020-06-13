@@ -54,6 +54,8 @@ const DevToolsResizer = ({
     };
   }, []);
 
+  const [sizeBeforeDrag, setSizeBeforeDrag] = useState(null);
+
   if (!open || mode === DEVTOOLS_MODES.UNDOCKED) {
     return null;
   }
@@ -63,10 +65,12 @@ const DevToolsResizer = ({
       <Resizable
         className={styles.resizable}
         size={{width: size.width, height: size.height}}
-        onResizeStop={(e, direction, ref, d) => {
+        onResizeStart={() => setSizeBeforeDrag(size)}
+        onResizeStop={() => setSizeBeforeDrag(null)}
+        onResize={(e, direction, ref, d) => {
           onDevToolsResize({
-            width: size.width + d.width,
-            height: size.height + d.height,
+            width: sizeBeforeDrag.width + d.width,
+            height: sizeBeforeDrag.height + d.height,
           });
         }}
         enable={getResizingDirections(mode)}
