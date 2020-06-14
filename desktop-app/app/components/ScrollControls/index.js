@@ -34,7 +34,6 @@ class ScrollControls extends Component {
           enabled: true,
         });
       } else {
-        console.log('hpa');
         contents.debugger.sendCommand('Emulation.setEmitTouchEventsForMouse', {
           enabled: false,
         });
