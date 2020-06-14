@@ -11,8 +11,7 @@
  * @flow
  */
 require('dotenv').config();
-import electron, {app, BrowserWindow, globalShortcut, ipcMain} from 'electron';
-import {autoUpdater} from 'electron-updater';
+import electron, {app, BrowserWindow, globalShortcut, ipcMain, nativeTheme} from 'electron';
 import settings from 'electron-settings';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -25,6 +24,8 @@ import installExtension, {
 import devtron from 'devtron';
 import fs from 'fs';
 import {migrateDeviceSchema} from './settings/migration';
+import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
+import {appUpdater} from './app-updater';
 
 const path = require('path');
 
@@ -39,14 +40,6 @@ if (process.env.NODE_ENV !== 'development') {
 const protocol = 'responsively';
 
 let hasActiveWindow = false;
-
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
 
 let mainWindow = null;
 let urlToOpen = null;
@@ -89,6 +82,9 @@ const openUrl = url => {
  */
 
 app.on('will-finish-launching', () => {
+  if (process.platform === 'win32') {
+    urlToOpen = process.argv.filter(i => /^responsively/.test(i))[0];
+  }
   if (['win32', 'darwin'].includes(process.platform)) {
     if (process.argv.length >= 2) {
       app.setAsDefaultProtocolClient(protocol, process.execPath, [
@@ -189,12 +185,15 @@ const createWindow = async () => {
     }
   });
 
+  initMainShortcutManager();
+
   mainWindow.once('ready-to-show', () => {
     if (urlToOpen) {
       openUrl(urlToOpen);
       urlToOpen = null;
+    } else {
+      mainWindow.show();
     }
-    mainWindow.show();
   });
 
   ipcMain.on('http-auth-promt-response', (event, ...args) => {
@@ -209,6 +208,10 @@ const createWindow = async () => {
     httpAuthCallbacks[url] = null;
   });
 
+  ipcMain.on('prefers-color-scheme-select', (event, scheme) => {
+    nativeTheme.themeSource = scheme || 'system';
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -216,9 +219,12 @@ const createWindow = async () => {
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
+  appUpdater.on('status-changed', (nextStatus) => { 
+    menuBuilder.buildMenu(true);
+    // update status bar info 
+  });
   // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
+  appUpdater.checkForUpdatesAndNotify();
 };
 
 app.on('activate', (event, hasVisibleWindows) => {

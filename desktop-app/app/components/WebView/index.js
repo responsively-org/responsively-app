@@ -141,8 +141,8 @@ class WebView extends Component {
       }
     );
 
-    const urlChangeHandler = ({url}) => {
-      if (url === this.props.browser.address) {
+    const urlChangeHandler = ({url, isMainFrame = true}) => {
+      if (!isMainFrame || url === this.props.browser.address) {
         return;
       }
       this.props.onAddressChange(url);
@@ -348,7 +348,7 @@ class WebView extends Component {
 
   initEventTriggers = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-      responsivelyApp.deviceId = ${this.props.device.id};
+      responsivelyApp.deviceId = '${this.props.device.id}';
       document.body.addEventListener('mouseleave', () => {
         window.responsivelyApp.mouseOn = false;
         if (responsivelyApp.domInspectorEnabled) {
@@ -375,13 +375,13 @@ class WebView extends Component {
       });
 
       document.addEventListener(
-        'click', 
+        'click',
         (e) => {
           if (e.target === window.responsivelyApp.lastClickElement || e.responsivelyAppProcessed) {
             window.responsivelyApp.lastClickElement = null;
             e.responsivelyAppProcessed = true;
             return;
-          } 
+          }
           if (window.responsivelyApp.domInspectorEnabled) {
             e.preventDefault();
             window.responsivelyApp.domInspector.disable();
@@ -398,7 +398,7 @@ class WebView extends Component {
           }
           e.responsivelyAppProcessed = true;
           window.responsivelyApp.sendMessageToHost(
-            '${MESSAGE_TYPES.click}', 
+            '${MESSAGE_TYPES.click}',
             {
               cssPath: window.responsivelyApp.cssPath(e.target),
             }

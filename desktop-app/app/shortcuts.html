@@ -12,6 +12,8 @@
       }
       ul {
         margin: 20px 50px;
+        overflow-y: auto;
+        max-height: 38vh;
       }
       li {
         display: flex;
@@ -40,6 +42,8 @@
         font-size: large;
         background-color: black;
         border-radius: 5px;
+        font-family: "Consolas", "Courier New", monospace;
+        white-space: pre;
       }
       .btn-wrapper {
         display: flex;
@@ -66,14 +70,54 @@
       <button id="close-btn">Close</button>
     </div>
     <script>
-      const shortcuts = [
-        ['Open HTML File', ['Cmd/Ctrl', 'O']],
-        ['Reload', ['Cmd/Ctrl', 'R']],
-        ['Reload Ignoring Cache', ['Cmd/Ctrl', 'Shift', 'R']],
-        ['Reload CSS Files In-place', ['Alt', 'R']],
-      ];
+      function firstToUpperCase(s) {
+        return s[0].toUpperCase() + s.slice(1);
+      }
+      function getNumPadName(n) {
+        const lo = n.toLowerCase();
+        if (lo === 'dec') return 'Numpad .';
+        if (lo === 'add') return 'Numpad +';
+        if (lo === 'sub') return 'Numpad -';
+        if (lo === 'mult') return 'Numpad *';
+        if (lo === 'div') return 'Numpad /';
+        return 'Numpad ' + firstToUpperCase(n);
+      }
+      function getKeyName(k) {
+        const lo = k.toLowerCase();
+        if (lo === 'mod')
+          return 'Cmd/Ctrl';
+        if (lo === 'commandorcontrol' || lo === 'cmdorctrl')
+          return 'Cmd/Ctrl';
+        if (lo === 'command')
+          return 'Cmd';
+        if (lo === 'control')
+          return 'Ctrl';
+        if (lo === 'plus')
+          return '+';
+        if (lo === 'return')
+          return 'Enter';
+        if (lo === 'escape')
+          return 'Esc';
+        if (lo === 'prtsc')
+          return 'PrtSc';
+        if (lo.startsWith('num'))
+          return getNumPadName(k.slice(3));
+        return firstToUpperCase(k);
+      }
+      function mapAccelerator(acc) {
+        return acc.split('+').map(getKeyName);
+      }    
 
-      const shortcutNodes = shortcuts.map(([label, keys]) => {
+      let registeredShortcuts = [];
+      try {
+        registeredShortcuts = JSON.parse(window.process.argv.slice(-1)).reduce((arr, def) => {
+          arr.push([def.title, mapAccelerator(def.accelerators[0])]);
+          def.accelerators.slice(1).forEach(acc => arr.push(['', mapAccelerator(acc)]))
+          return arr;
+        }, []);
+      } catch { }
+
+      const shortcutNodes = registeredShortcuts.map(([label, keys]) => {
         const liElem = document.createElement('li');
 
         const labelElem = document.createElement('div');
@@ -108,7 +152,7 @@
         if (document.readyState === 'complete') {
           document.getElementById('close-btn').addEventListener('click', () => {
             const window = BrowserWindow.getFocusedWindow();
-            window.hide();
+            window.close();
           });
         }
       };

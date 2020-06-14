@@ -12,6 +12,7 @@ import styles from './styles.module.css';
 import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
 import ZoomContainer from '../../containers/ZoomContainer';
+import PrefersColorSchemeSwitch from '../PrefersColorSchemeSwitch';
 import Tooltip from '@material-ui/core/Tooltip';
 
 class ScrollControls extends Component {
@@ -24,6 +25,9 @@ class ScrollControls extends Component {
     return (
       <div className={styles.scrollControls}>
         <Grid container spacing={1} alignItems="center">
+          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+            <PrefersColorSchemeSwitch/>
+          </Grid>
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
             <Tooltip title="Scroll Down">
               <div onClick={this.props.triggerScrollDown}>
