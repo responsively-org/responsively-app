@@ -199,10 +199,12 @@ const createWindow = async () => {
 
   initMainShortcutManager();
 
-  mainWindow.on('resize', function() {
+  const onResize = () => {
     const [width, height] = mainWindow.getSize();
     mainWindow.webContents.send('window-resize', {height, width});
-  });
+  };
+
+  mainWindow.on('resize', onResize);
 
   mainWindow.once('ready-to-show', () => {
     if (urlToOpen) {
@@ -211,6 +213,7 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+    onResize();
   });
 
   ipcMain.on('http-auth-promt-response', (event, ...args) => {
