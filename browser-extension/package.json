@@ -1,6 +1,6 @@
 {
 	"name": "Responsively-Helper",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "An extension to open current browser page in Responsively app",
 	"private": true,
 	"scripts": {
