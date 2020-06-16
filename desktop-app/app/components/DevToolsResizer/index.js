@@ -2,13 +2,13 @@ import React, {useState, useEffect} from 'react';
 import {ipcRenderer} from 'electron';
 import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
-
 import styles from './style.module.css';
 import Cross from '../icons/Cross';
 import DockRight from '../icons/DockRight';
 import DockBottom from '../icons/DockBottom';
 import InspectElementChrome from '../icons/InspectElementChrome';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
+import debounce from 'lodash/debounce';
 
 const getResizingDirections = mode => {
   if (mode === DEVTOOLS_MODES.RIGHT) {
@@ -44,10 +44,14 @@ const DevToolsResizer = ({
   toggleInspector,
 }) => {
   useEffect(() => {
-    const handler = (event, args) => {
-      const {height, width} = args;
-      onWindowResize({height, width});
-    };
+    const handler = debounce(
+      (event, args) => {
+        const {height, width} = args;
+        onWindowResize({height, width});
+      },
+      100,
+      {maxWait: 200}
+    );
     ipcRenderer.on('window-resize', handler);
     return () => {
       ipcRenderer.removeListener('window-resize', handler);
