@@ -200,7 +200,7 @@ const createWindow = async () => {
   initMainShortcutManager();
 
   const onResize = () => {
-    const [width, height] = mainWindow.getSize();
+    const [width, height] = mainWindow.getContentSize();
     mainWindow.webContents.send('window-resize', {height, width});
   };
 
