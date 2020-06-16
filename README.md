@@ -38,7 +38,7 @@ Follow on Twitter for future updates - [![Twitter Follow](https://img.shields.io
 If you face any problems while using the application, please open an issue here - https://github.com/manojVivek/responsively-app/issues
 
 ## Roadmap
-Here is the roadmap of the desktop app - https://github.com/manojVivek/responsively-app/projects/12.
+Here is the roadmap of the desktop app - https://github.com/manojVivek/responsively-app/projects/12?fullscreen=true.
 
 ## Contribute
 1. Goto `desktop-app` folder
