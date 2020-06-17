@@ -10,9 +10,9 @@ const Spacer = ({width = 10}) => (
   <div className={styles.link} style={{width}}></div>
 );
 
-const TaskBar = () => {
+const StatusBar = () => {
   return (
-    <div className={styles.taskBar}>
+    <div className={styles.statusBar}>
       <div className={styles.section}>
         <div
           className={styles.link}
@@ -72,4 +72,4 @@ const TaskBar = () => {
   );
 };
 
-export default TaskBar;
+export default StatusBar;
