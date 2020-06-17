@@ -90,6 +90,8 @@ a:hover {
 
 #root {
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #HW_badge_cont.HW_visible {
