@@ -5,6 +5,7 @@ import App from './containers/App';
 import Browser from './containers/Browser';
 import LeftIconsPaneContainer from './containers/LeftIconsPaneContainer';
 import styles from './layout.css';
+import TaskBar from './components/TaskBar';
 
 export default () => (
   <App>
@@ -18,5 +19,6 @@ export default () => (
         </Switch>
       </div>
     </div>
+    <TaskBar />
   </App>
 );

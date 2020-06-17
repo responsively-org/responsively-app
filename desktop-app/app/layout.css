@@ -1,5 +1,5 @@
 .appRoot {
-  height: 100%;
+  height: calc(100% - 20px);
   overflow: hidden;
   margin: 0;
   display: flex;
@@ -8,7 +8,7 @@
 
 .iconColumn {
   width: 50px;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background: #ffffff15;
