@@ -1,16 +1,22 @@
 import React from 'react';
 import cx from 'classnames';
+import PropTypes from 'prop-types';
+import {shell} from 'electron';
+
 import styles from './styles.module.css';
 import Github from '../icons/Github';
-import {shell} from 'electron';
 import Twitter from '../icons/Twitter';
 import RoadMap from '../icons/RoadMap';
 
 const Spacer = ({width = 10}) => (
-  <div className={styles.link} style={{width}}></div>
+  <div className={styles.link} style={{width}} />
 );
 
-const StatusBar = () => {
+const StatusBar = ({visible}) => {
+  if (!visible) {
+    return null;
+  }
+
   return (
     <div className={styles.statusBar}>
       <div className={styles.section}>
@@ -72,6 +78,10 @@ const StatusBar = () => {
       </div>
     </div>
   );
+};
+
+StatusBar.propTypes = {
+  visible: PropTypes.bool.isRequired,
 };
 
 export default StatusBar;
