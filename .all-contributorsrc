@@ -95,6 +95,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Kidcredo",
+      "name": "Ryan Pais",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/15522605?v=4",
+      "profile": "https://github.com/Kidcredo",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
