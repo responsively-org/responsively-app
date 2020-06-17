@@ -31,6 +31,7 @@ function Renderer(props) {
           device={props.device}
           transmitNavigatorStatus={props.transmitNavigatorStatus}
           onLoadingStateChange={setLoading}
+          devToolBottomRef={props.devToolBottomRef}
         />
       </div>
     </div>

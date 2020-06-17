@@ -1,5 +1,5 @@
 // @flow
-import React, {Fragment, useState, useEffect} from 'react';
+import React, {Fragment, useState, useEffect, useRef} from 'react';
 import cx from 'classnames';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import Renderer from '../Renderer';
@@ -23,6 +23,7 @@ export default function DevicesPreviewer(props) {
     },
   } = props;
   const [activeTab, changeTab] = useState(0);
+  const devToolBottomRef = useRef();
 
   return (
     <div className={cx(styles.container)}>
@@ -66,10 +67,12 @@ export default function DevicesPreviewer(props) {
               src={address}
               zoomLevel={zoomLevel}
               transmitNavigatorStatus={index === 0}
+              devToolBottomRef={devToolBottomRef}
             />
           </div>
         ))}
       </div>
+      <webview ref={devToolBottomRef} style={{height: 400}} src="about:blank" />
     </div>
   );
 }

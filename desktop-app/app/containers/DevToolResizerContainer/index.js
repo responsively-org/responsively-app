@@ -1,15 +1,15 @@
 // @flow
-import React from 'react';
+import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
-import UserPreferences from '../../components/UserPreferences';
+import DevToolsResizer from '../../components/DevToolsResizer';
 import * as BrowserActions from '../../actions/browser';
 
 function mapStateToProps(state) {
   return {
-    userPreferences: state.browser.userPreferences,
-    devToolsConfig: state.browser.devToolsConfig,
+    ...state.browser.devToolsConfig,
+    isInspecting: state.browser.isInspecting,
   };
 }
 
@@ -17,4 +17,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(BrowserActions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserPreferences);
+export default connect(mapStateToProps, mapDispatchToProps)(DevToolsResizer);
