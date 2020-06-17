@@ -27,6 +27,8 @@ import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
 import {captureFullPage} from './screenshotUtil';
 import {Tooltip} from '@material-ui/core';
+import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
+import console from 'electron-timber';
 
 const BrowserWindow = remote.BrowserWindow;
 
@@ -45,6 +47,7 @@ class WebView extends Component {
   constructor(props) {
     super(props);
     this.webviewRef = createRef();
+    this.devToolsWebviewRef = createRef();
     this.state = {
       screenshotInProgress: false,
       isTilted: false,
@@ -164,17 +167,22 @@ class WebView extends Component {
       }
     });
 
-    this.webviewRef.current.addEventListener('devtools-opened', () => {
-      /*this.webviewRef.current
-        .getWebContents()
-        .devToolsWebContents.executeJavaScript(
-          'DevToolsAPI.enterInspectElementMode()'
-        );*/
+    this.webviewRef.current.addEventListener('devtools-closed', () => {
+      if (
+        this.props.browser.devToolsConfig.mode === DEVTOOLS_MODES.UNDOCKED &&
+        this._isDevToolsOpen()
+      ) {
+        this._toggleDevTools();
+      }
     });
   }
 
+  getWebContentsId() {
+    return this.webviewRef.current.getWebContentsId();
+  }
+
   getWebContents() {
-    return this.getWebContentForId(this.webviewRef.current.getWebContentsId());
+    return this.getWebContentForId(this.getWebContentsId());
   }
 
   getWebContentForId(id) {
@@ -293,6 +301,12 @@ class WebView extends Component {
     } = this.webviewRef.current.getBoundingClientRect();
     const {x: deviceX, y: deviceY} = message;
     const zoomFactor = this.props.browser.zoomLevel;
+    if (this.props.browser.isInspecting) {
+      this.props.toggleInspector();
+    }
+    if (!this._isDevToolsOpen()) {
+      this._toggleDevTools();
+    }
     this.getWebContents().inspectElement(
       Math.round(webViewX + deviceX * zoomFactor),
       Math.round(webViewY + deviceY * zoomFactor)
@@ -304,9 +318,6 @@ class WebView extends Component {
   };
 
   processDisableInspectorEvent = message => {
-    if (message.sourceDeviceId === this.props.device.id) {
-      return;
-    }
     this.webviewRef.current.send('disableInspectorMessage');
   };
 
@@ -409,19 +420,19 @@ class WebView extends Component {
     `);
   };
 
-  _toggleDevTools = () => {
-    /*const devtools = new BrowserWindow({
-      fullscreen: false,
-      acceptFirstMouse: true,
-      show: true,
-    });
-    //devtools.hide();
+  _isDevToolsOpen = () =>
+    !!this.props.browser.devToolsConfig.activeDevTools.find(
+      ({deviceId}) => deviceId === this.props.device.id
+    );
 
-    this.webviewRef.current
-      .getWebContents()
-      .setDevToolsWebContents(devtools.webContents);
-    this.getWebContents().openDevTools({mode: 'detach'});*/
-    this.getWebContents().toggleDevTools();
+  _toggleDevTools = () => {
+    if (this._isDevToolsOpen()) {
+      return this.props.onDevToolsClose({
+        deviceId: this.props.device.id,
+        webViewId: this.getWebContentsId(),
+      });
+    }
+    this.props.onDevToolsOpen(this.props.device.id, this.getWebContentsId());
   };
 
   _flipOrientation = () => {
@@ -461,7 +472,10 @@ class WebView extends Component {
               className={cx(
                 styles.webViewToolbarIcons,
                 commonStyles.icons,
-                commonStyles.enabled
+                commonStyles.enabled,
+                {
+                  [commonStyles.selected]: this._isDevToolsOpen(),
+                }
               )}
               onClick={this._toggleDevTools}
             >
@@ -509,10 +523,12 @@ class WebView extends Component {
           </Tooltip>
         </div>
         <div
-          className={cx(styles.deviceContainer)}
+          className={cx(styles.deviceContainer, {
+            [styles.devToolsActive]: this._isDevToolsOpen(),
+          })}
           style={{
-            width: deviceStyles.width * browser.zoomLevel,
-            height: deviceStyles.height * browser.zoomLevel, //TODO why is this height not getting set?
+            width: deviceStyles.width * browser.zoomLevel + 6,
+            height: deviceStyles.height * browser.zoomLevel + 6, //TODO why is this height not getting set?
           }}
         >
           <div
