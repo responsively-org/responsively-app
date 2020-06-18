@@ -14,6 +14,7 @@ import {
   DISABLE_INSPECTOR_ALL_DEVICES,
   RELOAD_CSS,
   DELETE_STORAGE,
+  ADDRESS_CHANGE,
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
@@ -148,7 +149,7 @@ export function onAddressChange(newURL, force) {
 
     if (newURL === address) {
       if (force) {
-        pubsub.publish(NAVIGATION_RELOAD);
+        pubsub.publish(NAVIGATION_RELOAD,[{ignoreCache:false}]);
       }
       return;
     }
@@ -160,6 +161,7 @@ export function onAddressChange(newURL, force) {
     }
 
     dispatch(newAddress(newURL));
+    pubsub.publish(ADDRESS_CHANGE,[{address:newURL,force:false}]);
   };
 }
 
@@ -355,6 +357,7 @@ export function goToHomepage() {
     }
 
     dispatch(newAddress(homepage));
+    pubsub.publish(ADDRESS_CHANGE,[{address:homepage,force:true}]);
   };
 }
 

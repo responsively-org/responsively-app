@@ -19,6 +19,7 @@ import {
   DISABLE_INSPECTOR_ALL_DEVICES,
   RELOAD_CSS,
   DELETE_STORAGE,
+  ADDRESS_CHANGE,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -54,6 +55,8 @@ class WebView extends Component {
       isUnplugged: false,
       errorCode: null,
       errorDesc: null,
+      address: this.props.browser.address,
+      addressChangedState: Math.random()
     };
     this.subscriptions = [];
   }
@@ -92,6 +95,9 @@ class WebView extends Component {
     this.subscriptions.push(
       pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
     );
+    this.subscriptions.push(
+      pubsub.subscribe(ADDRESS_CHANGE, this.processAddressChange)
+    )
     this.subscriptions.push(
       pubsub.subscribe(
         FLIP_ORIENTATION_ALL_DEVICES,
@@ -144,27 +150,34 @@ class WebView extends Component {
       }
     );
 
-    const urlChangeHandler = ({url, isMainFrame = true}) => {
+    const urlChangeHandler = async({url, isMainFrame = true}) => {
       if (!isMainFrame || url === this.props.browser.address) {
         return;
       }
+      await new Promise(r => setTimeout(r, 200));
       this.props.onAddressChange(url);
     };
 
-    this.webviewRef.current.addEventListener('will-navigate', urlChangeHandler);
-
-    this.webviewRef.current.addEventListener(
-      'did-navigate-in-page',
-      urlChangeHandler
-    );
-
-    this.webviewRef.current.addEventListener('did-navigate', ({url}) => {
+    const navigationHandler = (event) => {
       if (this.props.transmitNavigatorStatus) {
         this.props.updateNavigatorStatus({
           backEnabled: this.webviewRef.current.canGoBack(),
           forwardEnabled: this.webviewRef.current.canGoForward(),
         });
       }
+    }
+
+    this.webviewRef.current.addEventListener('will-navigate', urlChangeHandler);
+
+    this.webviewRef.current.addEventListener(
+      'did-navigate-in-page',(event) => {
+        navigationHandler(event),
+        urlChangeHandler(event)
+      }
+    );
+
+    this.webviewRef.current.addEventListener('did-navigate', () => {
+      navigationHandler();
     });
 
     this.webviewRef.current.addEventListener('devtools-closed', () => {
@@ -235,6 +248,18 @@ class WebView extends Component {
           }
         })
     `);
+  };
+
+  processAddressChange = ({address,force}) => {
+
+    if(address!==this.webviewRef.current.src){
+      if(force){
+        this.webviewRef.current.loadURL(address)
+      }
+      this.setState({
+        address: address
+      })
+    }
   };
 
   processDeleteStorageEvent = ({storages}) => {
@@ -550,7 +575,7 @@ class WebView extends Component {
             ref={this.webviewRef}
             preload="./preload.js"
             className={cx(styles.device)}
-            src={browser.address || 'about:blank'}
+            src={this.state.address || 'about:blank'}
             useragent={device.useragent}
             style={deviceStyles}
           />
