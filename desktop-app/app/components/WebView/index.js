@@ -55,8 +55,7 @@ class WebView extends Component {
       isUnplugged: false,
       errorCode: null,
       errorDesc: null,
-      address: this.props.browser.address,
-      addressChangedState: Math.random()
+      address: this.props.browser.address
     };
     this.subscriptions = [];
   }
