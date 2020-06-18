@@ -175,8 +175,8 @@ class WebView extends Component {
       }
     );
 
-    this.webviewRef.current.addEventListener('did-navigate', () => {
-      navigationHandler();
+    this.webviewRef.current.addEventListener('did-navigate', (event) => {
+      navigationHandler(event);
     });
 
     this.webviewRef.current.addEventListener('devtools-closed', () => {
