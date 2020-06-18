@@ -33,7 +33,7 @@ import {
   CUSTOM_DEVICES,
 } from '../constants/settingKeys';
 import {isIfStatement} from 'typescript';
-import {getHomepage, saveHomepage} from '../utils/navigatorUtils';
+import {getHomepage, getLastOpenedAddress, saveHomepage, saveLastOpenedAddress} from '../utils/navigatorUtils'
 import console from 'electron-timber';
 
 export const FILTER_FIELDS = {
@@ -89,6 +89,7 @@ type PreviewerType = {
 
 type UserPreferenceType = {
   disableSSLValidation: boolean,
+  reopenLastAddress: boolean,
   drawerState: boolean,
   devToolsOpenMode: DevToolsOpenModeType,
 };
@@ -191,7 +192,7 @@ export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
     homepage: getHomepage(),
-    address: getHomepage(),
+    address: _getUserPreferences().reopenLastAddress ? getLastOpenedAddress() : getHomepage(),
     zoomLevel: 0.6,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
@@ -228,6 +229,7 @@ export default function browser(
 ) {
   switch (action.type) {
     case NEW_ADDRESS:
+      saveLastOpenedAddress(action.address)
       return {...state, address: action.address};
     case NEW_HOMEPAGE:
       const {homepage} = action;
