@@ -35,8 +35,7 @@ class NavigationControls extends Component {
               <div
                 onClick={this.props.triggerStopLoading}
               >
-                <Icon type="close" size="26px" {...iconProps} className="closeIcon" />
-                {/*<ReloadIcon {...iconProps} height={15} width={15} padding={5} />*/}
+                <Icon type="closeBig" {...iconProps} className="closeIcon" />
               </div>
             </Tooltip>
           </Grid>
@@ -48,7 +47,7 @@ class NavigationControls extends Component {
                 onClick={this.props.triggerNavigationReload}
                 style={{transform: 'rotate(90deg)'}}
               >
-                <Icon type="rotate" {...iconProps} className="reloadIcon" />
+                <Icon type="rotate" style="pointer-events:none" {...iconProps} className="reloadIcon" />
                 {/*<ReloadIcon {...iconProps} height={15} width={15} padding={5} />*/}
               </div>
             </Tooltip>
