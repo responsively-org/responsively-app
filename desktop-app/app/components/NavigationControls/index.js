@@ -31,7 +31,7 @@ class NavigationControls extends Component {
     if(pageLoading){
       refreshOrCancel=
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <Tooltip title="Close">
+            <Tooltip title="Stop loading this page">
               <div
                 onClick={this.props.triggerStopLoading}
               >
