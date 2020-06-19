@@ -105,6 +105,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "Grafikart",
+      "name": "Jonathan",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/395137?v=4",
+      "profile": "https://grafikart.fr",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
