@@ -20,6 +20,7 @@ import {
   RELOAD_CSS,
   DELETE_STORAGE,
   ADDRESS_CHANGE,
+  STOP_LOADING,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -95,7 +96,10 @@ class WebView extends Component {
       pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
     );
     this.subscriptions.push(
-      pubsub.subscribe(ADDRESS_CHANGE, this.processAddressChange)
+      pubsub.subscribe(ADDRESS_CHANGE, this.processAddressChangeEvent)
+    )
+    this.subscriptions.push(
+      pubsub.subscribe(STOP_LOADING, this.processStopLoadingEvent)
     )
     this.subscriptions.push(
       pubsub.subscribe(
@@ -123,9 +127,11 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener('did-start-loading', () => {
       this.setState({errorCode: null, errorDesc: null});
       this.props.onLoadingStateChange(true);
+      this.props.deviceLoadingChange({id: this.props.device.id, loading: true})
     });
     this.webviewRef.current.addEventListener('did-stop-loading', () => {
       this.props.onLoadingStateChange(false);
+      this.props.deviceLoadingChange({id: this.props.device.id, loading: false})
     });
     this.webviewRef.current.addEventListener(
       'did-fail-load',
@@ -249,7 +255,7 @@ class WebView extends Component {
     `);
   };
 
-  processAddressChange = ({address,force}) => {
+  processAddressChangeEvent = ({address,force}) => {
 
     if(address!==this.webviewRef.current.src){
       if(force){
@@ -260,6 +266,11 @@ class WebView extends Component {
       })
     }
   };
+
+  processStopLoadingEvent = () => {
+
+    this.webviewRef.current.stop();
+  }
 
   processDeleteStorageEvent = ({storages}) => {
     this.getWebContents().session.clearStorageData({storages});

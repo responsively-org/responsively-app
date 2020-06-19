@@ -24,7 +24,7 @@ export default function DevicesPreviewer(props) {
   } = props;
   const [activeTab, changeTab] = useState(0);
   const devToolBottomRef = useRef();
-
+  
   return (
     <div className={cx(styles.container)}>
       {layout === INDIVIDUAL_LAYOUT && (

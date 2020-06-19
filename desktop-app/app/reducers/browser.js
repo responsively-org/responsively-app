@@ -15,6 +15,7 @@ import {
   NEW_DEV_TOOLS_CONFIG,
   NEW_INSPECTOR_STATUS,
   NEW_WINDOW_SIZE,
+  DEVICE_LOADING,
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
@@ -138,6 +139,12 @@ function _getActiveDevices() {
     activeDevices = getAllDevices().filter(device => device.added);
     _saveActiveDevices(activeDevices);
   }
+
+  if(activeDevices){
+    activeDevices.forEach(device => {
+      device.loading=false;
+    })
+  }
   return activeDevices;
 }
 
@@ -222,6 +229,7 @@ export default function browser(
       ),
     },
     isInspecting: false,
+    devicesLoading: new Set(),
     windowSize: getWindowSize(),
   },
   action: Action
@@ -296,6 +304,17 @@ export default function browser(
       return {...state, isInspecting: action.status};
     case NEW_WINDOW_SIZE:
       return {...state, windowSize: action.size};
+    case DEVICE_LOADING:
+      const activeDevices=[...state.devices]
+      const devicesLoading=new Set(state.devicesLoading)
+      const currentDevice=activeDevices.filter(device => device.id===action.device.id)
+      currentDevice.loading=action.device.loading
+      if(action.device.loading){
+        devicesLoading.add(action.device.id)
+      }else{
+        devicesLoading.delete(action.device.id)
+      }
+      return {...state,activeDevices, devicesLoading};
     default:
       return state;
   }

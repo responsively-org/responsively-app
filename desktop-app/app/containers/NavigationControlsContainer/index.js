@@ -9,8 +9,9 @@ import NavigationControls from '../../components/NavigationControls';
 function mapStateToProps(state) {
   const {
     navigatorStatus: {backEnabled, forwardEnabled},
+    devicesLoading
   } = state.browser;
-  return {backEnabled, forwardEnabled};
+  return {backEnabled, forwardEnabled, devicesLoading};
 }
 
 function mapDispatchToProps(dispatch) {
