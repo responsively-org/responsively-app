@@ -63,10 +63,10 @@ function getOS(device) {
   return OS.pc;
 }
 
-function getUserAgent(device){
+function getUserAgent(device) {
 
   let deviceUserAgent=device['user-agent']
-  if(deviceUserAgent && deviceUserAgent.includes('Chrome/%s')){
+  if(deviceUserAgent && deviceUserAgent.includes('Chrome/%s')) {
       deviceUserAgent=deviceUserAgent.replace('%s',chromeVersion)
   }
   return deviceUserAgent
