@@ -29,6 +29,7 @@ class NavigationControls extends Component {
       device => device.loading
     )
 
+    console.log('asdindjha s')
     let refreshOrCancel
     if (deviceLoading) {
       refreshOrCancel = (
