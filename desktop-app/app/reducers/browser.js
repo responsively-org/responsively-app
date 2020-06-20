@@ -12,10 +12,12 @@ import {
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
   DELETE_CUSTOM_DEVICE,
+  TOGGLE_BOOKMARK,
   NEW_DEV_TOOLS_CONFIG,
   NEW_INSPECTOR_STATUS,
   NEW_WINDOW_SIZE,
 } from '../actions/browser';
+
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
 import {ipcRenderer, remote} from 'electron';
@@ -30,7 +32,7 @@ import {DEVICE_MANAGER} from '../constants/DrawerContents';
 import {
   ACTIVE_DEVICES,
   USER_PREFERENCES,
-  CUSTOM_DEVICES,
+  CUSTOM_DEVICES
 } from '../constants/settingKeys';
 import {isIfStatement} from 'typescript';
 import {getHomepage, getLastOpenedAddress, saveHomepage, saveLastOpenedAddress} from '../utils/navigatorUtils'
@@ -109,6 +111,7 @@ export type BrowserStateType = {
   previewer: PreviewerType,
   filters: FilterType,
   userPreferences: UserPreferenceType,
+  bookmarks: BookmarksType,
   devToolsConfig: DevToolsConfigType,
   isInspecting: boolean,
   windowSize: WindowSizeType,
