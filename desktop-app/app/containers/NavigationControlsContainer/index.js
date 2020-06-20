@@ -1,21 +1,21 @@
 // @flow
-import React from 'react'
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
+import React from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 
-import * as BrowserActions from '../../actions/browser'
-import NavigationControls from '../../components/NavigationControls'
+import * as BrowserActions from '../../actions/browser';
+import NavigationControls from '../../components/NavigationControls';
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
   const {
     navigatorStatus: {backEnabled, forwardEnabled},
     devices,
-  } = state.browser
-  return {backEnabled, forwardEnabled, devices}
+  } = state.browser;
+  return {backEnabled, forwardEnabled, devices};
 }
 
-function mapDispatchToProps (dispatch) {
-  return bindActionCreators(BrowserActions, dispatch)
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(BrowserActions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavigationControls)
+export default connect(mapStateToProps, mapDispatchToProps)(NavigationControls);

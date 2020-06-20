@@ -56,7 +56,7 @@ class WebView extends Component {
       isUnplugged: false,
       errorCode: null,
       errorDesc: null,
-      address: this.props.browser.address
+      address: this.props.browser.address,
     };
     this.subscriptions = [];
   }
@@ -97,10 +97,10 @@ class WebView extends Component {
     );
     this.subscriptions.push(
       pubsub.subscribe(ADDRESS_CHANGE, this.processAddressChangeEvent)
-    )
+    );
     this.subscriptions.push(
       pubsub.subscribe(STOP_LOADING, this.processStopLoadingEvent)
-    )
+    );
     this.subscriptions.push(
       pubsub.subscribe(
         FLIP_ORIENTATION_ALL_DEVICES,
@@ -127,11 +127,14 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener('did-start-loading', () => {
       this.setState({errorCode: null, errorDesc: null});
       this.props.onLoadingStateChange(true);
-      this.props.deviceLoadingChange({id: this.props.device.id, loading: true})
+      this.props.deviceLoadingChange({id: this.props.device.id, loading: true});
     });
     this.webviewRef.current.addEventListener('did-stop-loading', () => {
       this.props.onLoadingStateChange(false);
-      this.props.deviceLoadingChange({id: this.props.device.id, loading: false})
+      this.props.deviceLoadingChange({
+        id: this.props.device.id,
+        loading: false,
+      });
     });
     this.webviewRef.current.addEventListener(
       'did-fail-load',
@@ -155,7 +158,7 @@ class WebView extends Component {
       }
     );
 
-    const urlChangeHandler = async({url, isMainFrame = true}) => {
+    const urlChangeHandler = async ({url, isMainFrame = true}) => {
       if (!isMainFrame || url === this.props.browser.address) {
         return;
       }
@@ -163,25 +166,22 @@ class WebView extends Component {
       this.props.onAddressChange(url);
     };
 
-    const navigationHandler = (event) => {
+    const navigationHandler = event => {
       if (this.props.transmitNavigatorStatus) {
         this.props.updateNavigatorStatus({
           backEnabled: this.webviewRef.current.canGoBack(),
           forwardEnabled: this.webviewRef.current.canGoForward(),
         });
       }
-    }
+    };
 
     this.webviewRef.current.addEventListener('will-navigate', urlChangeHandler);
 
-    this.webviewRef.current.addEventListener(
-      'did-navigate-in-page',(event) => {
-        navigationHandler(event),
-        urlChangeHandler(event)
-      }
-    );
+    this.webviewRef.current.addEventListener('did-navigate-in-page', event => {
+      navigationHandler(event), urlChangeHandler(event);
+    });
 
-    this.webviewRef.current.addEventListener('did-navigate', (event) => {
+    this.webviewRef.current.addEventListener('did-navigate', event => {
       navigationHandler(event);
     });
 
@@ -255,22 +255,20 @@ class WebView extends Component {
     `);
   };
 
-  processAddressChangeEvent = ({address,force}) => {
-
-    if(address!==this.webviewRef.current.src){
-      if(force){
-        this.webviewRef.current.loadURL(address)
+  processAddressChangeEvent = ({address, force}) => {
+    if (address !== this.webviewRef.current.src) {
+      if (force) {
+        this.webviewRef.current.loadURL(address);
       }
       this.setState({
-        address: address
-      })
+        address: address,
+      });
     }
   };
 
   processStopLoadingEvent = () => {
-
     this.webviewRef.current.stop();
-  }
+  };
 
   processDeleteStorageEvent = ({storages}) => {
     this.getWebContents().session.clearStorageData({storages});

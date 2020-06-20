@@ -37,7 +37,7 @@ export const NEW_FILTERS = 'NEW_FILTERS';
 export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
 export const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
 export const NEW_WINDOW_SIZE = 'NEW_WINDOW_SIZE';
-export const DEVICE_LOADING='DEVICE_LOADING';
+export const DEVICE_LOADING = 'DEVICE_LOADING';
 
 export function newAddress(address) {
   return {
@@ -144,11 +144,11 @@ export function newFilters(filters) {
   };
 }
 
-export function newDeviceLoading(device){
+export function newDeviceLoading(device) {
   return {
     type: DEVICE_LOADING,
-    device
-  }
+    device,
+  };
 }
 
 export function onAddressChange(newURL, force) {
@@ -159,7 +159,7 @@ export function onAddressChange(newURL, force) {
 
     if (newURL === address) {
       if (force) {
-        pubsub.publish(NAVIGATION_RELOAD,[{ignoreCache:false}]);
+        pubsub.publish(NAVIGATION_RELOAD, [{ignoreCache: false}]);
       }
       return;
     }
@@ -171,7 +171,7 @@ export function onAddressChange(newURL, force) {
     }
 
     dispatch(newAddress(newURL));
-    pubsub.publish(ADDRESS_CHANGE,[{address:newURL,force:false}]);
+    pubsub.publish(ADDRESS_CHANGE, [{address: newURL, force: false}]);
   };
 }
 
@@ -367,7 +367,7 @@ export function goToHomepage() {
     }
 
     dispatch(newAddress(homepage));
-    pubsub.publish(ADDRESS_CHANGE,[{address:homepage,force:true}]);
+    pubsub.publish(ADDRESS_CHANGE, [{address: homepage, force: true}]);
   };
 }
 
@@ -382,7 +382,7 @@ export function gotoUrl(url) {
     }
 
     dispatch(newAddress(url));
-  }
+  };
 }
 
 export function onDevToolsModeChange(newMode) {
@@ -643,7 +643,7 @@ export function toggleInspector() {
   };
 }
 
-export function deviceLoadingChange(deviceInfo){
+export function deviceLoadingChange(deviceInfo) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     dispatch(newDeviceLoading(deviceInfo));
   };
@@ -676,7 +676,7 @@ export function triggerNavigationReload(_, args) {
 
 export function triggerStopLoading(_, args) {
   return (dispatch: Dispatch, getState: RootStateType) => {
-   pubsub.publish(STOP_LOADING);
+    pubsub.publish(STOP_LOADING);
   };
 }
 
