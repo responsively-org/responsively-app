@@ -12,64 +12,70 @@ import {
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
   DELETE_CUSTOM_DEVICE,
+  TOGGLE_BOOKMARK,
   NEW_DEV_TOOLS_CONFIG,
   NEW_INSPECTOR_STATUS,
   NEW_WINDOW_SIZE,
   DEVICE_LOADING,
-} from '../actions/browser'
-import type {Action} from './types'
-import getAllDevices from '../constants/devices'
-import {ipcRenderer, remote} from 'electron'
-import settings from 'electron-settings'
-import type {Device} from '../constants/devices'
+} from '../actions/browser';
+import type {Action} from './types';
+import getAllDevices from '../constants/devices';
+import {ipcRenderer, remote} from 'electron';
+import settings from 'electron-settings';
+import type {Device} from '../constants/devices';
 import {
   FLEXIGRID_LAYOUT,
   INDIVIDUAL_LAYOUT,
   DEVTOOLS_MODES,
-} from '../constants/previewerLayouts'
-import {DEVICE_MANAGER} from '../constants/DrawerContents'
+} from '../constants/previewerLayouts';
+import {DEVICE_MANAGER} from '../constants/DrawerContents';
 import {
   ACTIVE_DEVICES,
   USER_PREFERENCES,
   CUSTOM_DEVICES,
-} from '../constants/settingKeys'
-import {isIfStatement} from 'typescript'
-import {getHomepage, saveHomepage} from '../utils/navigatorUtils'
-import console from 'electron-timber'
+} from '../constants/settingKeys';
+import {isIfStatement} from 'typescript';
+import {
+  getHomepage,
+  getLastOpenedAddress,
+  saveHomepage,
+  saveLastOpenedAddress,
+} from '../utils/navigatorUtils';
+import console from 'electron-timber';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
   DEVICE_TYPE: 'DEVICE_TYPE',
-}
+};
 
 type ScrollPositionType = {
   x: number,
   y: number,
-}
+};
 
 type NavigatorStatusType = {
   backEnabled: boolean,
   forwardEnabled: boolean,
-}
+};
 
 type WindowSizeType = {
   width: number,
   height: number,
-}
+};
 
-type DevToolsOpenModeType = DEVTOOLS_MODES.BOTTOM | DEVTOOLS_MODES.RIGHT
+type DevToolsOpenModeType = DEVTOOLS_MODES.BOTTOM | DEVTOOLS_MODES.RIGHT;
 
 type WindowBoundsType = {
   x: number,
   y: number,
   width: number,
   height: number,
-}
+};
 
 type DevToolInfo = {
   deviceId: string,
   webViewId: number,
-}
+};
 
 type DevToolsConfigType = {
   size: WindowSizeType,
@@ -77,26 +83,27 @@ type DevToolsConfigType = {
   activeDevTools: Array<DevToolInfo>,
   mode: DevToolsOpenModeType,
   bounds: WindowBoundsType,
-}
+};
 
 type DrawerType = {
   open: boolean,
   content: string,
-}
+};
 
 type PreviewerType = {
   layout: string,
-}
+};
 
 type UserPreferenceType = {
   disableSSLValidation: boolean,
+  reopenLastAddress: boolean,
   drawerState: boolean,
   devToolsOpenMode: DevToolsOpenModeType,
-}
+};
 
-type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE
+type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
 
-type FilterType = {[key: FilterFieldType]: Array<string>}
+type FilterType = {[key: FilterFieldType]: Array<string>};
 
 export type BrowserStateType = {
   devices: Array<Device>,
@@ -109,96 +116,99 @@ export type BrowserStateType = {
   previewer: PreviewerType,
   filters: FilterType,
   userPreferences: UserPreferenceType,
+  bookmarks: BookmarksType,
   devToolsConfig: DevToolsConfigType,
   isInspecting: boolean,
   windowSize: WindowSizeType,
-}
+};
 
-let _activeDevices = null
+let _activeDevices = null;
 
-function _saveActiveDevices (devices) {
+function _saveActiveDevices(devices) {
   settings.set(
     ACTIVE_DEVICES,
     devices.map(device => device.name)
-  )
-  _activeDevices = devices
+  );
+  _activeDevices = devices;
 }
 
-function _getActiveDevices () {
+function _getActiveDevices() {
   if (_activeDevices) {
-    return _activeDevices
+    return _activeDevices;
   }
-  let activeDeviceNames = settings.get(ACTIVE_DEVICES)
-  let activeDevices = null
+  let activeDeviceNames = settings.get(ACTIVE_DEVICES);
+  let activeDevices = null;
   if (activeDeviceNames && activeDeviceNames.length) {
     activeDevices = activeDeviceNames
       .map(name => getAllDevices().find(device => device.name === name))
-      .filter(Boolean)
+      .filter(Boolean);
   }
   if (!activeDevices || !activeDevices.length) {
-    activeDevices = getAllDevices().filter(device => device.added)
-    _saveActiveDevices(activeDevices)
+    activeDevices = getAllDevices().filter(device => device.added);
+    _saveActiveDevices(activeDevices);
   }
 
   if (activeDevices) {
     activeDevices.forEach(device => {
-      device.loading = false
-    })
+      device.loading = false;
+    });
   }
-  return activeDevices
+  return activeDevices;
 }
 
-function _getUserPreferences (): UserPreferenceType {
-  return settings.get(USER_PREFERENCES) || {}
+function _getUserPreferences(): UserPreferenceType {
+  return settings.get(USER_PREFERENCES) || {};
 }
 
-function _setUserPreferences (userPreferences) {
-  settings.set(USER_PREFERENCES, userPreferences)
+function _setUserPreferences(userPreferences) {
+  settings.set(USER_PREFERENCES, userPreferences);
 }
 
-export function getBounds (mode, _size, windowSize) {
-  const size = _size || getDefaultDevToolsWindowSize(mode, windowSize)
-  const {width, height} = windowSize
+export function getBounds(mode, _size, windowSize) {
+  const size = _size || getDefaultDevToolsWindowSize(mode, windowSize);
+  const {width, height} = windowSize;
   if (mode === DEVTOOLS_MODES.RIGHT) {
-    const viewWidth = size.width
-    const viewHeight = size.height - 64 - 20
+    const viewWidth = size.width;
+    const viewHeight = size.height - 64 - 20;
     return {
       x: width - viewWidth,
       y: height - viewHeight,
       width: viewWidth,
       height: viewHeight,
-    }
+    };
   }
-  const viewHeight = size.height - 20
+  const viewHeight = size.height - 20;
   return {
     x: 0,
     y: height - viewHeight,
     width: width,
     height: viewHeight,
-  }
+  };
 }
 
-export function getDefaultDevToolsWindowSize (mode, windowSize) {
-  const {width, height} = windowSize
+export function getDefaultDevToolsWindowSize(mode, windowSize) {
+  const {width, height} = windowSize;
   if (mode === DEVTOOLS_MODES.RIGHT) {
-    return {width: Math.round(width * 0.33), height}
+    return {width: Math.round(width * 0.33), height};
   }
-  return {width, height: Math.round(height * 0.33)}
+  return {width, height: Math.round(height * 0.33)};
 }
 
-function getWindowSize () {
-  return remote.screen.getPrimaryDisplay().workAreaSize
+function getWindowSize() {
+  return remote.screen.getPrimaryDisplay().workAreaSize;
 }
 
-function _getUserPreferencesDevToolsMode () {
-  return _getUserPreferences().devToolsOpenMode || DEVTOOLS_MODES.BOTTOM
+function _getUserPreferencesDevToolsMode() {
+  return _getUserPreferences().devToolsOpenMode || DEVTOOLS_MODES.BOTTOM;
 }
 
-export default function browser (
+export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
     homepage: getHomepage(),
-    address: getHomepage(),
+    address: _getUserPreferences().reopenLastAddress
+      ? getLastOpenedAddress()
+      : getHomepage(),
     zoomLevel: 0.6,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
@@ -235,82 +245,83 @@ export default function browser (
 ) {
   switch (action.type) {
     case NEW_ADDRESS:
-      return {...state, address: action.address}
+      saveLastOpenedAddress(action.address);
+      return {...state, address: action.address};
     case NEW_HOMEPAGE:
-      const {homepage} = action
-      saveHomepage(homepage)
-      return {...state, homepage}
+      const {homepage} = action;
+      saveHomepage(homepage);
+      return {...state, homepage};
     case NEW_ZOOM_LEVEL:
-      return {...state, zoomLevel: action.zoomLevel}
+      return {...state, zoomLevel: action.zoomLevel};
     case NEW_SCROLL_POSITION:
-      return {...state, scrollPosition: action.scrollPosition}
+      return {...state, scrollPosition: action.scrollPosition};
     case NEW_NAVIGATOR_STATUS:
-      return {...state, navigatorStatus: action.navigatorStatus}
+      return {...state, navigatorStatus: action.navigatorStatus};
     case NEW_DRAWER_CONTENT:
       _setUserPreferences({
         ...state.userPreferences,
         drawerState: action.drawer.open,
-      })
-      return {...state, drawer: action.drawer}
+      });
+      return {...state, drawer: action.drawer};
     case NEW_PREVIEWER_CONFIG:
-      const updateObject = {previewer: action.previewer}
+      const updateObject = {previewer: action.previewer};
       if (
         state.previewer.layout !== INDIVIDUAL_LAYOUT &&
         action.previewer.layout === INDIVIDUAL_LAYOUT
       ) {
-        updateObject.zoomLevel = 1
-        updateObject.previousZoomLevel = state.zoomLevel
+        updateObject.zoomLevel = 1;
+        updateObject.previousZoomLevel = state.zoomLevel;
       }
       if (
         state.previewer.layout === INDIVIDUAL_LAYOUT &&
         action.previewer.layout !== INDIVIDUAL_LAYOUT
       ) {
-        updateObject.zoomLevel = state.previousZoomLevel
-        updateObject.previousZoomLevel = null
+        updateObject.zoomLevel = state.previousZoomLevel;
+        updateObject.previousZoomLevel = null;
       }
-      return {...state, ...updateObject}
+      return {...state, ...updateObject};
     case NEW_ACTIVE_DEVICES:
-      _saveActiveDevices(action.devices)
-      return {...state, devices: action.devices}
+      _saveActiveDevices(action.devices);
+      return {...state, devices: action.devices};
     case NEW_CUSTOM_DEVICE:
-      const existingDevices = settings.get(CUSTOM_DEVICES) || []
-      settings.set(CUSTOM_DEVICES, [action.device, ...existingDevices])
-      return {...state, allDevices: getAllDevices()}
+      const existingDevices = settings.get(CUSTOM_DEVICES) || [];
+      settings.set(CUSTOM_DEVICES, [action.device, ...existingDevices]);
+      return {...state, allDevices: getAllDevices()};
     case DELETE_CUSTOM_DEVICE:
-      const existingCustomDevices = settings.get(CUSTOM_DEVICES) || []
+      const existingCustomDevices = settings.get(CUSTOM_DEVICES) || [];
       settings.set(
         CUSTOM_DEVICES,
         existingCustomDevices.filter(device => device.id != action.device.id)
-      )
-      return {...state, allDevices: getAllDevices()}
+      );
+      return {...state, allDevices: getAllDevices()};
     case NEW_FILTERS:
-      return {...state, filters: action.filters}
+      return {...state, filters: action.filters};
     case NEW_USER_PREFERENCES:
-      _setUserPreferences(action.userPreferences)
-      return {...state, userPreferences: action.userPreferences}
+      _setUserPreferences(action.userPreferences);
+      return {...state, userPreferences: action.userPreferences};
     case NEW_DEV_TOOLS_CONFIG:
-      const newState = {...state, devToolsConfig: action.config}
+      const newState = {...state, devToolsConfig: action.config};
       if (state.devToolsConfig.mode !== action.config.mode) {
         const newUserPreferences = {
           ...state.userPreferences,
           devToolsOpenMode: action.config.mode,
-        }
-        _setUserPreferences(newUserPreferences)
-        newState.userPreferences = newUserPreferences
+        };
+        _setUserPreferences(newUserPreferences);
+        newState.userPreferences = newUserPreferences;
       }
-      return newState
+      return newState;
     case NEW_INSPECTOR_STATUS:
-      return {...state, isInspecting: action.status}
+      return {...state, isInspecting: action.status};
     case NEW_WINDOW_SIZE:
-      return {...state, windowSize: action.size}
+      return {...state, windowSize: action.size};
     case DEVICE_LOADING:
       const newDevicesList = state.devices.map(device =>
         device.id === action.device.id
           ? {...device, loading: action.device.loading}
           : device
-      )
-      return {...state, devices: newDevicesList}
+      );
+      return {...state, devices: newDevicesList};
     default:
-      return state
+      return state;
   }
 }

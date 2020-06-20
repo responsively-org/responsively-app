@@ -35,6 +35,7 @@ export const NEW_CUSTOM_DEVICE = 'NEW_CUSTOM_DEVICE';
 export const DELETE_CUSTOM_DEVICE = 'DELETE_CUSTOM_DEVICE';
 export const NEW_FILTERS = 'NEW_FILTERS';
 export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
+export const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
 export const NEW_WINDOW_SIZE = 'NEW_WINDOW_SIZE';
 export const DEVICE_LOADING='DEVICE_LOADING';
 
@@ -368,6 +369,20 @@ export function goToHomepage() {
     dispatch(newAddress(homepage));
     pubsub.publish(ADDRESS_CHANGE,[{address:homepage,force:true}]);
   };
+}
+
+export function gotoUrl(url) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {address},
+    } = getState();
+
+    if (url === address) {
+      return;
+    }
+
+    dispatch(newAddress(url));
+  }
 }
 
 export function onDevToolsModeChange(newMode) {

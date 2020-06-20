@@ -471,6 +471,8 @@ class WebView extends Component {
   };
 
   _flipOrientation = () => {
+    this.props.sendFlipStatus &&
+      this.props.sendFlipStatus(!this.state.isTilted);
     this.setState({isTilted: !this.state.isTilted});
   };
 
@@ -496,6 +498,7 @@ class WebView extends Component {
         this.isMobile && this.state.isTilted ? device.width : device.height,
       transform: `scale(${browser.zoomLevel})`,
     };
+
     return (
       <div
         className={cx(styles.webViewContainer)}
