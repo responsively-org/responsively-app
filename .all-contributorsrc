@@ -11,7 +11,9 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/1283424?v=4",
       "profile": "http://twitter.com/vivek_jonam",
       "contributions": [
-        "code"
+        "code",
+        "test",
+        "projectManagement"
       ]
     },
     {
@@ -20,7 +22,9 @@
       "avatar_url": "https://avatars0.githubusercontent.com/u/26249498?v=4",
       "profile": "https://github.com/esprush",
       "contributions": [
-        "code"
+        "code",
+        "test",
+        "projectManagement"
       ]
     },
     {
@@ -130,5 +134,6 @@
   "projectOwner": "manojVivek",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "none"
 }
