@@ -16,7 +16,6 @@ import Reload from '../icons/Reload';
 class NavigationControls extends Component {
   componentDidMount() {
     ipcRenderer.on('reload-url', this.props.triggerNavigationReload);
-    ipcRenderer.on('stop-loading-url', this.props.triggerStopLoading);
     ipcRenderer.on('reload-css', this.props.reloadCSS);
   }
 
@@ -35,7 +34,7 @@ class NavigationControls extends Component {
     if (deviceLoading) {
       refreshOrCancel = (
         <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-          <Tooltip title="Stop loading this page">
+          <Tooltip title="Stop loading this page" disableFocusListener={true}>
             <div
               className={commonStyles.flexAlignVerticalMiddle}
               onClick={this.props.triggerStopLoading}
@@ -48,11 +47,8 @@ class NavigationControls extends Component {
     } else {
       refreshOrCancel = (
         <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-          <Tooltip title="Reload">
-            <div
-              onClick={this.props.triggerNavigationReload}
-              style={{transform: 'rotate(90deg)'}}
-            >
+          <Tooltip title="Reload" disableFocusListener={true}>
+            <div onClick={this.props.triggerNavigationReload}>
               {/* <Icon
                 type="rotate"
                 style="pointer-events:none"
