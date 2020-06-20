@@ -14,6 +14,8 @@ import {
   DISABLE_INSPECTOR_ALL_DEVICES,
   RELOAD_CSS,
   DELETE_STORAGE,
+  ADDRESS_CHANGE,
+  STOP_LOADING,
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
@@ -35,6 +37,7 @@ export const NEW_FILTERS = 'NEW_FILTERS';
 export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
 export const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
 export const NEW_WINDOW_SIZE = 'NEW_WINDOW_SIZE';
+export const DEVICE_LOADING = 'DEVICE_LOADING';
 
 export function newAddress(address) {
   return {
@@ -141,6 +144,13 @@ export function newFilters(filters) {
   };
 }
 
+export function newDeviceLoading(device) {
+  return {
+    type: DEVICE_LOADING,
+    device,
+  };
+}
+
 export function onAddressChange(newURL, force) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
@@ -149,7 +159,7 @@ export function onAddressChange(newURL, force) {
 
     if (newURL === address) {
       if (force) {
-        pubsub.publish(NAVIGATION_RELOAD);
+        pubsub.publish(NAVIGATION_RELOAD, [{ignoreCache: false}]);
       }
       return;
     }
@@ -161,6 +171,7 @@ export function onAddressChange(newURL, force) {
     }
 
     dispatch(newAddress(newURL));
+    pubsub.publish(ADDRESS_CHANGE, [{address: newURL, force: false}]);
   };
 }
 
@@ -356,6 +367,7 @@ export function goToHomepage() {
     }
 
     dispatch(newAddress(homepage));
+    pubsub.publish(ADDRESS_CHANGE, [{address: homepage, force: true}]);
   };
 }
 
@@ -370,7 +382,7 @@ export function gotoUrl(url) {
     }
 
     dispatch(newAddress(url));
-  }
+  };
 }
 
 export function onDevToolsModeChange(newMode) {
@@ -631,6 +643,12 @@ export function toggleInspector() {
   };
 }
 
+export function deviceLoadingChange(deviceInfo) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(newDeviceLoading(deviceInfo));
+  };
+}
+
 export function triggerScrollUp() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(SCROLL_UP);
@@ -653,6 +671,12 @@ export function triggerNavigationReload(_, args) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const ignoreCache = (args || {}).ignoreCache || false;
     pubsub.publish(NAVIGATION_RELOAD, [{ignoreCache}]);
+  };
+}
+
+export function triggerStopLoading(_, args) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(STOP_LOADING);
   };
 }
 

@@ -10,6 +10,8 @@ import styles from './styles.module.css';
 import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
 import {Tooltip} from '@material-ui/core';
+import Cross from '../icons/Cross';
+import Reload from '../icons/Reload';
 
 class NavigationControls extends Component {
   componentDidMount() {
@@ -24,6 +26,41 @@ class NavigationControls extends Component {
       width: 25,
     };
     const {backEnabled, forwardEnabled} = this.props;
+    const deviceLoading = (this.props.devices || []).find(
+      device => device.loading
+    );
+
+    let refreshOrCancel;
+    if (deviceLoading) {
+      refreshOrCancel = (
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <Tooltip title="Stop loading this page" disableFocusListener={true}>
+            <div
+              className={commonStyles.flexAlignVerticalMiddle}
+              onClick={this.props.triggerStopLoading}
+            >
+              <Cross {...iconProps} padding={1} />
+            </div>
+          </Tooltip>
+        </Grid>
+      );
+    } else {
+      refreshOrCancel = (
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <Tooltip title="Reload" disableFocusListener={true}>
+            <div onClick={this.props.triggerNavigationReload}>
+              {/* <Icon
+                type="rotate"
+                style="pointer-events:none"
+                {...iconProps}
+                className="reloadIcon"
+              /> */}
+              <Reload {...iconProps} padding={4} />
+            </div>
+          </Tooltip>
+        </Grid>
+      );
+    }
     return (
       <div className={styles.navigationControls}>
         <Grid container spacing={1} alignItems="center">
@@ -64,17 +101,9 @@ class NavigationControls extends Component {
               </div>
             </Tooltip>
           </Grid>
-          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <Tooltip title="Reload">
-              <div
-                onClick={this.props.triggerNavigationReload}
-                style={{transform: 'rotate(90deg)'}}
-              >
-                <Icon type="rotate" {...iconProps} className="reloadIcon" />
-                {/*<ReloadIcon {...iconProps} height={15} width={15} padding={5} />*/}
-              </div>
-            </Tooltip>
-          </Grid>
+
+          {refreshOrCancel}
+
           <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
             <Tooltip title="Go to Homepage">
               <div

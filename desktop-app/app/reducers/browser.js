@@ -16,8 +16,8 @@ import {
   NEW_DEV_TOOLS_CONFIG,
   NEW_INSPECTOR_STATUS,
   NEW_WINDOW_SIZE,
+  DEVICE_LOADING,
 } from '../actions/browser';
-
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
 import {ipcRenderer, remote} from 'electron';
@@ -32,11 +32,15 @@ import {DEVICE_MANAGER} from '../constants/DrawerContents';
 import {
   ACTIVE_DEVICES,
   USER_PREFERENCES,
-  CUSTOM_DEVICES
+  CUSTOM_DEVICES,
 } from '../constants/settingKeys';
 import {isIfStatement} from 'typescript';
-import {getHomepage, saveHomepage} from '../utils/navigatorUtils';
-import {getWebsiteName} from '../components/WebView/screenshotUtil'
+import {
+  getHomepage,
+  getLastOpenedAddress,
+  saveHomepage,
+  saveLastOpenedAddress,
+} from '../utils/navigatorUtils';
 import console from 'electron-timber';
 
 export const FILTER_FIELDS = {
@@ -92,6 +96,7 @@ type PreviewerType = {
 
 type UserPreferenceType = {
   disableSSLValidation: boolean,
+  reopenLastAddress: boolean,
   drawerState: boolean,
   devToolsOpenMode: DevToolsOpenModeType,
 };
@@ -141,6 +146,12 @@ function _getActiveDevices() {
   if (!activeDevices || !activeDevices.length) {
     activeDevices = getAllDevices().filter(device => device.added);
     _saveActiveDevices(activeDevices);
+  }
+
+  if (activeDevices) {
+    activeDevices.forEach(device => {
+      device.loading = false;
+    });
   }
   return activeDevices;
 }
@@ -195,7 +206,9 @@ export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
     homepage: getHomepage(),
-    address: getHomepage(),
+    address: _getUserPreferences().reopenLastAddress
+      ? getLastOpenedAddress()
+      : getHomepage(),
     zoomLevel: 0.6,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
@@ -232,6 +245,7 @@ export default function browser(
 ) {
   switch (action.type) {
     case NEW_ADDRESS:
+      saveLastOpenedAddress(action.address);
       return {...state, address: action.address};
     case NEW_HOMEPAGE:
       const {homepage} = action;
@@ -300,6 +314,13 @@ export default function browser(
       return {...state, isInspecting: action.status};
     case NEW_WINDOW_SIZE:
       return {...state, windowSize: action.size};
+    case DEVICE_LOADING:
+      const newDevicesList = state.devices.map(device =>
+        device.id === action.device.id
+          ? {...device, loading: action.device.loading}
+          : device
+      );
+      return {...state, devices: newDevicesList};
     default:
       return state;
   }
