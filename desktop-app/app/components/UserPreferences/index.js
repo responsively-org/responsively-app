@@ -65,6 +65,25 @@ export default function UserPreference({
             }
           />
         </div>
+        <div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={userPreferences.reopenLastAddress || false}
+                onChange={e =>
+                  onChange('reopenLastAddress', e.target.checked)
+                }
+                name="Reopen last opened address on start"
+                color="primary"
+              />
+            }
+            label={
+              <span className={cx(styles.preferenceName)}>
+                Reopen last opened address on start
+              </span>
+            }
+          />
+        </div>
       </div>
     </div>
   );
