@@ -10,6 +10,8 @@ import styles from './styles.module.css';
 import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
 import {Tooltip} from '@material-ui/core';
+import Cross from '../icons/Cross';
+import Reload from '../icons/Reload';
 
 class NavigationControls extends Component {
   componentDidMount() {
@@ -34,8 +36,11 @@ class NavigationControls extends Component {
       refreshOrCancel = (
         <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
           <Tooltip title="Stop loading this page">
-            <div onClick={this.props.triggerStopLoading}>
-              <Icon type="closeBig" {...iconProps} className="closeIcon" />
+            <div
+              className={commonStyles.flexAlignVerticalMiddle}
+              onClick={this.props.triggerStopLoading}
+            >
+              <Cross {...iconProps} padding={1} />
             </div>
           </Tooltip>
         </Grid>
@@ -48,13 +53,13 @@ class NavigationControls extends Component {
               onClick={this.props.triggerNavigationReload}
               style={{transform: 'rotate(90deg)'}}
             >
-              <Icon
+              {/* <Icon
                 type="rotate"
                 style="pointer-events:none"
                 {...iconProps}
                 className="reloadIcon"
-              />
-              {/*<ReloadIcon {...iconProps} height={15} width={15} padding={5} />*/}
+              /> */}
+              <Reload {...iconProps} padding={4} />
             </div>
           </Tooltip>
         </Grid>
