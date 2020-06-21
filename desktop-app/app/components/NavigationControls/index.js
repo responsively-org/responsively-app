@@ -39,7 +39,7 @@ class NavigationControls extends Component {
               className={commonStyles.flexAlignVerticalMiddle}
               onClick={this.props.triggerStopLoading}
             >
-              <Cross {...iconProps} padding={1} />
+              <Cross {...iconProps} padding={6} height={24} width={24} />
             </div>
           </Tooltip>
         </Grid>
@@ -48,14 +48,11 @@ class NavigationControls extends Component {
       refreshOrCancel = (
         <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
           <Tooltip title="Reload" disableFocusListener={true}>
-            <div onClick={this.props.triggerNavigationReload}>
-              {/* <Icon
-                type="rotate"
-                style="pointer-events:none"
-                {...iconProps}
-                className="reloadIcon"
-              /> */}
-              <Reload {...iconProps} padding={4} />
+            <div
+              className={commonStyles.flexAlignVerticalMiddle}
+              onClick={this.props.triggerNavigationReload}
+            >
+              <Reload {...iconProps} padding={4} height={24} width={24} />
             </div>
           </Tooltip>
         </Grid>
