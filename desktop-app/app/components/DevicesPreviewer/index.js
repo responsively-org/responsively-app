@@ -1,7 +1,7 @@
 // @flow
 import React, {Fragment, useState, useEffect, useRef} from 'react';
 import cx from 'classnames';
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
+import {Tab, Tabs, TabList} from 'react-tabs';
 import Renderer from '../Renderer';
 
 import styles from './style.module.css';
@@ -25,12 +25,44 @@ export default function DevicesPreviewer(props) {
   const [activeTab, changeTab] = useState(0);
   const devToolBottomRef = useRef();
 
+  let newActiveTab = activeTab;
+  const devicesAfterFiltering = devices
+    .map((device, index) => {
+      if (isDeviceEligible(device, props.browser.filters)) {
+        return device;
+      }
+    })
+    .filter(Boolean);
+
+  let focusedDeviceIndex;
+  let computedLayout = layout;
+  if (props.browser.previewer.focusedDeviceId) {
+    focusedDeviceIndex = (devicesAfterFiltering || []).findIndex(
+      device => device.id === props.browser.previewer.focusedDeviceId
+    );
+
+    if (focusedDeviceIndex == -1) {
+      focusedDeviceIndex = 0;
+    }
+
+    if (focusedDeviceIndex != activeTab) {
+      changeTab(focusedDeviceIndex);
+    }
+    computedLayout = INDIVIDUAL_LAYOUT;
+  }
+
+  const onTabClick = function(newTabIndex) {
+    changeTab(newTabIndex);
+    props.deviceFocusChange({
+      id: devicesAfterFiltering[newTabIndex].id,
+    });
+  };
   return (
     <div className={cx(styles.container)}>
-      {layout === INDIVIDUAL_LAYOUT && (
-        <Tabs onSelect={changeTab}>
+      {computedLayout === INDIVIDUAL_LAYOUT && (
+        <Tabs onSelect={onTabClick} selectedIndex={focusedDeviceIndex}>
           <TabList>
-            {devices
+            {/* {devices
               .map(device => {
                 if (!isDeviceEligible(device, props.browser.filters)) {
                   return null;
@@ -42,7 +74,15 @@ export default function DevicesPreviewer(props) {
                   </Tab>
                 );
               })
-              .filter(Boolean)}
+              .filter(Boolean)} */}
+            {devicesAfterFiltering.map(device => {
+              return (
+                <Tab tabId={device.id} key={device.id}>
+                  {getDeviceIcon(device.type)}
+                  {device.name}
+                </Tab>
+              );
+            })}
           </TabList>
         </Tabs>
       )}
@@ -52,17 +92,17 @@ export default function DevicesPreviewer(props) {
           [styles.horizontal]: layout === HORIZONTAL_LAYOUT,
         })}
       >
-        {devices.map((device, index) => (
+        {devicesAfterFiltering.map((device, index) => (
           <div
             key={device.id}
             className={cx({
-              [styles.tab]: layout === INDIVIDUAL_LAYOUT,
+              [styles.tab]: computedLayout === INDIVIDUAL_LAYOUT,
               [styles.activeTab]:
-                layout === INDIVIDUAL_LAYOUT && activeTab === index,
+                computedLayout === INDIVIDUAL_LAYOUT && activeTab === index,
             })}
           >
             <Renderer
-              hidden={!isDeviceEligible(device, props.browser.filters)}
+              // hidden={!isDeviceEligible(device, props.browser.filters)}
               device={device}
               src={address}
               zoomLevel={zoomLevel}

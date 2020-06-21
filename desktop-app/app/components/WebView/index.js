@@ -31,6 +31,8 @@ import {captureFullPage} from './screenshotUtil';
 import {Tooltip} from '@material-ui/core';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 import console from 'electron-timber';
+import Maximize from '../icons/Maximize';
+import Minimize from '../icons/Minimize';
 
 const BrowserWindow = remote.BrowserWindow;
 
@@ -483,6 +485,14 @@ class WebView extends Component {
     });
   };
 
+  _focusDevice = () => {
+    this.props.deviceFocusChange({id: this.props.device.id});
+  };
+
+  _unfocusDevice = () => {
+    this.props.deviceUnfocusChange();
+  };
+
   get isMobile() {
     return this.props.device.capabilities.indexOf(CAPABILITIES.mobile) > -1;
   }
@@ -496,6 +506,47 @@ class WebView extends Component {
         this.isMobile && this.state.isTilted ? device.width : device.height,
       transform: `scale(${browser.zoomLevel})`,
     };
+
+    let expandOrCollapse;
+    if (browser.previewer.focusedDeviceId === device.id) {
+      expandOrCollapse = (
+        <Tooltip
+          title="Minimize"
+          disableFocusListener={true}
+          disableTouchListener={true}
+        >
+          <div
+            className={cx(
+              styles.webViewToolbarIcons,
+              commonStyles.icons,
+              commonStyles.enabled
+            )}
+            onClick={this._unfocusDevice}
+          >
+            <Minimize height={30} padding={5} color={iconsColor} />
+          </div>
+        </Tooltip>
+      );
+    } else {
+      expandOrCollapse = (
+        <Tooltip
+          title="Maximize"
+          disableFocusListener={true}
+          disableTouchListener={true}
+        >
+          <div
+            className={cx(
+              styles.webViewToolbarIcons,
+              commonStyles.icons,
+              commonStyles.enabled
+            )}
+            onClick={this._focusDevice}
+          >
+            <Maximize height={30} padding={5} color={iconsColor} />
+          </div>
+        </Tooltip>
+      );
+    }
 
     return (
       <div
@@ -557,6 +608,7 @@ class WebView extends Component {
               <UnplugIcon height={30} color={iconsColor} />
             </div>
           </Tooltip>
+          {expandOrCollapse}
         </div>
         <div
           className={cx(styles.deviceContainer, {

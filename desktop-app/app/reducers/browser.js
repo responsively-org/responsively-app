@@ -17,6 +17,8 @@ import {
   NEW_INSPECTOR_STATUS,
   NEW_WINDOW_SIZE,
   DEVICE_LOADING,
+  DEVICE_FOCUS,
+  DEVICE_UNFOCUS,
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
@@ -92,6 +94,7 @@ type DrawerType = {
 
 type PreviewerType = {
   layout: string,
+  focusedDeviceId: string,
 };
 
 type UserPreferenceType = {
@@ -321,6 +324,14 @@ export default function browser(
           : device
       );
       return {...state, devices: newDevicesList};
+    case DEVICE_FOCUS:
+      const currentPreviewerFocus = {...state.previewer};
+      currentPreviewerFocus.focusedDeviceId = action.device.id;
+      return {...state, previewer: currentPreviewerFocus};
+    case DEVICE_UNFOCUS:
+      const currentPreviewerUnfocus = {...state.previewer};
+      delete currentPreviewerUnfocus.focusedDeviceId;
+      return {...state, previewer: currentPreviewerUnfocus};
     default:
       return state;
   }
