@@ -515,19 +515,39 @@ class WebView extends Component {
       transform: `scale(${browser.zoomLevel})`,
     };
 
-    let deviceFocusTooltip;
-    let deviceFocusOnClickMethod;
-    let deviceFocusIcon;
+    let expandOrCollapse;
     if (browser.previewer.layout !== INDIVIDUAL_LAYOUT) {
-      deviceFocusTooltip = 'Maximize';
-      deviceFocusOnClickMethod = this._focusDevice;
-      deviceFocusIcon = <Maximize height={30} padding={5} color={iconsColor} />;
+      expandOrCollapse = (
+        <Tooltip title="Maximize">
+          <div
+            className={cx(
+              styles.webViewToolbarIcons,
+              styles.webViewToolbarRightIcons,
+              commonStyles.icons,
+              commonStyles.enabled
+            )}
+            onClick={this._focusDevice}
+          >
+            <Maximize height={30} padding={7} color={iconsColor} />
+          </div>
+        </Tooltip>
+      );
     } else {
       if (browser.previewer.previousLayout !== INDIVIDUAL_LAYOUT) {
-        deviceFocusTooltip = 'Minimize';
-        deviceFocusOnClickMethod = this._unfocusDevice;
-        deviceFocusIcon = (
-          <Minimize height={30} padding={5} color={iconsColor} />
+        expandOrCollapse = (
+          <Tooltip title="Minimize">
+            <div
+              className={cx(
+                styles.webViewToolbarIcons,
+                styles.webViewToolbarRightIcons,
+                commonStyles.icons,
+                commonStyles.enabled
+              )}
+              onClick={this._unfocusDevice}
+            >
+              <Minimize height={30} padding={5} color={iconsColor} />
+            </div>
+          </Tooltip>
         );
       }
     }
@@ -538,72 +558,73 @@ class WebView extends Component {
         style={{height: deviceStyles.height * browser.zoomLevel + 40}} //Hack, ref below TODO
       >
         <div className={cx(styles.webViewToolbar)}>
-          <Tooltip title="Open DevTools">
-            <div
-              className={cx(
-                styles.webViewToolbarIcons,
-                commonStyles.icons,
-                commonStyles.enabled,
-                {
-                  [commonStyles.selected]: this._isDevToolsOpen(),
-                }
-              )}
-              onClick={this._toggleDevTools}
-            >
-              <BugIcon width={20} color={iconsColor} />
-            </div>
-          </Tooltip>
-          <Tooltip title="Take Screenshot">
-            <div
-              className={cx(
-                styles.webViewToolbarIcons,
-                commonStyles.icons,
-                commonStyles.enabled
-              )}
-              onClick={() => this.processScreenshotEvent({})}
-            >
-              <ScreenshotIcon height={18} color={iconsColor} />
-            </div>
-          </Tooltip>
-          <Tooltip title="Tilt Device">
-            <div
-              className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
-                [commonStyles.enabled]: this.isMobile,
-                [commonStyles.disabled]: !this.isMobile,
-                [commonStyles.selected]: this.state.isTilted,
-              })}
-              onClick={this._flipOrientation}
-            >
-              <DeviceRotateIcon height={17} color={iconsColor} />
-            </div>
-          </Tooltip>
-          <Tooltip title="Disable event mirroring">
-            <div
-              className={cx(
-                styles.webViewToolbarIcons,
-                commonStyles.icons,
-                commonStyles.enabled,
-                {
-                  [commonStyles.selected]: this.state.isUnplugged,
-                }
-              )}
-              onClick={this._unPlug}
-            >
-              <UnplugIcon height={30} color={iconsColor} />
-            </div>
-          </Tooltip>
-          <Tooltip title={deviceFocusTooltip}>
-            <div
-              className={cx(
-                styles.webViewToolbarIcons,
-                commonStyles.icons,
-                commonStyles.enabled
-              )}
-              onClick={deviceFocusOnClickMethod}
-            >
-              {deviceFocusIcon}
-            </div>
-          </Tooltip>
+          <div className={cx(styles.webViewToolbarLeft)}>
+            <Tooltip title="Open DevTools">
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  styles.webViewToolbarLeftIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled,
+                  {
+                    [commonStyles.selected]: this._isDevToolsOpen(),
+                  }
+                )}
+                onClick={this._toggleDevTools}
+              >
+                <BugIcon width={20} color={iconsColor} />
+              </div>
+            </Tooltip>
+            <Tooltip title="Take Screenshot">
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  styles.webViewToolbarLeftIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled
+                )}
+                onClick={() => this.processScreenshotEvent({})}
+              >
+                <ScreenshotIcon height={18} color={iconsColor} />
+              </div>
+            </Tooltip>
+            <Tooltip title="Tilt Device">
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  styles.webViewToolbarLeftIcons,
+                  commonStyles.icons,
+                  {
+                    [commonStyles.enabled]: this.isMobile,
+                    [commonStyles.disabled]: !this.isMobile,
+                    [commonStyles.selected]: this.state.isTilted,
+                  }
+                )}
+                onClick={this._flipOrientation}
+              >
+                <DeviceRotateIcon height={17} color={iconsColor} />
+              </div>
+            </Tooltip>
+            <Tooltip title="Disable event mirroring">
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  styles.webViewToolbarLeftIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled,
+                  {
+                    [commonStyles.selected]: this.state.isUnplugged,
+                  }
+                )}
+                onClick={this._unPlug}
+              >
+                <UnplugIcon height={30} color={iconsColor} />
+              </div>
+            </Tooltip>
+          </div>
+          <div className={cx(styles.webViewToolbarRight)}>
+            {expandOrCollapse}
+          </div>
         </div>
         <div
           className={cx(styles.deviceContainer, {

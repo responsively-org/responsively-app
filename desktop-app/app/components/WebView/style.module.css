@@ -22,11 +22,18 @@
 .webViewToolbarIcons {
   margin-right: 2px;
   padding: 0 2px;
-  display: flex;
   align-items: center;
   justify-content: center;
   height: 30px;
   width: 30px;
+}
+
+.webViewToolbarLeftIcons {
+  display: flex;
+}
+
+.webViewToolbarRightIcons {
+  float: right;
 }
 
 .deviceContainer {
