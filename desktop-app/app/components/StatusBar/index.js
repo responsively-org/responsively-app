@@ -1,5 +1,5 @@
 import React from 'react';
-
+import cx from 'classnames';
 import styles from './styles.module.css';
 import Github from '../icons/Github';
 import {shell} from 'electron';
@@ -34,7 +34,7 @@ const StatusBar = () => {
         </div>
         <Spacer />
         <div
-          className={styles.link}
+          className={cx('roadMapLink', styles.link)}
           onClick={() =>
             shell.openExternal(
               'https://github.com/manojVivek/responsively-app/projects/12?fullscreen=true'
@@ -42,7 +42,7 @@ const StatusBar = () => {
           }
         >
           <RoadMap width={14} color="grey" className={styles.linkIcon} />
-          <span className={styles.linkText}>RoadMap</span>
+          <span className={cx('roadMapLink', styles.linkText)}>RoadMap</span>
         </div>
         <Spacer />
         <div
@@ -51,7 +51,9 @@ const StatusBar = () => {
             shell.openExternal('https://headwayapp.co/responsively-changelog')
           }
         >
-          <span className={styles.linkText}>Changelog</span>
+          <span className={cx('changeLogLink', styles.linkText)}>
+            Changelog
+          </span>
         </div>
       </div>
       <div className={styles.section}>
@@ -63,7 +65,7 @@ const StatusBar = () => {
             )
           }
         >
-          <span className={styles.linkText}>
+          <span className={cx('featureSuggestionLink', styles.linkText)}>
             Have a feature suggestion? Let us know! 🚀
           </span>
         </div>

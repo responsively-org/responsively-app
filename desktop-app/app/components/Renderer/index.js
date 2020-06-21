@@ -42,7 +42,6 @@ function Renderer(props) {
           sendFlipStatus={sendFlipStatus}
           transmitNavigatorStatus={props.transmitNavigatorStatus}
           onLoadingStateChange={setLoading}
-          devToolBottomRef={props.devToolBottomRef}
         />
       </div>
     </div>

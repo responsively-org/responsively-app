@@ -1,9 +1,11 @@
 .container {
   display: flex;
-  height: calc(100vh - 75px);
+  flex: 1;
+  height: 100%;
   width: 100%;
   overflow: scroll;
   flex-direction: column;
+  background-color: red;
 }
 
 .flexigrid {
@@ -16,6 +18,7 @@
 
 .devicesContainer {
   display: flex;
+  padding-bottom: 50px;
 }
 
 .tab {

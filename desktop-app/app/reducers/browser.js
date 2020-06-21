@@ -169,7 +169,7 @@ export function getBounds(mode, _size, windowSize) {
   const {width, height} = windowSize;
   if (mode === DEVTOOLS_MODES.RIGHT) {
     const viewWidth = size.width;
-    const viewHeight = size.height - 64 - 20;
+    const viewHeight = size.height - 64 - 10;
     return {
       x: width - viewWidth,
       y: height - viewHeight,
@@ -189,7 +189,7 @@ export function getBounds(mode, _size, windowSize) {
 export function getDefaultDevToolsWindowSize(mode, windowSize) {
   const {width, height} = windowSize;
   if (mode === DEVTOOLS_MODES.RIGHT) {
-    return {width: Math.round(width * 0.33), height};
+    return {width: Math.round(width * 0.25), height};
   }
   return {width, height: Math.round(height * 0.33)};
 }
