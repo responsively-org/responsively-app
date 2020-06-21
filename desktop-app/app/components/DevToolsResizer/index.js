@@ -9,6 +9,7 @@ import DockBottom from '../icons/DockBottom';
 import InspectElementChrome from '../icons/InspectElementChrome';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 import debounce from 'lodash/debounce';
+import CrossChrome from '../icons/CrossChrome';
 
 const getResizingDirections = mode => {
   if (mode === DEVTOOLS_MODES.RIGHT) {
@@ -71,12 +72,16 @@ const DevToolsResizer = ({
         size={{width: size.width, height: size.height}}
         onResizeStart={() => setSizeBeforeDrag(size)}
         onResizeStop={() => setSizeBeforeDrag(null)}
-        onResize={(e, direction, ref, d) => {
-          onDevToolsResize({
-            width: sizeBeforeDrag.width + d.width,
-            height: sizeBeforeDrag.height + d.height,
-          });
-        }}
+        onResize={debounce(
+          (e, direction, ref, d) => {
+            onDevToolsResize({
+              width: sizeBeforeDrag.width + d.width,
+              height: sizeBeforeDrag.height + d.height,
+            });
+          },
+          25,
+          {maxWait: 50}
+        )}
         enable={getResizingDirections(mode)}
       >
         <div
@@ -116,7 +121,7 @@ const DevToolsResizer = ({
               className={styles.icon}
               onClick={() => onDevToolsClose(null, true)}
             >
-              <Cross width={18} color="inherit" />
+              <CrossChrome width={18} color="inherit" />
             </span>
           </div>
         </div>
