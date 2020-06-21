@@ -38,8 +38,6 @@ export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
 export const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
 export const NEW_WINDOW_SIZE = 'NEW_WINDOW_SIZE';
 export const DEVICE_LOADING = 'DEVICE_LOADING';
-export const DEVICE_FOCUS = 'DEVICE_FOCUS';
-export const DEVICE_UNFOCUS = 'DEVICE_UNFOCUS';
 
 export function newAddress(address) {
   return {
@@ -149,20 +147,6 @@ export function newFilters(filters) {
 export function newDeviceLoading(device) {
   return {
     type: DEVICE_LOADING,
-    device,
-  };
-}
-
-export function newDeviceFocus(device) {
-  return {
-    type: DEVICE_FOCUS,
-    device,
-  };
-}
-
-export function newDeviceUnfocus(device) {
-  return {
-    type: DEVICE_UNFOCUS,
     device,
   };
 }
@@ -300,13 +284,16 @@ export function changeDrawerOpenState(newOpenState) {
   };
 }
 
-export function setPreviewLayout(newLayout) {
+export function setPreviewLayout(newLayout, focusedDeviceId) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {previewer},
     } = getState();
 
-    if (previewer.layout === newLayout) {
+    if (
+      previewer.layout === newLayout &&
+      previewer.focusedDeviceId === focusedDeviceId
+    ) {
       return;
     }
 
@@ -314,6 +301,7 @@ export function setPreviewLayout(newLayout) {
       newPreviewerConfig({
         ...previewer,
         layout: newLayout,
+        focusedDeviceId,
       })
     );
   };
@@ -662,18 +650,6 @@ export function toggleInspector() {
 export function deviceLoadingChange(deviceInfo) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     dispatch(newDeviceLoading(deviceInfo));
-  };
-}
-
-export function deviceFocusChange(device) {
-  return (dispatch: Dispatch, getState: RootStateType) => {
-    dispatch(newDeviceFocus(device));
-  };
-}
-
-export function deviceUnfocusChange(device) {
-  return (dispatch: Dispatch, getState: RootStateType) => {
-    dispatch(newDeviceUnfocus(device));
   };
 }
 

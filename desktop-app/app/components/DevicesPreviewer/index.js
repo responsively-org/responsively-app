@@ -34,32 +34,38 @@ export default function DevicesPreviewer(props) {
     })
     .filter(Boolean);
 
-  let focusedDeviceIndex;
-  let computedLayout = layout;
-  if (props.browser.previewer.focusedDeviceId) {
-    focusedDeviceIndex = (devicesAfterFiltering || []).findIndex(
-      device => device.id === props.browser.previewer.focusedDeviceId
-    );
+  let focusedDeviceIndex = 0;
+  let focusedDeviceId = props.browser.previewer.focusedDeviceId;
+  if (layout === INDIVIDUAL_LAYOUT) {
+    if (props.browser.previewer.focusedDeviceId) {
+      focusedDeviceIndex = (devicesAfterFiltering || []).findIndex(
+        device => device.id === focusedDeviceId
+      );
 
-    if (focusedDeviceIndex == -1) {
-      focusedDeviceIndex = 0;
-    }
+      if (focusedDeviceIndex === -1) {
+        focusedDeviceIndex = 0;
+        if (devicesAfterFiltering.length > 0) {
+          focusedDeviceId = devicesAfterFiltering[0].id;
+        }
+      }
 
-    if (focusedDeviceIndex != activeTab) {
-      changeTab(focusedDeviceIndex);
+      if (focusedDeviceIndex != activeTab) {
+        changeTab(focusedDeviceIndex);
+      }
     }
-    computedLayout = INDIVIDUAL_LAYOUT;
   }
 
   const onTabClick = function(newTabIndex) {
     changeTab(newTabIndex);
-    props.deviceFocusChange({
-      id: devicesAfterFiltering[newTabIndex].id,
-    });
+    props.setPreviewLayout(
+      INDIVIDUAL_LAYOUT,
+      devicesAfterFiltering[newTabIndex].id
+    );
   };
+
   return (
     <div className={cx(styles.container)}>
-      {computedLayout === INDIVIDUAL_LAYOUT && (
+      {layout === INDIVIDUAL_LAYOUT && (
         <Tabs onSelect={onTabClick} selectedIndex={focusedDeviceIndex}>
           <TabList>
             {/* {devices
@@ -92,17 +98,17 @@ export default function DevicesPreviewer(props) {
           [styles.horizontal]: layout === HORIZONTAL_LAYOUT,
         })}
       >
-        {devicesAfterFiltering.map((device, index) => (
+        {devices.map((device, index) => (
           <div
             key={device.id}
             className={cx({
-              [styles.tab]: computedLayout === INDIVIDUAL_LAYOUT,
+              [styles.tab]: layout === INDIVIDUAL_LAYOUT,
               [styles.activeTab]:
-                computedLayout === INDIVIDUAL_LAYOUT && activeTab === index,
+                layout === INDIVIDUAL_LAYOUT && focusedDeviceId === device.id,
             })}
           >
             <Renderer
-              // hidden={!isDeviceEligible(device, props.browser.filters)}
+              hidden={!isDeviceEligible(device, props.browser.filters)}
               device={device}
               src={address}
               zoomLevel={zoomLevel}

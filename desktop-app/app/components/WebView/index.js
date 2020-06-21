@@ -29,7 +29,10 @@ import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
 import {captureFullPage} from './screenshotUtil';
 import {Tooltip} from '@material-ui/core';
-import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
+import {
+  DEVTOOLS_MODES,
+  INDIVIDUAL_LAYOUT,
+} from '../../constants/previewerLayouts';
 import console from 'electron-timber';
 import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
@@ -486,11 +489,16 @@ class WebView extends Component {
   };
 
   _focusDevice = () => {
-    this.props.deviceFocusChange({id: this.props.device.id});
+    this.props.setPreviewLayout(INDIVIDUAL_LAYOUT, this.props.device.id);
   };
 
   _unfocusDevice = () => {
-    this.props.deviceUnfocusChange();
+    if (this.props.browser.previewer.previousLayout) {
+      this.props.setPreviewLayout(
+        this.props.browser.previewer.previousLayout,
+        this.props.device.id
+      );
+    }
   };
 
   get isMobile() {
@@ -507,45 +515,21 @@ class WebView extends Component {
       transform: `scale(${browser.zoomLevel})`,
     };
 
-    let expandOrCollapse;
-    if (browser.previewer.focusedDeviceId === device.id) {
-      expandOrCollapse = (
-        <Tooltip
-          title="Minimize"
-          disableFocusListener={true}
-          disableTouchListener={true}
-        >
-          <div
-            className={cx(
-              styles.webViewToolbarIcons,
-              commonStyles.icons,
-              commonStyles.enabled
-            )}
-            onClick={this._unfocusDevice}
-          >
-            <Minimize height={30} padding={5} color={iconsColor} />
-          </div>
-        </Tooltip>
-      );
+    let deviceFocusTooltip;
+    let deviceFocusOnClickMethod;
+    let deviceFocusIcon;
+    if (browser.previewer.layout !== INDIVIDUAL_LAYOUT) {
+      deviceFocusTooltip = 'Maximize';
+      deviceFocusOnClickMethod = this._focusDevice;
+      deviceFocusIcon = <Maximize height={30} padding={5} color={iconsColor} />;
     } else {
-      expandOrCollapse = (
-        <Tooltip
-          title="Maximize"
-          disableFocusListener={true}
-          disableTouchListener={true}
-        >
-          <div
-            className={cx(
-              styles.webViewToolbarIcons,
-              commonStyles.icons,
-              commonStyles.enabled
-            )}
-            onClick={this._focusDevice}
-          >
-            <Maximize height={30} padding={5} color={iconsColor} />
-          </div>
-        </Tooltip>
-      );
+      if (browser.previewer.previousLayout !== INDIVIDUAL_LAYOUT) {
+        deviceFocusTooltip = 'Minimize';
+        deviceFocusOnClickMethod = this._unfocusDevice;
+        deviceFocusIcon = (
+          <Minimize height={30} padding={5} color={iconsColor} />
+        );
+      }
     }
 
     return (
@@ -608,7 +592,18 @@ class WebView extends Component {
               <UnplugIcon height={30} color={iconsColor} />
             </div>
           </Tooltip>
-          {expandOrCollapse}
+          <Tooltip title={deviceFocusTooltip}>
+            <div
+              className={cx(
+                styles.webViewToolbarIcons,
+                commonStyles.icons,
+                commonStyles.enabled
+              )}
+              onClick={deviceFocusOnClickMethod}
+            >
+              {deviceFocusIcon}
+            </div>
+          </Tooltip>
         </div>
         <div
           className={cx(styles.deviceContainer, {

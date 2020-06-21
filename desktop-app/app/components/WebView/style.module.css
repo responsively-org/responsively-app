@@ -9,6 +9,16 @@
   align-items: center;
 }
 
+.webViewToolbarLeft {
+  width: 75%;
+  display: flex;
+}
+
+.webViewToolbarRight {
+  float: right;
+  width: 25%;
+}
+
 .webViewToolbarIcons {
   margin-right: 2px;
   padding: 0 2px;

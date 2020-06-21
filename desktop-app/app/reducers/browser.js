@@ -94,6 +94,7 @@ type DrawerType = {
 
 type PreviewerType = {
   layout: string,
+  previousLayout: string,
   focusedDeviceId: string,
 };
 
@@ -267,7 +268,18 @@ export default function browser(
       });
       return {...state, drawer: action.drawer};
     case NEW_PREVIEWER_CONFIG:
-      const updateObject = {previewer: action.previewer};
+      const updateObject = {previewer: {...state.previewer}};
+
+      updateObject.previewer.layout = action.previewer.layout;
+      if (action.previewer.layout !== state.previewer.layout) {
+        updateObject.previewer.previousLayout = state.previewer.layout;
+      }
+
+      if (action.previewer.focusedDeviceId) {
+        updateObject.previewer.focusedDeviceId =
+          action.previewer.focusedDeviceId;
+      }
+
       if (
         state.previewer.layout !== INDIVIDUAL_LAYOUT &&
         action.previewer.layout === INDIVIDUAL_LAYOUT
@@ -324,14 +336,14 @@ export default function browser(
           : device
       );
       return {...state, devices: newDevicesList};
-    case DEVICE_FOCUS:
-      const currentPreviewerFocus = {...state.previewer};
-      currentPreviewerFocus.focusedDeviceId = action.device.id;
-      return {...state, previewer: currentPreviewerFocus};
-    case DEVICE_UNFOCUS:
-      const currentPreviewerUnfocus = {...state.previewer};
-      delete currentPreviewerUnfocus.focusedDeviceId;
-      return {...state, previewer: currentPreviewerUnfocus};
+    // case DEVICE_FOCUS:
+    //   const currentPreviewerFocus = {...state.previewer};
+    //   currentPreviewerFocus.focusedDeviceId = action.device.id;
+    //   return {...state, previewer: currentPreviewerFocus};
+    // case DEVICE_UNFOCUS:
+    //   const currentPreviewerUnfocus = {...state.previewer};
+    //   delete currentPreviewerUnfocus.focusedDeviceId;
+    //   return {...state, previewer: currentPreviewerUnfocus};
     default:
       return state;
   }
