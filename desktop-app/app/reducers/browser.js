@@ -19,6 +19,7 @@ import {
   DEVICE_LOADING,
   DEVICE_FOCUS,
   DEVICE_UNFOCUS,
+  NEW_FOCUSED_DEVICE,
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
@@ -268,17 +269,8 @@ export default function browser(
       });
       return {...state, drawer: action.drawer};
     case NEW_PREVIEWER_CONFIG:
-      const updateObject = {previewer: {...state.previewer}};
-
-      updateObject.previewer.layout = action.previewer.layout;
-      if (action.previewer.layout !== state.previewer.layout) {
-        updateObject.previewer.previousLayout = state.previewer.layout;
-      }
-
-      if (action.previewer.focusedDeviceId) {
-        updateObject.previewer.focusedDeviceId =
-          action.previewer.focusedDeviceId;
-      }
+      const updateObject = {previewer: action.previewer};
+      updateObject.previewer.previousLayout = state.previewer.layout;
 
       if (
         state.previewer.layout !== INDIVIDUAL_LAYOUT &&
@@ -295,6 +287,8 @@ export default function browser(
         updateObject.previousZoomLevel = null;
       }
       return {...state, ...updateObject};
+    case NEW_FOCUSED_DEVICE:
+      return {...state, previewer: action.previewer};
     case NEW_ACTIVE_DEVICES:
       _saveActiveDevices(action.devices);
       return {...state, devices: action.devices};

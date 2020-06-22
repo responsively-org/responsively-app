@@ -57,10 +57,7 @@ export default function DevicesPreviewer(props) {
 
   const onTabClick = function(newTabIndex) {
     changeTab(newTabIndex);
-    props.setPreviewLayout(
-      INDIVIDUAL_LAYOUT,
-      devicesAfterFiltering[newTabIndex].id
-    );
+    props.setFocusedDevice(devicesAfterFiltering[newTabIndex].id);
   };
 
   return (

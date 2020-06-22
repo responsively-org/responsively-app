@@ -36,6 +36,7 @@ import {
 import console from 'electron-timber';
 import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
+import Focus from '../icons/Focus';
 
 const BrowserWindow = remote.BrowserWindow;
 
@@ -489,15 +490,13 @@ class WebView extends Component {
   };
 
   _focusDevice = () => {
-    this.props.setPreviewLayout(INDIVIDUAL_LAYOUT, this.props.device.id);
+    this.props.setPreviewLayout(INDIVIDUAL_LAYOUT);
+    this.props.setFocusedDevice(this.props.device.id);
   };
 
   _unfocusDevice = () => {
     if (this.props.browser.previewer.previousLayout) {
-      this.props.setPreviewLayout(
-        this.props.browser.previewer.previousLayout,
-        this.props.device.id
-      );
+      this.props.setPreviewLayout(this.props.browser.previewer.previousLayout);
     }
   };
 
@@ -516,42 +515,48 @@ class WebView extends Component {
     };
 
     let expandOrCollapse;
+    let tooltipMessage;
+    let tooltipCTA;
+    let tooltipIcon;
+
+    let shouldMaximize = browser.previewer.layout !== INDIVIDUAL_LAYOUT;
     if (browser.previewer.layout !== INDIVIDUAL_LAYOUT) {
       expandOrCollapse = (
         <Tooltip title="Maximize">
           <div
             className={cx(
               styles.webViewToolbarIcons,
-              styles.webViewToolbarRightIcons,
               commonStyles.icons,
               commonStyles.enabled
             )}
             onClick={this._focusDevice}
           >
-            <Maximize height={30} padding={7} color={iconsColor} />
+            <Focus height={30} padding={5} color={iconsColor} />
           </div>
         </Tooltip>
       );
     } else {
-      if (browser.previewer.previousLayout !== INDIVIDUAL_LAYOUT) {
-        expandOrCollapse = (
-          <Tooltip title="Minimize">
-            <div
-              className={cx(
-                styles.webViewToolbarIcons,
-                styles.webViewToolbarRightIcons,
-                commonStyles.icons,
-                commonStyles.enabled
-              )}
-              onClick={this._unfocusDevice}
-            >
-              <Minimize height={30} padding={5} color={iconsColor} />
-            </div>
-          </Tooltip>
-        );
-      }
+      expandOrCollapse = (
+        <Tooltip title="Minimize">
+          <div
+            className={cx(
+              styles.webViewToolbarIcons,
+              commonStyles.icons,
+              commonStyles.enabled
+            )}
+            onClick={this._unfocusDevice}
+          >
+            <Minimize height={30} padding={5} color={iconsColor} />
+          </div>
+        </Tooltip>
+      );
     }
 
+    const IconFocus = () => {
+      if (shouldMaximize)
+        return <Focus height={30} padding={5} color={iconsColor} />;
+      return <Minimize height={30} padding={5} color={iconsColor} />;
+    };
     return (
       <div
         className={cx(styles.webViewContainer)}
@@ -563,7 +568,6 @@ class WebView extends Component {
               <div
                 className={cx(
                   styles.webViewToolbarIcons,
-                  styles.webViewToolbarLeftIcons,
                   commonStyles.icons,
                   commonStyles.enabled,
                   {
@@ -579,7 +583,6 @@ class WebView extends Component {
               <div
                 className={cx(
                   styles.webViewToolbarIcons,
-                  styles.webViewToolbarLeftIcons,
                   commonStyles.icons,
                   commonStyles.enabled
                 )}
@@ -590,16 +593,11 @@ class WebView extends Component {
             </Tooltip>
             <Tooltip title="Tilt Device">
               <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  styles.webViewToolbarLeftIcons,
-                  commonStyles.icons,
-                  {
-                    [commonStyles.enabled]: this.isMobile,
-                    [commonStyles.disabled]: !this.isMobile,
-                    [commonStyles.selected]: this.state.isTilted,
-                  }
-                )}
+                className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
+                  [commonStyles.enabled]: this.isMobile,
+                  [commonStyles.disabled]: !this.isMobile,
+                  [commonStyles.selected]: this.state.isTilted,
+                })}
                 onClick={this._flipOrientation}
               >
                 <DeviceRotateIcon height={17} color={iconsColor} />
@@ -609,7 +607,6 @@ class WebView extends Component {
               <div
                 className={cx(
                   styles.webViewToolbarIcons,
-                  styles.webViewToolbarLeftIcons,
                   commonStyles.icons,
                   commonStyles.enabled,
                   {
@@ -623,7 +620,26 @@ class WebView extends Component {
             </Tooltip>
           </div>
           <div className={cx(styles.webViewToolbarRight)}>
-            {expandOrCollapse}
+            <Tooltip
+              title={shouldMaximize ? 'Max' : 'Min'}
+              disableFocusListener={true}
+            >
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled
+                )}
+                onClick={
+                  shouldMaximize ? this._focusDevice : this._unfocusDevice
+                }
+              >
+                <div>
+                  <IconFocus />
+                </div>
+              </div>
+            </Tooltip>
+            {/* {expandOrCollapse} */}
           </div>
         </div>
         <div
