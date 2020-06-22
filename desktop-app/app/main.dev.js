@@ -297,7 +297,7 @@ const createWindow = async () => {
 
   appUpdater.on('status-changed', nextStatus => {
     menuBuilder.buildMenu(true);
-    // update status bar info
+    mainWindow.webContents.send('updater-status-changed', {nextStatus});
   });
   // Remove this if your app does not use auto updates
   appUpdater.checkForUpdatesAndNotify();

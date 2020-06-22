@@ -1,16 +1,55 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import cx from 'classnames';
 import styles from './styles.module.css';
 import Github from '../icons/Github';
 import {shell} from 'electron';
 import Twitter from '../icons/Twitter';
 import RoadMap from '../icons/RoadMap';
+import {ipcRenderer} from 'electron';
 
 const Spacer = ({width = 10}) => (
   <div className={styles.link} style={{width}}></div>
 );
 
+const AppUpdaterStatusInfo = ({status}) => {
+  let label = '';
+  switch(status) {
+    case 'checking':
+      label = 'Update Info: Checking for Updates...';
+      break;
+    case 'noUpdate':
+      label = 'Update Info: No Updates';
+      break;
+    case 'downloading':
+      label = 'Update Info: Downloading Update...';
+      break;
+    case 'downloaded':
+      label = 'Update Info: Update Downloaded';
+      break;
+    default:
+      label = null;
+    break;
+  }
+  if (label == null) return null;
+  return (
+    <span className={cx('appUpdaterStatusInfo', styles.linkText)}>
+      {label}
+    </span>
+  )
+}
+
 const StatusBar = () => {
+  const [appUpdaterStatus, setAppUpdaterStatus] = useState('idle');
+  useEffect(() => {
+    const handler = (event, args) => {
+      setAppUpdaterStatus(args.nextStatus);
+    };
+    ipcRenderer.on('updater-status-changed', handler);
+    return () => {
+      ipcRenderer.removeListener('updater-status-changed', handler);
+    };
+  }, []);
+  
   return (
     <div className={styles.statusBar}>
       <div className={styles.section}>
@@ -56,6 +95,13 @@ const StatusBar = () => {
           </span>
         </div>
       </div>
+      { appUpdaterStatus !== 'idle' && 
+        <div className={styles.section}>
+          <div>
+            <AppUpdaterStatusInfo status={appUpdaterStatus} />
+          </div>
+        </div>
+      }
       <div className={styles.section}>
         <div
           className={styles.link}
