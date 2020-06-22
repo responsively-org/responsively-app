@@ -37,6 +37,7 @@ import console from 'electron-timber';
 import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
 import Focus from '../icons/Focus';
+import Unfocus from '../icons/Unfocus';
 
 const BrowserWindow = remote.BrowserWindow;
 
@@ -514,48 +515,11 @@ class WebView extends Component {
       transform: `scale(${browser.zoomLevel})`,
     };
 
-    let expandOrCollapse;
-    let tooltipMessage;
-    let tooltipCTA;
-    let tooltipIcon;
-
     let shouldMaximize = browser.previewer.layout !== INDIVIDUAL_LAYOUT;
-    if (browser.previewer.layout !== INDIVIDUAL_LAYOUT) {
-      expandOrCollapse = (
-        <Tooltip title="Maximize">
-          <div
-            className={cx(
-              styles.webViewToolbarIcons,
-              commonStyles.icons,
-              commonStyles.enabled
-            )}
-            onClick={this._focusDevice}
-          >
-            <Focus height={30} padding={5} color={iconsColor} />
-          </div>
-        </Tooltip>
-      );
-    } else {
-      expandOrCollapse = (
-        <Tooltip title="Minimize">
-          <div
-            className={cx(
-              styles.webViewToolbarIcons,
-              commonStyles.icons,
-              commonStyles.enabled
-            )}
-            onClick={this._unfocusDevice}
-          >
-            <Minimize height={30} padding={5} color={iconsColor} />
-          </div>
-        </Tooltip>
-      );
-    }
-
     const IconFocus = () => {
       if (shouldMaximize)
-        return <Focus height={30} padding={5} color={iconsColor} />;
-      return <Minimize height={30} padding={5} color={iconsColor} />;
+        return <Focus height={30} padding={6} color={iconsColor} />;
+      return <Unfocus height={30} padding={6} color={iconsColor} />;
     };
     return (
       <div

@@ -7,7 +7,6 @@ export default ({width, height, color, padding, margin}) => (
       width={width}
       style={{padding, margin}}
       xmlns="http://www.w3.org/2000/svg"
-      xmlns="http://www.w3.org/2000/svg"
       viewBox="731.153 408.441 103.001 103.001"
     >
       <defs>
