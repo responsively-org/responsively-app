@@ -1,13 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import cx from 'classnames';
 import {shell, ipcRenderer} from 'electron';
+import PropTypes from 'prop-types';
+
 import styles from './styles.module.css';
 import Github from '../icons/Github';
 import Twitter from '../icons/Twitter';
 import RoadMap from '../icons/RoadMap';
 
 const Spacer = ({width = 10}) => (
-  <div className={styles.link} style={{width}}></div>
+  <div className={styles.link} style={{width}} />
 );
 
 const AppUpdaterStatusInfoSection = () => {
@@ -52,7 +54,11 @@ const AppUpdaterStatusInfoSection = () => {
   )
 }
 
-const StatusBar = () => {
+const StatusBar = ({visible}) => {
+  if (!visible) {
+    return null;
+  }
+
   return (
     <div className={styles.statusBar}>
       <div className={styles.section}>
@@ -115,6 +121,10 @@ const StatusBar = () => {
       </div>
     </div>
   );
+};
+
+StatusBar.propTypes = {
+  visible: PropTypes.bool.isRequired,
 };
 
 export default StatusBar;

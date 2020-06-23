@@ -14,10 +14,9 @@ import {
   getAllShortcuts,
   registerShortcut,
 } from './shortcut-manager/main-shortcut-manager';
-import {
-  appUpdater, 
-  AppUpdaterStatus
-} from './app-updater';
+import {appUpdater, AppUpdaterStatus} from './app-updater';
+import {statusBarSettings} from './settings/statusBarSettings';
+import {STATUS_BAR_VISIBILITY_CHANGE} from './constants/pubsubEvents';
 
 const path = require('path');
 
@@ -105,13 +104,16 @@ export default class MenuBuilder {
         id: 'CHECK_FOR_UPDATES',
         click() {
           appUpdater.checkForUpdatesAndNotify().then(r => {
-            if (r == null || r.updateInfo == null || r.updateInfo.version === pkg.version) {
-              dialog
-                .showMessageBox(BrowserWindow.getAllWindows()[0], {
-                  type: 'info',
-                  title: 'Responsively',
-                  message: 'There are currently no updates available'
-                });
+            if (
+              r == null ||
+              r.updateInfo == null ||
+              r.updateInfo.version === pkg.version
+            ) {
+              dialog.showMessageBox(BrowserWindow.getAllWindows()[0], {
+                type: 'info',
+                title: 'Responsively',
+                message: 'There are currently no updates available',
+              });
             }
           });
         },
@@ -122,12 +124,12 @@ export default class MenuBuilder {
         click() {
           const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
           const title = 'Responsively';
-          const description = pkg.description;
+          const {description} = pkg;
           const version = pkg.version || 'Unknown';
-          const electron = process.versions['electron'] || 'Unknown';
-          const chrome = process.versions['chrome'] || 'Unknown';
-          const node = process.versions['node'] || 'Unknown';
-          const v8 = process.versions['v8'] || 'Unknown';
+          const electron = process.versions.electron || 'Unknown';
+          const chrome = process.versions.chrome || 'Unknown';
+          const node = process.versions.node || 'Unknown';
+          const v8 = process.versions.v8 || 'Unknown';
           const osText =
             `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
           const usefulInfo = `Version: ${version}\nElectron: ${electron}\nChrome: ${chrome}\nNode.js: ${node}\nV8: ${v8}\nOS: ${osText}`;
@@ -179,7 +181,7 @@ export default class MenuBuilder {
           }
           let filePath = selected[0];
           if (!filePath.startsWith('file://')) {
-            filePath = 'file://' + filePath;
+            filePath = `file://${filePath}`;
           }
           this.mainWindow.webContents.send('address-change', filePath);
         },
@@ -219,10 +221,11 @@ export default class MenuBuilder {
   }
 
   buildMenu(isUpdate: boolean = false) {
-
     if (isUpdate) {
-      const chkUpdtMenu = this.subMenuHelp.submenu.find(x => x.id === 'CHECK_FOR_UPDATES');
-      const {label, enabled} = this.getCheckForUpdatesMenuState(); 
+      const chkUpdtMenu = this.subMenuHelp.submenu.find(
+        x => x.id === 'CHECK_FOR_UPDATES'
+      );
+      const {label, enabled} = this.getCheckForUpdatesMenuState();
       chkUpdtMenu.label = label;
       chkUpdtMenu.enabled = enabled;
     }
@@ -354,6 +357,14 @@ export default class MenuBuilder {
             this.mainWindow.toggleDevTools();
           },
         },
+        {
+          label: 'Show Status Bar',
+          type: 'checkbox',
+          checked: statusBarSettings.getVisibility(),
+          click: () => {
+            this.mainWindow.webContents.send(STATUS_BAR_VISIBILITY_CHANGE);
+          },
+        },
       ],
     };
     const subMenuViewProd = {
@@ -385,6 +396,14 @@ export default class MenuBuilder {
           accelerator: 'Ctrl+Command+F',
           click: () => {
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+          },
+        },
+        {
+          label: 'Show Status Bar',
+          type: 'checkbox',
+          checked: statusBarSettings.getVisibility(),
+          click: () => {
+            this.mainWindow.webContents.send(STATUS_BAR_VISIBILITY_CHANGE);
           },
         },
       ],
@@ -460,6 +479,16 @@ export default class MenuBuilder {
                     this.mainWindow.toggleDevTools();
                   },
                 },
+                {
+                  label: 'Show Status Bar',
+                  type: 'checkbox',
+                  checked: statusBarSettings.getVisibility(),
+                  click: () => {
+                    this.mainWindow.webContents.send(
+                      STATUS_BAR_VISIBILITY_CHANGE
+                    );
+                  },
+                },
               ]
             : [
                 {
@@ -491,6 +520,16 @@ export default class MenuBuilder {
                   click: () => {
                     this.mainWindow.setFullScreen(
                       !this.mainWindow.isFullScreen()
+                    );
+                  },
+                },
+                {
+                  label: 'Show Status Bar',
+                  type: 'checkbox',
+                  checked: statusBarSettings.getVisibility(),
+                  click: () => {
+                    this.mainWindow.webContents.send(
+                      STATUS_BAR_VISIBILITY_CHANGE
                     );
                   },
                 },
