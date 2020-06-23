@@ -17,6 +17,7 @@ import {
   NEW_INSPECTOR_STATUS,
   NEW_WINDOW_SIZE,
   DEVICE_LOADING,
+  NEW_PAGE_META_FIELD,
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
@@ -94,6 +95,11 @@ type PreviewerType = {
   layout: string,
 };
 
+type PageMetaType = {
+  title: String,
+  favicons: Array<string>,
+};
+
 type UserPreferenceType = {
   disableSSLValidation: boolean,
   reopenLastAddress: boolean,
@@ -109,6 +115,7 @@ export type BrowserStateType = {
   devices: Array<Device>,
   homepage: string,
   address: string,
+  currentPageMeta: PageMetaType,
   zoomLevel: number,
   scrollPosition: ScrollPositionType,
   navigatorStatus: NavigatorStatusType,
@@ -209,6 +216,7 @@ export default function browser(
     address: _getUserPreferences().reopenLastAddress
       ? getLastOpenedAddress()
       : getHomepage(),
+    currentPageMeta: {},
     zoomLevel: 0.6,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
@@ -246,7 +254,15 @@ export default function browser(
   switch (action.type) {
     case NEW_ADDRESS:
       saveLastOpenedAddress(action.address);
-      return {...state, address: action.address};
+      return {...state, address: action.address, currentPageMeta: {}};
+    case NEW_PAGE_META_FIELD:
+      return {
+        ...state,
+        currentPageMeta: {
+          ...state.currentPageMeta,
+          [action.name]: action.value,
+        },
+      };
     case NEW_HOMEPAGE:
       const {homepage} = action;
       saveHomepage(homepage);

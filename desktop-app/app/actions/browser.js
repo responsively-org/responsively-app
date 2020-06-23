@@ -22,6 +22,7 @@ import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
 import console from 'electron-timber';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
+export const NEW_PAGE_META_FIELD = 'NEW_PAGE_META_FIELD';
 export const NEW_DEV_TOOLS_CONFIG = 'NEW_DEV_TOOLS_CONFIG';
 export const NEW_HOMEPAGE = 'NEW_HOMEPAGE';
 export const NEW_ZOOM_LEVEL = 'NEW_ZOOM_LEVEL';
@@ -43,6 +44,14 @@ export function newAddress(address) {
   return {
     type: NEW_ADDRESS,
     address,
+  };
+}
+
+export function newPageMetaField(name, value) {
+  return {
+    type: NEW_PAGE_META_FIELD,
+    name,
+    value,
   };
 }
 
@@ -172,6 +181,12 @@ export function onAddressChange(newURL, force) {
 
     dispatch(newAddress(newURL));
     pubsub.publish(ADDRESS_CHANGE, [{address: newURL, force: false}]);
+  };
+}
+
+export function onPageMetaFieldUpdate(name, value) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(newPageMetaField(name, value));
   };
 }
 
