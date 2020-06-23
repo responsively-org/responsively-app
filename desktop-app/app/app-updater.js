@@ -1,8 +1,7 @@
 import {autoUpdater} from 'electron-updater';
 import log from 'electron-log';
-import {pkg} from './utils/generalUtils';
 
-const EventEmitter = require('events').EventEmitter; 
+const {EventEmitter} = require('events'); 
 
 const AppUpdaterStatus = {
   Idle: 'idle',
@@ -16,6 +15,7 @@ Object.freeze(AppUpdaterStatus);
 
 class AppUpdater extends EventEmitter {
   status: string; 
+
   timerId = null;
 
   constructor() {
@@ -39,7 +39,7 @@ class AppUpdater extends EventEmitter {
       return autoUpdater.checkForUpdatesAndNotify();
   } 
 
-  handleStatusChange(nextStatus:string, backToIdle:boolean) {
+  handleStatusChange(nextStatus: string, backToIdle: boolean) {
     clearTimeout(this.timerId);
     
     if (this.status !== nextStatus) {
