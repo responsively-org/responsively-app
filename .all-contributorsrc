@@ -136,6 +136,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "falecci",
+      "name": "Federico Alecci",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/17703824?v=4",
+      "profile": "https://falecci.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
