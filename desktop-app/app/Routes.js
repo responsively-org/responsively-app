@@ -5,7 +5,7 @@ import App from './containers/App';
 import Browser from './containers/Browser';
 import LeftIconsPaneContainer from './containers/LeftIconsPaneContainer';
 import styles from './layout.css';
-import StatusBar from './components/StatusBar';
+import StatusBarContainer from './containers/StatusBarContainer';
 import DevToolResizerContainer from './containers/DevToolResizerContainer';
 
 export default () => (
@@ -20,7 +20,7 @@ export default () => (
         </Switch>
       </div>
     </div>
-    <StatusBar />
+    <StatusBarContainer />
     <DevToolResizerContainer />
   </App>
 );
