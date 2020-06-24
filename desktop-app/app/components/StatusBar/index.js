@@ -25,12 +25,12 @@ const AppUpdaterStatusInfoSection = () => {
   }, []);
 
   let label = '';
-  switch(status) {
+  switch (status) {
     case 'checking':
       label = 'Update Info: Checking for Updates...';
       break;
     case 'noUpdate':
-      label = 'Update Info: No Updates';
+      label = 'Update Info: The App is up to date!';
       break;
     case 'downloading':
       label = 'Update Info: Downloading Update...';
@@ -40,7 +40,7 @@ const AppUpdaterStatusInfoSection = () => {
       break;
     default:
       label = null;
-    break;
+      break;
   }
   if (label == null) return null;
   return (
@@ -51,8 +51,8 @@ const AppUpdaterStatusInfoSection = () => {
         </span>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const StatusBar = ({visible}) => {
   if (!visible) {
