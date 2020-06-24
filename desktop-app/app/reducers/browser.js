@@ -330,14 +330,6 @@ export default function browser(
           : device
       );
       return {...state, devices: newDevicesList};
-    // case DEVICE_FOCUS:
-    //   const currentPreviewerFocus = {...state.previewer};
-    //   currentPreviewerFocus.focusedDeviceId = action.device.id;
-    //   return {...state, previewer: currentPreviewerFocus};
-    // case DEVICE_UNFOCUS:
-    //   const currentPreviewerUnfocus = {...state.previewer};
-    //   delete currentPreviewerUnfocus.focusedDeviceId;
-    //   return {...state, previewer: currentPreviewerUnfocus};
     default:
       return state;
   }

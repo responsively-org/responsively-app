@@ -65,19 +65,6 @@ export default function DevicesPreviewer(props) {
       {layout === INDIVIDUAL_LAYOUT && (
         <Tabs onSelect={onTabClick} selectedIndex={focusedDeviceIndex}>
           <TabList>
-            {/* {devices
-              .map(device => {
-                if (!isDeviceEligible(device, props.browser.filters)) {
-                  return null;
-                }
-                return (
-                  <Tab tabId={device.id} key={device.id}>
-                    {getDeviceIcon(device.type)}
-                    {device.name}
-                  </Tab>
-                );
-              })
-              .filter(Boolean)} */}
             {devicesAfterFiltering.map(device => {
               return (
                 <Tab tabId={device.id} key={device.id}>

@@ -14,37 +14,37 @@ export default ({width, height, color, padding, margin}) => (
           <rect x="725.999" y="355.999" width="103.001" height="103.001" />
         </clipPath>
       </defs>
-      <g clip-path="url(#_clipPath_h8sxV9rYEahs9RnRvaBS9986KyxpspD8)">
+      <g clipPath="url(#_clipPath_h8sxV9rYEahs9RnRvaBS9986KyxpspD8)">
         <g>
           <path
             d=" M 752.499 450.801 C 728.601 437.003 720.4 406.398 734.198 382.499 C 747.996 358.601 778.601 350.4 802.499 364.198 C 826.398 377.996 834.598 408.601 820.801 432.499 C 807.003 456.398 776.398 464.598 752.499 450.801 Z "
             fill="none"
-            vector-effect="non-scaling-stroke"
-            stroke-width="1"
+            vectorEffect="non-scaling-stroke"
+            strokeWidth="1"
             stroke={color}
-            stroke-linejoin="miter"
-            stroke-linecap="square"
-            stroke-miterlimit="3"
+            strokeLinejoin="miter"
+            strokeLinecap="square"
+            strokeMiterlimit="3"
           />
           <path
             d=" M 745.681 414.57 L 768.661 416.338 L 770.429 439.319"
             fill="none"
-            vector-effect="non-scaling-stroke"
-            stroke-width="1"
+            vectorEffect="non-scaling-stroke"
+            strokeWidth="1"
             stroke={color}
-            stroke-linejoin="round"
-            stroke-linecap="round"
-            stroke-miterlimit="3"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+            strokeMiterlimit="3"
           />
           <path
             d=" M 784.571 375.679 L 786.339 398.66 L 809.32 400.428"
             fill="none"
-            vector-effect="non-scaling-stroke"
-            stroke-width="1"
+            vectorEffect="non-scaling-stroke"
+            strokeWidth="1"
             stroke={color}
-            stroke-linejoin="round"
-            stroke-linecap="round"
-            stroke-miterlimit="3"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+            strokeMiterlimit="3"
           />
         </g>
       </g>

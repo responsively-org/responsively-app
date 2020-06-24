@@ -585,7 +585,7 @@ class WebView extends Component {
           </div>
           <div className={cx(styles.webViewToolbarRight)}>
             <Tooltip
-              title={shouldMaximize ? 'Max' : 'Min'}
+              title={shouldMaximize ? 'Maximize' : 'Minimize'}
               disableFocusListener={true}
             >
               <div

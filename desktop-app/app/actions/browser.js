@@ -292,7 +292,7 @@ export function changeDrawerOpenState(newOpenState) {
   };
 }
 
-export function setPreviewLayout(newLayout, focusedDeviceId) {
+export function setPreviewLayout(newLayout) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {previewer},
