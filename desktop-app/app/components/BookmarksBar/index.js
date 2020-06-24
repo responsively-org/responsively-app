@@ -6,6 +6,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import BookmarkEditDialog from './BookmarkEditDialog';
 import styles from './style.module.css';
+import Globe from '../icons/Globe';
 
 export const BookmarksBar = function({
   bookmarks,
@@ -73,19 +74,28 @@ function BookmarkItem({bookmark, onClick, onDelete, onEdit}) {
   };
 
   return (
-    <div
-      className={styles.bookmarkItem}
-      key={bookmark.url}
-      onClick={handleClick}
-      onContextMenu={handleContextMenu}
-    >
-      <span>{bookmark.title}</span>
+    <>
+      <div
+        className={styles.bookmarkItem}
+        key={bookmark.url}
+        onClick={handleClick}
+        onContextMenu={handleContextMenu}
+      >
+        <Globe height={10} className={styles.icon} />
+        <span>{bookmark.title}</span>
+      </div>
       <Menu
         id="bookmark-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        getContentAnchorEl={null}
+        onContextMenu={handleClose}
       >
         <MenuItem onClick={openRenameDialog}>Edit</MenuItem>
         <MenuItem onClick={handleDelete}>Delete</MenuItem>
@@ -96,6 +106,6 @@ function BookmarkItem({bookmark, onClick, onDelete, onEdit}) {
         onClose={closeDialog}
         bookmark={bookmark}
       />
-    </div>
+    </>
   );
 }

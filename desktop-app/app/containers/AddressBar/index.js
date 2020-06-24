@@ -6,13 +6,15 @@ import {bindActionCreators} from 'redux';
 
 import AddressInput from '../../components/Addressinput';
 import * as BrowserActions from '../../actions/browser';
-import {toggleBookmarkUrl} from '../../actions/bookmarks'
+import {toggleBookmarkUrl} from '../../actions/bookmarks';
 
 const AddressBar = function(props) {
+  const handler = (_, url) => {
+    props.onAddressChange(url);
+  };
   useEffect(() => {
-    ipcRenderer.on('address-change', (_, url) => {
-      props.onAddressChange(url);
-    });
+    ipcRenderer.on('address-change', handler);
+    return () => ipcRenderer.removeListener('address-change', handler);
   }, []);
   return (
     <AddressInput
@@ -21,7 +23,9 @@ const AddressBar = function(props) {
       homepage={props.browser.homepage}
       setHomepage={props.setCurrentAddressAsHomepage}
       isBookmarked={props.isBookmarked}
-      toggleBookmark={props.toggleBookmarkUrl}
+      toggleBookmark={url =>
+        props.toggleBookmarkUrl(url, props.browser.currentPageMeta)
+      }
       deleteCookies={props.deleteCookies}
       deleteStorage={props.deleteStorage}
     />
@@ -31,7 +35,9 @@ const AddressBar = function(props) {
 function mapStateToProps(state) {
   return {
     browser: state.browser,
-    isBookmarked: state.bookmarks.bookmarks.some(b => b.url === state.browser.address)
+    isBookmarked: state.bookmarks.bookmarks.some(
+      b => b.url === state.browser.address
+    ),
   };
 }
 

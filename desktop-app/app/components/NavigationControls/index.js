@@ -18,6 +18,13 @@ class NavigationControls extends Component {
     ipcRenderer.on('reload-url', this.props.triggerNavigationReload);
     ipcRenderer.on('reload-css', this.props.reloadCSS);
   }
+  componentWillUnmount() {
+    ipcRenderer.removeListener(
+      'reload-url',
+      this.props.triggerNavigationReload
+    );
+    ipcRenderer.removeListener('reload-css', this.props.reloadCSS);
+  }
 
   render() {
     const iconProps = {
