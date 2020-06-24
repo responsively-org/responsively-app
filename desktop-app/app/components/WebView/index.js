@@ -124,6 +124,18 @@ class WebView extends Component {
       this.initEventTriggers(this.webviewRef.current);
     });
 
+    if (this.props.transmitNavigatorStatus) {
+      this.webviewRef.current.addEventListener(
+        'page-favicon-updated',
+        ({favicons}) => this.props.onPageMetaFieldUpdate('favicons', favicons)
+      );
+
+      this.webviewRef.current.addEventListener(
+        'page-title-updated',
+        ({title}) => this.props.onPageMetaFieldUpdate('title', title)
+      );
+    }
+
     this.webviewRef.current.addEventListener('did-start-loading', () => {
       this.setState({errorCode: null, errorDesc: null});
       this.props.onLoadingStateChange(true);

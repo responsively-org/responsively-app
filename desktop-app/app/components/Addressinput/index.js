@@ -6,11 +6,12 @@ import DeleteCookieIcon from '../icons/DeleteCookie';
 import DeleteStorageIcon from '../icons/DeleteStorage';
 import FavIconOff from '@material-ui/icons/StarBorder';
 import FavIconOn from '@material-ui/icons/Star';
-import {iconsColor} from '../../constants/colors';
+import {iconsColor, lightIconsColor} from '../../constants/colors';
 
 import commonStyles from '../common.styles.css';
 import styles from './style.css';
 import {Tooltip} from '@material-ui/core';
+import {Icon} from 'flwww';
 
 type Props = {
   address: string,
@@ -45,7 +46,6 @@ class AddressBar extends React.Component<Props> {
   }
 
   render() {
-    const FavIcon = this.props.isBookmarked ? FavIconOn : FavIconOff;
     return (
       <div className={styles.addressBarContainer}>
         <input
@@ -65,12 +65,23 @@ class AddressBar extends React.Component<Props> {
               [commonStyles.enabled]: true,
             })}
           >
-            <Tooltip title="Bookmark">
+            <Tooltip
+              title={
+                this.props.isBookmarked
+                  ? 'Remove from Bookmarks'
+                  : 'Add to Bookmarks'
+              }
+            >
               <div
                 className={cx(commonStyles.flexAlignVerticalMiddle)}
-                onClick={() => this.props.toggleBookmark(this.state.userTypedAddress)}
+                onClick={() =>
+                  this.props.toggleBookmark(this.state.userTypedAddress)
+                }
               >
-                <FavIcon fontSize="small"/>
+                <Icon
+                  type={this.props.isBookmarked ? 'starFull' : 'star'}
+                  color={lightIconsColor}
+                />
               </div>
             </Tooltip>
           </div>

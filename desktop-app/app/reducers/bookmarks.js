@@ -1,12 +1,13 @@
 import settings from 'electron-settings';
-import {TOGGLE_BOOKMARK, EDIT_BOOKMARK} from '../actions/bookmarks'
-import {BOOKMARKS} from '../constants/settingKeys'
-import { getWebsiteName } from '../components/WebView/screenshotUtil';
+import {TOGGLE_BOOKMARK, EDIT_BOOKMARK} from '../actions/bookmarks';
+import {BOOKMARKS} from '../constants/settingKeys';
+import {getWebsiteName} from '../components/WebView/screenshotUtil';
+import console from 'electron-timber';
 
 type BookmarksType = {
   title: string,
-  url: string
-}
+  url: string,
+};
 
 function fetchBookmarks(): BookmarksType {
   return settings.get(BOOKMARKS) || [];
@@ -24,22 +25,24 @@ export default function browser(
 ) {
   switch (action.type) {
     case TOGGLE_BOOKMARK:
-      let bookmarks = state.bookmarks
+      let bookmarks = state.bookmarks;
       const bookmark = {
-        title: getWebsiteName(action.url),
-        url: action.url
-      }
+        title: action.title || getWebsiteName(action.url),
+        url: action.url,
+      };
       if (bookmarks.find(b => b.url === action.url)) {
-        bookmarks = bookmarks.filter(b => b.url !== action.url)
+        bookmarks = bookmarks.filter(b => b.url !== action.url);
       } else {
-        bookmarks = [...bookmarks, bookmark]
+        bookmarks = [...bookmarks, bookmark];
       }
-      persistBookmarks(bookmarks)
-      return {...state, bookmarks}
+      persistBookmarks(bookmarks);
+      return {...state, bookmarks};
     case EDIT_BOOKMARK:
-      const updatedBookmarks = state.bookmarks.map(b => b === action.bookmark ? {...b, title: action.title, url: action.url} : b)
-      persistBookmarks(updatedBookmarks)
-      return {...state, bookmarks: updatedBookmarks}
+      const updatedBookmarks = state.bookmarks.map(b =>
+        b === action.bookmark ? {...b, title: action.title, url: action.url} : b
+      );
+      persistBookmarks(updatedBookmarks);
+      return {...state, bookmarks: updatedBookmarks};
     default:
       return state;
   }
