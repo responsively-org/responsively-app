@@ -26,7 +26,6 @@ export default function browser(
   switch (action.type) {
     case TOGGLE_BOOKMARK:
       let bookmarks = state.bookmarks;
-      console.log('action.title', action.title);
       const bookmark = {
         title: action.title || getWebsiteName(action.url),
         url: action.url,

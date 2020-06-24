@@ -60,6 +60,7 @@ function BookmarkItem({bookmark, onClick, onDelete, onEdit}) {
   };
 
   const handleDelete = function() {
+    setAnchorEl(null);
     onDelete(bookmark);
   };
 
