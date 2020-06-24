@@ -14,7 +14,7 @@ import {
   getAllShortcuts,
   registerShortcut,
 } from './shortcut-manager/main-shortcut-manager';
-import {appUpdater, AppUpdaterState} from './app-updater';
+import {appUpdater, AppUpdaterStatus} from './app-updater';
 import {statusBarSettings} from './settings/statusBarSettings';
 import {STATUS_BAR_VISIBILITY_CHANGE} from './constants/pubsubEvents';
 
@@ -190,18 +190,33 @@ export default class MenuBuilder {
   };
 
   getCheckForUpdatesMenuState() {
-    const updaterState = appUpdater.getCurrentState();
+    const updaterStatus = appUpdater.getCurrentStatus();
     let label = 'Check for Updates...';
     let enabled = true;
 
-    if (updaterState === AppUpdaterState.Checking) {
-      enabled = false;
-      label = 'Checking for Updates...';
-    } else if (updaterState === AppUpdaterState.Downloading) {
-      enabled = false;
-      label = 'Downloading Update...';
+    switch(updaterStatus) {
+      case AppUpdaterStatus.Idle:
+        label = 'Check for Updates...';
+        enabled = true;
+        break;
+      case AppUpdaterStatus.Checking:
+        label = 'Checking for Updates...';
+        enabled = false;  
+        break;
+      case AppUpdaterStatus.NoUpdate:
+        label = 'No Updates';
+        enabled = false;  
+        break;
+      case AppUpdaterStatus.Downloading:
+        label = 'Downloading Update...';
+        enabled = false;  
+        break;
+      case AppUpdaterStatus.Downloaded:
+        label = 'Update Downloaded';
+        enabled = false;  
+        break;
     }
-
+    
     return {label, enabled};
   }
 
