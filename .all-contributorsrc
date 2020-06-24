@@ -127,6 +127,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jonathanurias96",
+      "name": "jonathanurias96",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/57416786?v=4",
+      "profile": "https://github.com/jonathanurias96",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "falecci",
+      "name": "Federico Alecci",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/17703824?v=4",
+      "profile": "https://falecci.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

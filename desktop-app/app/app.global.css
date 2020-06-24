@@ -47,6 +47,10 @@ body {
   overflow: hidden;
 }
 
+svg {
+  pointer-events: none;
+}
+
 /*h2 {
   margin: 0;
   font-size: 2.25rem;

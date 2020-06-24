@@ -131,6 +131,18 @@ class WebView extends Component {
       this.initEventTriggers(this.webviewRef.current);
     });
 
+    if (this.props.transmitNavigatorStatus) {
+      this.webviewRef.current.addEventListener(
+        'page-favicon-updated',
+        ({favicons}) => this.props.onPageMetaFieldUpdate('favicons', favicons)
+      );
+
+      this.webviewRef.current.addEventListener(
+        'page-title-updated',
+        ({title}) => this.props.onPageMetaFieldUpdate('title', title)
+      );
+    }
+
     this.webviewRef.current.addEventListener('did-start-loading', () => {
       this.setState({errorCode: null, errorDesc: null});
       this.props.onLoadingStateChange(true);
@@ -400,20 +412,20 @@ class WebView extends Component {
   initEventTriggers = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
       responsivelyApp.deviceId = '${this.props.device.id}';
-      document.body.addEventListener('mouseleave', () => {
+      document.addEventListener('mouseleave', () => {
         window.responsivelyApp.mouseOn = false;
         if (responsivelyApp.domInspectorEnabled) {
           responsivelyApp.domInspector.disable();
         }
       });
-      document.body.addEventListener('mouseenter', () => {
+      document.addEventListener('mouseenter', () => {
         responsivelyApp.mouseOn = true;
         if (responsivelyApp.domInspectorEnabled) {
           responsivelyApp.domInspector.enable();
         }
       });
 
-      window.addEventListener('scroll', (e) => {
+      document.addEventListener('scroll', (e) => {
         if (!responsivelyApp.mouseOn) {
           return;
         }
