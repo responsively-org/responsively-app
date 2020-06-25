@@ -17,6 +17,7 @@ import {
   NEW_INSPECTOR_STATUS,
   NEW_WINDOW_SIZE,
   DEVICE_LOADING,
+  NEW_FOCUSED_DEVICE,
   NEW_PAGE_META_FIELD,
 } from '../actions/browser';
 import type {Action} from './types';
@@ -93,6 +94,8 @@ type DrawerType = {
 
 type PreviewerType = {
   layout: string,
+  previousLayout: string,
+  focusedDeviceId: string,
 };
 
 type PageMetaType = {
@@ -281,6 +284,8 @@ export default function browser(
       return {...state, drawer: action.drawer};
     case NEW_PREVIEWER_CONFIG:
       const updateObject = {previewer: action.previewer};
+      updateObject.previewer.previousLayout = state.previewer.layout;
+
       if (
         state.previewer.layout !== INDIVIDUAL_LAYOUT &&
         action.previewer.layout === INDIVIDUAL_LAYOUT
@@ -296,6 +301,8 @@ export default function browser(
         updateObject.previousZoomLevel = null;
       }
       return {...state, ...updateObject};
+    case NEW_FOCUSED_DEVICE:
+      return {...state, previewer: action.previewer};
     case NEW_ACTIVE_DEVICES:
       _saveActiveDevices(action.devices);
       return {...state, devices: action.devices};

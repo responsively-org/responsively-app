@@ -6,15 +6,23 @@
 .webViewToolbar {
   padding: 5px;
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+}
+
+.webViewToolbarLeft {
+  display: flex;
+}
+
+.webViewToolbarRight {
+  display: flex;
 }
 
 .webViewToolbarIcons {
   margin-right: 2px;
   padding: 0 2px;
-  display: flex;
   align-items: center;
   justify-content: center;
+  display: flex;
   height: 30px;
   width: 30px;
 }

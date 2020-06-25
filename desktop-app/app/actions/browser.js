@@ -39,6 +39,7 @@ export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
 export const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
 export const NEW_WINDOW_SIZE = 'NEW_WINDOW_SIZE';
 export const DEVICE_LOADING = 'DEVICE_LOADING';
+export const NEW_FOCUSED_DEVICE = 'NEW_FOCUSED_DEVICE';
 
 export function newAddress(address) {
   return {
@@ -121,6 +122,13 @@ export function newDrawerContent(drawer) {
 export function newPreviewerConfig(previewer) {
   return {
     type: NEW_PREVIEWER_CONFIG,
+    previewer,
+  };
+}
+
+export function newFocusedDevice(previewer) {
+  return {
+    type: NEW_FOCUSED_DEVICE,
     previewer,
   };
 }
@@ -313,6 +321,25 @@ export function setPreviewLayout(newLayout) {
       newPreviewerConfig({
         ...previewer,
         layout: newLayout,
+      })
+    );
+  };
+}
+
+export function setFocusedDevice(focusedDeviceId) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {previewer},
+    } = getState();
+
+    if (previewer.focusedDeviceId === focusedDeviceId) {
+      return;
+    }
+
+    dispatch(
+      newFocusedDevice({
+        ...previewer,
+        focusedDeviceId,
       })
     );
   };

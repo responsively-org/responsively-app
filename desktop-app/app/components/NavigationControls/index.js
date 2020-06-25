@@ -41,7 +41,7 @@ class NavigationControls extends Component {
     if (deviceLoading) {
       refreshOrCancel = (
         <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-          <Tooltip title="Stop loading this page" disableFocusListener={true}>
+          <Tooltip title="Stop loading this page">
             <div
               className={commonStyles.flexAlignVerticalMiddle}
               onClick={this.props.triggerStopLoading}
@@ -54,7 +54,7 @@ class NavigationControls extends Component {
     } else {
       refreshOrCancel = (
         <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-          <Tooltip title="Reload" disableFocusListener={true}>
+          <Tooltip title="Reload">
             <div
               className={commonStyles.flexAlignVerticalMiddle}
               onClick={this.props.triggerNavigationReload}
