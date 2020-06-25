@@ -29,6 +29,7 @@ const Browser = ({browser}) => {
             flex: 1,
             height: '100%',
             flexDirection: 'column',
+            overflow: 'hidden',
           }}
         >
           <DevicePreviewerContainer />

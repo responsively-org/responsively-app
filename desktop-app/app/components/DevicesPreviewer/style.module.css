@@ -3,7 +3,7 @@
   flex: 1;
   height: 100%;
   width: 100%;
-  overflow: scroll;
+  overflow: auto;
   flex-direction: column;
 }
 
@@ -17,7 +17,7 @@
 
 .devicesContainer {
   display: flex;
-  padding-bottom: 50px;
+  padding-bottom: 100px;
 }
 
 .tab {
