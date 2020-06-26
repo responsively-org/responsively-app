@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import cx from 'classnames';
 import {shell, ipcRenderer} from 'electron';
 import PropTypes from 'prop-types';
-
+import Announcement from './Announcement';
 import styles from './styles.module.css';
 import Github from '../icons/Github';
 import Twitter from '../icons/Twitter';
@@ -105,20 +105,7 @@ const StatusBar = ({visible}) => {
         </div>
       </div>
       <AppUpdaterStatusInfoSection />
-      <div className={styles.section}>
-        <div
-          className={styles.link}
-          onClick={() =>
-            shell.openExternal(
-              'https://github.com/manojVivek/responsively-app/issues/new?labels=enhancement&title=[Feature%20Suggestion]'
-            )
-          }
-        >
-          <span className={cx('featureSuggestionLink', styles.linkText)}>
-            Have a feature suggestion? Let us know! 🚀
-          </span>
-        </div>
-      </div>
+      <Announcement />
     </div>
   );
 };
