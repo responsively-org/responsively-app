@@ -1,5 +1,5 @@
 // @flow
-import React, {Fragment, useState, useEffect} from 'react';
+import React, {Fragment, useState, useEffect, useRef, createRef} from 'react';
 import cx from 'classnames';
 import {Tab, Tabs, TabList} from 'react-tabs';
 import Renderer from '../Renderer';
@@ -35,24 +35,24 @@ export default function DevicesPreviewer(props) {
     .filter(Boolean);
 
   let focusedDeviceIndex = 0;
-  let focusedDeviceId = props.browser.previewer.focusedDeviceId;
   if (layout === INDIVIDUAL_LAYOUT) {
     if (props.browser.previewer.focusedDeviceId) {
       focusedDeviceIndex = (devicesAfterFiltering || []).findIndex(
-        device => device.id === focusedDeviceId
+        device => device.id === props.browser.previewer.focusedDeviceId
       );
-
-      if (focusedDeviceIndex === -1) {
-        focusedDeviceIndex = 0;
-        if (devicesAfterFiltering.length > 0) {
-          focusedDeviceId = devicesAfterFiltering[0].id;
-        }
-      }
-
-      if (focusedDeviceIndex != activeTab) {
-        changeTab(focusedDeviceIndex);
-      }
     }
+    if (focusedDeviceIndex === -1) {
+      focusedDeviceIndex = 0;
+    }
+
+    if (focusedDeviceIndex != activeTab) {
+      changeTab(focusedDeviceIndex);
+    }
+  }
+
+  let focusedDeviceId;
+  if (devicesAfterFiltering.length > 0) {
+    focusedDeviceId = devicesAfterFiltering[focusedDeviceIndex].id;
   }
 
   const onTabClick = function(newTabIndex) {
