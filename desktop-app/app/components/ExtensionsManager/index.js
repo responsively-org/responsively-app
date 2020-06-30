@@ -79,13 +79,15 @@ export default function ExtensionsManager({triggerNavigationReload}) {
               variant="outlined"
               error={errorMessage !== ''}
             />
-            { errorMessage &&
-            <FormHelperText  error={true} className={styles.extensionAddError}>{errorMessage}</FormHelperText> }
           </div>
           <Button onClick={handleSubmit} disabled={extensionId.trim() === ''}>
             {loading ? <CircularProgress size={22}/> : 'Add'}
           </Button>
         </form>
+
+        {errorMessage && <FormHelperText error={true}>{errorMessage}</FormHelperText>}
+
+        <FormHelperText className={styles.extensionsNotice}>Note: Only DevTool extensions will work properly, other general browser extensions may not work as intended.</FormHelperText>
 
         <p className={styles.extensionsLabel}>Installed extensions ({extensions.length})</p>
 

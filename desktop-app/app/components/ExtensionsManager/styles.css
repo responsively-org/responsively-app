@@ -6,7 +6,7 @@
 }
 
 .extensionsLabel {
-  margin: 0;
+  margin: 34px 0 0;
   font-size: 13px;
   line-height: 13px;
   opacity: 0.5;
@@ -42,11 +42,10 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 30px;
+  margin-bottom: 6px;
   margin-top: 12px;
 }
 
-.extensionAddError {
-  margin-right: 0;
-  margin-left: 0;
+.extensionsNotice {
+  margin-top: 12px !important;
 }
