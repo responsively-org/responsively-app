@@ -55,7 +55,7 @@ export const captureFullPage = async (
     document.body.classList.add('responsivelyApp__ScreenshotInProgress');
     responsivelyApp.screenshotVar = {
       previousScrollPosition : {
-        left: window.scrollX, 
+        left: window.scrollX,
         top: window.scrollY,
       },
       scrollHeight: document.body.scrollHeight,
@@ -186,14 +186,14 @@ function _getScreenshotFileName(
       `Desktop/Responsively-Screenshots`,
       directoryPath
     ),
-    file: `${_getWebsiteName(address)} - ${device.name.replace(
+    file: `${getWebsiteName(address)} - ${device.name.replace(
       /\//g,
       '-'
     )} - ${dateString}.png`,
   };
 }
 
-const _getWebsiteName = address => {
+export const getWebsiteName = address => {
   let domain = '';
   if (address.startsWith('file://')) {
     let fileNameStartingIndex = address.lastIndexOf('/') + 1;

@@ -22,13 +22,14 @@ import {
   triggerScrollDown,
   screenshotAllDevices,
   flipOrientationAllDevices,
-  enableInpector,
+  toggleInspector,
   goToHomepage,
   triggerNavigationBack,
   triggerNavigationForward,
   deleteCookies,
   deleteStorage,
 } from '../actions/browser';
+import {toggleBookmarkUrl} from '../actions/bookmarks'
 
 type Props = {
   store: Store,
@@ -78,7 +79,6 @@ export default class Root extends Component<Props> {
 
   registerAllShortcuts = () => {
     const {store} = this.props;
-
     registerShortcut(
       {id: 'ZoomIn', title: 'Zoom In', accelerators: ['mod+=', 'mod+shift+=']},
       () => {
@@ -151,7 +151,7 @@ export default class Root extends Component<Props> {
         accelerators: ['mod+i'],
       },
       () => {
-        store.dispatch(enableInpector());
+        store.dispatch(toggleInspector());
       },
       true
     );
@@ -201,6 +201,18 @@ export default class Root extends Component<Props> {
       () => {
         store.dispatch(deleteCookies());
       },
+      true
+    );
+
+    registerShortcut(
+      {
+        id: 'AddBookmark', 
+        title: 'Add Bookmark', 
+        accelerators: ['mod+d']
+      }, 
+      () => {
+        store.dispatch(toggleBookmarkUrl(store.getState().browser.address));
+      }, 
       true
     );
   };

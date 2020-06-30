@@ -166,6 +166,9 @@ ipcRenderer.on('enableInspectorMessage', (event, args) => {
 });
 
 ipcRenderer.on('disableInspectorMessage', (event, args) => {
+  if (!window.responsivelyApp.domInspector) {
+    return;
+  }
   window.responsivelyApp.domInspector.destroy();
   window.responsivelyApp.domInspector = null;
   window.responsivelyApp.domInspectorEnabled = false;

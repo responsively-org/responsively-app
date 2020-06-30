@@ -11,7 +11,9 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/1283424?v=4",
       "profile": "http://twitter.com/vivek_jonam",
       "contributions": [
-        "code"
+        "code",
+        "test",
+        "projectManagement"
       ]
     },
     {
@@ -20,7 +22,9 @@
       "avatar_url": "https://avatars0.githubusercontent.com/u/26249498?v=4",
       "profile": "https://github.com/esprush",
       "contributions": [
-        "code"
+        "code",
+        "test",
+        "projectManagement"
       ]
     },
     {
@@ -95,6 +99,52 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Kidcredo",
+      "name": "Ryan Pais",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/15522605?v=4",
+      "profile": "https://github.com/Kidcredo",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "Grafikart",
+      "name": "Jonathan",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/395137?v=4",
+      "profile": "https://grafikart.fr",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "heygema",
+      "name": "Gema Anggada ✌︎",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/10743728?v=4",
+      "profile": "https://github.com/heygema",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jonathanurias96",
+      "name": "jonathanurias96",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/57416786?v=4",
+      "profile": "https://github.com/jonathanurias96",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "falecci",
+      "name": "Federico Alecci",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/17703824?v=4",
+      "profile": "https://falecci.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -102,5 +152,6 @@
   "projectOwner": "manojVivek",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "none"
 }

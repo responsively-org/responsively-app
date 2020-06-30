@@ -7,30 +7,57 @@ import DevicePreviewerContainer from '../DevicePreviewerContainer';
 import DrawerContainer from '../DrawerContainer';
 import * as BrowserActions from '../../actions/browser';
 import Grid from '@material-ui/core/Grid';
+import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 
 type Props = {};
 
-class Browser extends React.Component<Props> {
-  props: Props;
-
-  render() {
-    return (
-      <Fragment>
-        <Header />
+const Browser = ({browser}) => {
+  return (
+    <Fragment>
+      <Header />
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          height: '100%',
+        }}
+      >
+        <DrawerContainer />
         <div
           style={{
             display: 'flex',
-            flexDirection: 'row',
+            flex: 1,
             height: '100%',
+            flexDirection: 'column',
+            overflow: 'hidden',
           }}
         >
-          <DrawerContainer />
           <DevicePreviewerContainer />
+          {browser.devToolsConfig.open &&
+          browser.devToolsConfig.mode === DEVTOOLS_MODES.BOTTOM ? (
+            <div
+              style={{
+                display: 'flex',
+                width: '100%',
+                height: browser.devToolsConfig.size.height,
+              }}
+            />
+          ) : null}
         </div>
-      </Fragment>
-    );
-  }
-}
+        {browser.devToolsConfig.open &&
+        browser.devToolsConfig.mode === DEVTOOLS_MODES.RIGHT ? (
+          <div
+            style={{
+              height: '100%',
+              width: browser.devToolsConfig.size.width,
+              display: 'flex',
+            }}
+          />
+        ) : null}
+      </div>
+    </Fragment>
+  );
+};
 
 function mapStateToProps(state) {
   return {

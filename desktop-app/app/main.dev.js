@@ -11,7 +11,15 @@
  * @flow
  */
 require('dotenv').config();
-import electron, {app, BrowserWindow, globalShortcut, ipcMain, nativeTheme} from 'electron';
+import electron, {
+  app,
+  BrowserWindow,
+  BrowserView,
+  globalShortcut,
+  ipcMain,
+  nativeTheme,
+  webContents,
+} from 'electron';
 import settings from 'electron-settings';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -24,7 +32,9 @@ import installExtension, {
 import devtron from 'devtron';
 import fs from 'fs';
 import {migrateDeviceSchema} from './settings/migration';
+import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
+import console from 'electron-timber';
 import {appUpdater} from './app-updater';
 
 const path = require('path');
@@ -43,6 +53,7 @@ let hasActiveWindow = false;
 
 let mainWindow = null;
 let urlToOpen = null;
+let devToolsView = null;
 
 let httpAuthCallbacks = {};
 
@@ -133,7 +144,6 @@ app.on(
 app.on('login', (event, webContents, request, authInfo, callback) => {
   event.preventDefault();
   const {url} = request;
-  console.log('Sending HTTP Auth Prompt', {url});
   if (httpAuthCallbacks[url]) {
     return httpAuthCallbacks[url].push(callback);
   }
@@ -167,6 +177,8 @@ const createWindow = async () => {
     icon: iconPath,
   });
 
+  ipcMain.removeAllListeners();
+
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on('did-finish-load', function() {
@@ -187,6 +199,13 @@ const createWindow = async () => {
 
   initMainShortcutManager();
 
+  const onResize = () => {
+    const [width, height] = mainWindow.getContentSize();
+    mainWindow.webContents.send('window-resize', {height, width});
+  };
+
+  mainWindow.on('resize', onResize);
+
   mainWindow.once('ready-to-show', () => {
     if (urlToOpen) {
       openUrl(urlToOpen);
@@ -194,6 +213,7 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+    onResize();
   });
 
   ipcMain.on('http-auth-promt-response', (event, ...args) => {
@@ -212,6 +232,62 @@ const createWindow = async () => {
     nativeTheme.themeSource = scheme || 'system';
   });
 
+  ipcMain.on('open-devtools', (event, ...args) => {
+    const {webViewId, bounds, mode} = args[0];
+    if (!webViewId) {
+      return;
+    }
+    const webView = webContents.fromId(webViewId);
+
+    if (mode === DEVTOOLS_MODES.UNDOCKED) {
+      return webView.openDevTools();
+    }
+
+    devToolsView = new BrowserView();
+    mainWindow.setBrowserView(devToolsView);
+    devToolsView.setBounds(bounds);
+    webView.setDevToolsWebContents(devToolsView.webContents);
+    webView.openDevTools();
+    devToolsView.webContents.executeJavaScript(`
+      (async function () {
+        const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+        var retryCount = 0;
+        var done = false;
+        while(retryCount < 10 && !done) {
+          try {
+            retryCount++;
+            document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
+            done = true
+          } catch(err){
+            await sleep(100);
+          }
+        }
+      })()
+    `);
+  });
+
+  ipcMain.on('close-devtools', (event, ...args) => {
+    const {webViewId} = args[0];
+    if (!webViewId) {
+      return;
+    }
+    webContents.fromId(webViewId).closeDevTools();
+    if (!devToolsView) {
+      return;
+    }
+    mainWindow.removeBrowserView(devToolsView);
+    devToolsView.destroy();
+    devToolsView = null;
+  });
+
+  ipcMain.on('resize-devtools', (event, ...args) => {
+    const {bounds} = args[0];
+    if (!bounds || !devToolsView) {
+      return;
+    }
+    devToolsView.setBounds(bounds);
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -219,9 +295,9 @@ const createWindow = async () => {
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
-  appUpdater.on('status-changed', (nextStatus) => { 
+  appUpdater.on('status-changed', nextStatus => {
     menuBuilder.buildMenu(true);
-    // update status bar info 
+    mainWindow.webContents.send('updater-status-changed', {nextStatus});
   });
   // Remove this if your app does not use auto updates
   appUpdater.checkForUpdatesAndNotify();

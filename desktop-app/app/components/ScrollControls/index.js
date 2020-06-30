@@ -16,62 +16,74 @@ import PrefersColorSchemeSwitch from '../PrefersColorSchemeSwitch';
 import Tooltip from '@material-ui/core/Tooltip';
 import ToggleTouch from '../ToggleTouch';
 
-class ScrollControls extends Component {
-  render() {
-    const iconProps = {
-      color: iconsColor,
-      height: 25,
-      width: 25,
-    };
-    return (
-      <div className={styles.scrollControls}>
-        <Grid container spacing={1} alignItems="center">
-          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <PrefersColorSchemeSwitch />
-          </Grid>
-          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <Tooltip title="Scroll Down">
-              <div onClick={this.props.triggerScrollDown}>
-                <ScrollDownIcon {...iconProps} />
-              </div>
-            </Tooltip>
-          </Grid>
-          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <Tooltip title="Scroll Up">
-              <div onClick={this.props.triggerScrollUp}>
-                <ScrollUpIcon {...iconProps} height={30} width={30} />
-              </div>
-            </Tooltip>
-          </Grid>
-          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <Tooltip title="Take Screenshot">
-              <div onClick={this.props.screenshotAllDevices}>
-                <ScreenshotIcon {...iconProps} />
-              </div>
-            </Tooltip>
-          </Grid>
-          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <Tooltip title="Tilt Devices">
-              <div onClick={this.props.flipOrientationAllDevices}>
-                <DeviceRotateIcon {...iconProps} />
-              </div>
-            </Tooltip>
-          </Grid>
-          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <Tooltip title="Inspect Element">
-              <div onClick={this.props.enableInpector}>
-                <InspectElementIcon {...iconProps} />
-              </div>
-            </Tooltip>
-          </Grid>
-          <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-            <ToggleTouch />
-          </Grid>
-          <ZoomContainer />
+const ScrollControls = ({
+  browser,
+  triggerScrollDown,
+  triggerScrollUp,
+  screenshotAllDevices,
+  flipOrientationAllDevices,
+  toggleInspector,
+}) => {
+  const iconProps = {
+    color: iconsColor,
+    height: 25,
+    width: 25,
+  };
+  return (
+    <div className={styles.scrollControls}>
+      <Grid container spacing={1} alignItems="center">
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <PrefersColorSchemeSwitch />
         </Grid>
-      </div>
-    );
-  }
-}
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <Tooltip title="Scroll Down">
+            <div onClick={triggerScrollDown}>
+              <ScrollDownIcon {...iconProps} />
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <Tooltip title="Scroll Up">
+            <div onClick={triggerScrollUp}>
+              <ScrollUpIcon {...iconProps} height={30} width={30} />
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <Tooltip title="Take Screenshot">
+            <div onClick={screenshotAllDevices}>
+              <ScreenshotIcon {...iconProps} />
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <Tooltip title="Tilt Devices">
+            <div onClick={flipOrientationAllDevices}>
+              <DeviceRotateIcon {...iconProps} />
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid
+          item
+          className={cx(commonStyles.icons, commonStyles.enabled, {
+            [commonStyles.selected]: browser.isInspecting,
+          })}
+        >
+          <Tooltip title="Inspect Element">
+            <div onClick={toggleInspector}>
+              <InspectElementIcon
+                {...{...iconProps, ...{height: 22, width: 22}}}
+              />
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <ToggleTouch />
+        </Grid>
+        <ZoomContainer />
+      </Grid>
+    </div>
+  );
+};
 
 export default ScrollControls;

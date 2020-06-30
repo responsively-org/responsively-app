@@ -1,0 +1,43 @@
+.statusBar {
+  height: 20px;
+  display: flex;
+  background-color: #ffffff15;
+  box-shadow: 0 -3px 5px rgba(0, 0, 0, 0.35);
+  color: #ffffffcc;
+  justify-content: space-between;
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  margin: 0 5px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: grey;
+  fill: grey;
+  border-radius: 2px;
+  height: 100%;
+  padding: 0 5px;
+  filter: grayscale(1);
+}
+
+.link:hover {
+  color: lightgrey;
+  fill: lightgrey;
+  background-color: #000;
+  filter: none;
+}
+
+.linkIcon {
+  fill: inherit;
+  margin: 0 4px;
+}
+
+.linkText {
+  color: inherit;
+  font-size: 12px;
+}

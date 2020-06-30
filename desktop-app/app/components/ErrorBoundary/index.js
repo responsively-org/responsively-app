@@ -15,9 +15,7 @@ export default class ErrorBoundary extends React.Component {
     // You can also log the error to an error reporting service
     this.setState({
       err: error,
-      error: this.indentInnerLines(
-        JSON.stringify(error, Object.getOwnPropertyNames(error))
-      ),
+      error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
       errorInfo,
     });
   }
