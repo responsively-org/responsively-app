@@ -14,6 +14,7 @@ import {iconsColor} from '../../constants/colors';
 import ZoomContainer from '../../containers/ZoomContainer';
 import PrefersColorSchemeSwitch from '../PrefersColorSchemeSwitch';
 import Tooltip from '@material-ui/core/Tooltip';
+import ToggleTouch from '../ToggleTouch';
 
 const ScrollControls = ({
   browser,
@@ -75,6 +76,9 @@ const ScrollControls = ({
               />
             </div>
           </Tooltip>
+        </Grid>
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <ToggleTouch />
         </Grid>
         <ZoomContainer />
       </Grid>
