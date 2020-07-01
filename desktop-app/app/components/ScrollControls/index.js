@@ -77,9 +77,7 @@ const ScrollControls = ({
             </div>
           </Tooltip>
         </Grid>
-        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-          <ToggleTouch />
-        </Grid>
+        <ToggleTouch />
         <ZoomContainer />
       </Grid>
     </div>
