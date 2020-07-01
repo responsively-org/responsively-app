@@ -70,10 +70,9 @@ if (
 }
 
 const installExtensions = async () => {
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
   try {
-    const statuses = await installExtension(extensions);
+    await installExtension(extensions);
     devtron.install();
   } catch (err) {
     console.log('Error installing extensions', err);
@@ -230,6 +229,14 @@ const createWindow = async () => {
 
   ipcMain.on('prefers-color-scheme-select', (event, scheme) => {
     nativeTheme.themeSource = scheme || 'system';
+  });
+
+  ipcMain.handle('install-extension', async (event, id) => {
+    return installExtension(id, true);
+  });
+
+  ipcMain.on('uninstall-extension', (event, name) => {
+    return BrowserWindow.removeDevToolsExtension(name);
   });
 
   ipcMain.on('open-devtools', (event, ...args) => {
