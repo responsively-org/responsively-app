@@ -610,9 +610,7 @@ class WebView extends Component {
                   shouldMaximize ? this._focusDevice : this._unfocusDevice
                 }
               >
-                <div>
-                  <IconFocus />
-                </div>
+                <IconFocus />
               </div>
             </Tooltip>
             {/* {expandOrCollapse} */}

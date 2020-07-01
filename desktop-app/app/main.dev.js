@@ -152,10 +152,7 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
 
 const createWindow = async () => {
   hasActiveWindow = true;
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
+  if (process.env.NODE_ENV === 'development') {
     await installExtensions();
   }
 

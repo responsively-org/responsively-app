@@ -146,7 +146,10 @@ export default function ExtensionsManager({triggerNavigationReload}) {
                         size="small"
                         title="Help"
                       >
-                        <HelpOutlineIcon />
+                        <HelpOutlineIcon
+                          fontSize="small"
+                          htmlColor={lightIconsColor}
+                        />
                       </IconButton>
                     </InputAdornment>
                   ),
