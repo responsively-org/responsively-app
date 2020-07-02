@@ -45,7 +45,7 @@ Here is the roadmap of the desktop app - https://github.com/manojVivek/responsiv
 2. Run `yarn dev`. This will start the app for local development with live reloading.
 
 ## Distribution
-You can build the app for distrbution by runing:
+You can build the app for distribution by running:
 ```yarn package-all```
 
 This will build the binaries for all the platforms and place it in the `releases` folder.
@@ -60,7 +60,7 @@ If you want to build the binary for a specific platform, run one of the followin
 
 ## Contributors ✨
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+Thanks go to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
