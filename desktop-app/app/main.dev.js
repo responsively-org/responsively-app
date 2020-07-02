@@ -11,8 +11,15 @@
  * @flow
  */
 require('dotenv').config();
-import electron, {app, BrowserWindow, globalShortcut, ipcMain, nativeTheme} from 'electron';
-import {autoUpdater} from 'electron-updater';
+import electron, {
+  app,
+  BrowserWindow,
+  BrowserView,
+  globalShortcut,
+  ipcMain,
+  nativeTheme,
+  webContents,
+} from 'electron';
 import settings from 'electron-settings';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -25,7 +32,10 @@ import installExtension, {
 import devtron from 'devtron';
 import fs from 'fs';
 import {migrateDeviceSchema} from './settings/migration';
+import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
+import console from 'electron-timber';
+import {appUpdater} from './app-updater';
 
 const path = require('path');
 
@@ -41,16 +51,9 @@ const protocol = 'responsively';
 
 let hasActiveWindow = false;
 
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
-
 let mainWindow = null;
 let urlToOpen = null;
+let devToolsView = null;
 
 let httpAuthCallbacks = {};
 
@@ -67,10 +70,9 @@ if (
 }
 
 const installExtensions = async () => {
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
   try {
-    const statuses = await installExtension(extensions);
+    await installExtension(extensions);
     devtron.install();
   } catch (err) {
     console.log('Error installing extensions', err);
@@ -141,7 +143,6 @@ app.on(
 app.on('login', (event, webContents, request, authInfo, callback) => {
   event.preventDefault();
   const {url} = request;
-  console.log('Sending HTTP Auth Prompt', {url});
   if (httpAuthCallbacks[url]) {
     return httpAuthCallbacks[url].push(callback);
   }
@@ -151,10 +152,7 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
 
 const createWindow = async () => {
   hasActiveWindow = true;
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
+  if (process.env.NODE_ENV === 'development') {
     await installExtensions();
   }
 
@@ -174,6 +172,8 @@ const createWindow = async () => {
     titleBarStyle: 'hidden',
     icon: iconPath,
   });
+
+  ipcMain.removeAllListeners();
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
@@ -195,6 +195,13 @@ const createWindow = async () => {
 
   initMainShortcutManager();
 
+  const onResize = () => {
+    const [width, height] = mainWindow.getContentSize();
+    mainWindow.webContents.send('window-resize', {height, width});
+  };
+
+  mainWindow.on('resize', onResize);
+
   mainWindow.once('ready-to-show', () => {
     if (urlToOpen) {
       openUrl(urlToOpen);
@@ -202,6 +209,7 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+    onResize();
   });
 
   ipcMain.on('http-auth-promt-response', (event, ...args) => {
@@ -220,6 +228,70 @@ const createWindow = async () => {
     nativeTheme.themeSource = scheme || 'system';
   });
 
+  ipcMain.handle('install-extension', async (event, id) => {
+    return installExtension(id, true);
+  });
+
+  ipcMain.on('uninstall-extension', (event, name) => {
+    return BrowserWindow.removeDevToolsExtension(name);
+  });
+
+  ipcMain.on('open-devtools', (event, ...args) => {
+    const {webViewId, bounds, mode} = args[0];
+    if (!webViewId) {
+      return;
+    }
+    const webView = webContents.fromId(webViewId);
+
+    if (mode === DEVTOOLS_MODES.UNDOCKED) {
+      return webView.openDevTools();
+    }
+
+    devToolsView = new BrowserView();
+    mainWindow.setBrowserView(devToolsView);
+    devToolsView.setBounds(bounds);
+    webView.setDevToolsWebContents(devToolsView.webContents);
+    webView.openDevTools();
+    devToolsView.webContents.executeJavaScript(`
+      (async function () {
+        const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+        var retryCount = 0;
+        var done = false;
+        while(retryCount < 10 && !done) {
+          try {
+            retryCount++;
+            document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
+            done = true
+          } catch(err){
+            await sleep(100);
+          }
+        }
+      })()
+    `);
+  });
+
+  ipcMain.on('close-devtools', (event, ...args) => {
+    const {webViewId} = args[0];
+    if (!webViewId) {
+      return;
+    }
+    webContents.fromId(webViewId).closeDevTools();
+    if (!devToolsView) {
+      return;
+    }
+    mainWindow.removeBrowserView(devToolsView);
+    devToolsView.destroy();
+    devToolsView = null;
+  });
+
+  ipcMain.on('resize-devtools', (event, ...args) => {
+    const {bounds} = args[0];
+    if (!bounds || !devToolsView) {
+      return;
+    }
+    devToolsView.setBounds(bounds);
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -227,9 +299,12 @@ const createWindow = async () => {
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
+  appUpdater.on('status-changed', nextStatus => {
+    menuBuilder.buildMenu(true);
+    mainWindow.webContents.send('updater-status-changed', {nextStatus});
+  });
   // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
+  appUpdater.checkForUpdatesAndNotify();
 };
 
 app.on('activate', (event, hasVisibleWindows) => {

@@ -48,6 +48,8 @@ export function initMainShortcutManager() {
         const ok = unregisterShortcut(id);
         event.reply(UNREGISTER_REPLY_CHANNEL, { ok, id });
     });
+  
+    ipcMain.removeHandler(GET_ALL_CHANNEL);
 
     ipcMain.handle(GET_ALL_CHANNEL, () => {
         return getAllShortcuts();

@@ -11,20 +11,25 @@ import {grey} from '@material-ui/core/colors';
 import {themeColor} from '../constants/colors';
 import ErrorBoundary from '../components/ErrorBoundary';
 
-import {registerShortcut, clearAllShortcuts, unregisterShortcut} from '../shortcut-manager/renderer-shortcut-manager';
 import {
-  onZoomChange, 
-  triggerScrollUp, 
-  triggerScrollDown, 
-  screenshotAllDevices, 
-  flipOrientationAllDevices, 
-  enableInpector, 
-  goToHomepage, 
-  triggerNavigationBack, 
+  registerShortcut,
+  clearAllShortcuts,
+  unregisterShortcut,
+} from '../shortcut-manager/renderer-shortcut-manager';
+import {
+  onZoomChange,
+  triggerScrollUp,
+  triggerScrollDown,
+  screenshotAllDevices,
+  flipOrientationAllDevices,
+  toggleInspector,
+  goToHomepage,
+  triggerNavigationBack,
   triggerNavigationForward,
   deleteCookies,
-  deleteStorage
+  deleteStorage,
 } from '../actions/browser';
+import {toggleBookmarkUrl} from '../actions/bookmarks'
 
 type Props = {
   store: Store,
@@ -74,63 +79,143 @@ export default class Root extends Component<Props> {
 
   registerAllShortcuts = () => {
     const {store} = this.props;
+    registerShortcut(
+      {id: 'ZoomIn', title: 'Zoom In', accelerators: ['mod+=', 'mod+shift+=']},
+      () => {
+        store.dispatch(onZoomChange(store.getState().browser.zoomLevel + 0.1));
+      },
+      true
+    );
 
-    registerShortcut({id: 'ZoomIn', title: 'Zoom In', accelerators: ['mod+plus', 'mod+shift+=']}, () => {
-      store.dispatch(onZoomChange(store.getState().browser.zoomLevel + 0.1));
-    }, true);
+    registerShortcut(
+      {id: 'ZoomOut', title: 'Zoom Out', accelerators: ['mod+-']},
+      () => {
+        store.dispatch(onZoomChange(store.getState().browser.zoomLevel - 0.1));
+      },
+      true
+    );
 
-    registerShortcut({id: 'ZoomOut', title: 'Zoom Out', accelerators: ['mod+-']}, () => {
-      store.dispatch(onZoomChange(store.getState().browser.zoomLevel - 0.1));
-    }, true);
+    registerShortcut(
+      {id: 'ZoomReset', title: 'Zoom Reset', accelerators: ['mod+0']},
+      () => {
+        store.dispatch(onZoomChange(0.6));
+      },
+      true
+    );
 
-    registerShortcut({id: 'ZoomReset', title: 'Zoom Reset', accelerators: ['mod+0']}, () => {
-      store.dispatch(onZoomChange(0.6));
-    }, true);
+    registerShortcut(
+      {id: 'EditUrl', title: 'Edit URL', accelerators: ['mod+l']},
+      () => {
+        document.getElementById('adress').select();
+      },
+      true
+    );
 
-    registerShortcut({id: 'EditUrl', title: 'Edit URL', accelerators: ['mod+l']}, () => {
-      document.getElementById('adress').select();
-    }, true);
+    registerShortcut(
+      {id: 'ScroolUp', title: 'Scroll Up', accelerators: ['mod+pageup']},
+      () => {
+        store.dispatch(triggerScrollUp());
+      },
+      true
+    );
 
-    registerShortcut({id: 'ScroolUp', title: 'Scroll Up', accelerators: ['mod+pageup']}, () => {
-      store.dispatch(triggerScrollUp());
-    }, true);
+    registerShortcut(
+      {id: 'ScroolDown', title: 'Scroll Down', accelerators: ['mod+pagedown']},
+      () => {
+        store.dispatch(triggerScrollDown());
+      },
+      true
+    );
 
-    registerShortcut({id: 'ScroolDown', title: 'Scroll Down', accelerators: ['mod+pagedown']}, () => {
-      store.dispatch(triggerScrollDown());
-    }, true);
+    registerShortcut(
+      {id: 'Screenshot', title: 'Take Screenshot', accelerators: ['mod+prtsc']},
+      () => {
+        store.dispatch(screenshotAllDevices());
+      },
+      true,
+      'keyup'
+    );
 
-    registerShortcut({id: 'Screenshot', title: 'Take Screenshot', accelerators: ['mod+prtsc']}, () => {
-      store.dispatch(screenshotAllDevices());
-    }, true, 'keyup');
+    registerShortcut(
+      {id: 'TiltDevices', title: 'Tilt Devices', accelerators: ['mod+tab']},
+      () => {
+        store.dispatch(flipOrientationAllDevices());
+      },
+      true
+    );
 
-    registerShortcut({id: 'TiltDevices', title: 'Tilt Devices', accelerators: ['mod+tab']}, () => {
-      store.dispatch(flipOrientationAllDevices());
-    }, true);
-    
-    registerShortcut({id: 'ToggleInspector', title: 'Toggle Inspector', accelerators: ['mod+i']}, () => {
-      store.dispatch(enableInpector());
-    }, true);
+    registerShortcut(
+      {
+        id: 'ToggleInspector',
+        title: 'Toggle Inspector',
+        accelerators: ['mod+i'],
+      },
+      () => {
+        store.dispatch(toggleInspector());
+      },
+      true
+    );
 
-    registerShortcut({id: 'OpenHome', title: 'Go to Homepage', accelerators: ['alt+home']}, () => {
-      store.dispatch(goToHomepage());
-    }, true);
+    registerShortcut(
+      {id: 'OpenHome', title: 'Go to Homepage', accelerators: ['alt+home']},
+      () => {
+        store.dispatch(goToHomepage());
+      },
+      true
+    );
 
-    registerShortcut({id: 'BackAPage', title: 'Back a Page', accelerators: ['alt+left']}, () => {
-      store.dispatch(triggerNavigationBack());
-    }, true);
+    registerShortcut(
+      {id: 'BackAPage', title: 'Back a Page', accelerators: ['alt+left']},
+      () => {
+        store.dispatch(triggerNavigationBack());
+      },
+      true
+    );
 
-    registerShortcut({id: 'ForwardAPage', title: 'Forward a Page', accelerators: ['alt+right']}, () => {
-      store.dispatch(triggerNavigationForward());
-    }, true);
+    registerShortcut(
+      {
+        id: 'ForwardAPage',
+        title: 'Forward a Page',
+        accelerators: ['alt+right'],
+      },
+      () => {
+        store.dispatch(triggerNavigationForward());
+      },
+      true
+    );
 
-    registerShortcut({id: 'DeleteStorage', title: 'Delete Storage', accelerators: ['mod+del']}, () => {
-      store.dispatch(deleteStorage());
-    }, true);
+    registerShortcut(
+      {id: 'DeleteStorage', title: 'Delete Storage', accelerators: ['mod+del']},
+      () => {
+        store.dispatch(deleteStorage());
+      },
+      true
+    );
 
-    registerShortcut({id: 'DeleteCookies', title: 'Delete Cookies', accelerators: ['mod+shift+del']}, () => {
-      store.dispatch(deleteCookies());
-    }, true);
-  }
+    registerShortcut(
+      {
+        id: 'DeleteCookies',
+        title: 'Delete Cookies',
+        accelerators: ['mod+shift+del'],
+      },
+      () => {
+        store.dispatch(deleteCookies());
+      },
+      true
+    );
+
+    registerShortcut(
+      {
+        id: 'AddBookmark', 
+        title: 'Add Bookmark', 
+        accelerators: ['mod+d']
+      }, 
+      () => {
+        store.dispatch(toggleBookmarkUrl(store.getState().browser.address));
+      }, 
+      true
+    );
+  };
 
   componentWillUnmount() {
     clearAllShortcuts();

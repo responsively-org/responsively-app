@@ -2,7 +2,6 @@
   display: flex;
   position: relative;
   align-items: center;
-  font-size: 16px;
   height: 20px;
   width: 100%;
   padding: 14px 10px;
@@ -15,15 +14,15 @@
 }
 
 .addressInput {
-height: 20px;
-padding: 14px 10px;
+  height: 20px;
   background: unset;
-  color: #ffffffcc;
-  border:none;
-  width:92%;
-  margin:0;
+  font-size: 16px;
+  color: inherit;
+  border: none;
+  width: 92%;
+  margin: 0;
   outline: none;
-text-overflow: ellipsis;
+  text-overflow: ellipsis;
 }
 
 .addressBarContainer:focus-within {

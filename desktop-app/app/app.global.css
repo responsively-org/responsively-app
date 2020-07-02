@@ -47,6 +47,10 @@ body {
   overflow: hidden;
 }
 
+svg {
+  pointer-events: none;
+}
+
 /*h2 {
   margin: 0;
   font-size: 2.25rem;
@@ -90,6 +94,8 @@ a:hover {
 
 #root {
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #HW_badge_cont.HW_visible {
@@ -138,3 +144,31 @@ Add device form styles*/
 	}
 }
 */
+/* This is to make the scrollbar consistent */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* The scrollbar Track */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+}
+
+/* The scrollbar Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: rgba(49, 49, 49, 1);
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+}
+/* When the scrollbar is inactive */
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(49, 49, 49, 1);
+}
+/* When the box area between the horzontal scrollbar and the vertical scrollbar */
+::-webkit-scrollbar-corner {
+  background: rgba(0, 0, 0, 0);
+}

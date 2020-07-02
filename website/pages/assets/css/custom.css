@@ -26,3 +26,11 @@ html {
       max-width: 1140px;
   }
 }
+
+#privacyPolicy p {
+  text-align: justify !important;
+}
+
+#privacyPolicy ol, #privacyPolicy li {
+  text-align: left !important;
+}

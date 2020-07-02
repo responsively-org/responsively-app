@@ -10,7 +10,13 @@ import {
 } from 'electron';
 import * as os from 'os';
 import {pkg} from './utils/generalUtils';
-import {getAllShortcuts, registerShortcut} from './shortcut-manager/main-shortcut-manager';
+import {
+  getAllShortcuts,
+  registerShortcut,
+} from './shortcut-manager/main-shortcut-manager';
+import {appUpdater, AppUpdaterStatus} from './app-updater';
+import {statusBarSettings} from './settings/statusBarSettings';
+import {STATUS_BAR_VISIBILITY_CHANGE} from './constants/pubsubEvents';
 
 const path = require('path');
 
@@ -27,7 +33,7 @@ export default class MenuBuilder {
       {
         label: 'Website',
         click() {
-          shell.openExternal('https://manojvivek.github.io/responsively-app/');
+          shell.openExternal('https://responsively.app/');
         },
       },
       {
@@ -62,14 +68,14 @@ export default class MenuBuilder {
         label: 'Keyboard Shortcuts',
         click: () => {
           const {getCursorScreenPoint, getDisplayNearestPoint} = screen;
-          
+
           let win = new BrowserWindow({
             parent: BrowserWindow.getFocusedWindow(),
             frame: false,
             webPreferences: {
               devTools: false,
               nodeIntegration: true,
-              additionalArguments: [JSON.stringify(getAllShortcuts())]
+              additionalArguments: [JSON.stringify(getAllShortcuts())],
             },
           });
 
@@ -94,17 +100,36 @@ export default class MenuBuilder {
         },
       },
       {
+        label: 'Check for Updates...',
+        id: 'CHECK_FOR_UPDATES',
+        click() {
+          appUpdater.checkForUpdatesAndNotify().then(r => {
+            if (
+              r == null ||
+              r.updateInfo == null ||
+              r.updateInfo.version === pkg.version
+            ) {
+              dialog.showMessageBox(BrowserWindow.getAllWindows()[0], {
+                type: 'info',
+                title: 'Responsively',
+                message: 'There are currently no updates available',
+              });
+            }
+          });
+        },
+      },
+      {
         label: 'About',
         accelerator: 'F1',
         click() {
           const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
           const title = 'Responsively';
-          const description = pkg.description;
+          const {description} = pkg;
           const version = pkg.version || 'Unknown';
-          const electron = process.versions['electron'] || 'Unknown';
-          const chrome = process.versions['chrome'] || 'Unknown';
-          const node = process.versions['node'] || 'Unknown';
-          const v8 = process.versions['v8'] || 'Unknown';
+          const electron = process.versions.electron || 'Unknown';
+          const chrome = process.versions.chrome || 'Unknown';
+          const node = process.versions.node || 'Unknown';
+          const v8 = process.versions.v8 || 'Unknown';
           const osText =
             `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
           const usefulInfo = `Version: ${version}\nElectron: ${electron}\nChrome: ${chrome}\nNode.js: ${node}\nV8: ${v8}\nOS: ${osText}`;
@@ -156,7 +181,7 @@ export default class MenuBuilder {
           }
           let filePath = selected[0];
           if (!filePath.startsWith('file://')) {
-            filePath = 'file://' + filePath;
+            filePath = `file://${filePath}`;
           }
           this.mainWindow.webContents.send('address-change', filePath);
         },
@@ -164,7 +189,47 @@ export default class MenuBuilder {
     ],
   };
 
-  buildMenu() {
+  getCheckForUpdatesMenuState() {
+    const updaterStatus = appUpdater.getCurrentStatus();
+    let label = 'Check for Updates...';
+    let enabled = true;
+
+    switch(updaterStatus) {
+      case AppUpdaterStatus.Idle:
+        label = 'Check for Updates...';
+        enabled = true;
+        break;
+      case AppUpdaterStatus.Checking:
+        label = 'Checking for Updates...';
+        enabled = false;  
+        break;
+      case AppUpdaterStatus.NoUpdate:
+        label = 'No Updates';
+        enabled = false;  
+        break;
+      case AppUpdaterStatus.Downloading:
+        label = 'Downloading Update...';
+        enabled = false;  
+        break;
+      case AppUpdaterStatus.Downloaded:
+        label = 'Update Downloaded';
+        enabled = false;  
+        break;
+    }
+    
+    return {label, enabled};
+  }
+
+  buildMenu(isUpdate: boolean = false) {
+    if (isUpdate) {
+      const chkUpdtMenu = this.subMenuHelp.submenu.find(
+        x => x.id === 'CHECK_FOR_UPDATES'
+      );
+      const {label, enabled} = this.getCheckForUpdatesMenuState();
+      chkUpdtMenu.label = label;
+      chkUpdtMenu.enabled = enabled;
+    }
+
     if (
       process.env.NODE_ENV === 'development' ||
       process.env.DEBUG_PROD === 'true'
@@ -177,7 +242,9 @@ export default class MenuBuilder {
         ? this.buildDarwinTemplate()
         : this.buildDefaultTemplate();
 
-    this.registerMenuShortcuts(template);
+    if (!isUpdate) {
+      this.registerMenuShortcuts(template);
+    }
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 
@@ -290,6 +357,14 @@ export default class MenuBuilder {
             this.mainWindow.toggleDevTools();
           },
         },
+        {
+          label: 'Show Status Bar',
+          type: 'checkbox',
+          checked: statusBarSettings.getVisibility(),
+          click: () => {
+            this.mainWindow.webContents.send(STATUS_BAR_VISIBILITY_CHANGE);
+          },
+        },
       ],
     };
     const subMenuViewProd = {
@@ -321,6 +396,14 @@ export default class MenuBuilder {
           accelerator: 'Ctrl+Command+F',
           click: () => {
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+          },
+        },
+        {
+          label: 'Show Status Bar',
+          type: 'checkbox',
+          checked: statusBarSettings.getVisibility(),
+          click: () => {
+            this.mainWindow.webContents.send(STATUS_BAR_VISIBILITY_CHANGE);
           },
         },
       ],
@@ -396,6 +479,16 @@ export default class MenuBuilder {
                     this.mainWindow.toggleDevTools();
                   },
                 },
+                {
+                  label: 'Show Status Bar',
+                  type: 'checkbox',
+                  checked: statusBarSettings.getVisibility(),
+                  click: () => {
+                    this.mainWindow.webContents.send(
+                      STATUS_BAR_VISIBILITY_CHANGE
+                    );
+                  },
+                },
               ]
             : [
                 {
@@ -430,6 +523,16 @@ export default class MenuBuilder {
                     );
                   },
                 },
+                {
+                  label: 'Show Status Bar',
+                  type: 'checkbox',
+                  checked: statusBarSettings.getVisibility(),
+                  click: () => {
+                    this.mainWindow.webContents.send(
+                      STATUS_BAR_VISIBILITY_CHANGE
+                    );
+                  },
+                },
               ],
       },
       this.subMenuHelp,
@@ -438,25 +541,31 @@ export default class MenuBuilder {
     return templateDefault;
   }
 
-  registerMenuShortcuts(template: Array<(MenuItemConstructorOptions) | (MenuItem)>, id:string='Menu') {
+  registerMenuShortcuts(
+    template: Array<MenuItemConstructorOptions | MenuItem>,
+    id: string = 'Menu'
+  ) {
     if ((template || []).length === 0) return;
-    
-    for(let i = 0; i < template.length; i++) {
+
+    for (let i = 0; i < template.length; i++) {
       const item = template[i];
       if (item == null) continue;
 
       const label = (item.label || `submenu${i}`).split('&').join('');
       const levelId = `${id}_${label}`;
-      
+
       if (item.accelerator != null)
-        registerShortcut({id: levelId, title: label, accelerators: [item.accelerator]});
-      
+        registerShortcut({
+          id: levelId,
+          title: label,
+          accelerators: [item.accelerator],
+        });
+
       if (item.submenu == null) continue;
-      
+
       if (Array.isArray(item.submenu))
         this.registerMenuShortcuts(item.submenu, levelId);
-      else
-        this.registerMenuShortcuts([item.submenu], levelId);
+      else this.registerMenuShortcuts([item.submenu], levelId);
     }
   }
 }

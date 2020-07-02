@@ -1,0 +1,70 @@
+.extensionManagerIcon {
+  margin-right: 8px;
+  margin-left: 10px;
+  width: 30px;
+  height: 30px;
+}
+
+.extensionsLabel {
+  margin: 34px 0 0;
+  font-size: 13px;
+  line-height: 13px;
+  opacity: 0.5;
+}
+
+.extension {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #303030;
+}
+
+.extension:last-child {
+  border-bottom-width: 0;
+  padding-bottom: 0;
+}
+
+.extensionName {
+  font-size: 15px;
+}
+
+.extensionVersion {
+  opacity: 0.7;
+  font-size: 12px;
+  margin-left: 8px;
+  display: inline-block;
+}
+
+.extensionAdd {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+  margin-top: 12px;
+}
+
+.extensionsNotice {
+  margin-top: 12px !important;
+}
+
+.extensionsHelp {
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  padding: 12px;
+  color: white;
+  border-radius: 4px;
+  background: #252526;
+  box-shadow: 3px 3px 6px 1px black;
+}
+
+.extensionsHelpText {
+  font-size: 12px;
+}
+
+.extensionsHelpImg {
+  object-fit: contain;
+  width: 480px;
+}
