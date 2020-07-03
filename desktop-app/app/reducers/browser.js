@@ -44,6 +44,7 @@ import {
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
 import console from 'electron-timber';
+import trimStart from 'lodash/trimStart';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -212,6 +213,13 @@ function _getUserPreferencesDevToolsMode() {
   return _getUserPreferences().devToolsOpenMode || DEVTOOLS_MODES.BOTTOM;
 }
 
+function _updateFileWatcher(newURL) {
+  if (newURL.startsWith('file://') && (newURL.endsWith('.html') || newURL.endsWith('.htm')))
+    ipcRenderer.send('start-watching-file', {path: trimStart(newURL.slice(7), '/').trim()});
+  else
+    ipcRenderer.send('stop-watcher');
+}
+
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
@@ -257,6 +265,7 @@ export default function browser(
   switch (action.type) {
     case NEW_ADDRESS:
       saveLastOpenedAddress(action.address);
+      _updateFileWatcher(action.address)
       return {...state, address: action.address, currentPageMeta: {}};
     case NEW_PAGE_META_FIELD:
       return {
