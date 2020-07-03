@@ -214,7 +214,7 @@
               </div>
             </div>
             <div class="row text-center mb-4" id="manual">
-              <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+              <div class="col-md-4 mb-2" data-aos="fade-up" data-aos-delay="100">
                 <div class="bg-light rounded p-3">
                 <div class="icon-round bg-primary mx-auto mb-4">
                   <img class="icon" src="assets/img/logos/brand/apple.svg" alt="icon" />
@@ -224,7 +224,7 @@
                 </a>
               </div>
               </div>
-              <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+              <div class="col-md-4 mb-2" data-aos="fade-up" data-aos-delay="100">
                 <div class="bg-light rounded p-3">
                 <div class="icon-round bg-primary mx-auto mb-4">
                   <img class="icon" src="assets/img/icons/custom/windows-icon.svg" alt="icon" />
@@ -234,7 +234,7 @@
                 </a>
               </div>
               </div>
-              <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+              <div class="col-md-4 mb-2" data-aos="fade-up" data-aos-delay="100">
                 <div class="bg-light rounded p-3">
                 <div class="icon-round bg-primary mx-auto mb-4">
                   <img class="icon" src="assets/img/icons/custom/linux-icon.svg" alt="icon" />
@@ -468,14 +468,29 @@
     return os;
   }
 
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  function setCookie(variable, value, expires_seconds) {
+    var d = new Date();
+    d = new Date(d.getTime() + 1000 * expires_seconds);
+    document.cookie = variable + '=' + value + '; expires=' + d.toGMTString() + ';';
+  }
+
+  function getWidth() {
+    return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  }
+
   function setDownloadURL() {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", 'https://api.github.com/repos/manojVivek/responsively-app/releases/latest', false ); // false for synchronous request
     xmlHttp.send();
-    console.log(xmlHttp.responseText);
 
-    var tagName=JSON.parse(xmlHttp.responseText).tag_name
-    var versionName=tagName.substring(1)
+    var tagName=JSON.parse(xmlHttp.responseText).tag_name;
+    var versionName=tagName.substring(1);
 
     var downloadURL='https://github.com/manojVivek/responsively-app/releases/download/'+tagName;
     var linuxFileName='/ResponsivelyApp-'+versionName+'.AppImage';
@@ -487,15 +502,19 @@
   }
 
   window.addEventListener('load', () => {
-    return;
+    setDownloadURL();
+    if (getCookie('downloaded') === "true" || getWidth() < 800) {
+      return;
+    }
     setTimeout(() => {
-      setDownloadURL();
       var os = getOS();
       var downloadLink = document.getElementById(os);
       if (downloadLink) {
         downloadLink.click();
+        setCookie('downloaded', 'true', 2*60);
+        heap && heap.track('autoDownload');
       }
-    }, 2000);
+    }, 1000);
   });
   </script>
   </body>
