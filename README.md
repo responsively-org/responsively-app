@@ -1,6 +1,6 @@
 # Responsively App [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-16-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![Gitter chat](https://img.shields.io/gitter/room/badges/shields.svg)](https://gitter.im/responsively-app) [![xscode](https://img.shields.io/badge/Available%20on-xs%3Acode-blue?style=?style=plastic&logo=appveyor&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////////VXz1bAAAAAJ0Uk5T/wDltzBKAAAAlUlEQVR42uzXSwqAMAwE0Mn9L+3Ggtgkk35QwcnSJo9S+yGwM9DCooCbgn4YrJ4CIPUcQF7/XSBbx2TEz4sAZ2q1RAECBAiYBlCtvwN+KiYAlG7UDGj59MViT9hOwEqAhYCtAsUZvL6I6W8c2wcbd+LIWSCHSTeSAAECngN4xxIDSK9f4B9t377Wd7H5Nt7/Xz8eAgwAvesLRjYYPuUAAAAASUVORK5CYII=)](https://xscode.com/manojvivek/responsively-app) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/manojVivek/responsively-app/issues)
 
@@ -87,6 +87,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
   <tr>
     <td align="center"><a href="https://falecci.dev"><img src="https://avatars2.githubusercontent.com/u/17703824?v=4" width="100px;" alt=""/><br /><sub><b>Federico Alecci</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=falecci" title="Code">💻</a></td>
     <td align="center"><a href="https://linkedin.com/in/muminjon-abduraimov/"><img src="https://avatars1.githubusercontent.com/u/24930020?v=4" width="100px;" alt=""/><br /><sub><b>Abduraimov Muminjon</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=MuminjonGuru" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://www.vlazaro.es/"><img src="https://avatars1.githubusercontent.com/u/38981659?v=4" width="100px;" alt=""/><br /><sub><b>Víctor Lázaro</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=vlazaroes" title="Code">💻</a></td>
   </tr>
 </table>
 
