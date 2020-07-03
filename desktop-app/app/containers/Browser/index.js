@@ -19,8 +19,10 @@ const Browser = ({browser}) => {
         style={{
           display: 'flex',
           flexDirection: 'row',
-          height: '100%',
           overflowX: 'hidden',
+          height: 0,
+          flexGrow: 1,
+          flexBasis: 0,
         }}
       >
         <DrawerContainer />
