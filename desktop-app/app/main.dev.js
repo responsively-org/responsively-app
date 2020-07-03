@@ -228,7 +228,18 @@ const createWindow = async () => {
     nativeTheme.themeSource = scheme || 'system';
   });
 
-  ipcMain.handle('install-extension', async (event, id) => {
+  ipcMain.handle('install-extension', (event, extensionId) => {
+    const isLocalExtension = fs.statSync(extensionId).isDirectory();
+
+    if (isLocalExtension) {
+      return electron.BrowserWindow.addDevToolsExtension(extensionId);
+    }
+    
+    const id = extensionId
+      .replace(/\/$/, '')
+      .split('/')
+      .pop();
+
     return installExtension(id, true);
   });
 

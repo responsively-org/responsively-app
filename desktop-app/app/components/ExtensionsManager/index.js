@@ -58,17 +58,12 @@ export default function ExtensionsManager({triggerNavigationReload}) {
     setLoading(true);
     setErrorMessage('');
 
-    const id = extensionId
-      .replace(/\/$/, '')
-      .split('/')
-      .pop();
-
     try {
-      await ipcRenderer.invoke('install-extension', id);
+      await ipcRenderer.invoke('install-extension', extensionId);
       setExtensions(getInstalledExtensions());
       setExtensionId('');
       triggerNavigationReload();
-    } catch (e) {
+    } catch {
       setErrorMessage('Error while installing the extension.');
     } finally {
       setLoading(false);
@@ -167,7 +162,9 @@ export default function ExtensionsManager({triggerNavigationReload}) {
 
           <FormHelperText className={styles.extensionsNotice}>
             Note: Only DevTool extensions will work properly, other general
-            browser extensions may not work as intended.
+            browser extensions may not work as intended. Local devtools
+            extensions are also supported. Instead of ID, use absolute path to
+            your local extension.
           </FormHelperText>
 
           <p className={styles.extensionsLabel}>
