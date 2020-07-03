@@ -19,6 +19,7 @@ const Browser = ({browser}) => {
         style={{
           display: 'flex',
           flexDirection: 'row',
+          overflowX: 'hidden',
           height: 0,
           flexGrow: 1,
           flexBasis: 0,
