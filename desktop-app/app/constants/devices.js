@@ -1,6 +1,6 @@
 // @flow
-import chromeEmulatedDevices from './chromeEmulatedDevices';
 import settings from 'electron-settings';
+import chromeEmulatedDevices from './chromeEmulatedDevices';
 import {ACTIVE_DEVICES, CUSTOM_DEVICES} from './settingKeys';
 
 export const OS: {[key: string]: OS} = {
@@ -35,7 +35,7 @@ type Capability = CAPABILITIES.mobile | CAPABILITIES.touch;
 
 type Source = SOURCE.chrome | SOURCE.custom;
 
-let chromeVersion=process.versions['chrome'] || '83.0.4103.106';
+const chromeVersion = process.versions.chrome || '83.0.4103.106';
 
 export type Device = {
   id: number,
@@ -48,6 +48,7 @@ export type Device = {
   os: OSType,
   type: DeviceType,
   source: Source,
+  isMuted: boolean,
 };
 
 function getOS(device) {
@@ -65,12 +66,11 @@ function getOS(device) {
 }
 
 function getUserAgent(device) {
-
-  let deviceUserAgent=device['user-agent']
-  if(deviceUserAgent && deviceUserAgent.includes('Chrome/%s')) {
-      deviceUserAgent=deviceUserAgent.replace('%s',chromeVersion)
+  let deviceUserAgent = device['user-agent'];
+  if (deviceUserAgent && deviceUserAgent.includes('Chrome/%s')) {
+    deviceUserAgent = deviceUserAgent.replace('%s', chromeVersion);
   }
-  return deviceUserAgent
+  return deviceUserAgent;
 }
 
 export default function getAllDevices() {
@@ -81,9 +81,9 @@ export default function getAllDevices() {
         device.type === DEVICE_TYPE.desktop
           ? device.screen.horizontal
           : device.screen.vertical;
-      
+
       return {
-        id: id,
+        id,
         name: device.title,
         width: dimension.width,
         height: dimension.height,

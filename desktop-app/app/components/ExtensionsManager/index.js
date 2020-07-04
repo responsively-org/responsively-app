@@ -10,10 +10,6 @@ import ExtensionsIcon from '@material-ui/icons/Extension';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {remote, ipcRenderer} from 'electron';
 import cx from 'classnames';
-import styles from './styles.css';
-import commonStyles from '../common.styles.css';
-import {lightIconsColor} from '../../constants/colors';
-import helpScreenshot from './help-screenshot.png';
 import {
   makeStyles,
   Popper,
@@ -22,6 +18,10 @@ import {
   Typography,
   ClickAwayListener,
 } from '@material-ui/core';
+import styles from './styles.css';
+import commonStyles from '../common.styles.css';
+import {lightIconsColor} from '../../constants/colors';
+import helpScreenshot from './help-screenshot.png';
 
 const useStyles = makeStyles({
   adornedEnd: {
@@ -31,11 +31,10 @@ const useStyles = makeStyles({
 
 export default function ExtensionsManager({triggerNavigationReload}) {
   const {BrowserWindow} = remote;
-  const getInstalledExtensions = () => {
-    return Object.values(BrowserWindow.getDevToolsExtensions()).sort((a, b) =>
+  const getInstalledExtensions = () =>
+    Object.values(BrowserWindow.getDevToolsExtensions()).sort((a, b) =>
       a.name.localeCompare(b.name)
     );
-  };
 
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -162,7 +161,7 @@ export default function ExtensionsManager({triggerNavigationReload}) {
           </form>
 
           {errorMessage && (
-            <FormHelperText error={true}>{errorMessage}</FormHelperText>
+            <FormHelperText error>{errorMessage}</FormHelperText>
           )}
 
           <FormHelperText className={styles.extensionsNotice}>

@@ -70,9 +70,7 @@ export default function UserPreference({
             control={
               <Checkbox
                 checked={userPreferences.reopenLastAddress || false}
-                onChange={e =>
-                  onChange('reopenLastAddress', e.target.checked)
-                }
+                onChange={e => onChange('reopenLastAddress', e.target.checked)}
                 name="Reopen last opened address on start"
                 color="primary"
               />

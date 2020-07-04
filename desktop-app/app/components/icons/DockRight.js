@@ -7,7 +7,6 @@ export default function DockRight({width, height, color, padding, margin}) {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      style={{isolation: 'isolate'}}
       viewBox="971 549.189 26.921 23.075"
       width={width}
       height={height}

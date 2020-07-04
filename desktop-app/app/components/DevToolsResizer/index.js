@@ -2,13 +2,13 @@ import React, {useState, useEffect} from 'react';
 import {ipcRenderer} from 'electron';
 import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
+import debounce from 'lodash/debounce';
 import styles from './style.module.css';
 import Cross from '../icons/Cross';
 import DockRight from '../icons/DockRight';
 import DockBottom from '../icons/DockBottom';
 import InspectElementChrome from '../icons/InspectElementChrome';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
-import debounce from 'lodash/debounce';
 import CrossChrome from '../icons/CrossChrome';
 
 const getResizingDirections = mode => {

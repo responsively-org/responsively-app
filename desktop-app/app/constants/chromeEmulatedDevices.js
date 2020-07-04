@@ -1,4 +1,4 @@
-//https://cs.chromium.org/codesearch/f/chromium/src/third_party/blink/renderer/devtools/front_end/emulated_devices/module.json
+// https://cs.chromium.org/codesearch/f/chromium/src/third_party/blink/renderer/devtools/front_end/emulated_devices/module.json
 
 export default {
   extensions: [

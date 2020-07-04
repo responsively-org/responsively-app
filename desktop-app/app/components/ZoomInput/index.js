@@ -83,7 +83,7 @@ export default function BrowserZoom(props) {
           <ZoomIcon width={25} color={iconsColor} />
         </div>
       </Tooltip>
-      {/*<Grid container spacing={1}>
+      {/* <Grid container spacing={1}>
         <Grid item>
           <ZoomOutIcon />
         </Grid>
@@ -99,7 +99,7 @@ export default function BrowserZoom(props) {
         <Grid item>
           <ZoomInIcon />
         </Grid>
-  </Grid>*/}
+  </Grid> */}
       <div
         className={cx(styles.zoomControls, {
           [commonStyles.hidden]: !showExpanded,
