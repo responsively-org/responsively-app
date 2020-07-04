@@ -527,6 +527,7 @@ class WebView extends Component {
 
   _setResizeDimensions  = (event, direction, ref, delta) => {
     const { temporaryDims } = this.state;
+    const { updateResponsiveDimensions } = this.props;
       if(!temporaryDims) return;
       const updatedDeviceDims = {
         width: temporaryDims.width + delta.width,
@@ -534,11 +535,13 @@ class WebView extends Component {
       };
       this.setState({
         deviceDimensions: updatedDeviceDims
+      }, () => {
+        updateResponsiveDimensions(this.state.deviceDimensions);
       });
   }
 
   _getWebViewTag = (deviceStyles) => {
-    const {device : { id, useragent, capabilities }, browser : { address }} = this.props;
+    const {device : { id, useragent, capabilities }, browser : { address } } = this.props;
     const { deviceDimensions } = this.state;
 
     if(capabilities.includes(CAPABILITIES.responsive)){
@@ -598,7 +601,7 @@ class WebView extends Component {
   }
 
   render() {
-    const { browser : { zoomLevel } } = this.props;
+    const { browser : { zoomLevel, previewer } } = this.props;
     const { isTilted, deviceDimensions, errorCode, errorDesc, screenshotInProgress } = this.state;
     const deviceStyles = {
       width:
@@ -607,7 +610,7 @@ class WebView extends Component {
         this.isMobile && isTilted ? deviceDimensions.width : deviceDimensions.height,
     };
 
-    let shouldMaximize = browser.previewer.layout !== INDIVIDUAL_LAYOUT;
+    const shouldMaximize = previewer.layout !== INDIVIDUAL_LAYOUT;
     const IconFocus = () => {
       if (shouldMaximize)
         return <Focus height={30} padding={6} color={iconsColor} />;
