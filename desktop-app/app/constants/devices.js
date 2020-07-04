@@ -19,6 +19,7 @@ export const DEVICE_TYPE: {[key: string]: DeviceType} = {
 export const CAPABILITIES: {[key: string]: Capability} = {
   mobile: 'mobile',
   touch: 'touch',
+  responsive: 'responsive',
 };
 
 export const SOURCE: {[key: string]: Source} = {
@@ -47,6 +48,7 @@ export type Device = {
   os: OSType,
   type: DeviceType,
   source: Source,
+  isMuted: boolean,
 };
 
 function getOS(device) {

@@ -8,6 +8,8 @@ import ScrollUpIcon from '../icons/ScrollUp';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
 import InspectElementIcon from '../icons/InspectElement';
+import MutedIcon from '../icons/Muted';
+import UnmutedIcon from '../icons/Unmuted';
 
 import styles from './styles.module.css';
 import commonStyles from '../common.styles.css';
@@ -15,6 +17,7 @@ import {iconsColor} from '../../constants/colors';
 import ZoomContainer from '../../containers/ZoomContainer';
 import PrefersColorSchemeSwitch from '../PrefersColorSchemeSwitch';
 import ToggleTouch from '../ToggleTouch';
+import Muted from '../icons/Muted';
 
 const ScrollControls = ({
   browser,
@@ -23,6 +26,7 @@ const ScrollControls = ({
   screenshotAllDevices,
   flipOrientationAllDevices,
   toggleInspector,
+  onAllDevicesMutedChange,
 }) => {
   const iconProps = {
     color: iconsColor,
@@ -60,6 +64,13 @@ const ScrollControls = ({
           <Tooltip title="Tilt Devices">
             <div onClick={flipOrientationAllDevices}>
               <DeviceRotateIcon {...iconProps} />
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <Tooltip title={browser.allDevicesMuted? "Unmute all devices": "Mute all devices"}>
+            <div onClick={onAllDevicesMutedChange}>
+              { browser.allDevicesMuted ? (<MutedIcon {...iconProps} />):(<UnmutedIcon {...iconProps} />) }
             </div>
           </Tooltip>
         </Grid>

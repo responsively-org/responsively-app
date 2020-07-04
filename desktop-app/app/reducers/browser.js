@@ -24,6 +24,8 @@ import {
   DEVICE_LOADING,
   NEW_FOCUSED_DEVICE,
   NEW_PAGE_META_FIELD,
+  TOGGLE_ALL_DEVICES_MUTED,
+  TOGGLE_DEVICE_MUTED
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
@@ -131,6 +133,7 @@ export type BrowserStateType = {
   devToolsConfig: DevToolsConfigType,
   isInspecting: boolean,
   windowSize: WindowSizeType,
+  allDevicesMuted: boolean,
 };
 
 let _activeDevices = null;
@@ -162,6 +165,7 @@ function _getActiveDevices() {
   if (activeDevices) {
     activeDevices.forEach(device => {
       device.loading = false;
+      device.isMuted = false;
     });
   }
   return activeDevices;
@@ -263,6 +267,7 @@ export default function browser(
     },
     isInspecting: false,
     windowSize: getWindowSize(),
+    allDevicesMuted: false,
   },
   action: Action
 ) {
@@ -357,6 +362,15 @@ export default function browser(
           : device
       );
       return {...state, devices: newDevicesList};
+    case TOGGLE_ALL_DEVICES_MUTED:
+      const updatedDevices = state.devices;
+      updatedDevices.forEach(d => d.isMuted = action.allDevicesMuted);
+      return {...state, allDevicesMuted: action.allDevicesMuted, devices: updatedDevices};
+    case TOGGLE_DEVICE_MUTED:
+      const updatedDevice = state.devices.find(x => x.id === action.deviceId);
+      if (updatedDevice == null) return {...state};
+      updatedDevice.isMuted = action.isMuted;
+      return {...state, allDevicesMuted: state.devices.every(x => x.isMuted), devices: [...state.devices]};
     default:
       return state;
   }
