@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import cx from 'classnames';
 import Grid from '@material-ui/core/Grid';
+import Tooltip from '@material-ui/core/Tooltip';
 import ScrollDownIcon from '../icons/ScrollDown';
 import ScrollUpIcon from '../icons/ScrollUp';
 import ScreenshotIcon from '../icons/Screenshot';
@@ -13,7 +14,6 @@ import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
 import ZoomContainer from '../../containers/ZoomContainer';
 import PrefersColorSchemeSwitch from '../PrefersColorSchemeSwitch';
-import Tooltip from '@material-ui/core/Tooltip';
 import ToggleTouch from '../ToggleTouch';
 
 const ScrollControls = ({

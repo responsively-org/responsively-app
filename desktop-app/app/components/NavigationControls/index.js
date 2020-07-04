@@ -3,13 +3,13 @@ import React, {Component} from 'react';
 import cx from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import {ipcRenderer} from 'electron';
-import HomeIcon from '../icons/Home';
 import {Icon} from 'flwww';
+import {Tooltip} from '@material-ui/core';
+import HomeIcon from '../icons/Home';
 
 import styles from './styles.module.css';
 import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
-import {Tooltip} from '@material-ui/core';
 import Cross from '../icons/Cross';
 import Reload from '../icons/Reload';
 
@@ -18,6 +18,7 @@ class NavigationControls extends Component {
     ipcRenderer.on('reload-url', this.props.triggerNavigationReload);
     ipcRenderer.on('reload-css', this.props.reloadCSS);
   }
+
   componentWillUnmount() {
     ipcRenderer.removeListener(
       'reload-url',
@@ -101,7 +102,7 @@ class NavigationControls extends Component {
             <Tooltip title="Forward">
               <div onClick={this.props.triggerNavigationForward}>
                 <Icon type="arrowRight" size="30px" {...iconProps} />
-                {/*<ArrowRightIcon {...iconProps} />*/}
+                {/* <ArrowRightIcon {...iconProps} /> */}
               </div>
             </Tooltip>
           </Grid>

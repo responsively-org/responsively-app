@@ -42,7 +42,7 @@ export default function HttpAuthDialog() {
       <Dialog
         open={open}
         onClose={handleClose}
-        disableBackdropClick={true}
+        disableBackdropClick
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle id="form-dialog-title">Sign-in</DialogTitle>
@@ -86,7 +86,7 @@ export default function HttpAuthDialog() {
               onClick={() => handleClose(true)}
               color="primary"
               type="submit"
-              primary={true}
+              primary
             >
               Sign In
             </Button>

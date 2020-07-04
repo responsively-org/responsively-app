@@ -10,7 +10,6 @@
  *
  * @flow
  */
-require('dotenv').config();
 import electron, {
   app,
   BrowserWindow,
@@ -22,8 +21,6 @@ import electron, {
 } from 'electron';
 import settings from 'electron-settings';
 import log from 'electron-log';
-import MenuBuilder from './menu';
-import {USER_PREFERENCES} from './constants/settingKeys';
 import * as Sentry from '@sentry/electron';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
@@ -31,11 +28,15 @@ import installExtension, {
 } from 'electron-devtools-installer';
 import devtron from 'devtron';
 import fs from 'fs';
+import console from 'electron-timber';
+import MenuBuilder from './menu';
+import {USER_PREFERENCES} from './constants/settingKeys';
 import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
-import console from 'electron-timber';
 import {appUpdater} from './app-updater';
+
+require('dotenv').config();
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -56,7 +57,7 @@ let mainWindow = null;
 let urlToOpen = null;
 let devToolsView = null;
 
-let httpAuthCallbacks = {};
+const httpAuthCallbacks = {};
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -159,7 +160,7 @@ const createWindow = async () => {
 
   const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
 
-  let iconPath = path.resolve(__dirname, '../resources/icons/64x64.png');
+  const iconPath = path.resolve(__dirname, '../resources/icons/64x64.png');
   mainWindow = new BrowserWindow({
     show: false,
     width,
@@ -178,7 +179,7 @@ const createWindow = async () => {
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
-  mainWindow.webContents.on('did-finish-load', function() {
+  mainWindow.webContents.on('did-finish-load', () => {
     if (process.platform === 'darwin') {
       // Trick to make the transparent title bar draggable
       mainWindow.webContents.executeJavaScript(`
@@ -215,12 +216,11 @@ const createWindow = async () => {
 
   const watcher = new chokidar.FSWatcher();
   let watchedFileInfo = null;
-  watcher.on('change', (_) => {
+  watcher.on('change', _ => {
     mainWindow.webContents.send('reload-url');
   });
   ipcMain.on('start-watching-file', (event, fileInfo) => {
-    if (watchedFileInfo != null)
-      watcher.unwatch(watchedFileInfo.path);
+    if (watchedFileInfo != null) watcher.unwatch(watchedFileInfo.path);
     if (fs.existsSync(fileInfo.path)) {
       watcher.add(fileInfo.path);
       watchedFileInfo = fileInfo;
@@ -250,13 +250,13 @@ const createWindow = async () => {
     nativeTheme.themeSource = scheme || 'system';
   });
 
-  ipcMain.handle('install-extension', async (event, id) => {
-    return installExtension(id, true);
-  });
+  ipcMain.handle('install-extension', async (event, id) =>
+    installExtension(id, true)
+  );
 
-  ipcMain.on('uninstall-extension', (event, name) => {
-    return BrowserWindow.removeDevToolsExtension(name);
-  });
+  ipcMain.on('uninstall-extension', (event, name) =>
+    BrowserWindow.removeDevToolsExtension(name)
+  );
 
   ipcMain.on('open-devtools', (event, ...args) => {
     const {webViewId, bounds, mode} = args[0];
@@ -316,8 +316,7 @@ const createWindow = async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
-    if (watcher != null)
-      watcher.close();
+    if (watcher != null) watcher.close();
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);

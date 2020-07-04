@@ -3,7 +3,7 @@ import React from 'react';
 import {shallow} from 'enzyme';
 import {expect} from 'chai';
 
-import DevicesPreviewer from './';
+import DevicesPreviewer from '.';
 
 const testSrc = 'https://testUrl.com';
 const testDevice1 = {

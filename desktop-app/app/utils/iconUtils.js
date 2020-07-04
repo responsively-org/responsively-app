@@ -2,11 +2,11 @@ import React from 'react';
 import DesktopIcon from '@material-ui/icons/DesktopWindows';
 import MobileIcon from '@material-ui/icons/Smartphone';
 import TabletIcon from '@material-ui/icons/TabletMac';
+import AndroidIcon from '@material-ui/icons/Android';
 import {DEVICE_TYPE, OS} from '../constants/devices';
 import {iconsColor} from '../constants/colors';
 import AppleIcon from '../components/icons/Apple';
 import WindowsIcon from '../components/icons/Windows';
-import AndroidIcon from '@material-ui/icons/Android';
 
 export const getDeviceIcon = deviceType => {
   const iconProps = {

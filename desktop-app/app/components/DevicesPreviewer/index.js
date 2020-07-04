@@ -25,7 +25,7 @@ export default function DevicesPreviewer(props) {
   } = props;
   const [activeTab, changeTab] = useState(0);
 
-  let newActiveTab = activeTab;
+  const newActiveTab = activeTab;
   const devicesAfterFiltering = devices
     .map((device, index) => {
       if (isDeviceEligible(device, props.browser.filters)) {
@@ -65,14 +65,12 @@ export default function DevicesPreviewer(props) {
       {layout === INDIVIDUAL_LAYOUT && (
         <Tabs onSelect={onTabClick} selectedIndex={focusedDeviceIndex}>
           <TabList>
-            {devicesAfterFiltering.map(device => {
-              return (
-                <Tab tabId={device.id} key={device.id}>
-                  {getDeviceIcon(device.type)}
-                  {device.name}
-                </Tab>
-              );
-            })}
+            {devicesAfterFiltering.map(device => (
+              <Tab tabId={device.id} key={device.id}>
+                {getDeviceIcon(device.type)}
+                {device.name}
+              </Tab>
+            ))}
           </TabList>
         </Tabs>
       )}

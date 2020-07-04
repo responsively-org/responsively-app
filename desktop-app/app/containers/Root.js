@@ -3,11 +3,11 @@ import React, {Component} from 'react';
 import {Provider} from 'react-redux';
 import {ConnectedRouter} from 'connected-react-router';
 import log from 'electron-log';
-import type {Store} from '../reducers/types';
-import Routes from '../Routes';
 import {createMuiTheme, makeStyles} from '@material-ui/core/styles';
 import {ThemeProvider} from '@material-ui/styles';
 import {grey} from '@material-ui/core/colors';
+import Routes from '../Routes';
+import type {Store} from '../reducers/types';
 import {themeColor} from '../constants/colors';
 import ErrorBoundary from '../components/ErrorBoundary';
 
@@ -29,7 +29,7 @@ import {
   deleteCookies,
   deleteStorage,
 } from '../actions/browser';
-import {toggleBookmarkUrl} from '../actions/bookmarks'
+import {toggleBookmarkUrl} from '../actions/bookmarks';
 
 type Props = {
   store: Store,
@@ -206,13 +206,13 @@ export default class Root extends Component<Props> {
 
     registerShortcut(
       {
-        id: 'AddBookmark', 
-        title: 'Add Bookmark', 
-        accelerators: ['mod+d']
-      }, 
+        id: 'AddBookmark',
+        title: 'Add Bookmark',
+        accelerators: ['mod+d'],
+      },
       () => {
         store.dispatch(toggleBookmarkUrl(store.getState().browser.address));
-      }, 
+      },
       true
     );
   };

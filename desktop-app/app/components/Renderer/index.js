@@ -1,7 +1,7 @@
 // @flow
 import React, {useState, useCallback} from 'react';
-import WebViewContainer from '../../containers/WebViewContainer';
 import cx from 'classnames';
+import WebViewContainer from '../../containers/WebViewContainer';
 import Spinner from '../Spinner';
 import TickAnimation from '../icons/TickAnimation';
 
@@ -11,7 +11,7 @@ import {getDeviceIcon} from '../../utils/iconUtils';
 function Renderer(props) {
   const [loading, setLoading] = useState(true);
   const [isFlip, setFlip] = useState(false);
-  let dimension = [props.device.width, 'x', props.device.height];
+  const dimension = [props.device.width, 'x', props.device.height];
 
   const sendFlipStatus = useCallback(
     status => {

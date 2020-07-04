@@ -1,5 +1,5 @@
-var minimist = require('minimist');
+const minimist = require('minimist');
 
-var argv = minimist(process.argv.slice(2));
+const argv = minimist(process.argv.slice(2));
 
 module.exports = argv.env || 'production';

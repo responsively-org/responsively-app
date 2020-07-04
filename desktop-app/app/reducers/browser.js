@@ -1,4 +1,9 @@
 // @flow
+import {ipcRenderer, remote} from 'electron';
+import settings from 'electron-settings';
+import {isIfStatement} from 'typescript';
+import console from 'electron-timber';
+import trimStart from 'lodash/trimStart';
 import {
   NEW_ADDRESS,
   NEW_ZOOM_LEVEL,
@@ -22,8 +27,6 @@ import {
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
-import {ipcRenderer, remote} from 'electron';
-import settings from 'electron-settings';
 import type {Device} from '../constants/devices';
 import {
   FLEXIGRID_LAYOUT,
@@ -36,15 +39,12 @@ import {
   USER_PREFERENCES,
   CUSTOM_DEVICES,
 } from '../constants/settingKeys';
-import {isIfStatement} from 'typescript';
 import {
   getHomepage,
   getLastOpenedAddress,
   saveHomepage,
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
-import console from 'electron-timber';
-import trimStart from 'lodash/trimStart';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -147,7 +147,7 @@ function _getActiveDevices() {
   if (_activeDevices) {
     return _activeDevices;
   }
-  let activeDeviceNames = settings.get(ACTIVE_DEVICES);
+  const activeDeviceNames = settings.get(ACTIVE_DEVICES);
   let activeDevices = null;
   if (activeDeviceNames && activeDeviceNames.length) {
     activeDevices = activeDeviceNames
@@ -192,7 +192,7 @@ export function getBounds(mode, _size, windowSize) {
   return {
     x: 0,
     y: height - viewHeight,
-    width: width,
+    width,
     height: viewHeight,
   };
 }
@@ -214,10 +214,14 @@ function _getUserPreferencesDevToolsMode() {
 }
 
 function _updateFileWatcher(newURL) {
-  if (newURL.startsWith('file://') && (newURL.endsWith('.html') || newURL.endsWith('.htm')))
-    ipcRenderer.send('start-watching-file', {path: trimStart(newURL.slice(7), '/').trim()});
-  else
-    ipcRenderer.send('stop-watcher');
+  if (
+    newURL.startsWith('file://') &&
+    (newURL.endsWith('.html') || newURL.endsWith('.htm'))
+  )
+    ipcRenderer.send('start-watching-file', {
+      path: trimStart(newURL.slice(7), '/').trim(),
+    });
+  else ipcRenderer.send('stop-watcher');
 }
 
 export default function browser(
@@ -265,7 +269,7 @@ export default function browser(
   switch (action.type) {
     case NEW_ADDRESS:
       saveLastOpenedAddress(action.address);
-      _updateFileWatcher(action.address)
+      _updateFileWatcher(action.address);
       return {...state, address: action.address, currentPageMeta: {}};
     case NEW_PAGE_META_FIELD:
       return {

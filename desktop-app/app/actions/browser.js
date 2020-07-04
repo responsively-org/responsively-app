@@ -1,7 +1,8 @@
 // @flow
-import type {Dispatch, BrowserStateType} from '../reducers/types';
 import {ipcRenderer, remote} from 'electron';
 import pubsub from 'pubsub.js';
+import console from 'electron-timber';
+import type {Dispatch, BrowserStateType} from '../reducers/types';
 import {
   SCROLL_DOWN,
   SCROLL_UP,
@@ -19,7 +20,6 @@ import {
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
-import console from 'electron-timber';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_PAGE_META_FIELD = 'NEW_PAGE_META_FIELD';
@@ -352,7 +352,7 @@ export function setActiveDevices(newDevices) {
     } = getState();
 
     if (false) {
-      //TODO verify the devices list and return if the order of the devices didn;t change;
+      // TODO verify the devices list and return if the order of the devices didn;t change;
       return;
     }
 

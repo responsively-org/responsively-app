@@ -1,38 +1,33 @@
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 
-var rollup = require('rollup');
-var uglify = require('uglify-js');
+const rollup = require('rollup');
+const uglify = require('uglify-js');
 
-var env = require('./env.js');
+const env = require('./env.js');
 
-var version = require('../package.json').version;
+const {version} = require('../package.json');
 
-var config = require('./config.js');
+const config = require('./config.js');
 
-var banner =
-  '/*\n' +
-  ' * DomInspector v' +
-  version +
-  '\n' +
-  ' * (c) ' +
-  new Date().getFullYear() +
-  ' luoye <luoyefe@gmail.com>\n' +
+const banner =
+  `${'/*\n' + ' * DomInspector v'}${version}\n` +
+  ` * (c) ${new Date().getFullYear()} luoye <luoyefe@gmail.com>\n` +
   ' */';
 
 function getSize(code) {
-  return (code.length / 1024).toFixed(2) + 'kb';
+  return `${(code.length / 1024).toFixed(2)}kb`;
 }
 
 function blue(str) {
-  return '\x1b[1m\x1b[34m' + str + '\x1b[39m\x1b[22m';
+  return `\x1b[1m\x1b[34m${str}\x1b[39m\x1b[22m`;
 }
 
 function write(dest, code) {
-  return new Promise(function(resolve, reject) {
-    fs.writeFile(dest, code, function(err) {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(dest, code, err => {
       if (err) return reject(err);
-      console.log(blue(dest) + ' ' + getSize(code));
+      console.log(`${blue(dest)} ${getSize(code)}`);
       resolve(code);
     });
   });
@@ -40,28 +35,28 @@ function write(dest, code) {
 
 rollup
   .rollup(config)
-  .then(function(bundle) {
-    return bundle.generate({
-      banner: banner,
-      format: 'umd',
-      moduleName: 'DomInspector',
-    }).code;
-  })
-  .then(function(code) {
-    return write(path.join(__dirname, '../dist/dom-inspector.js'), code);
-  })
-  .then(function(code) {
-    return uglify.minify(code, {
-      fromString: true,
-      output: {
-        preamble: banner,
-        ascii_only: true,
-      },
-      compress: {
-        drop_console: true,
-      },
-    }).code;
-  })
-  .then(function(code) {
-    return write(path.join(__dirname, '../dist/dom-inspector.min.js'), code);
-  });
+  .then(
+    bundle =>
+      bundle.generate({
+        banner,
+        format: 'umd',
+        moduleName: 'DomInspector',
+      }).code
+  )
+  .then(code => write(path.join(__dirname, '../dist/dom-inspector.js'), code))
+  .then(
+    code =>
+      uglify.minify(code, {
+        fromString: true,
+        output: {
+          preamble: banner,
+          ascii_only: true,
+        },
+        compress: {
+          drop_console: true,
+        },
+      }).code
+  )
+  .then(code =>
+    write(path.join(__dirname, '../dist/dom-inspector.min.js'), code)
+  );

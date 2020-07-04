@@ -9,6 +9,7 @@ import {
   screen,
 } from 'electron';
 import * as os from 'os';
+import fs from 'fs';
 import {pkg} from './utils/generalUtils';
 import {
   getAllShortcuts,
@@ -17,7 +18,6 @@ import {
 import {appUpdater, AppUpdaterStatus} from './app-updater';
 import {statusBarSettings} from './settings/statusBarSettings';
 import {STATUS_BAR_VISIBILITY_CHANGE} from './constants/pubsubEvents';
-import fs from 'fs';
 
 const path = require('path');
 
@@ -66,7 +66,7 @@ export default class MenuBuilder {
         },
       },
       {
-        type: 'separator'
+        type: 'separator',
       },
       {
         label: 'Keyboard Shortcuts',
@@ -104,7 +104,7 @@ export default class MenuBuilder {
         },
       },
       {
-        type: 'separator'
+        type: 'separator',
       },
       {
         label: 'Check for Updates...',
@@ -126,7 +126,7 @@ export default class MenuBuilder {
         },
       },
       {
-        type: 'separator'
+        type: 'separator',
       },
       {
         label: 'About',
@@ -204,19 +204,19 @@ export default class MenuBuilder {
               os.homedir(),
               `Desktop/Responsively-Screenshots`
             );
-            if (!fs.existsSync(dir)){
+            if (!fs.existsSync(dir)) {
               fs.mkdirSync(dir);
             }
             shell.openItem(dir);
           } catch {}
-        }
+        },
       },
       {
-        type: 'separator'
+        type: 'separator',
       },
       {
-        role: process.platform === 'darwin'? 'close' : 'quit'
-      }
+        role: process.platform === 'darwin' ? 'close' : 'quit',
+      },
     ],
   };
 
@@ -225,7 +225,7 @@ export default class MenuBuilder {
     let label = 'Check for Updates...';
     let enabled = true;
 
-    switch(updaterStatus) {
+    switch (updaterStatus) {
       case AppUpdaterStatus.Idle:
         label = 'Check for Updates...';
         enabled = true;

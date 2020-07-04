@@ -2,10 +2,12 @@
 import React, {Component, createRef} from 'react';
 import {ipcRenderer, remote} from 'electron';
 import pubsub from 'pubsub.js';
+import cx from 'classnames';
+import {Tooltip} from '@material-ui/core';
+import console from 'electron-timber';
 import BugIcon from '../icons/Bug';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
-import cx from 'classnames';
 import {iconsColor} from '../../constants/colors';
 import {
   SCROLL_DOWN,
@@ -28,18 +30,16 @@ import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
 import {captureFullPage} from './screenshotUtil';
-import {Tooltip} from '@material-ui/core';
 import {
   DEVTOOLS_MODES,
   INDIVIDUAL_LAYOUT,
 } from '../../constants/previewerLayouts';
-import console from 'electron-timber';
 import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
 import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
 
-const BrowserWindow = remote.BrowserWindow;
+const {BrowserWindow} = remote;
 
 const MESSAGE_TYPES = {
   scroll: 'scroll',
@@ -69,7 +69,7 @@ class WebView extends Component {
   }
 
   componentDidMount() {
-    //this.initDeviceEmulationParams();
+    // this.initDeviceEmulationParams();
     this.webviewRef.current.addEventListener(
       'ipc-message',
       this.messageHandler
@@ -159,11 +159,11 @@ class WebView extends Component {
       'did-fail-load',
       ({errorCode, errorDescription}) => {
         if (errorCode === -3) {
-          //Aborted error, can be ignored
+          // Aborted error, can be ignored
           return;
         }
         this.setState({
-          errorCode: errorCode,
+          errorCode,
           errorDesc: errorDescription,
         });
       }
@@ -280,7 +280,7 @@ class WebView extends Component {
         this.webviewRef.current.loadURL(address);
       }
       this.setState({
-        address: address,
+        address,
       });
     }
   };
@@ -401,7 +401,6 @@ class WebView extends Component {
         return;
       case MESSAGE_TYPES.toggleEventMirroring:
         this._unPlug();
-        return;
     }
   };
 
@@ -527,7 +526,7 @@ class WebView extends Component {
       transform: `scale(${browser.zoomLevel})`,
     };
 
-    let shouldMaximize = browser.previewer.layout !== INDIVIDUAL_LAYOUT;
+    const shouldMaximize = browser.previewer.layout !== INDIVIDUAL_LAYOUT;
     const IconFocus = () => {
       if (shouldMaximize)
         return <Focus height={30} padding={6} color={iconsColor} />;
@@ -536,7 +535,7 @@ class WebView extends Component {
     return (
       <div
         className={cx(styles.webViewContainer)}
-        style={{height: deviceStyles.height * browser.zoomLevel + 40}} //Hack, ref below TODO
+        style={{height: deviceStyles.height * browser.zoomLevel + 40}} // Hack, ref below TODO
       >
         <div className={cx(styles.webViewToolbar)}>
           <div className={cx(styles.webViewToolbarLeft)}>
@@ -598,7 +597,7 @@ class WebView extends Component {
           <div className={cx(styles.webViewToolbarRight)}>
             <Tooltip
               title={shouldMaximize ? 'Maximize' : 'Minimize'}
-              disableFocusListener={true}
+              disableFocusListener
             >
               <div
                 className={cx(
@@ -622,7 +621,7 @@ class WebView extends Component {
           })}
           style={{
             width: deviceStyles.width * browser.zoomLevel + 6,
-            height: deviceStyles.height * browser.zoomLevel + 6, //TODO why is this height not getting set?
+            height: deviceStyles.height * browser.zoomLevel + 6, // TODO why is this height not getting set?
           }}
         >
           <div
