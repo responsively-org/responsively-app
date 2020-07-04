@@ -48,6 +48,7 @@ export type Device = {
   os: OSType,
   type: DeviceType,
   source: Source,
+  isMuted: boolean,
 };
 
 function getOS(device) {
@@ -81,7 +82,7 @@ export default function getAllDevices() {
         device.type === DEVICE_TYPE.desktop
           ? device.screen.horizontal
           : device.screen.vertical;
-      
+
       return {
         id: id,
         name: device.title,
