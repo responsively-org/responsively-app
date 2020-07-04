@@ -3,15 +3,20 @@ import React, {useState, useCallback} from 'react';
 import WebViewContainer from '../../containers/WebViewContainer';
 import cx from 'classnames';
 import Spinner from '../Spinner';
-import TickAnimation from '../icons/TickAnimation';
+import {CAPABILITIES} from '../../constants/devices';
 
 import styles from './style.module.css';
 import {getDeviceIcon} from '../../utils/iconUtils';
 
 function Renderer(props) {
+  const { device, hidden, transmitNavigatorStatus } = props;
   const [loading, setLoading] = useState(true);
   const [isFlip, setFlip] = useState(false);
-  let dimension = [props.device.width, 'x', props.device.height];
+  const [finalDimensions, setFinalDimensions] = useState({
+    width: device.width,
+    height: device.height
+  });
+  const dimension =  [finalDimensions.width, 'x', finalDimensions.height];
 
   const sendFlipStatus = useCallback(
     status => {
@@ -21,10 +26,10 @@ function Renderer(props) {
   );
 
   return (
-    <div className={cx(styles.container, {[styles.hidden]: props.hidden})}>
+    <div className={cx(styles.container, {[styles.hidden]: hidden})}>
       <div className={styles.titleContainer}>
-        {getDeviceIcon(props.device.type)}
-        <span className={cx(styles.deviceTitle)}>{props.device.name}</span>
+        {getDeviceIcon(device.type)}
+        <span className={cx(styles.deviceTitle)}>{device.name}</span>
         <div className={cx(styles.deviceSize)}>
           {isFlip ? dimension.reverse().join('') : dimension.join('')}
         </div>
@@ -38,10 +43,11 @@ function Renderer(props) {
       </div>
       <div className={cx(styles.deviceWrapper)}>
         <WebViewContainer
-          device={props.device}
+          device={device}
           sendFlipStatus={sendFlipStatus}
-          transmitNavigatorStatus={props.transmitNavigatorStatus}
+          transmitNavigatorStatus={transmitNavigatorStatus}
           onLoadingStateChange={setLoading}
+          updateResponsiveDimensions={setFinalDimensions}
         />
       </div>
     </div>

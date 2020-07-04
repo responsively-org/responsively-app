@@ -1,11 +1,14 @@
 // @flow
 import React, {Component, createRef} from 'react';
-import {ipcRenderer, remote} from 'electron';
+import { remote } from 'electron';
+import cx from 'classnames';
+import { Resizable } from 're-resizable';
+import {Tooltip} from '@material-ui/core';
+import debounce from 'lodash.debounce';
 import pubsub from 'pubsub.js';
 import BugIcon from '../icons/Bug';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
-import cx from 'classnames';
 import {iconsColor} from '../../constants/colors';
 import {
   SCROLL_DOWN,
@@ -28,7 +31,6 @@ import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
 import {captureFullPage} from './screenshotUtil';
-import {Tooltip} from '@material-ui/core';
 import {
   DEVTOOLS_MODES,
   INDIVIDUAL_LAYOUT,
@@ -63,6 +65,11 @@ class WebView extends Component {
       isUnplugged: false,
       errorCode: null,
       errorDesc: null,
+      deviceDimensions : {
+        width: this.props.device.width,
+        height: this.props.device.height
+      },
+      temporaryDims: null,
       address: this.props.browser.address,
     };
     this.subscriptions = [];
@@ -401,7 +408,8 @@ class WebView extends Component {
         return;
       case MESSAGE_TYPES.toggleEventMirroring:
         this._unPlug();
-        return;
+        break;
+      default: break;
     }
   };
 
@@ -517,17 +525,92 @@ class WebView extends Component {
     return this.props.device.capabilities.indexOf(CAPABILITIES.mobile) > -1;
   }
 
+  _setResizeDimensions  = (event, direction, ref, delta) => {
+    const { temporaryDims } = this.state;
+    const { updateResponsiveDimensions } = this.props;
+      if(!temporaryDims) return;
+      const updatedDeviceDims = {
+        width: temporaryDims.width + delta.width,
+        height: temporaryDims.height + delta.height
+      };
+      this.setState({
+        deviceDimensions: updatedDeviceDims
+      }, () => {
+        updateResponsiveDimensions(this.state.deviceDimensions);
+      });
+  }
+
+  _getWebViewTag = (deviceStyles) => {
+    const {device : { id, useragent, capabilities }, browser : { address } } = this.props;
+    const { deviceDimensions } = this.state;
+
+    if(capabilities.includes(CAPABILITIES.responsive)){
+      const responsiveStyle = {
+        width: deviceDimensions.width,
+        height:  deviceDimensions.height
+      }
+      return (
+        <Resizable 
+          className={cx(styles.resizableView)}
+          size={{width: responsiveStyle.width, height: responsiveStyle.height}}
+          onResizeStart={() => {
+            const updatedTempDims = {
+              width: deviceDimensions.width,
+              height: deviceDimensions.height
+            }
+            this.setState({
+              temporaryDims: updatedTempDims
+            });
+          }}
+          onResize={debounce(this._setResizeDimensions, 25, { maxWait: 50 })}
+          onResizeStop={() =>{
+            this.setState({
+              temporaryDims: null
+            });
+          }}
+          handleComponent={
+            {
+              right:  <div className={cx(styles.iconWrapper, styles.iconWrapperE)} {...this.props}><div className={styles.iconHolder} /></div>,
+              bottom : <div className={cx(styles.iconWrapper, styles.iconWrapperS)} {...this.props}><div className={styles.iconHolder} /></div>,
+              bottomRight : <div className={cx(styles.iconWrapper, styles.iconWrapperSE)} {...this.props}><div className={styles.iconHolder} /></div>,
+            }
+          }
+        >
+          <webview
+            ref={this.webviewRef}
+            preload="./preload.js"
+            className={cx(styles.device)}
+            src={address || 'about:blank'}
+            useragent={useragent}
+            style={responsiveStyle}
+          />
+        </Resizable>
+      )
+    }
+
+    return (
+      <webview
+        ref={this.webviewRef}
+        preload="./preload.js"
+        className={cx(styles.device)}
+        src={address || 'about:blank'}
+        useragent={useragent}
+        style={deviceStyles}
+      />
+    );
+  }
+
   render() {
-    const {device, browser} = this.props;
+    const { browser : { zoomLevel, previewer } } = this.props;
+    const { isTilted, deviceDimensions, errorCode, errorDesc, screenshotInProgress } = this.state;
     const deviceStyles = {
       width:
-        this.isMobile && this.state.isTilted ? device.height : device.width,
+        this.isMobile && isTilted ? deviceDimensions.height : deviceDimensions.width,
       height:
-        this.isMobile && this.state.isTilted ? device.width : device.height,
-      transform: `scale(${browser.zoomLevel})`,
+        this.isMobile && isTilted ? deviceDimensions.width : deviceDimensions.height,
     };
 
-    let shouldMaximize = browser.previewer.layout !== INDIVIDUAL_LAYOUT;
+    const shouldMaximize = previewer.layout !== INDIVIDUAL_LAYOUT;
     const IconFocus = () => {
       if (shouldMaximize)
         return <Focus height={30} padding={6} color={iconsColor} />;
@@ -536,7 +619,10 @@ class WebView extends Component {
     return (
       <div
         className={cx(styles.webViewContainer)}
-        style={{height: deviceStyles.height * browser.zoomLevel + 40}} //Hack, ref below TODO
+        style={{
+          width: deviceStyles.width * zoomLevel,
+          height: deviceStyles.height * zoomLevel + 40
+        }} 
       >
         <div className={cx(styles.webViewToolbar)}>
           <div className={cx(styles.webViewToolbarLeft)}>
@@ -621,33 +707,26 @@ class WebView extends Component {
             [styles.devToolsActive]: this._isDevToolsOpen(),
           })}
           style={{
-            width: deviceStyles.width * browser.zoomLevel + 6,
-            height: deviceStyles.height * browser.zoomLevel + 6, //TODO why is this height not getting set?
-          }}
+            width: deviceStyles.width,
+            transform: `scale(${zoomLevel})`, 
+        }}
         >
           <div
             className={cx(styles.deviceOverlay, {
-              [styles.overlayEnabled]: this.state.screenshotInProgress,
+              [styles.overlayEnabled]: screenshotInProgress,
             })}
             style={deviceStyles}
           />
           <div
             className={cx(styles.deviceOverlay, {
-              [styles.overlayEnabled]: this.state.errorCode,
+              [styles.overlayEnabled]: errorCode,
             })}
             style={deviceStyles}
           >
-            <p>ERROR: {this.state.errorCode}</p>
-            <p className={cx(styles.errorDesc)}>{this.state.errorDesc}</p>
+            <p>ERROR: {errorCode}</p>
+            <p className={cx(styles.errorDesc)}>{errorDesc}</p>
           </div>
-          <webview
-            ref={this.webviewRef}
-            preload="./preload.js"
-            className={cx(styles.device)}
-            src={this.state.address || 'about:blank'}
-            useragent={device.useragent}
-            style={deviceStyles}
-          />
+          {this._getWebViewTag(deviceStyles)}
         </div>
       </div>
     );

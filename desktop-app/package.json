@@ -280,6 +280,7 @@
     "flwww": "^2.0.10",
     "history": "^4.7.2",
     "jimp": "^0.12.1",
+    "lodash.debounce": "^4.0.8",
     "merge-img": "^2.1.3",
     "mousetrap": "^1.6.5",
     "promise-worker": "^2.0.1",

@@ -1,4 +1,6 @@
+/* eslint-disable import/first */
 require('dotenv').config();
+
 import React from 'react';
 import {remote} from 'electron';
 import {render} from 'react-dom';
