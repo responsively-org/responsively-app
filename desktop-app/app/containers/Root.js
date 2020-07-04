@@ -56,7 +56,7 @@ const theme = createMuiTheme({
 });
 
 const getApp = history => {
-  if (true || process.env.NODE_ENV !== 'development') {
+  if (process.env.NODE_ENV !== 'development') {
     return (
       <ErrorBoundary>
         <ConnectedRouter history={history}>
@@ -75,6 +75,10 @@ const getApp = history => {
 export default class Root extends Component<Props> {
   componentDidMount() {
     this.registerAllShortcuts();
+  }
+
+  componentWillUnmount() {
+    clearAllShortcuts();
   }
 
   registerAllShortcuts = () => {
@@ -216,10 +220,6 @@ export default class Root extends Component<Props> {
       true
     );
   };
-
-  componentWillUnmount() {
-    clearAllShortcuts();
-  }
 
   render() {
     const {store, history} = this.props;

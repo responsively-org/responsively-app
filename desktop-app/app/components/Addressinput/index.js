@@ -27,6 +27,42 @@ class AddressBar extends React.Component<Props> {
 
   state: State;
 
+  static getDerivedStateFromProps(props, state) {
+    if (props.address !== state.previousAddress) {
+      return {
+        userTypedAddress: props.address,
+        previousAddress: props.address,
+      };
+    }
+    return null;
+  }
+
+  _handleKeyDown = e => {
+    if (e.key === 'Enter') {
+      this.inputRef.current.blur();
+      this._onChange();
+    }
+  };
+
+  _normalize = address => {
+    if (address.indexOf('://') === -1) {
+      let protocol = 'https://';
+      if (address.startsWith('localhost') || address.startsWith('127.0.0.1')) {
+        protocol = 'http://';
+      }
+      address = `${protocol}${address}`;
+    }
+    return address;
+  };
+
+  _onChange = () => {
+    if (!this.state.userTypedAddress) {
+      return;
+    }
+    this.props.onChange &&
+      this.props.onChange(this._normalize(this.state.userTypedAddress), true);
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -34,16 +70,6 @@ class AddressBar extends React.Component<Props> {
       previousAddress: props.address,
     };
     this.inputRef = React.createRef();
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.address != state.previousAddress) {
-      return {
-        userTypedAddress: props.address,
-        previousAddress: props.address,
-      };
-    }
-    return null;
   }
 
   render() {
@@ -150,32 +176,6 @@ class AddressBar extends React.Component<Props> {
       </div>
     );
   }
-
-  _handleKeyDown = e => {
-    if (e.key === 'Enter') {
-      this.inputRef.current.blur();
-      this._onChange();
-    }
-  };
-
-  _onChange = () => {
-    if (!this.state.userTypedAddress) {
-      return;
-    }
-    this.props.onChange &&
-      this.props.onChange(this._normalize(this.state.userTypedAddress), true);
-  };
-
-  _normalize = address => {
-    if (address.indexOf('://') === -1) {
-      let protocol = 'https://';
-      if (address.startsWith('localhost') || address.startsWith('127.0.0.1')) {
-        protocol = 'http://';
-      }
-      address = `${protocol}${address}`;
-    }
-    return address;
-  };
 }
 
 export default AddressBar;
