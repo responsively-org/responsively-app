@@ -87,6 +87,7 @@ export default function AddDevice(props) {
   const [capabilities, setCapabilities] = useState({
     [CAPABILITIES.mobile]: false,
     [CAPABILITIES.touch]: true,
+    [CAPABILITIES.responsive]: false,
   });
   const [deviceType, setDeviceType] = useState(DEVICE_TYPE.phone);
   const [os, setOS] = useState(OS.android);
@@ -366,6 +367,23 @@ export default function AddDevice(props) {
                     />
                   }
                   label="Touchscreen"
+                />
+              </Grid>
+              <Grid item>
+                <FormControlLabel
+                  control={
+                    <CustomCheckbox
+                      checked={capabilities[CAPABILITIES.responsive]}
+                      onChange={e =>
+                        setCapabilities({
+                          ...capabilities,
+                          [CAPABILITIES.responsive]: e.target.checked,
+                        })
+                      }
+                      value="Responsive"
+                    />
+                  }
+                  label="Responsive"
                 />
               </Grid>
             </Grid>

@@ -19,6 +19,7 @@ export const DEVICE_TYPE: {[key: string]: DeviceType} = {
 export const CAPABILITIES: {[key: string]: Capability} = {
   mobile: 'mobile',
   touch: 'touch',
+  responsive: 'responsive',
 };
 
 export const SOURCE: {[key: string]: Source} = {

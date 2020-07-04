@@ -1,12 +1,14 @@
+/* eslint-disable import/first */
 require('dotenv').config();
+
 import React from 'react';
 import {remote} from 'electron';
 import {render} from 'react-dom';
+import * as Sentry from '@sentry/electron';
 import {AppContainer} from 'react-hot-loader';
 import Root from './containers/Root';
 import {configureStore, history} from './store/configureStore';
 import './app.global.css';
-import * as Sentry from '@sentry/electron';
 
 if (remote.getGlobal('process').env.NODE_ENV !== 'development') {
   Sentry.init({

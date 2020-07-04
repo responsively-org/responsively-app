@@ -1301,6 +1301,35 @@ export default {
         ],
       },
     },
+    {
+      id: '34',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': true,
+        title: 'Responsive Mode',
+        screen: {
+          horizontal: {
+            width: 500,
+            height: 790,
+          },
+          'device-pixel-ratio': 2,
+          vertical: {
+            width: 790,
+            height: 500,
+          },
+        },
+        capabilities: ['responsive'],
+        'user-agent': '',
+        type: 'notebook',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
   ],
   dependencies: ['emulation'],
   scripts: [],

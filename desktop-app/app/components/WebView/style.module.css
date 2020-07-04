@@ -7,6 +7,7 @@
   padding: 5px;
   display: flex;
   align-items: center;
+  width: fit-content;
 }
 
 .webViewToolbarIcons {
@@ -21,6 +22,8 @@
 
 .deviceContainer {
   position: relative;
+  display:inline-flex;
+  transform-origin: top left;
 }
 
 .device {
@@ -45,4 +48,96 @@
 
 .errorDesc {
   font-size: 20px;
+}
+
+.iconWrapper{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  background-position: center;
+  height: '100%';
+  width: '100%';
+  padding: 0;
+  background-color: #3b3b3b;
+}
+
+.iconWrapper:hover{
+  background-color: #575757;
+}
+
+.iconWrapperS{
+  width: 100%;
+  height: 15px;
+  bottom: -10px;
+  left: 0;
+}
+.iconWrapperE{
+  width: 15px;
+  height: 100%;
+  transform: rotate(180deg);
+  top: 0;
+  right: -10px;
+}
+.iconWrapperSE {
+  right: -5px;
+  bottom: -5px;
+  height: 15px;
+  width: 15px;
+}
+
+.iconHolder{
+  position: relative;
+  display: block;
+  height: 7px;
+  cursor: pointer;
+}
+
+.iconHolder::before, .iconHolder::after {
+  content: '';
+  position: absolute;
+  width: 15px;
+  height: 2px;
+  background-color: #000;
+}
+
+.iconWrapperE .iconHolder{
+  right: 1px;
+  transform: rotate(90deg);
+}
+
+.iconWrapperS .iconHolder{
+  bottom : 0;
+}
+
+.iconWrapperSE .iconHolder{
+  right: 3px;
+  top: 2px;
+  height: 6px;
+  transform: rotate(-45deg);
+}
+
+.iconHolder::before{
+  left: 0;
+}
+
+.iconHolder::after{
+  bottom: 0;
+}
+
+.iconWrapperSE .iconHolder::before{
+  left: -2px;
+  width: 11px;
+  height: 2px;
+}
+
+.iconWrapperSE .iconHolder::after{
+  bottom: 0;
+  width: 7px;
+  height: 2px;
+}
+
+.resizableView{
+  margin: 0 1rem;
 }

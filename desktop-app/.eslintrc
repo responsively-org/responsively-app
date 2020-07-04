@@ -37,6 +37,7 @@
     "jsx-a11y/anchor-is-valid": "off",
     "no-console": "off",
     "no-use-before-define": "off",
+    "no-underscore-dangle": "off",
     "no-multi-assign": "off",
     "promise/param-names": "error",
     "promise/always-return": "error",
