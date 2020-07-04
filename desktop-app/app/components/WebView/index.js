@@ -6,8 +6,6 @@ import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
 import debounce from 'lodash.debounce';
 import pubsub from 'pubsub.js';
-import cx from 'classnames';
-import {Tooltip} from '@material-ui/core';
 import console from 'electron-timber';
 import BugIcon from '../icons/Bug';
 import MutedIcon from '../icons/Muted';
@@ -739,8 +737,6 @@ class WebView extends Component {
                 <UnplugIcon height={30} color={iconsColor} />
               </div>
             </Tooltip>
-          </div>
-          <div className={cx(styles.webViewToolbarRight)}>
             <Tooltip
               title={isMuted ? 'Unmute' : 'Mute'}
               disableFocusListener={true}
@@ -760,6 +756,8 @@ class WebView extends Component {
                 )}
               </div>
             </Tooltip>
+          </div>
+          <div className={cx(styles.webViewToolbarRight)}>
             <Tooltip
               title={shouldMaximize ? 'Maximize' : 'Minimize'}
               disableFocusListener
