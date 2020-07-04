@@ -11,7 +11,9 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/1283424?v=4",
       "profile": "http://twitter.com/vivek_jonam",
       "contributions": [
-        "code"
+        "code",
+        "test",
+        "projectManagement"
       ]
     },
     {
@@ -20,7 +22,9 @@
       "avatar_url": "https://avatars0.githubusercontent.com/u/26249498?v=4",
       "profile": "https://github.com/esprush",
       "contributions": [
-        "code"
+        "code",
+        "test",
+        "projectManagement"
       ]
     },
     {
@@ -56,6 +60,107 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/13673443?v=4",
       "profile": "https://jjavierdguezas.github.io",
       "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "romanakash",
+      "name": "Roman Akash",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/40427975?v=4",
+      "profile": "https://github.com/romanakash",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "RomainFrancony",
+      "name": "Romain Francony",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/22396965?v=4",
+      "profile": "https://github.com/RomainFrancony",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "AARYAN-MAHENDRA",
+      "name": "AARYAN-MAHENDRA",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/64866670?v=4",
+      "profile": "https://github.com/AARYAN-MAHENDRA",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Nothing-Works",
+      "name": "Andy",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/18606648?v=4",
+      "profile": "https://github.com/Nothing-Works",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Kidcredo",
+      "name": "Ryan Pais",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/15522605?v=4",
+      "profile": "https://github.com/Kidcredo",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "Grafikart",
+      "name": "Jonathan",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/395137?v=4",
+      "profile": "https://grafikart.fr",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "heygema",
+      "name": "Gema Anggada ✌︎",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/10743728?v=4",
+      "profile": "https://github.com/heygema",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jonathanurias96",
+      "name": "jonathanurias96",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/57416786?v=4",
+      "profile": "https://github.com/jonathanurias96",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "falecci",
+      "name": "Federico Alecci",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/17703824?v=4",
+      "profile": "https://falecci.dev",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "MuminjonGuru",
+      "name": "Abduraimov Muminjon",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/24930020?v=4",
+      "profile": "https://linkedin.com/in/muminjon-abduraimov/",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "vlazaroes",
+      "name": "Víctor Lázaro",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/38981659?v=4",
+      "profile": "https://www.vlazaro.es/",
+      "contributions": [
         "code"
       ]
     }
@@ -65,5 +170,6 @@
   "projectOwner": "manojVivek",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "none"
 }

@@ -11,8 +11,15 @@
  * @flow
  */
 require('dotenv').config();
-import electron, {app, BrowserWindow, globalShortcut, ipcMain} from 'electron';
-import {autoUpdater} from 'electron-updater';
+import electron, {
+  app,
+  BrowserWindow,
+  BrowserView,
+  globalShortcut,
+  ipcMain,
+  nativeTheme,
+  webContents,
+} from 'electron';
 import settings from 'electron-settings';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -25,8 +32,13 @@ import installExtension, {
 import devtron from 'devtron';
 import fs from 'fs';
 import {migrateDeviceSchema} from './settings/migration';
+import {DEVTOOLS_MODES} from './constants/previewerLayouts';
+import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
+import console from 'electron-timber';
+import {appUpdater} from './app-updater';
 
 const path = require('path');
+const chokidar = require('chokidar');
 
 migrateDeviceSchema();
 
@@ -40,16 +52,9 @@ const protocol = 'responsively';
 
 let hasActiveWindow = false;
 
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
-
 let mainWindow = null;
 let urlToOpen = null;
+let devToolsView = null;
 
 let httpAuthCallbacks = {};
 
@@ -66,10 +71,9 @@ if (
 }
 
 const installExtensions = async () => {
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
   try {
-    const statuses = await installExtension(extensions);
+    await installExtension(extensions);
     devtron.install();
   } catch (err) {
     console.log('Error installing extensions', err);
@@ -89,6 +93,9 @@ const openUrl = url => {
  */
 
 app.on('will-finish-launching', () => {
+  if (process.platform === 'win32') {
+    urlToOpen = process.argv.filter(i => /^responsively/.test(i))[0];
+  }
   if (['win32', 'darwin'].includes(process.platform)) {
     if (process.argv.length >= 2) {
       app.setAsDefaultProtocolClient(protocol, process.execPath, [
@@ -137,7 +144,6 @@ app.on(
 app.on('login', (event, webContents, request, authInfo, callback) => {
   event.preventDefault();
   const {url} = request;
-  console.log('Sending HTTP Auth Prompt', {url});
   if (httpAuthCallbacks[url]) {
     return httpAuthCallbacks[url].push(callback);
   }
@@ -147,10 +153,7 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
 
 const createWindow = async () => {
   hasActiveWindow = true;
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
+  if (process.env.NODE_ENV === 'development') {
     await installExtensions();
   }
 
@@ -171,6 +174,8 @@ const createWindow = async () => {
     icon: iconPath,
   });
 
+  ipcMain.removeAllListeners();
+
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on('did-finish-load', function() {
@@ -189,12 +194,44 @@ const createWindow = async () => {
     }
   });
 
+  initMainShortcutManager();
+
+  const onResize = () => {
+    const [width, height] = mainWindow.getContentSize();
+    mainWindow.webContents.send('window-resize', {height, width});
+  };
+
+  mainWindow.on('resize', onResize);
+
   mainWindow.once('ready-to-show', () => {
     if (urlToOpen) {
       openUrl(urlToOpen);
       urlToOpen = null;
+    } else {
+      mainWindow.show();
     }
-    mainWindow.show();
+    onResize();
+  });
+
+  const watcher = new chokidar.FSWatcher();
+  let watchedFileInfo = null;
+  watcher.on('change', (_) => {
+    mainWindow.webContents.send('reload-url');
+  });
+  ipcMain.on('start-watching-file', (event, fileInfo) => {
+    if (watchedFileInfo != null)
+      watcher.unwatch(watchedFileInfo.path);
+    if (fs.existsSync(fileInfo.path)) {
+      watcher.add(fileInfo.path);
+      watchedFileInfo = fileInfo;
+    } else {
+      watchedFileInfo = null;
+    }
+  });
+
+  ipcMain.on('stop-watcher', () => {
+    if (watcher != null && watchedFileInfo != null)
+      watcher.unwatch(watchedFileInfo.path);
   });
 
   ipcMain.on('http-auth-promt-response', (event, ...args) => {
@@ -209,16 +246,89 @@ const createWindow = async () => {
     httpAuthCallbacks[url] = null;
   });
 
+  ipcMain.on('prefers-color-scheme-select', (event, scheme) => {
+    nativeTheme.themeSource = scheme || 'system';
+  });
+
+  ipcMain.handle('install-extension', async (event, id) => {
+    return installExtension(id, true);
+  });
+
+  ipcMain.on('uninstall-extension', (event, name) => {
+    return BrowserWindow.removeDevToolsExtension(name);
+  });
+
+  ipcMain.on('open-devtools', (event, ...args) => {
+    const {webViewId, bounds, mode} = args[0];
+    if (!webViewId) {
+      return;
+    }
+    const webView = webContents.fromId(webViewId);
+
+    if (mode === DEVTOOLS_MODES.UNDOCKED) {
+      return webView.openDevTools();
+    }
+
+    devToolsView = new BrowserView();
+    mainWindow.setBrowserView(devToolsView);
+    devToolsView.setBounds(bounds);
+    webView.setDevToolsWebContents(devToolsView.webContents);
+    webView.openDevTools();
+    devToolsView.webContents.executeJavaScript(`
+      (async function () {
+        const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+        var retryCount = 0;
+        var done = false;
+        while(retryCount < 10 && !done) {
+          try {
+            retryCount++;
+            document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
+            done = true
+          } catch(err){
+            await sleep(100);
+          }
+        }
+      })()
+    `);
+  });
+
+  ipcMain.on('close-devtools', (event, ...args) => {
+    const {webViewId} = args[0];
+    if (!webViewId) {
+      return;
+    }
+    webContents.fromId(webViewId).closeDevTools();
+    if (!devToolsView) {
+      return;
+    }
+    mainWindow.removeBrowserView(devToolsView);
+    devToolsView.destroy();
+    devToolsView = null;
+  });
+
+  ipcMain.on('resize-devtools', (event, ...args) => {
+    const {bounds} = args[0];
+    if (!bounds || !devToolsView) {
+      return;
+    }
+    devToolsView.setBounds(bounds);
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
+    if (watcher != null)
+      watcher.close();
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
+  appUpdater.on('status-changed', nextStatus => {
+    menuBuilder.buildMenu(true);
+    mainWindow.webContents.send('updater-status-changed', {nextStatus});
+  });
   // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
+  appUpdater.checkForUpdatesAndNotify();
 };
 
 app.on('activate', (event, hasVisibleWindows) => {

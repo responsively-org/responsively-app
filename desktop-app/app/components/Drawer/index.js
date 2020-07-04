@@ -3,11 +3,12 @@ import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import DeviceDrawerContainer from '../../containers/DeviceDrawerContainer';
 import UserPreferencesContainer from '../../containers/UserPreferencesContainer';
+import ExtensionsManagerContainer from '../../containers/ExtensionsManagerContainer';
 import cx from 'classnames';
 
 import styles from './styles.css';
 import commonStyles from '../common.styles.css';
-import {DEVICE_MANAGER, USER_PREFERENCES} from '../../constants/DrawerContents';
+import {DEVICE_MANAGER, USER_PREFERENCES, EXTENSIONS_MANAGER} from '../../constants/DrawerContents';
 import {iconsColor} from '../../constants/colors';
 import DoubleLeftArrowIcon from '../icons/DoubleLeftArrow';
 
@@ -63,6 +64,8 @@ function getDrawerContent(type) {
       return <DeviceDrawerContainer />;
     case USER_PREFERENCES:
       return <UserPreferencesContainer />;
+    case EXTENSIONS_MANAGER:
+      return <ExtensionsManagerContainer />
   }
 }
 

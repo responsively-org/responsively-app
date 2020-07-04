@@ -8,14 +8,23 @@
   display: flex;
   align-items: center;
   width: fit-content;
+  justify-content: space-between;
+}
+
+.webViewToolbarLeft {
+  display: flex;
+}
+
+.webViewToolbarRight {
+  display: flex;
 }
 
 .webViewToolbarIcons {
   margin-right: 2px;
   padding: 0 2px;
-  display: flex;
   align-items: center;
   justify-content: center;
+  display: flex;
   height: 30px;
   width: 30px;
 }
@@ -24,6 +33,11 @@
   position: relative;
   display:inline-flex;
   transform-origin: top left;
+  border: 3px solid #687cee00;
+}
+
+.devToolsActive {
+  border: 3px solid #6075ef;
 }
 
 .device {

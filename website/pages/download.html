@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-150751006-2"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "UA-150751006-2");
+    </script>
+    <script type="text/javascript">   
+      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};   
+      heap.load("3340058302"); 
+    </script>
+    <meta charset="utf-8" />
+    <title>Responsively App | A Web developer's browser</title>
+    <link rel="canonical" href="https://responsively.app" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A dev-tool that aids faster and precise responsive web development."
+    />
+    <meta property="og:title" content="A Web developer's browser - Responsively App" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://responsively.app" />
+    <meta property="og:description" content="A dev-tool that aids faster and precise responsive web development." />
+    <meta property="og:image" content="https://responsively.app/assets/img/screenshot.png" />
+    <meta name="twitter:card" content="summary"></meta>
+    <meta name="twitter:site" content="@ResponsivelyApp"></meta>
+    <link
+      href="assets/css/loaders/loader-typing.css"
+      rel="stylesheet"
+      type="text/css"
+      media="all"
+    />
+    <link
+      href="assets/css/theme-desktop-app.css"
+      rel="stylesheet"
+      type="text/css"
+      media="all"
+    />
+    <link
+      href="assets/css/custom.css"
+      rel="stylesheet"
+      type="text/css"
+      media="all"
+    />
+    <link
+      rel="preload"
+      as="font"
+      href="assets/fonts/Inter-UI-upright.var.woff2"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      as="font"
+      href="assets/fonts/Inter-UI.var.woff2"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="57x57"
+      href="/assets/img/favicons/apple-icon-57x57.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="60x60"
+      href="/assets/img/favicons/apple-icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="/assets/img/favicons/apple-icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="/assets/img/favicons/apple-icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="/assets/img/favicons/apple-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="/assets/img/favicons/apple-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="/assets/img/favicons/apple-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="/assets/img/favicons/apple-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/img/favicons/apple-icon-180x180.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/assets/img/favicons/android-icon-192x192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/img/favicons/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/assets/img/favicons/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/assets/img/favicons/favicon-16x16.png"
+    />
+    <link rel="manifest" href="/assets/img/favicons/manifest.json" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta
+      name="msapplication-TileImage"
+      content="/assets/img/favicons/ms-icon-144x144.png"
+    />
+    <meta name="theme-color" content="#ffffff" />
+  </head>
+
+  <body class="loaded">
+    <div class="loader"><div class="loading-animation"></div></div>
+
+    <div class="navbar-container bg-primary-3">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary-3" data-sticky="top">
+        <div class="container">
+          <a class="navbar-brand" href="/">
+            <img src="assets/img/responsively-logo.png" alt="Responsively" width="60px" />
+            Responsively
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <img class="icon navbar-toggler-open" src="assets/img/icons/interface/menu.svg" alt="menu interface icon"
+              data-inject-svg />
+            <img class="icon navbar-toggler-close" src="assets/img/icons/interface/cross.svg" alt="cross interface icon"
+              data-inject-svg />
+          </button>
+    
+          <div class="collapse navbar-collapse justify-content-end p-3 p-md-0">
+            <div class="py-2 py-lg-0">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a href="/#Features" class="nav-link" aria-expanded="false" aria-haspopup="true">Features</a>
+                </li>
+                <li class="nav-item">
+                  <a href="https://github.com/manojVivek/responsively-app/projects/12?fullscreen=true" class="nav-link" aria-expanded="false" aria-haspopup="true" target="_blank">RoadMap</a>
+                </li>
+              </ul>
+            </div>
+            <a href="download.html" class="btn btn-primary ml-lg-3">Download now</a>
+            <a class="ml-lg-3 d-none d-lg-block"
+              href="https://www.producthunt.com/posts/responsively?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-responsively"
+              target="_blank"><img
+                src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=200375&theme=light&period=daily"
+                alt="Responsively - Develop responsive web-apps 5x faster | Product Hunt Embed" height="38px" /></a>
+            <a href="https://github.com/manojVivek/responsively-app" target="_blank" class="nav-link ml-lg-2"
+              aria-expanded="false" aria-haspopup="true"><img
+              class="icon bg-primary"
+              src="assets/img/icons/social/github.svg"
+              alt="icon"
+              data-inject-svg
+            /></a>
+            <a href="https://twitter.com/ResponsivelyApp" target="_blank" class="nav-link"
+              aria-expanded="false" aria-haspopup="true"><img
+              class="icon bg-primary"
+              src="assets/img/icons/social/twitter.svg"
+              alt="icon"
+              data-inject-svg
+            /></a>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <section id="auto" class="bg-primary-3 text-light text-center has-divider">
+      <div class="container">
+          <div class="row text-center py-6">
+              <div class="col">
+    
+                <h1>Your download should start automatically</h1>
+                <div class="lead mb-4">If the download doesn't start, <a href="#manual" class="light-link">Click here</a> to download manually.</div>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col">
+                <h2>Available for all major operating systems</h2>
+              </div>
+            </div>
+            <div class="row text-center mb-4" id="manual">
+              <div class="col-md-4 mb-2" data-aos="fade-up" data-aos-delay="100">
+                <div class="bg-light rounded p-3">
+                <div class="icon-round bg-primary mx-auto mb-4">
+                  <img class="icon" src="assets/img/logos/brand/apple.svg" alt="icon" />
+                </div>
+                <a id="macOs" class="m-1 btn btn-outline-primary mx-2" href="#macOs">
+                  <span class="m-1">Download for Mac</span>
+                </a>
+              </div>
+              </div>
+              <div class="col-md-4 mb-2" data-aos="fade-up" data-aos-delay="100">
+                <div class="bg-light rounded p-3">
+                <div class="icon-round bg-primary mx-auto mb-4">
+                  <img class="icon" src="assets/img/icons/custom/windows-icon.svg" alt="icon" />
+                </div>
+                <a id="windowsOs" class="m-1 btn btn-outline-primary mx-2" href="#windowsOs">
+                  <span class="m-1">Download for Windows</span>
+                </a>
+              </div>
+              </div>
+              <div class="col-md-4 mb-2" data-aos="fade-up" data-aos-delay="100">
+                <div class="bg-light rounded p-3">
+                <div class="icon-round bg-primary mx-auto mb-4">
+                  <img class="icon" src="assets/img/icons/custom/linux-icon.svg" alt="icon" />
+                </div>
+                <a id="linuxOs" class="m-1 btn btn-outline-primary mx-2" href="#linuxOs">
+                  <span class="m-1">Download for Linux</span>
+                </a>
+              </div>
+              </div>
+
+              
+                
+        </div>
+
+        
+      </div>
+
+      </section>
+        <div class="has-divider">
+        
+          <div class="divider flip-x bg-primary-3">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="96px" viewBox="0 0 100 100" version="1.1" preserveAspectRatio="none" class="injected-svg" data-src="assets/img/dividers/divider-3.svg">
+         <path d="M0,0 C6.83050094,50 15.1638343,75 25,75 C41.4957514,75 62.4956597,0 81.2456597,0 C93.7456597,0 99.9971065,0 100,0 L100,100 L0,100"></path>
+        </svg>
+          </div>
+
+  <div class="container text-center mt-1">
+  <p><em>Please feel free to contact us on <a href="https://github.com/manojVivek/responsively-app/issues" target="_blank">GitHub</a>, if you need any help.</em></p>
+</div>
+  <div class="divider">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="96px" viewBox="0 0 100 100" version="1.1" preserveAspectRatio="none" class="injected-svg" data-src="assets/img/dividers/divider-2.svg">
+<path d="M0,0 C16.6666667,66 33.3333333,99 50,99 C66.6666667,99 83.3333333,66 100,0 L100,100 L0,100 L0,0 Z"></path>
+</svg>
+  </div>
+    <!-- trusted section -->
+    <footer id="Contact-Us" class="pb-1 bg-primary-3 text-light">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col">
+            <div
+              class="card card-body border-0 o-hidden mb-0 bg-primary text-light"
+            >
+              <div
+                class="position-relative d-flex flex-column flex-md-row justify-content-between align-items-center"
+              >
+                <div class="h3 text-center mb-md-0">
+                  Start building beautiful websites
+                </div>
+                <a
+                  href="download.html"
+                  class="btn btn-lg btn-white"
+                >
+                  Download Now
+                </a>
+                <div
+              class="d-block d-sm-block d-md-block d-lg-none flex-column flex-sm-row justify-content-center ml-sm-4 mt-4 mt-sm-0"
+            >
+              <a class="ml-lg-3" href="https://www.producthunt.com/posts/responsively?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-responsively" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=200375&theme=light&period=daily" alt="Responsively - Develop responsive web-apps 5x faster! | Product Hunt Embed" style="width: 250px; height: 50px;" width="250px" height="50px" /></a>
+            </div>
+              </div>
+              <div class="decoration layer-0">
+                <img
+                  class="bg-primary-2"
+                  src="assets/img/decorations/deco-blob-1.svg"
+                  alt="deco-blob-1 decoration"
+                  data-inject-svg
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center mb-2">
+          <div class="col-auto">
+            <ul class="nav">
+              <li class="nav-item">
+                <a href="https://twitter.com/ResponsivelyApp" class="nav-link" target="_blank">
+                  <img class="icon undefined" src="assets/img/icons/social/twitter.svg" alt="twitter social icon" data-inject-svg />
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="https://github.com/manojVivek/responsively-app" class="nav-link" target="_blank">
+                  <img class="icon undefined" src="assets/img/icons/social/github.svg" alt="github social icon" data-inject-svg />
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="https://www.producthunt.com/posts/responsively" class="nav-link" target="_blank">
+                  <img class="icon undefined" src="assets/img/logos/brand/ph.svg" alt="product hunt social icon" data-inject-svg />
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="https://www.indiehackers.com/product/responsively-app" class="nav-link" target="_blank">
+                  <img class="icon undefined" src="assets/img/logos/brand/indie-hackers.svg" alt="indie hackers social icon" data-inject-svg />
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col col-md-auto text-center">
+            <small class="text-muted">&copy;2020 Responsively App, All rights reserved and subject to the <a href="/privacy-policy.html">Privacy Policy</a> and <a href="/terms-and-conditions.html">Terms and Conditions</a>.
+            </small>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- Required vendor scripts (Do not remove) -->
+    <script type="text/javascript" src="assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="assets/js/popper.min.js"></script>
+    <script type="text/javascript" src="assets/js/bootstrap.js"></script>
+
+    <!--
+      Optional Vendor Scripts (Remove the plugin script here and comment initializer script out of index.js if site does not use that feature)
+    -->
+
+    <!--
+      AOS (Animate On Scroll - animates elements into view while scrolling down)
+    -->
+    <script type="text/javascript" src="assets/js/aos.js"></script>
+    <!-- Clipboard (copies content from browser into OS clipboard) -->
+    <script type="text/javascript" src="assets/js/clipboard.js"></script>
+    <!-- Fancybox (handles image and video lightbox and galleries) -->
+    <script
+      type="text/javascript"
+      src="assets/js/jquery.fancybox.min.js"
+    ></script>
+    <!-- Flatpickr (calendar/date/time picker UI) -->
+    <script type="text/javascript" src="assets/js/flatpickr.min.js"></script>
+    <!-- Flickity (handles touch enabled carousels and sliders) -->
+    <script
+      type="text/javascript"
+      src="assets/js/flickity.pkgd.min.js"
+    ></script>
+    <!-- Ion rangeSlider (flexible and pretty range slider elements) -->
+    <script
+      type="text/javascript"
+      src="assets/js/ion.rangeSlider.min.js"
+    ></script>
+    <!-- Isotope (masonry layouts and filtering) -->
+    <script type="text/javascript" src="assets/js/isotope.pkgd.min.js"></script>
+    <!-- jarallax (parallax effect and video backgrounds) -->
+    <script type="text/javascript" src="assets/js/jarallax.min.js"></script>
+    <script
+      type="text/javascript"
+      src="assets/js/jarallax-video.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="assets/js/jarallax-element.min.js"
+    ></script>
+    <!-- jQuery Countdown (displays countdown text to a specified date) -->
+    <script
+      type="text/javascript"
+      src="assets/js/jquery.countdown.min.js"
+    ></script>
+    <!-- jQuery smartWizard facilitates steppable wizard content -->
+    <script
+      type="text/javascript"
+      src="assets/js/jquery.smartWizard.min.js"
+    ></script>
+    <!-- Plyr (unified player for Video, Audio, Vimeo and Youtube) -->
+    <script
+      type="text/javascript"
+      src="assets/js/plyr.polyfilled.min.js"
+    ></script>
+    <!-- Prism (displays formatted code boxes) -->
+    <script type="text/javascript" src="assets/js/prism.js"></script>
+    <!--
+      ScrollMonitor (manages events for elements scrolling in and out of view)
+    -->
+    <script type="text/javascript" src="assets/js/scrollMonitor.js"></script>
+    <!-- Smooth scroll (animation to links in-page) -->
+    <script
+      type="text/javascript"
+      src="assets/js/smooth-scroll.polyfills.min.js"
+    ></script>
+    <!--
+      SVGInjector (replaces img tags with SVG code to allow easy inclusion of SVGs with the benefit of inheriting colors and styles)
+    -->
+    <script
+      type="text/javascript"
+      src="assets/js/svg-injector.umd.production.js"
+    ></script>
+    <!-- TwitterFetcher (displays a feed of tweets from a specified account) -->
+    <script
+      type="text/javascript"
+      src="assets/js/twitterFetcher_min.js"
+    ></script>
+    <!-- Typed text (animated typing effect) -->
+    <script type="text/javascript" src="assets/js/typed.min.js"></script>
+    <!-- Required theme scripts (Do not remove) -->
+    <script type="text/javascript" src="assets/js/theme.js"></script>
+    <!-- Removes page load animation when window is finished loading -->
+    <script type="text/javascript">
+      window.addEventListener("load", function() {
+        document.querySelector("body").classList.add("loaded");
+      });
+    </script>
+    <script>
+      var flkty = new Flickity(".controls-light", {
+        autoPlay: true,
+        imagesLoaded: true,
+        wrapAround: true
+      });
+    </script>
+
+<script>
+  var macOs = 'macOs';
+  var windowsOs = 'windowsOs';
+  var linuxOs = 'linuxOs';
+  function getOS() {
+    var userAgent = window.navigator.userAgent,
+        platform = window.navigator.platform,
+        macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+        windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+        iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+        os = null;
+  
+    if (macosPlatforms.indexOf(platform) !== -1) {
+      os = macOs;
+    } else if (iosPlatforms.indexOf(platform) !== -1) {
+      os = 'iOS';
+    } else if (windowsPlatforms.indexOf(platform) !== -1) {
+      os = windowsOs;
+    } else if (/Android/.test(userAgent)) {
+      os = 'Android';
+    } else if (!os && /Linux/.test(platform)) {
+      os = linuxOs;
+    }
+  
+    return os;
+  }
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  function setCookie(variable, value, expires_seconds) {
+    var d = new Date();
+    d = new Date(d.getTime() + 1000 * expires_seconds);
+    document.cookie = variable + '=' + value + '; expires=' + d.toGMTString() + ';';
+  }
+
+  function getWidth() {
+    return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  }
+
+  function setDownloadURL() {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", 'https://api.github.com/repos/manojVivek/responsively-app/releases/latest', false ); // false for synchronous request
+    xmlHttp.send();
+
+    var tagName=JSON.parse(xmlHttp.responseText).tag_name;
+    var versionName=tagName.substring(1);
+
+    var downloadURL='https://github.com/manojVivek/responsively-app/releases/download/'+tagName;
+    var linuxFileName='/ResponsivelyApp-'+versionName+'.AppImage';
+    var macFileName='/ResponsivelyApp-'+versionName+'.dmg';
+    var windowsFileName='/ResponsivelyApp-Setup-'+versionName+'.exe';
+    document.getElementById('linuxOs').href=downloadURL+linuxFileName
+    document.getElementById('macOs').href=downloadURL+macFileName
+    document.getElementById('windowsOs').href=downloadURL+windowsFileName
+  }
+
+  window.addEventListener('load', () => {
+    setDownloadURL();
+    if (getCookie('downloaded') === "true" || getWidth() < 800) {
+      return;
+    }
+    setTimeout(() => {
+      var os = getOS();
+      var downloadLink = document.getElementById(os);
+      if (downloadLink) {
+        downloadLink.click();
+        setCookie('downloaded', 'true', 2*60);
+        heap && heap.track('autoDownload');
+      }
+    }, 1000);
+  });
+  </script>
+  </body>
+</html>

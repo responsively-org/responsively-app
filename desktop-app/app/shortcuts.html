@@ -1,0 +1,161 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="app.global.css" />
+    <style>
+      body {
+        background-color: #1e1e1e;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        font-family: 'Roboto', sans-serif;
+      }
+      ul {
+        margin: 20px 50px;
+        overflow-y: auto;
+        max-height: 38vh;
+      }
+      li {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 5px;
+      }
+      .header {
+        font-size: 2em;
+        display: flex;
+        justify-content: center;
+        margin: 100px 0 50px;
+      }
+      .label {
+        width: 250px;
+        font-size: large;
+      }
+      .key {
+        display: flex;
+        text-align: right;
+        padding: 7px;
+        margin: 0 10px;
+        justify-content: center;
+        align-items: center;
+        font-size: large;
+        background-color: black;
+        border-radius: 5px;
+        font-family: "Consolas", "Courier New", monospace;
+        white-space: pre;
+      }
+      .btn-wrapper {
+        display: flex;
+        justify-content: center;
+        background-color: transparent;
+        padding-bottom: 50px;
+      }
+      #close-btn {
+        font-family: 'Roboto', sans-serif;
+        font-size: x-large;
+        padding: 10 20 10 20px;
+        border: 0;
+        border-radius: 5px;
+        background-color: black;
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">Keyboard Shortcuts</div>
+    <ul id="list"></ul>
+    <div class="btn-wrapper">
+      <button id="close-btn">Close</button>
+    </div>
+    <script>
+      function firstToUpperCase(s) {
+        return s[0].toUpperCase() + s.slice(1);
+      }
+      function getNumPadName(n) {
+        const lo = n.toLowerCase();
+        if (lo === 'dec') return 'Numpad .';
+        if (lo === 'add') return 'Numpad +';
+        if (lo === 'sub') return 'Numpad -';
+        if (lo === 'mult') return 'Numpad *';
+        if (lo === 'div') return 'Numpad /';
+        return 'Numpad ' + firstToUpperCase(n);
+      }
+      function getKeyName(k) {
+        const lo = k.toLowerCase();
+        if (lo === 'mod')
+          return 'Cmd/Ctrl';
+        if (lo === 'commandorcontrol' || lo === 'cmdorctrl')
+          return 'Cmd/Ctrl';
+        if (lo === 'command')
+          return 'Cmd';
+        if (lo === 'control')
+          return 'Ctrl';
+        if (lo === 'plus')
+          return '+';
+        if (lo === 'return')
+          return 'Enter';
+        if (lo === 'escape')
+          return 'Esc';
+        if (lo === 'prtsc')
+          return 'PrtSc';
+        if (lo.startsWith('num'))
+          return getNumPadName(k.slice(3));
+        return firstToUpperCase(k);
+      }
+      function mapAccelerator(acc) {
+        return acc.split('+').map(getKeyName);
+      }    
+
+      let registeredShortcuts = [];
+      try {
+        registeredShortcuts = JSON.parse(window.process.argv.slice(-1)).reduce((arr, def) => {
+          arr.push([def.title, mapAccelerator(def.accelerators[0])]);
+          def.accelerators.slice(1).forEach(acc => arr.push(['', mapAccelerator(acc)]))
+          return arr;
+        }, []);
+      } catch { }
+
+      const shortcutNodes = registeredShortcuts.map(([label, keys]) => {
+        const liElem = document.createElement('li');
+
+        const labelElem = document.createElement('div');
+        const labelTextNode = document.createTextNode(label);
+        labelElem.classList.add('label');
+        labelElem.appendChild(labelTextNode);
+
+        liElem.appendChild(labelElem);
+
+        keys.forEach((k, idx) => {
+          const keyElem = document.createElement('div');
+          const keyTextNode = document.createTextNode(k);
+          keyElem.classList.add('key');
+          keyElem.appendChild(keyTextNode);
+          if (idx != 0) {
+            liElem.append('+');
+          }
+          liElem.appendChild(keyElem);
+        });
+
+        return liElem;
+      });
+
+      shortcutNodes.forEach(node => {
+        document.getElementById('list').append(node);
+      });
+
+      const remote = require('electron').remote;
+      const BrowserWindow = remote.BrowserWindow;
+
+      document.onreadystatechange = () => {
+        if (document.readyState === 'complete') {
+          document.getElementById('close-btn').addEventListener('click', () => {
+            const window = BrowserWindow.getFocusedWindow();
+            window.close();
+          });
+        }
+      };
+    </script>
+  </body>
+</html>

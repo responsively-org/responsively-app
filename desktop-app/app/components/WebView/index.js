@@ -22,6 +22,8 @@ import {
   DISABLE_INSPECTOR_ALL_DEVICES,
   RELOAD_CSS,
   DELETE_STORAGE,
+  ADDRESS_CHANGE,
+  STOP_LOADING,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -29,6 +31,15 @@ import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
 import {captureFullPage} from './screenshotUtil';
+import {
+  DEVTOOLS_MODES,
+  INDIVIDUAL_LAYOUT,
+} from '../../constants/previewerLayouts';
+import console from 'electron-timber';
+import Maximize from '../icons/Maximize';
+import Minimize from '../icons/Minimize';
+import Focus from '../icons/Focus';
+import Unfocus from '../icons/Unfocus';
 
 const BrowserWindow = remote.BrowserWindow;
 
@@ -47,6 +58,7 @@ class WebView extends Component {
   constructor(props) {
     super(props);
     this.webviewRef = createRef();
+    this.devToolsWebviewRef = createRef();
     this.state = {
       screenshotInProgress: false,
       isTilted: false,
@@ -57,7 +69,8 @@ class WebView extends Component {
         width: this.props.device.width,
         height: this.props.device.height
       },
-      temporaryDims: null
+      temporaryDims: null,
+      address: this.props.browser.address,
     };
     this.subscriptions = [];
   }
@@ -97,6 +110,12 @@ class WebView extends Component {
       pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
     );
     this.subscriptions.push(
+      pubsub.subscribe(ADDRESS_CHANGE, this.processAddressChangeEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(STOP_LOADING, this.processStopLoadingEvent)
+    );
+    this.subscriptions.push(
       pubsub.subscribe(
         FLIP_ORIENTATION_ALL_DEVICES,
         this.processFlipOrientationEvent
@@ -119,12 +138,29 @@ class WebView extends Component {
       this.initEventTriggers(this.webviewRef.current);
     });
 
+    if (this.props.transmitNavigatorStatus) {
+      this.webviewRef.current.addEventListener(
+        'page-favicon-updated',
+        ({favicons}) => this.props.onPageMetaFieldUpdate('favicons', favicons)
+      );
+
+      this.webviewRef.current.addEventListener(
+        'page-title-updated',
+        ({title}) => this.props.onPageMetaFieldUpdate('title', title)
+      );
+    }
+
     this.webviewRef.current.addEventListener('did-start-loading', () => {
       this.setState({errorCode: null, errorDesc: null});
       this.props.onLoadingStateChange(true);
+      this.props.deviceLoadingChange({id: this.props.device.id, loading: true});
     });
     this.webviewRef.current.addEventListener('did-stop-loading', () => {
       this.props.onLoadingStateChange(false);
+      this.props.deviceLoadingChange({
+        id: this.props.device.id,
+        loading: false,
+      });
     });
     this.webviewRef.current.addEventListener(
       'did-fail-load',
@@ -148,40 +184,49 @@ class WebView extends Component {
       }
     );
 
-    const urlChangeHandler = ({url}) => {
-      if (url === this.props.browser.address) {
+    const urlChangeHandler = async ({url, isMainFrame = true}) => {
+      if (!isMainFrame || url === this.props.browser.address) {
         return;
       }
+      await new Promise(r => setTimeout(r, 200));
       this.props.onAddressChange(url);
     };
 
-    this.webviewRef.current.addEventListener('will-navigate', urlChangeHandler);
-
-    this.webviewRef.current.addEventListener(
-      'did-navigate-in-page',
-      urlChangeHandler
-    );
-
-    this.webviewRef.current.addEventListener('did-navigate', ({url}) => {
+    const navigationHandler = event => {
       if (this.props.transmitNavigatorStatus) {
         this.props.updateNavigatorStatus({
           backEnabled: this.webviewRef.current.canGoBack(),
           forwardEnabled: this.webviewRef.current.canGoForward(),
         });
       }
+    };
+
+    this.webviewRef.current.addEventListener('will-navigate', urlChangeHandler);
+
+    this.webviewRef.current.addEventListener('did-navigate-in-page', event => {
+      navigationHandler(event), urlChangeHandler(event);
     });
 
-    this.webviewRef.current.addEventListener('devtools-opened', () => {
-      /*this.webviewRef.current
-        .getWebContents()
-        .devToolsWebContents.executeJavaScript(
-          'DevToolsAPI.enterInspectElementMode()'
-        );*/
+    this.webviewRef.current.addEventListener('did-navigate', event => {
+      navigationHandler(event);
+    });
+
+    this.webviewRef.current.addEventListener('devtools-closed', () => {
+      if (
+        this.props.browser.devToolsConfig.mode === DEVTOOLS_MODES.UNDOCKED &&
+        this._isDevToolsOpen()
+      ) {
+        this._toggleDevTools();
+      }
     });
   }
 
+  getWebContentsId() {
+    return this.webviewRef.current.getWebContentsId();
+  }
+
   getWebContents() {
-    return this.getWebContentForId(this.webviewRef.current.getWebContentsId());
+    return this.getWebContentForId(this.getWebContentsId());
   }
 
   getWebContentForId(id) {
@@ -234,6 +279,21 @@ class WebView extends Component {
           }
         })
     `);
+  };
+
+  processAddressChangeEvent = ({address, force}) => {
+    if (address !== this.webviewRef.current.src) {
+      if (force) {
+        this.webviewRef.current.loadURL(address);
+      }
+      this.setState({
+        address: address,
+      });
+    }
+  };
+
+  processStopLoadingEvent = () => {
+    this.webviewRef.current.stop();
   };
 
   processDeleteStorageEvent = ({storages}) => {
@@ -300,6 +360,12 @@ class WebView extends Component {
     } = this.webviewRef.current.getBoundingClientRect();
     const {x: deviceX, y: deviceY} = message;
     const zoomFactor = this.props.browser.zoomLevel;
+    if (this.props.browser.isInspecting) {
+      this.props.toggleInspector();
+    }
+    if (!this._isDevToolsOpen()) {
+      this._toggleDevTools();
+    }
     this.getWebContents().inspectElement(
       Math.round(webViewX + deviceX * zoomFactor),
       Math.round(webViewY + deviceY * zoomFactor)
@@ -311,9 +377,6 @@ class WebView extends Component {
   };
 
   processDisableInspectorEvent = message => {
-    if (message.sourceDeviceId === this.props.device.id) {
-      return;
-    }
     this.webviewRef.current.send('disableInspectorMessage');
   };
 
@@ -356,21 +419,21 @@ class WebView extends Component {
 
   initEventTriggers = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-      responsivelyApp.deviceId = ${this.props.device.id};
-      document.body.addEventListener('mouseleave', () => {
+      responsivelyApp.deviceId = '${this.props.device.id}';
+      document.addEventListener('mouseleave', () => {
         window.responsivelyApp.mouseOn = false;
         if (responsivelyApp.domInspectorEnabled) {
           responsivelyApp.domInspector.disable();
         }
       });
-      document.body.addEventListener('mouseenter', () => {
+      document.addEventListener('mouseenter', () => {
         responsivelyApp.mouseOn = true;
         if (responsivelyApp.domInspectorEnabled) {
           responsivelyApp.domInspector.enable();
         }
       });
 
-      window.addEventListener('scroll', (e) => {
+      document.addEventListener('scroll', (e) => {
         if (!responsivelyApp.mouseOn) {
           return;
         }
@@ -383,13 +446,13 @@ class WebView extends Component {
       });
 
       document.addEventListener(
-        'click', 
+        'click',
         (e) => {
           if (e.target === window.responsivelyApp.lastClickElement || e.responsivelyAppProcessed) {
             window.responsivelyApp.lastClickElement = null;
             e.responsivelyAppProcessed = true;
             return;
-          } 
+          }
           if (window.responsivelyApp.domInspectorEnabled) {
             e.preventDefault();
             window.responsivelyApp.domInspector.disable();
@@ -406,7 +469,7 @@ class WebView extends Component {
           }
           e.responsivelyAppProcessed = true;
           window.responsivelyApp.sendMessageToHost(
-            '${MESSAGE_TYPES.click}', 
+            '${MESSAGE_TYPES.click}',
             {
               cssPath: window.responsivelyApp.cssPath(e.target),
             }
@@ -417,22 +480,24 @@ class WebView extends Component {
     `);
   };
 
-  _toggleDevTools = () => {
-    /*const devtools = new BrowserWindow({
-      fullscreen: false,
-      acceptFirstMouse: true,
-      show: true,
-    });
-    //devtools.hide();
+  _isDevToolsOpen = () =>
+    !!this.props.browser.devToolsConfig.activeDevTools.find(
+      ({deviceId}) => deviceId === this.props.device.id
+    );
 
-    this.webviewRef.current
-      .getWebContents()
-      .setDevToolsWebContents(devtools.webContents);
-    this.getWebContents().openDevTools({mode: 'detach'});*/
-    this.getWebContents().toggleDevTools();
+  _toggleDevTools = () => {
+    if (this._isDevToolsOpen()) {
+      return this.props.onDevToolsClose({
+        deviceId: this.props.device.id,
+        webViewId: this.getWebContentsId(),
+      });
+    }
+    this.props.onDevToolsOpen(this.props.device.id, this.getWebContentsId());
   };
 
   _flipOrientation = () => {
+    this.props.sendFlipStatus &&
+      this.props.sendFlipStatus(!this.state.isTilted);
     this.setState({isTilted: !this.state.isTilted});
   };
 
@@ -443,6 +508,17 @@ class WebView extends Component {
         !this.state.isUnplugged
       );
     });
+  };
+
+  _focusDevice = () => {
+    this.props.setPreviewLayout(INDIVIDUAL_LAYOUT);
+    this.props.setFocusedDevice(this.props.device.id);
+  };
+
+  _unfocusDevice = () => {
+    if (this.props.browser.previewer.previousLayout) {
+      this.props.setPreviewLayout(this.props.browser.previewer.previousLayout);
+    }
   };
 
   get isMobile() {
@@ -531,6 +607,12 @@ class WebView extends Component {
         this.isMobile && isTilted ? deviceDimensions.width : deviceDimensions.height,
     };
 
+    let shouldMaximize = browser.previewer.layout !== INDIVIDUAL_LAYOUT;
+    const IconFocus = () => {
+      if (shouldMaximize)
+        return <Focus height={30} padding={6} color={iconsColor} />;
+      return <Unfocus height={30} padding={6} color={iconsColor} />;
+    };
     return (
       <div
         className={cx(styles.webViewContainer)}
@@ -540,64 +622,91 @@ class WebView extends Component {
         }} 
       >
         <div className={cx(styles.webViewToolbar)}>
-          <Tooltip title="Open DevTools">
-            <div
-              className={cx(
-                styles.webViewToolbarIcons,
-                commonStyles.icons,
-                commonStyles.enabled
-              )}
-              onClick={this._toggleDevTools}
+          <div className={cx(styles.webViewToolbarLeft)}>
+            <Tooltip title="Open DevTools">
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled,
+                  {
+                    [commonStyles.selected]: this._isDevToolsOpen(),
+                  }
+                )}
+                onClick={this._toggleDevTools}
+              >
+                <BugIcon width={20} color={iconsColor} />
+              </div>
+            </Tooltip>
+            <Tooltip title="Take Screenshot">
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled
+                )}
+                onClick={() => this.processScreenshotEvent({})}
+              >
+                <ScreenshotIcon height={18} color={iconsColor} />
+              </div>
+            </Tooltip>
+            <Tooltip title="Tilt Device">
+              <div
+                className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
+                  [commonStyles.enabled]: this.isMobile,
+                  [commonStyles.disabled]: !this.isMobile,
+                  [commonStyles.selected]: this.state.isTilted,
+                })}
+                onClick={this._flipOrientation}
+              >
+                <DeviceRotateIcon height={17} color={iconsColor} />
+              </div>
+            </Tooltip>
+            <Tooltip title="Disable event mirroring">
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled,
+                  {
+                    [commonStyles.selected]: this.state.isUnplugged,
+                  }
+                )}
+                onClick={this._unPlug}
+              >
+                <UnplugIcon height={30} color={iconsColor} />
+              </div>
+            </Tooltip>
+          </div>
+          <div className={cx(styles.webViewToolbarRight)}>
+            <Tooltip
+              title={shouldMaximize ? 'Maximize' : 'Minimize'}
+              disableFocusListener={true}
             >
-              <BugIcon width={20} color={iconsColor} />
-            </div>
-          </Tooltip>
-          <Tooltip title="Take Screenshot">
-            <div
-              className={cx(
-                styles.webViewToolbarIcons,
-                commonStyles.icons,
-                commonStyles.enabled
-              )}
-              onClick={() => this.processScreenshotEvent({})}
-            >
-              <ScreenshotIcon height={18} color={iconsColor} />
-            </div>
-          </Tooltip>
-          <Tooltip title="Tilt Device">
-            <div
-              className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
-                [commonStyles.enabled]: this.isMobile,
-                [commonStyles.disabled]: !this.isMobile,
-                [commonStyles.selected]: this.state.isTilted,
-              })}
-              onClick={this._flipOrientation}
-            >
-              <DeviceRotateIcon height={17} color={iconsColor} />
-            </div>
-          </Tooltip>
-          <Tooltip title="Disable event mirroring">
-            <div
-              className={cx(
-                styles.webViewToolbarIcons,
-                commonStyles.icons,
-                commonStyles.enabled,
-                {
-                  [commonStyles.selected]: this.state.isUnplugged,
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled
+                )}
+                onClick={
+                  shouldMaximize ? this._focusDevice : this._unfocusDevice
                 }
-              )}
-              onClick={this._unPlug}
-            >
-              <UnplugIcon height={30} color={iconsColor} />
-            </div>
-          </Tooltip>
+              >
+                <IconFocus />
+              </div>
+            </Tooltip>
+            {/* {expandOrCollapse} */}
+          </div>
         </div>
         <div
-          className={cx(styles.deviceContainer)}
+          className={cx(styles.deviceContainer, {
+            [styles.devToolsActive]: this._isDevToolsOpen(),
+          })}
           style={{
-             width: deviceStyles.width,
+            width: deviceStyles.width,
             transform: `scale(${zoomLevel})`, 
-          }}
+        }}
         >
           <div
             className={cx(styles.deviceOverlay, {

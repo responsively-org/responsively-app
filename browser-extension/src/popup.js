@@ -74,7 +74,7 @@ const URLOpenerNonChrome = () => {
           <a
             className="anchorButton"
             onClick={() => setTimeout(() => window.close(), 200)}
-            href="https://manojvivek.github.io/responsively-app/"
+            href="https://responsively.app"
             target="_blank"
           >
             Install Now
@@ -117,7 +117,7 @@ const URLOpenerChrome = () => {
         <a
           className="anchorButton"
           onClick={() => setTimeout(() => window.close(), 200)}
-          href="https://manojvivek.github.io/responsively-app/"
+          href="https://responsively.app"
           target="_blank"
         >
           Install Now

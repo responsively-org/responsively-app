@@ -35,6 +35,8 @@ type Capability = CAPABILITIES.mobile | CAPABILITIES.touch;
 
 type Source = SOURCE.chrome | SOURCE.custom;
 
+let chromeVersion=process.versions['chrome'] || '83.0.4103.106';
+
 export type Device = {
   id: number,
   added: boolean,
@@ -62,6 +64,15 @@ function getOS(device) {
   return OS.pc;
 }
 
+function getUserAgent(device) {
+
+  let deviceUserAgent=device['user-agent']
+  if(deviceUserAgent && deviceUserAgent.includes('Chrome/%s')) {
+      deviceUserAgent=deviceUserAgent.replace('%s',chromeVersion)
+  }
+  return deviceUserAgent
+}
+
 export default function getAllDevices() {
   const chromeDefaultDevices = chromeEmulatedDevices.extensions
     .sort((a, b) => a.order - b.order)
@@ -70,13 +81,13 @@ export default function getAllDevices() {
         device.type === DEVICE_TYPE.desktop
           ? device.screen.horizontal
           : device.screen.vertical;
-
+      
       return {
         id: id,
         name: device.title,
         width: dimension.width,
         height: dimension.height,
-        useragent: device['user-agent'],
+        useragent: getUserAgent(device),
         capabilities: device.capabilities,
         added: device['show-by-default'],
         os: getOS(device),

@@ -20,7 +20,7 @@
     }
   },
   "license": "SEE LICENSE IN LICENSE.md",
-  "homepage": "https://manojvivek.github.io/responsively-app",
+  "homepage": "https://responsively.app",
   "dependencies": {
     "@fancyapps/fancybox": "3.5.2",
     "@tanem/svg-injector": "^8.0.49",
@@ -29,6 +29,7 @@
     "bootstrap": "~4.3.1",
     "clipboard": "^2.0.6",
     "countup.js": "^2.0.5",
+    "es-abstract": "^1.14.2",
     "flatpickr": "^4.6.3",
     "flickity": "~2.2.0",
     "gh-pages": "^2.2.0",
