@@ -209,7 +209,7 @@ class AddressBar extends React.Component<Props> {
   _addUrlToExistingSearchResult = () => {
 
     let existingSearchResults = getExistingSearchResults();
-    let formattedUrl = this.state.userTypedAddress.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
+    let formattedUrl = this._normalize(this.state.userTypedAddress);
 
     if(existingSearchResults?.length){
      let updatedSearchResults = [...existingSearchResults];
