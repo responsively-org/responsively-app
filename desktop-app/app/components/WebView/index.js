@@ -7,6 +7,8 @@ import {Tooltip} from '@material-ui/core';
 import debounce from 'lodash.debounce';
 import pubsub from 'pubsub.js';
 import BugIcon from '../icons/Bug';
+import MutedIcon from '../icons/Muted';
+import UnmutedIcon from '../icons/Unmuted';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
 import {iconsColor} from '../../constants/colors';
@@ -20,6 +22,7 @@ import {
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
   DISABLE_INSPECTOR_ALL_DEVICES,
+  TOGGLE_DEVICE_MUTED_STATE,
   RELOAD_CSS,
   DELETE_STORAGE,
   ADDRESS_CHANGE,
@@ -119,6 +122,12 @@ class WebView extends Component {
       pubsub.subscribe(
         FLIP_ORIENTATION_ALL_DEVICES,
         this.processFlipOrientationEvent
+      )
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(
+        TOGGLE_DEVICE_MUTED_STATE,
+        this.processToggleMuteEvent
       )
     );
     this.subscriptions.push(
@@ -353,6 +362,10 @@ class WebView extends Component {
     this._flipOrientation();
   };
 
+  processToggleMuteEvent = ({muted}) => {
+    this.getWebContents().setAudioMuted(muted);
+  }
+
   processOpenDevToolsInspectorEvent = message => {
     const {
       x: webViewX,
@@ -521,6 +534,15 @@ class WebView extends Component {
     }
   };
 
+  _muteDevice = () => {
+    this.getWebContents().setAudioMuted(true);
+    this.props.onDeviceMutedChange(this.props.device.id, true);
+  }
+  _unmuteDevice = () => {
+    this.getWebContents().setAudioMuted(false);
+    this.props.onDeviceMutedChange(this.props.device.id, false);
+  }
+
   get isMobile() {
     return this.props.device.capabilities.indexOf(CAPABILITIES.mobile) > -1;
   }
@@ -550,7 +572,7 @@ class WebView extends Component {
         height:  deviceDimensions.height
       }
       return (
-        <Resizable 
+        <Resizable
           className={cx(styles.resizableView)}
           size={{width: responsiveStyle.width, height: responsiveStyle.height}}
           onResizeStart={() => {
@@ -609,7 +631,7 @@ class WebView extends Component {
       height:
         this.isMobile && isTilted ? deviceDimensions.width : deviceDimensions.height,
     };
-
+    const isMuted = this.props.device.isMuted;
     const shouldMaximize = previewer.layout !== INDIVIDUAL_LAYOUT;
     const IconFocus = () => {
       if (shouldMaximize)
@@ -622,7 +644,7 @@ class WebView extends Component {
         style={{
           width: deviceStyles.width * zoomLevel,
           height: deviceStyles.height * zoomLevel + 40
-        }} 
+        }}
       >
         <div className={cx(styles.webViewToolbar)}>
           <div className={cx(styles.webViewToolbarLeft)}>
@@ -683,6 +705,23 @@ class WebView extends Component {
           </div>
           <div className={cx(styles.webViewToolbarRight)}>
             <Tooltip
+              title={isMuted ? 'Unmute' : 'Mute'}
+              disableFocusListener={true}
+            >
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled,
+                )}
+                onClick={
+                  isMuted ? this._unmuteDevice : this._muteDevice
+                }
+              >
+                {isMuted ? (<MutedIcon height={17} color="white" />):(<UnmutedIcon height={17} color="white" />) }
+              </div>
+            </Tooltip>
+            <Tooltip
               title={shouldMaximize ? 'Maximize' : 'Minimize'}
               disableFocusListener={true}
             >
@@ -708,7 +747,7 @@ class WebView extends Component {
           })}
           style={{
             width: deviceStyles.width,
-            transform: `scale(${zoomLevel})`, 
+            transform: `scale(${zoomLevel})`,
         }}
         >
           <div
