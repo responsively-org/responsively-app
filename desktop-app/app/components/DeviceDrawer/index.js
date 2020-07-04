@@ -11,13 +11,18 @@ import styles from './styles.css';
 import commonStyles from '../common.styles.css';
 import DevicesOverviewContainer from '../../containers/DevicesOverviewContainer';
 
-export default function DeviceDrawer(props) {
+export default function DeviceDrawer({
+  browser: {
+    previewer: {layout},
+  },
+  setPreviewLayout,
+}) {
   return (
     <div>
       <DevicesOverviewContainer />
       <PreviewerLayoutSelector
-        value={props.browser.previewer.layout}
-        onChange={val => props.setPreviewLayout(val.value)}
+        value={layout}
+        onChange={val => setPreviewLayout(val.value)}
       />
       <QuickFilterDevicesContainer />
     </div>

@@ -15,3 +15,5 @@ export const isDeviceEligible = (device, filterCriteria) => {
 
   return true;
 };
+
+export default {isDeviceEligible};
