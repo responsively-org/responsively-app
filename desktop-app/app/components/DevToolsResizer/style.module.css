@@ -7,7 +7,7 @@
   background-color: #333333;
   display: flex;
   justify-content: space-between;
-  z-index: 1000;
+  z-index: 1400;
 }
 
 @media (prefers-color-scheme: light) {
@@ -45,4 +45,5 @@
 
 .resizable {
   color: white;
+  z-index: 1400;
 }
