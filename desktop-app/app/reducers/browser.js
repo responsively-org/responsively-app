@@ -1,4 +1,9 @@
 // @flow
+import {ipcRenderer, remote} from 'electron';
+import settings from 'electron-settings';
+import {isIfStatement} from 'typescript';
+import console from 'electron-timber';
+import trimStart from 'lodash/trimStart';
 import {
   NEW_ADDRESS,
   NEW_ZOOM_LEVEL,
@@ -19,11 +24,11 @@ import {
   DEVICE_LOADING,
   NEW_FOCUSED_DEVICE,
   NEW_PAGE_META_FIELD,
+  TOGGLE_ALL_DEVICES_MUTED,
+  TOGGLE_DEVICE_MUTED,
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
-import {ipcRenderer, remote} from 'electron';
-import settings from 'electron-settings';
 import type {Device} from '../constants/devices';
 import {
   FLEXIGRID_LAYOUT,
@@ -36,14 +41,12 @@ import {
   USER_PREFERENCES,
   CUSTOM_DEVICES,
 } from '../constants/settingKeys';
-import {isIfStatement} from 'typescript';
 import {
   getHomepage,
   getLastOpenedAddress,
   saveHomepage,
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
-import console from 'electron-timber';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -130,6 +133,7 @@ export type BrowserStateType = {
   devToolsConfig: DevToolsConfigType,
   isInspecting: boolean,
   windowSize: WindowSizeType,
+  allDevicesMuted: boolean,
 };
 
 let _activeDevices = null;
@@ -146,7 +150,7 @@ function _getActiveDevices() {
   if (_activeDevices) {
     return _activeDevices;
   }
-  let activeDeviceNames = settings.get(ACTIVE_DEVICES);
+  const activeDeviceNames = settings.get(ACTIVE_DEVICES);
   let activeDevices = null;
   if (activeDeviceNames && activeDeviceNames.length) {
     activeDevices = activeDeviceNames
@@ -161,6 +165,7 @@ function _getActiveDevices() {
   if (activeDevices) {
     activeDevices.forEach(device => {
       device.loading = false;
+      device.isMuted = false;
     });
   }
   return activeDevices;
@@ -191,7 +196,7 @@ export function getBounds(mode, _size, windowSize) {
   return {
     x: 0,
     y: height - viewHeight,
-    width: width,
+    width,
     height: viewHeight,
   };
 }
@@ -210,6 +215,17 @@ function getWindowSize() {
 
 function _getUserPreferencesDevToolsMode() {
   return _getUserPreferences().devToolsOpenMode || DEVTOOLS_MODES.BOTTOM;
+}
+
+function _updateFileWatcher(newURL) {
+  if (
+    newURL.startsWith('file://') &&
+    (newURL.endsWith('.html') || newURL.endsWith('.htm'))
+  )
+    ipcRenderer.send('start-watching-file', {
+      path: trimStart(newURL.slice(7), '/').trim(),
+    });
+  else ipcRenderer.send('stop-watcher');
 }
 
 export default function browser(
@@ -251,12 +267,14 @@ export default function browser(
     },
     isInspecting: false,
     windowSize: getWindowSize(),
+    allDevicesMuted: false,
   },
   action: Action
 ) {
   switch (action.type) {
     case NEW_ADDRESS:
       saveLastOpenedAddress(action.address);
+      _updateFileWatcher(action.address);
       return {...state, address: action.address, currentPageMeta: {}};
     case NEW_PAGE_META_FIELD:
       return {
@@ -344,6 +362,23 @@ export default function browser(
           : device
       );
       return {...state, devices: newDevicesList};
+    case TOGGLE_ALL_DEVICES_MUTED:
+      const updatedDevices = state.devices;
+      updatedDevices.forEach(d => (d.isMuted = action.allDevicesMuted));
+      return {
+        ...state,
+        allDevicesMuted: action.allDevicesMuted,
+        devices: updatedDevices,
+      };
+    case TOGGLE_DEVICE_MUTED:
+      const updatedDevice = state.devices.find(x => x.id === action.deviceId);
+      if (updatedDevice == null) return {...state};
+      updatedDevice.isMuted = action.isMuted;
+      return {
+        ...state,
+        allDevicesMuted: state.devices.every(x => x.isMuted),
+        devices: [...state.devices],
+      };
     default:
       return state;
   }

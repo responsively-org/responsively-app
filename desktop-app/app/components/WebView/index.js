@@ -1,11 +1,17 @@
 // @flow
 import React, {Component, createRef} from 'react';
-import {ipcRenderer, remote} from 'electron';
+import { remote, ipcRenderer } from 'electron';
+import cx from 'classnames';
+import {Resizable} from 're-resizable';
+import {Tooltip} from '@material-ui/core';
+import debounce from 'lodash.debounce';
 import pubsub from 'pubsub.js';
+import console from 'electron-timber';
 import BugIcon from '../icons/Bug';
+import MutedIcon from '../icons/Muted';
+import UnmutedIcon from '../icons/Unmuted';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
-import cx from 'classnames';
 import {iconsColor} from '../../constants/colors';
 import {
   SCROLL_DOWN,
@@ -17,6 +23,7 @@ import {
   FLIP_ORIENTATION_ALL_DEVICES,
   ENABLE_INSPECTOR_ALL_DEVICES,
   DISABLE_INSPECTOR_ALL_DEVICES,
+  TOGGLE_DEVICE_MUTED_STATE,
   RELOAD_CSS,
   DELETE_STORAGE,
   ADDRESS_CHANGE,
@@ -28,18 +35,16 @@ import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
 import {captureFullPage} from './screenshotUtil';
-import {Tooltip} from '@material-ui/core';
 import {
   DEVTOOLS_MODES,
   INDIVIDUAL_LAYOUT,
 } from '../../constants/previewerLayouts';
-import console from 'electron-timber';
 import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
 import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
 
-const BrowserWindow = remote.BrowserWindow;
+const {BrowserWindow} = remote;
 
 const MESSAGE_TYPES = {
   scroll: 'scroll',
@@ -63,13 +68,18 @@ class WebView extends Component {
       isUnplugged: false,
       errorCode: null,
       errorDesc: null,
+      deviceDimensions: {
+        width: this.props.device.width,
+        height: this.props.device.height,
+      },
+      temporaryDims: null,
       address: this.props.browser.address,
     };
     this.subscriptions = [];
   }
 
   componentDidMount() {
-    //this.initDeviceEmulationParams();
+    // this.initDeviceEmulationParams();
     this.webviewRef.current.addEventListener(
       'ipc-message',
       this.messageHandler
@@ -115,6 +125,9 @@ class WebView extends Component {
       )
     );
     this.subscriptions.push(
+      pubsub.subscribe(TOGGLE_DEVICE_MUTED_STATE, this.processToggleMuteEvent)
+    );
+    this.subscriptions.push(
       pubsub.subscribe(
         ENABLE_INSPECTOR_ALL_DEVICES,
         this.processEnableInspectorEvent
@@ -141,6 +154,10 @@ class WebView extends Component {
         'page-title-updated',
         ({title}) => this.props.onPageMetaFieldUpdate('title', title)
       );
+
+      this.webviewRef.current.addEventListener('new-window', (e) => {
+        ipcRenderer.send('open-new-window', {url: e.url});
+      });
     }
 
     this.webviewRef.current.addEventListener('did-start-loading', () => {
@@ -159,11 +176,11 @@ class WebView extends Component {
       'did-fail-load',
       ({errorCode, errorDescription}) => {
         if (errorCode === -3) {
-          //Aborted error, can be ignored
+          // Aborted error, can be ignored
           return;
         }
         this.setState({
-          errorCode: errorCode,
+          errorCode,
           errorDesc: errorDescription,
         });
       }
@@ -280,7 +297,7 @@ class WebView extends Component {
         this.webviewRef.current.loadURL(address);
       }
       this.setState({
-        address: address,
+        address,
       });
     }
   };
@@ -346,6 +363,10 @@ class WebView extends Component {
     this._flipOrientation();
   };
 
+  processToggleMuteEvent = ({muted}) => {
+    this.getWebContents().setAudioMuted(muted);
+  };
+
   processOpenDevToolsInspectorEvent = message => {
     const {
       x: webViewX,
@@ -401,7 +422,9 @@ class WebView extends Component {
         return;
       case MESSAGE_TYPES.toggleEventMirroring:
         this._unPlug();
-        return;
+        break;
+      default:
+        break;
     }
   };
 
@@ -513,21 +536,142 @@ class WebView extends Component {
     }
   };
 
+  _muteDevice = () => {
+    this.getWebContents().setAudioMuted(true);
+    this.props.onDeviceMutedChange(this.props.device.id, true);
+  };
+  _unmuteDevice = () => {
+    this.getWebContents().setAudioMuted(false);
+    this.props.onDeviceMutedChange(this.props.device.id, false);
+  };
+
   get isMobile() {
     return this.props.device.capabilities.indexOf(CAPABILITIES.mobile) > -1;
   }
 
+  _setResizeDimensions = (event, direction, ref, delta) => {
+    const {temporaryDims} = this.state;
+    const {updateResponsiveDimensions} = this.props;
+    if (!temporaryDims) return;
+    const updatedDeviceDims = {
+      width: temporaryDims.width + delta.width,
+      height: temporaryDims.height + delta.height,
+    };
+    this.setState(
+      {
+        deviceDimensions: updatedDeviceDims,
+      },
+      () => {
+        updateResponsiveDimensions(this.state.deviceDimensions);
+      }
+    );
+  };
+
+  _getWebViewTag = deviceStyles => {
+    const {
+      device: {id, useragent, capabilities},
+      browser: {address},
+    } = this.props;
+    const {deviceDimensions} = this.state;
+
+    if (capabilities.includes(CAPABILITIES.responsive)) {
+      const responsiveStyle = {
+        width: deviceDimensions.width,
+        height: deviceDimensions.height,
+      };
+      return (
+        <Resizable
+          className={cx(styles.resizableView)}
+          size={{width: responsiveStyle.width, height: responsiveStyle.height}}
+          onResizeStart={() => {
+            const updatedTempDims = {
+              width: deviceDimensions.width,
+              height: deviceDimensions.height,
+            };
+            this.setState({
+              temporaryDims: updatedTempDims,
+            });
+          }}
+          onResize={debounce(this._setResizeDimensions, 25, {maxWait: 50})}
+          onResizeStop={() => {
+            this.setState({
+              temporaryDims: null,
+            });
+          }}
+          handleComponent={{
+            right: (
+              <div
+                className={cx(styles.iconWrapper, styles.iconWrapperE)}
+                {...this.props}
+              >
+                <div className={styles.iconHolder} />
+              </div>
+            ),
+            bottom: (
+              <div
+                className={cx(styles.iconWrapper, styles.iconWrapperS)}
+                {...this.props}
+              >
+                <div className={styles.iconHolder} />
+              </div>
+            ),
+            bottomRight: (
+              <div
+                className={cx(styles.iconWrapper, styles.iconWrapperSE)}
+                {...this.props}
+              >
+                <div className={styles.iconHolder} />
+              </div>
+            ),
+          }}
+        >
+          <webview
+            ref={this.webviewRef}
+            preload="./preload.js"
+            className={cx(styles.device)}
+            src={address || 'about:blank'}
+            useragent={useragent}
+            style={responsiveStyle}
+          />
+        </Resizable>
+      );
+    }
+
+    return (
+      <webview
+        ref={this.webviewRef}
+        preload="./preload.js"
+        className={cx(styles.device)}
+        src={address || 'about:blank'}
+        useragent={useragent}
+        style={deviceStyles}
+      />
+    );
+  };
+
   render() {
-    const {device, browser} = this.props;
+    const {
+      browser: {zoomLevel, previewer},
+    } = this.props;
+    const {
+      isTilted,
+      deviceDimensions,
+      errorCode,
+      errorDesc,
+      screenshotInProgress,
+    } = this.state;
     const deviceStyles = {
       width:
-        this.isMobile && this.state.isTilted ? device.height : device.width,
+        this.isMobile && isTilted
+          ? deviceDimensions.height
+          : deviceDimensions.width,
       height:
-        this.isMobile && this.state.isTilted ? device.width : device.height,
-      transform: `scale(${browser.zoomLevel})`,
+        this.isMobile && isTilted
+          ? deviceDimensions.width
+          : deviceDimensions.height,
     };
-
-    let shouldMaximize = browser.previewer.layout !== INDIVIDUAL_LAYOUT;
+    const isMuted = this.props.device.isMuted;
+    const shouldMaximize = previewer.layout !== INDIVIDUAL_LAYOUT;
     const IconFocus = () => {
       if (shouldMaximize)
         return <Focus height={30} padding={6} color={iconsColor} />;
@@ -536,7 +680,10 @@ class WebView extends Component {
     return (
       <div
         className={cx(styles.webViewContainer)}
-        style={{height: deviceStyles.height * browser.zoomLevel + 40}} //Hack, ref below TODO
+        style={{
+          width: deviceStyles.width * zoomLevel,
+          height: deviceStyles.height * zoomLevel + 40,
+        }}
       >
         <div className={cx(styles.webViewToolbar)}>
           <div className={cx(styles.webViewToolbarLeft)}>
@@ -594,11 +741,30 @@ class WebView extends Component {
                 <UnplugIcon height={30} color={iconsColor} />
               </div>
             </Tooltip>
+            <Tooltip
+              title={isMuted ? 'Unmute' : 'Mute'}
+              disableFocusListener={true}
+            >
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled
+                )}
+                onClick={isMuted ? this._unmuteDevice : this._muteDevice}
+              >
+                {isMuted ? (
+                  <MutedIcon height={17} color="white" />
+                ) : (
+                  <UnmutedIcon height={17} color="white" />
+                )}
+              </div>
+            </Tooltip>
           </div>
           <div className={cx(styles.webViewToolbarRight)}>
             <Tooltip
               title={shouldMaximize ? 'Maximize' : 'Minimize'}
-              disableFocusListener={true}
+              disableFocusListener
             >
               <div
                 className={cx(
@@ -621,33 +787,26 @@ class WebView extends Component {
             [styles.devToolsActive]: this._isDevToolsOpen(),
           })}
           style={{
-            width: deviceStyles.width * browser.zoomLevel + 6,
-            height: deviceStyles.height * browser.zoomLevel + 6, //TODO why is this height not getting set?
+            width: deviceStyles.width,
+            transform: `scale(${zoomLevel})`,
           }}
         >
           <div
             className={cx(styles.deviceOverlay, {
-              [styles.overlayEnabled]: this.state.screenshotInProgress,
+              [styles.overlayEnabled]: screenshotInProgress,
             })}
             style={deviceStyles}
           />
           <div
             className={cx(styles.deviceOverlay, {
-              [styles.overlayEnabled]: this.state.errorCode,
+              [styles.overlayEnabled]: errorCode,
             })}
             style={deviceStyles}
           >
-            <p>ERROR: {this.state.errorCode}</p>
-            <p className={cx(styles.errorDesc)}>{this.state.errorDesc}</p>
+            <p>ERROR: {errorCode}</p>
+            <p className={cx(styles.errorDesc)}>{errorDesc}</p>
           </div>
-          <webview
-            ref={this.webviewRef}
-            preload="./preload.js"
-            className={cx(styles.device)}
-            src={this.state.address || 'about:blank'}
-            useragent={device.useragent}
-            style={deviceStyles}
-          />
+          {this._getWebViewTag(deviceStyles)}
         </div>
       </div>
     );

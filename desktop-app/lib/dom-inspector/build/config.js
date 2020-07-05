@@ -1,12 +1,12 @@
-var path = require('path');
+const path = require('path');
 
-var postcss = require('rollup-plugin-postcss');
-var complieTools = require('rollup-plugin-babel');
-var eslint = require('rollup-plugin-eslint');
+const postcss = require('rollup-plugin-postcss');
+const complieTools = require('rollup-plugin-babel');
+const eslint = require('rollup-plugin-eslint');
 
-var env = require('./env.js');
+const env = require('./env.js');
 
-var config = {
+const config = {
   entry: path.join(__dirname, '../src/index.js'),
   plugins: [
     postcss({
