@@ -18,7 +18,8 @@ import electron, {
   ipcMain,
   nativeTheme,
   webContents,
-  shell
+  shell,
+  dialog,
 } from 'electron';
 import settings from 'electron-settings';
 import log from 'electron-log';
@@ -299,12 +300,18 @@ const createWindow = async () => {
   });
 
   ipcMain.handle('install-extension', (event, extensionId) => {
-    const isLocalExtension = fs.statSync(extensionId).isDirectory();
+    let isLocalExtension;
+
+    try {
+      isLocalExtension = fs.statSync(extensionId).isDirectory();
+    } catch {
+      isLocalExtension = false;
+    }
 
     if (isLocalExtension) {
       return electron.BrowserWindow.addDevToolsExtension(extensionId);
     }
-    
+
     const id = extensionId
       .replace(/\/$/, '')
       .split('/')
@@ -316,6 +323,19 @@ const createWindow = async () => {
   ipcMain.on('uninstall-extension', (event, name) =>
     BrowserWindow.removeDevToolsExtension(name)
   );
+
+  ipcMain.handle('get-local-extension-path', async event => {
+    try {
+      const {filePaths = []} = await dialog.showOpenDialog({
+        properties: ['openDirectory'],
+      });
+
+      const [localExtensionPath = ''] = filePaths;
+      return localExtensionPath;
+    } catch {
+      return '';
+    }
+  });
 
   ipcMain.on('open-devtools', (event, ...args) => {
     const {webViewId, bounds, mode} = args[0];
