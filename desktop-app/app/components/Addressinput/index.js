@@ -40,6 +40,14 @@ class AddressBar extends React.Component<Props> {
     this._filterExistingUrl = debounce(this._filterExistingUrl, 300);
   }
 
+    componentDidMount() {
+      document.addEventListener('click', this._handleClickOutside);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('click', this._handleClickOutside);
+    }
+
   static getDerivedStateFromProps(props, state) {
     if (props.address !== state.previousAddress) {
       return {
@@ -200,31 +208,33 @@ class AddressBar extends React.Component<Props> {
   _handleKeyDown = e => {
     if (e.key === 'Enter') {
       this.inputRef.current.blur();
-      this._onChange();
+      this._onChange(false);
       this._addUrlToExistingSearchResult();
     }
   };
 
-  _onChange = () => {
+  _onChange = (isNotFromEnter=true) => { //isNotFromEnter is used to hide the search result if the enter key is pressed!
     if (!this.state.userTypedAddress) {
       return;
     }
-    this._filterExistingUrl();
+    isNotFromEnter && this._filterExistingUrl();
     this.props.onChange &&
       this.props.onChange(this._normalize(this.state.userTypedAddress), true);
   };
 
   _onSearchedUrlClick = (url,index) => {
-      this.props.onChange(this._normalize(url), true);
+      if(url !== this.state.userTypedAddress){
+        this.props.onChange(this._normalize(url), true);
+      }
+
       this.setState({
         userTypedAddress: url,
         finalUrlResult:[]
+      },()=>{
+        //for increasing the visited count
+        this._addUrlToExistingSearchResult();
       });
-      //for increasing the visited count
-      let existingSearchResults = getExistingSearchResults();
-      let updatedSearchResults = [...existingSearchResults];
-      updatedSearchResults[index].visitedCount = updatedSearchResults[index].visitedCount+1 ;
-      addUrlToSearchResults(updatedSearchResults);
+
   }
 
 
@@ -271,7 +281,6 @@ class AddressBar extends React.Component<Props> {
   }
 
   _sortedExistingUrlSearchResult = (filteredData) => { //Most visited site should appear first in the list
-
     filteredData.sort((a, b)=> {
        if(a.visitedCount > b.visitedCount){
          return -1
@@ -290,6 +299,12 @@ class AddressBar extends React.Component<Props> {
     const filteredData = filter(getExistingSearchResults(), (eachResult) => eachResult.url.toLowerCase().includes(this.state.userTypedAddress));
     let finalResult = this._sortedExistingUrlSearchResult(filteredData);
     this.setState({finalUrlResult: finalResult});
+  }
+
+  _handleClickOutside = () => {
+    this.setState({
+      finalUrlResult:[]
+    })
   }
 
 }
