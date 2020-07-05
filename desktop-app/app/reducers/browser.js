@@ -223,7 +223,7 @@ function _updateFileWatcher(newURL) {
     (newURL.endsWith('.html') || newURL.endsWith('.htm'))
   )
     ipcRenderer.send('start-watching-file', {
-      path: trimStart(newURL.slice(7), '/').trim(),
+      path: newURL,
     });
   else ipcRenderer.send('stop-watcher');
 }
