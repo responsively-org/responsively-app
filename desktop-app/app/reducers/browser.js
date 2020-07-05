@@ -25,7 +25,7 @@ import {
   NEW_FOCUSED_DEVICE,
   NEW_PAGE_META_FIELD,
   TOGGLE_ALL_DEVICES_MUTED,
-  TOGGLE_DEVICE_MUTED
+  TOGGLE_DEVICE_MUTED,
 } from '../actions/browser';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
@@ -364,13 +364,21 @@ export default function browser(
       return {...state, devices: newDevicesList};
     case TOGGLE_ALL_DEVICES_MUTED:
       const updatedDevices = state.devices;
-      updatedDevices.forEach(d => d.isMuted = action.allDevicesMuted);
-      return {...state, allDevicesMuted: action.allDevicesMuted, devices: updatedDevices};
+      updatedDevices.forEach(d => (d.isMuted = action.allDevicesMuted));
+      return {
+        ...state,
+        allDevicesMuted: action.allDevicesMuted,
+        devices: updatedDevices,
+      };
     case TOGGLE_DEVICE_MUTED:
       const updatedDevice = state.devices.find(x => x.id === action.deviceId);
       if (updatedDevice == null) return {...state};
       updatedDevice.isMuted = action.isMuted;
-      return {...state, allDevicesMuted: state.devices.every(x => x.isMuted), devices: [...state.devices]};
+      return {
+        ...state,
+        allDevicesMuted: state.devices.every(x => x.isMuted),
+        devices: [...state.devices],
+      };
     default:
       return state;
   }
