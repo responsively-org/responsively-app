@@ -18,6 +18,7 @@ import electron, {
   ipcMain,
   nativeTheme,
   webContents,
+  shell
 } from 'electron';
 import settings from 'electron-settings';
 import log from 'electron-log';
@@ -35,11 +36,13 @@ import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
 import {appUpdater} from './app-updater';
+import isURL from 'validator/lib/isURL';
 
 require('dotenv').config();
 
 const path = require('path');
 const chokidar = require('chokidar');
+const URL = require("url").URL;
 
 migrateDeviceSchema();
 
@@ -69,6 +72,27 @@ if (
   process.env.DEBUG_PROD === 'true'
 ) {
   require('electron-debug')({isEnabled: true});
+}
+
+const chooseOpenWindowHandler = (url) => {
+  if (url == null || url.trim() === '' || url === "about:blank#blocked")
+    return 'none';
+
+  if (url === 'about:blank')
+    return 'useWindow';
+
+  if (isURL(url, {protocols: ['http','https']}))
+    return 'useWindow';
+
+  let urlObj = null;
+  try {
+    urlObj = new URL(url);
+  } catch {}
+
+  if (urlObj != null && urlObj.protocol === 'file:' && (urlObj.pathname.endsWith('.html') || urlObj.pathname.endsWith('.htm')))
+      return 'useWindow';
+
+  return 'useShell';
 }
 
 const installExtensions = async () => {
@@ -232,6 +256,30 @@ const createWindow = async () => {
   ipcMain.on('stop-watcher', () => {
     if (watcher != null && watchedFileInfo != null)
       watcher.unwatch(watchedFileInfo.path);
+  });
+
+  ipcMain.on('open-new-window', (event, data) => {
+    const handler = chooseOpenWindowHandler(data.url);
+
+    if (handler === 'useWindow') {
+      let win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+          devTools: false,
+        },
+      })
+      win.setMenu(null);
+      win.loadURL(data.url);
+      win.once('ready-to-show', () => {
+        win.show();
+      });
+      win.on('closed', () => {
+        win = null;
+      });
+    } else if (handler === 'useShell') {
+      shell.openExternal(data.url);
+    }
   });
 
   ipcMain.on('http-auth-promt-response', (event, ...args) => {

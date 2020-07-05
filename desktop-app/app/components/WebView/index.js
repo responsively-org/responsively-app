@@ -1,6 +1,6 @@
 // @flow
 import React, {Component, createRef} from 'react';
-import {remote} from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import cx from 'classnames';
 import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
@@ -154,6 +154,10 @@ class WebView extends Component {
         'page-title-updated',
         ({title}) => this.props.onPageMetaFieldUpdate('title', title)
       );
+
+      this.webviewRef.current.addEventListener('new-window', (e) => {
+        ipcRenderer.send('open-new-window', {url: e.url});
+      });
     }
 
     this.webviewRef.current.addEventListener('did-start-loading', () => {
