@@ -224,7 +224,6 @@ const createWindow = async () => {
       path = trimStart(path, '/');
     }
     fileInfo.path = path;
-    console.log('Watching', fileInfo);
     if (watchedFileInfo != null) watcher.unwatch(watchedFileInfo.path);
     if (fs.existsSync(fileInfo.path)) {
       watcher.add(fileInfo.path);
