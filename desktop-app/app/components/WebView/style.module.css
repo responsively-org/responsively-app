@@ -4,7 +4,7 @@
 }
 
 .webViewToolbar {
-  padding: 5px;
+  margin: 8px 3px 3px 3px;
   display: flex;
   justify-content: space-between;
 }
@@ -13,12 +13,19 @@
   display: flex;
 }
 
+.webViewToolbarLeft .webViewToolbarIcons {
+  margin-right: 4px;
+}
+
 .webViewToolbarRight {
   display: flex;
 }
 
+.webViewToolbarRight .webViewToolbarIcons {
+  margin-left: 4px;
+}
+
 .webViewToolbarIcons {
-  margin-right: 2px;
   padding: 0 2px;
   align-items: center;
   justify-content: center;

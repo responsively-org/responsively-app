@@ -5,7 +5,7 @@
 .deviceTitle {
   font-weight: normal;
   font-size: 16px;
-  margin-right: 2px;
+  margin: 0 6px -2px 4px;
 }
 
 .deviceSize {
@@ -25,8 +25,14 @@
 }
 
 .titleContainer {
+  margin: 3px;
   display: flex;
   align-items: center;
+}
+
+.deviceInfo {
+  display: flex;
+  align-items: flex-end;
 }
 
 .hidden {
