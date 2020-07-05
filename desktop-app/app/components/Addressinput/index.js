@@ -9,10 +9,13 @@ import HomePlusIcon from '../icons/HomePlus';
 import DeleteCookieIcon from '../icons/DeleteCookie';
 import DeleteStorageIcon from '../icons/DeleteStorage';
 import {iconsColor, lightIconsColor} from '../../constants/colors';
-import { addUrlToSearchResults,getExistingSearchResults,deleteSearchResults } from '../../settings/searchResultSettings';
+import { addUrlToSearchResults,getExistingSearchResults,deleteSearchResults } from '../../settings/urlSearchResultSettings';
+import UrlSearchResults from '../../components/UrlSearchResults';
 
 import commonStyles from '../common.styles.css';
 import styles from './style.css';
+import debounce from 'lodash/debounce';
+import filter from 'lodash/filter';
 
 type Props = {
   address: string,
@@ -26,7 +29,16 @@ type State = {
 class AddressBar extends React.Component<Props> {
   props: Props;
 
-  state: State;
+  constructor(props) {
+    super(props);
+    this.state = {
+      userTypedAddress: props.address,
+      previousAddress: props.address,
+      finalUrlResult:null,
+    };
+    this.inputRef = React.createRef();
+    this._filterExistingUrl = debounce(this._filterExistingUrl, 300);
+  }
 
   static getDerivedStateFromProps(props, state) {
     if (props.address !== state.previousAddress) {
@@ -65,15 +77,6 @@ class AddressBar extends React.Component<Props> {
     }
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      userTypedAddress: props.address,
-      previousAddress: props.address,
-    };
-    this.inputRef = React.createRef();
-  }
-
   render() {
     return (
       <div className={styles.addressBarContainer}>
@@ -86,7 +89,7 @@ class AddressBar extends React.Component<Props> {
           placeholder="https://your-website.com"
           value={this.state.userTypedAddress}
           onKeyDown={this._handleKeyDown}
-          onChange={e => this.setState({userTypedAddress: e.target.value})}
+          onChange={ this._handleInputChange }
         />
         <div className={cx(styles.floatingOptionsContainer)}>
           <div
@@ -175,8 +178,23 @@ class AddressBar extends React.Component<Props> {
             </Tooltip>
           </div>
         </div>
+       {this.state.finalUrlResult?.length &&
+        <UrlSearchResults
+         divClassName={ cx(styles.searchBarSuggestionsContainer) }
+         listItemsClassName = { cx(styles.searchBarSuggestionsListItems) }
+         existingSearchResults = { this.state.finalUrlResult }
+         handleUrlChange = { this._onSearchedUrlClick }
+        />
+       }
       </div>
     );
+  }
+
+  _handleInputChange = (e) => {
+    this.setState({userTypedAddress: e.target.value},()=>{
+      this._filterExistingUrl();
+    });
+
   }
 
   _handleKeyDown = e => {
@@ -191,9 +209,25 @@ class AddressBar extends React.Component<Props> {
     if (!this.state.userTypedAddress) {
       return;
     }
+    this._filterExistingUrl();
     this.props.onChange &&
       this.props.onChange(this._normalize(this.state.userTypedAddress), true);
   };
+
+  _onSearchedUrlClick = (url,index) => {
+      this.props.onChange(this._normalize(url), true);
+      this.setState({
+        userTypedAddress: url,
+        finalUrlResult:[]
+      });
+      //for increasing the visited count
+      let existingSearchResults = getExistingSearchResults();
+      let updatedSearchResults = [...existingSearchResults];
+      updatedSearchResults[index].visitedCount = updatedSearchResults[index].visitedCount+1 ;
+      addUrlToSearchResults(updatedSearchResults);
+  }
+
+
 
   _normalize = address => {
     if (address.indexOf('://') === -1) {
@@ -231,7 +265,33 @@ class AddressBar extends React.Component<Props> {
         });
       addUrlToSearchResults(addNewUrl);
     }
+    this.setState({
+      finalUrlResult:[]
+    })
   }
+
+  _sortedExistingUrlSearchResult = (filteredData) => { //Most visited site should appear first in the list
+
+    filteredData.sort((a, b)=> {
+       if(a.visitedCount > b.visitedCount){
+         return -1
+       }
+       else if(a.visitedCount < b.visitedCount){
+         return 1
+       }
+       return 0;
+    });
+
+     return filteredData;
+
+  }
+
+  _filterExistingUrl = () => {
+    const filteredData = filter(getExistingSearchResults(), (eachResult) => eachResult.url.toLowerCase().includes(this.state.userTypedAddress));
+    let finalResult = this._sortedExistingUrlSearchResult(filteredData);
+    this.setState({finalUrlResult: finalResult});
+  }
+
 }
 
 export default AddressBar;

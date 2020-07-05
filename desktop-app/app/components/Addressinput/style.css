@@ -35,3 +35,25 @@
   display: flex;
   right: 5px;
 }
+
+.searchBarSuggestionsContainer{
+  width: 90%;
+  position: absolute;
+  top: 2.8em;
+  left: 0;
+  background: #1e1e1e;
+  overflow: scroll;
+}
+  .searchBarSuggestionsListItems{
+    font-size: 1em;
+    color: white;
+    padding: 0.3em 1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+   .searchBarSuggestionsListItems:hover{
+     background: gray;
+   }
+
