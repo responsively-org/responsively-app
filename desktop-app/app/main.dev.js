@@ -1,5 +1,5 @@
 /* eslint global-require: off */
-
+require('dotenv').config();
 /**
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes
@@ -37,13 +37,12 @@ import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
 import {appUpdater} from './app-updater';
+import trimStart from 'lodash/trimStart';
 import isURL from 'validator/lib/isURL';
-
-require('dotenv').config();
 
 const path = require('path');
 const chokidar = require('chokidar');
-const URL = require("url").URL;
+const URL = require('url').URL;
 
 migrateDeviceSchema();
 
@@ -75,26 +74,28 @@ if (
   require('electron-debug')({isEnabled: true});
 }
 
-const chooseOpenWindowHandler = (url) => {
-  if (url == null || url.trim() === '' || url === "about:blank#blocked")
+const chooseOpenWindowHandler = url => {
+  if (url == null || url.trim() === '' || url === 'about:blank#blocked')
     return 'none';
 
-  if (url === 'about:blank')
-    return 'useWindow';
+  if (url === 'about:blank') return 'useWindow';
 
-  if (isURL(url, {protocols: ['http','https']}))
-    return 'useWindow';
+  if (isURL(url, {protocols: ['http', 'https']})) return 'useWindow';
 
   let urlObj = null;
   try {
     urlObj = new URL(url);
   } catch {}
 
-  if (urlObj != null && urlObj.protocol === 'file:' && (urlObj.pathname.endsWith('.html') || urlObj.pathname.endsWith('.htm')))
-      return 'useWindow';
+  if (
+    urlObj != null &&
+    urlObj.protocol === 'file:' &&
+    (urlObj.pathname.endsWith('.html') || urlObj.pathname.endsWith('.htm'))
+  )
+    return 'useWindow';
 
   return 'useShell';
-}
+};
 
 const installExtensions = async () => {
   const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
@@ -245,6 +246,11 @@ const createWindow = async () => {
     mainWindow.webContents.send('reload-url');
   });
   ipcMain.on('start-watching-file', (event, fileInfo) => {
+    let path = fileInfo.path.replace('file://', '');
+    if (process.platform === 'win32') {
+      path = trimStart(path, '/');
+    }
+    fileInfo.path = path;
     if (watchedFileInfo != null) watcher.unwatch(watchedFileInfo.path);
     if (fs.existsSync(fileInfo.path)) {
       watcher.add(fileInfo.path);
@@ -269,7 +275,7 @@ const createWindow = async () => {
         webPreferences: {
           devTools: false,
         },
-      })
+      });
       win.setMenu(null);
       win.loadURL(data.url);
       win.once('ready-to-show', () => {
