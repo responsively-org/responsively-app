@@ -1,12 +1,12 @@
 import React from 'react';
 import cx from 'classnames';
-import AppleIcon from '../icons/Apple';
-import WindowsIcon from '../icons/Windows';
 import AndroidIcon from '@material-ui/icons/Android';
 import DesktopIcon from '@material-ui/icons/DesktopWindows';
 import MobileIcon from '@material-ui/icons/Smartphone';
 import TabletIcon from '@material-ui/icons/TabletMac';
 import {Icon} from 'flwww';
+import WindowsIcon from '../icons/Windows';
+import AppleIcon from '../icons/Apple';
 
 import styles from './styles.css';
 import commonStyles from '../common.styles.css';

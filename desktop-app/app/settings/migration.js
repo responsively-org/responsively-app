@@ -15,3 +15,5 @@ export function migrateDeviceSchema() {
     activeDevices.map(device => device.name)
   );
 }
+
+export default {migrateDeviceSchema};

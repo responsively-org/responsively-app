@@ -2,7 +2,7 @@ import React, {Fragment} from 'react';
 
 export default ({width, height, color, padding, margin}) => (
   <Fragment>
-    {/*<svg
+    {/* <svg
       height={height}
       width={width}
       fill={color}
@@ -54,7 +54,7 @@ export default ({width, height, color, padding, margin}) => (
       <g />
       <g />
       <g />
-    </svg>*/}
+    </svg> */}
     <svg
       height={height}
       width={width}

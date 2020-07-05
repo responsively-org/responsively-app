@@ -6,7 +6,9 @@ import LightColorScheme from '../icons/LightColorScheme';
 import DarkColorScheme from '../icons/DarkColorScheme';
 
 export default function PrefersColorSchemeSwitch() {
-  const [colorScheme, setColorScheme] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const [colorScheme, setColorScheme] = useState(
+    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  );
 
   const handleSwitch = () => {
     setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
@@ -15,7 +17,6 @@ export default function PrefersColorSchemeSwitch() {
   useEffect(() => {
     ipcRenderer.send('prefers-color-scheme-select', colorScheme);
   });
-
 
   const iconProps = {
     color: iconsColor,
@@ -26,7 +27,11 @@ export default function PrefersColorSchemeSwitch() {
   return (
     <Tooltip title="Switch color scheme">
       <div onClick={handleSwitch}>
-        {colorScheme === 'dark' ? <DarkColorScheme {...iconProps}/> : <LightColorScheme {...iconProps}/>}
+        {colorScheme === 'dark' ? (
+          <DarkColorScheme {...iconProps} />
+        ) : (
+          <LightColorScheme {...iconProps} />
+        )}
       </div>
     </Tooltip>
   );

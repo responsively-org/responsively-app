@@ -1,5 +1,4 @@
 import settings from 'electron-settings';
-import path from 'path';
 
 const HOME_PAGE = 'HOME_PAGE';
 const LAST_OPENED_ADDRESS = 'LAST_OPENED_ADDRESS';

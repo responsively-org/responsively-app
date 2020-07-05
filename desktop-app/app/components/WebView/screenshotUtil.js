@@ -2,7 +2,6 @@
 import React from 'react';
 import {shell, remote} from 'electron';
 import {toast} from 'react-toastify';
-import NotificationMessage from '../NotificationMessage';
 import _mergeImg from 'merge-img';
 import os from 'os';
 import {promisify} from 'util';
@@ -10,6 +9,7 @@ import Promise from 'bluebird';
 import path from 'path';
 import fs from 'fs-extra';
 import PromiseWorker from 'promise-worker';
+import NotificationMessage from '../NotificationMessage';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 
@@ -24,12 +24,12 @@ export const captureFullPage = async (
   const promiseWorker = new PromiseWorker(worker);
   const toastId = toast.info(
     <NotificationMessage
-      spinner={true}
+      spinner
       message={`Capturing ${device.name} screenshot...`}
     />,
     {autoClose: false}
   );
-  //Hiding scrollbars in the screenshot
+  // Hiding scrollbars in the screenshot
   await webView.insertCSS(`
       .responsivelyApp__ScreenshotInProgress::-webkit-scrollbar {
         display: none;
@@ -40,11 +40,11 @@ export const captureFullPage = async (
       }
     `);
 
-  //Get the windows's scroll details
+  // Get the windows's scroll details
   let scrollX = 0;
   let scrollY = 0;
-  let pageX = 0;
-  let pageY = 0;
+  const pageX = 0;
+  const pageY = 0;
   const {
     previousScrollPosition,
     scrollHeight,
@@ -66,7 +66,7 @@ export const captureFullPage = async (
     responsivelyApp.screenshotVar;
   `);
 
-  let images = [];
+  const images = [];
 
   for (
     let pageY = 0;
@@ -123,7 +123,7 @@ export const captureFullPage = async (
   toast.update(toastId, {
     render: (
       <NotificationMessage
-        spinner={true}
+        spinner
         message={`Processing ${device.name} screenshot...`}
       />
     ),
@@ -142,10 +142,7 @@ export const captureFullPage = async (
   });
   toast.update(toastId, {
     render: (
-      <NotificationMessage
-        tick={true}
-        message={`${device.name} screenshot taken!`}
-      />
+      <NotificationMessage tick message={`${device.name} screenshot taken!`} />
     ),
     type: toast.TYPE.INFO,
     autoClose: 2000,
@@ -159,11 +156,8 @@ const _delay = ms =>
     setTimeout(() => resolve(), ms);
   });
 
-const _takeSnapshot = (webView, options) => {
-  return remote.webContents
-    .fromId(webView.getWebContentsId())
-    .capturePage(options);
-};
+const _takeSnapshot = (webView, options) =>
+  remote.webContents.fromId(webView.getWebContentsId()).capturePage(options);
 
 function _getScreenshotFileName(
   address,
@@ -196,7 +190,7 @@ function _getScreenshotFileName(
 export const getWebsiteName = address => {
   let domain = '';
   if (address.startsWith('file://')) {
-    let fileNameStartingIndex = address.lastIndexOf('/') + 1;
+    const fileNameStartingIndex = address.lastIndexOf('/') + 1;
     let htmIndex = address.indexOf('.htm');
     if (htmIndex == -1) {
       htmIndex = address.length;

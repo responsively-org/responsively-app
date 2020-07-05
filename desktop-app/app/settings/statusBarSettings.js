@@ -10,13 +10,11 @@ class StatusBarSettings {
     }
   }
 
-  getVisibility() {
-    return settings.get(STATUS_BAR_VISIBILITY);
-  }
+  getVisibility = () => settings.get(STATUS_BAR_VISIBILITY);
 
-  setVisibility(visible) {
+  setVisibility = visible => {
     settings.set(STATUS_BAR_VISIBILITY, visible);
-  }
+  };
 }
 
 const statusBarSettingsInstance = new StatusBarSettings();

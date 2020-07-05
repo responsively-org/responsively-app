@@ -9,6 +9,7 @@ import {
   screen,
 } from 'electron';
 import * as os from 'os';
+import fs from 'fs';
 import {pkg} from './utils/generalUtils';
 import {
   getAllShortcuts,
@@ -65,6 +66,9 @@ export default class MenuBuilder {
         },
       },
       {
+        type: 'separator',
+      },
+      {
         label: 'Keyboard Shortcuts',
         click: () => {
           const {getCursorScreenPoint, getDisplayNearestPoint} = screen;
@@ -100,6 +104,9 @@ export default class MenuBuilder {
         },
       },
       {
+        type: 'separator',
+      },
+      {
         label: 'Check for Updates...',
         id: 'CHECK_FOR_UPDATES',
         click() {
@@ -117,6 +124,9 @@ export default class MenuBuilder {
             }
           });
         },
+      },
+      {
+        type: 'separator',
       },
       {
         label: 'About',
@@ -186,6 +196,27 @@ export default class MenuBuilder {
           this.mainWindow.webContents.send('address-change', filePath);
         },
       },
+      {
+        label: 'Open Screenshots folder',
+        click: () => {
+          try {
+            const dir = path.join(
+              os.homedir(),
+              `Desktop/Responsively-Screenshots`
+            );
+            if (!fs.existsSync(dir)) {
+              fs.mkdirSync(dir);
+            }
+            shell.openItem(dir);
+          } catch {}
+        },
+      },
+      {
+        type: 'separator',
+      },
+      {
+        role: process.platform === 'darwin' ? 'close' : 'quit',
+      },
     ],
   };
 
@@ -194,29 +225,29 @@ export default class MenuBuilder {
     let label = 'Check for Updates...';
     let enabled = true;
 
-    switch(updaterStatus) {
+    switch (updaterStatus) {
       case AppUpdaterStatus.Idle:
         label = 'Check for Updates...';
         enabled = true;
         break;
       case AppUpdaterStatus.Checking:
         label = 'Checking for Updates...';
-        enabled = false;  
+        enabled = false;
         break;
       case AppUpdaterStatus.NoUpdate:
         label = 'No Updates';
-        enabled = false;  
+        enabled = false;
         break;
       case AppUpdaterStatus.Downloading:
         label = 'Downloading Update...';
-        enabled = false;  
+        enabled = false;
         break;
       case AppUpdaterStatus.Downloaded:
         label = 'Update Downloaded';
-        enabled = false;  
+        enabled = false;
         break;
     }
-    
+
     return {label, enabled};
   }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import {shallow} from 'enzyme';
 import {expect} from 'chai';
 
-import Header from './';
+import Header from '.';
 
 describe('<Header />', () => {
   it('renders a h1 and BrowserZoom components', () => {
