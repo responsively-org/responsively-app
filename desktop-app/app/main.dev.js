@@ -1,5 +1,5 @@
 /* eslint global-require: off */
-
+require('dotenv').config();
 /**
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes
@@ -35,8 +35,7 @@ import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
 import {appUpdater} from './app-updater';
-
-require('dotenv').config();
+import trimStart from 'lodash/trimStart';
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -220,6 +219,12 @@ const createWindow = async () => {
     mainWindow.webContents.send('reload-url');
   });
   ipcMain.on('start-watching-file', (event, fileInfo) => {
+    let path = fileInfo.path.replace('file://', '');
+    if (process.platform === 'win32') {
+      path = trimStart(path, '/');
+    }
+    fileInfo.path = path;
+    console.log('Watching', fileInfo);
     if (watchedFileInfo != null) watcher.unwatch(watchedFileInfo.path);
     if (fs.existsSync(fileInfo.path)) {
       watcher.add(fileInfo.path);
