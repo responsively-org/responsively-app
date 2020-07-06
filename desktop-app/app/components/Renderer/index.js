@@ -29,16 +29,18 @@ function Renderer(props) {
     <div className={cx(styles.container, {[styles.hidden]: hidden})}>
       <div className={styles.titleContainer}>
         {getDeviceIcon(device.type)}
-        <span className={cx(styles.deviceTitle)}>{device.name}</span>
-        <div className={cx(styles.deviceSize)}>
-          {isFlip ? dimension.reverse().join('') : dimension.join('')}
-        </div>
-        <div className={cx(styles.loaderContainer)}>
-          {loading && (
-            <div>
-              <Spinner size={16} />
-            </div>
-          )}
+        <div className={styles.deviceInfo}>
+          <span className={cx(styles.deviceTitle)}>{device.name}</span>
+          <div className={cx(styles.deviceSize)}>
+            {isFlip ? dimension.reverse().join('') : dimension.join('')}
+          </div>
+          <div className={cx(styles.loaderContainer)}>
+            {loading && (
+              <div>
+                <Spinner size={16} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className={cx(styles.deviceWrapper)}>
