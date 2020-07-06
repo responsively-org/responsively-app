@@ -1,6 +1,6 @@
 # Responsively App [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-20-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![Gitter chat](https://img.shields.io/gitter/room/badges/shields.svg)](https://gitter.im/responsively-app) [![xscode](https://img.shields.io/badge/Available%20on-xs%3Acode-blue?style=?style=plastic&logo=appveyor&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////////VXz1bAAAAAJ0Uk5T/wDltzBKAAAAlUlEQVR42uzXSwqAMAwE0Mn9L+3Ggtgkk35QwcnSJo9S+yGwM9DCooCbgn4YrJ4CIPUcQF7/XSBbx2TEz4sAZ2q1RAECBAiYBlCtvwN+KiYAlG7UDGj59MViT9hOwEqAhYCtAsUZvL6I6W8c2wcbd+LIWSCHSTeSAAECngN4xxIDSK9f4B9t377Wd7H5Nt7/Xz8eAgwAvesLRjYYPuUAAAAASUVORK5CYII=)](https://xscode.com/manojvivek/responsively-app) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/manojVivek/responsively-app/issues)
 
@@ -90,6 +90,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     <td align="center"><a href="https://www.vlazaro.es/"><img src="https://avatars1.githubusercontent.com/u/38981659?v=4" width="100px;" alt=""/><br /><sub><b>Víctor Lázaro</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=vlazaroes" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/kvnam"><img src="https://avatars0.githubusercontent.com/u/3608742?v=4" width="100px;" alt=""/><br /><sub><b>Kavita Nambissan</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=kvnam" title="Code">💻</a></td>
     <td align="center"><a href="https://twitter.com/PrashantPalikhe"><img src="https://avatars0.githubusercontent.com/u/2657709?v=4" width="100px;" alt=""/><br /><sub><b>Prashant Palikhe</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=prashantpalikhe" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/jaunesarmiento"><img src="https://avatars1.githubusercontent.com/u/1166928?v=4" width="100px;" alt=""/><br /><sub><b>Jaune Sarmiento</b></sub></a><br /><a href="#content-jaunesarmiento" title="Content">🖋</a></td>
   </tr>
 </table>
 
