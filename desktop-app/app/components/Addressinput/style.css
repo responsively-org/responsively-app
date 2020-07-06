@@ -38,6 +38,7 @@
 
 .searchBarSuggestionsContainer{
   width: 90%;
+  max-height: 20em;
   position: absolute;
   top: 2.8em;
   left: 0;
@@ -47,13 +48,21 @@
   .searchBarSuggestionsListItems{
     font-size: 1em;
     color: white;
-    padding: 0.3em 1em;
+    padding: 0.4em 1em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .searchBarSuggestionsListUl{
+    padding: 0px;
+    list-style: none;
   }
 
    .searchBarSuggestionsListItems:hover{
      background: gray;
    }
 
+   .searchBarSuggestionsListItems.active{
+    background: gray;
+   }

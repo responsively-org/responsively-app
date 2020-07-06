@@ -4,15 +4,19 @@ const UrlSearchResults = ({
   divClassName,
   listItemsClassName,
   existingSearchResults,
-  handleUrlChange
+  handleUrlChange,
+  activeClass,
+  listItemUiClassName
 }) => {
   return(
      <div className = { divClassName }>
+       <ul className={ listItemUiClassName }>
       {existingSearchResults?.map((eachResult,index)=>{
         return(
-         <p  onClick={ ()=>handleUrlChange(eachResult.url,index) } className={ listItemsClassName }> { eachResult.url }</p>
+         <li onKeyDown={(e)=>handleOnKeyDown(e,eachResult.url)} key={ index } onClick={ ()=>handleUrlChange(eachResult.url,index) } className={ `${listItemsClassName}` }> { eachResult.url }</li>
         )
       })}
+      </ul>
      </div>
   )
 }

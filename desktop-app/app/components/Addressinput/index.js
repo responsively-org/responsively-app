@@ -189,6 +189,7 @@ class AddressBar extends React.Component<Props> {
        {this.state.finalUrlResult?.length &&
         <UrlSearchResults
          divClassName={ cx(styles.searchBarSuggestionsContainer) }
+         listItemUiClassName = { cx(styles.searchBarSuggestionsListUl) }
          listItemsClassName = { cx(styles.searchBarSuggestionsListItems) }
          existingSearchResults = { this.state.finalUrlResult }
          handleUrlChange = { this._onSearchedUrlClick }
@@ -223,7 +224,7 @@ class AddressBar extends React.Component<Props> {
   };
 
   _onSearchedUrlClick = (url,index) => {
-      if(url !== this.state.userTypedAddress){
+      if(url !== this.state.previousAddress){
         this.props.onChange(this._normalize(url), true);
       }
 
