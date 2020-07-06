@@ -6,6 +6,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/DeleteOutlined';
+import FolderOpenIcon from '@material-ui/icons/FolderOpenOutlined';
 import ExtensionsIcon from '@material-ui/icons/Extension';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {remote, ipcRenderer} from 'electron';
@@ -57,17 +58,12 @@ export default function ExtensionsManager({triggerNavigationReload}) {
     setLoading(true);
     setErrorMessage('');
 
-    const id = extensionId
-      .replace(/\/$/, '')
-      .split('/')
-      .pop();
-
     try {
-      await ipcRenderer.invoke('install-extension', id);
+      await ipcRenderer.invoke('install-extension', extensionId);
       setExtensions(getInstalledExtensions());
       setExtensionId('');
       triggerNavigationReload();
-    } catch (e) {
+    } catch {
       setErrorMessage('Error while installing the extension.');
     } finally {
       setLoading(false);
@@ -93,6 +89,14 @@ export default function ExtensionsManager({triggerNavigationReload}) {
     }
     setAnchorEl(event.currentTarget);
     setHelpOpen(!helpOpen);
+  };
+
+  const getLocalExtensionPath = async event => {
+    const localExtensionPath = await ipcRenderer.invoke(
+      'get-local-extension-path'
+    );
+
+    setExtensionId(localExtensionPath);
   };
 
   return (
@@ -146,6 +150,17 @@ export default function ExtensionsManager({triggerNavigationReload}) {
                         title="Help"
                       >
                         <HelpOutlineIcon
+                          fontSize="small"
+                          htmlColor={lightIconsColor}
+                        />
+                      </IconButton>
+
+                      <IconButton
+                        onClick={getLocalExtensionPath}
+                        size="small"
+                        title="Install local devtools extension"
+                      >
+                        <FolderOpenIcon
                           fontSize="small"
                           htmlColor={lightIconsColor}
                         />
