@@ -382,7 +382,10 @@ const createWindow = async () => {
     if (!webViewId) {
       return;
     }
-    webContents.fromId(webViewId).closeDevTools();
+    const _webContents = webContents.fromId(webViewId);
+    if (_webContents) {
+      _webContents.closeDevTools();
+    }
     if (!devToolsView) {
       return;
     }
