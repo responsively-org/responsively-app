@@ -79,10 +79,13 @@ export default class Root extends Component<Props> {
 
   componentWillUnmount() {
     clearAllShortcuts();
+    document.removeEventListener('wheel', this.onWheel);
   }
 
   registerAllShortcuts = () => {
     const {store} = this.props;
+    document.addEventListener('wheel', this.onWheel);
+
     registerShortcut(
       {id: 'ZoomIn', title: 'Zoom In', accelerators: ['mod+=', 'mod+shift+=']},
       () => {
@@ -220,6 +223,13 @@ export default class Root extends Component<Props> {
       true
     );
   };
+
+  onWheel = (e) => {
+    if (e.ctrlKey) {
+      const {store} = this.props
+      store.dispatch(onZoomChange(store.getState().browser.zoomLevel + (e.deltaY < 0 ? 0.1 : -0.1)));
+    }
+  }
 
   render() {
     const {store, history} = this.props;

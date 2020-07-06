@@ -13,6 +13,16 @@
   margin: 0 5px;
 }
 
+.statusText {
+  display: flex;
+  align-items: center;
+  color: grey;
+  height: 100%;
+  padding: 0 5px;
+  filter: grayscale(1);
+  font-size: 12px;
+}
+
 .link {
   display: flex;
   align-items: center;
