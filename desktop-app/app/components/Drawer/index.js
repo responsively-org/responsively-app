@@ -70,6 +70,8 @@ function getDrawerContent(type) {
       return <UserPreferencesContainer />;
     case EXTENSIONS_MANAGER:
       return <ExtensionsManagerContainer />;
+    default:
+      return null;
   }
 }
 
