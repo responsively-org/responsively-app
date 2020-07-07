@@ -1,6 +1,6 @@
 // @flow
 import React, {Component, createRef} from 'react';
-import { remote, ipcRenderer } from 'electron';
+import {remote, ipcRenderer} from 'electron';
 import cx from 'classnames';
 import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
@@ -155,7 +155,7 @@ class WebView extends Component {
         ({title}) => this.props.onPageMetaFieldUpdate('title', title)
       );
 
-      this.webviewRef.current.addEventListener('new-window', (e) => {
+      this.webviewRef.current.addEventListener('new-window', e => {
         ipcRenderer.send('open-new-window', {url: e.url});
       });
     }
@@ -754,9 +754,9 @@ class WebView extends Component {
                 onClick={isMuted ? this._unmuteDevice : this._muteDevice}
               >
                 {isMuted ? (
-                  <MutedIcon height={17} color="white" />
+                  <MutedIcon height={20} color="white" />
                 ) : (
-                  <UnmutedIcon height={17} color="white" />
+                  <UnmutedIcon height={20} color="white" />
                 )}
               </div>
             </Tooltip>
