@@ -54,10 +54,12 @@ const AppUpdaterStatusInfoSection = () => {
   );
 };
 
-const StatusBar = ({visible}) => {
+const StatusBar = ({visible, zoomLevel}) => {
   if (!visible) {
     return null;
   }
+
+  const zoomPercent = Math.round(zoomLevel * 100)
 
   return (
     <div className={styles.statusBar}>
@@ -105,7 +107,14 @@ const StatusBar = ({visible}) => {
         </div>
       </div>
       <AppUpdaterStatusInfoSection />
-      <Announcement />
+      <div className={styles.section}>
+        <Announcement />
+        {zoomPercent !== 100 && <>
+          <div className={cx('roadMapLink', styles.statusText)}>
+            {zoomPercent}%
+          </div>
+        </>}
+      </div>
     </div>
   );
 };
