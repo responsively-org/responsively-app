@@ -37,6 +37,11 @@ import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
 import {appUpdater} from './app-updater';
+import {
+  confirmMove,
+  conflictHandler,
+  movingFailed,
+} from './app-move-to-applications';
 import trimStart from 'lodash/trimStart';
 import isURL from 'validator/lib/isURL';
 
@@ -425,4 +430,16 @@ app.on('activate', (event, hasVisibleWindows) => {
   createWindow();
 });
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  if (!app.isInApplicationsFolder() && confirmMove(dialog)) {
+    try {
+      app.moveToApplicationsFolder({
+        conflictHandler: conflictHandler.bind(this, dialog),
+      });
+    } catch (e) {
+      movingFailed(dialog);
+    }
+  } else {
+    createWindow();
+  }
+});
