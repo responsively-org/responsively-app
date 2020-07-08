@@ -56,7 +56,9 @@ export default function ExtensionsManager({triggerNavigationReload}) {
     }
     // validate the extension id.
     if (!validateExtensionId(extensionId)) {
-      setErrorMessage('Only lowercase alphabets are allowed.');
+      setErrorMessage(
+        'Only lowercase alphabets are allowed with maximum length of 32 chars.'
+      );
       setLoading(false);
       return;
     }
@@ -104,7 +106,8 @@ export default function ExtensionsManager({triggerNavigationReload}) {
     setExtensionId(localExtensionPath);
   };
 
-  const validateExtensionId = extensionId => extensionId.match(/^[a-z]+$/);
+  const validateExtensionId = extensionId =>
+    extensionId.match(/^[a-z]+$/) && extensionId.length <= 32;
 
   return (
     <>
