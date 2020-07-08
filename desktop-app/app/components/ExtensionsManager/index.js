@@ -54,10 +54,15 @@ export default function ExtensionsManager({triggerNavigationReload}) {
     if (loading) {
       return;
     }
+    // validate the extension id.
+    if (!validateExtensionId(extensionId)) {
+      setErrorMessage('Only lowercase alphabets are allowed.');
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setErrorMessage('');
-
     try {
       await ipcRenderer.invoke('install-extension', extensionId);
       setExtensions(getInstalledExtensions());
@@ -98,6 +103,8 @@ export default function ExtensionsManager({triggerNavigationReload}) {
 
     setExtensionId(localExtensionPath);
   };
+
+  const validateExtensionId = extensionId => extensionId.match(/^[a-z]+$/);
 
   return (
     <>
