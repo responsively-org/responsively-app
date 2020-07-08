@@ -56,9 +56,7 @@ export default function ExtensionsManager({triggerNavigationReload}) {
     }
     // validate the extension id.
     if (!validateExtensionId(extensionId)) {
-      setErrorMessage(
-        'Only lowercase alphabets are allowed with maximum length of 32 chars.'
-      );
+      setErrorMessage('Extension Id must have 32 lower case alphabets');
       setLoading(false);
       return;
     }
