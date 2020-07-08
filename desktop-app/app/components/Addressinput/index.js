@@ -9,13 +9,12 @@ import HomePlusIcon from '../icons/HomePlus';
 import DeleteCookieIcon from '../icons/DeleteCookie';
 import DeleteStorageIcon from '../icons/DeleteStorage';
 import {iconsColor, lightIconsColor} from '../../constants/colors';
-import { addUrlToSearchResults,getExistingSearchResults,deleteSearchResults } from '../../settings/urlSearchResultSettings';
+import {searchUrlUtils} from '../../utils/searchUrlUtils';
 import UrlSearchResults from '../../components/UrlSearchResults';
 
 import commonStyles from '../common.styles.css';
 import styles from './style.css';
 import debounce from 'lodash/debounce';
-import filter from 'lodash/filter';
 
 type Props = {
   address: string,
@@ -186,7 +185,7 @@ class AddressBar extends React.Component<Props> {
             </Tooltip>
           </div>
         </div>
-       {this.state.finalUrlResult?.length &&
+       {this.state.finalUrlResult?.length ?
         <UrlSearchResults
          divClassName={ cx(styles.searchBarSuggestionsContainer) }
          listItemUiClassName = { cx(styles.searchBarSuggestionsListUl) }
@@ -194,7 +193,7 @@ class AddressBar extends React.Component<Props> {
          existingSearchResults = { this.state.finalUrlResult }
          handleUrlChange = { this._onSearchedUrlClick }
         />
-       }
+       :''}
       </div>
     );
   }
@@ -253,52 +252,16 @@ class AddressBar extends React.Component<Props> {
 
   _addUrlToExistingSearchResult = () => {
 
-    let existingSearchResults = getExistingSearchResults();
-    let formattedUrl = this._normalize(this.state.userTypedAddress);
+    this.props.onChange(this._normalize(this.state.userTypedAddress), true);
 
-    if(existingSearchResults?.length){
-     let updatedSearchResults = [...existingSearchResults];
-
-     const index = updatedSearchResults.findIndex(eachSearchResult => eachSearchResult.url === formattedUrl);
-
-     index!== (undefined|| -1 || null) ? updatedSearchResults[index].visitedCount = updatedSearchResults[index].visitedCount+1 :
-            updatedSearchResults.push({url: formattedUrl,visitedCount:1})
-
-     addUrlToSearchResults(updatedSearchResults);
-
-    }
-
-    else {
-      let addNewUrl = [];
-        addNewUrl.push({
-          url: formattedUrl,
-          visitedCount: 1
-        });
-      addUrlToSearchResults(addNewUrl);
-    }
     this.setState({
       finalUrlResult:[]
     })
   }
 
-  _sortedExistingUrlSearchResult = (filteredData) => { //Most visited site should appear first in the list
-    filteredData.sort((a, b)=> {
-       if(a.visitedCount > b.visitedCount){
-         return -1
-       }
-       else if(a.visitedCount < b.visitedCount){
-         return 1
-       }
-       return 0;
-    });
-
-     return filteredData;
-
-  }
 
   _filterExistingUrl = () => {
-    const filteredData = filter(getExistingSearchResults(), (eachResult) => eachResult.url.toLowerCase().includes(this.state.userTypedAddress));
-    let finalResult = this._sortedExistingUrlSearchResult(filteredData);
+    let finalResult = searchUrlUtils(this.props.existingSearchResults,this.state.userTypedAddress)
     this.setState({finalUrlResult: finalResult});
   }
 
