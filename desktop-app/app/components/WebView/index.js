@@ -570,9 +570,8 @@ class WebView extends Component {
   _getWebViewTag = deviceStyles => {
     const {
       device: {id, useragent, capabilities},
-      browser: {address},
     } = this.props;
-    const {deviceDimensions} = this.state;
+    const {deviceDimensions, address} = this.state;
 
     if (capabilities.includes(CAPABILITIES.responsive)) {
       const responsiveStyle = {
