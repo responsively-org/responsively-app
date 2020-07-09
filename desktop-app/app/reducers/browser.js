@@ -111,6 +111,7 @@ type UserPreferenceType = {
   reopenLastAddress: boolean,
   drawerState: boolean,
   devToolsOpenMode: DevToolsOpenModeType,
+  deviceOutlineStyle: string,
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;

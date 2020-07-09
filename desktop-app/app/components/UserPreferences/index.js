@@ -2,6 +2,7 @@ import React from 'react';
 import cx from 'classnames';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
 import SettingsIcon from '@material-ui/icons/Settings';
 
 import commonStyles from '../common.styles.css';
@@ -80,6 +81,20 @@ export default function UserPreference({
                 Reopen last opened address on start
               </span>
             }
+          />
+        </div>
+      </div>
+      <div className={cx(commonStyles.sidebarContentSectionContainer)}>
+        <div>
+          <div className={cx(styles.preferenceName)}>Device Outline Style</div>
+          <small>(leave empty for no outline)</small>
+          <TextField
+            type="text"
+            color="secondary"
+            value={userPreferences.deviceOutlineStyle}
+            onChange={e => onChange('deviceOutlineStyle', e.target.value)}
+            placeholder="eg. 4px solid #ff0000"
+            variant="outlined"
           />
         </div>
       </div>
