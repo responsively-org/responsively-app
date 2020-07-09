@@ -31,9 +31,6 @@ import {
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
-import settings from 'electron-settings';
-import {USER_PREFERENCES} from '../../constants/settingKeys';
-
 import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
@@ -663,7 +660,7 @@ class WebView extends Component {
       screenshotInProgress,
     } = this.state;
     const deviceStyles = {
-      outline: (settings.get(USER_PREFERENCES) || {}).deviceOutlineStyle,
+      outline: `4px solid ${this.props.browser.userPreferences.deviceOutlineStyle}`,
       width:
         this.isMobile && isTilted
           ? deviceDimensions.height
