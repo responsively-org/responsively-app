@@ -660,6 +660,7 @@ class WebView extends Component {
       screenshotInProgress,
     } = this.state;
     const deviceStyles = {
+      outline: `4px solid ${this.props.browser.userPreferences.deviceOutlineStyle}`,
       width:
         this.isMobile && isTilted
           ? deviceDimensions.height
