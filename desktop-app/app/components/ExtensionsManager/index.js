@@ -56,7 +56,7 @@ export default function ExtensionsManager({triggerNavigationReload}) {
     }
     // validate the extension id.
     if (!validateExtensionId(extensionId)) {
-      setErrorMessage('Extension Id must have 32 lower case alphabets');
+      setErrorMessage('Please enter a valid extension ID');
       setLoading(false);
       return;
     }
@@ -105,7 +105,8 @@ export default function ExtensionsManager({triggerNavigationReload}) {
   };
 
   const validateExtensionId = extensionId =>
-    extensionId.match(/^[a-z]+$/) && extensionId.length <= 32;
+    (extensionId.match(/^[a-z]+$/) && extensionId.length <= 32) ||
+    /[<>:"/\\|?]/.test(extensionId);
 
   return (
     <>
