@@ -19,7 +19,6 @@ const AddressBar = props => {
   return (
     <AddressInput
       address={props.browser.address}
-      existingSearchResults ={props.browser.existingSearchResults}
       onChange={props.onAddressChange}
       homepage={props.browser.homepage}
       setHomepage={props.setCurrentAddressAsHomepage}

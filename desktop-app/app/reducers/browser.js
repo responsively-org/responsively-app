@@ -46,14 +46,10 @@ import {
   getLastOpenedAddress,
   saveHomepage,
   saveLastOpenedAddress,
-  addUrlToExistingSearchResult
 } from '../utils/navigatorUtils';
-<<<<<<< HEAD
-=======
 import {getExistingSearchResults,deleteSearchResults} from '../settings/urlSearchResultSettings';
 import console from 'electron-timber';
 import trimStart from 'lodash/trimStart';
->>>>>>> review changes: making sorting,filtering as a component,set urlHistory in redux
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -141,11 +137,7 @@ export type BrowserStateType = {
   devToolsConfig: DevToolsConfigType,
   isInspecting: boolean,
   windowSize: WindowSizeType,
-<<<<<<< HEAD
   allDevicesMuted: boolean,
-=======
-  existingSearchResults: Array<String>
->>>>>>> review changes: making sorting,filtering as a component,set urlHistory in redux
 };
 
 let _activeDevices = null;
