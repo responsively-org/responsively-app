@@ -105,7 +105,7 @@ export default function ExtensionsManager({triggerNavigationReload}) {
   };
 
   const validateExtensionId = extensionId =>
-    (extensionId.match(/^[a-z]+$/) && extensionId.length <= 32) ||
+    (extensionId.match(/^[a-z]+$/) && extensionId.length === 32) ||
     /[<>:"/\\|?]/.test(extensionId);
 
   return (
