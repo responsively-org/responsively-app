@@ -195,6 +195,7 @@ class WebView extends Component {
     );
 
     const urlChangeHandler = async ({url, isMainFrame = true}) => {
+      console.log(url);
       if (!isMainFrame || url === this.props.browser.address) {
         return;
       }
@@ -218,6 +219,7 @@ class WebView extends Component {
     });
 
     this.webviewRef.current.addEventListener('did-navigate', event => {
+      urlChangeHandler(event);
       navigationHandler(event);
     });
 
