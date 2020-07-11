@@ -54,10 +54,15 @@ export default function ExtensionsManager({triggerNavigationReload}) {
     if (loading) {
       return;
     }
+    // validate the extension id.
+    if (!validateExtensionId(extensionId)) {
+      setErrorMessage('Please enter a valid extension ID');
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setErrorMessage('');
-
     try {
       await ipcRenderer.invoke('install-extension', extensionId);
       setExtensions(getInstalledExtensions());
@@ -98,6 +103,10 @@ export default function ExtensionsManager({triggerNavigationReload}) {
 
     setExtensionId(localExtensionPath);
   };
+
+  const validateExtensionId = extensionId =>
+    (extensionId.match(/^[a-z]+$/) && extensionId.length === 32) ||
+    /[<>:"/\\|?]/.test(extensionId);
 
   return (
     <>
