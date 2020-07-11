@@ -15,18 +15,6 @@
   display: flex;
 }
 
-.webViewToolbarLeft .webViewToolbarIcons {
-  margin-right: 4px;
-}
-
-.webViewToolbarRight {
-  display: flex;
-}
-
-.webViewToolbarRight .webViewToolbarIcons {
-  margin-left: 4px;
-}
-
 .webViewToolbarIcons {
   padding: 0 2px;
   align-items: center;
@@ -34,6 +22,18 @@
   display: flex;
   height: 30px;
   width: 30px;
+}
+
+.webViewToolbarRight {
+  display: flex;
+}
+
+.webViewToolbarLeft .webViewToolbarIcons {
+  margin-right: 4px;
+}
+
+.webViewToolbarRight .webViewToolbarIcons {
+  margin-left: 4px;
 }
 
 .deviceContainer {
@@ -162,4 +162,8 @@
 
 .resizableView {
   margin: 0 1rem;
+}
+
+.withMarginRight {
+  margin-right: 5rem;
 }
