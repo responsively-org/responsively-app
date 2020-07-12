@@ -190,6 +190,24 @@
       "contributions": [
         "content"
       ]
+    },
+    {
+      "login": "diego-vieira",
+      "name": "Diego Vieira",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/930792?v=4",
+      "profile": "https://github.com/diego-vieira",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "pajaydev",
+      "name": "Ajaykumar",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/21375014?v=4",
+      "profile": "https://github.com/pajaydev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,

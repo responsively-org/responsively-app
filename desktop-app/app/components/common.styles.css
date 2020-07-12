@@ -40,21 +40,21 @@
 .sidebarContentSection {
   background: #00000040;
   border-radius: 5px;
-  margin: 0 0 10px;
-  padding: 0 0 10px;
+  margin: 8px;
+  padding: 8px;
 }
 
 .sidebarContentSectionTitleBar {
   display: flex;
   align-items: center;
-  padding: 5px 0;
+  padding: 5px;
   margin-bottom: 5px;
   text-transform: uppercase;
   font-size: 14px;
 }
 
 .sidebarContentSectionContainer {
-  margin: 5px 10px;
+  margin: 8px;
 }
 
 .flexContainer {
