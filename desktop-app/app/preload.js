@@ -108,7 +108,7 @@ global.responsivelyApp = {
     const elems = document.body.getElementsByTagName('*');
     for (const elem of elems) {
       const computedStyle = window.getComputedStyle(elem, null);
-      if (computedStyle.getPropertyValue('position') == 'fixed') {
+      if (computedStyle.getPropertyValue('position') === 'fixed') {
         elem.classList.add('responsivelyApp__HiddenForScreenshot');
       }
     }

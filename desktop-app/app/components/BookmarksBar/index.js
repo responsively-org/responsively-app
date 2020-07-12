@@ -8,68 +8,66 @@ import BookmarkEditDialog from './BookmarkEditDialog';
 import styles from './style.module.css';
 import Globe from '../icons/Globe';
 
-export const BookmarksBar = function({
+export const BookmarksBar = ({
   bookmarks,
   onBookmarkClick,
   onBookmarkDelete,
   onBookmarkEdit,
-}) {
-  return (
-    <div className={styles.bookmarks}>
-      {bookmarks.map((bookmark, k) => (
-        <BookmarkItem
-          bookmark={bookmark}
-          onClick={onBookmarkClick}
-          key={`bookmark${k}`}
-          onDelete={onBookmarkDelete}
-          onEdit={onBookmarkEdit}
-        />
-      ))}
-    </div>
-  );
-};
+}) => (
+  <div className={styles.bookmarks}>
+    {bookmarks.map((bookmark, k) => (
+      <BookmarkItem
+        bookmark={bookmark}
+        onClick={onBookmarkClick}
+        key={`bookmark${k}`}
+        onDelete={onBookmarkDelete}
+        onEdit={onBookmarkEdit}
+      />
+    ))}
+  </div>
+);
 
-const useToggle = function() {
+const useToggle = () => {
   const [value, setValue] = useState(false);
   return [
     value,
-    function() {
+    () => {
       setValue(true);
     },
-    function() {
+    () => {
       setValue(false);
     },
   ];
 };
 
-function BookmarkItem({bookmark, onClick, onDelete, onEdit}) {
+const BookmarkItem = ({bookmark, onClick, onDelete, onEdit}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [renameDialog, openRenameDialog, closeRenameDialog] = useToggle(null);
 
-  const handleContextMenu = function(event) {
+  const handleContextMenu = function handleContextMenu(event) {
     event.preventDefault();
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = function() {
+  const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const handleClick = function() {
+  const handleClick = () => {
     onClick(bookmark);
   };
 
-  const handleDelete = function() {
+  const handleDelete = () => {
     setAnchorEl(null);
     onDelete(bookmark);
   };
 
-  const handleRename = function(title, url) {
+  const handleRename = (title, url) => {
     onEdit(bookmark, {title, url});
     setAnchorEl(null);
   };
 
-  const closeDialog = function() {
+  const closeDialog = () => {
     closeRenameDialog();
     setAnchorEl(null);
   };
@@ -109,4 +107,4 @@ function BookmarkItem({bookmark, onClick, onDelete, onEdit}) {
       />
     </>
   );
-}
+};

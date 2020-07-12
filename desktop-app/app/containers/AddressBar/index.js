@@ -8,7 +8,7 @@ import AddressInput from '../../components/Addressinput';
 import * as BrowserActions from '../../actions/browser';
 import {toggleBookmarkUrl} from '../../actions/bookmarks';
 
-const AddressBar = function(props) {
+const AddressBar = props => {
   const handler = (_, url) => {
     props.onAddressChange(url);
   };
