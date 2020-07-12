@@ -43,6 +43,7 @@ import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
 import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
+import {BROWSER_SYNC_EMBED_SCRIPT} from '../../constants/browserSync';
 
 const {BrowserWindow} = remote;
 
@@ -199,7 +200,7 @@ class WebView extends Component {
         return;
       }
       await new Promise(r => setTimeout(r, 200));
-      // this.props.onAddressChange(url);
+      this.props.onAddressChange(url);
     };
 
     const navigationHandler = event => {
@@ -435,10 +436,8 @@ class WebView extends Component {
   initEventTriggers = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
 
-
-      console.log('browser-sync-script');
       var bsScript= document.createElement("script");
-      bsScript.src = "https://localhost:3000/browser-sync/browser-sync-client.js?v=2.26.7";
+      bsScript.src = "${BROWSER_SYNC_EMBED_SCRIPT}";
       bsScript.async = true
       document.body.appendChild(bsScript);
     
@@ -500,7 +499,7 @@ class WebView extends Component {
     //     },
     //     true
     //   );
-    // `);
+    `);
   };
 
   _isDevToolsOpen = () =>

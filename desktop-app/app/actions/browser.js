@@ -199,12 +199,6 @@ export function onAddressChange(newURL, force) {
       return;
     }
 
-    const isHashDiff = isHashOnlyChange(newURL, address);
-
-    if (isHashDiff) {
-      return;
-    }
-
     dispatch(newAddress(newURL));
     pubsub.publish(ADDRESS_CHANGE, [{address: newURL, force: false}]);
   };
@@ -694,13 +688,13 @@ export function onAllDevicesMutedChange() {
     } = getState();
     const next = !allDevicesMuted;
     pubsub.publish(TOGGLE_DEVICE_MUTED_STATE, [{muted: next}]);
-    dispatch(toggleAllDevicesMuted(next))
+    dispatch(toggleAllDevicesMuted(next));
   };
 }
 
 export function onDeviceMutedChange(deviceId, isMuted) {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    dispatch(toggleDeviceMuted(deviceId, isMuted))
+    dispatch(toggleDeviceMuted(deviceId, isMuted));
   };
 }
 
