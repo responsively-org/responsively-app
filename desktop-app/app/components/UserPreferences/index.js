@@ -10,6 +10,7 @@ import commonStyles from '../common.styles.css';
 import styles from './styles.module.css';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 import ScreenShotSavePreference from '../ScreenShotSavePreference/index';
+import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 
 export default function UserPreference({
   devToolsConfig,
@@ -111,7 +112,7 @@ export default function UserPreference({
         <ScreenShotSavePreference
           screenShotSavePath={
             userPreferences.screenShotSavePath ||
-            `Desktop/Responsively-Screenshots`
+            userPreferenceSettings.getDefaultScreenshotpath()
           }
           onScreenShotSaveLocationChange={onChange}
         />

@@ -3,9 +3,10 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import FolderOpenIcon from '@material-ui/icons/FolderOpenOutlined';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import {remote, ipcRenderer} from 'electron';
+import {ipcRenderer} from 'electron';
 import {lightIconsColor} from '../../constants/colors';
-import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
+import styles from '../UserPreferences/styles.module.css';
+import cx from 'classnames';
 
 export default function ScreenShotSavePreference({
   onScreenShotSaveLocationChange,
@@ -24,10 +25,12 @@ export default function ScreenShotSavePreference({
   };
 
   return (
-    <div>
+    <div className={cx(styles.screenshotLocationInputContainer)}>
+      <div className={cx(styles.sectionTitle)}>Screenshot Location:</div>
       <TextField
         type="text"
         color="secondary"
+        id="standard-size-small"
         value={screenShotSavePath}
         placeholder="Screenshot save path"
         variant="outlined"

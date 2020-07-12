@@ -19,7 +19,6 @@ import {appUpdater, AppUpdaterStatus} from './app-updater';
 import {statusBarSettings} from './settings/statusBarSettings';
 import {STATUS_BAR_VISIBILITY_CHANGE} from './constants/pubsubEvents';
 import {userPreferenceSettings} from './settings/userPreferenceSettings';
-import settings from 'electron-settings';
 
 const path = require('path');
 
@@ -205,11 +204,7 @@ export default class MenuBuilder {
             const userSelectedScreenShotSavePath = userPreferenceSettings.getScreenShotSavePath();
             const dir =
               userSelectedScreenShotSavePath ||
-              path.join(
-                os.homedir(),
-                `Desktop/Responsively-Screenshots`,
-                directoryPath
-              );
+              userPreferenceSettings.getDefaultScreenshotpath();
             if (!fs.existsSync(dir)) {
               fs.mkdirSync(dir);
             }
