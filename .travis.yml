@@ -1,4 +1,6 @@
 language: node_js
+node_js:
+  - 12.13.0
 os: osx
 before_install: cd desktop-app
 install: 
