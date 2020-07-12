@@ -5,7 +5,7 @@ matrix:
     - os: osx
       language: node_js
       node_js:
-        - node
+        - 12.13.0
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
