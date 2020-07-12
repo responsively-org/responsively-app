@@ -180,6 +180,17 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
 
 const createWindow = async () => {
   hasActiveWindow = true;
+
+  const browserSync = require('browser-sync');
+
+  browserSync.init({
+    logPrefix: 'My Project',
+    port: 3000,
+    open: false,
+    localOnly: true,
+    https: true,
+  });
+
   if (process.env.NODE_ENV === 'development') {
     await installExtensions();
   }
@@ -196,6 +207,7 @@ const createWindow = async () => {
       nodeIntegrationInWorker: true,
       webviewTag: true,
       enableRemoteModule: true,
+      webSecurity: false,
     },
     titleBarStyle: 'hidden',
     icon: iconPath,
