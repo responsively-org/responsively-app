@@ -59,8 +59,9 @@ class AddressBar extends React.Component<Props> {
     if (!this.state.userTypedAddress) {
       return;
     }
-    this.props.onChange &&
+    if (this.props.onChange) {
       this.props.onChange(this._normalize(this.state.userTypedAddress), true);
+    }
   };
 
   constructor(props) {
@@ -155,7 +156,7 @@ class AddressBar extends React.Component<Props> {
               [commonStyles.enabled]:
                 this.props.address !== this.props.homepage,
               [commonStyles.disabled]:
-                this.props.address == this.props.homepage,
+                this.props.address === this.props.homepage,
             })}
           >
             <Tooltip title="Set as Homepage">

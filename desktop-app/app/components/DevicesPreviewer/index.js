@@ -45,7 +45,7 @@ export default function DevicesPreviewer(props) {
       focusedDeviceIndex = 0;
     }
 
-    if (focusedDeviceIndex != activeTab) {
+    if (focusedDeviceIndex !== activeTab) {
       changeTab(focusedDeviceIndex);
     }
   }
@@ -55,7 +55,7 @@ export default function DevicesPreviewer(props) {
     focusedDeviceId = devicesAfterFiltering[focusedDeviceIndex].id;
   }
 
-  const onTabClick = function(newTabIndex) {
+  const onTabClick = function onTabClick(newTabIndex) {
     changeTab(newTabIndex);
     props.setFocusedDevice(devicesAfterFiltering[newTabIndex].id);
   };

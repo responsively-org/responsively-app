@@ -214,10 +214,12 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener('will-navigate', urlChangeHandler);
 
     this.webviewRef.current.addEventListener('did-navigate-in-page', event => {
-      navigationHandler(event), urlChangeHandler(event);
+      navigationHandler(event);
+      urlChangeHandler(event);
     });
 
     this.webviewRef.current.addEventListener('did-navigate', event => {
+      urlChangeHandler(event);
       navigationHandler(event);
     });
 
@@ -511,8 +513,9 @@ class WebView extends Component {
   };
 
   _flipOrientation = () => {
-    this.props.sendFlipStatus &&
+    if (this.props.sendFlipStatus) {
       this.props.sendFlipStatus(!this.state.isTilted);
+    }
     const flippedDeviceDims = {
       width: this.state.deviceDimensions.height,
       height: this.state.deviceDimensions.width,
@@ -547,6 +550,7 @@ class WebView extends Component {
     this.getWebContents().setAudioMuted(true);
     this.props.onDeviceMutedChange(this.props.device.id, true);
   };
+
   _unmuteDevice = () => {
     this.getWebContents().setAudioMuted(false);
     this.props.onDeviceMutedChange(this.props.device.id, false);

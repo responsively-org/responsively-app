@@ -30,7 +30,9 @@ export default function DeviceList({
     });
 
     setFilteredList(filteredDevices);
-    onFiltering && onFiltering(filteredDevices);
+    if (onFiltering) {
+      onFiltering(filteredDevices);
+    }
   }, [searchText, devices]);
   return (
     <>
