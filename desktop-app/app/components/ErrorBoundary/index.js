@@ -1,11 +1,6 @@
 import React, {Fragment} from 'react';
 
 export default class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {hasError: false};
-  }
-
   static getDerivedStateFromError(error) {
     // Update state so the next render will show the fallback UI.
     return {hasError: true, error};
@@ -18,6 +13,11 @@ export default class ErrorBoundary extends React.Component {
       error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
       errorInfo,
     });
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {hasError: false};
   }
 
   render() {

@@ -20,7 +20,7 @@ export const BookmarksBar = function({
         <BookmarkItem
           bookmark={bookmark}
           onClick={onBookmarkClick}
-          key={'bookmark' + k}
+          key={`bookmark${k}`}
           onDelete={onBookmarkDelete}
           onEdit={onBookmarkEdit}
         />

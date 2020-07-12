@@ -4,10 +4,10 @@
 }
 
 .webViewToolbar {
-  padding: 5px;
+  margin: 8px 3px 3px 3px;
   display: flex;
   align-items: center;
-  width: fit-content;
+  width: auto;
   justify-content: space-between;
 }
 
@@ -15,12 +15,19 @@
   display: flex;
 }
 
+.webViewToolbarLeft .webViewToolbarIcons {
+  margin-right: 4px;
+}
+
 .webViewToolbarRight {
   display: flex;
 }
 
+.webViewToolbarRight .webViewToolbarIcons {
+  margin-left: 4px;
+}
+
 .webViewToolbarIcons {
-  margin-right: 2px;
   padding: 0 2px;
   align-items: center;
   justify-content: center;
@@ -31,7 +38,7 @@
 
 .deviceContainer {
   position: relative;
-  display:inline-flex;
+  display: inline-flex;
   transform-origin: top left;
   border: 3px solid #687cee00;
 }
@@ -64,7 +71,7 @@
   font-size: 20px;
 }
 
-.iconWrapper{
+.iconWrapper {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -77,17 +84,17 @@
   background-color: #3b3b3b;
 }
 
-.iconWrapper:hover{
+.iconWrapper:hover {
   background-color: #575757;
 }
 
-.iconWrapperS{
+.iconWrapperS {
   width: 100%;
   height: 15px;
   bottom: -10px;
   left: 0;
 }
-.iconWrapperE{
+.iconWrapperE {
   width: 15px;
   height: 100%;
   transform: rotate(180deg);
@@ -101,14 +108,15 @@
   width: 15px;
 }
 
-.iconHolder{
+.iconHolder {
   position: relative;
   display: block;
   height: 7px;
   cursor: pointer;
 }
 
-.iconHolder::before, .iconHolder::after {
+.iconHolder::before,
+.iconHolder::after {
   content: '';
   position: absolute;
   width: 15px;
@@ -116,42 +124,42 @@
   background-color: #000;
 }
 
-.iconWrapperE .iconHolder{
+.iconWrapperE .iconHolder {
   right: 1px;
   transform: rotate(90deg);
 }
 
-.iconWrapperS .iconHolder{
-  bottom : 0;
+.iconWrapperS .iconHolder {
+  bottom: 0;
 }
 
-.iconWrapperSE .iconHolder{
+.iconWrapperSE .iconHolder {
   right: 3px;
   top: 2px;
   height: 6px;
   transform: rotate(-45deg);
 }
 
-.iconHolder::before{
+.iconHolder::before {
   left: 0;
 }
 
-.iconHolder::after{
+.iconHolder::after {
   bottom: 0;
 }
 
-.iconWrapperSE .iconHolder::before{
+.iconWrapperSE .iconHolder::before {
   left: -2px;
   width: 11px;
   height: 2px;
 }
 
-.iconWrapperSE .iconHolder::after{
+.iconWrapperSE .iconHolder::after {
   bottom: 0;
   width: 7px;
   height: 2px;
 }
 
-.resizableView{
+.resizableView {
   margin: 0 1rem;
 }

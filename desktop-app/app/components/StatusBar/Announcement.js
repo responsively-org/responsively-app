@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import cx from 'classnames';
+import {shell} from 'electron';
 
 import styles from './styles.module.css';
 

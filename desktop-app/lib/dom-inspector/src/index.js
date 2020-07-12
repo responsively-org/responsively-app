@@ -38,17 +38,21 @@ class DomInspector {
 
     this._init();
   }
+
   enable() {
-    if (this.destroyed)
+    if (this.destroyed) {
       return logger.warn(
         'Inspector instance has been destroyed! Please redeclare it.'
       );
+    }
     this.overlay.parent.style.display = 'block';
     this.root.addEventListener('mousemove', this._throttleOnMove);
   }
+
   pause() {
     this.root.removeEventListener('mousemove', this._throttleOnMove);
   }
+
   disable() {
     this.overlay.parent.style.display = 'none';
     this.overlay.parent.style.width = 0;
@@ -56,17 +60,20 @@ class DomInspector {
     this.target = null;
     this.root.removeEventListener('mousemove', this._throttleOnMove);
   }
+
   destroy() {
     this.destroyed = true;
     this.disable();
     this.overlay = {};
   }
+
   getXPath(ele) {
-    if (!isDOM(ele) && !this.target)
+    if (!isDOM(ele) && !this.target) {
       return logger.warn(
         'Target element is not found. Warning function name:%c getXPath',
         'color: #ff5151'
       );
+    }
     if (!ele) ele = this.target;
 
     if (ele.hasAttribute('id')) {
@@ -88,12 +95,14 @@ class DomInspector {
     }
     return `/${path.reverse().join('/')}`;
   }
+
   getSelector(ele) {
-    if (!isDOM(ele) && !this.target)
+    if (!isDOM(ele) && !this.target) {
       return logger.warn(
         'Target element is not found. Warning function name:%c getCssPath',
         'color: #ff5151'
       );
+    }
     if (!ele) ele = this.target;
     const path = [];
     while (ele.nodeType === Node.ELEMENT_NODE) {
@@ -109,12 +118,14 @@ class DomInspector {
     }
     return path.join('>');
   }
+
   getElementInfo(ele) {
-    if (!isDOM(ele) && !this.target)
+    if (!isDOM(ele) && !this.target) {
       return logger.warn(
         'Target element is not found. Warning function name:%c getElementInfo',
         'color: #ff5151'
       );
+    }
     return getElementInfo(ele || this.target);
   }
 
@@ -252,6 +263,7 @@ class DomInspector {
 
     $('body').appendChild(parent);
   }
+
   _createElement(tag, attr, content) {
     const ele = this._doc.createElement(tag);
     Object.keys(attr).forEach(item => {
@@ -260,6 +272,7 @@ class DomInspector {
     if (content) ele.innerHTML = content;
     return ele;
   }
+
   _createSurroundEle(parent, className, content) {
     const ele = this._createElement(
       'div',
@@ -271,6 +284,7 @@ class DomInspector {
     parent.appendChild(ele);
     return ele;
   }
+
   _onMove(e) {
     for (let i = 0; i < this.exclude.length; i += 1) {
       const cur = this.exclude[i];
@@ -451,6 +465,7 @@ class DomInspector {
       display: 'block',
     });
   }
+
   _formatExcludeOption(excludeArray = []) {
     const result = [];
 

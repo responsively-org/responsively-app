@@ -2,12 +2,12 @@
 import React, {useRef} from 'react';
 import {Icon} from 'flwww';
 import Grid from '@material-ui/core/Grid';
-import Logo from '../icons/Logo';
 import DevicesIcon from '@material-ui/icons/Devices';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibraryOutlined';
 import ExtensionIcon from '@material-ui/icons/Extension';
 import cx from 'classnames';
+import Logo from '../icons/Logo';
 
 import styles from './styles.css';
 import commonStyles from '../common.styles.css';
@@ -73,7 +73,7 @@ const LeftIconsPane = props => {
           item
           className={cx(commonStyles.icons, styles.icon, commonStyles.enabled, {
             [commonStyles.selected]:
-            props.drawer.open && props.drawer.content === EXTENSIONS_MANAGER,
+              props.drawer.open && props.drawer.content === EXTENSIONS_MANAGER,
           })}
           onClick={() => toggleState(EXTENSIONS_MANAGER)}
         >

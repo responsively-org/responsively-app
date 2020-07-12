@@ -1,14 +1,18 @@
 // @flow
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
+import cx from 'classnames';
 import DeviceDrawerContainer from '../../containers/DeviceDrawerContainer';
 import UserPreferencesContainer from '../../containers/UserPreferencesContainer';
 import ExtensionsManagerContainer from '../../containers/ExtensionsManagerContainer';
-import cx from 'classnames';
 
 import styles from './styles.css';
 import commonStyles from '../common.styles.css';
-import {DEVICE_MANAGER, USER_PREFERENCES, EXTENSIONS_MANAGER} from '../../constants/DrawerContents';
+import {
+  DEVICE_MANAGER,
+  USER_PREFERENCES,
+  EXTENSIONS_MANAGER,
+} from '../../constants/DrawerContents';
 import {iconsColor} from '../../constants/colors';
 import DoubleLeftArrowIcon from '../icons/DoubleLeftArrow';
 
@@ -48,8 +52,8 @@ export function Drawer(props) {
         >
           <DoubleLeftArrowIcon color="white" height={30} />
         </div>
-        {/*<Icon type="chevronsLeft" title="Close Drawer" color="white" className={classes.iconHover} />*/}
-        {/*<ChevronLeftIcon className={classes.iconHover} />*/}
+        {/* <Icon type="chevronsLeft" title="Close Drawer" color="white" className={classes.iconHover} /> */}
+        {/* <ChevronLeftIcon className={classes.iconHover} /> */}
       </div>
       <div className={styles.contentContainer}>
         {getDrawerContent(props.drawer.content)}
@@ -65,7 +69,9 @@ function getDrawerContent(type) {
     case USER_PREFERENCES:
       return <UserPreferencesContainer />;
     case EXTENSIONS_MANAGER:
-      return <ExtensionsManagerContainer />
+      return <ExtensionsManagerContainer />;
+    default:
+      return null;
   }
 }
 

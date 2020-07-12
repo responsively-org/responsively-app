@@ -7,7 +7,6 @@ export default function DockBottom({width, height, color, padding, margin}) {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      style={{isolation: 'isolate'}}
       viewBox="0 0 14.14 12"
       width={width}
       height={height}

@@ -5,13 +5,13 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
 import StatusBar from '../../components/StatusBar';
-import {toggleStatusBarVisibility} from '../../actions/statusBar';
+import {toggleStatusBarVisibility as _toggleStatusBarVisibility} from '../../actions/statusBar';
 import {STATUS_BAR_VISIBILITY_CHANGE} from '../../constants/pubsubEvents';
 
-const StatusBarContainer = props => {
+const StatusBarContainer = ({visible, zoomLevel, toggleStatusBarVisibility}) => {
   useEffect(() => {
     const handler = () => {
-      props.toggleStatusBarVisibility();
+      toggleStatusBarVisibility();
     };
 
     ipcRenderer.on(STATUS_BAR_VISIBILITY_CHANGE, handler);
@@ -20,17 +20,21 @@ const StatusBarContainer = props => {
       ipcRenderer.removeListener(STATUS_BAR_VISIBILITY_CHANGE, handler);
   }, []);
 
-  return <StatusBar visible={props.visible} />;
+  return <StatusBar visible={visible} zoomLevel={zoomLevel}/>;
 };
 
 function mapStateToProps(state) {
   return {
     visible: state.statusBar.visible,
+    zoomLevel: state.browser.zoomLevel
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({toggleStatusBarVisibility}, dispatch);
+  return bindActionCreators(
+    {toggleStatusBarVisibility: _toggleStatusBarVisibility},
+    dispatch
+  );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(StatusBarContainer);

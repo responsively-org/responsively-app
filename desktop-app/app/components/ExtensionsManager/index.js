@@ -6,14 +6,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/DeleteOutlined';
+import FolderOpenIcon from '@material-ui/icons/FolderOpenOutlined';
 import ExtensionsIcon from '@material-ui/icons/Extension';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {remote, ipcRenderer} from 'electron';
 import cx from 'classnames';
-import styles from './styles.css';
-import commonStyles from '../common.styles.css';
-import {lightIconsColor} from '../../constants/colors';
-import helpScreenshot from './help-screenshot.png';
 import {
   makeStyles,
   Popper,
@@ -22,6 +19,10 @@ import {
   Typography,
   ClickAwayListener,
 } from '@material-ui/core';
+import styles from './styles.css';
+import commonStyles from '../common.styles.css';
+import {lightIconsColor} from '../../constants/colors';
+import helpScreenshot from './help-screenshot.png';
 
 const useStyles = makeStyles({
   adornedEnd: {
@@ -31,11 +32,10 @@ const useStyles = makeStyles({
 
 export default function ExtensionsManager({triggerNavigationReload}) {
   const {BrowserWindow} = remote;
-  const getInstalledExtensions = () => {
-    return Object.values(BrowserWindow.getDevToolsExtensions()).sort((a, b) =>
+  const getInstalledExtensions = () =>
+    Object.values(BrowserWindow.getDevToolsExtensions()).sort((a, b) =>
       a.name.localeCompare(b.name)
     );
-  };
 
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -54,21 +54,21 @@ export default function ExtensionsManager({triggerNavigationReload}) {
     if (loading) {
       return;
     }
+    // validate the extension id.
+    if (!validateExtensionId(extensionId)) {
+      setErrorMessage('Please enter a valid extension ID');
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setErrorMessage('');
-
-    const id = extensionId
-      .replace(/\/$/, '')
-      .split('/')
-      .pop();
-
     try {
-      await ipcRenderer.invoke('install-extension', id);
+      await ipcRenderer.invoke('install-extension', extensionId);
       setExtensions(getInstalledExtensions());
       setExtensionId('');
       triggerNavigationReload();
-    } catch (e) {
+    } catch {
       setErrorMessage('Error while installing the extension.');
     } finally {
       setLoading(false);
@@ -95,6 +95,18 @@ export default function ExtensionsManager({triggerNavigationReload}) {
     setAnchorEl(event.currentTarget);
     setHelpOpen(!helpOpen);
   };
+
+  const getLocalExtensionPath = async event => {
+    const localExtensionPath = await ipcRenderer.invoke(
+      'get-local-extension-path'
+    );
+
+    setExtensionId(localExtensionPath);
+  };
+
+  const validateExtensionId = extensionId =>
+    (extensionId.match(/^[a-z]+$/) && extensionId.length === 32) ||
+    /[<>:"/\\|?]/.test(extensionId);
 
   return (
     <>
@@ -151,6 +163,17 @@ export default function ExtensionsManager({triggerNavigationReload}) {
                           htmlColor={lightIconsColor}
                         />
                       </IconButton>
+
+                      <IconButton
+                        onClick={getLocalExtensionPath}
+                        size="small"
+                        title="Install local devtools extension"
+                      >
+                        <FolderOpenIcon
+                          fontSize="small"
+                          htmlColor={lightIconsColor}
+                        />
+                      </IconButton>
                     </InputAdornment>
                   ),
                 }}
@@ -162,7 +185,7 @@ export default function ExtensionsManager({triggerNavigationReload}) {
           </form>
 
           {errorMessage && (
-            <FormHelperText error={true}>{errorMessage}</FormHelperText>
+            <FormHelperText error>{errorMessage}</FormHelperText>
           )}
 
           <FormHelperText className={styles.extensionsNotice}>

@@ -3,11 +3,11 @@ import React, {Component} from 'react';
 import {Provider} from 'react-redux';
 import {ConnectedRouter} from 'connected-react-router';
 import log from 'electron-log';
-import type {Store} from '../reducers/types';
-import Routes from '../Routes';
 import {createMuiTheme, makeStyles} from '@material-ui/core/styles';
 import {ThemeProvider} from '@material-ui/styles';
 import {grey} from '@material-ui/core/colors';
+import Routes from '../Routes';
+import type {Store} from '../reducers/types';
 import {themeColor} from '../constants/colors';
 import ErrorBoundary from '../components/ErrorBoundary';
 
@@ -29,7 +29,7 @@ import {
   deleteCookies,
   deleteStorage,
 } from '../actions/browser';
-import {toggleBookmarkUrl} from '../actions/bookmarks'
+import {toggleBookmarkUrl} from '../actions/bookmarks';
 
 type Props = {
   store: Store,
@@ -56,7 +56,7 @@ const theme = createMuiTheme({
 });
 
 const getApp = history => {
-  if (true || process.env.NODE_ENV !== 'development') {
+  if (process.env.NODE_ENV !== 'development') {
     return (
       <ErrorBoundary>
         <ConnectedRouter history={history}>
@@ -77,8 +77,15 @@ export default class Root extends Component<Props> {
     this.registerAllShortcuts();
   }
 
+  componentWillUnmount() {
+    clearAllShortcuts();
+    document.removeEventListener('wheel', this.onWheel);
+  }
+
   registerAllShortcuts = () => {
     const {store} = this.props;
+    document.addEventListener('wheel', this.onWheel);
+
     registerShortcut(
       {id: 'ZoomIn', title: 'Zoom In', accelerators: ['mod+=', 'mod+shift+=']},
       () => {
@@ -206,19 +213,22 @@ export default class Root extends Component<Props> {
 
     registerShortcut(
       {
-        id: 'AddBookmark', 
-        title: 'Add Bookmark', 
-        accelerators: ['mod+d']
-      }, 
+        id: 'AddBookmark',
+        title: 'Add Bookmark',
+        accelerators: ['mod+d'],
+      },
       () => {
         store.dispatch(toggleBookmarkUrl(store.getState().browser.address));
-      }, 
+      },
       true
     );
   };
 
-  componentWillUnmount() {
-    clearAllShortcuts();
+  onWheel = (e) => {
+    if (e.ctrlKey) {
+      const {store} = this.props
+      store.dispatch(onZoomChange(store.getState().browser.zoomLevel + (e.deltaY < 0 ? 0.1 : -0.1)));
+    }
   }
 
   render() {

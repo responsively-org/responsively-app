@@ -2,6 +2,8 @@ import React from 'react';
 import cx from 'classnames';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
+import Input from '@material-ui/core/Input';
 import SettingsIcon from '@material-ui/icons/Settings';
 
 import commonStyles from '../common.styles.css';
@@ -70,9 +72,7 @@ export default function UserPreference({
             control={
               <Checkbox
                 checked={userPreferences.reopenLastAddress || false}
-                onChange={e =>
-                  onChange('reopenLastAddress', e.target.checked)
-                }
+                onChange={e => onChange('reopenLastAddress', e.target.checked)}
                 name="Reopen last opened address on start"
                 color="primary"
               />
@@ -80,6 +80,27 @@ export default function UserPreference({
             label={
               <span className={cx(styles.preferenceName)}>
                 Reopen last opened address on start
+              </span>
+            }
+          />
+        </div>
+      </div>
+      <div className={cx(commonStyles.sidebarContentSectionContainer)}>
+        <div>
+          <FormControlLabel
+            control={
+              <Input
+                type="color"
+                onChange={e => onChange('deviceOutlineStyle', e.target.value)}
+                name="Device Outline Color"
+                color="primary"
+                value={userPreferences.deviceOutlineStyle}
+                classes={{root: cx(styles.preferenceColor)}}
+              />
+            }
+            label={
+              <span className={cx(styles.preferenceName)}>
+                Device Outline Color
               </span>
             }
           />

@@ -13,10 +13,10 @@ export default function(props) {
       alignItems: 'center',
     },
     top: {
-      color: '#ffffff00', //'#eef3fd',
+      color: '#ffffff00', // '#eef3fd',
     },
     bottom: {
-      color: '#7587ec', //'#6798e5',
+      color: '#7587ec', // '#6798e5',
       animationDuration: '550ms',
       position: 'absolute',
     },
