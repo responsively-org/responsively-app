@@ -77,6 +77,88 @@ if (
   require('electron-debug')({isEnabled: true});
 }
 
+/**
+ * Add event listeners...
+ */
+app.on('will-finish-launching', () => {
+  if (process.platform === 'win32') {
+    urlToOpen = process.argv.filter(i => /^responsively/.test(i))[0];
+  }
+  if (['win32', 'darwin'].includes(process.platform)) {
+    if (process.argv.length >= 2) {
+      app.setAsDefaultProtocolClient(protocol, process.execPath, [
+        path.resolve(process.argv[1]),
+      ]);
+    } else {
+      app.setAsDefaultProtocolClient(protocol);
+    }
+  }
+});
+
+app.on('open-url', async (event, url) => {
+  if (mainWindow) {
+    openUrl(url);
+  } else {
+    urlToOpen = url;
+    if (!hasActiveWindow) {
+      createWindow();
+    }
+  }
+});
+
+app.on('window-all-closed', () => {
+  if (
+    false &&
+    process.env.NODE_ENV === 'development' &&
+    ['win32', 'darwin'].includes(process.platform)
+  ) {
+    app.removeAsDefaultProtocolClient(protocol);
+  }
+  // Respect the OSX convention of having the application in memory even
+  // after all windows have been closed
+  hasActiveWindow = false;
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+app.on(
+  'certificate-error',
+  (event, webContents, url, error, certificate, callback) => {
+    if (
+      getHostFromURL(url) === BROWSER_SYNC_HOST ||
+      (settings.get(USER_PREFERENCES) || {}).disableSSLValidation === true
+    ) {
+      event.preventDefault();
+      callback(true);
+    }
+  }
+);
+
+app.on('login', (event, webContents, request, authInfo, callback) => {
+  event.preventDefault();
+  const {url} = request;
+  if (httpAuthCallbacks[url]) {
+    return httpAuthCallbacks[url].push(callback);
+  }
+  httpAuthCallbacks[url] = [callback];
+  mainWindow.webContents.send('http-auth-prompt', {url});
+});
+
+app.on('activate', (event, hasVisibleWindows) => {
+  if (hasVisibleWindows || hasActiveWindow) {
+    return;
+  }
+  createWindow();
+});
+
+app.on('ready', () => {
+  if (hasActiveWindow) {
+    return;
+  }
+  createWindow();
+});
+
 const chooseOpenWindowHandler = url => {
   if (url == null || url.trim() === '' || url === 'about:blank#blocked')
     return 'none';
@@ -117,72 +199,6 @@ const openUrl = url => {
   );
   mainWindow.show();
 };
-
-/**
- * Add event listeners...
- */
-
-app.on('will-finish-launching', () => {
-  if (process.platform === 'win32') {
-    urlToOpen = process.argv.filter(i => /^responsively/.test(i))[0];
-  }
-  if (['win32', 'darwin'].includes(process.platform)) {
-    if (process.argv.length >= 2) {
-      app.setAsDefaultProtocolClient(protocol, process.execPath, [
-        path.resolve(process.argv[1]),
-      ]);
-    } else {
-      app.setAsDefaultProtocolClient(protocol);
-    }
-  }
-});
-
-app.on('open-url', async (event, url) => {
-  if (mainWindow) {
-    openUrl(url);
-  } else {
-    urlToOpen = url;
-    if (!hasActiveWindow) {
-      createWindow();
-    }
-  }
-});
-
-app.on('window-all-closed', () => {
-  if (false && process.env.NODE_ENV === 'development') {
-    ['win32', 'darwin'].includes(process.platform) &&
-      app.removeAsDefaultProtocolClient(protocol);
-  }
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  hasActiveWindow = false;
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-app.on(
-  'certificate-error',
-  (event, webContents, url, error, certificate, callback) => {
-    if (
-      getHostFromURL(url) === BROWSER_SYNC_HOST ||
-      (settings.get(USER_PREFERENCES) || {}).disableSSLValidation === true
-    ) {
-      event.preventDefault();
-      callback(true);
-    }
-  }
-);
-
-app.on('login', (event, webContents, request, authInfo, callback) => {
-  event.preventDefault();
-  const {url} = request;
-  if (httpAuthCallbacks[url]) {
-    return httpAuthCallbacks[url].push(callback);
-  }
-  httpAuthCallbacks[url] = [callback];
-  mainWindow.webContents.send('http-auth-prompt', {url});
-});
 
 const createWindow = async () => {
   hasActiveWindow = true;
@@ -426,12 +442,3 @@ const createWindow = async () => {
   // Remove this if your app does not use auto updates
   appUpdater.checkForUpdatesAndNotify();
 };
-
-app.on('activate', (event, hasVisibleWindows) => {
-  if (hasVisibleWindows) {
-    return;
-  }
-  createWindow();
-});
-
-app.on('ready', createWindow);

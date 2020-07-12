@@ -7,7 +7,7 @@ import * as BrowserActions from '../../actions/browser';
 import * as BookmarksActions from '../../actions/bookmarks';
 import {BookmarksBar} from '../../components/BookmarksBar';
 
-const BookmarksBarContainer = function(props) {
+const BookmarksBarContainer = props => {
   const handleBookmarkClick = useCallback(bookmark => {
     props.onAddressChange(bookmark.url);
   }, []);

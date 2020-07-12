@@ -171,7 +171,7 @@ function _getScreenshotFileName(
     .reverse()
     .join('-')} at ${now
     .toLocaleTimeString([], {hour12: true})
-    .replace(/\:/g, '.')
+    .replace(/:/g, '.')
     .toUpperCase()}`;
   const directoryPath = createSeparateDir ? `${dateString}/` : '';
   return {
@@ -192,7 +192,7 @@ export const getWebsiteName = address => {
   if (address.startsWith('file://')) {
     const fileNameStartingIndex = address.lastIndexOf('/') + 1;
     let htmIndex = address.indexOf('.htm');
-    if (htmIndex == -1) {
+    if (htmIndex === -1) {
       htmIndex = address.length;
     }
     domain = address.substring(fileNameStartingIndex, htmIndex);

@@ -86,7 +86,9 @@ export default function ExtensionsManager({triggerNavigationReload}) {
 
   const toggleHelp = event => {
     if (helpOpen) {
-      event && event.stopPropagation();
+      if (event) {
+        event.stopPropagation();
+      }
       return setHelpOpen(!helpOpen);
     }
     if (!event.currentTarget.type) {
