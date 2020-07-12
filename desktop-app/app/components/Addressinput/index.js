@@ -59,8 +59,9 @@ class AddressBar extends React.Component<Props> {
     if (!this.state.userTypedAddress) {
       return;
     }
-    this.props.onChange &&
+    if (this.props.onChange) {
       this.props.onChange(this._normalize(this.state.userTypedAddress), true);
+    }
   };
 
   constructor(props) {

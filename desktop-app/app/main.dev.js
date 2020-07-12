@@ -104,9 +104,12 @@ app.on('open-url', async (event, url) => {
 });
 
 app.on('window-all-closed', () => {
-  if (false && process.env.NODE_ENV === 'development') {
-    ['win32', 'darwin'].includes(process.platform) &&
-      app.removeAsDefaultProtocolClient(protocol);
+  if (
+    false &&
+    process.env.NODE_ENV === 'development' &&
+    ['win32', 'darwin'].includes(process.platform)
+  ) {
+    app.removeAsDefaultProtocolClient(protocol);
   }
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed

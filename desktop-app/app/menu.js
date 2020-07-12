@@ -246,6 +246,8 @@ export default class MenuBuilder {
         label = 'Update Downloaded';
         enabled = false;
         break;
+      default:
+        break;
     }
 
     return {label, enabled};

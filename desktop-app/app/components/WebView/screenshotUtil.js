@@ -171,7 +171,7 @@ function _getScreenshotFileName(
     .reverse()
     .join('-')} at ${now
     .toLocaleTimeString([], {hour12: true})
-    .replace(/\:/g, '.')
+    .replace(/:/g, '.')
     .toUpperCase()}`;
   const directoryPath = createSeparateDir ? `${dateString}/` : '';
   return {

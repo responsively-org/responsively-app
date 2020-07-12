@@ -62,6 +62,8 @@ export default function BrowserZoom(props) {
         return props.onZoomChange(props.browser.zoomLevel + 0.1);
       case 'zoomOut':
         return props.onZoomChange(props.browser.zoomLevel - 0.1);
+      default:
+        break;
     }
   };
 

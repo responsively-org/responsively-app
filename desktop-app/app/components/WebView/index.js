@@ -214,7 +214,8 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener('will-navigate', urlChangeHandler);
 
     this.webviewRef.current.addEventListener('did-navigate-in-page', event => {
-      navigationHandler(event), urlChangeHandler(event);
+      navigationHandler(event);
+      urlChangeHandler(event);
     });
 
     this.webviewRef.current.addEventListener('did-navigate', event => {
@@ -512,8 +513,9 @@ class WebView extends Component {
   };
 
   _flipOrientation = () => {
-    this.props.sendFlipStatus &&
+    if (this.props.sendFlipStatus) {
       this.props.sendFlipStatus(!this.state.isTilted);
+    }
     this.setState({isTilted: !this.state.isTilted});
   };
 

@@ -15,7 +15,7 @@ export default function BookmarkEditDialog({
   const titleInput = useRef(null);
   const urlInput = useRef(null);
 
-  const handleSubmit = function(e) {
+  const handleSubmit = function handleSubmit(e) {
     onSubmit(
       titleInput.current.querySelector('input').value,
       urlInput.current.querySelector('input').value
@@ -23,7 +23,7 @@ export default function BookmarkEditDialog({
     onClose();
   };
 
-  const handleKeyPress = function(e) {
+  const handleKeyPress = function handleKeyPress(e) {
     if (e.key === 'Enter') {
       handleSubmit(e);
     } else if (e.key === 'Escape') {
