@@ -218,6 +218,7 @@ class WebView extends Component {
     });
 
     this.webviewRef.current.addEventListener('did-navigate', event => {
+      urlChangeHandler(event);
       navigationHandler(event);
     });
 

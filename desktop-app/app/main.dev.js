@@ -74,51 +74,9 @@ if (
   require('electron-debug')({isEnabled: true});
 }
 
-const chooseOpenWindowHandler = url => {
-  if (url == null || url.trim() === '' || url === 'about:blank#blocked')
-    return 'none';
-
-  if (url === 'about:blank') return 'useWindow';
-
-  if (isURL(url, {protocols: ['http', 'https']})) return 'useWindow';
-
-  let urlObj = null;
-  try {
-    urlObj = new URL(url);
-  } catch {}
-
-  if (
-    urlObj != null &&
-    urlObj.protocol === 'file:' &&
-    (urlObj.pathname.endsWith('.html') || urlObj.pathname.endsWith('.htm'))
-  )
-    return 'useWindow';
-
-  return 'useShell';
-};
-
-const installExtensions = async () => {
-  const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
-  try {
-    await installExtension(extensions);
-    devtron.install();
-  } catch (err) {
-    console.log('Error installing extensions', err);
-  }
-};
-
-const openUrl = url => {
-  mainWindow.webContents.send(
-    'address-change',
-    url.replace(`${protocol}://`, '')
-  );
-  mainWindow.show();
-};
-
 /**
  * Add event listeners...
  */
-
 app.on('will-finish-launching', () => {
   if (process.platform === 'win32') {
     urlToOpen = process.argv.filter(i => /^responsively/.test(i))[0];
@@ -177,6 +135,61 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
   httpAuthCallbacks[url] = [callback];
   mainWindow.webContents.send('http-auth-prompt', {url});
 });
+
+app.on('activate', (event, hasVisibleWindows) => {
+  if (hasVisibleWindows || hasActiveWindow) {
+    return;
+  }
+  createWindow();
+});
+
+app.on('ready', () => {
+  if (hasActiveWindow) {
+    return;
+  }
+  createWindow();
+});
+
+const chooseOpenWindowHandler = url => {
+  if (url == null || url.trim() === '' || url === 'about:blank#blocked')
+    return 'none';
+
+  if (url === 'about:blank') return 'useWindow';
+
+  if (isURL(url, {protocols: ['http', 'https']})) return 'useWindow';
+
+  let urlObj = null;
+  try {
+    urlObj = new URL(url);
+  } catch {}
+
+  if (
+    urlObj != null &&
+    urlObj.protocol === 'file:' &&
+    (urlObj.pathname.endsWith('.html') || urlObj.pathname.endsWith('.htm'))
+  )
+    return 'useWindow';
+
+  return 'useShell';
+};
+
+const installExtensions = async () => {
+  const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
+  try {
+    await installExtension(extensions);
+    devtron.install();
+  } catch (err) {
+    console.log('Error installing extensions', err);
+  }
+};
+
+const openUrl = url => {
+  mainWindow.webContents.send(
+    'address-change',
+    url.replace(`${protocol}://`, '')
+  );
+  mainWindow.show();
+};
 
 const createWindow = async () => {
   hasActiveWindow = true;
@@ -417,12 +430,3 @@ const createWindow = async () => {
   // Remove this if your app does not use auto updates
   appUpdater.checkForUpdatesAndNotify();
 };
-
-app.on('activate', (event, hasVisibleWindows) => {
-  if (hasVisibleWindows) {
-    return;
-  }
-  createWindow();
-});
-
-app.on('ready', createWindow);
