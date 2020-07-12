@@ -199,7 +199,7 @@ class WebView extends Component {
         return;
       }
       await new Promise(r => setTimeout(r, 200));
-      //this.props.onAddressChange(url);
+      // this.props.onAddressChange(url);
     };
 
     const navigationHandler = event => {
@@ -434,25 +434,27 @@ class WebView extends Component {
 
   initEventTriggers = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
+
+
       console.log('browser-sync-script');
       var bsScript= document.createElement("script");
       bsScript.src = "https://localhost:3000/browser-sync/browser-sync-client.js?v=2.26.7";
       bsScript.async = true
-      document.body.appendChild(bsScript);`);
-    // this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-    //   responsivelyApp.deviceId = '${this.props.device.id}';
-    //   document.addEventListener('mouseleave', () => {
-    //     window.responsivelyApp.mouseOn = false;
-    //     if (responsivelyApp.domInspectorEnabled) {
-    //       responsivelyApp.domInspector.disable();
-    //     }
-    //   });
-    //   document.addEventListener('mouseenter', () => {
-    //     responsivelyApp.mouseOn = true;
-    //     if (responsivelyApp.domInspectorEnabled) {
-    //       responsivelyApp.domInspector.enable();
-    //     }
-    //   });
+      document.body.appendChild(bsScript);
+    
+      responsivelyApp.deviceId = '${this.props.device.id}';
+      document.addEventListener('mouseleave', () => {
+        window.responsivelyApp.mouseOn = false;
+        if (responsivelyApp.domInspectorEnabled) {
+          responsivelyApp.domInspector.disable();
+        }
+      });
+      document.addEventListener('mouseenter', () => {
+        responsivelyApp.mouseOn = true;
+        if (responsivelyApp.domInspectorEnabled) {
+          responsivelyApp.domInspector.enable();
+        }
+      });
 
     //   document.addEventListener('scroll', (e) => {
     //     if (!responsivelyApp.mouseOn) {
