@@ -30,6 +30,7 @@ import {
   STOP_LOADING,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
+import DevToolsService from '../../services/dev-tools';
 
 import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
@@ -80,6 +81,7 @@ class WebView extends Component {
 
   componentDidMount() {
     // this.initDeviceEmulationParams();
+    DevToolsService.refreshTargets();
     this.webviewRef.current.addEventListener(
       'ipc-message',
       this.messageHandler
@@ -140,7 +142,7 @@ class WebView extends Component {
       )
     );
 
-    this.webviewRef.current.addEventListener('dom-ready', () => {
+    this.webviewRef.current.addEventListener('dom-ready', async () => {
       this.initEventTriggers(this.webviewRef.current);
     });
 
@@ -292,7 +294,14 @@ class WebView extends Component {
   };
 
   processAddressChangeEvent = ({address, force}) => {
+    console.log(
+      'processAddressChangeEvent address, force',
+      address,
+      force,
+      this.webviewRef.current.src
+    );
     if (address !== this.webviewRef.current.src) {
+      console.log('Inside if');
       if (force) {
         this.webviewRef.current.loadURL(address);
       }
@@ -632,19 +641,23 @@ class WebView extends Component {
             useragent={useragent}
             style={responsiveStyle}
           />
+          <webview id={`dev-tools-${this.props.key}`} src="about:blank" />
         </Resizable>
       );
     }
 
     return (
-      <webview
-        ref={this.webviewRef}
-        preload="./preload.js"
-        className={cx(styles.device)}
-        src={address || 'about:blank'}
-        useragent={useragent}
-        style={deviceStyles}
-      />
+      <>
+        <webview
+          ref={this.webviewRef}
+          preload="./preload.js"
+          className={cx(styles.device)}
+          src={address || 'about:blank'}
+          useragent={useragent}
+          style={deviceStyles}
+        />
+        <webview id="dev-tools-1" src="about:blank" />
+      </>
     );
   };
 

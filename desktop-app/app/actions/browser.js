@@ -21,6 +21,7 @@ import {
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
+import DevToolsService from '../services/dev-tools';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_PAGE_META_FIELD = 'NEW_PAGE_META_FIELD';
@@ -694,13 +695,13 @@ export function onAllDevicesMutedChange() {
     } = getState();
     const next = !allDevicesMuted;
     pubsub.publish(TOGGLE_DEVICE_MUTED_STATE, [{muted: next}]);
-    dispatch(toggleAllDevicesMuted(next))
+    dispatch(toggleAllDevicesMuted(next));
   };
 }
 
 export function onDeviceMutedChange(deviceId, isMuted) {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    dispatch(toggleDeviceMuted(deviceId, isMuted))
+    dispatch(toggleDeviceMuted(deviceId, isMuted));
   };
 }
 
@@ -710,11 +711,12 @@ export function toggleInspector() {
       browser: {isInspecting},
     } = getState();
 
-    pubsub.publish(
+    /* pubsub.publish(
       !isInspecting
         ? ENABLE_INSPECTOR_ALL_DEVICES
         : DISABLE_INSPECTOR_ALL_DEVICES
-    );
+    ); */
+    DevToolsService.enableUniversalInspector();
 
     dispatch(newInspectorState(!isInspecting));
   };

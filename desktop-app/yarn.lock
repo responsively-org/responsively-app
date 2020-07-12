@@ -3693,7 +3693,7 @@ bluebird-lst@^1.0.9:
   dependencies:
     bluebird "^3.5.5"
 
-bluebird@^3.5.5:
+bluebird@^3.5.5, bluebird@^3.7.2:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
   integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
@@ -4403,6 +4403,14 @@ chrome-remote-interface@^0.27.0:
   dependencies:
     commander "2.11.x"
     ws "^6.1.0"
+
+chrome-remote-interface@^0.28.2:
+  version "0.28.2"
+  resolved "https://registry.yarnpkg.com/chrome-remote-interface/-/chrome-remote-interface-0.28.2.tgz#6be3554d2c227ff07eb74baa7e5d4911da12a5a6"
+  integrity sha512-F7mjof7rWvRNsJqhVXuiFU/HWySCxTA9tzpLxUJxVfdLkljwFJ1aMp08AnwXRmmP7r12/doTDOMwaNhFCJsacw==
+  dependencies:
+    commander "2.11.x"
+    ws "^7.2.0"
 
 chrome-trace-event@^1.0.2:
   version "1.0.2"
@@ -16233,6 +16241,11 @@ ws@^6.0.0, ws@^6.1.0, ws@^6.2.1:
   integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
   dependencies:
     async-limiter "~1.0.0"
+
+ws@^7.2.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.3.0.tgz#4b2f7f219b3d3737bc1a2fbf145d825b94d38ffd"
+  integrity sha512-iFtXzngZVXPGgpTlP1rBqsUK82p9tKqsWRPg5L56egiljujJT3vGAYnHANvFxBieXrTFavhzhxW52jnaWV+w2w==
 
 x-is-string@^0.1.0:
   version "0.1.0"
