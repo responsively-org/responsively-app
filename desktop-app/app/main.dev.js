@@ -359,6 +359,17 @@ const createWindow = async () => {
     }
   });
 
+  ipcMain.handle('get-screen-shot-save-path', async event => {
+    try {
+      const {filePaths = []} = await dialog.showOpenDialog({
+        properties: ['openDirectory'],
+      });
+      return filePaths[0];
+    } catch {
+      return '';
+    }
+  });
+
   ipcMain.on('open-devtools', (event, ...args) => {
     const {webViewId, bounds, mode} = args[0];
     if (!webViewId) {

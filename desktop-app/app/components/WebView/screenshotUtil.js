@@ -10,6 +10,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import PromiseWorker from 'promise-worker';
 import NotificationMessage from '../NotificationMessage';
+import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 
@@ -174,12 +175,15 @@ function _getScreenshotFileName(
     .replace(/:/g, '.')
     .toUpperCase()}`;
   const directoryPath = createSeparateDir ? `${dateString}/` : '';
+  const userSelectedScreenShotSavePath = userPreferenceSettings.getScreenShotSavePath();
   return {
-    dir: path.join(
-      os.homedir(),
-      `Desktop/Responsively-Screenshots`,
-      directoryPath
-    ),
+    dir:
+      userSelectedScreenShotSavePath ||
+      path.join(
+        os.homedir(),
+        `Desktop/Responsively-Screenshots`,
+        directoryPath
+      ),
     file: `${getWebsiteName(address)} - ${device.name.replace(
       /\//g,
       '-'
