@@ -513,6 +513,8 @@ class WebView extends Component {
   };
 
   _flipOrientation = () => {
+    if (!this.isMobile) return;
+
     if (this.props.sendFlipStatus) {
       this.props.sendFlipStatus(!this.state.isTilted);
     }
