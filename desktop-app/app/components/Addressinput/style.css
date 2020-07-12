@@ -7,7 +7,7 @@
   padding: 14px 10px;
   border-radius: 20px;
   background: unset;
-  color: #ffffffcc;
+  color: #fffc;
   border: solid 1px #ffffff80;
   outline: none;
   transition: border 500ms ease-out;
@@ -41,7 +41,7 @@
 }
 
 .searchBarSuggestionsContainer {
-  width: 885px;
+  width: 100%;
   max-height: 20em;
   position: absolute;
   left: -1px;
@@ -62,7 +62,7 @@
 }
 
 .searchBarSuggestionsListUl {
-  padding: 0px;
+  padding: 0;
   list-style: none;
 }
 
