@@ -438,9 +438,9 @@ class WebView extends Component {
   initEventTriggers = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
 
-      var bsScript= document.createElement("script");
-      bsScript.src = "${BROWSER_SYNC_EMBED_SCRIPT}";
-      bsScript.async = true
+      var bsScript= document.createElement('script');
+      bsScript.src = '${BROWSER_SYNC_EMBED_SCRIPT}';
+      bsScript.async = true;
       document.body.appendChild(bsScript);
     
       responsivelyApp.deviceId = '${this.props.device.id}';
@@ -456,51 +456,6 @@ class WebView extends Component {
           responsivelyApp.domInspector.enable();
         }
       });
-
-    //   document.addEventListener('scroll', (e) => {
-    //     if (!responsivelyApp.mouseOn) {
-    //       return;
-    //     }
-    //     window.responsivelyApp.sendMessageToHost(
-    //       '${MESSAGE_TYPES.scroll}',
-    //       {
-    //         position: {x: window.scrollX, y: window.scrollY},
-    //       }
-    //     );
-    //   });
-
-    //   document.addEventListener(
-    //     'click',
-    //     (e) => {
-    //       if (e.target === window.responsivelyApp.lastClickElement || e.responsivelyAppProcessed) {
-    //         window.responsivelyApp.lastClickElement = null;
-    //         e.responsivelyAppProcessed = true;
-    //         return;
-    //       }
-    //       if (window.responsivelyApp.domInspectorEnabled) {
-    //         e.preventDefault();
-    //         window.responsivelyApp.domInspector.disable();
-    //         window.responsivelyApp.domInspectorEnabled = false;
-    //         const targetRect = e.target.getBoundingClientRect();
-    //         window.responsivelyApp.sendMessageToHost(
-    //           '${MESSAGE_TYPES.disableInspector}'
-    //         );
-    //         window.responsivelyApp.sendMessageToHost(
-    //           '${MESSAGE_TYPES.openDevToolsInspector}',
-    //           {x: targetRect.left, y: targetRect.top}
-    //         );
-    //         return;
-    //       }
-    //       e.responsivelyAppProcessed = true;
-    //       window.responsivelyApp.sendMessageToHost(
-    //         '${MESSAGE_TYPES.click}',
-    //         {
-    //           cssPath: window.responsivelyApp.cssPath(e.target),
-    //         }
-    //       );
-    //     },
-    //     true
-    //   );
     `);
   };
 
