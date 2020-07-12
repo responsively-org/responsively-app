@@ -155,7 +155,7 @@ class AddressBar extends React.Component<Props> {
               [commonStyles.enabled]:
                 this.props.address !== this.props.homepage,
               [commonStyles.disabled]:
-                this.props.address == this.props.homepage,
+                this.props.address === this.props.homepage,
             })}
           >
             <Tooltip title="Set as Homepage">

@@ -45,7 +45,7 @@ export default function DevicesPreviewer(props) {
       focusedDeviceIndex = 0;
     }
 
-    if (focusedDeviceIndex != activeTab) {
+    if (focusedDeviceIndex !== activeTab) {
       changeTab(focusedDeviceIndex);
     }
   }

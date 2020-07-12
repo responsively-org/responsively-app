@@ -192,7 +192,7 @@ export const getWebsiteName = address => {
   if (address.startsWith('file://')) {
     const fileNameStartingIndex = address.lastIndexOf('/') + 1;
     let htmIndex = address.indexOf('.htm');
-    if (htmIndex == -1) {
+    if (htmIndex === -1) {
       htmIndex = address.length;
     }
     domain = address.substring(fileNameStartingIndex, htmIndex);

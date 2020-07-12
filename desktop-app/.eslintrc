@@ -17,7 +17,6 @@
     "consistent-return": "off",
     "comma-dangle": "off",
     "default-case": "off",
-    "eqeqeq": "off",
     "func-names": "off",
     "flowtype/boolean-style": ["error", "boolean"],
     "flowtype/define-flow-type": "warn",

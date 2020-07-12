@@ -333,7 +333,7 @@ export default function browser(
       const existingCustomDevices = settings.get(CUSTOM_DEVICES) || [];
       settings.set(
         CUSTOM_DEVICES,
-        existingCustomDevices.filter(device => device.id != action.device.id)
+        existingCustomDevices.filter(device => device.id !== action.device.id)
       );
       return {...state, allDevices: getAllDevices()};
     case NEW_FILTERS:

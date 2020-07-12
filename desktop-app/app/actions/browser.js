@@ -480,7 +480,7 @@ export function onDevToolsModeChange(newMode) {
       mode: newMode,
       open: newOpen,
     };
-    if (newMode != DEVTOOLS_MODES.UNDOCKED) {
+    if (newMode !== DEVTOOLS_MODES.UNDOCKED) {
       const size = getDefaultDevToolsWindowSize(newMode, windowSize);
       const bounds = getBounds(newMode, size, windowSize);
       newConfig = {
@@ -635,7 +635,7 @@ export function onDevToolsClose(devToolsInfo, closeAll) {
     devToolsToClose.forEach(({webViewId}) => {
       ipcRenderer.send('close-devtools', {webViewId});
       newActiveDevTools = newActiveDevTools.filter(
-        ({webViewId: _webViewId}) => _webViewId != webViewId
+        ({webViewId: _webViewId}) => _webViewId !== webViewId
       );
     });
 
@@ -694,13 +694,13 @@ export function onAllDevicesMutedChange() {
     } = getState();
     const next = !allDevicesMuted;
     pubsub.publish(TOGGLE_DEVICE_MUTED_STATE, [{muted: next}]);
-    dispatch(toggleAllDevicesMuted(next))
+    dispatch(toggleAllDevicesMuted(next));
   };
 }
 
 export function onDeviceMutedChange(deviceId, isMuted) {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    dispatch(toggleDeviceMuted(deviceId, isMuted))
+    dispatch(toggleDeviceMuted(deviceId, isMuted));
   };
 }
 
