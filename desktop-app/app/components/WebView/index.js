@@ -513,10 +513,19 @@ class WebView extends Component {
   };
 
   _flipOrientation = () => {
+    if (!this.isMobile) return;
+
     if (this.props.sendFlipStatus) {
       this.props.sendFlipStatus(!this.state.isTilted);
     }
-    this.setState({isTilted: !this.state.isTilted});
+    const flippedDeviceDims = {
+      width: this.state.deviceDimensions.height,
+      height: this.state.deviceDimensions.width,
+    };
+    this.setState({
+      isTilted: !this.state.isTilted,
+      deviceDimensions: flippedDeviceDims,
+    });
   };
 
   _unPlug = () => {
@@ -543,6 +552,7 @@ class WebView extends Component {
     this.getWebContents().setAudioMuted(true);
     this.props.onDeviceMutedChange(this.props.device.id, true);
   };
+
   _unmuteDevice = () => {
     this.getWebContents().setAudioMuted(false);
     this.props.onDeviceMutedChange(this.props.device.id, false);
@@ -574,7 +584,7 @@ class WebView extends Component {
     const {
       device: {id, useragent, capabilities},
     } = this.props;
-    const {deviceDimensions, address} = this.state;
+    const {deviceDimensions, address, isTilted} = this.state;
 
     if (capabilities.includes(CAPABILITIES.responsive)) {
       const responsiveStyle = {
@@ -654,9 +664,9 @@ class WebView extends Component {
   render() {
     const {
       browser: {zoomLevel, previewer},
+      device: {capabilities},
     } = this.props;
     const {
-      isTilted,
       deviceDimensions,
       errorCode,
       errorDesc,
@@ -664,16 +674,11 @@ class WebView extends Component {
     } = this.state;
     const deviceStyles = {
       outline: `4px solid ${this.props.browser.userPreferences.deviceOutlineStyle}`,
-      width:
-        this.isMobile && isTilted
-          ? deviceDimensions.height
-          : deviceDimensions.width,
-      height:
-        this.isMobile && isTilted
-          ? deviceDimensions.width
-          : deviceDimensions.height,
+      width: deviceDimensions.width,
+      height: deviceDimensions.height,
     };
     const isMuted = this.props.device.isMuted;
+    const isResponsive = capabilities.includes(CAPABILITIES.responsive);
     const shouldMaximize = previewer.layout !== INDIVIDUAL_LAYOUT;
     const IconFocus = () => {
       if (shouldMaximize)
@@ -682,7 +687,9 @@ class WebView extends Component {
     };
     return (
       <div
-        className={cx(styles.webViewContainer)}
+        className={cx(styles.webViewContainer, {
+          [styles.withMarginRight]: isResponsive,
+        })}
         style={{
           width: deviceStyles.width * zoomLevel,
           height: deviceStyles.height * zoomLevel + 40,
