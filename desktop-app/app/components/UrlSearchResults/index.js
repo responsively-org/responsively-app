@@ -3,7 +3,7 @@ import React from 'react';
 const UrlSearchResults = ({
   divClassName,
   listItemsClassName,
-  existingSearchResults,
+  filteredSearchResults,
   handleUrlChange,
   activeClass,
   listItemUiClassName
@@ -11,7 +11,7 @@ const UrlSearchResults = ({
   return(
      <div className = { divClassName }>
        <ul className={ listItemUiClassName }>
-      {existingSearchResults?.map((eachResult,index)=>{
+      {filteredSearchResults?.map((eachResult,index)=>{
         return(
          <li onKeyDown={(e)=>handleOnKeyDown(e,eachResult.url)} key={ index } onClick={ ()=>handleUrlChange(eachResult.url,index) } className={ `${listItemsClassName}` }> { eachResult.url }</li>
         )

@@ -34,10 +34,8 @@ class AddressBar extends React.Component<Props> {
       userTypedAddress: props.address,
       previousAddress: props.address,
       finalUrlResult :null,
-      previousSearchResults: getExistingSearchResults()
     };
     this.inputRef = React.createRef();
-    this._filterExistingUrl = debounce(this._filterExistingUrl, 300);
   }
 
     componentDidMount() {
@@ -191,7 +189,7 @@ class AddressBar extends React.Component<Props> {
          divClassName={ cx(styles.searchBarSuggestionsContainer) }
          listItemUiClassName = { cx(styles.searchBarSuggestionsListUl) }
          listItemsClassName = { cx(styles.searchBarSuggestionsListItems) }
-         existingSearchResults = { this.state.finalUrlResult }
+         filteredSearchResults = { this.state.finalUrlResult }
          handleUrlChange = { this._onSearchedUrlClick }
         />
        :''}
@@ -209,16 +207,18 @@ class AddressBar extends React.Component<Props> {
   _handleKeyDown = e => {
     if (e.key === 'Enter') {
       this.inputRef.current.blur();
-      this._onChange(false);
-      this._addUrlToExistingSearchResult();
+      this.setState({
+        finalUrlResult:[]
+      },()=>{
+        this._onChange();
+      })
     }
   };
 
-  _onChange = (isNotFromEnter=true) => { //isNotFromEnter is used to hide the search result if the enter key is pressed!
+  _onChange = () => {
     if (!this.state.userTypedAddress) {
       return;
     }
-    isNotFromEnter && this._filterExistingUrl();
     this.props.onChange &&
       this.props.onChange(this._normalize(this.state.userTypedAddress), true);
   };
@@ -231,14 +231,9 @@ class AddressBar extends React.Component<Props> {
       this.setState({
         userTypedAddress: url,
         finalUrlResult:[]
-      },()=>{
-        //for increasing the visited count
-        this._addUrlToExistingSearchResult();
       });
 
   }
-
-
 
   _normalize = address => {
     if (address.indexOf('://') === -1) {
@@ -251,22 +246,12 @@ class AddressBar extends React.Component<Props> {
     return address;
   };
 
-  _addUrlToExistingSearchResult = () => {
 
-    this.props.onChange(this._normalize(this.state.userTypedAddress), true);
-    let updateUrlResult = updateExistingUrl(this.state.previousSearchResults,this._normalize(this.state.userTypedAddress));
-
-    this.setState({
-      finalUrlResult:[],
-      previousSearchResults: updateUrlResult
-    })
-  }
-
-
-  _filterExistingUrl = () => {
-    let finalResult = searchUrlUtils(this.state.previousSearchResults,this.state.userTypedAddress)
+  _filterExistingUrl = debounce(() => {
+    let finalResult = searchUrlUtils(this.state.userTypedAddress)
     this.setState({finalUrlResult: finalResult});
-  }
+  }, 300);
+
 
   _handleClickOutside = () => {
     this.setState({

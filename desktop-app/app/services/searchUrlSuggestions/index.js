@@ -3,6 +3,8 @@ import filter from 'lodash/filter';
 import settings from 'electron-settings';
 import {ADD_SEARCH_RESULTS} from '../../constants/searchResultSettings';
 
+let previousSearchResults = settings.get(ADD_SEARCH_RESULTS);
+
 export const getExistingSearchResults = () => {
   return settings.get(ADD_SEARCH_RESULTS);
 }
@@ -31,20 +33,16 @@ const _sortedExistingUrlSearchResult = (filteredData) => { //Most visited site s
 
 }
 
-/* **
-@params existingUrl,existingSearchResults is received from the function call
- */
 
-
-export const searchUrlUtils = (existingUrl,url) => {
-  const filteredData = filter(existingUrl, (eachResult) => eachResult.url.toLowerCase().includes(url));
+export const searchUrlUtils = (url) => {
+  const filteredData = filter(previousSearchResults, (eachResult) => eachResult.url.toLowerCase().includes(url));
   let finalResult = _sortedExistingUrlSearchResult(filteredData);
   return finalResult;
 }
 
-export const updateExistingUrl = (existingSearchResults,url )=> {
-  if(existingSearchResults?.length){
-   let updatedSearchResults = [...existingSearchResults];
+export const updateExistingUrl = (url )=> {
+  if(previousSearchResults?.length){
+   let updatedSearchResults = [...previousSearchResults];
 
    const index = updatedSearchResults.findIndex(eachSearchResult => eachSearchResult.url === url);
 
@@ -52,7 +50,7 @@ export const updateExistingUrl = (existingSearchResults,url )=> {
           updatedSearchResults.push({url: url,visitedCount:1})
 
    addUrlToSearchResults(updatedSearchResults);
-   return updatedSearchResults;
+   previousSearchResults = updatedSearchResults;
 
   }
 
@@ -63,7 +61,7 @@ export const updateExistingUrl = (existingSearchResults,url )=> {
         visitedCount: 1
       });
     addUrlToSearchResults(addNewUrl);
-    return addNewUrl;
+    previousSearchResults = addNewUrl;
   }
 }
 

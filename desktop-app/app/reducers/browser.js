@@ -47,8 +47,7 @@ import {
   saveHomepage,
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
-import {getExistingSearchResults,deleteSearchResults} from '../settings/urlSearchResultSettings';
-import console from 'electron-timber';
+import {updateExistingUrl} from '../services/searchUrlSuggestions'
 import trimStart from 'lodash/trimStart';
 
 export const FILTER_FIELDS = {
@@ -279,6 +278,7 @@ export default function browser(
     case NEW_ADDRESS:
       saveLastOpenedAddress(action.address);
       _updateFileWatcher(action.address);
+       updateExistingUrl(action.address);
       return {...state, address: action.address, currentPageMeta: {}};
     case NEW_PAGE_META_FIELD:
       return {
