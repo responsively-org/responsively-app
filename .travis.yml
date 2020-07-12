@@ -1,0 +1,5 @@
+os: osx
+before_install: cd desktop-app
+install: yarn
+script:
+  - yarn run package-mac
