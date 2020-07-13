@@ -1305,7 +1305,7 @@ export default {
       id: '34',
       type: 'emulated-device',
       device: {
-        'show-by-default': true,
+        'show-by-default': false,
         title: 'Responsive Mode',
         screen: {
           horizontal: {
