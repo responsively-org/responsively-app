@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - 12.13.0
+os: osx
+osx_image: xcode10.2
+before_install: cd desktop-app
+install: 
+  - brew install yarn
+  - yarn
+  - sh add-osx-cert.sh
+script:
+  - yarn run package-mac

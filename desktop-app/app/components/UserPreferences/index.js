@@ -9,6 +9,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import commonStyles from '../common.styles.css';
 import styles from './styles.module.css';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
+import ScreenShotSavePreference from '../ScreenShotSavePreference/index';
+import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 
 export default function UserPreference({
   devToolsConfig,
@@ -105,6 +107,15 @@ export default function UserPreference({
             }
           />
         </div>
+      </div>
+      <div className={cx(commonStyles.sidebarContentSectionContainer)}>
+        <ScreenShotSavePreference
+          screenShotSavePath={
+            userPreferences.screenShotSavePath ||
+            userPreferenceSettings.getDefaultScreenshotpath()
+          }
+          onScreenShotSaveLocationChange={onChange}
+        />
       </div>
     </div>
   );
