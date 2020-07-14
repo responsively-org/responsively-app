@@ -456,6 +456,33 @@ class WebView extends Component {
           responsivelyApp.domInspector.enable();
         }
       });
+
+      document.addEventListener(
+        'click',
+        (e) => {
+          if (e.target === window.responsivelyApp.lastClickElement || e.responsivelyAppProcessed) {
+            window.responsivelyApp.lastClickElement = null;
+            e.responsivelyAppProcessed = true;
+            return;
+          }
+          if (window.responsivelyApp.domInspectorEnabled) {
+            e.preventDefault();
+            window.responsivelyApp.domInspector.disable();
+            window.responsivelyApp.domInspectorEnabled = false;
+            const targetRect = e.target.getBoundingClientRect();
+            window.responsivelyApp.sendMessageToHost(
+              '${MESSAGE_TYPES.disableInspector}'
+            );
+            window.responsivelyApp.sendMessageToHost(
+              '${MESSAGE_TYPES.openDevToolsInspector}',
+              {x: targetRect.left, y: targetRect.top}
+            );
+            return;
+          }
+          e.responsivelyAppProcessed = true;
+        },
+        true
+      );
     `);
   };
 

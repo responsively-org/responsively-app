@@ -220,7 +220,6 @@ const createWindow = async () => {
       nodeIntegrationInWorker: true,
       webviewTag: true,
       enableRemoteModule: true,
-      webSecurity: false,
     },
     titleBarStyle: 'hidden',
     icon: iconPath,
