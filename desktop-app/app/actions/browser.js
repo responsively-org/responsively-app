@@ -199,12 +199,6 @@ export function onAddressChange(newURL, force) {
       return;
     }
 
-    const isHashDiff = isHashOnlyChange(newURL, address);
-
-    if (isHashDiff) {
-      return;
-    }
-
     dispatch(newAddress(newURL));
     pubsub.publish(ADDRESS_CHANGE, [{address: newURL, force: false}]);
   };

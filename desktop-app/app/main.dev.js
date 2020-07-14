@@ -39,6 +39,9 @@ import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager'
 import {appUpdater} from './app-updater';
 import trimStart from 'lodash/trimStart';
 import isURL from 'validator/lib/isURL';
+import {initBrowserSync} from './utils/browserSync';
+import {BROWSER_SYNC_HOST} from './constants/browserSync';
+import {getHostFromURL} from './utils/urlUtils';
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -122,7 +125,10 @@ app.on('window-all-closed', () => {
 app.on(
   'certificate-error',
   (event, webContents, url, error, certificate, callback) => {
-    if ((settings.get(USER_PREFERENCES) || {}).disableSSLValidation === true) {
+    if (
+      getHostFromURL(url) === BROWSER_SYNC_HOST ||
+      (settings.get(USER_PREFERENCES) || {}).disableSSLValidation === true
+    ) {
       event.preventDefault();
       callback(true);
     }
@@ -196,6 +202,8 @@ const openUrl = url => {
 
 const createWindow = async () => {
   hasActiveWindow = true;
+
+  initBrowserSync();
   if (process.env.NODE_ENV === 'development') {
     await installExtensions();
   }

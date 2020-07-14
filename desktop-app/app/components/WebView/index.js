@@ -43,6 +43,7 @@ import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
 import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
+import {BROWSER_SYNC_EMBED_SCRIPT} from '../../constants/browserSync';
 
 const {BrowserWindow} = remote;
 
@@ -436,6 +437,12 @@ class WebView extends Component {
 
   initEventTriggers = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
+
+      var bsScript= document.createElement('script');
+      bsScript.src = '${BROWSER_SYNC_EMBED_SCRIPT}';
+      bsScript.async = true;
+      document.body.appendChild(bsScript);
+    
       responsivelyApp.deviceId = '${this.props.device.id}';
       document.addEventListener('mouseleave', () => {
         window.responsivelyApp.mouseOn = false;
@@ -448,18 +455,6 @@ class WebView extends Component {
         if (responsivelyApp.domInspectorEnabled) {
           responsivelyApp.domInspector.enable();
         }
-      });
-
-      document.addEventListener('scroll', (e) => {
-        if (!responsivelyApp.mouseOn) {
-          return;
-        }
-        window.responsivelyApp.sendMessageToHost(
-          '${MESSAGE_TYPES.scroll}',
-          {
-            position: {x: window.scrollX, y: window.scrollY},
-          }
-        );
       });
 
       document.addEventListener(
@@ -485,12 +480,6 @@ class WebView extends Component {
             return;
           }
           e.responsivelyAppProcessed = true;
-          window.responsivelyApp.sendMessageToHost(
-            '${MESSAGE_TYPES.click}',
-            {
-              cssPath: window.responsivelyApp.cssPath(e.target),
-            }
-          );
         },
         true
       );
