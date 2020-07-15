@@ -9,7 +9,7 @@ import Twitter from '../icons/Twitter';
 import RoadMap from '../icons/RoadMap';
 
 const Spacer = ({width = 10}) => (
-  <div className={styles.link} style={{width}} />
+  <div className={cx(styles.text)} style={{width}} />
 );
 
 const AppUpdaterStatusInfoSection = () => {
@@ -59,13 +59,13 @@ const StatusBar = ({visible, zoomLevel}) => {
     return null;
   }
 
-  const zoomPercent = Math.round(zoomLevel * 100)
+  const zoomPercent = Math.round(zoomLevel * 100);
 
   return (
     <div className={styles.statusBar}>
       <div className={styles.section}>
         <div
-          className={styles.link}
+          className={cx(styles.text, styles.link)}
           onClick={() =>
             shell.openExternal('https://github.com/manojVivek/responsively-app')
           }
@@ -73,7 +73,7 @@ const StatusBar = ({visible, zoomLevel}) => {
           <Github width={14} className={styles.linkIcon} />
         </div>
         <div
-          className={styles.link}
+          className={cx(styles.text, styles.link)}
           onClick={() =>
             shell.openExternal(
               'https://twitter.com/intent/follow?original_referer=app&ref_src=twsrc%5Etfw&region=follow_link&screen_name=ResponsivelyApp&tw_p=followbutton'
@@ -84,7 +84,7 @@ const StatusBar = ({visible, zoomLevel}) => {
         </div>
         <Spacer />
         <div
-          className={cx('roadMapLink', styles.link)}
+          className={cx('roadMapLink', styles.text, styles.link)}
           onClick={() =>
             shell.openExternal(
               'https://github.com/manojVivek/responsively-app/projects/12?fullscreen=true'
@@ -96,7 +96,7 @@ const StatusBar = ({visible, zoomLevel}) => {
         </div>
         <Spacer />
         <div
-          className={styles.link}
+          className={cx(styles.text, styles.link)}
           onClick={() =>
             shell.openExternal('https://headwayapp.co/responsively-changelog')
           }
@@ -105,15 +105,16 @@ const StatusBar = ({visible, zoomLevel}) => {
             Changelog
           </span>
         </div>
+        <Spacer />
+        <div className={cx(styles.text)}>
+          <span className={cx('zoomText', styles.linkText)}>
+            Zoom: {zoomPercent}%
+          </span>
+        </div>
       </div>
       <AppUpdaterStatusInfoSection />
       <div className={styles.section}>
         <Announcement />
-        {zoomPercent !== 100 && <>
-          <div className={cx('roadMapLink', styles.statusText)}>
-            {zoomPercent}%
-          </div>
-        </>}
       </div>
     </div>
   );
