@@ -177,13 +177,11 @@ function _getScreenshotFileName(
   const directoryPath = createSeparateDir ? `${dateString}/` : '';
   const userSelectedScreenShotSavePath = userPreferenceSettings.getScreenShotSavePath();
   return {
-    dir:
+    dir: path.join(
       userSelectedScreenShotSavePath ||
-      path.join(
-        os.homedir(),
-        `Desktop/Responsively-Screenshots`,
-        directoryPath
-      ),
+        path.join(os.homedir(), `Desktop/Responsively-Screenshots`),
+      directoryPath
+    ),
     file: `${getWebsiteName(address)} - ${device.name.replace(
       /\//g,
       '-'
