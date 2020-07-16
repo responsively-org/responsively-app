@@ -82,7 +82,7 @@ a:hover {
 .react-tabs {
   position: sticky;
   left: 0;
-  top: 5px;
+  top: 0;
   margin-bottom: 10px;
   z-index: 4;
   background-color: #1e1e1e;
