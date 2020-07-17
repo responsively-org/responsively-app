@@ -112,6 +112,7 @@ type UserPreferenceType = {
   drawerState: boolean,
   devToolsOpenMode: DevToolsOpenModeType,
   deviceOutlineStyle: string,
+  zoomLevel: number,
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
@@ -237,7 +238,7 @@ export default function browser(
       ? getLastOpenedAddress()
       : getHomepage(),
     currentPageMeta: {},
-    zoomLevel: 0.6,
+    zoomLevel: _getUserPreferences().zoomLevel || 0.6,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
@@ -290,6 +291,10 @@ export default function browser(
       saveHomepage(homepage);
       return {...state, homepage};
     case NEW_ZOOM_LEVEL:
+      _setUserPreferences({
+        ...state.userPreferences,
+        zoomLevel: action.zoomLevel,
+      });
       return {...state, zoomLevel: action.zoomLevel};
     case NEW_SCROLL_POSITION:
       return {...state, scrollPosition: action.scrollPosition};
