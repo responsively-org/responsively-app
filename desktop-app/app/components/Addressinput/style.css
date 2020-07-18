@@ -27,7 +27,6 @@
 
 .active {
   border-radius: 14px 14px 0 0;
-  border-bottom: none;
 }
 
 .addressBarContainer:focus-within {
