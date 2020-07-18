@@ -26,7 +26,7 @@
 }
 
 .active {
-  border-radius: 20px 20px 0 0;
+  border-radius: 14px 14px 0 0;
 }
 
 .addressBarContainer:focus-within {
@@ -41,14 +41,17 @@
 }
 
 .searchBarSuggestionsContainer {
-  width: 100%;
+  width: calc(100% + 2px);
   max-height: 20em;
   position: absolute;
   left: -1px;
   top: 1.8em;
   background: #4b4b4c;
-  border-radius: 0 0 20px 20px;
+  border-radius: 0 0 14px 14px;
   text-decoration: underline;
+  border-right: solid 1px #7587ec;
+  border-bottom: solid 1px #7587ec;
+  border-left: solid 1px #7587ec;
 }
 .searchBarSuggestionsListItems {
   font-size: 1.1em;
