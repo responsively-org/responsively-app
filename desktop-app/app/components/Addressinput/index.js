@@ -38,6 +38,7 @@ class AddressBar extends React.Component<Props> {
       userTypedAddress: props.address,
       previousAddress: props.address,
       finalUrlResult: null,
+      canShowSuggestions: false,
     };
     this.inputRef = React.createRef();
   }
@@ -65,7 +66,7 @@ class AddressBar extends React.Component<Props> {
       <div
         className={`${styles.addressBarContainer} ${
           this.state.finalUrlResult
-            ? this.state.finalUrlResult.length
+            ? this.state.finalUrlResult.length && this.state.canShowSuggestions
               ? styles.active
               : ''
             : ''
@@ -169,7 +170,7 @@ class AddressBar extends React.Component<Props> {
             </Tooltip>
           </div>
         </div>
-        {this.state.finalUrlResult?.length ? (
+        {this.state.finalUrlResult?.length && this.state.canShowSuggestions ? (
           <UrlSearchResults
             divClassName={cx(styles.searchBarSuggestionsContainer)}
             listItemUiClassName={cx(styles.searchBarSuggestionsListUl)}
@@ -185,9 +186,12 @@ class AddressBar extends React.Component<Props> {
   }
 
   _handleInputChange = e => {
-    this.setState({userTypedAddress: e.target.value}, () => {
-      this._filterExistingUrl();
-    });
+    this.setState(
+      {userTypedAddress: e.target.value, canShowSuggestions: true},
+      () => {
+        this._filterExistingUrl();
+      }
+    );
   };
 
   _handleKeyDown = e => {
@@ -196,6 +200,7 @@ class AddressBar extends React.Component<Props> {
       this.setState(
         {
           finalUrlResult: [],
+          canShowSuggestions: false,
         },
         () => {
           this._onChange();
