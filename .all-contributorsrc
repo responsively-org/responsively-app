@@ -217,6 +217,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "sebasrodriguez",
+      "name": "Sebastián Rodríguez",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/1605931?v=4",
+      "profile": "https://github.com/sebasrodriguez",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
