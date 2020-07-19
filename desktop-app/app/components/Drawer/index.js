@@ -5,6 +5,7 @@ import cx from 'classnames';
 import DeviceDrawerContainer from '../../containers/DeviceDrawerContainer';
 import UserPreferencesContainer from '../../containers/UserPreferencesContainer';
 import ExtensionsManagerContainer from '../../containers/ExtensionsManagerContainer';
+import NetworkConfigurationContainer from '../../containers/NetworkConfigurationContainer';
 
 import styles from './styles.css';
 import commonStyles from '../common.styles.css';
@@ -12,6 +13,7 @@ import {
   DEVICE_MANAGER,
   USER_PREFERENCES,
   EXTENSIONS_MANAGER,
+  NETWORK_CONFIGURATION,
 } from '../../constants/DrawerContents';
 import {iconsColor} from '../../constants/colors';
 import DoubleLeftArrowIcon from '../icons/DoubleLeftArrow';
@@ -70,6 +72,8 @@ function getDrawerContent(type) {
       return <UserPreferencesContainer />;
     case EXTENSIONS_MANAGER:
       return <ExtensionsManagerContainer />;
+    case NETWORK_CONFIGURATION:
+      return <NetworkConfigurationContainer />;
     default:
       return null;
   }

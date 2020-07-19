@@ -1,0 +1,39 @@
+.profileManagerContainer {
+    height: 600px;
+    padding: 20px;
+}
+
+.profilesContainer {
+    max-height: 430px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.profilesHeader > tr > th {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.profilesRow > th {
+    margin-right: 16px;
+}
+
+.actionIcon {
+    pointer-events: all;
+    cursor: pointer;
+    color: white;
+}
+
+.actionIcon:hover {
+    color: #6075ef;
+}
+
+.saveButton {
+    position: absolute !important;
+    bottom: 25px;
+    right: 25px;
+}
+
+.numericField * {
+    text-align: right;
+}
