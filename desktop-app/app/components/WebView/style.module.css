@@ -40,11 +40,6 @@
   position: relative;
   display: inline-flex;
   transform-origin: top left;
-  border: 3px solid #687cee00;
-}
-
-.devToolsActive {
-  border: 3px solid #6075ef;
 }
 
 .device {

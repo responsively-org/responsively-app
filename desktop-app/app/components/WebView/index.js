@@ -662,7 +662,11 @@ class WebView extends Component {
       screenshotInProgress,
     } = this.state;
     const deviceStyles = {
-      outline: `4px solid ${this.props.browser.userPreferences.deviceOutlineStyle}`,
+      outline: `4px solid ${
+        this._isDevToolsOpen()
+          ? `#6075ef`
+          : this.props.browser.userPreferences.deviceOutlineStyle
+      }`,
       width: deviceDimensions.width,
       height: deviceDimensions.height,
     };
@@ -782,9 +786,7 @@ class WebView extends Component {
           </div>
         </div>
         <div
-          className={cx(styles.deviceContainer, {
-            [styles.devToolsActive]: this._isDevToolsOpen(),
-          })}
+          className={cx(styles.deviceContainer)}
           style={{
             width: deviceStyles.width,
             transform: `scale(${zoomLevel})`,
