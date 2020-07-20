@@ -5,7 +5,6 @@ let browserSyncOptions;
 
 if (!browserSyncOptions) {
   browserSyncOptions = ipcRenderer.sendSync('request-browser-sync');
-  console.log(browserSyncOptions);
 }
 
 export function getBrowserSyncEmbedScriptURL() {
