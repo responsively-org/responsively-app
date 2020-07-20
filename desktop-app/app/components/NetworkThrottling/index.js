@@ -29,7 +29,7 @@ const selectStyles = {
         ? '#ffffff20'
         : null,
       color: 'white',
-    
+
       ':active': {
         ...selectStyles[':active'],
         backgroundColor: !isDisabled && '#ffffff40',
@@ -102,7 +102,7 @@ export default function NetworkThrottling({
           component="span"
           onClick={() => setOpen(true)}
         >
-          Customize Profiles
+          Manage Profiles
         </Button>
         <Dialog className={cx(styles.profileManagerDialog)} maxWidth="md" fullWidth open={open} scroll="paper" onClose={closeDialog}>
           <AppBar className={classes.appBar} color="secondary">

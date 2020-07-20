@@ -278,13 +278,6 @@ function getDefaultNetworkThrottlingProfiles(): NetworkThrottlingProfileType[] {
       downloadKps: 1475,
       uploadKps: 675,
       latencyMs: 563
-    },
-    {
-      type: 'Custom',
-      title: 'Modem 56K',
-      downloadKps: 56,
-      uploadKps: 56,
-      latencyMs: 2000
     }
   ]
 }
