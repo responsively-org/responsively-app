@@ -39,9 +39,13 @@ import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager'
 import {appUpdater} from './app-updater';
 import trimStart from 'lodash/trimStart';
 import isURL from 'validator/lib/isURL';
-import {initBrowserSync} from './utils/browserSync';
-import {BROWSER_SYNC_HOST} from './constants/browserSync';
+import {
+  initBrowserSync,
+  getBrowserSyncHost,
+  getBrowserSyncEmbedScriptURL,
+} from './utils/browserSync';
 import {getHostFromURL} from './utils/urlUtils';
+import browserSync from 'browser-sync';
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -126,7 +130,7 @@ app.on(
   'certificate-error',
   (event, webContents, url, error, certificate, callback) => {
     if (
-      getHostFromURL(url) === BROWSER_SYNC_HOST ||
+      getHostFromURL(url) === getBrowserSyncHost() ||
       (settings.get(USER_PREFERENCES) || {}).disableSSLValidation === true
     ) {
       event.preventDefault();
@@ -203,7 +207,6 @@ const openUrl = url => {
 const createWindow = async () => {
   hasActiveWindow = true;
 
-  initBrowserSync();
   if (process.env.NODE_ENV === 'development') {
     await installExtensions();
   }
@@ -245,6 +248,8 @@ const createWindow = async () => {
     }
   });
 
+  await initBrowserSync();
+
   initMainShortcutManager();
 
   const onResize = () => {
@@ -262,6 +267,13 @@ const createWindow = async () => {
       mainWindow.show();
     }
     onResize();
+  });
+
+  ipcMain.on('request-browser-sync', (event, data) => {
+    const browserSyncOptions = {
+      url: getBrowserSyncEmbedScriptURL(),
+    };
+    event.returnValue = browserSyncOptions;
   });
 
   const watcher = new chokidar.FSWatcher();

@@ -43,7 +43,7 @@ import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
 import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
-import {BROWSER_SYNC_EMBED_SCRIPT} from '../../constants/browserSync';
+import {getBrowserSyncEmbedScriptURL} from '../../service/browserSync';
 
 const {BrowserWindow} = remote;
 
@@ -435,13 +435,18 @@ class WebView extends Component {
     pubsub.publish(DISABLE_INSPECTOR_ALL_DEVICES, [message]);
   };
 
-  initEventTriggers = webview => {
+  initBrowserSync = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-
-      var bsScript= document.createElement('script');
-      bsScript.src = '${BROWSER_SYNC_EMBED_SCRIPT}';
+    var bsScript= document.createElement('script');
+      bsScript.src = '${getBrowserSyncEmbedScriptURL()}';
       bsScript.async = true;
       document.body.appendChild(bsScript);
+    `);
+  };
+
+  initEventTriggers = webview => {
+    this.initBrowserSync(webview);
+    this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
     
       responsivelyApp.deviceId = '${this.props.device.id}';
       document.addEventListener('mouseleave', () => {
