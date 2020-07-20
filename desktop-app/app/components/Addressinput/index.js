@@ -9,9 +9,16 @@ import HomePlusIcon from '../icons/HomePlus';
 import DeleteCookieIcon from '../icons/DeleteCookie';
 import DeleteStorageIcon from '../icons/DeleteStorage';
 import {iconsColor, lightIconsColor} from '../../constants/colors';
+import {
+  getExistingSearchResults,
+  updateExistingUrl,
+  searchUrlUtils,
+} from '../../services/searchUrlSuggestions';
+import UrlSearchResults from '../UrlSearchResults';
 
 import commonStyles from '../common.styles.css';
 import styles from './style.css';
+import debounce from 'lodash/debounce';
 
 type Props = {
   address: string,
@@ -25,7 +32,24 @@ type State = {
 class AddressBar extends React.Component<Props> {
   props: Props;
 
-  state: State;
+  constructor(props) {
+    super(props);
+    this.state = {
+      userTypedAddress: props.address,
+      previousAddress: props.address,
+      finalUrlResult: null,
+      canShowSuggestions: false,
+    };
+    this.inputRef = React.createRef();
+  }
+
+  componentDidMount() {
+    document.addEventListener('click', this._handleClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this._handleClickOutside);
+  }
 
   static getDerivedStateFromProps(props, state) {
     if (props.address !== state.previousAddress) {
@@ -37,45 +61,17 @@ class AddressBar extends React.Component<Props> {
     return null;
   }
 
-  _handleKeyDown = e => {
-    if (e.key === 'Enter') {
-      this.inputRef.current.blur();
-      this._onChange();
-    }
-  };
-
-  _normalize = address => {
-    if (address.indexOf('://') === -1) {
-      let protocol = 'https://';
-      if (address.startsWith('localhost') || address.startsWith('127.0.0.1')) {
-        protocol = 'http://';
-      }
-      address = `${protocol}${address}`;
-    }
-    return address;
-  };
-
-  _onChange = () => {
-    if (!this.state.userTypedAddress) {
-      return;
-    }
-    if (this.props.onChange) {
-      this.props.onChange(this._normalize(this.state.userTypedAddress), true);
-    }
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      userTypedAddress: props.address,
-      previousAddress: props.address,
-    };
-    this.inputRef = React.createRef();
-  }
-
   render() {
     return (
-      <div className={styles.addressBarContainer}>
+      <div
+        className={`${styles.addressBarContainer} ${
+          this.state.finalUrlResult
+            ? this.state.finalUrlResult.length && this.state.canShowSuggestions
+              ? styles.active
+              : ''
+            : ''
+        }`}
+      >
         <input
           ref={this.inputRef}
           type="text"
@@ -85,7 +81,7 @@ class AddressBar extends React.Component<Props> {
           placeholder="https://your-website.com"
           value={this.state.userTypedAddress}
           onKeyDown={this._handleKeyDown}
-          onChange={e => this.setState({userTypedAddress: e.target.value})}
+          onChange={this._handleInputChange}
         />
         <div className={cx(styles.floatingOptionsContainer)}>
           <div
@@ -174,9 +170,87 @@ class AddressBar extends React.Component<Props> {
             </Tooltip>
           </div>
         </div>
+        {this.state.finalUrlResult?.length && this.state.canShowSuggestions ? (
+          <UrlSearchResults
+            divClassName={cx(styles.searchBarSuggestionsContainer)}
+            listItemUiClassName={cx(styles.searchBarSuggestionsListUl)}
+            listItemsClassName={cx(styles.searchBarSuggestionsListItems)}
+            filteredSearchResults={this.state.finalUrlResult}
+            handleUrlChange={this._onSearchedUrlClick}
+          />
+        ) : (
+          ''
+        )}
       </div>
     );
   }
+
+  _handleInputChange = e => {
+    this.setState(
+      {userTypedAddress: e.target.value, canShowSuggestions: true},
+      () => {
+        this._filterExistingUrl();
+      }
+    );
+  };
+
+  _handleKeyDown = e => {
+    if (e.key === 'Enter') {
+      this.inputRef.current.blur();
+      this.setState(
+        {
+          finalUrlResult: [],
+          canShowSuggestions: false,
+        },
+        () => {
+          this._onChange();
+        }
+      );
+    }
+  };
+
+  _onChange = () => {
+    if (!this.state.userTypedAddress) {
+      return;
+    }
+    return (
+      this.props.onChange &&
+      this.props.onChange(this._normalize(this.state.userTypedAddress), true)
+    );
+  };
+
+  _onSearchedUrlClick = (url, index) => {
+    if (url !== this.state.previousAddress) {
+      this.props.onChange(this._normalize(url), true);
+    }
+
+    this.setState({
+      userTypedAddress: url,
+      finalUrlResult: [],
+    });
+  };
+
+  _normalize = address => {
+    if (address.indexOf('://') === -1) {
+      let protocol = 'https://';
+      if (address.startsWith('localhost') || address.startsWith('127.0.0.1')) {
+        protocol = 'http://';
+      }
+      address = `${protocol}${address}`;
+    }
+    return address;
+  };
+
+  _filterExistingUrl = debounce(() => {
+    const finalResult = searchUrlUtils(this.state.userTypedAddress);
+    this.setState({finalUrlResult: finalResult});
+  }, 300);
+
+  _handleClickOutside = () => {
+    this.setState({
+      finalUrlResult: [],
+    });
+  };
 }
 
 export default AddressBar;

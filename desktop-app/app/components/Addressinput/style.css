@@ -7,7 +7,7 @@
   padding: 14px 10px;
   border-radius: 20px;
   background: unset;
-  color: #ffffffcc;
+  color: #fffc;
   border: solid 1px #ffffff80;
   outline: none;
   transition: border 500ms ease-out;
@@ -25,6 +25,10 @@
   text-overflow: ellipsis;
 }
 
+.active {
+  border-radius: 14px 14px 0 0;
+}
+
 .addressBarContainer:focus-within {
   color: white;
   border: solid 1px #7587ec;
@@ -34,4 +38,40 @@
   position: absolute;
   display: flex;
   right: 5px;
+}
+
+.searchBarSuggestionsContainer {
+  width: calc(100% + 2px);
+  max-height: 20em;
+  position: absolute;
+  left: -1px;
+  top: 1.8em;
+  background: #4b4b4c;
+  border-radius: 0 0 14px 14px;
+  border-right: solid 1px #7587ec;
+  border-bottom: solid 1px #7587ec;
+  border-left: solid 1px #7587ec;
+}
+.searchBarSuggestionsListItems {
+  font-size: 1.1em;
+  line-height: 22px;
+  color: #cacaca;
+  padding: 0.4em 1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.searchBarSuggestionsListUl {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.searchBarSuggestionsListItems:hover {
+  background: gray;
+}
+
+.searchBarSuggestionsListItems.active {
+  background: gray;
 }

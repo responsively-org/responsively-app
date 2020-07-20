@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "A developer-friendly browser for developing responsive web apps",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -202,9 +202,9 @@
     "cross-spawn": "^6.0.5",
     "css-loader": "^1.0.1",
     "detect-port": "^1.3.0",
-    "electron": "^8.3.0",
+    "electron": "^8.4.0",
     "electron-builder": "^22.6.1",
-    "electron-devtools-installer": "^3.0.0",
+    "electron-devtools-installer": "^3.1.1",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.7.0",
     "enzyme-to-json": "^3.3.4",

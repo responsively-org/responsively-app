@@ -14,3 +14,10 @@
   height: 40px;
   border: transparent;
 }
+
+.screenshotLocationInputContainer {
+  border-top: 1px solid #383737;
+}
+.sectionTitle {
+  margin: 5px 0;
+}
