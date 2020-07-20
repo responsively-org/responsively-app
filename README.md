@@ -1,6 +1,6 @@
 # Responsively App [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-25-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-26-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![Gitter chat](https://img.shields.io/gitter/room/badges/shields.svg)](https://gitter.im/responsively-app) [![xscode](https://img.shields.io/badge/Available%20on-xs%3Acode-blue?style=?style=plastic&logo=appveyor&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////////VXz1bAAAAAJ0Uk5T/wDltzBKAAAAlUlEQVR42uzXSwqAMAwE0Mn9L+3Ggtgkk35QwcnSJo9S+yGwM9DCooCbgn4YrJ4CIPUcQF7/XSBbx2TEz4sAZ2q1RAECBAiYBlCtvwN+KiYAlG7UDGj59MViT9hOwEqAhYCtAsUZvL6I6W8c2wcbd+LIWSCHSTeSAAECngN4xxIDSK9f4B9t377Wd7H5Nt7/Xz8eAgwAvesLRjYYPuUAAAAASUVORK5CYII=)](https://xscode.com/manojvivek/responsively-app) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/manojVivek/responsively-app/issues)
 
@@ -100,6 +100,9 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     <td align="center"><a href="https://github.com/kirubakarthikeyan"><img src="https://avatars0.githubusercontent.com/u/38885946?v=4" width="100px;" alt=""/><br /><sub><b>Kiruba Karan</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=kirubakarthikeyan" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/sebasrodriguez"><img src="https://avatars1.githubusercontent.com/u/1605931?v=4" width="100px;" alt=""/><br /><sub><b>Sebastián Rodríguez</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=sebasrodriguez" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/karthick3018"><img src="https://avatars1.githubusercontent.com/u/47154512?v=4" width="100px;" alt=""/><br /><sub><b>Karthick Raja</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=karthick3018" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/jzabala"><img src="https://avatars0.githubusercontent.com/u/1315054?v=4" width="100px;" alt=""/><br /><sub><b>Johnny Zabala</b></sub></a><br /><a href="https://github.com/manojVivek/responsively-app/commits?author=jzabala" title="Code">💻</a></td>
   </tr>
 </table>
 
