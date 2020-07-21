@@ -447,9 +447,7 @@ class WebView extends Component {
   }
 
   clearNetworkCache = () => {
-    this.getWebContents().session.clearCache().then(() => {
-      this.webviewRef.current.reload();
-    });
+    this.getWebContents().session.clearCache();
   }
 
   messageHandler = ({channel: type, args: [message]}) => {
@@ -497,7 +495,7 @@ class WebView extends Component {
       bsScript.src = '${BROWSER_SYNC_EMBED_SCRIPT}';
       bsScript.async = true;
       document.body.appendChild(bsScript);
-    
+
       responsivelyApp.deviceId = '${this.props.device.id}';
       document.addEventListener('mouseleave', () => {
         window.responsivelyApp.mouseOn = false;
