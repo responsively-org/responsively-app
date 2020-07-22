@@ -111,16 +111,14 @@ app.on('open-url', async (event, url) => {
 });
 
 app.on('window-all-closed', () => {
-  if (
-    false &&
-    process.env.NODE_ENV === 'development' &&
-    ['win32', 'darwin'].includes(process.platform)
-  ) {
-    app.removeAsDefaultProtocolClient(protocol);
-  }
+  hasActiveWindow = false;
+  ipcMain.removeAllListeners();
+  ipcMain.removeHandler('install-extension');
+  ipcMain.removeHandler('get-local-extension-path');
+  ipcMain.removeHandler('get-screen-shot-save-path');
+  ipcMain.removeHandler('request-browser-sync');
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  hasActiveWindow = false;
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -227,8 +225,6 @@ const createWindow = async () => {
     titleBarStyle: 'hidden',
     icon: iconPath,
   });
-
-  ipcMain.removeAllListeners();
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
