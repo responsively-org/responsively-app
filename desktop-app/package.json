@@ -120,7 +120,8 @@
     },
     "linux": {
       "target": [
-        "AppImage"
+        "AppImage",
+        "rpm"
       ],
       "category": "Development"
     },
