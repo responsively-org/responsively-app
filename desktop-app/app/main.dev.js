@@ -269,13 +269,6 @@ const createWindow = async () => {
     onResize();
   });
 
-  ipcMain.on('request-browser-sync', (event, data) => {
-    const browserSyncOptions = {
-      url: getBrowserSyncEmbedScriptURL(),
-    };
-    event.returnValue = browserSyncOptions;
-  });
-
   const watcher = new chokidar.FSWatcher();
   let watchedFileInfo = null;
   watcher.on('change', _ => {
@@ -388,6 +381,13 @@ const createWindow = async () => {
     } catch {
       return '';
     }
+  });
+
+  ipcMain.handle('request-browser-sync', (event, data) => {
+    const browserSyncOptions = {
+      url: getBrowserSyncEmbedScriptURL(),
+    };
+    return browserSyncOptions;
   });
 
   ipcMain.on('open-devtools', (event, ...args) => {

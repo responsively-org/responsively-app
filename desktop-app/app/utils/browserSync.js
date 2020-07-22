@@ -27,8 +27,10 @@ async function initInstance(): Promise<> {
         ui: false,
       },
       (err, bs) => {
+        if (err) {
+          reject(err);
+        }
         resolve(bs);
-        reject(err);
       }
     );
   });

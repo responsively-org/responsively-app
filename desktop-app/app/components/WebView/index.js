@@ -734,21 +734,6 @@ class WebView extends Component {
                 <DeviceRotateIcon height={17} color={iconsColor} />
               </div>
             </Tooltip>
-            <Tooltip title="Disable event mirroring">
-              <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled,
-                  {
-                    [commonStyles.selected]: this.state.isUnplugged,
-                  }
-                )}
-                onClick={this._unPlug}
-              >
-                <UnplugIcon height={30} color={iconsColor} />
-              </div>
-            </Tooltip>
             <Tooltip
               title={isMuted ? 'Unmute' : 'Mute'}
               disableFocusListener={true}

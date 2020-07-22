@@ -3,8 +3,12 @@ import browserSync from 'browser-sync';
 
 let browserSyncOptions;
 
-if (!browserSyncOptions) {
-  browserSyncOptions = ipcRenderer.sendSync('request-browser-sync');
+initializeBrowserSyncOptions();
+
+async function initializeBrowserSyncOptions() {
+  if (!browserSyncOptions) {
+    browserSyncOptions = await ipcRenderer.invoke('request-browser-sync');
+  }
 }
 
 export function getBrowserSyncEmbedScriptURL() {
