@@ -45,7 +45,7 @@ import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
 import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
-import {BROWSER_SYNC_EMBED_SCRIPT} from '../../constants/browserSync';
+import {getBrowserSyncEmbedScriptURL} from '../../service/browserSync';
 
 const {BrowserWindow} = remote;
 
@@ -145,7 +145,10 @@ class WebView extends Component {
     );
 
     this.subscriptions.push(
-      pubsub.subscribe(SET_NETWORK_TROTTLING_PROFILE, this.setNetworkThrottlingProfile)
+      pubsub.subscribe(
+        SET_NETWORK_TROTTLING_PROFILE,
+        this.setNetworkThrottlingProfile
+      )
     );
     this.subscriptions.push(
       pubsub.subscribe(CLEAR_NETWORK_CACHE, this.clearNetworkCache)
@@ -154,8 +157,7 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
       this.dbg = this.getWebContents().debugger;
-      if (!this.dbg.isAttached())
-        this.dbg.attach();
+      if (!this.dbg.isAttached()) this.dbg.attach();
     });
 
     if (this.props.transmitNavigatorStatus) {
@@ -261,8 +263,7 @@ class WebView extends Component {
 
   componentWillUnmount() {
     this.subscriptions.forEach(pubsub.unsubscribe);
-    if (this.dbg && this.dbg.isAttached())
-      this.dbg.detach();
+    if (this.dbg && this.dbg.isAttached()) this.dbg.detach();
   }
 
   initDeviceEmulationParams = () => {
@@ -412,12 +413,7 @@ class WebView extends Component {
     this.webviewRef.current.send('disableInspectorMessage');
   };
 
-  setNetworkThrottlingProfile = ({
-    type,
-    downloadKps,
-    uploadKps,
-    latencyMs,
-  }) => {
+  setNetworkThrottlingProfile = ({type, downloadKps, uploadKps, latencyMs}) => {
     // TODO : change this when https://github.com/electron/electron/issues/21250 is solved
     // if (type === 'Online') {
     //   this.getWebContents().session.disableNetworkEmulation();
@@ -434,21 +430,31 @@ class WebView extends Component {
       this.dbg.sendCommand('Network.disable');
     } else if (type === 'Offline') {
       this.dbg.sendCommand('Network.enable').then(_ => {
-        this.dbg.sendCommand('Network.emulateNetworkConditions', {offline: true, latency: 0, downloadThroughput: -1, uploadThroughput: -1});
+        this.dbg.sendCommand('Network.emulateNetworkConditions', {
+          offline: true,
+          latency: 0,
+          downloadThroughput: -1,
+          uploadThroughput: -1,
+        });
       });
     } else {
-      const downloadThroughput = downloadKps != null? downloadKps * 128 : -1;
-      const uploadThroughput = uploadKps != null? uploadKps * 128 : -1;
+      const downloadThroughput = downloadKps != null ? downloadKps * 128 : -1;
+      const uploadThroughput = uploadKps != null ? uploadKps * 128 : -1;
       const latency = latencyMs || 0;
       this.dbg.sendCommand('Network.enable').then(_ => {
-        this.dbg.sendCommand('Network.emulateNetworkConditions', {offline: false, latency, downloadThroughput, uploadThroughput});
+        this.dbg.sendCommand('Network.emulateNetworkConditions', {
+          offline: false,
+          latency,
+          downloadThroughput,
+          uploadThroughput,
+        });
       });
     }
-  }
+  };
 
   clearNetworkCache = () => {
     this.getWebContents().session.clearCache();
-  }
+  };
 
   messageHandler = ({channel: type, args: [message]}) => {
     if (type !== MESSAGE_TYPES.toggleEventMirroring && this.state.isUnplugged) {
@@ -488,14 +494,19 @@ class WebView extends Component {
     pubsub.publish(DISABLE_INSPECTOR_ALL_DEVICES, [message]);
   };
 
-  initEventTriggers = webview => {
+  initBrowserSync = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-
-      var bsScript= document.createElement('script');
-      bsScript.src = '${BROWSER_SYNC_EMBED_SCRIPT}';
+    var bsScript= document.createElement('script');
+      bsScript.src = '${getBrowserSyncEmbedScriptURL()}';
       bsScript.async = true;
       document.body.appendChild(bsScript);
+    `);
+  };
 
+  initEventTriggers = webview => {
+    this.initBrowserSync(webview);
+    this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
+    
       responsivelyApp.deviceId = '${this.props.device.id}';
       document.addEventListener('mouseleave', () => {
         window.responsivelyApp.mouseOn = false;
@@ -776,21 +787,6 @@ class WebView extends Component {
                 onClick={this._flipOrientation}
               >
                 <DeviceRotateIcon height={17} color={iconsColor} />
-              </div>
-            </Tooltip>
-            <Tooltip title="Disable event mirroring">
-              <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled,
-                  {
-                    [commonStyles.selected]: this.state.isUnplugged,
-                  }
-                )}
-                onClick={this._unPlug}
-              >
-                <UnplugIcon height={30} color={iconsColor} />
               </div>
             </Tooltip>
             <Tooltip
