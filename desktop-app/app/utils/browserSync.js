@@ -28,7 +28,7 @@ async function initInstance(): Promise<> {
       },
       (err, bs) => {
         if (err) {
-          reject(err);
+          return reject(err);
         }
         resolve(bs);
       }
