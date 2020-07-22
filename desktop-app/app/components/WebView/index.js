@@ -28,6 +28,8 @@ import {
   DELETE_STORAGE,
   ADDRESS_CHANGE,
   STOP_LOADING,
+  CLEAR_NETWORK_CACHE,
+  SET_NETWORK_TROTTLING_PROFILE,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -77,6 +79,7 @@ class WebView extends Component {
       address: this.props.browser.address,
     };
     this.subscriptions = [];
+    this.dbg = null;
   }
 
   componentDidMount() {
@@ -141,8 +144,20 @@ class WebView extends Component {
       )
     );
 
+    this.subscriptions.push(
+      pubsub.subscribe(
+        SET_NETWORK_TROTTLING_PROFILE,
+        this.setNetworkThrottlingProfile
+      )
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(CLEAR_NETWORK_CACHE, this.clearNetworkCache)
+    );
+
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
+      this.dbg = this.getWebContents().debugger;
+      if (!this.dbg.isAttached()) this.dbg.attach();
     });
 
     if (this.props.transmitNavigatorStatus) {
@@ -248,6 +263,7 @@ class WebView extends Component {
 
   componentWillUnmount() {
     this.subscriptions.forEach(pubsub.unsubscribe);
+    if (this.dbg && this.dbg.isAttached()) this.dbg.detach();
   }
 
   initDeviceEmulationParams = () => {
@@ -395,6 +411,49 @@ class WebView extends Component {
 
   processDisableInspectorEvent = message => {
     this.webviewRef.current.send('disableInspectorMessage');
+  };
+
+  setNetworkThrottlingProfile = ({type, downloadKps, uploadKps, latencyMs}) => {
+    // TODO : change this when https://github.com/electron/electron/issues/21250 is solved
+    // if (type === 'Online') {
+    //   this.getWebContents().session.disableNetworkEmulation();
+    // } else if (type === 'Offline') {
+    //   this.getWebContents().session.enableNetworkEmulation({offline: true});
+    // } else if (type === 'Custom') {
+    //   const downloadThroughput = downloadKps != null? downloadKps * 128 : undefined;
+    //   const uploadThroughput = uploadKps != null? uploadKps * 128 : undefined;
+    //   this.getWebContents().session.enableNetworkEmulation({offline: false, latency: latencyMs, downloadThroughput, uploadThroughput });
+    // }
+
+    // WORKAROUND
+    if (type === 'Online') {
+      this.dbg.sendCommand('Network.disable');
+    } else if (type === 'Offline') {
+      this.dbg.sendCommand('Network.enable').then(_ => {
+        this.dbg.sendCommand('Network.emulateNetworkConditions', {
+          offline: true,
+          latency: 0,
+          downloadThroughput: -1,
+          uploadThroughput: -1,
+        });
+      });
+    } else {
+      const downloadThroughput = downloadKps != null ? downloadKps * 128 : -1;
+      const uploadThroughput = uploadKps != null ? uploadKps * 128 : -1;
+      const latency = latencyMs || 0;
+      this.dbg.sendCommand('Network.enable').then(_ => {
+        this.dbg.sendCommand('Network.emulateNetworkConditions', {
+          offline: false,
+          latency,
+          downloadThroughput,
+          uploadThroughput,
+        });
+      });
+    }
+  };
+
+  clearNetworkCache = () => {
+    this.getWebContents().session.clearCache();
   };
 
   messageHandler = ({channel: type, args: [message]}) => {
@@ -581,14 +640,10 @@ class WebView extends Component {
     const {deviceDimensions, address, isTilted} = this.state;
 
     if (capabilities.includes(CAPABILITIES.responsive)) {
-      const responsiveStyle = {
-        width: deviceDimensions.width,
-        height: deviceDimensions.height,
-      };
       return (
         <Resizable
           className={cx(styles.resizableView)}
-          size={{width: responsiveStyle.width, height: responsiveStyle.height}}
+          size={{width: deviceStyles.width, height: deviceStyles.height}}
           onResizeStart={() => {
             const updatedTempDims = {
               width: deviceDimensions.width,
@@ -637,7 +692,7 @@ class WebView extends Component {
             className={cx(styles.device)}
             src={address || 'about:blank'}
             useragent={useragent}
-            style={responsiveStyle}
+            style={deviceStyles}
           />
         </Resizable>
       );
