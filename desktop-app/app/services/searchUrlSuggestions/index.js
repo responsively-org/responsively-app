@@ -37,9 +37,17 @@ export const searchUrlUtils = url => {
   return [];
 };
 
+const normalizeURL = url => {
+  if (url.indexOf('?') === -1 && !url.endsWith('/')) {
+    url = `${url}/`;
+  }
+  return url;
+};
+
 export const updateExistingUrl = url => {
+  url = normalizeURL(url);
   if (previousSearchResults?.length) {
-    const updatedSearchResults = [...previousSearchResults];
+    let updatedSearchResults = [...previousSearchResults];
 
     const index = updatedSearchResults.findIndex(
       eachSearchResult => eachSearchResult.url === url
@@ -49,7 +57,10 @@ export const updateExistingUrl = url => {
       updatedSearchResults[index].visitedCount =
         1 + updatedSearchResults[index].visitedCount;
     } else {
-      updatedSearchResults.push({url, visitedCount: 1});
+      updatedSearchResults = [
+        {url, visitedCount: 1},
+        ...updatedSearchResults,
+      ].slice(0, 300);
     }
 
     addUrlToSearchResults(updatedSearchResults);
