@@ -4,7 +4,7 @@ import {remote, ipcRenderer} from 'electron';
 import cx from 'classnames';
 import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
-import debounce from 'lodash.debounce';
+import debounce from 'lodash/debounce';
 import pubsub from 'pubsub.js';
 import console from 'electron-timber';
 import BugIcon from '../icons/Bug';
