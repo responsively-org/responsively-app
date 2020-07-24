@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from '../Addressinput/style.css';
 
 const UrlSearchResults = ({
   divClassName,

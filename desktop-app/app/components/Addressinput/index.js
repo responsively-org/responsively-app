@@ -198,7 +198,6 @@ class AddressBar extends React.Component<Props> {
   };
 
   _handleKeyDown = e => {
-    console.log(this.state.cursor);
     if (e.key === 'Enter') {
       this.inputRef.current.blur();
       this.setState(
