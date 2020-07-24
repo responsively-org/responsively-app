@@ -190,7 +190,7 @@ class AddressBar extends React.Component<Props> {
 
   _handleInputChange = e => {
     this.setState(
-      {userTypedAddress: e.target.value, canShowSuggestions: true},
+      {userTypedAddress: e.target.value, canShowSuggestions: true, cursor: 0},
       () => {
         this._filterExistingUrl();
       }
