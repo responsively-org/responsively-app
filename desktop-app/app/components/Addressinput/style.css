@@ -60,6 +60,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: default;
 }
 
 .searchBarSuggestionsListUl {
@@ -70,8 +71,10 @@
 
 .searchBarSuggestionsListItems:hover {
   background: gray;
+  color: white;
 }
 
 .searchBarSuggestionsListItems.active {
   background: gray;
+  color: white;
 }

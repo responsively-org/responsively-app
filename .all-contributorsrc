@@ -235,6 +235,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jzabala",
+      "name": "Johnny Zabala",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1315054?v=4",
+      "profile": "https://github.com/jzabala",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "rossmoody",
+      "name": "Ross Moody",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/29072694?v=4",
+      "profile": "http://rossmoody.com",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 5,

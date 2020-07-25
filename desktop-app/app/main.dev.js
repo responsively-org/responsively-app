@@ -39,9 +39,14 @@ import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager'
 import {appUpdater} from './app-updater';
 import trimStart from 'lodash/trimStart';
 import isURL from 'validator/lib/isURL';
-import {initBrowserSync} from './utils/browserSync';
-import {BROWSER_SYNC_HOST} from './constants/browserSync';
+import {
+  initBrowserSync,
+  getBrowserSyncHost,
+  getBrowserSyncEmbedScriptURL,
+  closeBrowserSync,
+} from './utils/browserSync';
 import {getHostFromURL} from './utils/urlUtils';
+import browserSync from 'browser-sync';
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -107,16 +112,15 @@ app.on('open-url', async (event, url) => {
 });
 
 app.on('window-all-closed', () => {
-  if (
-    false &&
-    process.env.NODE_ENV === 'development' &&
-    ['win32', 'darwin'].includes(process.platform)
-  ) {
-    app.removeAsDefaultProtocolClient(protocol);
-  }
+  hasActiveWindow = false;
+  ipcMain.removeAllListeners();
+  ipcMain.removeHandler('install-extension');
+  ipcMain.removeHandler('get-local-extension-path');
+  ipcMain.removeHandler('get-screen-shot-save-path');
+  ipcMain.removeHandler('request-browser-sync');
+  closeBrowserSync();
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  hasActiveWindow = false;
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -126,7 +130,7 @@ app.on(
   'certificate-error',
   (event, webContents, url, error, certificate, callback) => {
     if (
-      getHostFromURL(url) === BROWSER_SYNC_HOST ||
+      getHostFromURL(url) === getBrowserSyncHost() ||
       (settings.get(USER_PREFERENCES) || {}).disableSSLValidation === true
     ) {
       event.preventDefault();
@@ -203,7 +207,6 @@ const openUrl = url => {
 const createWindow = async () => {
   hasActiveWindow = true;
 
-  initBrowserSync();
   if (process.env.NODE_ENV === 'development') {
     await installExtensions();
   }
@@ -225,8 +228,6 @@ const createWindow = async () => {
     icon: iconPath,
   });
 
-  ipcMain.removeAllListeners();
-
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
@@ -244,6 +245,8 @@ const createWindow = async () => {
       `);
     }
   });
+
+  await initBrowserSync();
 
   initMainShortcutManager();
 
@@ -376,6 +379,13 @@ const createWindow = async () => {
     } catch {
       return '';
     }
+  });
+
+  ipcMain.handle('request-browser-sync', (event, data) => {
+    const browserSyncOptions = {
+      url: getBrowserSyncEmbedScriptURL(),
+    };
+    return browserSyncOptions;
   });
 
   ipcMain.on('open-devtools', (event, ...args) => {
