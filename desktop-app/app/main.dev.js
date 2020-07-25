@@ -43,6 +43,7 @@ import {
   initBrowserSync,
   getBrowserSyncHost,
   getBrowserSyncEmbedScriptURL,
+  closeBrowserSync,
 } from './utils/browserSync';
 import {getHostFromURL} from './utils/urlUtils';
 import browserSync from 'browser-sync';
@@ -121,6 +122,7 @@ app.on('window-all-closed', () => {
   // after all windows have been closed
   if (process.platform !== 'darwin') {
     app.quit();
+    closeBrowserSync();
   }
 });
 

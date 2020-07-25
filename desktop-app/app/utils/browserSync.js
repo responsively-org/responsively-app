@@ -35,3 +35,8 @@ async function initInstance(): Promise<> {
     );
   });
 }
+
+export function closeBrowserSync() {
+  browserSync.cleanup();
+  browserSync.exit();
+}
