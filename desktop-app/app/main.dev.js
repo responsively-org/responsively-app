@@ -118,11 +118,11 @@ app.on('window-all-closed', () => {
   ipcMain.removeHandler('get-local-extension-path');
   ipcMain.removeHandler('get-screen-shot-save-path');
   ipcMain.removeHandler('request-browser-sync');
+  closeBrowserSync();
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   if (process.platform !== 'darwin') {
     app.quit();
-    closeBrowserSync();
   }
 });
 
