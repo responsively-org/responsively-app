@@ -39,6 +39,13 @@ import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager'
 import {appUpdater} from './app-updater';
 import trimStart from 'lodash/trimStart';
 import isURL from 'validator/lib/isURL';
+import {
+  initBrowserSync,
+  getBrowserSyncHost,
+  getBrowserSyncEmbedScriptURL,
+} from './utils/browserSync';
+import {getHostFromURL} from './utils/urlUtils';
+import browserSync from 'browser-sync';
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -46,9 +53,9 @@ const URL = require('url').URL;
 
 migrateDeviceSchema();
 
-app &&
-  app.commandLine &&
+if (app && app.commandLine) {
   app.commandLine.appendSwitch('remote-debugging-port', '31313');
+}
 
 if (process.env.NODE_ENV !== 'development') {
   Sentry.init({
@@ -108,16 +115,14 @@ app.on('open-url', async (event, url) => {
 });
 
 app.on('window-all-closed', () => {
-  if (
-    false &&
-    process.env.NODE_ENV === 'development' &&
-    ['win32', 'darwin'].includes(process.platform)
-  ) {
-    app.removeAsDefaultProtocolClient(protocol);
-  }
+  hasActiveWindow = false;
+  ipcMain.removeAllListeners();
+  ipcMain.removeHandler('install-extension');
+  ipcMain.removeHandler('get-local-extension-path');
+  ipcMain.removeHandler('get-screen-shot-save-path');
+  ipcMain.removeHandler('request-browser-sync');
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  hasActiveWindow = false;
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -126,7 +131,10 @@ app.on('window-all-closed', () => {
 app.on(
   'certificate-error',
   (event, webContents, url, error, certificate, callback) => {
-    if ((settings.get(USER_PREFERENCES) || {}).disableSSLValidation === true) {
+    if (
+      getHostFromURL(url) === getBrowserSyncHost() ||
+      (settings.get(USER_PREFERENCES) || {}).disableSSLValidation === true
+    ) {
       event.preventDefault();
       callback(true);
     }
@@ -200,6 +208,7 @@ const openUrl = url => {
 
 const createWindow = async () => {
   hasActiveWindow = true;
+
   if (process.env.NODE_ENV === 'development') {
     await installExtensions();
   }
@@ -221,8 +230,6 @@ const createWindow = async () => {
     icon: iconPath,
   });
 
-  ipcMain.removeAllListeners();
-
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
@@ -240,6 +247,8 @@ const createWindow = async () => {
       `);
     }
   });
+
+  await initBrowserSync();
 
   initMainShortcutManager();
 
@@ -361,6 +370,24 @@ const createWindow = async () => {
     } catch {
       return '';
     }
+  });
+
+  ipcMain.handle('get-screen-shot-save-path', async event => {
+    try {
+      const {filePaths = []} = await dialog.showOpenDialog({
+        properties: ['openDirectory'],
+      });
+      return filePaths[0];
+    } catch {
+      return '';
+    }
+  });
+
+  ipcMain.handle('request-browser-sync', (event, data) => {
+    const browserSyncOptions = {
+      url: getBrowserSyncEmbedScriptURL(),
+    };
+    return browserSyncOptions;
   });
 
   ipcMain.on('open-devtools', (event, ...args) => {

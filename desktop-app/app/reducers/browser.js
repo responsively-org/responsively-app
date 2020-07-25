@@ -27,6 +27,10 @@ import {
   TOGGLE_ALL_DEVICES_MUTED,
   TOGGLE_DEVICE_MUTED,
 } from '../actions/browser';
+import {
+  CHANGE_ACTIVE_THROTTLING_PROFILE,
+  SAVE_THROTTLING_PROFILES,
+} from '../actions/networkConfig';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
 import type {Device} from '../constants/devices';
@@ -40,6 +44,7 @@ import {
   ACTIVE_DEVICES,
   USER_PREFERENCES,
   CUSTOM_DEVICES,
+  NETWORK_CONFIGURATION,
 } from '../constants/settingKeys';
 import {
   getHomepage,
@@ -47,6 +52,7 @@ import {
   saveHomepage,
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
+import {updateExistingUrl} from '../services/searchUrlSuggestions';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -112,11 +118,26 @@ type UserPreferenceType = {
   drawerState: boolean,
   devToolsOpenMode: DevToolsOpenModeType,
   deviceOutlineStyle: string,
+  zoomLevel: number,
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
 
 type FilterType = {[key: FilterFieldType]: Array<string>};
+
+type NetworkThrottlingProfileType = {
+  type: 'Online' | 'Offline' | 'Preset' | 'Custom',
+  title: string,
+  downloadKps: number,
+  uploadKps: number,
+  latencyMs: number,
+  active: boolean,
+};
+
+type NetworkConfigurationType = {
+  throttling: NetworkThrottlingProfileType[],
+  // proxy: NetworkProxyProfileType[],
+};
 
 export type BrowserStateType = {
   devices: Array<Device>,
@@ -135,6 +156,7 @@ export type BrowserStateType = {
   isInspecting: boolean,
   windowSize: WindowSizeType,
   allDevicesMuted: boolean,
+  networkConfiguration: NetworkConfigurationType,
 };
 
 let _activeDevices = null;
@@ -229,6 +251,57 @@ function _updateFileWatcher(newURL) {
   else ipcRenderer.send('stop-watcher');
 }
 
+function getDefaultNetworkThrottlingProfiles(): NetworkThrottlingProfileType[] {
+  return [
+    {
+      type: 'Online',
+      title: 'Online',
+      active: true,
+    },
+    {
+      type: 'Offline',
+      title: 'Offline',
+      downloadKps: 0,
+      uploadKps: 0,
+      latencyMs: 0,
+    },
+    // https://github.com/ChromeDevTools/devtools-frontend/blob/4f404fa8beab837367e49f68e29da427361b1f81/front_end/sdk/NetworkManager.js#L251-L265
+    {
+      type: 'Preset',
+      title: 'Slow 3G',
+      downloadKps: 400,
+      uploadKps: 400,
+      latencyMs: 2000,
+    },
+    {
+      type: 'Preset',
+      title: 'Fast 3G',
+      downloadKps: 1475,
+      uploadKps: 675,
+      latencyMs: 563,
+    },
+  ];
+}
+
+function _getNetworkConfiguration(): NetworkConfigurationType {
+  const ntwrk: NetworkConfigurationType =
+    settings.get(NETWORK_CONFIGURATION) || {};
+
+  if (ntwrk.throttling == null)
+    ntwrk.throttling = getDefaultNetworkThrottlingProfiles();
+
+  // if (ntwrk.proxy == null)
+  //   ntwrk.proxy = getDefaultNetworkProxyProfiles();
+
+  return ntwrk;
+}
+
+function _setNetworkConfiguration(
+  networkConfiguration: NetworkConfigurationType
+) {
+  settings.set(NETWORK_CONFIGURATION, networkConfiguration);
+}
+
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
@@ -237,7 +310,7 @@ export default function browser(
       ? getLastOpenedAddress()
       : getHomepage(),
     currentPageMeta: {},
-    zoomLevel: 0.6,
+    zoomLevel: _getUserPreferences().zoomLevel || 0.6,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
@@ -269,6 +342,7 @@ export default function browser(
     isInspecting: false,
     windowSize: getWindowSize(),
     allDevicesMuted: false,
+    networkConfiguration: _getNetworkConfiguration(),
   },
   action: Action
 ) {
@@ -276,6 +350,7 @@ export default function browser(
     case NEW_ADDRESS:
       saveLastOpenedAddress(action.address);
       _updateFileWatcher(action.address);
+      updateExistingUrl(action.address);
       return {...state, address: action.address, currentPageMeta: {}};
     case NEW_PAGE_META_FIELD:
       return {
@@ -290,6 +365,10 @@ export default function browser(
       saveHomepage(homepage);
       return {...state, homepage};
     case NEW_ZOOM_LEVEL:
+      _setUserPreferences({
+        ...state.userPreferences,
+        zoomLevel: action.zoomLevel,
+      });
       return {...state, zoomLevel: action.zoomLevel};
     case NEW_SCROLL_POSITION:
       return {...state, scrollPosition: action.scrollPosition};
@@ -379,6 +458,34 @@ export default function browser(
         ...state,
         allDevicesMuted: state.devices.every(x => x.isMuted),
         devices: [...state.devices],
+      };
+    case CHANGE_ACTIVE_THROTTLING_PROFILE:
+      const throttling = state.networkConfiguration.throttling;
+      const activeProfile = throttling.find(x => x.title === action.title);
+      if (activeProfile != null) {
+        throttling.forEach(x => (x.active = false));
+        activeProfile.active = true;
+      }
+      return {
+        ...state,
+        networkConfiguration: {
+          ...state.networkConfiguration,
+          throttling: [...throttling],
+        },
+      };
+    case SAVE_THROTTLING_PROFILES:
+      action.profiles.forEach(x => (x.active = false));
+      action.profiles[0].active = true;
+      _setNetworkConfiguration({
+        ...state.networkConfiguration,
+        throttling: action.profiles,
+      });
+      return {
+        ...state,
+        networkConfiguration: {
+          ...state.networkConfiguration,
+          throttling: action.profiles,
+        },
       };
     default:
       return state;

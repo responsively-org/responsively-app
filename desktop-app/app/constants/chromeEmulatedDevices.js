@@ -1305,7 +1305,7 @@ export default {
       id: '34',
       type: 'emulated-device',
       device: {
-        'show-by-default': true,
+        'show-by-default': false,
         title: 'Responsive Mode',
         screen: {
           horizontal: {
@@ -1314,13 +1314,14 @@ export default {
           },
           'device-pixel-ratio': 2,
           vertical: {
-            width: 790,
-            height: 500,
+            width: 500,
+            height: 790,
           },
         },
-        capabilities: ['responsive'],
-        'user-agent': '',
-        type: 'notebook',
+        capabilities: ['responsive', 'mobile'],
+        'user-agent':
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
+        type: 'phone',
         modes: [
           {
             title: 'default',

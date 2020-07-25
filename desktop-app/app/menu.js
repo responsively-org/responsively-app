@@ -18,6 +18,7 @@ import {
 import {appUpdater, AppUpdaterStatus} from './app-updater';
 import {statusBarSettings} from './settings/statusBarSettings';
 import {STATUS_BAR_VISIBILITY_CHANGE} from './constants/pubsubEvents';
+import {userPreferenceSettings} from './settings/userPreferenceSettings';
 
 const path = require('path');
 
@@ -200,10 +201,10 @@ export default class MenuBuilder {
         label: 'Open Screenshots folder',
         click: () => {
           try {
-            const dir = path.join(
-              os.homedir(),
-              `Desktop/Responsively-Screenshots`
-            );
+            const userSelectedScreenShotSavePath = userPreferenceSettings.getScreenShotSavePath();
+            const dir =
+              userSelectedScreenShotSavePath ||
+              userPreferenceSettings.getDefaultScreenshotpath();
             if (!fs.existsSync(dir)) {
               fs.mkdirSync(dir);
             }

@@ -15,18 +15,6 @@
   display: flex;
 }
 
-.webViewToolbarLeft .webViewToolbarIcons {
-  margin-right: 4px;
-}
-
-.webViewToolbarRight {
-  display: flex;
-}
-
-.webViewToolbarRight .webViewToolbarIcons {
-  margin-left: 4px;
-}
-
 .webViewToolbarIcons {
   padding: 0 2px;
   align-items: center;
@@ -36,15 +24,22 @@
   width: 30px;
 }
 
+.webViewToolbarRight {
+  display: flex;
+}
+
+.webViewToolbarLeft .webViewToolbarIcons {
+  margin-right: 4px;
+}
+
+.webViewToolbarRight .webViewToolbarIcons {
+  margin-left: 4px;
+}
+
 .deviceContainer {
   position: relative;
   display: inline-flex;
   transform-origin: top left;
-  border: 3px solid #687cee00;
-}
-
-.devToolsActive {
-  border: 3px solid #6075ef;
 }
 
 .device {
@@ -161,5 +156,9 @@
 }
 
 .resizableView {
-  margin: 0 1rem;
+  margin: 0 1rem 1rem 0;
+}
+
+.withMarginRight {
+  margin-right: 5rem;
 }

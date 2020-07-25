@@ -6,6 +6,7 @@ import DevicesIcon from '@material-ui/icons/Devices';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibraryOutlined';
 import ExtensionIcon from '@material-ui/icons/Extension';
+import NetworkIcon from '../icons/Network';
 import cx from 'classnames';
 import Logo from '../icons/Logo';
 
@@ -17,6 +18,7 @@ import {
   SCREENSHOT_MANAGER,
   USER_PREFERENCES,
   EXTENSIONS_MANAGER,
+  NETWORK_CONFIGURATION,
 } from '../../constants/DrawerContents';
 
 const LeftIconsPane = props => {
@@ -79,6 +81,19 @@ const LeftIconsPane = props => {
         >
           <div>
             <ExtensionIcon {...iconProps} className="extensionsIcon" />
+          </div>
+        </Grid>
+        <Grid
+          item
+          className={cx(commonStyles.icons, styles.icon, commonStyles.enabled, {
+            [commonStyles.selected]:
+              props.drawer.open &&
+              props.drawer.content === NETWORK_CONFIGURATION,
+          })}
+          onClick={() => toggleState(NETWORK_CONFIGURATION)}
+        >
+          <div>
+            <NetworkIcon {...iconProps} color="white" className="networkIcon" />
           </div>
         </Grid>
       </Grid>

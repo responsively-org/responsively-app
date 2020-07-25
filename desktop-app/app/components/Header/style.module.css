@@ -3,7 +3,7 @@
   padding: 20px 0 5px;
   background: #252526;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);
-  z-index: 2;
+  z-index: 5;
 }
 
 .darkToast {

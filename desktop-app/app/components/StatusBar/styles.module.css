@@ -3,7 +3,7 @@
   display: flex;
   background-color: #ffffff15;
   box-shadow: 0 -3px 5px rgba(0, 0, 0, 0.35);
-  color: #ffffffcc;
+  color: #fffc;
   justify-content: space-between;
 }
 
@@ -23,16 +23,20 @@
   font-size: 12px;
 }
 
-.link {
+.text {
   display: flex;
   align-items: center;
-  cursor: pointer;
+  cursor: default;
   color: grey;
   fill: grey;
   border-radius: 2px;
   height: 100%;
   padding: 0 5px;
   filter: grayscale(1);
+}
+
+.link {
+  cursor: pointer;
 }
 
 .link:hover {
