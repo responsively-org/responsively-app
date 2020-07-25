@@ -32,7 +32,6 @@ import {
   SET_NETWORK_TROTTLING_PROFILE,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
-import DevToolsService from '../../services/dev-tools';
 
 import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
@@ -85,7 +84,6 @@ class WebView extends Component {
 
   componentDidMount() {
     // this.initDeviceEmulationParams();
-    DevToolsService.refreshTargets();
     this.webviewRef.current.addEventListener(
       'ipc-message',
       this.messageHandler
@@ -159,7 +157,10 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
       this.dbg = this.getWebContents().debugger;
-      if (!this.dbg.isAttached()) this.dbg.attach();
+      if (!this.dbg.isAttached()) {
+        this.dbg.attach();
+        this.dbg.on('message', this._onDebuggerEvent);
+      }
     });
 
     if (this.props.transmitNavigatorStatus) {
@@ -642,6 +643,65 @@ class WebView extends Component {
     );
   };
 
+  _onDebuggerEvent = async (event, method, params) => {
+    switch (method) {
+      case 'Overlay.inspectNodeRequested':
+        await this._onInspectNodeRequested(params);
+        break;
+      default:
+        break;
+    }
+  };
+
+  _onInspectNodeRequested = async ({backendNodeId}) => {
+    if (!this.props.browser.isInspecting) {
+      return;
+    }
+    const [
+      {
+        model: {
+          content: [x, y],
+        },
+      },
+    ] = await Promise.all([
+      this.dbg.sendCommand('DOM.getBoxModel', {
+        backendNodeId,
+      }),
+      this.dbg.sendCommand('Overlay.setInspectMode', {
+        mode: 'none',
+        highlightConfig: {},
+      }),
+    ]);
+    this.processOpenDevToolsInspectorEvent({x, y});
+  };
+
+  _onMouseEnter = async () => {
+    if (!this.props.browser.isInspecting) {
+      return;
+    }
+    await this.dbg.sendCommand('DOM.enable');
+    await this.dbg.sendCommand('Overlay.enable');
+    await this.dbg.sendCommand('Overlay.setInspectMode', {
+      mode: 'searchForNode',
+      highlightConfig: {
+        showInfo: true,
+        showStyles: true,
+        contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+        paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+        borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+        marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+      },
+    });
+  };
+
+  _onMouseLeave = async () => {
+    if (!this.props.browser.isInspecting) {
+      return;
+    }
+    await this.dbg.sendCommand('Overlay.disable');
+    await this.dbg.sendCommand('DOM.disable');
+  };
+
   _getWebViewTag = deviceStyles => {
     const {
       device: {id, useragent, capabilities},
@@ -703,7 +763,6 @@ class WebView extends Component {
             useragent={useragent}
             style={deviceStyles}
           />
-          <webview id={`dev-tools-${this.props.key}`} src="about:blank" />
         </Resizable>
       );
     }
@@ -718,7 +777,6 @@ class WebView extends Component {
           useragent={useragent}
           style={deviceStyles}
         />
-        <webview id="dev-tools-1" src="about:blank" />
       </>
     );
   };
@@ -849,6 +907,8 @@ class WebView extends Component {
             width: deviceStyles.width,
             transform: `scale(${zoomLevel})`,
           }}
+          onMouseEnter={this._onMouseEnter}
+          onMouseLeave={this._onMouseLeave}
         >
           <div
             className={cx(styles.deviceOverlay, {
