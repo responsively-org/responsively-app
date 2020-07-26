@@ -111,11 +111,29 @@
       "icon": "resources/icon.icns",
       "target": [
         "dmg"
+      ],
+      "fileAssociations": [
+        {
+          "ext": [
+            "html",
+            "htm"
+          ],
+          "role": "Viewer"
+        }
       ]
     },
     "win": {
       "target": [
         "nsis"
+      ],
+      "fileAssociations": [
+        {
+          "ext": [
+            "html",
+            "htm"
+          ],
+          "role": "Viewer"
+        }
       ]
     },
     "linux": {
