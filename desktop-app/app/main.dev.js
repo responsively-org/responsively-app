@@ -43,6 +43,7 @@ import {
   initBrowserSync,
   getBrowserSyncHost,
   getBrowserSyncEmbedScriptURL,
+  closeBrowserSync,
 } from './utils/browserSync';
 import {getHostFromURL} from './utils/urlUtils';
 import browserSync from 'browser-sync';
@@ -117,6 +118,7 @@ app.on('window-all-closed', () => {
   ipcMain.removeHandler('get-local-extension-path');
   ipcMain.removeHandler('get-screen-shot-save-path');
   ipcMain.removeHandler('request-browser-sync');
+  closeBrowserSync();
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   if (process.platform !== 'darwin') {

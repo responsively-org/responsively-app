@@ -146,6 +146,7 @@ class WebView extends Component {
         this.dbg.attach();
         this.dbg.on('message', this._onDebuggerEvent);
       }
+      if (this.isMobile) this.hideScrollbar();
     });
 
     if (this.props.transmitNavigatorStatus) {
@@ -488,6 +489,16 @@ class WebView extends Component {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
       responsivelyApp.deviceId = '${this.props.device.id}';
     `);
+  };
+
+  hideScrollbar = () => {
+    this.webviewRef.current.insertCSS(
+      `
+        body::-webkit-scrollbar {
+          display: none;
+        }
+        `
+    );
   };
 
   _isDevToolsOpen = () =>
