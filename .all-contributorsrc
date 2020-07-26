@@ -253,6 +253,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "mehrdad-shokri",
+      "name": "Mehrdad Shokri",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/13661520?v=4",
+      "profile": "https://shokri.me",
+      "contributions": [
+        "infra"
+      ]
     }
   ],
   "contributorsPerLine": 5,

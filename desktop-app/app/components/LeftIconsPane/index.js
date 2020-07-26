@@ -18,7 +18,7 @@ import {
   SCREENSHOT_MANAGER,
   USER_PREFERENCES,
   EXTENSIONS_MANAGER,
-  NETWORK_CONFIGURATION
+  NETWORK_CONFIGURATION,
 } from '../../constants/DrawerContents';
 
 const LeftIconsPane = props => {
@@ -87,12 +87,13 @@ const LeftIconsPane = props => {
           item
           className={cx(commonStyles.icons, styles.icon, commonStyles.enabled, {
             [commonStyles.selected]:
-              props.drawer.open && props.drawer.content === NETWORK_CONFIGURATION,
+              props.drawer.open &&
+              props.drawer.content === NETWORK_CONFIGURATION,
           })}
           onClick={() => toggleState(NETWORK_CONFIGURATION)}
         >
           <div>
-            <NetworkIcon {...iconProps} color='white' className="networkIcon" />
+            <NetworkIcon {...iconProps} color="white" className="networkIcon" />
           </div>
         </Grid>
       </Grid>

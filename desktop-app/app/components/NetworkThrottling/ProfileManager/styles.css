@@ -9,11 +9,6 @@
   flex-grow: 1;
 }
 
-.profilesHeader > tr > th {
-  font-size: 20px;
-  font-weight: bold;
-}
-
 .profilesRow > th,
 td {
   padding-right: 16px !important;
@@ -22,6 +17,12 @@ td {
 .profilesRow > th {
   cursor: default;
 }
+
+.profilesHeader > tr > th {
+  font-size: 20px;
+  font-weight: bold;
+}
+
 .profilesRow > th.customProfile {
   cursor: pointer;
 }

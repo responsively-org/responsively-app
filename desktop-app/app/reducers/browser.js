@@ -30,7 +30,7 @@ import {
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
   SAVE_THROTTLING_PROFILES,
-} from '../actions/networkConfig'
+} from '../actions/networkConfig';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
 import type {Device} from '../constants/devices';
@@ -131,7 +131,7 @@ type NetworkThrottlingProfileType = {
   downloadKps: number,
   uploadKps: number,
   latencyMs: number,
-  active: boolean
+  active: boolean,
 };
 
 type NetworkConfigurationType = {
@@ -263,7 +263,7 @@ function getDefaultNetworkThrottlingProfiles(): NetworkThrottlingProfileType[] {
       title: 'Offline',
       downloadKps: 0,
       uploadKps: 0,
-      latencyMs: 0
+      latencyMs: 0,
     },
     // https://github.com/ChromeDevTools/devtools-frontend/blob/4f404fa8beab837367e49f68e29da427361b1f81/front_end/sdk/NetworkManager.js#L251-L265
     {
@@ -271,20 +271,21 @@ function getDefaultNetworkThrottlingProfiles(): NetworkThrottlingProfileType[] {
       title: 'Slow 3G',
       downloadKps: 400,
       uploadKps: 400,
-      latencyMs: 2000
+      latencyMs: 2000,
     },
     {
       type: 'Preset',
       title: 'Fast 3G',
       downloadKps: 1475,
       uploadKps: 675,
-      latencyMs: 563
-    }
-  ]
+      latencyMs: 563,
+    },
+  ];
 }
 
 function _getNetworkConfiguration(): NetworkConfigurationType {
-  const ntwrk: NetworkConfigurationType =  settings.get(NETWORK_CONFIGURATION) || {};
+  const ntwrk: NetworkConfigurationType =
+    settings.get(NETWORK_CONFIGURATION) || {};
 
   if (ntwrk.throttling == null)
     ntwrk.throttling = getDefaultNetworkThrottlingProfiles();
@@ -295,7 +296,9 @@ function _getNetworkConfiguration(): NetworkConfigurationType {
   return ntwrk;
 }
 
-function _setNetworkConfiguration(networkConfiguration: NetworkConfigurationType) {
+function _setNetworkConfiguration(
+  networkConfiguration: NetworkConfigurationType
+) {
   settings.set(NETWORK_CONFIGURATION, networkConfiguration);
 }
 
@@ -457,21 +460,33 @@ export default function browser(
         devices: [...state.devices],
       };
     case CHANGE_ACTIVE_THROTTLING_PROFILE:
-      const throttling = state.networkConfiguration.throttling
+      const throttling = state.networkConfiguration.throttling;
       const activeProfile = throttling.find(x => x.title === action.title);
       if (activeProfile != null) {
-        throttling.forEach(x => x.active = false);
+        throttling.forEach(x => (x.active = false));
         activeProfile.active = true;
       }
-      return {...state, networkConfiguration: {...state.networkConfiguration, throttling: [...throttling]}}
+      return {
+        ...state,
+        networkConfiguration: {
+          ...state.networkConfiguration,
+          throttling: [...throttling],
+        },
+      };
     case SAVE_THROTTLING_PROFILES:
-      action.profiles.forEach(x => x.active = false);
+      action.profiles.forEach(x => (x.active = false));
       action.profiles[0].active = true;
       _setNetworkConfiguration({
         ...state.networkConfiguration,
         throttling: action.profiles,
       });
-      return {...state, networkConfiguration: {...state.networkConfiguration, throttling: action.profiles}}
+      return {
+        ...state,
+        networkConfiguration: {
+          ...state.networkConfiguration,
+          throttling: action.profiles,
+        },
+      };
     default:
       return state;
   }

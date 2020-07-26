@@ -17,4 +17,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(NetworkConfigActions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NetworkConfiguration);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NetworkConfiguration);

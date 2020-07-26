@@ -62,28 +62,27 @@ export default function NetworkThrottling({
   const classes = useStyles();
 
   const selectedIdx = throttling.findIndex(p => p.active);
-  const options = throttling.map(p => {
-    return {
-      value: p.title,
-      label: p.title,
-    };
-  });
+  const options = throttling.map(p => ({
+    value: p.title,
+    label: p.title,
+  }));
   const selectedOption = options[selectedIdx];
 
-  const onThrottlingProfileChanged = (val) => {
-  if (val.value !== selectedOption.value)
-    onActiveThrottlingProfileChanged(val.value);
+  const onThrottlingProfileChanged = val => {
+    if (val.value !== selectedOption.value)
+      onActiveThrottlingProfileChanged(val.value);
   };
 
-  const saveThrottlingProfiles = (profiles) => {
+  const saveThrottlingProfiles = profiles => {
     onThrottlingProfilesListChanged(profiles);
     closeDialog();
-  }
+  };
 
   return (
     <div className={cx(commonStyles.sidebarContentSection)}>
       <div className={cx(commonStyles.sidebarContentSectionTitleBar)}>
-        <NetworkCheckIcon className={cx(styles.networkThrottlingIcon)}/>  Network Throttling
+        <NetworkCheckIcon className={cx(styles.networkThrottlingIcon)} />{' '}
+        Network Throttling
       </div>
       <div className={cx(commonStyles.sidebarContentSectionContainer)}>
         <div className={cx(styles.throttlingProfileSelectorContainer)}>
@@ -104,7 +103,14 @@ export default function NetworkThrottling({
         >
           Manage Profiles
         </Button>
-        <Dialog className={cx(styles.profileManagerDialog)} maxWidth="md" fullWidth open={open} scroll="paper" onClose={closeDialog}>
+        <Dialog
+          className={cx(styles.profileManagerDialog)}
+          maxWidth="md"
+          fullWidth
+          open={open}
+          scroll="paper"
+          onClose={closeDialog}
+        >
           <AppBar className={classes.appBar} color="secondary">
             <Toolbar>
               <Typography variant="h6" className={classes.title}>
@@ -116,7 +122,10 @@ export default function NetworkThrottling({
             </Toolbar>
           </AppBar>
           <DialogContent>
-            <ProfileManager profiles={[...throttling]} onSave={saveThrottlingProfiles} />
+            <ProfileManager
+              profiles={[...throttling]}
+              onSave={saveThrottlingProfiles}
+            />
           </DialogContent>
         </Dialog>
       </div>
