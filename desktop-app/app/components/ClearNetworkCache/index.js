@@ -9,7 +9,7 @@ export default function ClearNetworkCache(props) {
   return (
     <div className={cx(commonStyles.sidebarContentSection)}>
       <div className={cx(commonStyles.sidebarContentSectionTitleBar)}>
-        <CachedIcon style={{marginRight: 5}} />  Network Cache
+        <CachedIcon style={{marginRight: 5}} /> Network Cache
       </div>
       <div className={cx(commonStyles.sidebarContentSectionContainer)}>
         <Button

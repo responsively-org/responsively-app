@@ -21,8 +21,6 @@ import {
   NAVIGATION_RELOAD,
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
-  ENABLE_INSPECTOR_ALL_DEVICES,
-  DISABLE_INSPECTOR_ALL_DEVICES,
   TOGGLE_DEVICE_MUTED_STATE,
   RELOAD_CSS,
   DELETE_STORAGE,
@@ -53,7 +51,6 @@ const MESSAGE_TYPES = {
   scroll: 'scroll',
   click: 'click',
   openDevToolsInspector: 'openDevToolsInspector',
-  disableInspector: 'disableInspector',
   openConsole: 'openConsole',
   tiltDevice: 'tiltDevice',
   takeScreenshot: 'takeScreenshot',
@@ -131,18 +128,6 @@ class WebView extends Component {
     this.subscriptions.push(
       pubsub.subscribe(TOGGLE_DEVICE_MUTED_STATE, this.processToggleMuteEvent)
     );
-    this.subscriptions.push(
-      pubsub.subscribe(
-        ENABLE_INSPECTOR_ALL_DEVICES,
-        this.processEnableInspectorEvent
-      )
-    );
-    this.subscriptions.push(
-      pubsub.subscribe(
-        DISABLE_INSPECTOR_ALL_DEVICES,
-        this.processDisableInspectorEvent
-      )
-    );
 
     this.subscriptions.push(
       pubsub.subscribe(
@@ -157,7 +142,10 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
       this.dbg = this.getWebContents().debugger;
-      if (!this.dbg.isAttached()) this.dbg.attach();
+      if (!this.dbg.isAttached()) {
+        this.dbg.attach();
+        this.dbg.on('message', this._onDebuggerEvent);
+      }
       if (this.isMobile) this.hideScrollbar();
     });
 
@@ -406,14 +394,6 @@ class WebView extends Component {
     );
   };
 
-  processEnableInspectorEvent = () => {
-    this.webviewRef.current.send('enableInspectorMessage');
-  };
-
-  processDisableInspectorEvent = message => {
-    this.webviewRef.current.send('disableInspectorMessage');
-  };
-
   setNetworkThrottlingProfile = ({type, downloadKps, uploadKps, latencyMs}) => {
     // TODO : change this when https://github.com/electron/electron/issues/21250 is solved
     // if (type === 'Online') {
@@ -471,9 +451,6 @@ class WebView extends Component {
       case MESSAGE_TYPES.openDevToolsInspector:
         this.processOpenDevToolsInspectorEvent(message);
         return;
-      case MESSAGE_TYPES.disableInspector:
-        this.transmitDisableInspectorToAllDevices(message);
-        return;
       case MESSAGE_TYPES.openConsole:
         this._toggleDevTools();
         return;
@@ -491,10 +468,6 @@ class WebView extends Component {
     }
   };
 
-  transmitDisableInspectorToAllDevices = message => {
-    pubsub.publish(DISABLE_INSPECTOR_ALL_DEVICES, [message]);
-  };
-
   initBrowserSync = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
     var bsScript= document.createElement('script');
@@ -507,47 +480,7 @@ class WebView extends Component {
   initEventTriggers = webview => {
     this.initBrowserSync(webview);
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-    
       responsivelyApp.deviceId = '${this.props.device.id}';
-      document.addEventListener('mouseleave', () => {
-        window.responsivelyApp.mouseOn = false;
-        if (responsivelyApp.domInspectorEnabled) {
-          responsivelyApp.domInspector.disable();
-        }
-      });
-      document.addEventListener('mouseenter', () => {
-        responsivelyApp.mouseOn = true;
-        if (responsivelyApp.domInspectorEnabled) {
-          responsivelyApp.domInspector.enable();
-        }
-      });
-
-      document.addEventListener(
-        'click',
-        (e) => {
-          if (e.target === window.responsivelyApp.lastClickElement || e.responsivelyAppProcessed) {
-            window.responsivelyApp.lastClickElement = null;
-            e.responsivelyAppProcessed = true;
-            return;
-          }
-          if (window.responsivelyApp.domInspectorEnabled) {
-            e.preventDefault();
-            window.responsivelyApp.domInspector.disable();
-            window.responsivelyApp.domInspectorEnabled = false;
-            const targetRect = e.target.getBoundingClientRect();
-            window.responsivelyApp.sendMessageToHost(
-              '${MESSAGE_TYPES.disableInspector}'
-            );
-            window.responsivelyApp.sendMessageToHost(
-              '${MESSAGE_TYPES.openDevToolsInspector}',
-              {x: targetRect.left, y: targetRect.top}
-            );
-            return;
-          }
-          e.responsivelyAppProcessed = true;
-        },
-        true
-      );
     `);
   };
 
@@ -644,6 +577,65 @@ class WebView extends Component {
     );
   };
 
+  _onDebuggerEvent = async (event, method, params) => {
+    switch (method) {
+      case 'Overlay.inspectNodeRequested':
+        await this._onInspectNodeRequested(params);
+        break;
+      default:
+        break;
+    }
+  };
+
+  _onInspectNodeRequested = async ({backendNodeId}) => {
+    if (!this.props.browser.isInspecting) {
+      return;
+    }
+    const [
+      {
+        model: {
+          content: [x, y],
+        },
+      },
+    ] = await Promise.all([
+      this.dbg.sendCommand('DOM.getBoxModel', {
+        backendNodeId,
+      }),
+      this.dbg.sendCommand('Overlay.setInspectMode', {
+        mode: 'none',
+        highlightConfig: {},
+      }),
+    ]);
+    this.processOpenDevToolsInspectorEvent({x, y});
+  };
+
+  _onMouseEnter = async () => {
+    if (!this.props.browser.isInspecting) {
+      return;
+    }
+    await this.dbg.sendCommand('DOM.enable');
+    await this.dbg.sendCommand('Overlay.enable');
+    await this.dbg.sendCommand('Overlay.setInspectMode', {
+      mode: 'searchForNode',
+      highlightConfig: {
+        showInfo: true,
+        showStyles: true,
+        contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+        paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+        borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+        marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+      },
+    });
+  };
+
+  _onMouseLeave = async () => {
+    if (!this.props.browser.isInspecting) {
+      return;
+    }
+    await this.dbg.sendCommand('Overlay.disable');
+    await this.dbg.sendCommand('DOM.disable');
+  };
+
   _getWebViewTag = deviceStyles => {
     const {
       device: {id, useragent, capabilities},
@@ -710,14 +702,16 @@ class WebView extends Component {
     }
 
     return (
-      <webview
-        ref={this.webviewRef}
-        preload="./preload.js"
-        className={cx(styles.device)}
-        src={address || 'about:blank'}
-        useragent={useragent}
-        style={deviceStyles}
-      />
+      <>
+        <webview
+          ref={this.webviewRef}
+          preload="./preload.js"
+          className={cx(styles.device)}
+          src={address || 'about:blank'}
+          useragent={useragent}
+          style={deviceStyles}
+        />
+      </>
     );
   };
 
@@ -847,6 +841,8 @@ class WebView extends Component {
             width: deviceStyles.width,
             transform: `scale(${zoomLevel})`,
           }}
+          onMouseEnter={this._onMouseEnter}
+          onMouseLeave={this._onMouseLeave}
         >
           <div
             className={cx(styles.deviceOverlay, {
