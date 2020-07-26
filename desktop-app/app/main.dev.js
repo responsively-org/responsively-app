@@ -53,10 +53,6 @@ const URL = require('url').URL;
 
 migrateDeviceSchema();
 
-if (app && app.commandLine) {
-  app.commandLine.appendSwitch('remote-debugging-port', '31313');
-}
-
 if (process.env.NODE_ENV !== 'development') {
   Sentry.init({
     dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
@@ -439,36 +435,6 @@ const createWindow = async () => {
     mainWindow.removeBrowserView(devToolsView);
     devToolsView.destroy();
     devToolsView = null;
-  });
-
-  ipcMain.on('open-devtools-new', (event, ...args) => {
-    const {webViewId, backendNodeId} = args[0];
-    const webView = webContents.fromId(webViewId);
-
-    devToolsView = new BrowserView();
-    mainWindow.setBrowserView(devToolsView);
-    devToolsView.setBounds({x: 0, y: 673, width: 1920, height: 301});
-    webView.setDevToolsWebContents(devToolsView.webContents);
-    webView.openDevTools();
-    devToolsView.webContents.executeJavaScript(`
-    (() => setTimeout(async () => {
-      InspectorFrontendAPI.showPanel('elements');
-      setTimeout(async () => {
-        const mainTarget = SDK.targetManager.mainTarget();
-        const domModel = mainTarget.model(SDK.DOMModel);
-        const res = await domModel.pushNodesByBackendIdsToFrontend(
-          new Set().add(${backendNodeId})
-        );
-        if (res) {
-          const nodeId = res.values().next().value.id;
-          await Main.sendOverProtocol('DOM.setInspectedNode', {nodeId});
-          const nodeForSelection = domModel.nodeForId(nodeId);
-          UI.panels.elements.selectDOMNode(nodeForSelection, true);
-        }
-      }, 300);
-    }, 1000))();
-    `);
-    devToolsView.webContents.openDevTools();
   });
 
   ipcMain.on('resize-devtools', (event, ...args) => {

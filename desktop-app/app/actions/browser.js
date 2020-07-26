@@ -11,8 +11,6 @@ import {
   NAVIGATION_RELOAD,
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
-  ENABLE_INSPECTOR_ALL_DEVICES,
-  DISABLE_INSPECTOR_ALL_DEVICES,
   TOGGLE_DEVICE_MUTED_STATE,
   RELOAD_CSS,
   DELETE_STORAGE,
@@ -21,7 +19,6 @@ import {
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
-import DevToolsService from '../services/dev-tools';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_PAGE_META_FIELD = 'NEW_PAGE_META_FIELD';
@@ -704,13 +701,6 @@ export function toggleInspector() {
     const {
       browser: {isInspecting},
     } = getState();
-
-    /* pubsub.publish(
-      !isInspecting
-        ? ENABLE_INSPECTOR_ALL_DEVICES
-        : DISABLE_INSPECTOR_ALL_DEVICES
-    ); */
-    DevToolsService.enableUniversalInspector();
 
     dispatch(newInspectorState(!isInspecting));
   };

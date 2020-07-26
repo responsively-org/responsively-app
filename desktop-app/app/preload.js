@@ -1,5 +1,4 @@
 const {ipcRenderer, remote} = require('electron');
-const DomInspector = require('../lib/dom-inspector');
 
 const {Menu} = remote;
 const {MenuItem} = remote;
@@ -68,7 +67,6 @@ window.addEventListener(
 );
 
 global.responsivelyApp = {
-  DomInspector,
   sendMessageToHost: (type, message) => {
     if (!message) {
       message = {};
@@ -157,21 +155,6 @@ ipcRenderer.on('scrollUpMessage', (event, args) => {
     left: window.scrollX - 250,
     behavior: 'smooth',
   });
-});
-
-ipcRenderer.on('enableInspectorMessage', (event, args) => {
-  responsivelyApp.domInspector = new responsivelyApp.DomInspector();
-  window.responsivelyApp.domInspector.enable();
-  window.responsivelyApp.domInspectorEnabled = true;
-});
-
-ipcRenderer.on('disableInspectorMessage', (event, args) => {
-  if (!window.responsivelyApp.domInspector) {
-    return;
-  }
-  window.responsivelyApp.domInspector.destroy();
-  window.responsivelyApp.domInspector = null;
-  window.responsivelyApp.domInspectorEnabled = false;
 });
 
 ipcRenderer.on('eventsMirroringState', (event, args) => {
