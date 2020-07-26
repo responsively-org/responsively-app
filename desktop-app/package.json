@@ -141,7 +141,16 @@
         "AppImage",
         "rpm"
       ],
-      "category": "Development"
+      "category": "Development",
+      "fileAssociations": [
+        {
+          "ext": [
+            "html",
+            "htm"
+          ],
+          "role": "Viewer"
+        }
+      ]
     },
     "directories": {
       "buildResources": "resources",
