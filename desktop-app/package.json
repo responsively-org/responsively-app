@@ -266,7 +266,6 @@
     "bluebird": "^3.7.2",
     "browser-sync": "^2.26.7",
     "chokidar": "^3.4.0",
-    "chrome-remote-interface": "^0.28.2",
     "classnames": "^2.2.6",
     "core-js": "2",
     "devtron": "^1.4.0",

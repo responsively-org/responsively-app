@@ -300,14 +300,7 @@ class WebView extends Component {
   };
 
   processAddressChangeEvent = ({address, force}) => {
-    console.log(
-      'processAddressChangeEvent address, force',
-      address,
-      force,
-      this.webviewRef.current.src
-    );
     if (address !== this.webviewRef.current.src) {
-      console.log('Inside if');
       if (force) {
         this.webviewRef.current.loadURL(address);
       }
