@@ -39,6 +39,7 @@ class AddressBar extends React.Component<Props> {
       previousAddress: props.address,
       finalUrlResult: null,
       canShowSuggestions: false,
+      cursor: 0,
     };
     this.inputRef = React.createRef();
   }
@@ -175,7 +176,9 @@ class AddressBar extends React.Component<Props> {
             divClassName={cx(styles.searchBarSuggestionsContainer)}
             listItemUiClassName={cx(styles.searchBarSuggestionsListUl)}
             listItemsClassName={cx(styles.searchBarSuggestionsListItems)}
+            activeClass={cx(styles.searchBarSuggestionsActiveListItems)}
             filteredSearchResults={this.state.finalUrlResult}
+            cursorIndex={this.state.cursor}
             handleUrlChange={this._onSearchedUrlClick}
           />
         ) : (
@@ -187,7 +190,7 @@ class AddressBar extends React.Component<Props> {
 
   _handleInputChange = e => {
     this.setState(
-      {userTypedAddress: e.target.value, canShowSuggestions: true},
+      {userTypedAddress: e.target.value, canShowSuggestions: true, cursor: 0},
       () => {
         this._filterExistingUrl();
       }
@@ -206,6 +209,25 @@ class AddressBar extends React.Component<Props> {
           this._onChange();
         }
       );
+    } else if (e.key === 'ArrowUp' && this.state.cursor > 0) {
+      this.setState(prevState => ({
+        cursor: prevState.cursor - 1,
+        userTypedAddress: this.state.finalUrlResult[prevState.cursor - 1].url,
+        canShowSuggestions: true,
+      }));
+    } else if (
+      e.key === 'ArrowDown' &&
+      this.state.cursor < this.state.finalUrlResult.length - 1
+    ) {
+      this.setState(prevState => ({
+        cursor: prevState.cursor + 1,
+        userTypedAddress: this.state.finalUrlResult[prevState.cursor + 1].url,
+        canShowSuggestions: true,
+      }));
+    } else if (e.key === 'Escape') {
+      this.setState(prevState => ({
+        canShowSuggestions: false,
+      }));
     }
   };
 

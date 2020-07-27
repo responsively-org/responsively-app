@@ -4,6 +4,7 @@ const UrlSearchResults = ({
   divClassName,
   listItemsClassName,
   filteredSearchResults,
+  cursorIndex,
   handleUrlChange,
   activeClass,
   listItemUiClassName,
@@ -13,11 +14,13 @@ const UrlSearchResults = ({
       {filteredSearchResults?.map(
         (eachResult, index) =>
           index < 8 && (
-            <li key={index} className={`${listItemsClassName}`}>
-              <div
-                onKeyDown={e => handleOnKeyDown(e, eachResult.url)}
-                onClick={() => handleUrlChange(eachResult.url, index)}
-              >
+            <li
+              key={index}
+              className={`${listItemsClassName} ${
+                cursorIndex === index ? activeClass : ''
+              }`}
+            >
+              <div onClick={() => handleUrlChange(eachResult.url, index)}>
                 {eachResult.url}
               </div>
             </li>

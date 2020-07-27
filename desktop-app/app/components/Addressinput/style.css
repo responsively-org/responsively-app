@@ -74,7 +74,7 @@
   color: white;
 }
 
-.searchBarSuggestionsListItems.active {
-  background: gray;
+.searchBarSuggestionsActiveListItems {
+  background: #7587ec;
   color: white;
 }
