@@ -730,7 +730,8 @@ class WebView extends Component {
       outline: `4px solid ${
         this._isDevToolsOpen()
           ? `#6075ef`
-          : this.props.browser.userPreferences.deviceOutlineStyle
+          : this.props.browser.userPreferences.deviceOutlineStyle ||
+            'rgba(0, 0, 0, 0)'
       }`,
       width: deviceDimensions.width,
       height: deviceDimensions.height,
