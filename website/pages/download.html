@@ -174,7 +174,7 @@
                 </li>
               </ul>
             </div>
-            <a href="download.html" class="btn btn-primary ml-lg-3">Download now</a>
+            <a href="/download" class="btn btn-primary ml-lg-3">Download now</a>
             <a class="ml-lg-3 d-none d-lg-block"
               href="https://www.producthunt.com/posts/responsively?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-responsively"
               target="_blank"><img
@@ -262,9 +262,10 @@
         </svg>
           </div>
 
-  <div class="container text-center mt-1">
-  <p><em>Please feel free to contact us on <a href="https://github.com/manojVivek/responsively-app/issues" target="_blank">GitHub</a>, if you need any help.</em></p>
-</div>
+  <div class="container text-center mt-1" id="instructions">
+    <p><em>If you are a linux user, please follow the <a href="https://docs.appimage.org/introduction/quickstart.html#ref-how-to-run-appimage" target="_blank" rel=”nofollow” >instructions here</a> after downloading the <code>.AppImage</code> file.</em></p>
+    <p><em>Please feel free to contact us on <a href="https://github.com/manojVivek/responsively-app/issues" target="_blank">GitHub</a>, if you need any help.</em></p>
+  </div>
   <div class="divider">
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="96px" viewBox="0 0 100 100" version="1.1" preserveAspectRatio="none" class="injected-svg" data-src="assets/img/dividers/divider-2.svg">
 <path d="M0,0 C16.6666667,66 33.3333333,99 50,99 C66.6666667,99 83.3333333,66 100,0 L100,100 L0,100 L0,0 Z"></path>
@@ -285,7 +286,7 @@
                   Start building beautiful websites
                 </div>
                 <a
-                  href="download.html"
+                  href="/download"
                   class="btn btn-lg btn-white"
                 >
                   Download Now
@@ -507,6 +508,9 @@
       return;
     }
     setTimeout(() => {
+      if (window.location.href.indexOf('instructions') !== -1) {
+        return;
+      }
       var os = getOS();
       var downloadLink = document.getElementById(os);
       if (downloadLink) {
