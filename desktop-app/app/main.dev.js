@@ -28,7 +28,6 @@ import installExtension, {
   REACT_DEVELOPER_TOOLS,
   REDUX_DEVTOOLS,
 } from 'electron-devtools-installer';
-import devtron from 'devtron';
 import fs from 'fs';
 import console from 'electron-timber';
 import MenuBuilder from './menu';
@@ -190,7 +189,6 @@ const installExtensions = async () => {
   const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
   try {
     await installExtension(extensions);
-    devtron.install();
   } catch (err) {
     console.log('Error installing extensions', err);
   }

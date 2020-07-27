@@ -287,7 +287,7 @@ class WebView extends Component {
   };
 
   processReloadCSSEvent = () => {
-    this.webviewRef.current.executeJavaScript(`
+    this.webviewRef.current.executeJavaScript(`{
         var elements = document.querySelectorAll('link[rel=stylesheet][href]');
         elements.forEach(element=>{
           var href = element.href;
@@ -296,7 +296,7 @@ class WebView extends Component {
             element.href = href + (href.indexOf('?')>=0?'&':'?') + 'invalidateCacheParam=' + (new Date().valueOf());
           }
         })
-    `);
+    }`);
   };
 
   processAddressChangeEvent = ({address, force}) => {
@@ -470,18 +470,19 @@ class WebView extends Component {
 
   initBrowserSync = webview => {
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-    var bsScript= document.createElement('script');
+      var bsScript= document.createElement('script');
       bsScript.src = '${getBrowserSyncEmbedScriptURL()}';
       bsScript.async = true;
       document.body.appendChild(bsScript);
+      true
     `);
   };
 
   initEventTriggers = webview => {
     this.initBrowserSync(webview);
-    this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
+    this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`{
       responsivelyApp.deviceId = '${this.props.device.id}';
-    `);
+    }`);
   };
 
   hideScrollbar = () => {

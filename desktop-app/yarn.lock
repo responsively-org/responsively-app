@@ -2535,11 +2535,6 @@ accepts@~1.3.4, accepts@~1.3.5, accepts@~1.3.7:
     mime-types "~2.1.24"
     negotiator "0.6.2"
 
-accessibility-developer-tools@^2.11.0:
-  version "2.12.0"
-  resolved "https://registry.yarnpkg.com/accessibility-developer-tools/-/accessibility-developer-tools-2.12.0.tgz#3da0cce9d6ec6373964b84f35db7cfc3df7ab514"
-  integrity sha1-PaDM6dbsY3OWS4TzXbfPw996tRQ=
-
 acorn-globals@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/acorn-globals/-/acorn-globals-6.0.0.tgz#46cdd39f0f8ff08a876619b55f5ac8a6dc770b45"
@@ -6118,15 +6113,6 @@ device-specs@^1.0.0:
   resolved "https://registry.yarnpkg.com/device-specs/-/device-specs-1.0.0.tgz#47b54577b9b159118bbb0a175177d0aa9c50a9c9"
   integrity sha512-fYXbFSeilT7bnKWFi4OERSPHdtaEoDGn4aUhV5Nly6/I+Tp6JZ/6Icmd7LVIF5euyodGpxz2e/bfUmDnIdSIDw==
 
-devtron@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/devtron/-/devtron-1.4.0.tgz#b5e748bd6e95bbe70bfcc68aae6fe696119441e1"
-  integrity sha1-tedIvW6Vu+cL/MaKrm/mlhGUQeE=
-  dependencies:
-    accessibility-developer-tools "^2.11.0"
-    highlight.js "^9.3.0"
-    humanize-plus "^1.8.1"
-
 diff-sequences@^26.0.0:
   version "26.0.0"
   resolved "https://registry.yarnpkg.com/diff-sequences/-/diff-sequences-26.0.0.tgz#0760059a5c287637b842bd7085311db7060e88a6"
@@ -6528,10 +6514,10 @@ electron-util@^0.8.2:
   dependencies:
     electron-is-dev "^0.3.0"
 
-electron@^8.4.0:
-  version "8.4.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-8.4.0.tgz#30692166dc8b2a511b3c01c70960d467efe2b8e6"
-  integrity sha512-SpgyccM5rjDJSGcpQjiviUBT44fZlSyhcjy8RpKSnAad+co4xY1vYj6T25U1CfSk0PH/dhvcp63P2sdXHCwq/Q==
+electron@^9.1.1:
+  version "9.1.1"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-9.1.1.tgz#d52c9873be4113287c3eb2b02f85bad6644b100e"
+  integrity sha512-BYvroBLV9x7G4iN33P/IxeZqwjl62/9VuBAF1CoM0m6OeheaiLog1ZMKLlCqVXycJvvrAvLHc454DDEmwnqqhA==
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^12.0.12"
@@ -8456,11 +8442,6 @@ highlight-es@^1.0.0:
     is-es2016-keyword "^1.0.0"
     js-tokens "^3.0.0"
 
-highlight.js@^9.3.0:
-  version "9.18.1"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.18.1.tgz#ed21aa001fe6252bb10a3d76d47573c6539fe13c"
-  integrity sha512-OrVKYz70LHsnCgmbXctv/bfuvntIKDz177h0Co37DQ5jamGZLVmoCVMtjMtNZY3X9DrCcKfklHPNeA0uPZhSJg==
-
 history@^4.7.2, history@^4.9.0:
   version "4.10.1"
   resolved "https://registry.yarnpkg.com/history/-/history-4.10.1.tgz#33371a65e3a83b267434e2b3f3b1b4c58aad4cf3"
@@ -8684,11 +8665,6 @@ human-signals@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-1.1.1.tgz#c5b1cd14f50aeae09ab6c59fe63ba3395fe4dfa3"
   integrity sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==
-
-humanize-plus@^1.8.1:
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/humanize-plus/-/humanize-plus-1.8.2.tgz#a65b34459ad6367adbb3707a82a3c9f916167030"
-  integrity sha1-pls0RZrWNnrbs3B6gqPJ+RYWcDA=
 
 husky@^1.1.4:
   version "1.3.1"
