@@ -240,6 +240,7 @@ const createWindow = async () => {
         div.style["-webkit-app-region"] = "drag";
         div.style['-webkit-user-select'] = 'none';
         document.body.appendChild(div);
+        true;
       `);
     }
   });
