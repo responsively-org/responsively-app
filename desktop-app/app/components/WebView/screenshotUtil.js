@@ -11,16 +11,25 @@ import fs from 'fs-extra';
 import PromiseWorker from 'promise-worker';
 import NotificationMessage from '../NotificationMessage';
 import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
+import {type Device} from '../../constants/devices';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 
-export const captureFullPage = async (
+const captureScreenshot = async ({
   address,
   device,
   webView,
   createSeparateDir,
-  now
-) => {
+  now,
+  fullScreen = false,
+}: {
+  address: string,
+  device: Device,
+  webView: WebviewElement,
+  createSeparateDir: boolean,
+  now?: Date,
+  fullScreen: boolean,
+}) => {
   const worker = new Worker('./imageWorker.js');
   const promiseWorker = new PromiseWorker(worker);
   const toastId = toast.info(
@@ -30,96 +39,14 @@ export const captureFullPage = async (
     />,
     {autoClose: false}
   );
-  // Hiding scrollbars in the screenshot
-  await webView.insertCSS(`
-      .responsivelyApp__ScreenshotInProgress::-webkit-scrollbar {
-        display: none;
-      }
+  const webViewUtils = new WebViewUtils(webView);
+  const insertedCSSKey = await webViewUtils.hideScrollbarAndFixedPositionedElements();
 
-      .responsivelyApp__HiddenForScreenshot {
-        display: none !important;
-      }
-    `);
+  const images = fullScreen
+    ? await webViewUtils.getFullScreenImages(promiseWorker)
+    : [await webViewUtils.getViewportImage(promiseWorker)];
 
-  // Get the windows's scroll details
-  let scrollX = 0;
-  let scrollY = 0;
-  const pageX = 0;
-  const pageY = 0;
-  const {
-    previousScrollPosition,
-    scrollHeight,
-    viewPortHeight,
-    scrollWidth,
-    viewPortWidth,
-  } = await webView.executeJavaScript(`
-    document.body.classList.add('responsivelyApp__ScreenshotInProgress');
-    responsivelyApp.screenshotVar = {
-      previousScrollPosition : {
-        left: window.scrollX,
-        top: window.scrollY,
-      },
-      scrollHeight: document.body.scrollHeight,
-      scrollWidth: document.body.scrollWidth,
-      viewPortHeight: document.documentElement.clientHeight,
-      viewPortWidth: document.documentElement.clientWidth,
-    };
-    responsivelyApp.screenshotVar;
-  `);
-
-  const images = [];
-
-  for (
-    let pageY = 0;
-    scrollY < scrollHeight;
-    pageY++, scrollY = viewPortHeight * pageY
-  ) {
-    scrollX = 0;
-    const columnImages = [];
-    for (
-      let pageX = 0;
-      scrollX < scrollWidth;
-      pageX++, scrollX = viewPortWidth * pageX
-    ) {
-      await webView.executeJavaScript(`
-        window.scrollTo(${scrollX}, ${scrollY})
-        responsivelyApp.hideFixedPositionElementsForScreenshot();
-      `);
-      await _delay(200);
-      const options = {
-        x: 0,
-        y: 0,
-        width: viewPortWidth,
-        height: viewPortHeight,
-      };
-      if (scrollX + viewPortWidth > scrollWidth) {
-        options.width = scrollWidth - scrollX;
-        options.x = viewPortWidth - options.width;
-      }
-      if (scrollY + viewPortHeight > scrollHeight) {
-        options.height = scrollHeight - scrollY;
-        options.y = viewPortHeight - options.height;
-      }
-      const image = await _takeSnapshot(webView, options);
-      columnImages.push(image);
-    }
-    const pngs = columnImages.map(img => img.toPNG());
-    images.push(
-      await promiseWorker.postMessage(
-        {
-          images: pngs,
-          direction: 'horizontal',
-        },
-        [...pngs]
-      )
-    );
-  }
-
-  webView.executeJavaScript(`
-    window.scrollTo(${JSON.stringify(previousScrollPosition)});
-    document.body.classList.remove('responsivelyApp__ScreenshotInProgress');
-    responsivelyApp.unHideElementsHiddenForScreenshot();
-  `);
+  await webViewUtils.unHideScrollbarAndFixedPositionedElements(insertedCSSKey);
 
   toast.update(toastId, {
     render: (
@@ -130,17 +57,20 @@ export const captureFullPage = async (
     ),
     type: toast.TYPE.INFO,
   });
+
   const resultFilename = _getScreenshotFileName(
     address,
     device,
     now,
     createSeparateDir
   );
+
   const mergedImage = await promiseWorker.postMessage({
     images,
     direction: 'vertical',
     resultFilename,
   });
+
   toast.update(toastId, {
     render: (
       <NotificationMessage tick message={`${device.name} screenshot taken!`} />
@@ -148,17 +78,156 @@ export const captureFullPage = async (
     type: toast.TYPE.INFO,
     autoClose: 2000,
   });
+
   await _delay(250);
   shell.showItemInFolder(path.join(resultFilename.dir, resultFilename.file));
 };
+
+class WebViewUtils {
+  webView: WebviewElement;
+
+  constructor(webView) {
+    this.webView = webView;
+  }
+
+  getWindowSizeAndScrollDetails(): Promise {
+    return this.webView.executeJavaScript(`
+      responsivelyApp.screenshotVar = {
+        previousScrollPosition : {
+          left: window.scrollX,
+          top: window.scrollY,
+        },
+        scrollHeight: document.body.scrollHeight,
+        scrollWidth: document.body.scrollWidth,
+        viewPortHeight: document.documentElement.clientHeight,
+        viewPortWidth: document.documentElement.clientWidth,
+      };
+      responsivelyApp.screenshotVar;
+    `);
+  }
+
+  async scrollTo(scrollX: number, scrollY: number): Promise {
+    await this.webView.executeJavaScript(`
+      window.scrollTo(${scrollX}, ${scrollY})
+    `);
+    // wait a little for the scroll to take effect.
+    await _delay(200);
+  }
+
+  async hideScrollbarAndFixedPositionedElements(): Promise<string> {
+    const key = await this.webView.insertCSS(`
+      .responsivelyApp__ScreenshotInProgress::-webkit-scrollbar {
+        display: none;
+      }
+
+      .responsivelyApp__HiddenForScreenshot {
+        display: none !important;
+      }
+    `);
+
+    await this.webView.executeJavaScript(`
+      document.body.classList.add('responsivelyApp__ScreenshotInProgress');
+      responsivelyApp.hideFixedPositionElementsForScreenshot();
+    `);
+
+    // wait a little for the 'hide' effect to take place.
+    await _delay(200);
+
+    return key;
+  }
+
+  async unHideScrollbarAndFixedPositionedElements(insertedCSSKey): Promise {
+    await this.webView.removeInsertedCSS(insertedCSSKey);
+    return this.webView.executeJavaScript(`
+      document.body.classList.remove('responsivelyApp__ScreenshotInProgress');
+      responsivelyApp.unHideElementsHiddenForScreenshot();
+    `);
+  }
+
+  async getFullScreenImages(promiseWorker: PromiseWorker): Promise {
+    const {
+      previousScrollPosition,
+      scrollHeight,
+      viewPortHeight,
+      scrollWidth,
+      viewPortWidth,
+    } = await this.getWindowSizeAndScrollDetails();
+
+    const images = [];
+    let scrollX = 0;
+    let scrollY = 0;
+    for (
+      let pageY = 0;
+      scrollY < scrollHeight;
+      pageY++, scrollY = viewPortHeight * pageY
+    ) {
+      scrollX = 0;
+      const columnImages = [];
+      for (
+        let pageX = 0;
+        scrollX < scrollWidth;
+        pageX++, scrollX = viewPortWidth * pageX
+      ) {
+        await this.scrollTo(scrollX, scrollY);
+
+        const options = {
+          x: 0,
+          y: 0,
+          width: viewPortWidth,
+          height: viewPortHeight,
+        };
+        if (scrollX + viewPortWidth > scrollWidth) {
+          options.width = scrollWidth - scrollX;
+          options.x = viewPortWidth - options.width;
+        }
+        if (scrollY + viewPortHeight > scrollHeight) {
+          options.height = scrollHeight - scrollY;
+          options.y = viewPortHeight - options.height;
+        }
+        const image = await this.takeSnapshot(options);
+        columnImages.push(image);
+      }
+      const pngs = columnImages.map(img => img.toPNG());
+      images.push(
+        await promiseWorker.postMessage(
+          {
+            images: pngs,
+            direction: 'horizontal',
+          },
+          [...pngs]
+        )
+      );
+    }
+
+    this.scrollTo(previousScrollPosition.left, previousScrollPosition.top);
+
+    return images;
+  }
+
+  async getViewportImage(promiseWorker: PromiseWorker): Promise {
+    const image = await this.takeSnapshot();
+    const png = image.toPNG();
+
+    return promiseWorker.postMessage(
+      {
+        images: [png],
+        direction: 'horizontal',
+      },
+      [png]
+    );
+  }
+
+  takeSnapshot(options): Promise {
+    return remote.webContents
+      .fromId(this.webView.getWebContentsId())
+      .capturePage(options);
+  }
+}
 
 const _delay = ms =>
   new Promise((resolve, reject) => {
     setTimeout(() => resolve(), ms);
   });
-
-const _takeSnapshot = (webView, options) =>
-  remote.webContents.fromId(webView.getWebContentsId()).capturePage(options);
 
 function _getScreenshotFileName(
   address,
@@ -189,7 +258,7 @@ function _getScreenshotFileName(
   };
 }
 
-export const getWebsiteName = address => {
+const getWebsiteName = (address: string) => {
   let domain = '';
   if (address.startsWith('file://')) {
     const fileNameStartingIndex = address.lastIndexOf('/') + 1;
@@ -208,3 +277,5 @@ export const getWebsiteName = address => {
   }
   return domain.charAt(0).toUpperCase() + domain.slice(1);
 };
+
+export {getWebsiteName, captureScreenshot};
