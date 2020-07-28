@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import cx from 'classnames';
 import {motion} from 'framer-motion';
 import {shell} from 'electron';
-import Button from '@material-ui/core/Button';
 import settings from 'electron-settings';
 import {APP_NOTIFICATION} from '../../constants/settingKeys';
 import styles from './styles.module.css';
@@ -33,68 +32,64 @@ function checkIfInteracted(id) {
   return false;
 }
 
-const AppNotification = props => {
-  const data = props.data;
+const AppNotification = () => {
   const [notificationInteracted, setNotificationInteracted] = useState(false);
-  console.log(props);
-  if (
-    !data ||
-    !Object.keys(data).length ||
-    (!notificationInteracted && checkIfInteracted(data.id))
-  ) {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    (async () => {
+      const response = await (
+        await fetch('https://responsively.app/assets/appMessages.json')
+      ).json();
+      setData(response.notification);
+    })();
+  }, []);
+
+  if (!data || (!notificationInteracted && checkIfInteracted(data.id))) {
     return null;
   }
+
+  const {id, text, okText, dismissText, link} = data;
+
+  const notificationClicked = () => {
+    shell.openExternal(link);
+    updateNotificationStatus(id, 'ANSWERED');
+    setNotificationInteracted(true);
+  };
 
   return (
     <motion.div
       className={styles.container}
-      initial={{x: notificationInteracted ? 0 : 300, scale: 1}}
-      animate={{x: notificationInteracted ? 300 : 0, scale: 1}}
+      initial={{x: notificationInteracted ? 0 : 500, scale: 1}}
+      animate={{x: notificationInteracted ? 500 : 0, scale: 1}}
       transition={{
         type: 'spring',
         stiffness: 260,
         damping: 20,
+        delay: notificationInteracted ? 0 : 3,
       }}
     >
-      <div
-        className={styles.content}
-        onClick={() => {
-          shell.openExternal(data.link);
-          updateNotificationStatus(data.id, 'ANSWERED');
-          setNotificationInteracted(true);
-        }}
-      >
-        {data.text}
+      <div className={styles.content} onClick={notificationClicked}>
+        {text}
       </div>
       <div className={styles.responseButtonsContainer}>
-        <div className={styles.responseButtons}>
-          <Button
-            variant="contained"
-            color="primary"
-            aria-label="dismiss notfication"
-            component="span"
-            onClick={() => {
-              shell.openExternal(data.link);
-              updateNotificationStatus(data.id, 'ANSWER');
-              setNotificationInteracted(true);
-            }}
-          >
-            Yes
-          </Button>
+        <div
+          className={cx('notificationDismiss', styles.responseButtons)}
+          onClick={() => {
+            updateNotificationStatus(id, 'DISMISS');
+            setNotificationInteracted(true);
+          }}
+        >
+          {dismissText}
         </div>
-        <div className={styles.dismiss}>
-          <Button
-            variant="contained"
-            color="primary"
-            aria-label="dismiss notfication"
-            component="span"
-            onClick={() => {
-              updateNotificationStatus(data.id, 'DISMISS');
-              setNotificationInteracted(true);
-            }}
-          >
-            Dismiss
-          </Button>
+        <div
+          className={cx(
+            'notificationOK',
+            styles.responseButtons,
+            styles.okButton
+          )}
+          onClick={notificationClicked}
+        >
+          {okText}
         </div>
       </div>
     </motion.div>
