@@ -834,7 +834,6 @@ class WebView extends Component {
                 <IconFocus />
               </div>
             </Tooltip>
-            {/* {expandOrCollapse} */}
           </div>
         </div>
         <div

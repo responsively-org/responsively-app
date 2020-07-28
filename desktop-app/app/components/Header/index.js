@@ -10,6 +10,7 @@ import HttpAuthDialog from '../HttpAuthDialog';
 import styles from './style.module.css';
 import NavigationControlsContainer from '../../containers/NavigationControlsContainer';
 import BookmarksBar from '../../containers/BookmarksBarContainer';
+import AppNotification from '../AppNotification/AppNotification';
 
 const Header = () => (
   <div className={styles.header}>
@@ -38,6 +39,7 @@ const Header = () => (
       pauseOnHover
       toastClassName={styles.darkToast}
     />
+    <AppNotification />
   </div>
 );
 
