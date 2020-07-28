@@ -111,11 +111,29 @@
       "icon": "resources/icon.icns",
       "target": [
         "dmg"
+      ],
+      "fileAssociations": [
+        {
+          "ext": [
+            "html",
+            "htm"
+          ],
+          "role": "Viewer"
+        }
       ]
     },
     "win": {
       "target": [
         "nsis"
+      ],
+      "fileAssociations": [
+        {
+          "ext": [
+            "html",
+            "htm"
+          ],
+          "role": "Viewer"
+        }
       ]
     },
     "linux": {
@@ -123,7 +141,16 @@
         "AppImage",
         "rpm"
       ],
-      "category": "Development"
+      "category": "Development",
+      "fileAssociations": [
+        {
+          "ext": [
+            "html",
+            "htm"
+          ],
+          "role": "Viewer"
+        }
+      ]
     },
     "directories": {
       "buildResources": "resources",

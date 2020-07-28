@@ -66,6 +66,7 @@ let hasActiveWindow = false;
 let mainWindow = null;
 let urlToOpen = null;
 let devToolsView = null;
+let fileToOpen = null;
 
 const httpAuthCallbacks = {};
 
@@ -81,6 +82,19 @@ if (
   require('electron-debug')({isEnabled: true});
 }
 
+const openWithHandler = filePath => {
+  fileToOpen = null;
+  if (
+    filePath != null &&
+    (filePath.endsWith('.html') || filePath.endsWith('.htm'))
+  ) {
+    const url = `file://${filePath}`;
+    fileToOpen = url;
+    return true;
+  }
+  return false;
+};
+
 /**
  * Add event listeners...
  */
@@ -90,11 +104,28 @@ app.on('will-finish-launching', () => {
   }
   if (['win32', 'darwin'].includes(process.platform)) {
     if (process.argv.length >= 2) {
-      app.setAsDefaultProtocolClient(protocol, process.execPath, [
-        path.resolve(process.argv[1]),
-      ]);
+      if (!openWithHandler(process.argv[1])) {
+        app.setAsDefaultProtocolClient(protocol, process.execPath, [
+          path.resolve(process.argv[1]),
+        ]);
+      }
     } else {
       app.setAsDefaultProtocolClient(protocol);
+    }
+  }
+});
+
+app.on('open-file', async (event, filePath) => {
+  event.preventDefault();
+  let htmlFile = filePath;
+  if (process.platform === 'win32' && process.argv.length >= 2) {
+    htmlFile = process.argv[1];
+  }
+  if (openWithHandler(htmlFile)) {
+    if (mainWindow) {
+      openFile(fileToOpen);
+    } else if (!hasActiveWindow) {
+      createWindow();
     }
   }
 });
@@ -202,6 +233,11 @@ const openUrl = url => {
   mainWindow.show();
 };
 
+const openFile = filePath => {
+  mainWindow.webContents.send('address-change', filePath);
+  mainWindow.show();
+};
+
 const createWindow = async () => {
   hasActiveWindow = true;
 
@@ -260,6 +296,9 @@ const createWindow = async () => {
     if (urlToOpen) {
       openUrl(urlToOpen);
       urlToOpen = null;
+    } else if (fileToOpen) {
+      openFile(fileToOpen);
+      fileToOpen = null;
     } else {
       mainWindow.show();
     }
@@ -276,6 +315,7 @@ const createWindow = async () => {
     if (process.platform === 'win32') {
       path = trimStart(path, '/');
     }
+    app.addRecentDocument(path);
     fileInfo.path = path;
     if (watchedFileInfo != null) watcher.unwatch(watchedFileInfo.path);
     if (fs.existsSync(fileInfo.path)) {
