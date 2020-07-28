@@ -16,7 +16,7 @@ export default function PrefersColorSchemeSwitch() {
 
   useEffect(() => {
     ipcRenderer.send('prefers-color-scheme-select', colorScheme);
-  });
+  }, [colorScheme]);
 
   const iconProps = {
     color: iconsColor,

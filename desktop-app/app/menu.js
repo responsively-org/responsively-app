@@ -208,8 +208,10 @@ export default class MenuBuilder {
             if (!fs.existsSync(dir)) {
               fs.mkdirSync(dir);
             }
-            shell.openItem(dir);
-          } catch {}
+            shell.openPath(dir);
+          } catch (err) {
+            console.log('Error opening screenshots folder', err);
+          }
         },
       },
       {
