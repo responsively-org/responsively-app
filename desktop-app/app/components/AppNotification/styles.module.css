@@ -1,0 +1,27 @@
+.container {
+  max-width: 250px;
+  position: absolute;
+  bottom: 25px;
+  right: 50px;
+  background: white;
+  border-radius: 10px;
+  word-wrap: break-word;
+  color: green;
+  box-shadow: inset 0 0 3px #000;
+}
+
+.content {
+  color: green;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.responseButtons {
+  padding: 10px;
+}
+
+.responseButtonsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
