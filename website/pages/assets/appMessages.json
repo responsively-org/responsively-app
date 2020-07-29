@@ -1,11 +1,11 @@
 {
   "statusBarMessage": {
-    "text": "We need your thoughts, please pitch in! Just 2 mins 🙏",
-    "link": "https://docs.google.com/forms/d/e/1FAIpQLSdjwMkFD5ftq6mGqQKUn6ITh175uTkxoQ2LXsTshnBN6rVavw/viewform?usp=sf_link"
+    "text": "Do you enjoy the app? Show us some support on twitter!",
+    "link": "https://twitter.com/intent/tweet?text=I'm using @ResponsivelyApp for web development and enjoying it. You should try it out too.&url=https://responsively.app&related=@ResponsivelyApp"
   },
   "notification":{
     "id":"100001",
-    "text":"We are running a feedback campaign, please pitch in your thoughts.",
+    "text":"We are running a feedback campaign to make the app better. Please pitch in your thoughts. 🙏",
     "link":"https://docs.google.com/forms/d/e/1FAIpQLSdjwMkFD5ftq6mGqQKUn6ITh175uTkxoQ2LXsTshnBN6rVavw/viewform?usp=sf_link",
     "okText": "OK",
     "dismissText": "Dismiss"
