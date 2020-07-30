@@ -1,4 +1,9 @@
 // @flow
+import {ipcRenderer, remote} from 'electron';
+import settings from 'electron-settings';
+import {isIfStatement} from 'typescript';
+import console from 'electron-timber';
+import trimStart from 'lodash/trimStart';
 import {
   NEW_ADDRESS,
   NEW_ZOOM_LEVEL,
@@ -12,23 +17,42 @@ import {
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
   DELETE_CUSTOM_DEVICE,
+  TOGGLE_BOOKMARK,
+  NEW_DEV_TOOLS_CONFIG,
+  NEW_INSPECTOR_STATUS,
+  NEW_WINDOW_SIZE,
+  DEVICE_LOADING,
+  NEW_FOCUSED_DEVICE,
+  NEW_PAGE_META_FIELD,
+  TOGGLE_ALL_DEVICES_MUTED,
+  TOGGLE_DEVICE_MUTED,
 } from '../actions/browser';
+import {
+  CHANGE_ACTIVE_THROTTLING_PROFILE,
+  SAVE_THROTTLING_PROFILES,
+} from '../actions/networkConfig';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
-import settings from 'electron-settings';
 import type {Device} from '../constants/devices';
 import {
   FLEXIGRID_LAYOUT,
   INDIVIDUAL_LAYOUT,
+  DEVTOOLS_MODES,
 } from '../constants/previewerLayouts';
 import {DEVICE_MANAGER} from '../constants/DrawerContents';
 import {
   ACTIVE_DEVICES,
   USER_PREFERENCES,
   CUSTOM_DEVICES,
+  NETWORK_CONFIGURATION,
 } from '../constants/settingKeys';
-import {isIfStatement} from 'typescript';
-import {getHomepage, saveHomepage} from '../utils/navigatorUtils';
+import {
+  getHomepage,
+  getLastOpenedAddress,
+  saveHomepage,
+  saveLastOpenedAddress,
+} from '../utils/navigatorUtils';
+import {updateExistingUrl} from '../services/searchUrlSuggestions';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -45,6 +69,33 @@ type NavigatorStatusType = {
   forwardEnabled: boolean,
 };
 
+type WindowSizeType = {
+  width: number,
+  height: number,
+};
+
+type DevToolsOpenModeType = DEVTOOLS_MODES.BOTTOM | DEVTOOLS_MODES.RIGHT;
+
+type WindowBoundsType = {
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+};
+
+type DevToolInfo = {
+  deviceId: string,
+  webViewId: number,
+};
+
+type DevToolsConfigType = {
+  size: WindowSizeType,
+  open: Boolean,
+  activeDevTools: Array<DevToolInfo>,
+  mode: DevToolsOpenModeType,
+  bounds: WindowBoundsType,
+};
+
 type DrawerType = {
   open: boolean,
   content: string,
@@ -52,21 +103,47 @@ type DrawerType = {
 
 type PreviewerType = {
   layout: string,
+  previousLayout: string,
+  focusedDeviceId: string,
+};
+
+type PageMetaType = {
+  title: String,
+  favicons: Array<string>,
 };
 
 type UserPreferenceType = {
   disableSSLValidation: boolean,
+  reopenLastAddress: boolean,
   drawerState: boolean,
+  devToolsOpenMode: DevToolsOpenModeType,
+  deviceOutlineStyle: string,
+  zoomLevel: number,
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
 
 type FilterType = {[key: FilterFieldType]: Array<string>};
 
+type NetworkThrottlingProfileType = {
+  type: 'Online' | 'Offline' | 'Preset' | 'Custom',
+  title: string,
+  downloadKps: number,
+  uploadKps: number,
+  latencyMs: number,
+  active: boolean,
+};
+
+type NetworkConfigurationType = {
+  throttling: NetworkThrottlingProfileType[],
+  // proxy: NetworkProxyProfileType[],
+};
+
 export type BrowserStateType = {
   devices: Array<Device>,
   homepage: string,
   address: string,
+  currentPageMeta: PageMetaType,
   zoomLevel: number,
   scrollPosition: ScrollPositionType,
   navigatorStatus: NavigatorStatusType,
@@ -74,6 +151,12 @@ export type BrowserStateType = {
   previewer: PreviewerType,
   filters: FilterType,
   userPreferences: UserPreferenceType,
+  bookmarks: BookmarksType,
+  devToolsConfig: DevToolsConfigType,
+  isInspecting: boolean,
+  windowSize: WindowSizeType,
+  allDevicesMuted: boolean,
+  networkConfiguration: NetworkConfigurationType,
 };
 
 let _activeDevices = null;
@@ -90,7 +173,7 @@ function _getActiveDevices() {
   if (_activeDevices) {
     return _activeDevices;
   }
-  let activeDeviceNames = settings.get(ACTIVE_DEVICES);
+  const activeDeviceNames = settings.get(ACTIVE_DEVICES);
   let activeDevices = null;
   if (activeDeviceNames && activeDeviceNames.length) {
     activeDevices = activeDeviceNames
@@ -100,6 +183,13 @@ function _getActiveDevices() {
   if (!activeDevices || !activeDevices.length) {
     activeDevices = getAllDevices().filter(device => device.added);
     _saveActiveDevices(activeDevices);
+  }
+
+  if (activeDevices) {
+    activeDevices.forEach(device => {
+      device.loading = false;
+      device.isMuted = false;
+    });
   }
   return activeDevices;
 }
@@ -112,12 +202,115 @@ function _setUserPreferences(userPreferences) {
   settings.set(USER_PREFERENCES, userPreferences);
 }
 
+export function getBounds(mode, _size, windowSize) {
+  const size = _size || getDefaultDevToolsWindowSize(mode, windowSize);
+  const {width, height} = windowSize;
+  if (mode === DEVTOOLS_MODES.RIGHT) {
+    const viewWidth = size.width;
+    const viewHeight = size.height - 64 - 10;
+    return {
+      x: width - viewWidth,
+      y: height - viewHeight,
+      width: viewWidth,
+      height: viewHeight,
+    };
+  }
+  const viewHeight = size.height - 20;
+  return {
+    x: 0,
+    y: height - viewHeight,
+    width,
+    height: viewHeight,
+  };
+}
+
+export function getDefaultDevToolsWindowSize(mode, windowSize) {
+  const {width, height} = windowSize;
+  if (mode === DEVTOOLS_MODES.RIGHT) {
+    return {width: Math.round(width * 0.25), height};
+  }
+  return {width, height: Math.round(height * 0.33)};
+}
+
+function getWindowSize() {
+  return remote.screen.getPrimaryDisplay().workAreaSize;
+}
+
+function _getUserPreferencesDevToolsMode() {
+  return _getUserPreferences().devToolsOpenMode || DEVTOOLS_MODES.BOTTOM;
+}
+
+function _updateFileWatcher(newURL) {
+  if (
+    newURL.startsWith('file://') &&
+    (newURL.endsWith('.html') || newURL.endsWith('.htm'))
+  )
+    ipcRenderer.send('start-watching-file', {
+      path: newURL,
+    });
+  else ipcRenderer.send('stop-watcher');
+}
+
+function getDefaultNetworkThrottlingProfiles(): NetworkThrottlingProfileType[] {
+  return [
+    {
+      type: 'Online',
+      title: 'Online',
+      active: true,
+    },
+    {
+      type: 'Offline',
+      title: 'Offline',
+      downloadKps: 0,
+      uploadKps: 0,
+      latencyMs: 0,
+    },
+    // https://github.com/ChromeDevTools/devtools-frontend/blob/4f404fa8beab837367e49f68e29da427361b1f81/front_end/sdk/NetworkManager.js#L251-L265
+    {
+      type: 'Preset',
+      title: 'Slow 3G',
+      downloadKps: 400,
+      uploadKps: 400,
+      latencyMs: 2000,
+    },
+    {
+      type: 'Preset',
+      title: 'Fast 3G',
+      downloadKps: 1475,
+      uploadKps: 675,
+      latencyMs: 563,
+    },
+  ];
+}
+
+function _getNetworkConfiguration(): NetworkConfigurationType {
+  const ntwrk: NetworkConfigurationType =
+    settings.get(NETWORK_CONFIGURATION) || {};
+
+  if (ntwrk.throttling == null)
+    ntwrk.throttling = getDefaultNetworkThrottlingProfiles();
+
+  // if (ntwrk.proxy == null)
+  //   ntwrk.proxy = getDefaultNetworkProxyProfiles();
+
+  return ntwrk;
+}
+
+function _setNetworkConfiguration(
+  networkConfiguration: NetworkConfigurationType
+) {
+  settings.set(NETWORK_CONFIGURATION, networkConfiguration);
+}
+
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
     homepage: getHomepage(),
-    address: getHomepage(),
-    zoomLevel: 0.6,
+    address: _getUserPreferences().reopenLastAddress
+      ? getLastOpenedAddress()
+      : getHomepage(),
+    currentPageMeta: {},
+    zoomLevel: _getUserPreferences().zoomLevel || 0.6,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
@@ -132,17 +325,50 @@ export default function browser(
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
     userPreferences: _getUserPreferences(),
     allDevices: getAllDevices(),
+    devToolsConfig: {
+      size: getDefaultDevToolsWindowSize(
+        _getUserPreferencesDevToolsMode(),
+        getWindowSize()
+      ),
+      open: false,
+      mode: _getUserPreferencesDevToolsMode(),
+      activeDevTools: [],
+      bounds: getBounds(
+        _getUserPreferencesDevToolsMode(),
+        null,
+        getWindowSize()
+      ),
+    },
+    isInspecting: false,
+    windowSize: getWindowSize(),
+    allDevicesMuted: false,
+    networkConfiguration: _getNetworkConfiguration(),
   },
   action: Action
 ) {
   switch (action.type) {
     case NEW_ADDRESS:
-      return {...state, address: action.address};
+      saveLastOpenedAddress(action.address);
+      _updateFileWatcher(action.address);
+      updateExistingUrl(action.address);
+      return {...state, address: action.address, currentPageMeta: {}};
+    case NEW_PAGE_META_FIELD:
+      return {
+        ...state,
+        currentPageMeta: {
+          ...state.currentPageMeta,
+          [action.name]: action.value,
+        },
+      };
     case NEW_HOMEPAGE:
       const {homepage} = action;
       saveHomepage(homepage);
       return {...state, homepage};
     case NEW_ZOOM_LEVEL:
+      _setUserPreferences({
+        ...state.userPreferences,
+        zoomLevel: action.zoomLevel,
+      });
       return {...state, zoomLevel: action.zoomLevel};
     case NEW_SCROLL_POSITION:
       return {...state, scrollPosition: action.scrollPosition};
@@ -156,6 +382,8 @@ export default function browser(
       return {...state, drawer: action.drawer};
     case NEW_PREVIEWER_CONFIG:
       const updateObject = {previewer: action.previewer};
+      updateObject.previewer.previousLayout = state.previewer.layout;
+
       if (
         state.previewer.layout !== INDIVIDUAL_LAYOUT &&
         action.previewer.layout === INDIVIDUAL_LAYOUT
@@ -171,6 +399,8 @@ export default function browser(
         updateObject.previousZoomLevel = null;
       }
       return {...state, ...updateObject};
+    case NEW_FOCUSED_DEVICE:
+      return {...state, previewer: action.previewer};
     case NEW_ACTIVE_DEVICES:
       _saveActiveDevices(action.devices);
       return {...state, devices: action.devices};
@@ -182,14 +412,81 @@ export default function browser(
       const existingCustomDevices = settings.get(CUSTOM_DEVICES) || [];
       settings.set(
         CUSTOM_DEVICES,
-        existingCustomDevices.filter(device => device.id != action.device.id)
+        existingCustomDevices.filter(device => device.id !== action.device.id)
       );
       return {...state, allDevices: getAllDevices()};
     case NEW_FILTERS:
       return {...state, filters: action.filters};
     case NEW_USER_PREFERENCES:
-      settings.set(USER_PREFERENCES, action.userPreferences);
+      _setUserPreferences(action.userPreferences);
       return {...state, userPreferences: action.userPreferences};
+    case NEW_DEV_TOOLS_CONFIG:
+      const newState = {...state, devToolsConfig: action.config};
+      if (state.devToolsConfig.mode !== action.config.mode) {
+        const newUserPreferences = {
+          ...state.userPreferences,
+          devToolsOpenMode: action.config.mode,
+        };
+        _setUserPreferences(newUserPreferences);
+        newState.userPreferences = newUserPreferences;
+      }
+      return newState;
+    case NEW_INSPECTOR_STATUS:
+      return {...state, isInspecting: action.status};
+    case NEW_WINDOW_SIZE:
+      return {...state, windowSize: action.size};
+    case DEVICE_LOADING:
+      const newDevicesList = state.devices.map(device =>
+        device.id === action.device.id
+          ? {...device, loading: action.device.loading}
+          : device
+      );
+      return {...state, devices: newDevicesList};
+    case TOGGLE_ALL_DEVICES_MUTED:
+      const updatedDevices = state.devices;
+      updatedDevices.forEach(d => (d.isMuted = action.allDevicesMuted));
+      return {
+        ...state,
+        allDevicesMuted: action.allDevicesMuted,
+        devices: updatedDevices,
+      };
+    case TOGGLE_DEVICE_MUTED:
+      const updatedDevice = state.devices.find(x => x.id === action.deviceId);
+      if (updatedDevice == null) return {...state};
+      updatedDevice.isMuted = action.isMuted;
+      return {
+        ...state,
+        allDevicesMuted: state.devices.every(x => x.isMuted),
+        devices: [...state.devices],
+      };
+    case CHANGE_ACTIVE_THROTTLING_PROFILE:
+      const throttling = state.networkConfiguration.throttling;
+      const activeProfile = throttling.find(x => x.title === action.title);
+      if (activeProfile != null) {
+        throttling.forEach(x => (x.active = false));
+        activeProfile.active = true;
+      }
+      return {
+        ...state,
+        networkConfiguration: {
+          ...state.networkConfiguration,
+          throttling: [...throttling],
+        },
+      };
+    case SAVE_THROTTLING_PROFILES:
+      action.profiles.forEach(x => (x.active = false));
+      action.profiles[0].active = true;
+      _setNetworkConfiguration({
+        ...state.networkConfiguration,
+        throttling: action.profiles,
+      });
+      return {
+        ...state,
+        networkConfiguration: {
+          ...state.networkConfiguration,
+          throttling: action.profiles,
+        },
+      };
     default:
       return state;
   }

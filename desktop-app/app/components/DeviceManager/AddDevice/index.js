@@ -19,7 +19,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-//import Switch from '@material-ui/core/Switch';
+// import Switch from '@material-ui/core/Switch';
 import {
   Typography,
   Grid,
@@ -32,6 +32,7 @@ import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import Switch from 'react-switch';
 import {
   DEVICE_TYPE,
   CAPABILITIES,
@@ -39,7 +40,6 @@ import {
   SOURCE,
 } from '../../../constants/devices';
 import {lightIconsColor, themeColor} from '../../../constants/colors';
-import Switch from 'react-switch';
 
 const useStyles = makeStyles(theme => ({
   fab: {
@@ -87,6 +87,7 @@ export default function AddDevice(props) {
   const [capabilities, setCapabilities] = useState({
     [CAPABILITIES.mobile]: false,
     [CAPABILITIES.touch]: true,
+    [CAPABILITIES.responsive]: false,
   });
   const [deviceType, setDeviceType] = useState(DEVICE_TYPE.phone);
   const [os, setOS] = useState(OS.android);
@@ -196,7 +197,7 @@ export default function AddDevice(props) {
         open={open}
         onClose={closeDialog}
         aria-labelledby="form-dialog-title"
-        fullWidth={true}
+        fullWidth
       >
         <DialogTitle id="form-dialog-title">New Device</DialogTitle>
         <DialogContent>
@@ -216,7 +217,7 @@ export default function AddDevice(props) {
             }}
             value={name}
             onChange={e => setName(e.target.value)}
-            className={'padded-input'}
+            className="padded-input"
           />
           <TextField
             className={classes.inputField}
@@ -233,7 +234,7 @@ export default function AddDevice(props) {
             }}
             value={width}
             onChange={e => setWidth(e.target.value)}
-            className={'padded-input'}
+            className="padded-input"
           />
           <TextField
             className={classes.inputField}
@@ -250,7 +251,7 @@ export default function AddDevice(props) {
             }}
             value={height}
             onChange={e => setHeight(e.target.value)}
-            className={'padded-input'}
+            className="padded-input"
           />
           <FormControl
             component="fieldset"
@@ -368,6 +369,23 @@ export default function AddDevice(props) {
                   label="Touchscreen"
                 />
               </Grid>
+              <Grid item>
+                <FormControlLabel
+                  control={
+                    <CustomCheckbox
+                      checked={capabilities[CAPABILITIES.responsive]}
+                      onChange={e =>
+                        setCapabilities({
+                          ...capabilities,
+                          [CAPABILITIES.responsive]: e.target.checked,
+                        })
+                      }
+                      value="Responsive"
+                    />
+                  }
+                  label="Responsive"
+                />
+              </Grid>
             </Grid>
           </FormGroup>
           <TextField
@@ -404,7 +422,7 @@ export default function AddDevice(props) {
                 'Mui-focused': !previewState,
               })}
             >
-              {/*Off*/}
+              {/* Off */}
             </Grid>
             <Grid item>
               <Switch
@@ -419,7 +437,7 @@ export default function AddDevice(props) {
                 'Mui-focused': previewState,
               })}
             >
-              {/*On*/}
+              {/* On */}
             </Grid>
           </Grid>
         </DialogContent>

@@ -47,6 +47,10 @@ body {
   overflow: hidden;
 }
 
+svg {
+  pointer-events: none;
+}
+
 /*h2 {
   margin: 0;
   font-size: 2.25rem;
@@ -75,13 +79,26 @@ a:hover {
   cursor: pointer;
 }
 
+.react-tabs {
+  position: sticky;
+  left: 0;
+  top: 0;
+  margin-bottom: 10px;
+  z-index: 4;
+  background-color: #1e1e1e;
+}
+
 .react-tabs__tab {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
+  bottom: unset;
 }
 
 .react-tabs__tab-list {
   display: flex;
+  margin-bottom: 0;
+  overflow: auto;
 }
 
 .spin::before {
@@ -90,6 +107,8 @@ a:hover {
 
 #root {
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #HW_badge_cont.HW_visible {

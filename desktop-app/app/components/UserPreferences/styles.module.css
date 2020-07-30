@@ -1,3 +1,23 @@
 .preferenceName {
   font-size: 14px;
 }
+
+.preferenceColor {
+  width: 24px;
+  height: 20px;
+  margin: 0 10px;
+  border: transparent;
+}
+
+.preferenceColor input {
+  width: 26px;
+  height: 40px;
+  border: transparent;
+}
+
+.screenshotLocationInputContainer {
+  border-top: 1px solid #383737;
+}
+.sectionTitle {
+  margin: 5px 0;
+}

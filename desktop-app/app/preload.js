@@ -1,16 +1,15 @@
 const {ipcRenderer, remote} = require('electron');
-const DomInspector = require('../lib/dom-inspector');
 
-const Menu = remote.Menu;
-const MenuItem = remote.MenuItem;
+const {Menu} = remote;
+const {MenuItem} = remote;
 
-var menu = new Menu();
-var rightClickPosition = null;
+const menu = new Menu();
+let rightClickPosition = null;
 
 menu.append(
   new MenuItem({
     label: 'Take Screenshot',
-    click: function(menuItem, browserWindow, event) {
+    click(menuItem, browserWindow, event) {
       window.responsivelyApp.sendMessageToHost('takeScreenshot');
     },
   })
@@ -18,7 +17,7 @@ menu.append(
 menu.append(
   new MenuItem({
     label: 'Tilt Device',
-    click: function(menuItem, browserWindow, event) {
+    click(menuItem, browserWindow, event) {
       window.responsivelyApp.sendMessageToHost('tiltDevice');
     },
   })
@@ -29,7 +28,7 @@ menu.append(
     label: 'Mirror Events',
     type: 'checkbox',
     checked: true,
-    click: function(menuItem, browserWindow, event) {
+    click(menuItem, browserWindow, event) {
       window.responsivelyApp.sendMessageToHost('toggleEventMirroring');
     },
   })
@@ -40,7 +39,7 @@ menu.append(new MenuItem({type: 'separator'}));
 menu.append(
   new MenuItem({
     label: 'Inspect',
-    click: function(menuItem, browserWindow, event) {
+    click(menuItem, browserWindow, event) {
       window.responsivelyApp.sendMessageToHost(
         'openDevToolsInspector',
         rightClickPosition
@@ -51,7 +50,7 @@ menu.append(
 menu.append(
   new MenuItem({
     label: 'Open Console',
-    click: function(menuItem, browserWindow, event) {
+    click(menuItem, browserWindow, event) {
       window.responsivelyApp.sendMessageToHost('openConsole');
     },
   })
@@ -59,7 +58,7 @@ menu.append(
 
 window.addEventListener(
   'contextmenu',
-  function(e) {
+  e => {
     e.preventDefault();
     rightClickPosition = {x: e.x, y: e.y};
     menu.popup(remote.getCurrentWindow());
@@ -68,7 +67,6 @@ window.addEventListener(
 );
 
 global.responsivelyApp = {
-  DomInspector: DomInspector,
   sendMessageToHost: (type, message) => {
     if (!message) {
       message = {};
@@ -78,17 +76,17 @@ global.responsivelyApp = {
   },
   cssPath: el => {
     if (!(el instanceof Element)) return;
-    var path = [];
+    const path = [];
     while (el.nodeType === Node.ELEMENT_NODE) {
-      var selector = el.nodeName.toLowerCase();
-      var sib = el,
-        nth = 1;
+      let selector = el.nodeName.toLowerCase();
+      let sib = el;
+      let nth = 1;
       while (
         sib.nodeType === Node.ELEMENT_NODE &&
         (sib = sib.previousElementSibling) &&
         nth++
       );
-      selector += ':nth-child(' + nth + ')';
+      selector += `:nth-child(${nth})`;
       path.unshift(selector);
       el = el.parentNode;
     }
@@ -96,9 +94,9 @@ global.responsivelyApp = {
   },
   eventFire: (el, etype) => {
     if (el.fireEvent) {
-      el.fireEvent('on' + etype);
+      el.fireEvent(`on${etype}`);
     } else {
-      var evObj = document.createEvent('Events');
+      const evObj = document.createEvent('Events');
       evObj.initEvent(etype, true, false);
       evObj.responsivelyAppProcessed = true;
       el.dispatchEvent(evObj);
@@ -108,7 +106,7 @@ global.responsivelyApp = {
     const elems = document.body.getElementsByTagName('*');
     for (const elem of elems) {
       const computedStyle = window.getComputedStyle(elem, null);
-      if (computedStyle.getPropertyValue('position') == 'fixed') {
+      if (computedStyle.getPropertyValue('position') === 'fixed') {
         elem.classList.add('responsivelyApp__HiddenForScreenshot');
       }
     }
@@ -157,18 +155,6 @@ ipcRenderer.on('scrollUpMessage', (event, args) => {
     left: window.scrollX - 250,
     behavior: 'smooth',
   });
-});
-
-ipcRenderer.on('enableInspectorMessage', (event, args) => {
-  responsivelyApp.domInspector = new responsivelyApp.DomInspector();
-  window.responsivelyApp.domInspector.enable();
-  window.responsivelyApp.domInspectorEnabled = true;
-});
-
-ipcRenderer.on('disableInspectorMessage', (event, args) => {
-  window.responsivelyApp.domInspector.destroy();
-  window.responsivelyApp.domInspector = null;
-  window.responsivelyApp.domInspectorEnabled = false;
 });
 
 ipcRenderer.on('eventsMirroringState', (event, args) => {

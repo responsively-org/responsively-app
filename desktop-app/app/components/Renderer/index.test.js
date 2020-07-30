@@ -3,7 +3,7 @@ import React from 'react';
 import {shallow} from 'enzyme';
 import {expect} from 'chai';
 
-import Renderer from './';
+import Renderer from '.';
 
 const testSrc = 'https://testUrl.com';
 const testDevice1 = {
@@ -35,12 +35,12 @@ describe('<Renderer />', () => {
     expect(wrapper.find('iframe').prop('src')).to.equal(testSrc);
   });
 
-  /*it('Calls the callback with a number value', () => {
+  /* it('Calls the callback with a number value', () => {
     const onChange = sinon.spy();
     const wrapper = mount(<BrowserZoom onChange={onChange} />);
     wrapper.find('.MuiSlider-thumb').simulate('mousedown');
     wrapper.find('.MuiSlider-thumb').simulate('mouseup');
     console.log('spy.args', onChange.args);
     assert(onChange.calledWith(100));
-  });*/
+  }); */
 });

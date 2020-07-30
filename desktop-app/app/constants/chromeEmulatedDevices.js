@@ -1,4 +1,4 @@
-//https://cs.chromium.org/codesearch/f/chromium/src/third_party/blink/renderer/devtools/front_end/emulated_devices/module.json
+// https://cs.chromium.org/codesearch/f/chromium/src/third_party/blink/renderer/devtools/front_end/emulated_devices/module.json
 
 export default {
   extensions: [
@@ -1292,6 +1292,36 @@ export default {
         capabilities: [],
         'user-agent': '',
         type: 'notebook',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
+    {
+      id: '34',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': false,
+        title: 'Responsive Mode',
+        screen: {
+          horizontal: {
+            width: 500,
+            height: 790,
+          },
+          'device-pixel-ratio': 2,
+          vertical: {
+            width: 500,
+            height: 790,
+          },
+        },
+        capabilities: ['responsive', 'mobile'],
+        'user-agent':
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
+        type: 'phone',
         modes: [
           {
             title: 'default',

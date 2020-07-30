@@ -1,6 +1,8 @@
 // @flow
-import type {Dispatch, BrowserStateType} from '../reducers/types';
+import {ipcRenderer, remote} from 'electron';
 import pubsub from 'pubsub.js';
+import console from 'electron-timber';
+import type {Dispatch, BrowserStateType} from '../reducers/types';
 import {
   SCROLL_DOWN,
   SCROLL_UP,
@@ -9,16 +11,23 @@ import {
   NAVIGATION_RELOAD,
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
-  ENABLE_INSPECTOR_ALL_DEVICES,
+  TOGGLE_DEVICE_MUTED_STATE,
   RELOAD_CSS,
   DELETE_STORAGE,
+  ADDRESS_CHANGE,
+  STOP_LOADING,
 } from '../constants/pubsubEvents';
+import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
+import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
+export const NEW_PAGE_META_FIELD = 'NEW_PAGE_META_FIELD';
+export const NEW_DEV_TOOLS_CONFIG = 'NEW_DEV_TOOLS_CONFIG';
 export const NEW_HOMEPAGE = 'NEW_HOMEPAGE';
 export const NEW_ZOOM_LEVEL = 'NEW_ZOOM_LEVEL';
 export const NEW_SCROLL_POSITION = 'NEW_SCROLL_POSITION';
 export const NEW_NAVIGATOR_STATUS = 'NEW_NAVIGATOR_STATUS';
+export const NEW_INSPECTOR_STATUS = 'NEW_INSPECTOR_STATUS';
 export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
 export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
@@ -26,6 +35,12 @@ export const NEW_CUSTOM_DEVICE = 'NEW_CUSTOM_DEVICE';
 export const DELETE_CUSTOM_DEVICE = 'DELETE_CUSTOM_DEVICE';
 export const NEW_FILTERS = 'NEW_FILTERS';
 export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
+export const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
+export const NEW_WINDOW_SIZE = 'NEW_WINDOW_SIZE';
+export const DEVICE_LOADING = 'DEVICE_LOADING';
+export const NEW_FOCUSED_DEVICE = 'NEW_FOCUSED_DEVICE';
+export const TOGGLE_ALL_DEVICES_MUTED = 'TOGGLE_ALL_DEVICES_MUTED';
+export const TOGGLE_DEVICE_MUTED = 'TOGGLE_DEVICE_MUTED';
 
 export function newAddress(address) {
   return {
@@ -34,10 +49,39 @@ export function newAddress(address) {
   };
 }
 
+export function newPageMetaField(name, value) {
+  return {
+    type: NEW_PAGE_META_FIELD,
+    name,
+    value,
+  };
+}
+
+export function newWindowSize(size) {
+  return {
+    type: NEW_WINDOW_SIZE,
+    size,
+  };
+}
+
+export function newDevToolsConfig(config) {
+  return {
+    type: NEW_DEV_TOOLS_CONFIG,
+    config,
+  };
+}
+
 export function newHomepage(homepage) {
   return {
     type: NEW_HOMEPAGE,
     homepage,
+  };
+}
+
+export function newInspectorState(status) {
+  return {
+    type: NEW_INSPECTOR_STATUS,
+    status,
   };
 }
 
@@ -83,6 +127,13 @@ export function newPreviewerConfig(previewer) {
   };
 }
 
+export function newFocusedDevice(previewer) {
+  return {
+    type: NEW_FOCUSED_DEVICE,
+    previewer,
+  };
+}
+
 export function newActiveDevices(devices) {
   return {
     type: NEW_ACTIVE_DEVICES,
@@ -111,6 +162,28 @@ export function newFilters(filters) {
   };
 }
 
+export function newDeviceLoading(device) {
+  return {
+    type: DEVICE_LOADING,
+    device,
+  };
+}
+
+export function toggleAllDevicesMuted(allDevicesMuted) {
+  return {
+    type: TOGGLE_ALL_DEVICES_MUTED,
+    allDevicesMuted,
+  };
+}
+
+export function toggleDeviceMuted(deviceId, isMuted) {
+  return {
+    type: TOGGLE_DEVICE_MUTED,
+    deviceId,
+    isMuted,
+  };
+}
+
 export function onAddressChange(newURL, force) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
@@ -119,18 +192,19 @@ export function onAddressChange(newURL, force) {
 
     if (newURL === address) {
       if (force) {
-        pubsub.publish(NAVIGATION_RELOAD);
+        pubsub.publish(NAVIGATION_RELOAD, [{ignoreCache: false}]);
       }
       return;
     }
 
-    const isHashDiff = isHashOnlyChange(newURL, address);
-
-    if (isHashDiff) {
-      return;
-    }
-
     dispatch(newAddress(newURL));
+    pubsub.publish(ADDRESS_CHANGE, [{address: newURL, force: false}]);
+  };
+}
+
+export function onPageMetaFieldUpdate(name, value) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(newPageMetaField(name, value));
   };
 }
 
@@ -262,6 +336,25 @@ export function setPreviewLayout(newLayout) {
   };
 }
 
+export function setFocusedDevice(focusedDeviceId) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {previewer},
+    } = getState();
+
+    if (previewer.focusedDeviceId === focusedDeviceId) {
+      return;
+    }
+
+    dispatch(
+      newFocusedDevice({
+        ...previewer,
+        focusedDeviceId,
+      })
+    );
+  };
+}
+
 export function setActiveDevices(newDevices) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
@@ -269,7 +362,7 @@ export function setActiveDevices(newDevices) {
     } = getState();
 
     if (false) {
-      //TODO verify the devices list and return if the order of the devices didn;t change;
+      // TODO verify the devices list and return if the order of the devices didn;t change;
       return;
     }
 
@@ -326,6 +419,225 @@ export function goToHomepage() {
     }
 
     dispatch(newAddress(homepage));
+    pubsub.publish(ADDRESS_CHANGE, [{address: homepage, force: true}]);
+  };
+}
+
+export function gotoUrl(url) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {address},
+    } = getState();
+
+    if (url === address) {
+      return;
+    }
+
+    dispatch(newAddress(url));
+  };
+}
+
+export function onDevToolsModeChange(newMode) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {devToolsConfig, windowSize},
+    } = getState();
+
+    const {mode, activeDevTools, open} = devToolsConfig;
+
+    if (mode === newMode) {
+      return;
+    }
+
+    let newActiveDevTools = [...activeDevTools];
+    let newOpen = open;
+
+    if (
+      newMode === DEVTOOLS_MODES.UNDOCKED ||
+      mode === DEVTOOLS_MODES.UNDOCKED
+    ) {
+      dispatch(onDevToolsClose(null, true));
+      if (newActiveDevTools.length > 0) {
+        newActiveDevTools = [newActiveDevTools[0]];
+        newOpen = true;
+      } else {
+        newActiveDevTools = [];
+        newOpen = false;
+      }
+    }
+
+    let newConfig = {
+      ...devToolsConfig,
+      activeDevTools: newActiveDevTools,
+      mode: newMode,
+      open: newOpen,
+    };
+    if (newMode !== DEVTOOLS_MODES.UNDOCKED) {
+      const size = getDefaultDevToolsWindowSize(newMode, windowSize);
+      const bounds = getBounds(newMode, size, windowSize);
+      newConfig = {
+        ...newConfig,
+        size,
+        bounds,
+      };
+    }
+
+    if (
+      newMode === DEVTOOLS_MODES.UNDOCKED ||
+      mode === DEVTOOLS_MODES.UNDOCKED
+    ) {
+      newConfig.activeDevTools.forEach(({webViewId, deviceId}) =>
+        setTimeout(() => {
+          dispatch(onDevToolsOpen(deviceId, webViewId, true));
+        })
+      );
+    } else {
+      ipcRenderer.send('resize-devtools', {bounds: newConfig.bounds});
+    }
+
+    dispatch(newDevToolsConfig(newConfig));
+  };
+}
+
+export function onWindowResize(size) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {
+        windowSize: {width, height},
+        devToolsConfig,
+      },
+    } = getState();
+
+    if (width === size.width && height === size.height) {
+      return;
+    }
+
+    dispatch(newWindowSize(size));
+    const devToolsSize = getDefaultDevToolsWindowSize(
+      devToolsConfig.mode,
+      size
+    );
+    const newBounds = getBounds(devToolsConfig.mode, devToolsSize, size);
+    ipcRenderer.send('resize-devtools', {
+      bounds: newBounds,
+    });
+    dispatch(
+      newDevToolsConfig({
+        ...devToolsConfig,
+        size: devToolsSize,
+        bounds: newBounds,
+      })
+    );
+  };
+}
+
+export function onDevToolsResize(size) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {devToolsConfig, windowSize},
+    } = getState();
+
+    const {size: devToolsSize, bounds, mode} = devToolsConfig;
+
+    if (
+      devToolsSize.width === size.width &&
+      devToolsSize.height === size.height
+    ) {
+      return;
+    }
+    const newBounds = getBounds(mode, size, windowSize);
+    ipcRenderer.send('resize-devtools', {
+      bounds: newBounds,
+    });
+
+    dispatch(newDevToolsConfig({...devToolsConfig, size, bounds: newBounds}));
+  };
+}
+
+export function onDevToolsOpen(newDeviceId, newWebViewId, force) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {devToolsConfig},
+    } = getState();
+
+    const {open, activeDevTools, bounds, mode} = devToolsConfig;
+
+    if (
+      open &&
+      !!activeDevTools.find(({deviceId}) => deviceId === newDeviceId)
+    ) {
+      if (force) {
+        ipcRenderer.send('open-devtools', {
+          bounds,
+          mode,
+          webViewId: newWebViewId,
+        });
+      }
+      return;
+    }
+
+    let newActiveDevices = [...activeDevTools];
+
+    if (open && activeDevTools[0] && mode !== DEVTOOLS_MODES.UNDOCKED) {
+      activeDevTools.forEach(({webViewId}) => {
+        ipcRenderer.send('close-devtools', {webViewId});
+        newActiveDevices = newActiveDevices.filter(
+          ({webViewId: _webViewId}) => webViewId !== _webViewId
+        );
+      });
+    }
+
+    ipcRenderer.send('open-devtools', {bounds, mode, webViewId: newWebViewId});
+
+    const newData = {
+      ...devToolsConfig,
+      open: true,
+      activeDevTools: [
+        ...newActiveDevices,
+        {deviceId: newDeviceId, webViewId: newWebViewId},
+      ],
+    };
+
+    dispatch(newDevToolsConfig(newData));
+  };
+}
+
+export function onDevToolsClose(devToolsInfo, closeAll) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {devToolsConfig},
+    } = getState();
+
+    const {open, activeDevTools} = devToolsConfig;
+
+    if (!open) {
+      return;
+    }
+
+    let devToolsToClose = [];
+
+    if (closeAll) {
+      devToolsToClose = [...activeDevTools];
+    } else {
+      devToolsToClose = [devToolsInfo];
+    }
+
+    let newActiveDevTools = [...activeDevTools];
+
+    devToolsToClose.forEach(({webViewId}) => {
+      ipcRenderer.send('close-devtools', {webViewId});
+      newActiveDevTools = newActiveDevTools.filter(
+        ({webViewId: _webViewId}) => _webViewId !== webViewId
+      );
+    });
+
+    dispatch(
+      newDevToolsConfig({
+        ...devToolsConfig,
+        open: newActiveDevTools.length > 0,
+        activeDevTools: newActiveDevTools,
+      })
+    );
   };
 }
 
@@ -367,9 +679,36 @@ export function flipOrientationAllDevices() {
   };
 }
 
-export function enableInpector() {
+export function onAllDevicesMutedChange() {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    pubsub.publish(ENABLE_INSPECTOR_ALL_DEVICES);
+    const {
+      browser: {allDevicesMuted},
+    } = getState();
+    const next = !allDevicesMuted;
+    pubsub.publish(TOGGLE_DEVICE_MUTED_STATE, [{muted: next}]);
+    dispatch(toggleAllDevicesMuted(next));
+  };
+}
+
+export function onDeviceMutedChange(deviceId, isMuted) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(toggleDeviceMuted(deviceId, isMuted));
+  };
+}
+
+export function toggleInspector() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {isInspecting},
+    } = getState();
+
+    dispatch(newInspectorState(!isInspecting));
+  };
+}
+
+export function deviceLoadingChange(deviceInfo) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(newDeviceLoading(deviceInfo));
   };
 }
 
@@ -395,6 +734,12 @@ export function triggerNavigationReload(_, args) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const ignoreCache = (args || {}).ignoreCache || false;
     pubsub.publish(NAVIGATION_RELOAD, [{ignoreCache}]);
+  };
+}
+
+export function triggerStopLoading(_, args) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(STOP_LOADING);
   };
 }
 

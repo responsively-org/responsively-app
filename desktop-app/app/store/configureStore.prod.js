@@ -10,11 +10,12 @@ const rootReducer = createRootReducer(history);
 const router = routerMiddleware(history);
 const heap = () => next => action => {
   window.requestIdleCallback(() => {
-    window.heap &&
+    if (window.heap) {
       window.heap.track(`ACTION-${action.type}`, {
         type: action.type,
         payload: JSON.stringify(action),
       });
+    }
   });
   return next(action);
 };
