@@ -488,7 +488,7 @@ class WebView extends Component {
   hideScrollbar = () => {
     this.webviewRef.current.insertCSS(
       `
-        body::-webkit-scrollbar {
+        ::-webkit-scrollbar {
           display: none;
         }
         `
