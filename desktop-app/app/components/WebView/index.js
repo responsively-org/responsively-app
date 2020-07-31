@@ -10,6 +10,7 @@ import console from 'electron-timber';
 import BugIcon from '../icons/Bug';
 import MutedIcon from '../icons/Muted';
 import UnmutedIcon from '../icons/Unmuted';
+import FullScreenshotIcon from '../icons/FullScreenshot';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
 import {iconsColor} from '../../constants/colors';
@@ -34,7 +35,7 @@ import {CAPABILITIES} from '../../constants/devices';
 import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
-import {captureFullPage} from './screenshotUtil';
+import {captureScreenshot} from './screenshotUtil';
 import {
   DEVTOOLS_MODES,
   INDIVIDUAL_LAYOUT,
@@ -352,15 +353,22 @@ class WebView extends Component {
     this.webviewRef.current.send('scrollUpMessage');
   };
 
-  processScreenshotEvent = async ({now}) => {
+  processScreenshotEvent = async ({
+    now,
+    fullScreen = true,
+  }: {
+    now?: Date,
+    fullScreen?: boolean,
+  }) => {
     this.setState({screenshotInProgress: true});
-    await captureFullPage(
-      this.props.browser.address,
-      this.props.device,
-      this.webviewRef.current,
-      now != null,
-      now
-    );
+    await captureScreenshot({
+      address: this.props.browser.address,
+      device: this.props.device,
+      webView: this.webviewRef.current,
+      createSeparateDir: now != null,
+      fullScreen,
+      now,
+    });
     this.setState({screenshotInProgress: false});
   };
 
@@ -779,9 +787,21 @@ class WebView extends Component {
                   commonStyles.icons,
                   commonStyles.enabled
                 )}
-                onClick={() => this.processScreenshotEvent({})}
+                onClick={() => this.processScreenshotEvent({fullScreen: false})}
               >
                 <ScreenshotIcon height={18} color={iconsColor} />
+              </div>
+            </Tooltip>
+            <Tooltip title="Take Full Size Screenshot">
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled
+                )}
+                onClick={this.processScreenshotEvent}
+              >
+                <FullScreenshotIcon height={18} color={iconsColor} />
               </div>
             </Tooltip>
             <Tooltip title="Tilt Device">

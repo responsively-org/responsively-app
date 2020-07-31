@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
 import ScrollDownIcon from '../icons/ScrollDown';
 import ScrollUpIcon from '../icons/ScrollUp';
-import ScreenshotIcon from '../icons/Screenshot';
+import ScreenshotIcon from '../icons/FullScreenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
 import InspectElementIcon from '../icons/InspectElement';
 import MutedIcon from '../icons/Muted';
@@ -68,9 +68,19 @@ const ScrollControls = ({
           </Tooltip>
         </Grid>
         <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-          <Tooltip title={browser.allDevicesMuted? "Unmute all devices": "Mute all devices"}>
+          <Tooltip
+            title={
+              browser.allDevicesMuted
+                ? 'Unmute all devices'
+                : 'Mute all devices'
+            }
+          >
             <div onClick={onAllDevicesMutedChange}>
-              { browser.allDevicesMuted ? (<MutedIcon {...iconProps} />):(<UnmutedIcon {...iconProps} />) }
+              {browser.allDevicesMuted ? (
+                <MutedIcon {...iconProps} />
+              ) : (
+                <UnmutedIcon {...iconProps} />
+              )}
             </div>
           </Tooltip>
         </Grid>
