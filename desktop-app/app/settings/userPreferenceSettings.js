@@ -6,7 +6,7 @@ const path = require('path');
 
 class UserPreferenceSettings {
   getScreenShotSavePath = () =>
-    settings.get(USER_PREFERENCES).screenShotSavePath;
+    (settings.get(USER_PREFERENCES) || {}).screenShotSavePath;
   getDefaultScreenshotpath = () =>
     path.join(os.homedir(), `Desktop/Responsively-Screenshots`);
 }
