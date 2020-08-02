@@ -1,7 +1,7 @@
 {
   "statusBarMessage": {
     "text": "Do you enjoy the app? Show us some support on twitter!",
-    "link": "https://twitter.com/intent/tweet?text=I'm using @ResponsivelyApp for web development and enjoying it. You should try it out too.&url=https://responsively.app&related=@ResponsivelyApp"
+    "link": "https://twitter.com/ResponsivelyApp"
   },
   "notification":{
     "id":"100001",
