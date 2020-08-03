@@ -60,6 +60,5 @@ async function initInstance(): Promise<> {
 }
 
 export function closeBrowserSync() {
-  browserSyncEmbed.cleanup();
   browserSyncEmbed.exit();
 }
