@@ -37,7 +37,8 @@ export default class ErrorBoundary extends React.Component {
           </div>
           <p style={{width: '80%', textAlign: 'center'}}>
             Please copy the contents in the above box and create an issue in the
-            github repo: https://github.com/manojVivek/responsively-app/issues
+            github repo:
+            https://github.com/responsively-org/responsively-app/issues
           </p>
         </Fragment>
       );

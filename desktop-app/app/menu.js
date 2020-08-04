@@ -41,14 +41,16 @@ export default class MenuBuilder {
       {
         label: 'Open Source',
         click() {
-          shell.openExternal('https://github.com/manojVivek/responsively-app');
+          shell.openExternal(
+            'https://github.com/responsively-org/responsively-app'
+          );
         },
       },
       {
         label: 'Report Issues',
         click() {
           shell.openExternal(
-            'https://github.com/manojVivek/responsively-app/issues'
+            'https://github.com/responsively-org/responsively-app/issues'
           );
         },
       },
@@ -120,7 +122,7 @@ export default class MenuBuilder {
               dialog.showMessageBox(BrowserWindow.getAllWindows()[0], {
                 type: 'info',
                 title: 'Responsively',
-                message: 'There are currently no updates available',
+                message: 'The app is up to date! 🎉',
               });
             }
           });
