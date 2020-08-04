@@ -1,6 +1,7 @@
 const browserSyncEmbed = require('browser-sync').create('embed');
 
 import {BROWSER_SYNC_VERSION} from '../constants/browserSync';
+import fs from 'fs';
 
 let filesWatcher;
 let cssWatcher;
@@ -10,16 +11,22 @@ export async function initBrowserSync() {
   }
 }
 
-export function watchFiles(fileDir) {
-  filesWatcher = browserSyncEmbed
-    .watch([`${fileDir}/*.html`, `${fileDir}/**/**.js`])
-    .on('change', browserSyncEmbed.reload);
+export function watchFiles(filePath) {
+  if (filePath && fs.existsSync(filePath)) {
+    const fileDir = filePath.substring(0, filePath.lastIndexOf('/'));
+    filesWatcher = browserSyncEmbed
+      .watch([filePath, `${fileDir}/**/**.js`])
+      .on('change', browserSyncEmbed.reload);
 
-  cssWatcher = browserSyncEmbed.watch(`${fileDir}/**/**.css`, (event, file) => {
-    if (event === 'change') {
-      browserSyncEmbed.reload(file);
-    }
-  });
+    cssWatcher = browserSyncEmbed.watch(
+      `${fileDir}/**/**.css`,
+      (event, file) => {
+        if (event === 'change') {
+          browserSyncEmbed.reload(file);
+        }
+      }
+    );
+  }
 }
 
 export function stopWatchFiles() {

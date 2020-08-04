@@ -313,9 +313,8 @@ const createWindow = async () => {
       path = trimStart(path, '/');
     }
     app.addRecentDocument(path);
-    const fileDir = path.substring(0, path.lastIndexOf('/'));
     stopWatchFiles();
-    watchFiles(fileDir);
+    watchFiles(path);
   });
 
   ipcMain.on('stop-watcher', () => {
