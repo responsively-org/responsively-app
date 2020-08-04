@@ -29,12 +29,12 @@ export function watchFiles(filePath) {
   }
 }
 
-export function stopWatchFiles() {
+export async function stopWatchFiles() {
   if (filesWatcher) {
-    filesWatcher.close();
+    await filesWatcher.close();
   }
   if (cssWatcher) {
-    cssWatcher.close();
+    await cssWatcher.close();
   }
 }
 

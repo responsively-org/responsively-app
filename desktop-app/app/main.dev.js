@@ -307,18 +307,18 @@ const createWindow = async () => {
     onResize();
   });
 
-  ipcMain.on('start-watching-file', (event, fileInfo) => {
+  ipcMain.on('start-watching-file', async (event, fileInfo) => {
     let path = fileInfo.path.replace('file://', '');
     if (process.platform === 'win32') {
       path = trimStart(path, '/');
     }
     app.addRecentDocument(path);
-    stopWatchFiles();
+    await stopWatchFiles();
     watchFiles(path);
   });
 
-  ipcMain.on('stop-watcher', () => {
-    stopWatchFiles();
+  ipcMain.on('stop-watcher', async () => {
+    await stopWatchFiles();
   });
 
   ipcMain.on('open-new-window', (event, data) => {
