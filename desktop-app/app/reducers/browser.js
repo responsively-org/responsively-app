@@ -251,6 +251,12 @@ function _updateFileWatcher(newURL) {
   else ipcRenderer.send('stop-watcher');
 }
 
+function _getHomepage() {
+  const homepage = getHomepage();
+  _updateFileWatcher(homepage);
+  return homepage;
+}
+
 function getDefaultNetworkThrottlingProfiles(): NetworkThrottlingProfileType[] {
   return [
     {
@@ -305,7 +311,7 @@ function _setNetworkConfiguration(
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
-    homepage: getHomepage(),
+    homepage: _getHomepage(),
     address: _getUserPreferences().reopenLastAddress
       ? getLastOpenedAddress()
       : getHomepage(),
