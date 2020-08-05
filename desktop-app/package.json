@@ -284,7 +284,6 @@
     "@sentry/electron": "^1.5.2",
     "bluebird": "^3.7.2",
     "browser-sync": "^2.26.7",
-    "chokidar": "^3.4.0",
     "classnames": "^2.2.6",
     "core-js": "2",
     "dotenv": "^8.1.0",
