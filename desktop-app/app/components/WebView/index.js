@@ -622,27 +622,35 @@ class WebView extends Component {
     if (!this.props.browser.isInspecting) {
       return;
     }
-    await this.dbg.sendCommand('DOM.enable');
-    await this.dbg.sendCommand('Overlay.enable');
-    await this.dbg.sendCommand('Overlay.setInspectMode', {
-      mode: 'searchForNode',
-      highlightConfig: {
-        showInfo: true,
-        showStyles: true,
-        contentColor: {r: 111, g: 168, b: 220, a: 0.66},
-        paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
-        borderColor: {r: 255, g: 229, b: 153, a: 0.66},
-        marginColor: {r: 246, g: 178, b: 107, a: 0.66},
-      },
-    });
+    try {
+      await this.dbg.sendCommand('DOM.enable');
+      await this.dbg.sendCommand('Overlay.enable');
+      await this.dbg.sendCommand('Overlay.setInspectMode', {
+        mode: 'searchForNode',
+        highlightConfig: {
+          showInfo: true,
+          showStyles: true,
+          contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+          paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+          borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+          marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+        },
+      });
+    } catch (err) {
+      console.log('Error enabling overlay', err);
+    }
   };
 
   _onMouseLeave = async () => {
     if (!this.props.browser.isInspecting) {
       return;
     }
-    await this.dbg.sendCommand('Overlay.disable');
-    await this.dbg.sendCommand('DOM.disable');
+    try {
+      await this.dbg.sendCommand('Overlay.disable');
+      await this.dbg.sendCommand('DOM.disable');
+    } catch (err) {
+      console.log('Error disabling overlay', err);
+    }
   };
 
   _getWebViewTag = deviceStyles => {
