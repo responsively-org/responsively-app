@@ -488,5 +488,7 @@ const createWindow = async () => {
     mainWindow.webContents.send('updater-status-changed', {nextStatus});
   });
   // Remove this if your app does not use auto updates
-  appUpdater.checkForUpdatesAndNotify();
+  appUpdater
+    .checkForUpdatesAndNotify()
+    .catch(err => console.log('Error while updating app', err));
 };
