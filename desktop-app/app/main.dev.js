@@ -264,6 +264,14 @@ const createWindow = async () => {
     icon: iconPath,
   });
 
+  await initBrowserSync();
+  ipcMain.handle('request-browser-sync', (event, data) => {
+    const browserSyncOptions = {
+      url: getBrowserSyncEmbedScriptURL(),
+    };
+    return browserSyncOptions;
+  });
+
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
@@ -282,8 +290,6 @@ const createWindow = async () => {
       `);
     }
   });
-
-  await initBrowserSync();
 
   initMainShortcutManager();
 
@@ -408,13 +414,6 @@ const createWindow = async () => {
     } catch {
       return '';
     }
-  });
-
-  ipcMain.handle('request-browser-sync', (event, data) => {
-    const browserSyncOptions = {
-      url: getBrowserSyncEmbedScriptURL(),
-    };
-    return browserSyncOptions;
   });
 
   ipcMain.on('open-devtools', (event, ...args) => {
