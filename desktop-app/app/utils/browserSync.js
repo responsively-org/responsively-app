@@ -1,6 +1,9 @@
 const browserSyncEmbed = require('browser-sync').create('embed');
 
-import {BROWSER_SYNC_VERSION} from '../constants/browserSync';
+import {
+  BROWSER_SYNC_VERSION,
+  BROWSER_SYNC_PORT,
+} from '../constants/browserSync';
 import fs from 'fs';
 
 let filesWatcher;
@@ -55,6 +58,7 @@ async function initInstance(): Promise<> {
         https: true,
         notify: false,
         ui: false,
+        port: BROWSER_SYNC_PORT,
       },
       (err, bs) => {
         if (err) {
