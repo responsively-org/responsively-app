@@ -265,7 +265,6 @@ const createWindow = async () => {
   });
 
   await initBrowserSync();
-  console.log('adding browser sync handler');
   ipcMain.handle('request-browser-sync', (event, data) => {
     const browserSyncOptions = {
       url: getBrowserSyncEmbedScriptURL(),

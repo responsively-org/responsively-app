@@ -6,7 +6,6 @@ let browserSyncOptions;
 initializeBrowserSyncOptions();
 
 async function initializeBrowserSyncOptions() {
-  console.log('requesting browser sync');
   if (!browserSyncOptions) {
     browserSyncOptions = await ipcRenderer.invoke('request-browser-sync');
   }
