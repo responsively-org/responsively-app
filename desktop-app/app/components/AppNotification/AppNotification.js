@@ -37,10 +37,14 @@ const AppNotification = () => {
   const [data, setData] = useState(null);
   useEffect(() => {
     (async () => {
-      const response = await (
-        await fetch('https://responsively.app/assets/appMessages.json')
-      ).json();
-      setData(response.notification);
+      try {
+        const response = await (
+          await fetch('https://responsively.app/assets/appMessages.json')
+        ).json();
+        setData(response.notification);
+      } catch (err) {
+        console.log('Error fetching appMessages.json', err);
+      }
     })();
   }, []);
 

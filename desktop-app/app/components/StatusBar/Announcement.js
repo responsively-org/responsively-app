@@ -8,10 +8,14 @@ const Announcement = () => {
   const [data, setData] = useState(null);
   useEffect(() => {
     (async () => {
-      const response = await (
-        await fetch('https://responsively.app/assets/appMessages.json')
-      ).json();
-      setData(response.statusBarMessage);
+      try {
+        const response = await (
+          await fetch('https://responsively.app/assets/appMessages.json')
+        ).json();
+        setData(response.statusBarMessage);
+      } catch (err) {
+        console.log('Error fetching appMessages.json', err);
+      }
     })();
   }, []);
 
