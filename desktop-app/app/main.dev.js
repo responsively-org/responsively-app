@@ -43,6 +43,8 @@ import {
   getBrowserSyncHost,
   getBrowserSyncEmbedScriptURL,
   closeBrowserSync,
+  stopWatchFiles,
+  watchFiles,
 } from './utils/browserSync';
 import {getHostFromURL} from './utils/urlUtils';
 import browserSync from 'browser-sync';
@@ -305,30 +307,18 @@ const createWindow = async () => {
     onResize();
   });
 
-  const watcher = new chokidar.FSWatcher();
-  let watchedFileInfo = null;
-  watcher.on('change', _ => {
-    mainWindow.webContents.send('reload-url');
-  });
-  ipcMain.on('start-watching-file', (event, fileInfo) => {
+  ipcMain.on('start-watching-file', async (event, fileInfo) => {
     let path = fileInfo.path.replace('file://', '');
     if (process.platform === 'win32') {
       path = trimStart(path, '/');
     }
     app.addRecentDocument(path);
-    fileInfo.path = path;
-    if (watchedFileInfo != null) watcher.unwatch(watchedFileInfo.path);
-    if (fs.existsSync(fileInfo.path)) {
-      watcher.add(fileInfo.path);
-      watchedFileInfo = fileInfo;
-    } else {
-      watchedFileInfo = null;
-    }
+    await stopWatchFiles();
+    watchFiles(path);
   });
 
-  ipcMain.on('stop-watcher', () => {
-    if (watcher != null && watchedFileInfo != null)
-      watcher.unwatch(watchedFileInfo.path);
+  ipcMain.on('stop-watcher', async () => {
+    await stopWatchFiles();
   });
 
   ipcMain.on('open-new-window', (event, data) => {
@@ -488,7 +478,6 @@ const createWindow = async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
-    if (watcher != null) watcher.close();
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
