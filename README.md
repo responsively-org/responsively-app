@@ -1,8 +1,8 @@
 <div align="center">
   <img src="https://responsively.app/assets/img/responsively-logo.png" alt="Responsively Logo" width="150">
   <h1>Responsively App</h1>
-  <strong>A must-have devtool for web developers for effient responsive web development. 🚀</strong>
-  <h6>Made by developers for developers</h6>
+  <strong>A must-have devtool for web developers for quicker responsive web development. 🚀</strong>
+  <h6>Save time by becoming 5x faster!</h6>
 </div>
 <br>
 
@@ -31,7 +31,7 @@
 </p>
 
 <p align="center">
-  Download Now: <a href="https://responsively.app" target="_blank">
+  Download Now(free!): <a href="https://responsively.app" target="_blank">
     responsively.app
   </a>
 </p>
