@@ -788,7 +788,7 @@ class WebView extends Component {
                 <BugIcon width={20} color={iconsColor} />
               </div>
             </Tooltip>
-            <Tooltip title="Take Screenshot">
+            <Tooltip title="Quick Screenshot">
               <div
                 className={cx(
                   styles.webViewToolbarIcons,
@@ -800,7 +800,7 @@ class WebView extends Component {
                 <ScreenshotIcon height={18} color={iconsColor} />
               </div>
             </Tooltip>
-            <Tooltip title="Take Full Page Screenshot">
+            <Tooltip title="Full Page Screenshot">
               <div
                 className={cx(
                   styles.webViewToolbarIcons,

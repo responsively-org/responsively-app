@@ -62,7 +62,8 @@ const captureScreenshot = async ({
     address,
     device,
     now,
-    createSeparateDir
+    createSeparateDir,
+    fullScreen
   );
 
   const mergedImage = await promiseWorker.postMessage({
@@ -233,7 +234,8 @@ function _getScreenshotFileName(
   address,
   device,
   now = new Date(),
-  createSeparateDir
+  createSeparateDir,
+  fullScreen
 ) {
   const dateString = `${now
     .toLocaleDateString()
@@ -251,10 +253,9 @@ function _getScreenshotFileName(
         path.join(os.homedir(), `Desktop/Responsively-Screenshots`),
       directoryPath
     ),
-    file: `${getWebsiteName(address)} - ${device.name.replace(
-      /\//g,
-      '-'
-    )} - ${dateString}.png`,
+    file: `${getWebsiteName(address)} ${
+      fullScreen ? '- Full ' : ''
+    }- ${device.name.replace(/\//g, '-')} - ${dateString}.png`,
   };
 }
 

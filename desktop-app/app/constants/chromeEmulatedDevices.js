@@ -150,7 +150,7 @@ export default {
       type: 'emulated-device',
       order: 32,
       device: {
-        'show-by-default': true,
+        'show-by-default': false,
         title: 'iPhone 6/7/8 Plus',
         screen: {
           horizontal: {
@@ -530,7 +530,7 @@ export default {
       type: 'emulated-device',
       order: 20,
       device: {
-        'show-by-default': false,
+        'show-by-default': true,
         title: 'Pixel 2',
         screen: {
           horizontal: {
