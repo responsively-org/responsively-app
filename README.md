@@ -1,15 +1,48 @@
-# Responsively App [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
+<div align="center">
+  <img src="https://responsively.app/assets/img/responsively-logo.png" alt="Responsively Logo" width="150">
+  <h1>Responsively App</h1>
+  <strong>A must-have devtool for web developers for effient responsive web development. 🚀</strong>
+  <h6>Made by developers for developers</h6>
+</div>
+<br>
+
+<p align="center">
+  <a href="https://twitter.com/ResponsivelyApp" target="_blank">
+    <img src="https://img.shields.io/twitter/follow/responsivelyApp?color=26A0ED&label=Follow&logo=twitter&logoColor=white&style=flat" alt="Twitter">
+  </a>
+
+  <a href="https://gitter.im/responsively-app" target="_blank">
+    <img src="https://img.shields.io/gitter/room/badges/shields.svg" alt="Gitter">
+  </a>
+
+  <a href="https://xscode.com/manojvivek/responsively-app" target="_blank">
+    <img src="https://img.shields.io/badge/Available%20on-xs%3Acode-blue?style=?style=plastic&logo=appveyor&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////////VXz1bAAAAAJ0Uk5T/wDltzBKAAAAlUlEQVR42uzXSwqAMAwE0Mn9L+3Ggtgkk35QwcnSJo9S+yGwM9DCooCbgn4YrJ4CIPUcQF7/XSBbx2TEz4sAZ2q1RAECBAiYBlCtvwN+KiYAlG7UDGj59MViT9hOwEqAhYCtAsUZvL6I6W8c2wcbd+LIWSCHSTeSAAECngN4xxIDSK9f4B9t377Wd7H5Nt7/Xz8eAgwAvesLRjYYPuUAAAAASUVORK5CYII=" alt="XS:Code">
+  </a>
+
+  <a href="https://github.com/responsively-org/responsively-app/issues" target="_blank">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs Welcome">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://www.producthunt.com/posts/responsively?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-responsively" target="_blank">
+    <img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=200375&theme=light&period=daily" alt="ProductHunt">
+  </a>
+</p>
+
+<p align="center">
+  Download Now: <a href="https://responsively.app" target="_blank">
+    responsively.app
+  </a>
+</p>
+<br>
+
+## Responsively App
+>A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development. 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-29-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
-[![Gitter chat](https://img.shields.io/gitter/room/badges/shields.svg)](https://gitter.im/responsively-app) [![xscode](https://img.shields.io/badge/Available%20on-xs%3Acode-blue?style=?style=plastic&logo=appveyor&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////////VXz1bAAAAAJ0Uk5T/wDltzBKAAAAlUlEQVR42uzXSwqAMAwE0Mn9L+3Ggtgkk35QwcnSJo9S+yGwM9DCooCbgn4YrJ4CIPUcQF7/XSBbx2TEz4sAZ2q1RAECBAiYBlCtvwN+KiYAlG7UDGj59MViT9hOwEqAhYCtAsUZvL6I6W8c2wcbd+LIWSCHSTeSAAECngN4xxIDSK9f4B9t377Wd7H5Nt7/Xz8eAgwAvesLRjYYPuUAAAAASUVORK5CYII=)](https://xscode.com/manojvivek/responsively-app) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/responsively-org/responsively-app/issues)
-
-[![PH](https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=200375&theme=light&period=daily)](https://www.producthunt.com/posts/responsively?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-responsively)
-
-Website: https://responsively.app
-
-
-A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development. 
+<br>
 
 ![Quick Demo](https://responsively.app/assets/img/responsively-app.gif)
 
