@@ -10,17 +10,23 @@
   <a href="https://twitter.com/ResponsivelyApp" target="_blank">
     <img src="https://img.shields.io/twitter/follow/responsivelyApp?color=26A0ED&label=Follow&logo=twitter&logoColor=white&style=flat" alt="Twitter">
   </a>
+  
+  <a href="#contributors-" target="_blank">
+    <img src="https://img.shields.io/github/all-contributors/responsively-org/responsively-app?style=flat" alt="Twitter">
+  </a>
+  
+  
 
   <a href="https://gitter.im/responsively-app" target="_blank">
-    <img src="https://img.shields.io/gitter/room/badges/shields.svg" alt="Gitter">
+    <img src="https://img.shields.io/gitter/room/badges/shields.svg?style=flat" alt="Gitter">
   </a>
 
   <a href="https://xscode.com/manojvivek/responsively-app" target="_blank">
-    <img src="https://img.shields.io/badge/Available%20on-xs%3Acode-blue?style=?style=plastic&logo=appveyor&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////////VXz1bAAAAAJ0Uk5T/wDltzBKAAAAlUlEQVR42uzXSwqAMAwE0Mn9L+3Ggtgkk35QwcnSJo9S+yGwM9DCooCbgn4YrJ4CIPUcQF7/XSBbx2TEz4sAZ2q1RAECBAiYBlCtvwN+KiYAlG7UDGj59MViT9hOwEqAhYCtAsUZvL6I6W8c2wcbd+LIWSCHSTeSAAECngN4xxIDSK9f4B9t377Wd7H5Nt7/Xz8eAgwAvesLRjYYPuUAAAAASUVORK5CYII=" alt="XS:Code">
+    <img src="https://img.shields.io/badge/Available%20on-xs%3Acode-blue?style=?style=flat&logo=appveyor&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////////VXz1bAAAAAJ0Uk5T/wDltzBKAAAAlUlEQVR42uzXSwqAMAwE0Mn9L+3Ggtgkk35QwcnSJo9S+yGwM9DCooCbgn4YrJ4CIPUcQF7/XSBbx2TEz4sAZ2q1RAECBAiYBlCtvwN+KiYAlG7UDGj59MViT9hOwEqAhYCtAsUZvL6I6W8c2wcbd+LIWSCHSTeSAAECngN4xxIDSK9f4B9t377Wd7H5Nt7/Xz8eAgwAvesLRjYYPuUAAAAASUVORK5CYII=" alt="XS:Code">
   </a>
 
   <a href="https://github.com/responsively-org/responsively-app/issues" target="_blank">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs Welcome">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" alt="PRs Welcome">
   </a>
 </p>
 
@@ -39,9 +45,6 @@
 
 ## Responsively App
 >A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development. 
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-29-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 <br>
 
 ![Quick Demo](https://responsively.app/assets/img/responsively-app.gif)
