@@ -479,6 +479,16 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
+  mainWindow.webContents.on(
+    'new-window',
+    (event, url, frameName, disposition, options) => {
+      if (url?.indexOf('headwayapp.co') !== -1) {
+        event.preventDefault();
+        shell.openExternal(url);
+      }
+    }
+  );
+
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 

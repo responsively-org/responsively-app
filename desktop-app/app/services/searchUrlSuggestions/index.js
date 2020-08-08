@@ -38,7 +38,11 @@ export const searchUrlUtils = url => {
 };
 
 const normalizeURL = url => {
-  if (url.indexOf('?') === -1 && !url.endsWith('/')) {
+  if (
+    url.indexOf('?') === -1 &&
+    !url.endsWith('/') &&
+    url.indexOf('file://') === -1
+  ) {
     url = `${url}/`;
   }
   return url;
