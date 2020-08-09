@@ -6,7 +6,6 @@ import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
 import debounce from 'lodash/debounce';
 import pubsub from 'pubsub.js';
-import console from 'electron-timber';
 import BugIcon from '../icons/Bug';
 import MutedIcon from '../icons/Muted';
 import UnmutedIcon from '../icons/Unmuted';

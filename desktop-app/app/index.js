@@ -9,7 +9,6 @@ import Root from './containers/Root';
 import {configureStore, history} from './store/configureStore';
 import './app.global.css';
 import * as Sentry from '@sentry/electron';
-import console from 'electron-timber';
 
 require('dotenv').config();
 

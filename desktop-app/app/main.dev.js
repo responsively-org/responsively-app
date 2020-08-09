@@ -29,7 +29,6 @@ import installExtension, {
   REDUX_DEVTOOLS,
 } from 'electron-devtools-installer';
 import fs from 'fs';
-import console from 'electron-timber';
 import MenuBuilder from './menu';
 import {USER_PREFERENCES} from './constants/settingKeys';
 import {migrateDeviceSchema} from './settings/migration';
