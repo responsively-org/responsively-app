@@ -492,7 +492,9 @@ class WebView extends Component {
   closeBrowserSyncSocket = async webview => {
     await this.getWebContentForId(webview.getWebContentsId())
       .executeJavaScript(`
-      window.___browserSync___.socket.close()
+      if(window.___browserSync___){
+        window.___browserSync___.socket.close()
+      }
       true
     `);
   };
@@ -500,7 +502,9 @@ class WebView extends Component {
   openBrowserSyncSocket = async webview => {
     await this.getWebContentForId(webview.getWebContentsId())
       .executeJavaScript(`
-      window.___browserSync___.socket.open()
+      if(window.___browserSync___){
+        window.___browserSync___.socket.open()
+      }
       true
     `);
   };
