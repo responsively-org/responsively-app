@@ -35,7 +35,7 @@ export default function UserPreference({
                 onChange={e =>
                   onChange('disableSSLValidation', e.target.checked)
                 }
-                name="Diable SSL Validation"
+                name="Disable SSL Validation"
                 color="primary"
               />
             }
