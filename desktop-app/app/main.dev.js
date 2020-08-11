@@ -48,6 +48,7 @@ import {
 } from './utils/browserSync';
 import {getHostFromURL} from './utils/urlUtils';
 import browserSync from 'browser-sync';
+import {captureOnSentry} from './utils/generalUtils';
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -277,17 +278,21 @@ const createWindow = async () => {
   mainWindow.webContents.on('did-finish-load', () => {
     if (process.platform === 'darwin') {
       // Trick to make the transparent title bar draggable
-      mainWindow.webContents.executeJavaScript(`
-        var div = document.createElement("div");
-        div.style.position = "absolute";
-        div.style.top = 0;
-        div.style.height = "23px";
-        div.style.width = "100%";
-        div.style["-webkit-app-region"] = "drag";
-        div.style['-webkit-user-select'] = 'none';
-        document.body.appendChild(div);
-        true;
-      `);
+      mainWindow.webContents
+        .executeJavaScript(
+          `
+            var div = document.createElement("div");
+            div.style.position = "absolute";
+            div.style.top = 0;
+            div.style.height = "23px";
+            div.style.width = "100%";
+            div.style["-webkit-app-region"] = "drag";
+            div.style['-webkit-user-select'] = 'none';
+            document.body.appendChild(div);
+            true;
+          `
+        )
+        .catch(captureOnSentry);
     }
   });
 
@@ -432,22 +437,26 @@ const createWindow = async () => {
     devToolsView.setBounds(bounds);
     webView.setDevToolsWebContents(devToolsView.webContents);
     webView.openDevTools();
-    devToolsView.webContents.executeJavaScript(`
-      (async function () {
-        const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
-        var retryCount = 0;
-        var done = false;
-        while(retryCount < 10 && !done) {
-          try {
-            retryCount++;
-            document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
-            done = true
-          } catch(err){
-            await sleep(100);
-          }
-        }
-      })()
-    `);
+    devToolsView.webContents
+      .executeJavaScript(
+        `
+          (async function () {
+            const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+            var retryCount = 0;
+            var done = false;
+            while(retryCount < 10 && !done) {
+              try {
+                retryCount++;
+                document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
+                done = true
+              } catch(err){
+                await sleep(100);
+              }
+            }
+          })()
+        `
+      )
+      .catch(captureOnSentry);
   });
 
   ipcMain.on('close-devtools', (event, ...args) => {

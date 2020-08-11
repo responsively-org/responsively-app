@@ -1,7 +1,7 @@
 import {app} from 'electron';
-
-const path = require('path');
-const fs = require('fs');
+import * as Sentry from '@sentry/electron';
+import path from 'path';
+import fs from 'fs';
 
 export function getPackageJson() {
   const appPath =
@@ -13,4 +13,10 @@ export function getPackageJson() {
 }
 
 const pkg = getPackageJson();
-export {pkg};
+
+export const captureOnSentry = err => {
+  console.log('err', err);
+  Sentry.captureException(err);
+};
+
+export default {pkg};
