@@ -29,6 +29,46 @@ export default class MenuBuilder {
     this.mainWindow = mainWindow;
   }
 
+  aboutClick() {
+    const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
+    const title = 'Responsively';
+    const {description} = pkg;
+    const version = pkg.version || 'Unknown';
+    const electron = process.versions.electron || 'Unknown';
+    const chrome = process.versions.chrome || 'Unknown';
+    const node = process.versions.node || 'Unknown';
+    const v8 = process.versions.v8 || 'Unknown';
+    const osText =
+      `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
+    const usefulInfo = `Version: ${version}\nElectron: ${electron}\nChrome: ${chrome}\nNode.js: ${node}\nV8: ${v8}\nOS: ${osText}`;
+    const detail = description ? `${description}\n\n${usefulInfo}` : usefulInfo;
+    let buttons = ['OK', 'Copy'];
+    let cancelId = 0;
+    let defaultId = 1;
+    if (process.platform === 'linux') {
+      buttons = ['Copy', 'OK'];
+      cancelId = 1;
+      defaultId = 0;
+    }
+    dialog
+      .showMessageBox(BrowserWindow.getAllWindows()[0], {
+        type: 'none',
+        buttons,
+        title,
+        message: title,
+        detail,
+        noLink: true,
+        icon: iconPath,
+        cancelId,
+        defaultId,
+      })
+      .then(({response}) => {
+        if (response === defaultId) {
+          clipboard.writeText(usefulInfo, 'clipboard');
+        }
+      });
+  }
+
   subMenuHelp = {
     label: 'Help',
     submenu: [
@@ -134,47 +174,7 @@ export default class MenuBuilder {
       {
         label: 'About',
         accelerator: 'F1',
-        click() {
-          const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
-          const title = 'Responsively';
-          const {description} = pkg;
-          const version = pkg.version || 'Unknown';
-          const electron = process.versions.electron || 'Unknown';
-          const chrome = process.versions.chrome || 'Unknown';
-          const node = process.versions.node || 'Unknown';
-          const v8 = process.versions.v8 || 'Unknown';
-          const osText =
-            `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
-          const usefulInfo = `Version: ${version}\nElectron: ${electron}\nChrome: ${chrome}\nNode.js: ${node}\nV8: ${v8}\nOS: ${osText}`;
-          const detail = description
-            ? `${description}\n\n${usefulInfo}`
-            : usefulInfo;
-          let buttons = ['OK', 'Copy'];
-          let cancelId = 0;
-          let defaultId = 1;
-          if (process.platform === 'linux') {
-            buttons = ['Copy', 'OK'];
-            cancelId = 1;
-            defaultId = 0;
-          }
-          dialog
-            .showMessageBox(BrowserWindow.getAllWindows()[0], {
-              type: 'none',
-              buttons,
-              title,
-              message: title,
-              detail,
-              noLink: true,
-              icon: iconPath,
-              cancelId,
-              defaultId,
-            })
-            .then(({response}) => {
-              if (response === defaultId) {
-                clipboard.writeText(usefulInfo, 'clipboard');
-              }
-            });
-        },
+        click: this.aboutClick,
       },
     ],
   };
@@ -309,10 +309,11 @@ export default class MenuBuilder {
     const subMenuAbout = {
       label: 'Responsively',
       submenu: [
-        // {
-        //   label: 'About ResponsivelyApp',
-        //   selector: 'orderFrontStandardAboutPanel:',
-        // },
+        {
+          label: 'About ResponsivelyApp',
+          selector: 'orderFrontStandardAboutPanel:',
+          click: this.aboutClick,
+        },
         {type: 'separator'},
         // {label: 'Services', submenu: []},
         {type: 'separator'},
