@@ -361,6 +361,8 @@ class WebView extends Component {
     fullScreen?: boolean,
   }) => {
     this.setState({screenshotInProgress: true});
+
+    await this.closeBrowserSyncSocket(this.webviewRef.current);
     await captureScreenshot({
       address: this.props.browser.address,
       device: this.props.device,
@@ -369,6 +371,7 @@ class WebView extends Component {
       fullScreen,
       now,
     });
+    await this.openBrowserSyncSocket(this.webviewRef.current);
     this.setState({screenshotInProgress: false});
   };
 
@@ -486,6 +489,22 @@ class WebView extends Component {
     `);
   };
 
+  closeBrowserSyncSocket = async webview => {
+    await this.getWebContentForId(webview.getWebContentsId())
+      .executeJavaScript(`
+      window.___browserSync___.socket.close()
+      true
+    `);
+  };
+
+  openBrowserSyncSocket = async webview => {
+    await this.getWebContentForId(webview.getWebContentsId())
+      .executeJavaScript(`
+      window.___browserSync___.socket.open()
+      true
+    `);
+  };
+
   initEventTriggers = webview => {
     this.initBrowserSync(webview);
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`{
@@ -535,6 +554,11 @@ class WebView extends Component {
   };
 
   _unPlug = () => {
+    if (this.state.isUnplugged) {
+      this.openBrowserSyncSocket(this.webviewRef.current);
+    } else {
+      this.closeBrowserSyncSocket(this.webviewRef.current);
+    }
     this.setState({isUnplugged: !this.state.isUnplugged}, () => {
       this.webviewRef.current.send(
         'eventsMirroringState',
@@ -824,6 +848,23 @@ class WebView extends Component {
                 <DeviceRotateIcon height={17} color={iconsColor} />
               </div>
             </Tooltip>
+
+            <Tooltip title="Disable event mirroring">
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled,
+                  {
+                    [commonStyles.selected]: this.state.isUnplugged,
+                  }
+                )}
+                onClick={this._unPlug}
+              >
+                <UnplugIcon height={30} color={iconsColor} />
+              </div>
+            </Tooltip>
+
             <Tooltip
               title={isMuted ? 'Unmute' : 'Mute'}
               disableFocusListener={true}
