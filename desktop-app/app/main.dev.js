@@ -48,7 +48,7 @@ import {
 } from './utils/browserSync';
 import {getHostFromURL} from './utils/urlUtils';
 import browserSync from 'browser-sync';
-import {captureOnSentry} from './utils/generalUtils';
+import {captureOnSentry} from './utils/logUtils';
 
 const path = require('path');
 const chokidar = require('chokidar');

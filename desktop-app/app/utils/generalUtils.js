@@ -1,5 +1,4 @@
 import {app} from 'electron';
-import * as Sentry from '@sentry/electron';
 import path from 'path';
 import fs from 'fs';
 
@@ -12,11 +11,6 @@ export function getPackageJson() {
   return JSON.parse(pkgContent);
 }
 
-const pkg = getPackageJson();
-
-export const captureOnSentry = err => {
-  console.log('err', err);
-  Sentry.captureException(err);
-};
+export const pkg = getPackageJson();
 
 export default {pkg};

@@ -12,7 +12,7 @@ import PromiseWorker from 'promise-worker';
 import NotificationMessage from '../NotificationMessage';
 import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 import {type Device} from '../../constants/devices';
-import {captureOnSentry} from '../../utils/generalUtils';
+import {captureOnSentry} from '../../utils/logUtils';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 

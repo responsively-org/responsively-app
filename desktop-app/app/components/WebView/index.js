@@ -45,7 +45,7 @@ import Minimize from '../icons/Minimize';
 import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
 import {getBrowserSyncEmbedScriptURL} from '../../service/browserSync';
-import {captureOnSentry} from '../../utils/generalUtils';
+import {captureOnSentry} from '../../utils/logUtils';
 
 const {BrowserWindow} = remote;
 
