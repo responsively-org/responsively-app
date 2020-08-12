@@ -22,6 +22,7 @@ const captureScreenshot = async ({
   createSeparateDir,
   now,
   fullScreen = false,
+  removeFixedPositionedElements,
 }: {
   address: string,
   device: Device,
@@ -29,6 +30,7 @@ const captureScreenshot = async ({
   createSeparateDir: boolean,
   now?: Date,
   fullScreen: boolean,
+  removeFixedPositionedElements: boolean,
 }) => {
   const worker = new Worker('./imageWorker.js');
   const promiseWorker = new PromiseWorker(worker);
@@ -126,10 +128,16 @@ class WebViewUtils {
       }
     `);
 
-    await this.webView.executeJavaScript(`
-      document.body.classList.add('responsivelyApp__ScreenshotInProgress');
-      responsivelyApp.hideFixedPositionElementsForScreenshot();
-    `);
+    // await this.webView.executeJavaScript(`
+
+    // `);
+
+    if (removeFixedPositionedElements) {
+      await this.webView.executeJavaScript(`
+        document.body.classList.add('responsivelyApp__ScreenshotInProgress');
+        responsivelyApp.hideFixedPositionElementsForScreenshot();
+      `);
+    }
 
     // wait a little for the 'hide' effect to take place.
     await _delay(200);

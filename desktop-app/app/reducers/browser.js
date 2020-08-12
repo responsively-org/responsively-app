@@ -119,6 +119,7 @@ type UserPreferenceType = {
   devToolsOpenMode: DevToolsOpenModeType,
   deviceOutlineStyle: string,
   zoomLevel: number,
+  removeFixedPositionedElements: boolean,
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;

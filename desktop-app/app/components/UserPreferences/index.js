@@ -86,23 +86,25 @@ export default function UserPreference({
             }
           />
         </div>
-      </div>
-      <div>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={userPreferences.removeFixedElements || false}
-              onChange={e => onChange('removeFixedElements', e.target.checked)}
-              name="Remove fixed position elements from full screenshot"
-              color="primary"
-            />
-          }
-          label={
-            <span className={cx(styles.preferenceName)}>
-              Remove fixed position elements from full screenshot
-            </span>
-          }
-        />
+        <div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={userPreferences.removeFixedPositionedElements || false}
+                onChange={e =>
+                  onChange('removeFixedPositionedElements', e.target.checked)
+                }
+                name="Remove fixed position elements from full page screenshot"
+                color="primary"
+              />
+            }
+            label={
+              <span className={cx(styles.preferenceName)}>
+                Remove fixed position elements from full page screenshot
+              </span>
+            }
+          />
+        </div>
       </div>
       <div className={cx(commonStyles.sidebarContentSectionContainer)}>
         <div>

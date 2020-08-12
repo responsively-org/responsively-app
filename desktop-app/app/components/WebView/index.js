@@ -368,6 +368,8 @@ class WebView extends Component {
       createSeparateDir: now != null,
       fullScreen,
       now,
+      removeFixedPositionedElements: this.props.browser.userPreferences
+        .removeFixedPositionedElements,
     });
     this.setState({screenshotInProgress: false});
   };
