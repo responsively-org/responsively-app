@@ -136,6 +136,11 @@ class WebView extends Component {
         this.setNetworkThrottlingProfile
       )
     );
+
+    this.subscriptions.push(
+      pubsub.subscribe(CLEAR_NETWORK_CACHE, this.clearNetworkCache)
+    );
+
     this.subscriptions.push(
       pubsub.subscribe(
         OPEN_CONSOLE_FOR_DEVICE,
