@@ -1,7 +1,6 @@
 // @flow
 import {ipcRenderer, remote} from 'electron';
 import pubsub from 'pubsub.js';
-import console from 'electron-timber';
 import type {Dispatch, BrowserStateType} from '../reducers/types';
 import {
   SCROLL_DOWN,

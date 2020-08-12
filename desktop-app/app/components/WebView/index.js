@@ -6,7 +6,6 @@ import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
 import debounce from 'lodash/debounce';
 import pubsub from 'pubsub.js';
-import console from 'electron-timber';
 import BugIcon from '../icons/Bug';
 import MutedIcon from '../icons/Muted';
 import UnmutedIcon from '../icons/Unmuted';
@@ -29,6 +28,7 @@ import {
   STOP_LOADING,
   CLEAR_NETWORK_CACHE,
   SET_NETWORK_TROTTLING_PROFILE,
+  OPEN_CONSOLE_FOR_DEVICE,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -137,8 +137,16 @@ class WebView extends Component {
         this.setNetworkThrottlingProfile
       )
     );
+
     this.subscriptions.push(
       pubsub.subscribe(CLEAR_NETWORK_CACHE, this.clearNetworkCache)
+    );
+
+    this.subscriptions.push(
+      pubsub.subscribe(
+        OPEN_CONSOLE_FOR_DEVICE,
+        this.processOpenConsoleForDeviceEvent
+      )
     );
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
@@ -405,6 +413,14 @@ class WebView extends Component {
       Math.round(webViewX + deviceX * zoomFactor),
       Math.round(webViewY + deviceY * zoomFactor)
     );
+  };
+
+  processOpenConsoleForDeviceEvent = message => {
+    const {deviceId} = message;
+    if (this.props.device.id !== deviceId) {
+      return;
+    }
+    this._toggleDevTools();
   };
 
   setNetworkThrottlingProfile = ({type, downloadKps, uploadKps, latencyMs}) => {
