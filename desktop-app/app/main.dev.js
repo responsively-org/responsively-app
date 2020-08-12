@@ -49,6 +49,7 @@ import {
 import {getHostFromURL} from './utils/urlUtils';
 import browserSync from 'browser-sync';
 import {captureOnSentry} from './utils/logUtils';
+import appMetadata from './services/db/appMetadata';
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -242,6 +243,7 @@ const openFile = filePath => {
 };
 
 const createWindow = async () => {
+  appMetadata.incrementOpenCount();
   hasActiveWindow = true;
 
   if (process.env.NODE_ENV === 'development') {

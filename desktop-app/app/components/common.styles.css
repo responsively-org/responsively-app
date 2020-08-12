@@ -60,6 +60,7 @@
 .flexContainer {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .flexContainerSpaceBetween {
