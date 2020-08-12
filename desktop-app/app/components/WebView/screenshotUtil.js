@@ -43,7 +43,9 @@ const captureScreenshot = async ({
     {autoClose: false}
   );
   const webViewUtils = new WebViewUtils(webView);
-  const insertedCSSKey = await webViewUtils.hideScrollbarAndFixedPositionedElements();
+  const insertedCSSKey = await webViewUtils.hideScrollbarAndFixedPositionedElements(
+    removeFixedPositionedElements
+  );
 
   const images = fullScreen
     ? await webViewUtils.getFullScreenImages(promiseWorker)
@@ -126,7 +128,9 @@ class WebViewUtils {
     await _delay(200);
   }
 
-  async hideScrollbarAndFixedPositionedElements(): Promise<string> {
+  async hideScrollbarAndFixedPositionedElements(
+    removeFixedPositionedElements: boolean
+  ): Promise<string> {
     const key = await this.webView.insertCSS(`
       .responsivelyApp__ScreenshotInProgress::-webkit-scrollbar {
         display: none;
@@ -136,10 +140,6 @@ class WebViewUtils {
         display: none !important;
       }
     `);
-
-    // await this.webView.executeJavaScript(`
-
-    // `);
 
     if (removeFixedPositionedElements) {
       await this.webView
