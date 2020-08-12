@@ -4,7 +4,10 @@ import {motion} from 'framer-motion';
 import {shell} from 'electron';
 import settings from 'electron-settings';
 import {APP_NOTIFICATION} from '../../constants/settingKeys';
+import commonStyles from '../common.styles.css';
 import styles from './styles.module.css';
+import appMetadata from '../../services/db/appMetadata';
+import logo from '../../../resources/logo.svg';
 
 function updateNotificationStatus(id, action) {
   const notifications = settings.get(APP_NOTIFICATION) || [];
@@ -36,12 +39,27 @@ const AppNotification = () => {
   const [notificationInteracted, setNotificationInteracted] = useState(false);
   const [data, setData] = useState(null);
   useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      return;
+    }
     (async () => {
       try {
         const response = await (
           await fetch('https://responsively.app/assets/appMessages.json')
         ).json();
-        setData(response.notification);
+        if (!response?.notifications) {
+          return;
+        }
+        const notifications = response.notifications.sort(
+          (a, b) => a.minOpenCount - b.minOpenCount
+        );
+        const eligibleNotifications = notifications
+          .filter(({minOpenCount}) => appMetadata.getOpenCount() > minOpenCount)
+          .filter(({id}) => !checkIfInteracted(id));
+        if (eligibleNotifications.length === 0) {
+          return;
+        }
+        setData(eligibleNotifications[0]);
       } catch (err) {
         console.log('Error fetching appMessages.json', err);
       }
@@ -52,7 +70,7 @@ const AppNotification = () => {
     return null;
   }
 
-  const {id, text, okText, dismissText, link} = data;
+  const {id, title, text, okText, dismissText, link} = data;
 
   const notificationClicked = () => {
     shell.openExternal(link);
@@ -72,8 +90,21 @@ const AppNotification = () => {
         delay: notificationInteracted ? 0 : 3,
       }}
     >
-      <div className={styles.content} onClick={notificationClicked}>
-        {text}
+      <div className={commonStyles.flexContainer}>
+        <img src={logo} width={150} />
+      </div>
+      <div className={cx(styles.titleContainer, commonStyles.flexContainer)}>
+        <div
+          className={cx(commonStyles.flexContainer)}
+          onClick={notificationClicked}
+        >
+          {title}
+        </div>
+      </div>
+      <div className={commonStyles.flexContainer}>
+        <div className={styles.content} onClick={notificationClicked}>
+          {text}
+        </div>
       </div>
       <div className={styles.responseButtonsContainer}>
         <div

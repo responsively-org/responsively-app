@@ -6,7 +6,6 @@ import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
 import debounce from 'lodash/debounce';
 import pubsub from 'pubsub.js';
-import console from 'electron-timber';
 import BugIcon from '../icons/Bug';
 import MutedIcon from '../icons/Muted';
 import UnmutedIcon from '../icons/Unmuted';
@@ -29,6 +28,7 @@ import {
   STOP_LOADING,
   CLEAR_NETWORK_CACHE,
   SET_NETWORK_TROTTLING_PROFILE,
+  OPEN_CONSOLE_FOR_DEVICE,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -44,7 +44,8 @@ import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
 import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
-import {getBrowserSyncEmbedScriptURL} from '../../service/browserSync';
+import {captureOnSentry} from '../../utils/logUtils';
+import {getBrowserSyncEmbedScriptURL} from '../../services/browserSync';
 
 const {BrowserWindow} = remote;
 
@@ -136,8 +137,16 @@ class WebView extends Component {
         this.setNetworkThrottlingProfile
       )
     );
+
     this.subscriptions.push(
       pubsub.subscribe(CLEAR_NETWORK_CACHE, this.clearNetworkCache)
+    );
+
+    this.subscriptions.push(
+      pubsub.subscribe(
+        OPEN_CONSOLE_FOR_DEVICE,
+        this.processOpenConsoleForDeviceEvent
+      )
     );
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
@@ -288,7 +297,9 @@ class WebView extends Component {
   };
 
   processReloadCSSEvent = () => {
-    this.webviewRef.current.executeJavaScript(`{
+    this.webviewRef.current
+      .executeJavaScript(
+        `{
         var elements = document.querySelectorAll('link[rel=stylesheet][href]');
         elements.forEach(element=>{
           var href = element.href;
@@ -297,7 +308,9 @@ class WebView extends Component {
             element.href = href + (href.indexOf('?')>=0?'&':'?') + 'invalidateCacheParam=' + (new Date().valueOf());
           }
         })
-    }`);
+    }`
+      )
+      .catch(captureOnSentry);
   };
 
   processAddressChangeEvent = ({address, force}) => {
@@ -404,6 +417,14 @@ class WebView extends Component {
     );
   };
 
+  processOpenConsoleForDeviceEvent = message => {
+    const {deviceId} = message;
+    if (this.props.device.id !== deviceId) {
+      return;
+    }
+    this._toggleDevTools();
+  };
+
   setNetworkThrottlingProfile = ({type, downloadKps, uploadKps, latencyMs}) => {
     // TODO : change this when https://github.com/electron/electron/issues/21250 is solved
     // if (type === 'Online') {
@@ -479,20 +500,28 @@ class WebView extends Component {
   };
 
   initBrowserSync = webview => {
-    this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-      var bsScript= document.createElement('script');
-      bsScript.src = '${getBrowserSyncEmbedScriptURL()}';
-      bsScript.async = true;
-      document.body.appendChild(bsScript);
-      true
-    `);
+    this.getWebContentForId(webview.getWebContentsId())
+      .executeJavaScript(
+        `
+          var bsScript= document.createElement('script');
+          bsScript.src = '${getBrowserSyncEmbedScriptURL()}';
+          bsScript.async = true;
+          document.body.appendChild(bsScript);
+          true
+        `
+      )
+      .catch(captureOnSentry);
   };
 
   initEventTriggers = webview => {
     this.initBrowserSync(webview);
-    this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`{
-      responsivelyApp.deviceId = '${this.props.device.id}';
-    }`);
+    this.getWebContentForId(webview.getWebContentsId())
+      .executeJavaScript(
+        `{
+          responsivelyApp.deviceId = '${this.props.device.id}';
+        }`
+      )
+      .catch(captureOnSentry);
   };
 
   hideScrollbar = () => {

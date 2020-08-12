@@ -12,6 +12,7 @@ import PromiseWorker from 'promise-worker';
 import NotificationMessage from '../NotificationMessage';
 import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 import {type Device} from '../../constants/devices';
+import {captureOnSentry} from '../../utils/logUtils';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 
@@ -94,25 +95,33 @@ class WebViewUtils {
   }
 
   getWindowSizeAndScrollDetails(): Promise {
-    return this.webView.executeJavaScript(`
-      responsivelyApp.screenshotVar = {
-        previousScrollPosition : {
-          left: window.scrollX,
-          top: window.scrollY,
-        },
-        scrollHeight: document.body.scrollHeight,
-        scrollWidth: document.body.scrollWidth,
-        viewPortHeight: document.documentElement.clientHeight,
-        viewPortWidth: document.documentElement.clientWidth,
-      };
-      responsivelyApp.screenshotVar;
-    `);
+    return this.webView
+      .executeJavaScript(
+        `
+          responsivelyApp.screenshotVar = {
+            previousScrollPosition : {
+              left: window.scrollX,
+              top: window.scrollY,
+            },
+            scrollHeight: document.body.scrollHeight,
+            scrollWidth: document.body.scrollWidth,
+            viewPortHeight: document.documentElement.clientHeight,
+            viewPortWidth: document.documentElement.clientWidth,
+          };
+          responsivelyApp.screenshotVar;
+        `
+      )
+      .catch(captureOnSentry);
   }
 
   async scrollTo(scrollX: number, scrollY: number): Promise {
-    await this.webView.executeJavaScript(`
-      window.scrollTo(${scrollX}, ${scrollY})
-    `);
+    await this.webView
+      .executeJavaScript(
+        `
+          window.scrollTo(${scrollX}, ${scrollY})
+        `
+      )
+      .catch(captureOnSentry);
     // wait a little for the scroll to take effect.
     await _delay(200);
   }
@@ -133,10 +142,14 @@ class WebViewUtils {
     // `);
 
     if (removeFixedPositionedElements) {
-      await this.webView.executeJavaScript(`
+      await this.webView
+        .executeJavaScript(
+          `
         document.body.classList.add('responsivelyApp__ScreenshotInProgress');
         responsivelyApp.hideFixedPositionElementsForScreenshot();
-      `);
+      `
+        )
+        .catch(captureOnSentry);
     }
 
     // wait a little for the 'hide' effect to take place.
@@ -147,10 +160,14 @@ class WebViewUtils {
 
   async unHideScrollbarAndFixedPositionedElements(insertedCSSKey): Promise {
     await this.webView.removeInsertedCSS(insertedCSSKey);
-    return this.webView.executeJavaScript(`
-      document.body.classList.remove('responsivelyApp__ScreenshotInProgress');
-      responsivelyApp.unHideElementsHiddenForScreenshot();
-    `);
+    return this.webView
+      .executeJavaScript(
+        `
+          document.body.classList.remove('responsivelyApp__ScreenshotInProgress');
+          responsivelyApp.unHideElementsHiddenForScreenshot();
+        `
+      )
+      .catch(captureOnSentry);
   }
 
   async getFullScreenImages(promiseWorker: PromiseWorker): Promise {

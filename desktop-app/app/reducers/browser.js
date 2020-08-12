@@ -2,7 +2,6 @@
 import {ipcRenderer, remote} from 'electron';
 import settings from 'electron-settings';
 import {isIfStatement} from 'typescript';
-import console from 'electron-timber';
 import trimStart from 'lodash/trimStart';
 import {
   NEW_ADDRESS,
