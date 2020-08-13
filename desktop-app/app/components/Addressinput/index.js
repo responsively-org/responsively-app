@@ -5,6 +5,7 @@ import FavIconOff from '@material-ui/icons/StarBorder';
 import FavIconOn from '@material-ui/icons/Star';
 import {Tooltip} from '@material-ui/core';
 import {Icon} from 'flwww';
+import fs from 'fs';
 import HomePlusIcon from '../icons/HomePlus';
 import DeleteCookieIcon from '../icons/DeleteCookie';
 import DeleteStorageIcon from '../icons/DeleteStorage';
@@ -252,11 +253,13 @@ class AddressBar extends React.Component<Props> {
     });
   };
 
-  _normalize = address => {
+  _normalize = (address: string) => {
     if (address.indexOf('://') === -1) {
       let protocol = 'https://';
       if (address.startsWith('localhost') || address.startsWith('127.0.0.1')) {
         protocol = 'http://';
+      } else if (fs.existsSync(address)) {
+        protocol = 'file://';
       }
       address = `${protocol}${address}`;
     }
