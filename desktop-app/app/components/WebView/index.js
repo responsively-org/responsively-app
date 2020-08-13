@@ -479,8 +479,9 @@ class WebView extends Component {
     }
   };
 
-  initBrowserSync = webview => {
-    this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
+  initBrowserSync = async webview => {
+    await this.getWebContentForId(webview.getWebContentsId())
+      .executeJavaScript(`
       var bsScript= document.createElement('script');
       bsScript.src = '${getBrowserSyncEmbedScriptURL()}';
       bsScript.async = true;
@@ -509,11 +510,15 @@ class WebView extends Component {
     `);
   };
 
-  initEventTriggers = webview => {
-    this.initBrowserSync(webview);
+  initEventTriggers = async webview => {
+    await this.initBrowserSync(webview);
     this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`{
       responsivelyApp.deviceId = '${this.props.device.id}';
     }`);
+
+    if (this.state.isUnplugged) {
+      await this.closeBrowserSyncSocket(webview);
+    }
   };
 
   hideScrollbar = () => {

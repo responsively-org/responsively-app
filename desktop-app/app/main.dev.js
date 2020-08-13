@@ -127,7 +127,7 @@ app.on('open-file', async (event, filePath) => {
     if (mainWindow) {
       openFile(fileToOpen);
     } else if (!hasActiveWindow) {
-      createWindow();
+      await createWindow();
     }
   }
 });
@@ -138,7 +138,7 @@ app.on('open-url', async (event, url) => {
   } else {
     urlToOpen = url;
     if (!hasActiveWindow) {
-      createWindow();
+      await createWindow();
     }
   }
 });
@@ -181,18 +181,18 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
   mainWindow.webContents.send('http-auth-prompt', {url});
 });
 
-app.on('activate', (event, hasVisibleWindows) => {
+app.on('activate', async (event, hasVisibleWindows) => {
   if (hasVisibleWindows || hasActiveWindow) {
     return;
   }
-  createWindow();
+  await createWindow();
 });
 
-app.on('ready', () => {
+app.on('ready', async () => {
   if (hasActiveWindow) {
     return;
   }
-  createWindow();
+  await createWindow();
 });
 
 const chooseOpenWindowHandler = url => {
