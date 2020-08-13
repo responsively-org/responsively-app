@@ -60,8 +60,16 @@ export default function DeviceManager(props) {
   const onDragEnd = result => {
     const {source, destination} = result;
 
+    if (!source || !destination) {
+      return;
+    }
+
     const sourceList = devices[source.droppableId];
     const destinationList = devices[destination.droppableId];
+
+    if (!sourceList || !destinationList) {
+      return;
+    }
 
     const itemDragged =
       source.droppableId === 'inactive'
