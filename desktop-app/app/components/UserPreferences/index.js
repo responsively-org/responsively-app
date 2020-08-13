@@ -94,13 +94,13 @@ export default function UserPreference({
                 onChange={e =>
                   onChange('removeFixedPositionedElements', e.target.checked)
                 }
-                name="Remove fixed position elements from full page screenshot"
+                name="Remove fixed positioned elements for screenshot"
                 color="primary"
               />
             }
             label={
               <span className={cx(styles.preferenceName)}>
-                Remove fixed position elements from full page screenshot
+                Remove fixed positioned elements for screenshot
               </span>
             }
           />

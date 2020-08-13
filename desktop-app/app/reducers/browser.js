@@ -196,7 +196,9 @@ function _getActiveDevices() {
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  return settings.get(USER_PREFERENCES) || {};
+  return (
+    settings.get(USER_PREFERENCES) || {removeFixedPositionedElements: true}
+  );
 }
 
 function _setUserPreferences(userPreferences) {
