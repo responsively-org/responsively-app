@@ -145,9 +145,13 @@ class WebViewUtils {
     `);
 
     if (removeFixedPositionedElements) {
-      await this.webView.executeJavaScript(`
+      await this.webView
+        .executeJavaScript(
+          `
         responsivelyApp.hideFixedPositionElementsForScreenshot();
-      `);
+      `
+        )
+        .catch(captureOnSentry);
     }
 
     // wait a little for the 'hide' effect to take place.
