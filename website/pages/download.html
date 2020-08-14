@@ -15,9 +15,9 @@
 
       gtag("config", "UA-150751006-2");
     </script>
-    <script type="text/javascript">   
-      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};   
-      heap.load("3340058302"); 
+    <script type="text/javascript">
+      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+      heap.load("3340058302");
     </script>
     <meta charset="utf-8" />
     <title>Responsively App | A Web developer's browser</title>
@@ -163,7 +163,7 @@
             <img class="icon navbar-toggler-close" src="assets/img/icons/interface/cross.svg" alt="cross interface icon"
               data-inject-svg />
           </button>
-    
+
           <div class="collapse navbar-collapse justify-content-end p-3 p-md-0">
             <div class="py-2 py-lg-0">
               <ul class="navbar-nav">
@@ -204,7 +204,7 @@
       <div class="container">
           <div class="row text-center py-6">
               <div class="col">
-    
+
                 <h1>Your download should start automatically</h1>
                 <div class="lead mb-4">If the download doesn't start, <a href="#manual" class="light-link">Click here</a> to download manually.</div>
               </div>
@@ -246,17 +246,52 @@
                 </a>
               </div>
               </div>
+            </div>
+            <br><br><br>
+            <div class="row mb-4">
+              <div class="col">
+                <h2>Responsively Helper for major Web Browsers</h2>
+              </div>
+            </div>
+            <div class="row text-center mb-4" id="manual">
+              <div class="col-md-4 mb-2" data-aos="fade-up" data-aos-delay="100">
+                <div class="bg-light rounded p-3">
+                <div class="icon-round bg-primary mx-auto mb-4">
+                  <img class="icon" src="assets/img/icons/custom/firefox-icon.svg" alt="icon" />
+                </div>
+                <a id="firefoxBrowser" class="m-1 btn btn-outline-primary mx-2" href="https://addons.mozilla.org/en-US/firefox/addon/responsively-helper" target="_blank">
+                  <span class="m-1">Download for Firefox</span>
+                </a>
+              </div>
+              </div>
+              <div class="col-md-4 mb-2" data-aos="fade-up" data-aos-delay="100">
+                <div class="bg-light rounded p-3">
+                <div class="icon-round bg-primary mx-auto mb-4">
+                  <img class="icon" src="assets/img/icons/custom/chrome-icon.svg" alt="icon" />
+                </div>
+                <a id="chromeBrowser" class="m-1 btn btn-outline-primary mx-2" href="https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj" target="_blank">
+                  <span class="m-1">Download for Chrome</span>
+                </a>
+              </div>
+              </div>
+              <div class="col-md-4 mb-2" data-aos="fade-up" data-aos-delay="100">
+                <div class="bg-light rounded p-3">
+                <div class="icon-round bg-primary mx-auto mb-4">
+                  <img class="icon" src="assets/img/icons/custom/edge-icon.svg" alt="icon" />
+                </div>
+                <a id="edgeBrowser" class="m-1 btn btn-outline-primary mx-2" href="https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn" target="_blank">
+                  <span class="m-1">Download for Edge</span>
+                </a>
+              </div>
+              </div>
+            </div>
 
-              
-                
-        </div>
 
-        
       </div>
 
       </section>
         <div class="has-divider">
-        
+
           <div class="divider flip-x bg-primary-3">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="96px" viewBox="0 0 100 100" version="1.1" preserveAspectRatio="none" class="injected-svg" data-src="assets/img/dividers/divider-3.svg">
          <path d="M0,0 C6.83050094,50 15.1638343,75 25,75 C41.4957514,75 62.4956597,0 81.2456597,0 C93.7456597,0 99.9971065,0 100,0 L100,100 L0,100"></path>
@@ -454,7 +489,7 @@
         windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
         iosPlatforms = ['iPhone', 'iPad', 'iPod'],
         os = null;
-  
+
     if (macosPlatforms.indexOf(platform) !== -1) {
       os = macOs;
     } else if (iosPlatforms.indexOf(platform) !== -1) {
@@ -466,7 +501,7 @@
     } else if (!os && /Linux/.test(platform)) {
       os = linuxOs;
     }
-  
+
     return os;
   }
 
