@@ -135,7 +135,7 @@ class WebViewUtils {
     removeFixedPositionedElements: boolean
   ): Promise<string> {
     const key = await this.webView.insertCSS(`
-      .body::-webkit-scrollbar {
+      body::-webkit-scrollbar {
         display: none;
       }
 
