@@ -58,6 +58,7 @@ function Renderer(props) {
           <div onClick={props.device.isMuted ? _unmuteDevice : _muteDevice}>
             {props.device.isMuted ? 'Unmute Audio' : 'Mute Audio'}
           </div>
+          <div>Test</div>
         </KebabMenu>
       </div>
       <div className={cx(styles.deviceWrapper)}>

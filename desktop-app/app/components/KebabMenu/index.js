@@ -1,9 +1,11 @@
 import React, {useState, useRef} from 'react';
+import {useClickAway} from 'react-use';
+import {motion} from 'framer-motion';
+
 import Kebab from '../icons/Kebab';
 import {iconsColor, themeColor} from '../../constants/colors';
 
 import styles from './styles.module.css';
-import {useClickAway} from 'react-use';
 
 const KebabMenu = ({children}) => {
   const [mouseOn, setMouseOn] = useState(false);
@@ -32,13 +34,23 @@ const KebabMenu = ({children}) => {
             color={mouseOn || showMenu ? themeColor : iconsColor}
           />
           {showMenu ? (
-            <div className={styles.menu} onClick={() => setMouseOn(false)}>
+            <motion.div
+              initial={{opacity: 0, height: 0}}
+              animate={{opacity: 1, height: 'auto'}}
+              transition={{
+                type: 'spring',
+                stiffness: 500,
+                damping: 1000,
+              }}
+              className={styles.menu}
+              onClick={() => setMouseOn(false)}
+            >
               {children.map((child, idx) => (
-                <div className={styles.option} key={idx}>
+                <motion.div className={styles.option} key={idx}>
                   {child}
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           ) : null}
         </div>
       </div>
