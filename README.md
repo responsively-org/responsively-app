@@ -142,6 +142,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     <td align="center"><a href="http://rossmoody.com"><img src="https://avatars0.githubusercontent.com/u/29072694?v=4" width="100px;" alt=""/><br /><sub><b>Ross Moody</b></sub></a><br /><a href="#design-rossmoody" title="Design">🎨</a></td>
     <td align="center"><a href="https://shokri.me"><img src="https://avatars1.githubusercontent.com/u/13661520?v=4" width="100px;" alt=""/><br /><sub><b>Mehrdad Shokri</b></sub></a><br /><a href="#infra-mehrdad-shokri" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
     <td align="center"><a href="https://github.com/abakermi"><img src="https://avatars1.githubusercontent.com/u/60294727?v=4" width="100px;" alt=""/><br /><sub><b>Abdelhak Akermi</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=abakermi" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/crperezt"><img src="https://avatars0.githubusercontent.com/u/20329014?v=4" width="100px;" alt=""/><br /><sub><b>Carlos Perez</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=crperezt" title="Code">💻</a></td>
   </tr>
 </table>
 
