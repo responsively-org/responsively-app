@@ -144,6 +144,9 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     <td align="center"><a href="https://github.com/abakermi"><img src="https://avatars1.githubusercontent.com/u/60294727?v=4" width="100px;" alt=""/><br /><sub><b>Abdelhak Akermi</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=abakermi" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/crperezt"><img src="https://avatars0.githubusercontent.com/u/20329014?v=4" width="100px;" alt=""/><br /><sub><b>Carlos Perez</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=crperezt" title="Code">💻</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/JayArya"><img src="https://avatars0.githubusercontent.com/u/42388314?v=4" width="100px;" alt=""/><br /><sub><b>Jayant Arya</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=JayArya" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
