@@ -91,7 +91,10 @@ const openWithHandler = filePath => {
     filePath != null &&
     (filePath.endsWith('.html') || filePath.endsWith('.htm'))
   ) {
-    const url = `file://${filePath}`;
+    // code to encode
+    // file URI
+    p1 = encodeURIComponent(filePath);
+    const url = `file://${filePath + p1}`;
     fileToOpen = url;
     return true;
   }
