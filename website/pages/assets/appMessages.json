@@ -3,11 +3,40 @@
     "text": "Do you enjoy the app? Show us some support on twitter!",
     "link": "https://twitter.com/ResponsivelyApp"
   },
-  "notification":{
-    "id":"100001",
-    "text":"We are running a feedback campaign to make the app better. Please pitch in your thoughts. 🙏",
-    "link":"https://docs.google.com/forms/d/e/1FAIpQLSdjwMkFD5ftq6mGqQKUn6ITh175uTkxoQ2LXsTshnBN6rVavw/viewform?usp=sf_link",
+  "notification": {
+    "id": "100001",
+    "text": "We are running a feedback campaign to make the app better. Please pitch in your thoughts. 🙏",
+    "link": "https://docs.google.com/forms/d/e/1FAIpQLSdjwMkFD5ftq6mGqQKUn6ITh175uTkxoQ2LXsTshnBN6rVavw/viewform?usp=sf_link",
     "okText": "OK",
     "dismissText": "Dismiss"
-  }
+  },
+  "notifications": [
+    {
+      "id": "100001",
+      "title": "Can you please share your thoughts?",
+      "text": "We are collecting feedback to make the app better.",
+      "link": "https://docs.google.com/forms/d/e/1FAIpQLSdjwMkFD5ftq6mGqQKUn6ITh175uTkxoQ2LXsTshnBN6rVavw/viewform?usp=sf_link",
+      "okText": "Open",
+      "dismissText": "Dismiss",
+      "minOpenCount": 20
+    },
+    {
+      "id": "github-repo-intro",
+      "title": "Do you know Responsively is an open-source project?",
+      "text": "Show us your support by staring our GitHub repo.",
+      "link": "https://github.com/responsively-org/responsively-app/stargazers",
+      "okText": "Open",
+      "dismissText": "Dismiss",
+      "minOpenCount": 0
+    },
+    {
+      "id": "twitter-handle-intro",
+      "title": "Keep yourselves informed!",
+      "text": "Follow us on Twitter and stay up to date on the tricks and tips.",
+      "link": "https://twitter.com/ResponsivelyApp",
+      "okText": "Open",
+      "dismissText": "Dismiss",
+      "minOpenCount": 5
+    }
+  ]
 }

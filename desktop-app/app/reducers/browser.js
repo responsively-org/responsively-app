@@ -2,7 +2,6 @@
 import {ipcRenderer, remote} from 'electron';
 import settings from 'electron-settings';
 import {isIfStatement} from 'typescript';
-import console from 'electron-timber';
 import trimStart from 'lodash/trimStart';
 import {
   NEW_ADDRESS,
@@ -119,6 +118,7 @@ type UserPreferenceType = {
   devToolsOpenMode: DevToolsOpenModeType,
   deviceOutlineStyle: string,
   zoomLevel: number,
+  removeFixedPositionedElements: boolean,
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
@@ -195,7 +195,9 @@ function _getActiveDevices() {
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  return settings.get(USER_PREFERENCES) || {};
+  return (
+    settings.get(USER_PREFERENCES) || {removeFixedPositionedElements: true}
+  );
 }
 
 function _setUserPreferences(userPreferences) {

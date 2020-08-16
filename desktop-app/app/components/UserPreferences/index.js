@@ -35,7 +35,7 @@ export default function UserPreference({
                 onChange={e =>
                   onChange('disableSSLValidation', e.target.checked)
                 }
-                name="Diable SSL Validation"
+                name="Disable SSL Validation"
                 color="primary"
               />
             }
@@ -82,6 +82,25 @@ export default function UserPreference({
             label={
               <span className={cx(styles.preferenceName)}>
                 Reopen last opened address on start
+              </span>
+            }
+          />
+        </div>
+        <div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={userPreferences.removeFixedPositionedElements || false}
+                onChange={e =>
+                  onChange('removeFixedPositionedElements', e.target.checked)
+                }
+                name="Remove fixed positioned elements for screenshot"
+                color="primary"
+              />
+            }
+            label={
+              <span className={cx(styles.preferenceName)}>
+                Remove fixed positioned elements for screenshot
               </span>
             }
           />

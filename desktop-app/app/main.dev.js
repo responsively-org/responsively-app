@@ -29,7 +29,6 @@ import installExtension, {
   REDUX_DEVTOOLS,
 } from 'electron-devtools-installer';
 import fs from 'fs';
-import console from 'electron-timber';
 import MenuBuilder from './menu';
 import {USER_PREFERENCES} from './constants/settingKeys';
 import {migrateDeviceSchema} from './settings/migration';
@@ -48,6 +47,8 @@ import {
 } from './utils/browserSync';
 import {getHostFromURL} from './utils/urlUtils';
 import browserSync from 'browser-sync';
+import {captureOnSentry} from './utils/logUtils';
+import appMetadata from './services/db/appMetadata';
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -127,7 +128,7 @@ app.on('open-file', async (event, filePath) => {
     if (mainWindow) {
       openFile(fileToOpen);
     } else if (!hasActiveWindow) {
-      createWindow();
+      await createWindow();
     }
   }
 });
@@ -138,7 +139,7 @@ app.on('open-url', async (event, url) => {
   } else {
     urlToOpen = url;
     if (!hasActiveWindow) {
-      createWindow();
+      await createWindow();
     }
   }
 });
@@ -181,18 +182,18 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
   mainWindow.webContents.send('http-auth-prompt', {url});
 });
 
-app.on('activate', (event, hasVisibleWindows) => {
+app.on('activate', async (event, hasVisibleWindows) => {
   if (hasVisibleWindows || hasActiveWindow) {
     return;
   }
-  createWindow();
+  await createWindow();
 });
 
-app.on('ready', () => {
+app.on('ready', async () => {
   if (hasActiveWindow) {
     return;
   }
-  createWindow();
+  await createWindow();
 });
 
 const chooseOpenWindowHandler = url => {
@@ -241,6 +242,7 @@ const openFile = filePath => {
 };
 
 const createWindow = async () => {
+  appMetadata.incrementOpenCount();
   hasActiveWindow = true;
 
   if (process.env.NODE_ENV === 'development') {
@@ -277,17 +279,21 @@ const createWindow = async () => {
   mainWindow.webContents.on('did-finish-load', () => {
     if (process.platform === 'darwin') {
       // Trick to make the transparent title bar draggable
-      mainWindow.webContents.executeJavaScript(`
-        var div = document.createElement("div");
-        div.style.position = "absolute";
-        div.style.top = 0;
-        div.style.height = "23px";
-        div.style.width = "100%";
-        div.style["-webkit-app-region"] = "drag";
-        div.style['-webkit-user-select'] = 'none';
-        document.body.appendChild(div);
-        true;
-      `);
+      mainWindow.webContents
+        .executeJavaScript(
+          `
+            var div = document.createElement("div");
+            div.style.position = "absolute";
+            div.style.top = 0;
+            div.style.height = "23px";
+            div.style.width = "100%";
+            div.style["-webkit-app-region"] = "drag";
+            div.style['-webkit-user-select'] = 'none';
+            document.body.appendChild(div);
+            true;
+          `
+        )
+        .catch(captureOnSentry);
     }
   });
 
@@ -432,22 +438,26 @@ const createWindow = async () => {
     devToolsView.setBounds(bounds);
     webView.setDevToolsWebContents(devToolsView.webContents);
     webView.openDevTools();
-    devToolsView.webContents.executeJavaScript(`
-      (async function () {
-        const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
-        var retryCount = 0;
-        var done = false;
-        while(retryCount < 10 && !done) {
-          try {
-            retryCount++;
-            document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
-            done = true
-          } catch(err){
-            await sleep(100);
-          }
-        }
-      })()
-    `);
+    devToolsView.webContents
+      .executeJavaScript(
+        `
+          (async function () {
+            const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+            var retryCount = 0;
+            var done = false;
+            while(retryCount < 10 && !done) {
+              try {
+                retryCount++;
+                document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
+                done = true
+              } catch(err){
+                await sleep(100);
+              }
+            }
+          })()
+        `
+      )
+      .catch(captureOnSentry);
   });
 
   ipcMain.on('close-devtools', (event, ...args) => {
