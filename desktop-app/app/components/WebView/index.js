@@ -543,8 +543,8 @@ class WebView extends Component {
   };
 
   initEventTriggers = async webview => {
-    this.initBrowserSync(webview);
-    await this.getWebContentForId(webview.getWebContentsId())
+    await this.initBrowserSync(webview);
+    this.getWebContentForId(webview.getWebContentsId())
       .executeJavaScript(
         `{
           responsivelyApp.deviceId = '${this.props.device.id}';
