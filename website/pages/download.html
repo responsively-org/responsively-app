@@ -202,11 +202,11 @@
 
     <section id="auto" class="bg-primary-3 text-light text-center has-divider">
       <div class="container">
-          <div class="row text-center py-6">
-              <div class="col">
+          <div class="row text-center">
+              <div class="col pb-5">
 
-                <h1>Your download should start automatically</h1>
-                <div class="lead mb-4">If the download doesn't start, <a href="#manual" class="light-link">Click here</a> to download manually.</div>
+                <h1>Download Responsively App</h1>
+                <div class="lead mb-4">You are one step away from improving your web development speed!</div>
               </div>
             </div>
 
@@ -539,21 +539,6 @@
 
   window.addEventListener('load', () => {
     setDownloadURL();
-    if (getCookie('downloaded') === "true" || getWidth() < 800) {
-      return;
-    }
-    setTimeout(() => {
-      if (window.location.href.indexOf('instructions') !== -1) {
-        return;
-      }
-      var os = getOS();
-      var downloadLink = document.getElementById(os);
-      if (downloadLink) {
-        downloadLink.click();
-        setCookie('downloaded', 'true', 2*60);
-        heap && heap.track('autoDownload');
-      }
-    }, 1000);
   });
   </script>
   </body>
