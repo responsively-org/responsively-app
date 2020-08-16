@@ -128,7 +128,7 @@ class WebViewUtils {
       )
       .catch(captureOnSentry);
     // wait a little for the scroll to take effect.
-    await _delay(200);
+    await _delay(500);
   }
 
   async hideScrollbarAndFixedPositionedElements(
