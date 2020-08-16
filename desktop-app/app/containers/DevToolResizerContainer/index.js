@@ -10,6 +10,7 @@ function mapStateToProps(state) {
   return {
     ...state.browser.devToolsConfig,
     isInspecting: state.browser.isInspecting,
+    devices: state.browser.devices,
   };
 }
 

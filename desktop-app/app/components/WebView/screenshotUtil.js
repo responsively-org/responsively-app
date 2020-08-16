@@ -12,6 +12,7 @@ import PromiseWorker from 'promise-worker';
 import NotificationMessage from '../NotificationMessage';
 import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 import {type Device} from '../../constants/devices';
+import {captureOnSentry} from '../../utils/logUtils';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 
@@ -22,6 +23,7 @@ const captureScreenshot = async ({
   createSeparateDir,
   now,
   fullScreen = false,
+  removeFixedPositionedElements,
 }: {
   address: string,
   device: Device,
@@ -29,6 +31,7 @@ const captureScreenshot = async ({
   createSeparateDir: boolean,
   now?: Date,
   fullScreen: boolean,
+  removeFixedPositionedElements: boolean,
 }) => {
   const worker = new Worker('./imageWorker.js');
   const promiseWorker = new PromiseWorker(worker);
@@ -40,13 +43,18 @@ const captureScreenshot = async ({
     {autoClose: false}
   );
   const webViewUtils = new WebViewUtils(webView);
-  const insertedCSSKey = await webViewUtils.hideScrollbarAndFixedPositionedElements();
+  const insertedCSSKey = await webViewUtils.hideScrollbarAndFixedPositionedElements(
+    removeFixedPositionedElements
+  );
 
   const images = fullScreen
     ? await webViewUtils.getFullScreenImages(promiseWorker)
     : [await webViewUtils.getViewportImage(promiseWorker)];
 
-  await webViewUtils.unHideScrollbarAndFixedPositionedElements(insertedCSSKey);
+  await webViewUtils.unHideScrollbarAndFixedPositionedElements(
+    insertedCSSKey,
+    removeFixedPositionedElements
+  );
 
   toast.update(toastId, {
     render: (
@@ -92,32 +100,42 @@ class WebViewUtils {
   }
 
   getWindowSizeAndScrollDetails(): Promise {
-    return this.webView.executeJavaScript(`
-      responsivelyApp.screenshotVar = {
-        previousScrollPosition : {
-          left: window.scrollX,
-          top: window.scrollY,
-        },
-        scrollHeight: document.body.scrollHeight,
-        scrollWidth: document.body.scrollWidth,
-        viewPortHeight: document.documentElement.clientHeight,
-        viewPortWidth: document.documentElement.clientWidth,
-      };
-      responsivelyApp.screenshotVar;
-    `);
+    return this.webView
+      .executeJavaScript(
+        `
+          responsivelyApp.screenshotVar = {
+            previousScrollPosition : {
+              left: window.scrollX,
+              top: window.scrollY,
+            },
+            scrollHeight: document.body.scrollHeight,
+            scrollWidth: document.body.scrollWidth,
+            viewPortHeight: document.documentElement.clientHeight,
+            viewPortWidth: document.documentElement.clientWidth,
+          };
+          responsivelyApp.screenshotVar;
+        `
+      )
+      .catch(captureOnSentry);
   }
 
   async scrollTo(scrollX: number, scrollY: number): Promise {
-    await this.webView.executeJavaScript(`
-      window.scrollTo(${scrollX}, ${scrollY})
-    `);
+    await this.webView
+      .executeJavaScript(
+        `
+          window.scrollTo(${scrollX}, ${scrollY})
+        `
+      )
+      .catch(captureOnSentry);
     // wait a little for the scroll to take effect.
     await _delay(500);
   }
 
-  async hideScrollbarAndFixedPositionedElements(): Promise<string> {
+  async hideScrollbarAndFixedPositionedElements(
+    removeFixedPositionedElements: boolean
+  ): Promise<string> {
     const key = await this.webView.insertCSS(`
-      .responsivelyApp__ScreenshotInProgress::-webkit-scrollbar {
+      body::-webkit-scrollbar {
         display: none;
       }
 
@@ -126,10 +144,15 @@ class WebViewUtils {
       }
     `);
 
-    await this.webView.executeJavaScript(`
-      document.body.classList.add('responsivelyApp__ScreenshotInProgress');
-      responsivelyApp.hideFixedPositionElementsForScreenshot();
-    `);
+    if (removeFixedPositionedElements) {
+      await this.webView
+        .executeJavaScript(
+          `
+        responsivelyApp.hideFixedPositionElementsForScreenshot();
+      `
+        )
+        .catch(captureOnSentry);
+    }
 
     // wait a little for the 'hide' effect to take place.
     await _delay(200);
@@ -137,12 +160,22 @@ class WebViewUtils {
     return key;
   }
 
-  async unHideScrollbarAndFixedPositionedElements(insertedCSSKey): Promise {
+  async unHideScrollbarAndFixedPositionedElements(
+    insertedCSSKey,
+    removeFixedPositionedElements: boolean
+  ): Promise {
     await this.webView.removeInsertedCSS(insertedCSSKey);
-    return this.webView.executeJavaScript(`
-      document.body.classList.remove('responsivelyApp__ScreenshotInProgress');
-      responsivelyApp.unHideElementsHiddenForScreenshot();
-    `);
+    if (removeFixedPositionedElements) {
+      return this.webView
+        .executeJavaScript(
+          `
+        document.body.classList.remove('responsivelyApp__ScreenshotInProgress');
+        responsivelyApp.unHideElementsHiddenForScreenshot();
+      `
+        )
+        .catch(captureOnSentry);
+    }
+    return Promise.resolve(true);
   }
 
   async getFullScreenImages(promiseWorker: PromiseWorker): Promise {

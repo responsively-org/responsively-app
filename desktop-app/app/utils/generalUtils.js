@@ -1,7 +1,6 @@
 import {app} from 'electron';
-
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
 export function getPackageJson() {
   const appPath =
@@ -12,5 +11,6 @@ export function getPackageJson() {
   return JSON.parse(pkgContent);
 }
 
-const pkg = getPackageJson();
-export {pkg};
+export const pkg = getPackageJson();
+
+export default {pkg};

@@ -34,3 +34,7 @@ html {
 #privacyPolicy ol, #privacyPolicy li {
   text-align: left !important;
 }
+
+.extensionButton {
+  width: 300px;
+}
