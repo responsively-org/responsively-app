@@ -1,4 +1,5 @@
 import React from 'react';
+import DefaultFavIcon from '@material-ui/icons/Public';
 
 const UrlSearchResults = ({
   divClassName,
@@ -8,9 +9,10 @@ const UrlSearchResults = ({
   handleUrlChange,
   activeClass,
   listItemUiClassName,
-  pageMetaIconClassName,
-  pageMetaIconWrapperClassName,
+  pageMetaFavIconClassName,
+  pageMetaFavIconWrapperClassName,
   searchBarSuggestionUrlClassName,
+  pageMetaDefaultFavIconWrapperClassName,
 }) => (
   <div className={divClassName}>
     <ul className={listItemUiClassName}>
@@ -21,21 +23,34 @@ const UrlSearchResults = ({
         const searchBarSuggestion = `${title ? `${title} - ` : ''} ${url}`;
         return (
           index < 8 && (
-            <li key={index}>
+            <li key={url}>
               <div
                 className={`${listItemsClassName} ${
                   cursorIndex === index ? activeClass : ''
                 }`}
                 onClick={() => handleUrlChange(eachResult.url, index)}
               >
-                <div className={pageMetaIconWrapperClassName}>
-                  {favicon && (
+                <div className={pageMetaFavIconWrapperClassName}>
+                  {favicon ? (
                     <img
-                      className={pageMetaIconClassName}
+                      className={pageMetaFavIconClassName}
                       src={favicon}
-                      onError={event => (event.target.style.display = 'none')}
+                      onError={event => {
+                        event.target.style.display = 'none';
+                        event.target.nextSibling.style.display = 'block';
+                      }}
                     />
+                  ) : (
+                    <div className={pageMetaDefaultFavIconWrapperClassName}>
+                      <DefaultFavIcon fontSize="inherit" />
+                    </div>
                   )}
+                  <div
+                    style={{display: 'none'}}
+                    className={pageMetaDefaultFavIconWrapperClassName}
+                  >
+                    <DefaultFavIcon fontSize="inherit" />
+                  </div>
                 </div>
                 <span className={searchBarSuggestionUrlClassName}>
                   {searchBarSuggestion}
