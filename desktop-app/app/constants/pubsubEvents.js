@@ -14,6 +14,7 @@ export const STOP_LOADING = 'STOP_LOADING';
 export const SET_NETWORK_TROTTLING_PROFILE = 'SET_NETWORK_TROTTLING_PROFILE';
 export const CLEAR_NETWORK_CACHE = 'CLEAR_NETWORK_CACHE';
 export const OPEN_CONSOLE_FOR_DEVICE = 'OPEN_CONSOLE_FOR_DEVICE';
+export const FIND_TEXT = 'FIND_TEXT';
 
 // status bar events
 export const STATUS_BAR_VISIBILITY_CHANGE = 'status-bar-visibility-change';

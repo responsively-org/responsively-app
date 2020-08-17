@@ -29,6 +29,7 @@ import {
   CLEAR_NETWORK_CACHE,
   SET_NETWORK_TROTTLING_PROFILE,
   OPEN_CONSOLE_FOR_DEVICE,
+  FIND_TEXT,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -141,6 +142,7 @@ class WebView extends Component {
     this.subscriptions.push(
       pubsub.subscribe(CLEAR_NETWORK_CACHE, this.clearNetworkCache)
     );
+    this.subscriptions.push(pubsub.subscribe(FIND_TEXT, this.findText));
 
     this.subscriptions.push(
       pubsub.subscribe(
@@ -246,6 +248,10 @@ class WebView extends Component {
         this._toggleDevTools();
       }
     });
+
+    // this.webviewRef.current.addEventListener('found-in-page', event => {
+
+    // });
   }
 
   getWebContentsId() {
@@ -499,6 +505,17 @@ class WebView extends Component {
         break;
       default:
         break;
+    }
+  };
+
+  findText = ({findOptions}) => {
+    if (findOptions.stop) {
+      this.webviewRef.current.stopFindInPage('keepSelection');
+    } else {
+      this.webviewRef.current.findInPage(
+        findOptions.textToFind,
+        findOptions.options
+      );
     }
   };
 

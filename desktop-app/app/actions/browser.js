@@ -15,6 +15,7 @@ import {
   DELETE_STORAGE,
   ADDRESS_CHANGE,
   STOP_LOADING,
+  FIND_TEXT,
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
@@ -770,5 +771,11 @@ export function deleteStorage() {
 export function reloadCSS() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(RELOAD_CSS);
+  };
+}
+
+export function findText(findOptions) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(FIND_TEXT, [{findOptions}]);
   };
 }
