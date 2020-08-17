@@ -72,8 +72,11 @@ const FindText = props => {
     const findOptions = {
       stop: true,
     };
-
     props.findText(findOptions);
+  };
+
+  const _closeFind = () => {
+    _stopFind();
     setFindTextEnabled(false);
     setTextToFind(null);
   };
@@ -88,7 +91,7 @@ const FindText = props => {
 
   const _handleKeyDown = e => {
     if (e.key === 'Escape') {
-      _stopFind();
+      _closeFind();
     }
   };
 
@@ -130,7 +133,7 @@ const FindText = props => {
           </div>
         </Tooltip>
         <Tooltip title="Close">
-          <div onClick={_stopFind}>
+          <div onClick={_closeFind}>
             <Icon type="close" size="30px" />
           </div>
         </Tooltip>
