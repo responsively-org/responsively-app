@@ -21,7 +21,10 @@
   width: 20px;
 }
 
-.deviceWrapper {
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .titleContainer {

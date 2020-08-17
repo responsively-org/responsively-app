@@ -6,6 +6,12 @@ export function migrateDeviceSchema() {
     settings.set(USER_PREFERENCES, settings.get('USER_PREFERENCES'));
     settings.delete('USER_PREFERENCES');
   }
+
+  _handleScreenshotPreferences();
+  _handleDeviceSchema();
+}
+
+const _handleDeviceSchema = () => {
   const activeDevices = settings.get(ACTIVE_DEVICES);
   if (!activeDevices || !activeDevices.length || !activeDevices[0].width) {
     return;
@@ -14,6 +20,17 @@ export function migrateDeviceSchema() {
     ACTIVE_DEVICES,
     activeDevices.map(device => device.name)
   );
-}
+};
+
+const _handleScreenshotPreferences = () => {
+  const userPreferences = settings.get(USER_PREFERENCES) || {};
+
+  if (userPreferences.removeFixedPositionedElements != null) {
+    return;
+  }
+
+  userPreferences.removeFixedPositionedElements = true;
+  settings.set(USER_PREFERENCES, userPreferences);
+};
 
 export default {migrateDeviceSchema};

@@ -463,9 +463,14 @@ export default function browser(
         devices: updatedDevices,
       };
     case TOGGLE_DEVICE_MUTED:
-      const updatedDevice = state.devices.find(x => x.id === action.deviceId);
-      if (updatedDevice == null) return {...state};
-      updatedDevice.isMuted = action.isMuted;
+      const updatedDeviceIndex = state.devices.findIndex(
+        x => x.id === action.deviceId
+      );
+      if (updatedDeviceIndex === -1) return {...state};
+      state.devices[updatedDeviceIndex] = {
+        ...state.devices[updatedDeviceIndex],
+        isMuted: action.isMuted,
+      };
       return {
         ...state,
         allDevicesMuted: state.devices.every(x => x.isMuted),

@@ -8,6 +8,7 @@
 
 * {
   box-sizing: border-box;
+  -webkit-user-select: none;
 }
 
 body {
@@ -15,10 +16,9 @@ body {
   color: white;
   height: 100vh;
   margin: 0;
-
   background-color: #1e1e1e;
 
-  /*background: #232526;
+  /* background: #232526;
   background: linear-gradient(to right, #414345, #232526);
   background-color: #0cbaba;
   background-image: linear-gradient(315deg, #0cbaba 0%, #380036 74%);
@@ -42,7 +42,8 @@ body {
   background: -webkit-linear-gradient(to right, #2f0743, #41295a);
   background: linear-gradient(to right, #1d0827, #352646);
 */
-  /*font-family: Arial, Helvetica, Helvetica Neue, serif;*/
+
+  /* font-family: Arial, Helvetica, Helvetica Neue, serif; */
   font-family: 'Roboto', sans-serif;
   overflow: hidden;
 }
@@ -51,13 +52,13 @@ svg {
   pointer-events: none;
 }
 
-/*h2 {
+/* h2 {
   margin: 0;
   font-size: 2.25rem;
   font-weight: bold;
   letter-spacing: -0.025em;
   color: #fff;
-}*/
+} */
 
 p {
   font-size: 24px;
@@ -120,11 +121,11 @@ a:hover {
 #HW_badge {
   position: absolute !important;
   left: 20px !important;
-  top: 0px !important;
+  top: 0 !important;
 }
 
-/*--start
-Add device form styles*/
+/* --start
+Add device form styles */
 .padded-input input {
   padding: 20px 14px;
 }
@@ -133,8 +134,9 @@ Add device form styles*/
   color: #ffffff90;
 }
 
-/*Add device form styles 
---End*/
+/* Add device form styles 
+--End */
+
 /*
 {
 	"$schema": "vscode://schemas/color-theme",
@@ -157,6 +159,7 @@ Add device form styles*/
 	}
 }
 */
+
 /* This is to make the scrollbar consistent */
 ::-webkit-scrollbar {
   width: 10px;
@@ -177,11 +180,13 @@ Add device form styles*/
   background: rgba(49, 49, 49, 1);
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
 }
-/* When the scrollbar is inactive */
-::-webkit-scrollbar-thumb:window-inactive {
-  background: rgba(49, 49, 49, 1);
-}
+
 /* When the box area between the horzontal scrollbar and the vertical scrollbar */
 ::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0);
+}
+
+/* When the scrollbar is inactive */
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(49, 49, 49, 1);
 }

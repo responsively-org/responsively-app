@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "A developer-friendly browser for developing responsive web apps",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -316,6 +316,7 @@
     "react-switch": "^5.0.1",
     "react-tabs": "^3.0.0",
     "react-toastify": "^5.3.2",
+    "react-use": "^15.3.3",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "source-map-support": "^0.5.9",

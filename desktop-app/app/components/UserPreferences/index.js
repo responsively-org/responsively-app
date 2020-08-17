@@ -27,6 +27,7 @@ export default function UserPreference({
         <SettingsIcon width={26} margin={2} /> User Preferences
       </div>
       <div className={cx(commonStyles.sidebarContentSectionContainer)}>
+        <div className={styles.sectionHeader}>General</div>
         <div>
           <FormControlLabel
             control={
@@ -58,13 +59,13 @@ export default function UserPreference({
                     onDevToolsModeChange(DEVTOOLS_MODES.UNDOCKED);
                   }
                 }}
-                name="Dock DevTools to Main Window"
+                name="Dock dev-tools to Main Window"
                 color="primary"
               />
             }
             label={
               <span className={cx(styles.preferenceName)}>
-                Dock DevTools to Main Window
+                Dock dev-tools to Main Window
               </span>
             }
           />
@@ -75,38 +76,17 @@ export default function UserPreference({
               <Checkbox
                 checked={userPreferences.reopenLastAddress || false}
                 onChange={e => onChange('reopenLastAddress', e.target.checked)}
-                name="Reopen last opened address on start"
+                name="Reopen last page during startup"
                 color="primary"
               />
             }
             label={
               <span className={cx(styles.preferenceName)}>
-                Reopen last opened address on start
+                Reopen last page during startup
               </span>
             }
           />
         </div>
-        <div>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={userPreferences.removeFixedPositionedElements || false}
-                onChange={e =>
-                  onChange('removeFixedPositionedElements', e.target.checked)
-                }
-                name="Remove fixed positioned elements for screenshot"
-                color="primary"
-              />
-            }
-            label={
-              <span className={cx(styles.preferenceName)}>
-                Remove fixed positioned elements for screenshot
-              </span>
-            }
-          />
-        </div>
-      </div>
-      <div className={cx(commonStyles.sidebarContentSectionContainer)}>
         <div>
           <FormControlLabel
             control={
@@ -128,6 +108,26 @@ export default function UserPreference({
         </div>
       </div>
       <div className={cx(commonStyles.sidebarContentSectionContainer)}>
+        <div className={styles.sectionHeader}>Screenshot</div>
+        <div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={userPreferences.removeFixedPositionedElements || false}
+                onChange={e =>
+                  onChange('removeFixedPositionedElements', e.target.checked)
+                }
+                name="Hide fixed positioned elements"
+                color="primary"
+              />
+            }
+            label={
+              <span className={cx(styles.preferenceName)}>
+                Hide fixed positioned elements
+              </span>
+            }
+          />
+        </div>
         <ScreenShotSavePreference
           screenShotSavePath={
             userPreferences.screenShotSavePath ||

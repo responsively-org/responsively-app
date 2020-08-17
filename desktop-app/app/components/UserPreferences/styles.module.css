@@ -15,9 +15,19 @@
   border: transparent;
 }
 
-.screenshotLocationInputContainer {
-  border-top: 1px solid #383737;
-}
 .sectionTitle {
   margin: 5px 0;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+}
+
+.sectionHeader::after {
+  content: '';
+  flex: 1;
+  margin-left: 5px;
+  height: 1px;
+  background-color: #636363;
 }

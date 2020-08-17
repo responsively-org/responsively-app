@@ -248,6 +248,16 @@ class WebView extends Component {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.device.isMuted !== this.props.device.isMuted) {
+      if (this.props.device.isMuted) {
+        this._muteWebView();
+      } else {
+        this._unmuteWebView();
+      }
+    }
+  }
+
   getWebContentsId() {
     return this.webviewRef.current.getWebContentsId();
   }
@@ -623,14 +633,12 @@ class WebView extends Component {
     }
   };
 
-  _muteDevice = () => {
+  _muteWebView = () => {
     this.getWebContents().setAudioMuted(true);
-    this.props.onDeviceMutedChange(this.props.device.id, true);
   };
 
-  _unmuteDevice = () => {
+  _unmuteWebView = () => {
     this.getWebContents().setAudioMuted(false);
-    this.props.onDeviceMutedChange(this.props.device.id, false);
   };
 
   get isMobile() {
@@ -907,26 +915,6 @@ class WebView extends Component {
                 onClick={this._unPlug}
               >
                 <UnplugIcon height={30} color={iconsColor} />
-              </div>
-            </Tooltip>
-
-            <Tooltip
-              title={isMuted ? 'Unmute' : 'Mute'}
-              disableFocusListener={true}
-            >
-              <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled
-                )}
-                onClick={isMuted ? this._unmuteDevice : this._muteDevice}
-              >
-                {isMuted ? (
-                  <MutedIcon height={20} color="white" />
-                ) : (
-                  <UnmutedIcon height={20} color="white" />
-                )}
               </div>
             </Tooltip>
           </div>
