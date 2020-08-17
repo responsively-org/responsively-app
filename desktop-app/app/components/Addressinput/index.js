@@ -178,6 +178,9 @@ class AddressBar extends React.Component<Props> {
             listItemUiClassName={cx(styles.searchBarSuggestionsListUl)}
             listItemsClassName={cx(styles.searchBarSuggestionsListItems)}
             activeClass={cx(styles.searchBarSuggestionsActiveListItems)}
+            pageMetaIconClassName={cx(styles.pageMetaIcon)}
+            pageMetaIconWrapperClassName={cx(styles.pageMetaIconWrapper)}
+            searchBarSuggestionUrlClassName={cx(styles.searchBarSuggestionUrl)}
             filteredSearchResults={this.state.finalUrlResult}
             cursorIndex={this.state.cursor}
             handleUrlChange={this._onSearchedUrlClick}
