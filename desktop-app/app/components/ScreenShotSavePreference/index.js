@@ -26,7 +26,7 @@ export default function ScreenShotSavePreference({
 
   return (
     <div className={cx(styles.screenshotLocationInputContainer)}>
-      <div className={cx(styles.sectionTitle)}>Screenshot Location:</div>
+      <div className={cx(styles.sectionTitle)}>Save Location:</div>
       <TextField
         type="text"
         color="secondary"
