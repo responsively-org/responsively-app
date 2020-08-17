@@ -28,9 +28,15 @@ const _sortedExistingUrlSearchResult = filteredData => {
 
 export const searchUrlUtils = url => {
   if (url) {
-    const filteredData = filter(previousSearchResults, eachResult =>
-      eachResult.url.toLowerCase().includes(url)
-    );
+    const filteredData = filter(previousSearchResults, eachResult => {
+      if (eachResult.pageMeta?.title) {
+        return (
+          eachResult.pageMeta.title.toLowerCase().includes(url) ||
+          eachResult.url.toLowerCase().includes(url)
+        );
+      }
+      return eachResult.url.toLowerCase().includes(url);
+    });
     const finalResult = _sortedExistingUrlSearchResult(filteredData);
     return finalResult;
   }
@@ -48,7 +54,7 @@ const normalizeURL = url => {
   return url;
 };
 
-export const updateExistingUrl = url => {
+export const updateExistingUrl = (url, pageMeta = null) => {
   url = normalizeURL(url);
   if (previousSearchResults?.length) {
     let updatedSearchResults = [...previousSearchResults];
@@ -60,6 +66,12 @@ export const updateExistingUrl = url => {
     if (index !== (undefined || -1 || null)) {
       updatedSearchResults[index].visitedCount =
         1 + updatedSearchResults[index].visitedCount;
+      if (pageMeta) {
+        updatedSearchResults[index].pageMeta = {
+          ...updatedSearchResults[index].pageMeta,
+          [pageMeta.name]: pageMeta.value,
+        };
+      }
     } else {
       updatedSearchResults = [
         {url, visitedCount: 1},
@@ -75,6 +87,7 @@ export const updateExistingUrl = url => {
       url,
       visitedCount: 1,
     });
+
     addUrlToSearchResults(addNewUrl);
     previousSearchResults = addNewUrl;
   }
