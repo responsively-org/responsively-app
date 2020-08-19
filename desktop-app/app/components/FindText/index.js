@@ -3,6 +3,9 @@ import cx from 'classnames';
 import {motion} from 'framer-motion';
 import styles from './styles.module.css';
 import {Icon} from 'flwww';
+import DownIcon from '@material-ui/icons/KeyboardArrowDown';
+import UpIcon from '@material-ui/icons/KeyboardArrowUp';
+import CloseIcon from '@material-ui/icons/Close';
 import {Tooltip} from '@material-ui/core';
 import {ipcRenderer} from 'electron';
 
@@ -122,21 +125,15 @@ const FindText = props => {
       </div>
       <div className={styles.separator} />
       <div className={styles.iconsContainer}>
-        <Tooltip title="Previous">
-          <div onClick={_findPrevious}>
-            <Icon type="arrowUp" size="30px" />
-          </div>
-        </Tooltip>
-        <Tooltip title="Next">
-          <div onClick={_findNext}>
-            <Icon type="arrowDown" size="30px" />
-          </div>
-        </Tooltip>
-        <Tooltip title="Close">
-          <div onClick={_closeFind}>
-            <Icon type="close" size="30px" />
-          </div>
-        </Tooltip>
+        <span className={styles.icon} onClick={_findPrevious}>
+          <UpIcon />
+        </span>
+        <span className={styles.icon} onClick={_findNext}>
+          <DownIcon />
+        </span>
+        <span className={styles.icon} onClick={_closeFind}>
+          <CloseIcon className={styles.closeIcon} />
+        </span>
       </div>
     </motion.div>
   );
