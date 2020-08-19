@@ -17,8 +17,8 @@
   
   
 
-  <a href="https://gitter.im/responsively-app" target="_blank">
-    <img src="https://img.shields.io/gitter/room/badges/shields.svg?style=flat" alt="Gitter">
+  <a href="https://join.slack.com/t/responsively/shared_invite/zt-h0ouywhs-IIeHj39ymz5IOrgcOa_tRA" target="_blank">
+    <img src="https://img.shields.io/badge/Join%20on-Slack-brightgreen?logo=slack" alt="Slack">
   </a>
 
   <a href="https://xscode.com/manojvivek/responsively-app" target="_blank">
@@ -80,19 +80,9 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 1. Goto `desktop-app` folder
 2. Run `yarn dev`. This will start the app for local development with live reloading.
 
-## Distribution
-You can build the app for distribution by running:
-```yarn package-all```
+## Get in touch
 
-This will build the binaries for all the platforms and place it in the `releases` folder.
-
-If you want to build the binary for a specific platform, run one of the following commands:
-
-**Mac** - ```yarn package-mac```
-
-**Windows(NSIS)** - ```yarn package-win```
-
-**Linux(AppImage)** - ```yarn package-linux```
+Come say hi to us on [Slack](https://join.slack.com/t/responsively/shared_invite/zt-h0ouywhs-IIeHj39ymz5IOrgcOa_tRA)! :wave:
 
 ## Contributors ✨
 
