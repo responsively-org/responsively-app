@@ -1,5 +1,5 @@
-/* 
-/* 
+/*
+/*
 /*  custom.css
 /*
 /*  If not using Gulp and Sass, add your custom CSS below then include it
@@ -37,4 +37,21 @@ html {
 
 .extensionButton {
   width: 300px;
+}
+
+#github-contributors__users {
+  padding: 0 2rem;
+  max-width: 40rem;
+  margin: 1rem auto;
+}
+
+.github-contributors__avatar {
+  overflow: hidden;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  margin: .1rem .2rem;
+  display: inline-block;
+  background-color: hsla(0, 0%, 100%, .1);
+  background-size: contain;
 }
