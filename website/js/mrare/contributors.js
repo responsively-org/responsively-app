@@ -1,14 +1,14 @@
-let json = '';
-let html = '';
+var json = '';
+var html = '';
 
 function profileHtmlString(to, title, style) {
     return `<a href="${to}" title="${title}" target="_blank" class="github-contributors__avatar" style="${style}">&nbsp;</a>`;
 }
 
 function generateProfile(c) {
-    const to = `https://github.com/${c.login}`;
-    const title = `${c.contributions} contributions from ${c.login}`;
-    const style = `background-image: url('${c.avatar_url}&s=64');`;
+    var to = `https://github.com/${c.login}`;
+    var title = `${c.contributions} contributions from ${c.login}`;
+    var style = `background-image: url('${c.avatar_url}&s=64');`;
     html += profileHtmlString(to, title, style);
 }
 
@@ -18,7 +18,7 @@ function getContributorAmount() {
 
 function generateFooterRow() {
     document.getElementById('github-contributors__thanks').innerText = `Thanks to all of our ${getContributorAmount()} contributors!`;
-    for (let i = 0; i < json.length; i++) {
+    for (var i = 0; i < json.length; i++) {
         generateProfile(json[i]);
     }
     document.getElementById('github-contributors__users').innerHTML = html;
