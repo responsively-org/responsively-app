@@ -289,6 +289,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "JohnRawlins",
+      "name": "John Rawlins",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/42707277?v=4",
+      "profile": "https://github.com/JohnRawlins",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
