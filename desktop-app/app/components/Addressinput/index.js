@@ -174,10 +174,6 @@ class AddressBar extends React.Component<Props> {
         </div>
         {this.state.finalUrlResult?.length && this.state.canShowSuggestions ? (
           <UrlSearchResults
-            divClassName={cx(styles.searchBarSuggestionsContainer)}
-            listItemUiClassName={cx(styles.searchBarSuggestionsListUl)}
-            listItemsClassName={cx(styles.searchBarSuggestionsListItems)}
-            activeClass={cx(styles.searchBarSuggestionsActiveListItems)}
             filteredSearchResults={this.state.finalUrlResult}
             cursorIndex={this.state.cursor}
             handleUrlChange={this._onSearchedUrlClick}
