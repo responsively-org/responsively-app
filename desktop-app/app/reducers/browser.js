@@ -361,6 +361,10 @@ export default function browser(
       updateExistingUrl(action.address);
       return {...state, address: action.address, currentPageMeta: {}};
     case NEW_PAGE_META_FIELD:
+      updateExistingUrl(state.address, {
+        name: action.name,
+        value: action.value,
+      });
       return {
         ...state,
         currentPageMeta: {
