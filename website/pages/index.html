@@ -556,7 +556,7 @@
 
     <section>
       <div class="justify-content-center text-center">
-        <h3 id="github-contributors__thanks">Thanks to all of our contributors!</h3>
+        <h4 id="github-contributors__thanks"></h4>
         <div id="github-contributors__users">
         </div>
       </div>
@@ -735,9 +735,12 @@
     <script type="text/javascript" src="assets/js/typed.min.js"></script>
     <!-- Required theme scripts (Do not remove) -->
     <script type="text/javascript" src="assets/js/theme.js"></script>
-    <!-- Removes page load animation when window is finished loading -->
-    <script type="text/javascript" src="../js/mrare/contributors.js"></script>
     <!-- Loads github contributors -->
+    <script type="text/javascript" src="assets/js/custom.js"></script>
+    <script type="text/javascript">
+      window.custom.populateContributors();
+    </script>
+    <!-- Removes page load animation when window is finished loading -->
     <script type="text/javascript">
       window.addEventListener("load", function() {
         document.querySelector("body").classList.add("loaded");
