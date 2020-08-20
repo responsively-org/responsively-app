@@ -1,39 +1,33 @@
 import React from 'react';
+import cx from 'classnames';
+import styles from './style.css';
 import DefaultFavIcon from '@material-ui/icons/Public';
 
 const UrlSearchResults = ({
-  divClassName,
-  listItemsClassName,
   filteredSearchResults,
   cursorIndex,
   handleUrlChange,
-  activeClass,
-  listItemUiClassName,
-  pageMetaFavIconClassName,
-  pageMetaFavIconWrapperClassName,
-  searchBarSuggestionUrlClassName,
-  pageMetaDefaultFavIconWrapperClassName,
 }) => (
-  <div className={divClassName}>
-    <ul className={listItemUiClassName}>
+  <div className={cx(styles.searchBarSuggestionsContainer)}>
+    <ul className={cx(styles.searchBarSuggestionsListUl)}>
       {filteredSearchResults?.map((eachResult, index) => {
         const favicon = eachResult.pageMeta?.favicons?.[0];
         const title = eachResult.pageMeta?.title;
         const url = eachResult.url;
-        const searchBarSuggestion = `${title ? `${title} - ` : ''} ${url}`;
         return (
           index < 8 && (
             <li key={url}>
               <div
-                className={`${listItemsClassName} ${
-                  cursorIndex === index ? activeClass : ''
-                }`}
+                className={cx(styles.searchBarSuggestionsListItems, {
+                  [styles.searchBarSuggestionsActiveListItems]:
+                    cursorIndex === index,
+                })}
                 onClick={() => handleUrlChange(eachResult.url, index)}
               >
-                <div className={pageMetaFavIconWrapperClassName}>
+                <div className={cx(styles.pageFavIconWrapper)}>
                   {favicon ? (
                     <img
-                      className={pageMetaFavIconClassName}
+                      className={cx(styles.pageFavIcon)}
                       src={favicon}
                       onError={event => {
                         event.target.style.display = 'none';
@@ -41,20 +35,21 @@ const UrlSearchResults = ({
                       }}
                     />
                   ) : (
-                    <div className={pageMetaDefaultFavIconWrapperClassName}>
+                    <div className={cx(styles.pageDefaultFavIconWrapper)}>
                       <DefaultFavIcon fontSize="inherit" />
                     </div>
                   )}
                   <div
                     style={{display: 'none'}}
-                    className={pageMetaDefaultFavIconWrapperClassName}
+                    className={cx(styles.pageDefaultFavIconWrapperClassName)}
                   >
                     <DefaultFavIcon fontSize="inherit" />
                   </div>
                 </div>
-                <span className={searchBarSuggestionUrlClassName}>
-                  {searchBarSuggestion}
-                </span>
+                <div className={cx(styles.pageTitleAndUrlContainer)}>
+                  <span className={cx(styles.pageTitle)}>{title}</span>
+                  <span className={cx(styles.pageUrl)}>{url}</span>
+                </div>
               </div>
             </li>
           )
