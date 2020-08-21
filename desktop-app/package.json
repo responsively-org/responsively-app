@@ -305,6 +305,7 @@
     "re-resizable": "^6.4.0",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^11.0.5",
+    "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.8",
     "react-number-format": "^4.4.1",

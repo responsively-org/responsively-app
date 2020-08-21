@@ -1,4 +1,5 @@
 import React, {Fragment} from 'react';
+import TextBoxWithCopyButton from '../../utils/TextBoxWithCopyButton';
 
 export default class ErrorBoundary extends React.Component {
   static getDerivedStateFromError(error) {
@@ -11,7 +12,10 @@ export default class ErrorBoundary extends React.Component {
     this.setState({
       err: error,
       error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
-      errorInfo,
+      errorInfo: JSON.stringify(
+        errorInfo,
+        Object.getOwnPropertyNames(errorInfo)
+      ),
     });
   }
 
@@ -26,16 +30,15 @@ export default class ErrorBoundary extends React.Component {
       return (
         <Fragment>
           <h1 style={{textAlign: 'center', marginTop: 100}}>
-            Something went wrong.
+            App has crashed!
           </h1>
-          <div style={{display: 'flex', justifyContent: 'center'}}>
-            <pre
-              style={{overflow: 'scroll', background: '#6d6d6d', width: '80%'}}
-            >
-              {JSON.stringify(this.state, null, 2)}
-            </pre>
-          </div>
-          <p style={{width: '80%', textAlign: 'center'}}>
+          <p style={{textAlign: 'center'}}>
+            Stack Trace: <TextBoxWithCopyButton text={this.state.error} />
+          </p>
+          <p style={{textAlign: 'center'}}>
+            Error Info: <TextBoxWithCopyButton text={this.state.errorInfo} />
+          </p>
+          <p style={{textAlign: 'center'}}>
             Please copy the contents in the above box and create an issue in the
             github repo:
             https://github.com/responsively-org/responsively-app/issues
