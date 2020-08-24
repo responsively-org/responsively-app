@@ -11,6 +11,7 @@ import styles from './styles.module.css';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 import ScreenShotSavePreference from '../ScreenShotSavePreference/index';
 import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
+import {SCREENSHOT_MECHANISM} from '../../constants/values';
 
 export default function UserPreference({
   devToolsConfig,
@@ -124,6 +125,33 @@ export default function UserPreference({
             label={
               <span className={cx(styles.preferenceName)}>
                 Hide fixed positioned elements
+              </span>
+            }
+          />
+        </div>
+        <div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={
+                  userPreferences.screenshotMechanism ===
+                  SCREENSHOT_MECHANISM.V2
+                }
+                onChange={e =>
+                  onChange(
+                    'screenshotMechanism',
+                    e.target.checked
+                      ? SCREENSHOT_MECHANISM.V2
+                      : SCREENSHOT_MECHANISM.V1
+                  )
+                }
+                name="Use improved screenshot mechanism"
+                color="primary"
+              />
+            }
+            label={
+              <span className={cx(styles.preferenceName)}>
+                Use improved screenshot mechanism
               </span>
             }
           />

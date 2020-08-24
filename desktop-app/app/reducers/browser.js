@@ -119,6 +119,7 @@ type UserPreferenceType = {
   deviceOutlineStyle: string,
   zoomLevel: number,
   removeFixedPositionedElements: boolean,
+  screenshotMechanism: string,
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
@@ -195,9 +196,7 @@ function _getActiveDevices() {
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  return (
-    settings.get(USER_PREFERENCES) || {removeFixedPositionedElements: true}
-  );
+  return settings.get(USER_PREFERENCES);
 }
 
 function _setUserPreferences(userPreferences) {
