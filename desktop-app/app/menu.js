@@ -10,6 +10,7 @@ import {
 } from 'electron';
 import * as os from 'os';
 import fs from 'fs';
+import url from 'url';
 import {pkg} from './utils/generalUtils';
 import {
   getAllShortcuts,
@@ -131,7 +132,12 @@ export default class MenuBuilder {
 
           win.center();
 
-          win.loadURL(`file://${__dirname}/shortcuts.html`);
+          win.loadURL(
+            url.format({
+              protocol: 'file',
+              pathname: path.join(__dirname, 'shortcuts.html'),
+            })
+          );
 
           win.once('ready-to-show', () => {
             win.show();
@@ -189,13 +195,16 @@ export default class MenuBuilder {
           const selected = dialog.showOpenDialogSync({
             filters: [{name: 'HTML', extensions: ['htm', 'html']}],
           });
+
           if (!selected || !selected.length || !selected[0]) {
             return;
           }
           let filePath = selected[0];
-          if (!filePath.startsWith('file://')) {
-            filePath = `file://${filePath}`;
-          }
+
+          filePath = url.format({
+            protocol: 'file',
+            pathname: filePath,
+          });
           this.mainWindow.webContents.send('address-change', filePath);
         },
       },

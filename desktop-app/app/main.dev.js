@@ -237,6 +237,9 @@ const openUrl = url => {
 };
 
 const openFile = filePath => {
+  console.log('BOOOOO');
+
+  console.log(filePath);
   mainWindow.webContents.send('address-change', filePath);
   mainWindow.show();
 };
