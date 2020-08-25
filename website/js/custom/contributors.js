@@ -11,14 +11,15 @@ const populateContributors = () => {
   }
 
   function generateFooterRow(json) {
-    if (!json.length) {
+    if (json == null || !json.length) {
       throw new Error('Malformed data');
     }
+    const humanContributors = json.filter((contributor) => contributor.type === "User");
     let html = '';
     document.getElementById(
       'github-contributors__thanks',
-    ).innerText = `Thanks to all of our ${json.length} contributors! 🎉👏`;
-    json.forEach((contributor) => {
+    ).innerText = `Thanks to all of our ${humanContributors.length} contributors! 🎉👏`;
+    humanContributors.forEach((contributor) => {
       html += generateProfile(contributor);
     });
     document.getElementById('github-contributors__users').innerHTML = html;
