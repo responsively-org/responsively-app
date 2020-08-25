@@ -11,6 +11,9 @@ const populateContributors = () => {
   }
 
   function generateFooterRow(json) {
+    if (!json.length) {
+      throw new Error('Malformed data');
+    }
     let html = '';
     document.getElementById(
       'github-contributors__thanks',
