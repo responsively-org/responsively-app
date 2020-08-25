@@ -26,7 +26,7 @@ const populateContributors = () => {
 
   function getContr() {
     fetch(
-      'https://api.github.com/repos/responsively-org/responsively-app/contributors',
+      'https://api.github.com/repos/responsively-org/responsively-app/contributors?per_page=100',
     )
       .then((response) => response.text())
       .then((text) => JSON.parse(text))
