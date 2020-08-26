@@ -277,12 +277,25 @@ class WebViewUtils {
 
     const image = await this.takeSnapshot();
     this.resetBG();
+    this.scrollTo(previousScrollPosition.left, previousScrollPosition.top);
     this.setFullDocumentDimensions(null, null, null);
-    const png = image.toPNG();
-    await fs.writeFile(path.join(dir, file), png);
+    await this.writeNativeImageToFile(image, dir, file);
+  }
+
+  async getViewportImage({dir, file}): Promise {
+    await this.setWhiteBG();
+    const image = await this.takeSnapshot();
+    this.resetBG();
+    await this.writeNativeImageToFile(image, dir, file);
+  }
+
+  async writeNativeImageToFile(image, dir, file) {
+    const jpg = image.toJPEG(100);
+    await fs.writeFile(path.join(dir, file), jpg);
   }
 
   async getFullScreenImages(promiseWorker: PromiseWorker): Promise {
+    this.setWhiteBG();
     const {
       previousScrollPosition,
       scrollHeight,
@@ -325,29 +338,21 @@ class WebViewUtils {
         const image = await this.takeSnapshot(options);
         columnImages.push(image);
       }
-      const pngs = columnImages.map(img => img.toPNG());
+      const jpgs = columnImages.map(img => img.toJPEG(100));
       images.push(
         await promiseWorker.postMessage(
           {
-            images: pngs,
+            images: jpgs,
             direction: 'horizontal',
           },
-          [...pngs]
+          [...jpgs]
         )
       );
     }
 
     this.scrollTo(previousScrollPosition.left, previousScrollPosition.top);
-
-    return images;
-  }
-
-  async getViewportImage({dir, file}): Promise {
-    await this.setWhiteBG();
-    const image = await this.takeSnapshot();
-    const png = image.toPNG();
     this.resetBG();
-    await fs.writeFile(path.join(dir, file), png);
+    return images;
   }
 
   takeSnapshot(options): Promise {
@@ -367,7 +372,8 @@ function _getScreenshotFileName(
   device,
   now = new Date(),
   createSeparateDir,
-  fullScreen
+  fullScreen,
+  format = 'jpg'
 ) {
   const dateString = `${now
     .toLocaleDateString()
@@ -387,7 +393,7 @@ function _getScreenshotFileName(
     ),
     file: `${getWebsiteName(address)} ${
       fullScreen ? '- Full ' : ''
-    }- ${device.name.replace(/\//g, '-')} - ${dateString}.png`,
+    }- ${device.name.replace(/\//g, '-')} - ${dateString}.${format}`,
   };
 }
 
