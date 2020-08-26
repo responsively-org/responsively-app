@@ -30,6 +30,15 @@
       "minOpenCount": 0
     },
     {
+      "id": "app-growth-udate",
+      "title": "It is been 100 days since the app is launched!",
+      "text": "We have some stats published about it, check it out.",
+      "link": "https://twitter.com/vivek_jonam/status/1298212909118562304",
+      "okText": "Open",
+      "dismissText": "Dismiss",
+      "minOpenCount": 1
+    },
+    {
       "id": "twitter-handle-intro",
       "title": "Keep yourselves informed!",
       "text": "Follow us on Twitter and stay up to date on the tricks and tips.",
