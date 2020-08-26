@@ -17,4 +17,9 @@
 
 .searchIcon {
   margin: 0 14px 0 !important;
+  color: white !important;
+}
+
+.searchActiveIcon {
+  color: white !important;
 }
