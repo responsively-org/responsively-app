@@ -388,20 +388,24 @@ class WebView extends Component {
     fullScreen?: boolean,
   }) => {
     this.setState({screenshotInProgress: true});
-    await this.closeBrowserSyncSocket(this.webviewRef.current);
-    await captureScreenshot({
-      address: this.props.browser.address,
-      device: this.props.device,
-      webView: this.webviewRef.current,
-      createSeparateDir: now != null,
-      fullScreen,
-      now,
-      removeFixedPositionedElements: this.props.browser.userPreferences
-        .removeFixedPositionedElements,
-      screenshotMechanism: this.props.browser.userPreferences
-        .screenshotMechanism,
-      setFullDocumentDimensions: this._setFullDocumentDimensions,
-    });
+    try {
+      await this.closeBrowserSyncSocket(this.webviewRef.current);
+      await captureScreenshot({
+        address: this.props.browser.address,
+        device: this.props.device,
+        webView: this.webviewRef.current,
+        createSeparateDir: now != null,
+        fullScreen,
+        now,
+        removeFixedPositionedElements: this.props.browser.userPreferences
+          .removeFixedPositionedElements,
+        screenshotMechanism: this.props.browser.userPreferences
+          .screenshotMechanism,
+        setFullDocumentDimensions: this._setFullDocumentDimensions,
+      });
+    } catch (err) {
+      console.log('Error during screen capture', err);
+    }
     await this.openBrowserSyncSocket(this.webviewRef.current);
     this.setState({screenshotInProgress: false});
   };
