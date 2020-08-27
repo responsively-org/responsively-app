@@ -4,6 +4,10 @@ import {
   HIDE_PERMISSION_POPUP_DUE_TO_RELOAD,
   PERMISSION_MANAGEMENT_PREFERENCE_CHANGED,
 } from '../constants/pubsubEvents';
+import {PERMISSION_MANAGEMENT_OPTIONS} from '../constants/permissionsManagement';
+import {USER_PREFERENCES} from '../constants/settingKeys';
+import settings from 'electron-settings';
+
 const path = require('path');
 
 export function getPermissionPageTitle(url) {
@@ -11,9 +15,8 @@ export function getPermissionPageTitle(url) {
   try {
     if (url.startsWith('file://')) {
       return decodeURIComponent(path.basename(url));
-    } else {
-      return new URL(url).hostname;
     }
+    return new URL(url).hostname;
   } catch {
     return url;
   }
@@ -63,4 +66,8 @@ export function notifyPermissionToHandleReloadOrNewAddress() {
 
 export function notifyPermissionPreferenceChanged(newPreference) {
   pubsub.publish(PERMISSION_MANAGEMENT_PREFERENCE_CHANGED, [newPreference]);
+}
+
+export function getPermissionSettingPreference() {
+  return settings.get(USER_PREFERENCES)?.permissionManagement || PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS;
 }

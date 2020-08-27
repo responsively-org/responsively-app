@@ -13,6 +13,8 @@ import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 import ScreenShotSavePreference from '../ScreenShotSavePreference/index';
 import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 import {notifyPermissionPreferenceChanged} from '../../utils/permissionUtils.js';
+import {PERMISSION_MANAGEMENT_OPTIONS} from '../../constants/permissionsManagement';
+
 const selectStyles = {
   control: selectStyles => ({...selectStyles, backgroundColor: '#ffffff10'}),
   option: (selectStyles, {data, isDisabled, isFocused, isSelected}) => {
@@ -41,9 +43,9 @@ const selectStyles = {
 };
 
 const permissionsOptions = [
-  {value: 'Allow always', label: 'Allow always'},
-  {value: 'Deny always', label: 'Deny always'},
-  {value: 'Ask always', label: 'Ask always'},
+  {value: PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS, label: PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS},
+  {value: PERMISSION_MANAGEMENT_OPTIONS.DENY_ALWAYS, label: PERMISSION_MANAGEMENT_OPTIONS.DENY_ALWAYS},
+  {value: PERMISSION_MANAGEMENT_OPTIONS.ASK_ALWAYS, label: PERMISSION_MANAGEMENT_OPTIONS.ASK_ALWAYS},
 ];
 
 export default function UserPreference({

@@ -20,6 +20,7 @@ import {
   getPermissionPageTitle,
   getPermissionRequestMessage,
 } from '../../utils/permissionUtils.js';
+import {PERMISSION_MANAGEMENT_OPTIONS} from '../../constants/permissionsManagement';
 
 const useStyles = makeStyles(theme => ({
   closeButton: {
@@ -66,14 +67,14 @@ export default function PermissionPopup() {
 
   useEffect(() => {
     const preferenceChangedHandler = newPreference => {
-      if (newPreference === 'Ask always') return;
+      if (newPreference === PERMISSION_MANAGEMENT_OPTIONS.ASK_ALWAYS) return;
 
-      if (newPreference === 'Allow always') {
+      if (newPreference === PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS) {
         permissionInfos.forEach(info => {
           ipcRenderer.send('permission-response', {...info, allowed: true});
         });
         setPermissionInfos([]);
-      } else if (newPreference === 'Deny always') {
+      } else if (newPreference === PERMISSION_MANAGEMENT_OPTIONS.DENY_ALWAYS) {
         permissionInfos.forEach(info => {
           ipcRenderer.send('permission-response', {...info, allowed: false});
         });

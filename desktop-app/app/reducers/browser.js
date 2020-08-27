@@ -52,6 +52,7 @@ import {
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
 import {updateExistingUrl} from '../services/searchUrlSuggestions';
+import {PERMISSION_MANAGEMENT_OPTIONS} from '../constants/permissionsManagement';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -200,11 +201,11 @@ function _getUserPreferences(): UserPreferenceType {
   if (fromSettings == null)
     return {
       removeFixedPositionedElements: true,
-      permissionManagement: 'Allow always',
+      permissionManagement: PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS,
     };
 
   if (fromSettings.permissionManagement == null)
-    fromSettings.permissionManagement = 'Allow always';
+    fromSettings.permissionManagement = PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS;
 
   return fromSettings;
 }

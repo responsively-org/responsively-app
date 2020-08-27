@@ -47,9 +47,11 @@ import {
   watchFiles,
 } from './utils/browserSync';
 import {getHostFromURL} from './utils/urlUtils';
+import {getPermissionSettingPreference} from './utils/permissionUtils';
 import browserSync from 'browser-sync';
 import {captureOnSentry} from './utils/logUtils';
 import appMetadata from './services/db/appMetadata';
+import {PERMISSION_MANAGEMENT_OPTIONS} from './constants/permissionsManagement';
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -321,11 +323,6 @@ const createWindow = async () => {
     onResize();
   });
 
-  const getPermissionSettingPreference = () => {
-    const fromSettings = settings.get(USER_PREFERENCES);
-    return fromSettings?.permissionManagement || 'Allow always';
-  };
-
   session.defaultSession.setPermissionRequestHandler(
     (webContents, permission, callback, details) => {
       const preferences = getPermissionSettingPreference();
@@ -344,14 +341,14 @@ const createWindow = async () => {
 
       const entry = permissionCallbacks[reqUrl][permission];
 
-      if (preferences === 'Allow always') {
+      if (preferences === PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS) {
         entry.callbacks.forEach(callback => callback(true));
         entry.callbacks = [];
         entry.allowed = true;
         entry.called = true;
         return callback(true);
       }
-      if (preferences === 'Deny always') {
+      if (preferences === PERMISSION_MANAGEMENT_OPTIONS.DENY_ALWAYS) {
         entry.callbacks.forEach(callback => callback(false));
         entry.callbacks = [];
         entry.allowed = false;
