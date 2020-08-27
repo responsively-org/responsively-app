@@ -1,0 +1,30 @@
+.permissionPopup {
+  position: absolute;
+  background-color: #252526;
+  border-radius: 4px;
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2),
+    0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+  width: 20em;
+  transition: opacity 0.5s ease-out;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.permissionPopupActive {
+  opacity: 1;
+  height: auto;
+}
+
+.permissionPopupTitle {
+  margin: 14px;
+}
+
+.permissionPopupMsg {
+  margin-bottom: 0 !important;
+  font-size: 0.9rem !important;
+}
+
+.permissionPopupMsgContainer {
+  padding: 0 14px !important;
+}
