@@ -1,8 +1,6 @@
 // @flow
 import {ipcRenderer, remote} from 'electron';
 import settings from 'electron-settings';
-import {isIfStatement} from 'typescript';
-import trimStart from 'lodash/trimStart';
 import {
   NEW_ADDRESS,
   NEW_ZOOM_LEVEL,
@@ -16,7 +14,6 @@ import {
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
   DELETE_CUSTOM_DEVICE,
-  TOGGLE_BOOKMARK,
   NEW_DEV_TOOLS_CONFIG,
   NEW_INSPECTOR_STATUS,
   NEW_WINDOW_SIZE,
@@ -52,7 +49,6 @@ import {
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
 import {updateExistingUrl} from '../services/searchUrlSuggestions';
-import {PERMISSION_MANAGEMENT_OPTIONS} from '../constants/permissionsManagement';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -197,17 +193,9 @@ function _getActiveDevices() {
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  const fromSettings = settings.get(USER_PREFERENCES);
-  if (fromSettings == null)
-    return {
-      removeFixedPositionedElements: true,
-      permissionManagement: PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS,
-    };
-
-  if (fromSettings.permissionManagement == null)
-    fromSettings.permissionManagement = PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS;
-
-  return fromSettings;
+  return (
+    settings.get(USER_PREFERENCES) || {removeFixedPositionedElements: true}
+  );
 }
 
 function _setUserPreferences(userPreferences) {
