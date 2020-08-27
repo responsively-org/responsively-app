@@ -19,6 +19,7 @@ import UrlSearchResults from '../UrlSearchResults';
 import commonStyles from '../common.styles.css';
 import styles from './style.css';
 import debounce from 'lodash/debounce';
+import {notifyPermissionToHandleReloadOrNewAddress} from '../../utils/permissionUtils.js';
 
 type Props = {
   address: string,
@@ -271,13 +272,12 @@ class AddressBar extends React.Component<Props> {
   };
 
   _onChange = () => {
-    if (!this.state.userTypedAddress) {
+    if (!this.state.userTypedAddress || !this.props.onChange) {
       return;
     }
-    return (
-      this.props.onChange &&
-      this.props.onChange(this._normalize(this.state.userTypedAddress), true)
-    );
+
+    notifyPermissionToHandleReloadOrNewAddress();
+    this.props.onChange(this._normalize(this.state.userTypedAddress), true);
   };
 
   _onSearchedUrlClick = (url, index) => {

@@ -119,6 +119,7 @@ type UserPreferenceType = {
   deviceOutlineStyle: string,
   zoomLevel: number,
   removeFixedPositionedElements: boolean,
+  permissionManagement: 'Ask always' | 'Allow always' | 'Deny always',
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
@@ -195,9 +196,17 @@ function _getActiveDevices() {
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  return (
-    settings.get(USER_PREFERENCES) || {removeFixedPositionedElements: true}
-  );
+  const fromSettings = settings.get(USER_PREFERENCES);
+  if (fromSettings == null)
+    return {
+      removeFixedPositionedElements: true,
+      permissionManagement: 'Allow always',
+    };
+
+  if (fromSettings.permissionManagement == null)
+    fromSettings.permissionManagement = 'Allow always';
+
+  return fromSettings;
 }
 
 function _setUserPreferences(userPreferences) {
