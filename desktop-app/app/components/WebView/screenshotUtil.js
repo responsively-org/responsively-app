@@ -246,6 +246,22 @@ class WebViewUtils {
     `);
   }
 
+  async setScrollBehaviorToAuto() {
+    this.scrollModKey = await this.webView.insertCSS(`
+      html, body {
+        scroll-behavior: auto !important;
+      }
+    `);
+  }
+
+  async resetScrollBehavior() {
+    if (!this.scrollModKey) {
+      return;
+    }
+    await this.webView.removeInsertedCSS(this.scrollModKey);
+    this.scrollModKey = null;
+  }
+
   async resetBG() {
     if (!this.bgModKey) {
       return;
@@ -267,6 +283,7 @@ class WebViewUtils {
 
   async captureFullPageV2({dir, file}) {
     this.setWhiteBG();
+    this.setScrollBehaviorToAuto();
     const {previousScrollPosition} = await this.getWindowSizeAndScrollDetails();
     await this.doFullPageScrollToLoadLazyLoadedSections();
     const {
@@ -282,6 +299,7 @@ class WebViewUtils {
 
     const image = await this.takeSnapshot();
     this.resetBG();
+    this.resetScrollBehavior();
     this.setFullDocumentDimensions(null, null, null);
     await this.writeNativeImageToFile(image, dir, file);
     await this.scrollTo(
