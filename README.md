@@ -136,6 +136,9 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/JayArya"><img src="https://avatars0.githubusercontent.com/u/42388314?v=4" width="100px;" alt=""/><br /><sub><b>Jayant Arya</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=JayArya" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/JohnRawlins"><img src="https://avatars3.githubusercontent.com/u/42707277?v=4" width="100px;" alt=""/><br /><sub><b>John Rawlins</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=JohnRawlins" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/lepasq"><img src="https://avatars3.githubusercontent.com/u/53230128?v=4" width="100px;" alt=""/><br /><sub><b>lepasq</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=lepasq" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/mrfelfel"><img src="https://avatars0.githubusercontent.com/u/19575588?v=4" width="100px;" alt=""/><br /><sub><b>mrfelfel</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=mrfelfel" title="Code">💻</a></td>
   </tr>
 </table>
 

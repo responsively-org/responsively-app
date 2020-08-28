@@ -6,6 +6,7 @@ import {ToastContainer} from 'react-toastify';
 import AddressBar from '../../containers/AddressBar';
 import ScrollControlsContainer from '../../containers/ScrollControlsContainer';
 import HttpAuthDialog from '../HttpAuthDialog';
+import PermissionPopup from '../PermissionPopup';
 
 import styles from './style.module.css';
 import NavigationControlsContainer from '../../containers/NavigationControlsContainer';
@@ -20,6 +21,7 @@ const Header = () => (
       </Grid>
       <Grid item style={{flex: 1}}>
         <AddressBar />
+        <PermissionPopup />
       </Grid>
       <Grid item>
         <ScrollControlsContainer />

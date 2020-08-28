@@ -1,8 +1,6 @@
 // @flow
 import {ipcRenderer, remote} from 'electron';
 import settings from 'electron-settings';
-import {isIfStatement} from 'typescript';
-import trimStart from 'lodash/trimStart';
 import {
   NEW_ADDRESS,
   NEW_ZOOM_LEVEL,
@@ -16,7 +14,6 @@ import {
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
   DELETE_CUSTOM_DEVICE,
-  TOGGLE_BOOKMARK,
   NEW_DEV_TOOLS_CONFIG,
   NEW_INSPECTOR_STATUS,
   NEW_WINDOW_SIZE,
@@ -121,6 +118,8 @@ type UserPreferenceType = {
   deviceOutlineStyle: string,
   zoomLevel: number,
   removeFixedPositionedElements: boolean,
+  screenshotMechanism: string,
+  permissionManagement: 'Ask always' | 'Allow always' | 'Deny always',
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
@@ -215,9 +214,7 @@ function _getActiveDevices() {
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  return (
-    settings.get(USER_PREFERENCES) || {removeFixedPositionedElements: true}
-  );
+  return settings.get(USER_PREFERENCES);
 }
 
 function _setUserPreferences(userPreferences) {
@@ -340,6 +337,10 @@ export default function browser(
       updateExistingUrl(action.address);
       return {...state, address: action.address, currentPageMeta: {}};
     case NEW_PAGE_META_FIELD:
+      updateExistingUrl(state.address, {
+        name: action.name,
+        value: action.value,
+      });
       return {
         ...state,
         currentPageMeta: {

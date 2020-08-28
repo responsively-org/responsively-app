@@ -289,6 +289,33 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "JohnRawlins",
+      "name": "John Rawlins",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/42707277?v=4",
+      "profile": "https://github.com/JohnRawlins",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "lepasq",
+      "name": "lepasq",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/53230128?v=4",
+      "profile": "https://github.com/lepasq",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mrfelfel",
+      "name": "mrfelfel",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/19575588?v=4",
+      "profile": "https://github.com/mrfelfel",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,

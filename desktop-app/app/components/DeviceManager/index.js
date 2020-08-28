@@ -45,9 +45,26 @@ export default function DeviceManager(props) {
       acc[val.id] = val;
       return acc;
     }, {});
-    const inactiveDevices = props.browser.allDevices.filter(
-      device => !activeDevicesById[device.id]
-    );
+
+    const currentInactiveDevicesById = devices.inactive.reduce((acc, val) => {
+      acc[val.id] = val;
+      return acc;
+    }, {});
+
+    const devicesById = props.browser.allDevices.reduce((acc, val) => {
+      acc[val.id] = val;
+      return acc;
+    }, {});
+
+    const inactiveDevices = [
+      ...props.browser.allDevices.filter(
+        device =>
+          !activeDevicesById[device.id] &&
+          !currentInactiveDevicesById[device.id]
+      ),
+      ...devices.inactive.filter(device => devicesById[device.id]),
+    ];
+
     setDevices({active: activeDevices, inactive: inactiveDevices});
   }, [props.browser.devices, props.browser.allDevices]);
 
@@ -75,9 +92,21 @@ export default function DeviceManager(props) {
       source.droppableId === 'inactive'
         ? devices.inactiveFiltered[source.index]
         : sourceList[source.index];
+
+    let idx = destination.index;
+
+    if (destination.droppableId === 'inactive') {
+      idx =
+        destination.index < devices.inactiveFiltered.length
+          ? devices.inactive.findIndex(
+              d => d.id === devices.inactiveFiltered[destination.index].id
+            )
+          : devices.inactive.length;
+    }
+
     sourceList.splice(sourceList.indexOf(itemDragged), 1);
 
-    destinationList.splice(destination.index, 0, itemDragged);
+    destinationList.splice(idx, 0, itemDragged);
 
     updateDevices(devices);
   };

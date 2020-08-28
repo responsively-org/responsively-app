@@ -9,6 +9,7 @@ import Root from './containers/Root';
 import {configureStore, history} from './store/configureStore';
 import './app.global.css';
 import * as Sentry from '@sentry/electron';
+import appMetadata from './services/db/appMetadata';
 
 require('dotenv').config();
 
@@ -32,6 +33,7 @@ if (remote.getGlobal('process').env.NODE_ENV !== 'development') {
 
 if (window.heap) {
   window.heap.addUserProperties({appVersion: remote.app.getVersion()});
+  window.heap.addUserProperties({openCount: appMetadata.getOpenCount()});
 }
 
 const store = configureStore();

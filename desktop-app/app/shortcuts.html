@@ -96,7 +96,6 @@
         if (lo === 'escape') return 'Esc';
         if (lo === 'prtsc') return 'PrtSc';
         if (lo.startsWith('num')) return getNumPadName(k.slice(3));
-        console.log('k', k);
         return firstToUpperCase(k);
       }
       function mapAccelerator(acc) {

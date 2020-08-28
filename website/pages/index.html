@@ -554,6 +554,13 @@
       </div>
     </section>
 
+    <section>
+      <div class="justify-content-center text-center">
+        <h4 id="github-contributors__thanks"></h4>
+        <div id="github-contributors__users">
+        </div>
+      </div>
+    </section>
     <!--
       <section id="How-It-Works" class="bg-primary-3 text-light has-divider jarallax" data-jarallax data-speed="0.2">
         <img src="assets/img/desktop-app-3.jpg" alt="Image" class="jarallax-img opacity-20">
@@ -728,6 +735,11 @@
     <script type="text/javascript" src="assets/js/typed.min.js"></script>
     <!-- Required theme scripts (Do not remove) -->
     <script type="text/javascript" src="assets/js/theme.js"></script>
+    <!-- Loads github contributors -->
+    <script type="text/javascript" src="assets/js/custom.js"></script>
+    <script type="text/javascript">
+      window.custom.populateContributors();
+    </script>
     <!-- Removes page load animation when window is finished loading -->
     <script type="text/javascript">
       window.addEventListener("load", function() {

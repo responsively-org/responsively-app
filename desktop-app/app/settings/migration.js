@@ -4,6 +4,8 @@ import {
   USER_PREFERENCES,
   NETWORK_CONFIGURATION,
 } from '../constants/settingKeys';
+import {SCREENSHOT_MECHANISM} from '../constants/values';
+import {PERMISSION_MANAGEMENT_OPTIONS} from '../constants/permissionsManagement';
 
 export function migrateDeviceSchema() {
   if (settings.get('USER_PREFERENCES')) {
@@ -12,15 +14,18 @@ export function migrateDeviceSchema() {
   }
 
   _ensureDefaultNetworkConfig();
-  _handleScreenshotPreferences();
+  _handleScreenshotMechanismPreferences();
+  _handleScreenshotFixedElementsPreferences();
   _handleDeviceSchema();
+  _handlePermissionsDefaultPreferences();
 }
 
 function _ensureDefaultNetworkConfig() {
   const ntwrk = settings.get(NETWORK_CONFIGURATION) || {};
 
-  if (true || ntwrk.throttling == null || ntwrk.proxy == null) {
-    ntwrk.throttling = _getDefaultNetworkThrottlingProfiles();
+  if (ntwrk.throttling == null || ntwrk.proxy == null) {
+    ntwrk.throttling =
+      ntwrk.throttling || _getDefaultNetworkThrottlingProfiles();
     ntwrk.proxy = ntwrk.proxy || _getDefaultNetworkProxyProfile();
     settings.set(NETWORK_CONFIGURATION, ntwrk);
   }
@@ -80,7 +85,7 @@ const _handleDeviceSchema = () => {
   );
 };
 
-const _handleScreenshotPreferences = () => {
+const _handleScreenshotFixedElementsPreferences = () => {
   const userPreferences = settings.get(USER_PREFERENCES) || {};
 
   if (userPreferences.removeFixedPositionedElements != null) {
@@ -88,6 +93,32 @@ const _handleScreenshotPreferences = () => {
   }
 
   userPreferences.removeFixedPositionedElements = true;
+  settings.set(USER_PREFERENCES, userPreferences);
+};
+
+const _handleScreenshotMechanismPreferences = () => {
+  const userPreferences = settings.get(USER_PREFERENCES) || {};
+
+  if (userPreferences.screenshotMechanism != null) {
+    return;
+  }
+
+  userPreferences.screenshotMechanism = SCREENSHOT_MECHANISM.V2;
+  // If mechanism is not set previously and initialized to v2, then set removeFixedPositionedElements to false
+  // as that was mainly required for the v1 mechanism.
+  userPreferences.removeFixedPositionedElements = false;
+  settings.set(USER_PREFERENCES, userPreferences);
+};
+
+const _handlePermissionsDefaultPreferences = () => {
+  const userPreferences = settings.get(USER_PREFERENCES) || {};
+
+  if (userPreferences.permissionManagement != null) {
+    return;
+  }
+
+  userPreferences.permissionManagement =
+    PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS;
   settings.set(USER_PREFERENCES, userPreferences);
 };
 

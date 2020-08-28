@@ -47,10 +47,12 @@ import {
   watchFiles,
 } from './utils/browserSync';
 import {getHostFromURL} from './utils/urlUtils';
+import {getPermissionSettingPreference} from './utils/permissionUtils';
 import browserSync from 'browser-sync';
 import {captureOnSentry} from './utils/logUtils';
 import appMetadata from './services/db/appMetadata';
 import {convertToProxyConfig} from './utils/proxyUtils';
+import {PERMISSION_MANAGEMENT_OPTIONS} from './constants/permissionsManagement';
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -74,6 +76,7 @@ let devToolsView = null;
 let fileToOpen = null;
 
 const httpAuthCallbacks = {};
+const permissionCallbacks = {};
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -346,6 +349,98 @@ const createWindow = async () => {
       mainWindow.show();
     }
     onResize();
+  });
+
+  session.defaultSession.setPermissionRequestHandler(
+    (webContents, permission, callback, details) => {
+      const preferences = getPermissionSettingPreference();
+
+      const reqUrl = webContents.getURL();
+
+      if (permissionCallbacks[reqUrl] == null) permissionCallbacks[reqUrl] = {};
+
+      if (permissionCallbacks[reqUrl][permission] == null) {
+        permissionCallbacks[reqUrl][permission] = {
+          called: false,
+          allowed: null,
+          callbacks: [],
+        };
+      }
+
+      const entry = permissionCallbacks[reqUrl][permission];
+
+      if (preferences === PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS) {
+        entry.callbacks.forEach(callback => callback(true));
+        entry.callbacks = [];
+        entry.allowed = true;
+        entry.called = true;
+        return callback(true);
+      }
+      if (preferences === PERMISSION_MANAGEMENT_OPTIONS.DENY_ALWAYS) {
+        entry.callbacks.forEach(callback => callback(false));
+        entry.callbacks = [];
+        entry.allowed = false;
+        entry.called = true;
+        return callback(false);
+      }
+
+      if (entry.called) {
+        if (entry.allowed == null) return;
+        return callback(entry.allowed);
+      }
+
+      if (entry.callbacks.length === 0) {
+        entry.callbacks.push(callback);
+
+        mainWindow.webContents.send('permission-prompt', {
+          url: reqUrl,
+          permission,
+          details,
+        });
+      } else {
+        entry.callbacks.push(callback);
+      }
+    }
+  );
+
+  session.defaultSession.setPermissionCheckHandler(
+    (webContents, permission) => {
+      const reqUrl = webContents.getURL();
+
+      let entry = permissionCallbacks[reqUrl];
+      if (entry != null) entry = entry[permission];
+
+      if (entry == null || !entry.called) {
+        return null;
+      }
+
+      return entry.allowed;
+    }
+  );
+
+  ipcMain.on('permission-response', (evnt, ...args) => {
+    if (args[0] == null) return;
+    const {url, permission, allowed} = args[0];
+
+    let entry = permissionCallbacks[url];
+    if (entry != null) entry = entry[permission];
+
+    if (entry != null && !entry.called) {
+      entry.called = true;
+      entry.allowed = allowed;
+      if (allowed != null)
+        entry.callbacks.forEach(callback => callback(allowed));
+      entry.callbacks = [];
+    }
+  });
+
+  ipcMain.on('reset-ignored-permissions', evnt => {
+    Object.entries(permissionCallbacks).forEach(([_, permissions]) => {
+      Object.entries(permissions).forEach(([_, entry]) => {
+        if (entry.called && entry.allowed == null) entry.called = false;
+        entry.callbacks = [];
+      });
+    });
   });
 
   ipcMain.on('start-watching-file', async (event, fileInfo) => {

@@ -94,6 +94,10 @@ getPaths = () => {
       mrare: {
         all: "js/mrare/**/*.js",
         index: "js/mrare/index.js",
+      },
+      custom: {
+        all: "js/custom/**/*.js",
+        index: "js/custom/index.js",
       }
     },
     scss: {
@@ -305,6 +309,59 @@ gulp.task('mrarejs', async (done) => {
   done();
 });
 
+gulp.task('customjs', async (done) => {
+  gulp.src(paths.js.custom.all)
+    .pipe(eslint())
+    .pipe(eslint.format());
+
+  let fileDest = 'custom.js';
+  const banner = `/*!
+  * Copyright 2020 responsively.app
+  */`;
+  const external = [];
+  const plugins = [
+    rollupCommonjs(),
+    rollupResolve({
+      browser: true,
+    }),
+    rollupBabel(babelConfig),
+    rollupUglify({
+      output: {
+        comments: "/^!/"
+      }
+    }),
+  ];
+  const globals = {};
+
+  const bundle = await rollup.rollup({
+    input: paths.js.custom.index,
+    external,
+    plugins,
+    onwarn: function (warning) {
+      // Skip certain warnings
+      if (warning.code === 'THIS_IS_UNDEFINED') {
+        return;
+      }
+      // console.warn everything else
+      console.warn(warning.message);
+    }
+  });
+
+  await bundle.write({
+    file: path.resolve(__dirname, `./${paths.dist.js}${path.sep}${fileDest}`),
+    banner,
+    globals,
+    format: 'umd',
+    name: 'custom',
+    sourcemap: true,
+    sourcemapFile: path.resolve(__dirname, `./${paths.dist.js}${path.sep}${fileDest}.map`),
+  });
+  // Reload Browsersync clients
+  reload();
+  done();
+});
+
+
 // Assets
 gulp.task('copy-assets', function () {
   return gulp.src(paths.assets.all, {
@@ -379,6 +436,11 @@ gulp.task('watch', function (done) {
     cwd: './'
   }, gulp.series('mrarejs'));
 
+  // Rebuild custom js if files change
+  gulp.watch([paths.js.custom.all], {
+    cwd: './'
+  }, gulp.series('customjs'));
+
   // Rebuild mrare js if files change
   const assetsWatcher = gulp.watch([paths.assets.all, ...paths.assets.allFolders], {
     cwd: './'
@@ -399,6 +461,6 @@ gulp.task('watch', function (done) {
 
 });
 
-gulp.task('default', gulp.series('clean:dist', 'copy-assets', gulp.series('html', 'sass', 'sass-min', 'bootstrapjs', 'mrarejs'), gulp.series('serve', 'watch')));
+gulp.task('default', gulp.series('clean:dist', 'copy-assets', gulp.series('html', 'sass', 'sass-min', 'bootstrapjs', 'mrarejs', 'customjs'), gulp.series('serve', 'watch')));
 
-gulp.task('build', gulp.series('clean:dist', 'copy-assets', gulp.series('html-minify', 'sass', 'sass-min', 'bootstrapjs', 'mrarejs')));
+gulp.task('build', gulp.series('clean:dist', 'copy-assets', gulp.series('html-minify', 'sass', 'sass-min', 'bootstrapjs', 'mrarejs', 'customjs')));
