@@ -145,13 +145,13 @@ export default function UserPreference({
                       : SCREENSHOT_MECHANISM.V1
                   )
                 }
-                name="Use improved screenshot mechanism"
+                name="Use improved mechanism"
                 color="primary"
               />
             }
             label={
               <span className={cx(styles.preferenceName)}>
-                Use improved screenshot mechanism
+                Use improved mechanism
               </span>
             }
           />

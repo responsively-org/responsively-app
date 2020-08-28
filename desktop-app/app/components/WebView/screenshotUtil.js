@@ -130,7 +130,7 @@ class WebViewUtils {
       .catch(captureOnSentry);
   }
 
-  async scrollTo(scrollX: number, scrollY: number): Promise {
+  async scrollTo(scrollX: number, scrollY: number, doDelay = false): Promise {
     await this.webView
       .executeJavaScript(
         `
@@ -138,6 +138,9 @@ class WebViewUtils {
         `
       )
       .catch(captureOnSentry);
+    if (!doDelay) {
+      return;
+    }
     // wait a little for the scroll to take effect.
     await _delay(500);
   }
@@ -264,9 +267,9 @@ class WebViewUtils {
 
   async captureFullPageV2({dir, file}) {
     this.setWhiteBG();
+    const {previousScrollPosition} = await this.getWindowSizeAndScrollDetails();
     await this.doFullPageScrollToLoadLazyLoadedSections();
     const {
-      previousScrollPosition,
       scrollHeight,
       viewPortHeight,
       scrollWidth,
@@ -279,9 +282,12 @@ class WebViewUtils {
 
     const image = await this.takeSnapshot();
     this.resetBG();
-    this.scrollTo(previousScrollPosition.left, previousScrollPosition.top);
     this.setFullDocumentDimensions(null, null, null);
     await this.writeNativeImageToFile(image, dir, file);
+    await this.scrollTo(
+      previousScrollPosition.left,
+      previousScrollPosition.top
+    );
   }
 
   async getViewportImage({dir, file}): Promise {
@@ -323,7 +329,7 @@ class WebViewUtils {
         scrollX < scrollWidth;
         pageX++, scrollX = viewPortWidth * pageX
       ) {
-        await this.scrollTo(scrollX, scrollY);
+        await this.scrollTo(scrollX, scrollY, true);
 
         const options = {
           x: 0,
