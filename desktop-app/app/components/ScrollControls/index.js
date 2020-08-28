@@ -10,6 +10,7 @@ import DeviceRotateIcon from '../icons/DeviceRotate';
 import InspectElementIcon from '../icons/InspectElement';
 import MutedIcon from '../icons/Muted';
 import UnmutedIcon from '../icons/Unmuted';
+import UnplugIcon from '../icons/Unplug';
 
 import styles from './styles.module.css';
 import commonStyles from '../common.styles.css';
@@ -25,6 +26,7 @@ const ScrollControls = ({
   triggerScrollUp,
   screenshotAllDevices,
   flipOrientationAllDevices,
+  toggleEventMirroringAllDevices,
   toggleInspector,
   onAllDevicesMutedChange,
 }) => {
@@ -57,6 +59,13 @@ const ScrollControls = ({
           <Tooltip title="Take Screenshot">
             <div onClick={screenshotAllDevices}>
               <ScreenshotIcon {...iconProps} />
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+          <Tooltip title="Disable event mirroring">
+            <div onClick={toggleEventMirroringAllDevices}>
+              <UnplugIcon {...iconProps} />
             </div>
           </Tooltip>
         </Grid>

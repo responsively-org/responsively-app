@@ -20,6 +20,7 @@ import {
   NAVIGATION_FORWARD,
   NAVIGATION_RELOAD,
   SCREENSHOT_ALL_DEVICES,
+  TOGGLE_EVENT_MIRRORING_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
   TOGGLE_DEVICE_MUTED_STATE,
   RELOAD_CSS,
@@ -115,6 +116,11 @@ class WebView extends Component {
     this.subscriptions.push(
       pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
     );
+
+    this.subscriptions.push(
+      pubsub.subscribe(TOGGLE_EVENT_MIRRORING_ALL_DEVICES, this._unPlug)
+    );
+
     this.subscriptions.push(
       pubsub.subscribe(ADDRESS_CHANGE, this.processAddressChangeEvent)
     );

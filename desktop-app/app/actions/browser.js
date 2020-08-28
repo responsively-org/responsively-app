@@ -9,6 +9,7 @@ import {
   NAVIGATION_FORWARD,
   NAVIGATION_RELOAD,
   SCREENSHOT_ALL_DEVICES,
+  TOGGLE_EVENT_MIRRORING_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
   TOGGLE_DEVICE_MUTED_STATE,
   RELOAD_CSS,
@@ -669,6 +670,12 @@ export function triggerScrollDown() {
 export function screenshotAllDevices() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(SCREENSHOT_ALL_DEVICES, [{now: new Date()}]);
+  };
+}
+
+export function toggleEventMirroringAllDevices() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(TOGGLE_EVENT_MIRRORING_ALL_DEVICES, [{now: new Date()}]);
   };
 }
 
