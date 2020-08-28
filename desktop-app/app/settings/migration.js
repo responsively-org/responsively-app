@@ -9,8 +9,8 @@ export function migrateDeviceSchema() {
     settings.delete('USER_PREFERENCES');
   }
 
-  _handleScreenshotFixedElementsPreferences();
   _handleScreenshotMechanismPreferences();
+  _handleScreenshotFixedElementsPreferences();
   _handleDeviceSchema();
   _handlePermissionsDefaultPreferences();
 }
@@ -45,6 +45,9 @@ const _handleScreenshotMechanismPreferences = () => {
   }
 
   userPreferences.screenshotMechanism = SCREENSHOT_MECHANISM.V2;
+  // If mechanism is not set previously and initialized to v2, then set removeFixedPositionedElements to false
+  // as that was mainly required for the v1 mechanism.
+  userPreferences.removeFixedPositionedElements = false;
   settings.set(USER_PREFERENCES, userPreferences);
 };
 
