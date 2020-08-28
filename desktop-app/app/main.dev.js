@@ -20,6 +20,7 @@ import electron, {
   webContents,
   shell,
   dialog,
+  session,
 } from 'electron';
 import settings from 'electron-settings';
 import log from 'electron-log';
@@ -30,7 +31,7 @@ import installExtension, {
 } from 'electron-devtools-installer';
 import fs from 'fs';
 import MenuBuilder from './menu';
-import {USER_PREFERENCES} from './constants/settingKeys';
+import {USER_PREFERENCES, NETWORK_CONFIGURATION} from './constants/settingKeys';
 import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
@@ -49,6 +50,7 @@ import {getHostFromURL} from './utils/urlUtils';
 import browserSync from 'browser-sync';
 import {captureOnSentry} from './utils/logUtils';
 import appMetadata from './services/db/appMetadata';
+import {convertToProxyConfig} from './utils/proxyUtils';
 
 const path = require('path');
 const chokidar = require('chokidar');
@@ -96,6 +98,13 @@ const openWithHandler = filePath => {
     return true;
   }
   return false;
+};
+
+const setProxyOnStart = () => {
+  const proxyConfig = (settings.get(NETWORK_CONFIGURATION) || {}).proxy;
+  if (proxyConfig != null && proxyConfig.active) {
+    session.defaultSession.setProxy(convertToProxyConfig(proxyConfig));
+  }
 };
 
 /**
@@ -175,11 +184,30 @@ app.on(
 app.on('login', (event, webContents, request, authInfo, callback) => {
   event.preventDefault();
   const {url} = request;
-  if (httpAuthCallbacks[url]) {
-    return httpAuthCallbacks[url].push(callback);
+  if (authInfo.isProxy) {
+    const proxyConfig = (settings.get(NETWORK_CONFIGURATION) || {}).proxy;
+    if (proxyConfig != null && proxyConfig.active) {
+      const schConfig =
+        proxyConfig[url.substr(0, url.indexOf(':')).toLowerCase()];
+      if (schConfig != null && !schConfig.useDefault) {
+        callback(schConfig.user, schConfig.password);
+      } else {
+        callback(proxyConfig.default.user, proxyConfig.default.password);
+      }
+    }
+  } else {
+    if (httpAuthCallbacks[url]) {
+      return httpAuthCallbacks[url].push(callback);
+    }
+    httpAuthCallbacks[url] = [callback];
+    mainWindow.webContents.send('http-auth-prompt', {url});
   }
-  httpAuthCallbacks[url] = [callback];
-  mainWindow.webContents.send('http-auth-prompt', {url});
+});
+
+ipcMain.on('set-proxy-profile', async (_, proxyProfile) => {
+  if (proxyProfile == null || proxyProfile.length === 0) return;
+  await session.defaultSession.clearAuthCache();
+  await session.defaultSession.setProxy(proxyProfile);
 });
 
 app.on('activate', async (event, hasVisibleWindows) => {
@@ -244,6 +272,7 @@ const openFile = filePath => {
 const createWindow = async () => {
   appMetadata.incrementOpenCount();
   hasActiveWindow = true;
+  setProxyOnStart();
 
   if (process.env.NODE_ENV === 'development') {
     await installExtensions();

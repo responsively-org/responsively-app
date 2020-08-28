@@ -29,6 +29,8 @@ import {
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
   SAVE_THROTTLING_PROFILES,
+  CHANGE_PROXY_PROFILE,
+  TOGGLE_USE_PROXY,
 } from '../actions/networkConfig';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
@@ -134,9 +136,27 @@ type NetworkThrottlingProfileType = {
   active: boolean,
 };
 
+type ProxyRuleType = {
+  protocol: 'direct' | 'http' | 'https' | 'socks4' | 'socks5',
+  server: string,
+  port: number,
+  user: string,
+  password: string,
+  useDefault: boolean,
+};
+
+type NetworkProxyProfileType = {
+  active: boolean,
+  default: ProxyRuleType,
+  http: ProxyRuleType,
+  https: ProxyRuleType,
+  ftp: ProxyRuleType,
+  bypassList: string[],
+};
+
 type NetworkConfigurationType = {
   throttling: NetworkThrottlingProfileType[],
-  // proxy: NetworkProxyProfileType[],
+  proxy: NetworkProxyProfileType,
 };
 
 export type BrowserStateType = {
@@ -259,49 +279,8 @@ function _getHomepage() {
   return homepage;
 }
 
-function getDefaultNetworkThrottlingProfiles(): NetworkThrottlingProfileType[] {
-  return [
-    {
-      type: 'Online',
-      title: 'Online',
-      active: true,
-    },
-    {
-      type: 'Offline',
-      title: 'Offline',
-      downloadKps: 0,
-      uploadKps: 0,
-      latencyMs: 0,
-    },
-    // https://github.com/ChromeDevTools/devtools-frontend/blob/4f404fa8beab837367e49f68e29da427361b1f81/front_end/sdk/NetworkManager.js#L251-L265
-    {
-      type: 'Preset',
-      title: 'Slow 3G',
-      downloadKps: 400,
-      uploadKps: 400,
-      latencyMs: 2000,
-    },
-    {
-      type: 'Preset',
-      title: 'Fast 3G',
-      downloadKps: 1475,
-      uploadKps: 675,
-      latencyMs: 563,
-    },
-  ];
-}
-
 function _getNetworkConfiguration(): NetworkConfigurationType {
-  const ntwrk: NetworkConfigurationType =
-    settings.get(NETWORK_CONFIGURATION) || {};
-
-  if (ntwrk.throttling == null)
-    ntwrk.throttling = getDefaultNetworkThrottlingProfiles();
-
-  // if (ntwrk.proxy == null)
-  //   ntwrk.proxy = getDefaultNetworkProxyProfiles();
-
-  return ntwrk;
+  return settings.get(NETWORK_CONFIGURATION) || {};
 }
 
 function _setNetworkConfiguration(
@@ -498,6 +477,32 @@ export default function browser(
         networkConfiguration: {
           ...state.networkConfiguration,
           throttling: action.profiles,
+        },
+      };
+    case TOGGLE_USE_PROXY:
+      const proxy = state.networkConfiguration.proxy;
+      proxy.active = !!action.useProxy;
+      _setNetworkConfiguration({
+        ...state.networkConfiguration,
+        proxy,
+      });
+      return {
+        ...state,
+        networkConfiguration: {
+          ...state.networkConfiguration,
+          proxy: {...proxy},
+        },
+      };
+    case CHANGE_PROXY_PROFILE:
+      _setNetworkConfiguration({
+        ...state.networkConfiguration,
+        proxy: action.profile,
+      });
+      return {
+        ...state,
+        networkConfiguration: {
+          ...state.networkConfiguration,
+          proxy: action.profile,
         },
       };
     default:
