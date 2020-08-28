@@ -69,5 +69,8 @@ export function notifyPermissionPreferenceChanged(newPreference) {
 }
 
 export function getPermissionSettingPreference() {
-  return settings.get(USER_PREFERENCES)?.permissionManagement || PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS;
+  return (
+    settings.get(USER_PREFERENCES)?.permissionManagement ||
+    PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS
+  );
 }

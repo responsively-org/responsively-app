@@ -116,6 +116,7 @@ type UserPreferenceType = {
   deviceOutlineStyle: string,
   zoomLevel: number,
   removeFixedPositionedElements: boolean,
+  screenshotMechanism: string,
   permissionManagement: 'Ask always' | 'Allow always' | 'Deny always',
 };
 
@@ -193,9 +194,7 @@ function _getActiveDevices() {
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  return (
-    settings.get(USER_PREFERENCES) || {removeFixedPositionedElements: true}
-  );
+  return settings.get(USER_PREFERENCES);
 }
 
 function _setUserPreferences(userPreferences) {

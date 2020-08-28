@@ -8,13 +8,17 @@ import {promisify} from 'util';
 import Promise from 'bluebird';
 import path from 'path';
 import fs from 'fs-extra';
+import Jimp from 'jimp';
 import PromiseWorker from 'promise-worker';
 import NotificationMessage from '../NotificationMessage';
 import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 import {type Device} from '../../constants/devices';
 import {captureOnSentry} from '../../utils/logUtils';
+import {SCREENSHOT_MECHANISM} from '../../constants/values';
+import mutexify from 'mutexify/promise';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
+const snapshotLock = mutexify();
 
 const captureScreenshot = async ({
   address,
@@ -24,14 +28,8 @@ const captureScreenshot = async ({
   now,
   fullScreen = false,
   removeFixedPositionedElements,
-}: {
-  address: string,
-  device: Device,
-  webView: WebviewElement,
-  createSeparateDir: boolean,
-  now?: Date,
-  fullScreen: boolean,
-  removeFixedPositionedElements: boolean,
+  screenshotMechanism,
+  setFullDocumentDimensions,
 }) => {
   const worker = new Worker('./imageWorker.js');
   const promiseWorker = new PromiseWorker(worker);
@@ -42,30 +40,6 @@ const captureScreenshot = async ({
     />,
     {autoClose: false}
   );
-  const webViewUtils = new WebViewUtils(webView);
-  const insertedCSSKey = await webViewUtils.hideScrollbarAndFixedPositionedElements(
-    removeFixedPositionedElements
-  );
-
-  const images = fullScreen
-    ? await webViewUtils.getFullScreenImages(promiseWorker)
-    : [await webViewUtils.getViewportImage(promiseWorker)];
-
-  await webViewUtils.unHideScrollbarAndFixedPositionedElements(
-    insertedCSSKey,
-    removeFixedPositionedElements
-  );
-
-  toast.update(toastId, {
-    render: (
-      <NotificationMessage
-        spinner
-        message={`Processing ${device.name} screenshot...`}
-      />
-    ),
-    type: toast.TYPE.INFO,
-  });
-
   const resultFilename = _getScreenshotFileName(
     address,
     device,
@@ -73,12 +47,43 @@ const captureScreenshot = async ({
     createSeparateDir,
     fullScreen
   );
+  const webViewUtils = new WebViewUtils(webView, setFullDocumentDimensions);
+  const insertedCSSKey = await webViewUtils.hideScrollbarAndFixedPositionedElements(
+    removeFixedPositionedElements
+  );
 
-  const mergedImage = await promiseWorker.postMessage({
-    images,
-    direction: 'vertical',
-    resultFilename,
-  });
+  let images = null;
+
+  if (!fullScreen) {
+    await webViewUtils.getViewportImage(resultFilename);
+  } else if (screenshotMechanism === SCREENSHOT_MECHANISM.V2) {
+    await webViewUtils.captureFullPageV2(resultFilename);
+  } else {
+    images = await webViewUtils.getFullScreenImages(promiseWorker);
+  }
+
+  await webViewUtils.unHideScrollbarAndFixedPositionedElements(
+    insertedCSSKey,
+    removeFixedPositionedElements
+  );
+
+  if (images != null) {
+    toast.update(toastId, {
+      render: (
+        <NotificationMessage
+          spinner
+          message={`Processing ${device.name} screenshot...`}
+        />
+      ),
+      type: toast.TYPE.INFO,
+    });
+
+    const mergedImage = await promiseWorker.postMessage({
+      images,
+      direction: 'vertical',
+      resultFilename,
+    });
+  }
 
   toast.update(toastId, {
     render: (
@@ -94,9 +99,15 @@ const captureScreenshot = async ({
 
 class WebViewUtils {
   webView: WebviewElement;
+  webContents;
+  setFullDocumentDimensions;
 
-  constructor(webView) {
+  constructor(webView, setFullDocumentDimensions) {
     this.webView = webView;
+    this.webContents = remote.webContents.fromId(
+      this.webView.getWebContentsId()
+    );
+    this.setFullDocumentDimensions = setFullDocumentDimensions;
   }
 
   getWindowSizeAndScrollDetails(): Promise {
@@ -119,7 +130,7 @@ class WebViewUtils {
       .catch(captureOnSentry);
   }
 
-  async scrollTo(scrollX: number, scrollY: number): Promise {
+  async scrollTo(scrollX: number, scrollY: number, doDelay = false): Promise {
     await this.webView
       .executeJavaScript(
         `
@@ -127,6 +138,9 @@ class WebViewUtils {
         `
       )
       .catch(captureOnSentry);
+    if (!doDelay) {
+      return;
+    }
     // wait a little for the scroll to take effect.
     await _delay(500);
   }
@@ -178,7 +192,138 @@ class WebViewUtils {
     return Promise.resolve(true);
   }
 
+  async getScrollPercent(): Promise<Number> {
+    return this.webContents.executeJavaScriptInIsolatedWorld(
+      Math.round(Math.random() * 1000),
+      [
+        {
+          code: `
+          var h = document.documentElement,
+          b = document.body,
+          st = 'scrollTop',
+          sh = 'scrollHeight';
+          ((h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight)) * 100;
+        `,
+        },
+      ]
+    );
+  }
+
+  async scrollViewPort(): Promise {
+    return this.webContents.executeJavaScriptInIsolatedWorld(
+      Math.round(Math.random() * 1000),
+      [
+        {
+          code: `
+            scrollBy(0, window.innerHeight);
+            true
+          `,
+        },
+      ]
+    );
+  }
+
+  async setWhiteBG() {
+    const isTransparentBG = this.webContents.executeJavaScriptInIsolatedWorld(
+      Math.round(Math.random() * 1000),
+      [
+        {
+          code: `
+          const transparentBGStyle = 'rgba(0, 0, 0, 0)';
+          const styles = window.getComputedStyle(document.getElementsByTagName('body')[0])
+          styles.background.indexOf(transparentBGStyle) !== -1 || styles.backgroundColor.indexOf(transparentBGStyle) !== -1
+        `,
+        },
+      ]
+    );
+    if (!isTransparentBG) {
+      return;
+    }
+    this.bgModKey = await this.webView.insertCSS(`
+      body {
+        background-color: white;
+      }
+    `);
+  }
+
+  async setScrollBehaviorToAuto() {
+    this.scrollModKey = await this.webView.insertCSS(`
+      html, body {
+        scroll-behavior: auto !important;
+      }
+    `);
+  }
+
+  async resetScrollBehavior() {
+    if (!this.scrollModKey) {
+      return;
+    }
+    await this.webView.removeInsertedCSS(this.scrollModKey);
+    this.scrollModKey = null;
+  }
+
+  async resetBG() {
+    if (!this.bgModKey) {
+      return;
+    }
+    await this.webView.removeInsertedCSS(this.bgModKey);
+    this.bgModKey = null;
+  }
+
+  async doFullPageScrollToLoadLazyLoadedSections(): Promise {
+    const {scrollHeight: before} = await this.getWindowSizeAndScrollDetails();
+    let scrollPercent = await this.getScrollPercent();
+    while (scrollPercent !== 100 && !Number.isNaN(scrollPercent)) {
+      await this.scrollViewPort();
+      await _delay(100);
+      scrollPercent = await this.getScrollPercent();
+    }
+    const {scrollHeight: after} = await this.getWindowSizeAndScrollDetails();
+  }
+
+  async captureFullPageV2({dir, file}) {
+    this.setWhiteBG();
+    this.setScrollBehaviorToAuto();
+    const {previousScrollPosition} = await this.getWindowSizeAndScrollDetails();
+    await this.doFullPageScrollToLoadLazyLoadedSections();
+    const {
+      scrollHeight,
+      viewPortHeight,
+      scrollWidth,
+      viewPortWidth,
+    } = await this.getWindowSizeAndScrollDetails();
+
+    this.setFullDocumentDimensions(scrollHeight, scrollWidth, 0.01);
+
+    await _delay(500);
+
+    const image = await this.takeSnapshot();
+    this.resetBG();
+    this.resetScrollBehavior();
+    this.setFullDocumentDimensions(null, null, null);
+    await this.writeNativeImageToFile(image, dir, file);
+    await this.scrollTo(
+      previousScrollPosition.left,
+      previousScrollPosition.top
+    );
+  }
+
+  async getViewportImage({dir, file}): Promise {
+    await this.setWhiteBG();
+    const image = await this.takeSnapshot();
+    this.resetBG();
+    await this.writeNativeImageToFile(image, dir, file);
+  }
+
+  async writeNativeImageToFile(image, dir, file) {
+    const ensureDirPromise = fs.ensureDir(dir);
+    const jpg = image.toJPEG(100);
+    await ensureDirPromise;
+    await fs.writeFile(path.join(dir, file), jpg);
+  }
+
   async getFullScreenImages(promiseWorker: PromiseWorker): Promise {
+    this.setWhiteBG();
     const {
       previousScrollPosition,
       scrollHeight,
@@ -202,7 +347,7 @@ class WebViewUtils {
         scrollX < scrollWidth;
         pageX++, scrollX = viewPortWidth * pageX
       ) {
-        await this.scrollTo(scrollX, scrollY);
+        await this.scrollTo(scrollX, scrollY, true);
 
         const options = {
           x: 0,
@@ -221,40 +366,30 @@ class WebViewUtils {
         const image = await this.takeSnapshot(options);
         columnImages.push(image);
       }
-      const pngs = columnImages.map(img => img.toPNG());
+      const jpgs = columnImages.map(img => img.toJPEG(100));
       images.push(
         await promiseWorker.postMessage(
           {
-            images: pngs,
+            images: jpgs,
             direction: 'horizontal',
           },
-          [...pngs]
+          [...jpgs]
         )
       );
     }
 
     this.scrollTo(previousScrollPosition.left, previousScrollPosition.top);
-
+    this.resetBG();
     return images;
   }
 
-  async getViewportImage(promiseWorker: PromiseWorker): Promise {
-    const image = await this.takeSnapshot();
-    const png = image.toPNG();
-
-    return promiseWorker.postMessage(
-      {
-        images: [png],
-        direction: 'horizontal',
-      },
-      [png]
-    );
-  }
-
-  takeSnapshot(options): Promise {
-    return remote.webContents
+  async takeSnapshot(options): Promise {
+    const release = await snapshotLock();
+    const image = await remote.webContents
       .fromId(this.webView.getWebContentsId())
       .capturePage(options);
+    release();
+    return image;
   }
 }
 
@@ -268,7 +403,8 @@ function _getScreenshotFileName(
   device,
   now = new Date(),
   createSeparateDir,
-  fullScreen
+  fullScreen,
+  format = 'jpg'
 ) {
   const dateString = `${now
     .toLocaleDateString()
@@ -288,7 +424,7 @@ function _getScreenshotFileName(
     ),
     file: `${getWebsiteName(address)} ${
       fullScreen ? '- Full ' : ''
-    }- ${device.name.replace(/\//g, '-')} - ${dateString}.png`,
+    }- ${device.name.replace(/\//g, '-')} - ${dateString}.${format}`,
   };
 }
 
