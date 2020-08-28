@@ -973,7 +973,8 @@ class WebView extends Component {
         <div
           className={cx(styles.deviceContainer)}
           style={{
-            width: deviceStyles.width,
+            width: deviceStyles.width * zoomLevel,
+            height: deviceStyles.height * zoomLevel,
           }}
           onMouseEnter={this._onMouseEnter}
           onMouseLeave={this._onMouseLeave}
