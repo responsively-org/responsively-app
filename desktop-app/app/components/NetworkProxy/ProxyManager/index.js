@@ -105,6 +105,7 @@ export default function ProxyManager({proxy, onSave}) {
   const [errors, setErrors] = useState([]);
 
   const changeValue = (scheme, prop, value) => {
+    if (profile[scheme].useDefault && prop !== 'protocol') return;
     if (prop === 'useDefault' && value === true) {
       profile[scheme] = getEmptyProxySchemeConfig(true);
     }
