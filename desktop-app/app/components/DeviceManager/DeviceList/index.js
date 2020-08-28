@@ -59,6 +59,7 @@ export default function DeviceList({
                   endAdornment: (
                     <InputAdornment>
                       <IconButton
+                        className={styles.searchActiveIcon}
                         onClick={() => {
                           setSearchOpen(false);
                           setSearchText('');

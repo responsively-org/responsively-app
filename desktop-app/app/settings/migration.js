@@ -1,6 +1,7 @@
 import settings from 'electron-settings';
 import {ACTIVE_DEVICES, USER_PREFERENCES} from '../constants/settingKeys';
 import {SCREENSHOT_MECHANISM} from '../constants/values';
+import {PERMISSION_MANAGEMENT_OPTIONS} from '../constants/permissionsManagement';
 
 export function migrateDeviceSchema() {
   if (settings.get('USER_PREFERENCES')) {
@@ -11,6 +12,7 @@ export function migrateDeviceSchema() {
   _handleScreenshotFixedElementsPreferences();
   _handleScreenshotMechanismPreferences();
   _handleDeviceSchema();
+  _handlePermissionsDefaultPreferences();
 }
 
 const _handleDeviceSchema = () => {
@@ -43,6 +45,18 @@ const _handleScreenshotMechanismPreferences = () => {
   }
 
   userPreferences.screenshotMechanism = SCREENSHOT_MECHANISM.V2;
+  settings.set(USER_PREFERENCES, userPreferences);
+};
+
+const _handlePermissionsDefaultPreferences = () => {
+  const userPreferences = settings.get(USER_PREFERENCES) || {};
+
+  if (userPreferences.permissionManagement != null) {
+    return;
+  }
+
+  userPreferences.permissionManagement =
+    PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS;
   settings.set(USER_PREFERENCES, userPreferences);
 };
 
