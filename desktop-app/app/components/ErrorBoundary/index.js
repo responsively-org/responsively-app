@@ -1,5 +1,16 @@
 import React, {Fragment} from 'react';
 import TextBoxWithCopyButton from '../../utils/TextBoxWithCopyButton';
+import Button from '@material-ui/core/Button';
+
+const {openNewGitHubIssue} = require('electron-util');
+
+const createIssue = () => {
+  openNewGitHubIssue({
+    user: 'responsively-org',
+    repo: 'responsively-app',
+    body: '',
+  });
+};
 
 export default class ErrorBoundary extends React.Component {
   static getDerivedStateFromError(error) {
@@ -40,9 +51,9 @@ export default class ErrorBoundary extends React.Component {
           </p>
           <p style={{textAlign: 'center'}}>
             Please copy the contents in the above box and create an issue in the
-            github repo:
-            https://github.com/responsively-org/responsively-app/issues
+            github repo
           </p>
+          <Button onClick={createIssue}>open github issue</Button>
         </Fragment>
       );
     }
