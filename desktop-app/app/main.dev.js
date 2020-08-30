@@ -55,7 +55,6 @@ import {PERMISSION_MANAGEMENT_OPTIONS} from './constants/permissionsManagement';
 import {endSession, startSession} from './utils/analytics';
 
 const path = require('path');
-const chokidar = require('chokidar');
 const URL = require('url').URL;
 
 migrateDeviceSchema();
