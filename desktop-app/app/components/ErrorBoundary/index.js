@@ -1,14 +1,25 @@
 import React, {Fragment} from 'react';
-import TextBoxWithCopyButton from '../../utils/TextBoxWithCopyButton';
+import TextAreaWithCopyButton from '../../utils/TextAreaWithCopyButton';
 import Button from '@material-ui/core/Button';
 
 const {openNewGitHubIssue} = require('electron-util');
+
+const reportBody = `Hi I'm reporting an app crash:
+<details>
+  <summary>Environment</summary>
+</details>
+<details>
+  <summary>Error Info</summary>
+</details>
+<details>
+  <summary>Stack Trace</summary>
+</details>`;
 
 const createIssue = () => {
   openNewGitHubIssue({
     user: 'responsively-org',
     repo: 'responsively-app',
-    body: '',
+    body: reportBody,
   });
 };
 
@@ -43,17 +54,19 @@ export default class ErrorBoundary extends React.Component {
           <h1 style={{textAlign: 'center', marginTop: 100}}>
             App has crashed!
           </h1>
-          <p style={{textAlign: 'center'}}>
-            Stack Trace: <TextBoxWithCopyButton text={this.state.error} />
-          </p>
-          <p style={{textAlign: 'center'}}>
-            Error Info: <TextBoxWithCopyButton text={this.state.errorInfo} />
-          </p>
+          <div style={{display: 'flex', justifyContent: 'center'}}>
+            <p style={{textAlign: 'center', margin: 40}}>
+              Stack Trace: <TextAreaWithCopyButton text={this.state.error} />
+            </p>
+            <p style={{textAlign: 'center', margin: 40}}>
+              Error Info: <TextAreaWithCopyButton text={this.state.errorInfo} />
+            </p>
+          </div>
           <p style={{textAlign: 'center'}}>
             Please copy the contents in the above box and create an issue in the
             github repo
           </p>
-          <Button onClick={createIssue}>open github issue</Button>
+          <Button onClick={createIssue}>create issue</Button>
         </Fragment>
       );
     }
