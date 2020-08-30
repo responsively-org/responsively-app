@@ -30,7 +30,12 @@ export default class ErrorBoundary extends React.Component {
           </h1>
           <div style={{display: 'flex', justifyContent: 'center'}}>
             <pre
-              style={{overflow: 'scroll', background: '#6d6d6d', width: '80%'}}
+              style={{
+                overflow: 'scroll',
+                background: '#6d6d6d',
+                width: '80%',
+                userSelect: 'text',
+              }}
             >
               {JSON.stringify(this.state, null, 2)}
             </pre>
