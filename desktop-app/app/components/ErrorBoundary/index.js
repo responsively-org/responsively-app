@@ -19,7 +19,7 @@ const styles = {
     justifyContent: 'center',
   },
   errorContainer: {
-    textAlign: 'left',
+    textAlign: 'center',
     justifyContent: 'center',
     margin: '3rem 6rem',
     width: '30vw',
