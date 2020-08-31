@@ -2,14 +2,11 @@ import React, {useState} from 'react';
 import cx from 'classnames';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import styles from './styles.css';
 import TextField from '@material-ui/core/TextField';
 import NumberFormat from 'react-number-format';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Select from 'react-select';
-import commonStyles from '../../common.styles.css';
 import {
-  validateProxyConfig,
   getEmptyProxySchemeConfig,
 } from '../../../utils/proxyUtils';
 import {isNullOrWhiteSpaces} from '../../../utils/stringUtils';
@@ -21,8 +18,9 @@ import IconButton from '@material-ui/core/IconButton';
 import {shell} from 'electron';
 import Link from '@material-ui/core/Link';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import {makeStyles} from '@material-ui/core/styles';
 
-const selectStyles = {
+const selectStylesObj = {
   control: selectStyles => ({
     ...selectStyles,
     backgroundColor: '#00000000',
@@ -30,9 +28,8 @@ const selectStyles = {
     height: '37px',
     borderColor: '#ffffff3b',
   }),
-  option: (selectStyles, {data, isDisabled, isFocused, isSelected}) => {
-    const color = 'white';
-    return {
+  option: (selectStyles, {data, isDisabled, isFocused, isSelected}) => (
+     {
       ...selectStyles,
       backgroundColor: isDisabled
         ? null
@@ -47,8 +44,8 @@ const selectStyles = {
         ...selectStyles[':active'],
         backgroundColor: !isDisabled && '#ffffff40',
       },
-    };
-  },
+    }
+  ),
   input: selectStyles => ({...selectStyles}),
   placeholder: selectStyles => ({...selectStyles}),
   singleValue: (selectStyles, {data}) => ({...selectStyles, color: 'white'}),
@@ -73,7 +70,7 @@ function ProtocolSelector({value, onChange, allowUseDefault = false}) {
       options={opts}
       value={opts.find(x => x.value === value) || opts[0]}
       onChange={onChange}
-      styles={selectStyles}
+      styles={selectStylesObj}
     />
   );
 }
@@ -99,10 +96,61 @@ function NumberFormatCustom(props) {
   );
 }
 
+const useStyles = makeStyles(theme => ({
+  proxyManagerContainer:  {
+    minHeight: '600px',
+    padding: '20px 0',
+  },
+  saveButton: {
+    position: 'absolute',
+    bottom: '25px',
+    right: '25px'
+  },
+  numericField: {
+    '& *': {
+      fontSize: '14px'
+    }
+  },
+  numericFieldDisabled: {
+    '& fieldset': {
+      border: '0'
+    },
+    '& input': {
+      color: 'white'
+    }
+  },
+  titleField: {
+    '& *': {
+      fontSize: '14px'
+    }
+  },
+  removeMarginTop: {
+    marginTop: 0
+  },
+  removeMarginBottom: {
+    marginBottom: 0
+  },
+  wilcardsAndMoreLink: {
+    color: 'white',
+    textDecoration: 'underline'
+  },
+  bypassListField:  {
+    marginTop: '18px',
+    width: '50%',
+  },
+  bypassListFieldTextArea:{
+     '& *': {
+    fontFamily: "'Consolas', 'Courier New', monospace",
+    whiteSpace: 'pre',
+    fontSize: '14px'
+     }
+  }
+}));
+
 export default function ProxyManager({proxy, onSave}) {
   const [profile, setProfile] = useState(cloneDeep(proxy));
   const [visiblePasswords, setVisiblePasswords] = useState({});
-  const [errors, setErrors] = useState([]);
+  const classes = useStyles();
 
   const changeValue = (scheme, prop, value) => {
     if (profile[scheme].useDefault && prop !== 'protocol') return;
@@ -133,7 +181,7 @@ export default function ProxyManager({proxy, onSave}) {
 
   const getDisplayValue = (scheme, prop) => {
     if (scheme === 'default') return profile.default[prop] || '';
-    else if (profile[scheme].useDefault) return profile.default[prop] || '';
+    if (profile[scheme].useDefault) return profile.default[prop] || '';
     return profile[scheme][prop] || '';
   };
 
@@ -159,14 +207,14 @@ export default function ProxyManager({proxy, onSave}) {
     setProfile({...profile});
   };
 
-  const isTextFieldDisabled = scheme => {
-    return (
+  const isTextFieldDisabled = scheme =>
+    (
       !!profile[scheme].useDefault || profile[scheme].protocol === 'direct'
     );
-  };
+
   return (
-    <div className={cx(styles.proxyManagerContainer)}>
-      <h3 className={styles.removeMarginTop}>Proxy Servers</h3>
+    <div className={cx(classes.proxyManagerContainer)}>
+      <h3 className={classes.removeMarginTop}>Proxy Servers</h3>
       <Grid container spacing={1}>
         <Grid container item xs={12} spacing={1}>
           <Grid item xs={1}>
@@ -214,7 +262,7 @@ export default function ProxyManager({proxy, onSave}) {
                 value={getDisplayValue(scheme, 'server')}
                 fullWidth
                 variant="outlined"
-                className={cx(styles.titleField)}
+                className={cx(classes.titleField)}
                 onChange={e => {
                   changeValue(scheme, 'server', e.target.value);
                 }}
@@ -228,7 +276,7 @@ export default function ProxyManager({proxy, onSave}) {
             </Grid>
             <Grid item xs={1}>
               <TextField
-                className={cx(styles.numericField)}
+                className={cx(classes.numericField)}
                 value={getDisplayValue(scheme, 'port')}
                 onChange={e => {
                   changeValue(scheme, 'port', e.target.value);
@@ -246,7 +294,7 @@ export default function ProxyManager({proxy, onSave}) {
                 value={getDisplayValue(scheme, 'user')}
                 fullWidth
                 variant="outlined"
-                className={cx(styles.titleField)}
+                className={cx(classes.titleField)}
                 onChange={e => {
                   changeValue(scheme, 'user', e.target.value);
                 }}
@@ -259,7 +307,7 @@ export default function ProxyManager({proxy, onSave}) {
                 value={getDisplayValue(scheme, 'password')}
                 fullWidth
                 variant="outlined"
-                className={cx(styles.titleField)}
+                className={cx(classes.titleField)}
                 onChange={e => {
                   changeValue(scheme, 'password', e.target.value);
                 }}
@@ -286,19 +334,19 @@ export default function ProxyManager({proxy, onSave}) {
           </Grid>
         ))}
       </Grid>
-      <h3 className={styles.removeMarginBottom}>Bypass List</h3>
+      <h3 className={classes.removeMarginBottom}>Bypass List</h3>
       <small>
         Servers for which you do not want to use any proxy: (One server on each
         line.){' '}
         <Link
-          className={styles.wilcardsAndMoreLink}
+          className={classes.wilcardsAndMoreLink}
           href="#"
           onClick={onMoreInfo}
         >
           Wilcards and more available <OpenInNewIcon fontSize="inherit" />
         </Link>
       </small>
-      <div className={cx(styles.bypassListField)}>
+      <div className={cx(classes.bypassListField)}>
         <TextField
           value={(profile.bypassList || []).join('\n')}
           rows={9}
@@ -307,7 +355,7 @@ export default function ProxyManager({proxy, onSave}) {
           onChange={changeBypassList}
           multiline
           fullWidth
-          className={styles.bypassListFieldTextArea}
+          className={classes.bypassListFieldTextArea}
         />
       </div>
       <Button
@@ -317,7 +365,7 @@ export default function ProxyManager({proxy, onSave}) {
         component="span"
         onClick={onSaveClicked}
         size="large"
-        className={cx(styles.saveButton)}
+        className={cx(classes.saveButton)}
         disabled={schemes.some(
           scheme =>
             !profile[scheme].useDefault &&

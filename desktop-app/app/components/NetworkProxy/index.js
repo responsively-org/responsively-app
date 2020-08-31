@@ -3,13 +3,11 @@ import cx from 'classnames';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import ProxyManager from './ProxyManager';
 import commonStyles from '../common.styles.css';
-import styles from './styles.css';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import {makeStyles} from '@material-ui/core/styles';
@@ -22,6 +20,15 @@ const useStyles = makeStyles(theme => ({
   title: {
     flex: 1,
   },
+  preferenceName:{
+    fontSize: '14px'
+  },
+  networkProxyTitle: {
+    marginBottom: 0
+  },
+  sidebarContentSectionContainer: {
+    marginTop: 0
+  }
 }));
 
 export default function NetworkProxy({
@@ -44,22 +51,22 @@ export default function NetworkProxy({
       <div
         className={cx(
           commonStyles.sidebarContentSectionTitleBar,
-          styles.networkProxyTitle
+          classes.networkProxyTitle
         )}
       >
         <ProxyIcon
           color="white"
           height={24}
           width={24}
-          margin={'0 5px 0 0'}
-          className={cx(styles.networkProxyIcon)}
+          margin="0 5px 0 0"
+          className={cx(classes.networkProxyIcon)}
         />{' '}
         Proxy
       </div>
       <div
         className={cx(
           commonStyles.sidebarContentSectionContainer,
-          styles.sidebarContentSectionContainer
+          classes.sidebarContentSectionContainer
         )}
       >
         <div>
@@ -72,7 +79,7 @@ export default function NetworkProxy({
                 color="primary"
               />
             }
-            label={<span className={cx(styles.preferenceName)}>Use Proxy</span>}
+            label={<span className={cx(classes.preferenceName)}>Use Proxy</span>}
           />
           <Button
             variant="contained"
@@ -86,7 +93,7 @@ export default function NetworkProxy({
         </div>
 
         <Dialog
-          className={cx(styles.profileManagerDialog)}
+          className={cx(classes.profileManagerDialog)}
           maxWidth="lg"
           fullWidth
           open={open}
