@@ -1,17 +1,21 @@
 import {app} from 'electron';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 
-const os = require('os');
+const getPackageJson = () => {
+  let appPath;
+  if (process.env.NODE_ENV === 'production') appPath = app.getAppPath();
+  else appPath = process.cwd();
 
-function getPackageJson() {
-  const appPath =
-    process.env.NODE_ENV === 'production'
-      ? app.getAppPath()
-      : path.join(document.location.pathname, '..', '..');
-  const pkgContent = fs.readFileSync(path.join(appPath, 'package.json'));
-  return JSON.parse(pkgContent);
-}
+  const pkgPath = path.join(appPath, 'package.json');
+  if (fs.existsSync(pkgPath)) {
+    const pkgContent = fs.readFileSync(pkgPath);
+    return JSON.parse(pkgContent);
+  }
+  console.error(`cant find package.json in: '${appPath}'`);
+  return {};
+};
 
 export const pkg = getPackageJson();
 
