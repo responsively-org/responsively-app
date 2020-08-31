@@ -15,6 +15,7 @@ import {
   DELETE_STORAGE,
   ADDRESS_CHANGE,
   STOP_LOADING,
+  SEARCH_DEVICES,
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
@@ -739,6 +740,12 @@ export function triggerNavigationReload(_, args) {
 export function triggerStopLoading(_, args) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(STOP_LOADING);
+  };
+}
+
+export function onSearchActivated() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(SEARCH_DEVICES);
   };
 }
 

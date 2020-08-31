@@ -5,8 +5,10 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
 import TextField from '@material-ui/core/TextField';
 import CancelIcon from '@material-ui/icons/Cancel';
+import pubsub from 'pubsub.js';
 import cx from 'classnames';
 import DeviceItem from '../DeviceItem';
+import {SEARCH_DEVICES} from '../../../constants/pubsubEvents';
 
 import styles from './styles.css';
 
@@ -21,6 +23,14 @@ export default function DeviceList({
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filteredDevices, setFilteredList] = useState(devices);
+  const subscriptions = [];
+
+  function focusSearchField() {
+    setSearchOpen(true);
+  }
+
+  subscriptions.push(pubsub.subscribe(SEARCH_DEVICES, focusSearchField));
+
   useEffect(() => {
     const filteredDevices = devices.filter(device => {
       if (!searchText) {
@@ -34,6 +44,7 @@ export default function DeviceList({
       onFiltering(filteredDevices);
     }
   }, [searchText, devices]);
+
   return (
     <>
       <div className={cx(styles.searchContainer)}>
