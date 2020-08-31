@@ -43,9 +43,13 @@ import {lightIconsColor, themeColor} from '../../../constants/colors';
 
 const useStyles = makeStyles(theme => ({
   fab: {
-    position: 'absolute',
+    position: 'absolute !important',
     top: theme.spacing(10),
     right: theme.spacing(3),
+    color: '#fff !important',
+    backgroundColor: `${themeColor} !important`,
+    borderRadius: '24px !important',
+    padding: '0 16px !important',
   },
   extendedIcon: {
     marginRight: theme.spacing(1),

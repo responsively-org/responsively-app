@@ -10,8 +10,10 @@ function mapStateToProps(state) {
   const {
     navigatorStatus: {backEnabled, forwardEnabled},
     devices,
+    address,
+    homepage,
   } = state.browser;
-  return {backEnabled, forwardEnabled, devices};
+  return {backEnabled, forwardEnabled, devices, address, homepage};
 }
 
 function mapDispatchToProps(dispatch) {
