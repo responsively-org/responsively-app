@@ -235,7 +235,7 @@ export default class Root extends Component<Props> {
         accelerators: ['mod+f'],
       },
       () => {
-        store.dispatch(onSearchActivated(store.getState()));
+        store.dispatch(onSearchActivated());
       },
       true
     );

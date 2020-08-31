@@ -29,8 +29,6 @@ export default function DeviceList({
     setSearchOpen(true);
   }
 
-  subscriptions.push(pubsub.subscribe(SEARCH_DEVICES, focusSearchField));
-
   useEffect(() => {
     const filteredDevices = devices.filter(device => {
       if (!searchText) {
@@ -43,6 +41,14 @@ export default function DeviceList({
     if (onFiltering) {
       onFiltering(filteredDevices);
     }
+
+    subscriptions.push(pubsub.subscribe(SEARCH_DEVICES, focusSearchField));
+
+    return () => {
+      subscriptions.forEach(sub => {
+        pubsub.unsubscribe(sub);
+      });
+    };
   }, [searchText, devices]);
 
   return (
