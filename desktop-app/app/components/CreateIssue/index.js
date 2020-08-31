@@ -14,6 +14,8 @@ const {
 } = getEnvironmentInfo();
 
 const reportBody = state => `Hi I'm reporting an app crash:
+**PLEASE WRITE HERE ANY HINT THAT HELP US TO REPRODUCE THIS**
+
 <details>
 <summary>Environment</summary>
 
@@ -27,13 +29,21 @@ const reportBody = state => `Hi I'm reporting an app crash:
 
 <details>
 <summary>Error Info</summary>
-${state.error}
+
+\`\`\`json
+${(state.error || '').split('\\n ').join('\n')}
+\`\`\`
 </details>
 
 <details>
 <summary>Stack Trace</summary>
-${state.errorInfo}
-</details>`;
+
+\`\`\`json
+${(state.errorInfo || '').split('\\n ').join('\n')}
+\`\`\`
+</details>
+
+Hope you found the issue, regards`;
 
 const createIssue = state => {
   openNewGitHubIssue({
@@ -47,11 +57,14 @@ const createIssue = state => {
 export default function CreateIssue(props) {
   return (
     <div style={{textAlign: 'center'}}>
-      <p>
-        Please copy the contents in the above box and create an issue in the
-        github repo
-      </p>
-      <Button onClick={() => createIssue(props.state)}>create issue</Button>
+      <p>Please create a new issue in the github repo sending this info</p>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => createIssue(props.state)}
+      >
+        Create issue
+      </Button>
     </div>
   );
 }
