@@ -136,6 +136,9 @@
         }
       ]
     },
+    "nsis": {
+      "deleteAppDataOnUninstall": true
+    },
     "linux": {
       "target": [
         "AppImage",
