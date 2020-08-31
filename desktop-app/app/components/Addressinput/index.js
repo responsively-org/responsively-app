@@ -294,7 +294,7 @@ class AddressBar extends React.Component<Props> {
   _normalize = (address: string) => {
     if (address.indexOf('://') === -1) {
       let protocol = 'https://';
-      if (address.startsWith('localhost') || address.startsWith('127.0.0.1')) {
+      if (address.startsWith('localhost') || address.startsWith('127.0.0.1') || address.split(':')[0].split('?')[0].endsWith('.localhost')) {
         protocol = 'http://';
       } else if (fs.existsSync(address)) {
         protocol = 'file://';
