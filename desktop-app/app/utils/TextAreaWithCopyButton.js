@@ -1,8 +1,10 @@
 import React from 'react';
-import CopyToClipBoard from 'react-copy-to-clipboard';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import {makeStyles} from '@material-ui/core/styles';
+import {
+  clipboard,
+} from 'electron';
 
 const useStyles = makeStyles(theme => ({
   codeBoxContainer: {
@@ -38,11 +40,9 @@ const TextAreaWithCopyButton = props => {
           })}
         </pre>
       </div>
-      <CopyToClipBoard text={props.text}>
-        <Button size="small" variant="contained" color="primary">
+        <Button onClick={() => clipboard.writeText(props.text, 'clipboard')} size="small" variant="contained" color="primary">
           Copy
         </Button>
-      </CopyToClipBoard>
     </Box>
   );
 };
