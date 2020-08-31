@@ -46,6 +46,7 @@ import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
 import {captureOnSentry} from '../../utils/logUtils';
 import {getBrowserSyncEmbedScriptURL} from '../../services/browserSync';
+import Spinner from '../Spinner';
 
 const {BrowserWindow} = remote;
 
@@ -76,6 +77,9 @@ class WebView extends Component {
       },
       temporaryDims: null,
       address: this.props.browser.address,
+      fullDocumentHeight: null,
+      fullDocumentWidth: null,
+      zoomLevel: null,
     };
     this.subscriptions = [];
     this.dbg = null;
@@ -384,18 +388,24 @@ class WebView extends Component {
     fullScreen?: boolean,
   }) => {
     this.setState({screenshotInProgress: true});
-
-    await this.closeBrowserSyncSocket(this.webviewRef.current);
-    await captureScreenshot({
-      address: this.props.browser.address,
-      device: this.props.device,
-      webView: this.webviewRef.current,
-      createSeparateDir: now != null,
-      fullScreen,
-      now,
-      removeFixedPositionedElements: this.props.browser.userPreferences
-        .removeFixedPositionedElements,
-    });
+    try {
+      await this.closeBrowserSyncSocket(this.webviewRef.current);
+      await captureScreenshot({
+        address: this.props.browser.address,
+        device: this.props.device,
+        webView: this.webviewRef.current,
+        createSeparateDir: now != null,
+        fullScreen,
+        now,
+        removeFixedPositionedElements: this.props.browser.userPreferences
+          .removeFixedPositionedElements,
+        screenshotMechanism: this.props.browser.userPreferences
+          .screenshotMechanism,
+        setFullDocumentDimensions: this._setFullDocumentDimensions,
+      });
+    } catch (err) {
+      console.log('Error during screen capture', err);
+    }
     await this.openBrowserSyncSocket(this.webviewRef.current);
     this.setState({screenshotInProgress: false});
   };
@@ -575,6 +585,14 @@ class WebView extends Component {
         }
         `
     );
+  };
+
+  _setFullDocumentDimensions = (
+    fullDocumentHeight,
+    fullDocumentWidth,
+    zoomLevel = null
+  ) => {
+    this.setState({fullDocumentHeight, fullDocumentWidth, zoomLevel});
   };
 
   _isDevToolsOpen = () =>
@@ -820,16 +838,30 @@ class WebView extends Component {
       errorDesc,
       screenshotInProgress,
     } = this.state;
+    const screenshotZoomLevel = screenshotInProgress && this.state.zoomLevel;
+    const outline = `4px solid ${
+      this._isDevToolsOpen()
+        ? `#6075ef`
+        : this.props.browser.userPreferences.deviceOutlineStyle ||
+          'rgba(0, 0, 0, 0)'
+    }`;
     const deviceStyles = {
-      outline: `4px solid ${
-        this._isDevToolsOpen()
-          ? `#6075ef`
-          : this.props.browser.userPreferences.deviceOutlineStyle ||
-            'rgba(0, 0, 0, 0)'
-      }`,
+      outline,
+      width:
+        (this.state.screenshotInProgress && this.state.fullDocumentWidth) ||
+        deviceDimensions.width,
+      height:
+        (this.state.screenshotInProgress && this.state.fullDocumentHeight) ||
+        deviceDimensions.height,
+      transform: `scale(${screenshotZoomLevel || zoomLevel})`,
+    };
+    const overlayStyles = {
+      outline,
       width: deviceDimensions.width,
       height: deviceDimensions.height,
+      transform: `scale(${zoomLevel})`,
     };
+
     const isMuted = this.props.device.isMuted;
     const isResponsive = capabilities.includes(CAPABILITIES.responsive);
     const shouldMaximize = previewer.layout !== INDIVIDUAL_LAYOUT;
@@ -941,8 +973,8 @@ class WebView extends Component {
         <div
           className={cx(styles.deviceContainer)}
           style={{
-            width: deviceStyles.width,
-            transform: `scale(${zoomLevel})`,
+            width: deviceStyles.width * zoomLevel,
+            height: deviceStyles.height * zoomLevel,
           }}
           onMouseEnter={this._onMouseEnter}
           onMouseLeave={this._onMouseLeave}
@@ -951,8 +983,10 @@ class WebView extends Component {
             className={cx(styles.deviceOverlay, {
               [styles.overlayEnabled]: screenshotInProgress,
             })}
-            style={deviceStyles}
-          />
+            style={overlayStyles}
+          >
+            <Spinner size={24} />
+          </div>
           <div
             className={cx(styles.deviceOverlay, {
               [styles.overlayEnabled]: errorCode,

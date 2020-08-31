@@ -61,6 +61,16 @@ export default class ErrorBoundary extends React.Component {
             <p style={{textAlign: 'center', margin: 40}}>
               Error Info: <TextAreaWithCopyButton text={this.state.errorInfo} />
             </p>
+            <pre
+              style={{
+                overflow: 'scroll',
+                background: '#6d6d6d',
+                width: '80%',
+                userSelect: 'text',
+              }}
+            >
+              {JSON.stringify(this.state, null, 2)}
+            </pre>
           </div>
           <p style={{textAlign: 'center'}}>
             Please copy the contents in the above box and create an issue in the

@@ -12,6 +12,7 @@ import commonStyles from '../common.styles.css';
 import {iconsColor} from '../../constants/colors';
 import Cross from '../icons/Cross';
 import Reload from '../icons/Reload';
+import {notifyPermissionToHandleReloadOrNewAddress} from '../../utils/permissionUtils.js';
 
 class NavigationControls extends Component {
   componentDidMount() {
@@ -58,7 +59,10 @@ class NavigationControls extends Component {
           <Tooltip title="Reload">
             <div
               className={commonStyles.flexAlignVerticalMiddle}
-              onClick={this.props.triggerNavigationReload}
+              onClick={() => {
+                notifyPermissionToHandleReloadOrNewAddress();
+                this.props.triggerNavigationReload();
+              }}
             >
               <Reload {...iconProps} padding={4} height={24} width={24} />
             </div>
@@ -82,7 +86,12 @@ class NavigationControls extends Component {
               })}
             />
             <Tooltip title="Back">
-              <div onClick={this.props.triggerNavigationBack}>
+              <div
+                onClick={() => {
+                  notifyPermissionToHandleReloadOrNewAddress();
+                  this.props.triggerNavigationBack();
+                }}
+              >
                 <Icon type="arrowLeft" size="30px" {...iconProps} />
               </div>
             </Tooltip>
@@ -100,7 +109,12 @@ class NavigationControls extends Component {
               })}
             />
             <Tooltip title="Forward">
-              <div onClick={this.props.triggerNavigationForward}>
+              <div
+                onClick={() => {
+                  notifyPermissionToHandleReloadOrNewAddress();
+                  this.props.triggerNavigationForward();
+                }}
+              >
                 <Icon type="arrowRight" size="30px" {...iconProps} />
                 {/* <ArrowRightIcon {...iconProps} /> */}
               </div>
@@ -113,7 +127,11 @@ class NavigationControls extends Component {
             <Tooltip title="Go to Homepage">
               <div
                 className={commonStyles.flexAlignVerticalMiddle}
-                onClick={this.props.goToHomepage}
+                onClick={() => {
+                  if (this.props.address !== this.props.homepage)
+                    notifyPermissionToHandleReloadOrNewAddress();
+                  this.props.goToHomepage();
+                }}
               >
                 <HomeIcon {...iconProps} padding={5} />
               </div>
