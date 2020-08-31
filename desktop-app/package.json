@@ -124,7 +124,8 @@
     },
     "win": {
       "target": [
-        "nsis"
+        "nsis",
+        "portable"
       ],
       "fileAssociations": [
         {
