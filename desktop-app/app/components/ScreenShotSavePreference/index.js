@@ -1,17 +1,18 @@
 import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
+import {useTheme} from '@material-ui/core/styles';
 import FolderOpenIcon from '@material-ui/icons/FolderOpenOutlined';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {ipcRenderer} from 'electron';
-import {lightIconsColor} from '../../constants/colors';
-import styles from '../UserPreferences/styles.module.css';
-import cx from 'classnames';
+import useStyles from '../UserPreferences/useStyles';
 
-export default function ScreenShotSavePreference({
+function ScreenShotSavePreference({
   onScreenShotSaveLocationChange,
   screenShotSavePath,
 }) {
+  const theme = useTheme();
+  const classes = useStyles();
   const getScreenshotSavePath = async event => {
     const screenshotSavePathResponseFromIpc = await ipcRenderer.invoke(
       'get-screen-shot-save-path'
@@ -25,9 +26,10 @@ export default function ScreenShotSavePreference({
   };
 
   return (
-    <div className={cx(styles.screenshotLocationInputContainer)}>
-      <div className={cx(styles.sectionTitle)}>Save Location:</div>
+    <div>
+      <div className={classes.preferenceName}>Save Location:</div>
       <TextField
+        className={classes.marginTop}
         type="text"
         color="secondary"
         id="standard-size-small"
@@ -42,7 +44,10 @@ export default function ScreenShotSavePreference({
                 size="small"
                 title="Select Screenshots save location"
               >
-                <FolderOpenIcon fontSize="small" htmlColor={lightIconsColor} />
+                <FolderOpenIcon
+                  fontSize="small"
+                  htmlColor={theme.palette.lightIcon.main}
+                />
               </IconButton>
             </InputAdornment>
           ),
@@ -51,3 +56,5 @@ export default function ScreenShotSavePreference({
     </div>
   );
 }
+
+export default ScreenShotSavePreference;

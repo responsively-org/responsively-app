@@ -1,44 +1,28 @@
-// @flow
 import React, {Component, useState, useRef, useEffect} from 'react';
 import cx from 'classnames';
 import Slider from '@material-ui/core/Slider';
+import Typography from '@material-ui/core/Typography';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import PlusIcon from '@material-ui/icons/Add';
 import MinusIcon from '@material-ui/icons/Minimize';
 import Grid from '@material-ui/core/Grid';
+import {makeStyles} from '@material-ui/core/styles';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ZoomIcon from '../icons/Zoom';
 
 import styles from './styles.module.css';
-import commonStyles from '../common.styles.css';
+import useCommonStyles from '../useCommonStyles';
 import './otherStyles.css';
-import {iconsColor} from '../../constants/colors';
 import {Tooltip} from '@material-ui/core';
 
-const marks = [
-  {
-    value: 25,
-    label: '25%',
-  },
-  {
-    value: 50,
-    label: '50%',
-  },
-  {
-    value: 100,
-    label: '100%',
-  },
-  {
-    value: 200,
-    label: '200%',
-  },
-];
-
-export default function BrowserZoom(props) {
+function BrowserZoom(props) {
   const [showExpanded, setShowExpanded] = useState(false);
   const zoomRef = useRef();
+  const classes = useStyles();
+  const commonClasses = useCommonStyles();
+
   const handleClickOutside = event => {
     if (!showExpanded) {
       return;
@@ -72,48 +56,31 @@ export default function BrowserZoom(props) {
   return (
     <div
       ref={zoomRef}
-      className={cx(
-        commonStyles.icons,
-        commonStyles.enabled,
-        styles.zoomSlider,
-        'MuiGrid-item',
-        'MuiGrid-root'
-      )}
+      className={cx(commonClasses.icon, 'MuiGrid-item', 'MuiGrid-root')}
     >
       <Tooltip title="Zoom In/Out">
         <div onClick={() => setShowExpanded(!showExpanded)}>
-          <ZoomIcon width={25} color={iconsColor} />
+          <ZoomIcon {...props.iconProps} />
         </div>
       </Tooltip>
-      {/* <Grid container spacing={1}>
-        <Grid item>
-          <ZoomOutIcon />
-        </Grid>
-        <Grid item xs>
-          <Slider
-            value={value}
-            valueLabelDisplay="auto"
-            min={10}
-            max={100}
-            onChange={(_, value) => props.onZoomChange(value / 100)}
-          />
-        </Grid>
-        <Grid item>
-          <ZoomInIcon />
-        </Grid>
-  </Grid> */}
       <div
         className={cx(styles.zoomControls, {
-          [commonStyles.hidden]: !showExpanded,
+          [commonClasses.hidden]: !showExpanded,
         })}
       >
         <ToggleButtonGroup value={[]} onChange={_zoomChange}>
           <ToggleButton value="zoomOut" disabled={value === 20} disableRipple>
             &ndash;
           </ToggleButton>
-          <ToggleButton value="value" disabled className={styles.zoomValue}>
+          <Typography
+            className={cx(
+              classes.zoomValue,
+              commonClasses.flexContainer,
+              'MuiToggleButton-root'
+            )}
+          >
             {value}%
-          </ToggleButton>
+          </Typography>
           <ToggleButton value="zoomIn" disabled={value === 200} disableRipple>
             +
           </ToggleButton>
@@ -122,3 +89,31 @@ export default function BrowserZoom(props) {
     </div>
   );
 }
+
+const useStyles = makeStyles(theme => ({
+  zoomValue: {
+    width: '75px',
+    color: theme.palette.text.primary,
+  },
+}));
+
+const marks = [
+  {
+    value: 25,
+    label: '25%',
+  },
+  {
+    value: 50,
+    label: '50%',
+  },
+  {
+    value: 100,
+    label: '100%',
+  },
+  {
+    value: 200,
+    label: '200%',
+  },
+];
+
+export default BrowserZoom;

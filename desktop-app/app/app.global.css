@@ -16,34 +16,6 @@ body {
   color: white;
   height: 100vh;
   margin: 0;
-  background-color: #1e1e1e;
-
-  /* background: #232526;
-  background: linear-gradient(to right, #414345, #232526);
-  background-color: #0cbaba;
-  background-image: linear-gradient(315deg, #0cbaba 0%, #380036 74%);
-  background-color: #7f5a83;
-  background-image: linear-gradient(315deg, #7f5a83 0%, #0d324d 74%);
-  background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.15) 0%,
-      rgba(0, 0, 0, 0.15) 100%
-    ),
-    radial-gradient(
-        at top center,
-        rgba(255, 255, 255, 0.4) 0%,
-        rgba(0, 0, 0, 0.4) 120%
-      )
-      #989898;
-  /*background-blend-mode: multiply, multiply;
-  background-image: linear-gradient(to right, #434343 0%, black 100%);
-  background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
-  background: #352646;
-  background: -webkit-linear-gradient(to right, #2f0743, #41295a);
-  background: linear-gradient(to right, #1d0827, #352646);
-*/
-
-  /* font-family: Arial, Helvetica, Helvetica Neue, serif; */
   font-family: 'Roboto', sans-serif;
   overflow: hidden;
 }
@@ -51,14 +23,6 @@ body {
 svg {
   pointer-events: none;
 }
-
-/* h2 {
-  margin: 0;
-  font-size: 2.25rem;
-  font-weight: bold;
-  letter-spacing: -0.025em;
-  color: #fff;
-} */
 
 p {
   font-size: 24px;
@@ -112,16 +76,14 @@ a:hover {
   flex-direction: column;
 }
 
-#HW_badge_cont.HW_visible {
-  background-image: url("data:image/svg+xml,%3Csvg width='30px' height='30px' viewBox='0 0 1240 1240' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' style='height: 22.4px; width: 22.4px;'%3E%3Cdesc%3Egift%3C/desc%3E%3Ctitle%3Egift%3C/title%3E%3Cg id='gift' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='Group' transform='translate(280.826367, 309.000000)' stroke='white' stroke-width='50'%3E%3Crect id='Rectangle' x='25.1736334' y='155' width='629' height='134'%3E%3C/rect%3E%3Crect id='Rectangle' transform='translate(339.673633, 471.500000) scale(1, -1) translate(-339.673633, -471.500000) ' x='78.1736334' y='292' width='523' height='359'%3E%3C/rect%3E%3Cpath d='M339.173633,150 C326.714456,34.4086022 278.746623,-14.3759394 195.270134,3.6463753 C111.793646,21.66869 101.826304,70.4532316 165.368109,150' id='Path-13'%3E%3C/path%3E%3Cpath d='M555.173633,150 C542.714456,34.4086022 494.746623,-14.3759394 411.270134,3.6463753 C327.793646,21.66869 317.826304,70.4532316 381.368109,150' id='Path-13' transform='translate(447.673633, 75.000000) scale(-1, 1) translate(-447.673633, -75.000000) '%3E%3C/path%3E%3Cpath d='M339.673633,150 L339.673633,651' id='Path-14'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-#HW_badge {
+#HW_badge_cont {
   position: absolute !important;
-  left: 20px !important;
-  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+#HW_badge {
+  left: 26px !important;
+  top: 6px !important;
 }
 
 /* --start
@@ -173,20 +135,7 @@ Add device form styles */
   border-radius: 8px;
 }
 
-/* The scrollbar Handle */
-::-webkit-scrollbar-thumb {
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
-  background: rgba(49, 49, 49, 1);
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
-}
-
 /* When the box area between the horzontal scrollbar and the vertical scrollbar */
 ::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0);
-}
-
-/* When the scrollbar is inactive */
-::-webkit-scrollbar-thumb:window-inactive {
-  background: rgba(49, 49, 49, 1);
 }

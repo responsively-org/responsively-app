@@ -5,6 +5,7 @@
   box-shadow: 0 -3px 5px rgba(0, 0, 0, 0.35);
   color: #fffc;
   justify-content: space-between;
+  z-index: 1;
 }
 
 .section {

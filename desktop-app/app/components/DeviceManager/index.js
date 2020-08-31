@@ -19,17 +19,7 @@ import ErrorBoundary from '../ErrorBoundary';
 
 import styles from './styles.css';
 
-const useStyles = makeStyles(theme => ({
-  appBar: {
-    position: 'relative',
-  },
-  title: {
-    marginLeft: theme.spacing(2),
-    flex: 1,
-  },
-}));
-
-export default function DeviceManager(props) {
+function DeviceManager(props) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
 
@@ -129,54 +119,77 @@ export default function DeviceManager(props) {
         className={styles.editButton}
       >
         Customize
-        {/* <EditIcon style={{fontSize: 'inherit'}} /> */}
       </Button>
-      <Dialog fullScreen open={open} onClose={closeDialog}>
-        <AppBar className={classes.appBar} color="secondary">
-          <Toolbar>
-            {/* <IconButton edge="start" onClick={closeDialog} aria-label="close">
-              <CloseIcon />
-             </IconButton> */}
-            <Typography variant="h6" className={classes.title}>
-              Manage Devices
+      {open ? (
+        <Dialog fullScreen open={open} onClose={closeDialog}>
+          <AppBar className={classes.appBar} color="secondary">
+            <Toolbar>
+              <Typography variant="h6" className={classes.title}>
+                Manage Devices
+              </Typography>
+              <Button color="inherit" onClick={closeDialog}>
+                close
+              </Button>
+            </Toolbar>
+          </AppBar>
+          <div className={styles.container}>
+            <Typography variant="body1" className={classes.toolTip}>
+              <span>✨</span>Drag and drop the devices across to re-order them.
             </Typography>
-            <Button color="inherit" onClick={closeDialog}>
-              close
-            </Button>
-          </Toolbar>
-        </AppBar>
-        <div className={styles.container}>
-          <p className={styles.toolTip}>
-            <span>✨</span>Drag and drop the devices across to re-order them.
-          </p>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Grid container className={styles.content}>
-              <Grid item className={styles.section}>
-                <div className={styles.listTitle}>
-                  <LightBulbIcon height={30} color="#FFD517" />
-                  Active Devices
-                </div>
-                <DeviceList droppableId="active" devices={devices.active} />
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Grid container className={styles.content}>
+                <Grid item className={styles.section}>
+                  <div className={styles.listTitle}>
+                    <LightBulbIcon height={30} color="#FFD517" />
+                    Active Devices
+                  </div>
+                  <DeviceList droppableId="active" devices={devices.active} />
+                </Grid>
+                <Grid item className={styles.section}>
+                  <div className={styles.listTitle}>
+                    <LightBulbIcon height={30} color="darkgrey" />
+                    Inactive Devices
+                  </div>
+                  <DeviceList
+                    droppableId="inactive"
+                    devices={devices.inactive}
+                    enableFiltering
+                    onFiltering={onInactiveListFiltering}
+                    enableCustomDeviceDeletion
+                    deleteDevice={props.deleteDevice}
+                  />
+                </Grid>
               </Grid>
-              <Grid item className={styles.section}>
-                <div className={styles.listTitle}>
-                  <LightBulbIcon height={30} color="darkgrey" />
-                  Inactive Devices
-                </div>
-                <DeviceList
-                  droppableId="inactive"
-                  devices={devices.inactive}
-                  enableFiltering
-                  onFiltering={onInactiveListFiltering}
-                  enableCustomDeviceDeletion
-                  deleteDevice={props.deleteDevice}
-                />
-              </Grid>
-            </Grid>
-          </DragDropContext>
-          <AddDeviceContainer />
-        </div>
-      </Dialog>
+            </DragDropContext>
+            <AddDeviceContainer />
+          </div>
+        </Dialog>
+      ) : null}
     </Fragment>
   );
 }
+
+const useStyles = makeStyles(theme => ({
+  appBar: {
+    position: 'relative',
+  },
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
+  toolTip: {
+    background: theme.palette.mode({
+      light: theme.palette.grey[400],
+      dark: '#ffffff10',
+    }),
+    padding: '10px 40px',
+    borderRadius: '5px',
+    margin: '0 auto 20px',
+    textAlign: 'center',
+    fontSize: '14px',
+    color: theme.palette.text.primary,
+    width: 'fit-content',
+  },
+}));
+
+export default DeviceManager;

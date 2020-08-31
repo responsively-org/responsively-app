@@ -13,8 +13,6 @@ import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOut
 import TextField from '@material-ui/core/TextField';
 import NumberFormat from 'react-number-format';
 import InputAdornment from '@material-ui/core/InputAdornment';
-
-import commonStyles from '../../common.styles.css';
 import styles from './styles.css';
 
 function NumberFormatCustom(props) {

@@ -1,31 +1,33 @@
-// @flow
 import React, {useState} from 'react';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import {makeStyles} from '@material-ui/core/styles';
 import BookmarkEditDialog from './BookmarkEditDialog';
-import styles from './style.module.css';
 import Globe from '../icons/Globe';
 
-export const BookmarksBar = ({
+const BookmarksBar = ({
   bookmarks,
   onBookmarkClick,
   onBookmarkDelete,
   onBookmarkEdit,
-}) => (
-  <div className={styles.bookmarks}>
-    {bookmarks.map((bookmark, k) => (
-      <BookmarkItem
-        bookmark={bookmark}
-        onClick={onBookmarkClick}
-        key={`bookmark${k}`}
-        onDelete={onBookmarkDelete}
-        onEdit={onBookmarkEdit}
-      />
-    ))}
-  </div>
-);
+}) => {
+  const classes = useStyles();
+  return (
+    <div className={classes.bookmarks}>
+      {bookmarks.map((bookmark, k) => (
+        <BookmarkItem
+          bookmark={bookmark}
+          onClick={onBookmarkClick}
+          key={`bookmark${k}`}
+          onDelete={onBookmarkDelete}
+          onEdit={onBookmarkEdit}
+        />
+      ))}
+    </div>
+  );
+};
 
 const useToggle = () => {
   const [value, setValue] = useState(false);
@@ -43,6 +45,7 @@ const useToggle = () => {
 const BookmarkItem = ({bookmark, onClick, onDelete, onEdit}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [renameDialog, openRenameDialog, closeRenameDialog] = useToggle(null);
+  const classes = useStyles();
 
   const handleContextMenu = function handleContextMenu(event) {
     event.preventDefault();
@@ -75,12 +78,12 @@ const BookmarkItem = ({bookmark, onClick, onDelete, onEdit}) => {
   return (
     <>
       <div
-        className={styles.bookmarkItem}
+        className={classes.bookmarkItem}
         key={bookmark.url}
         onClick={handleClick}
         onContextMenu={handleContextMenu}
       >
-        <Globe height={10} className={styles.icon} />
+        <Globe height={10} className={classes.icon} />
         <span>{bookmark.title}</span>
       </div>
       <Menu
@@ -108,3 +111,34 @@ const BookmarkItem = ({bookmark, onClick, onDelete, onEdit}) => {
     </>
   );
 };
+
+const useStyles = makeStyles(theme => ({
+  bookmarks: {
+    padding: '0 10px',
+    display: 'flex',
+    marginTop: '4px',
+  },
+  bookmarkItem: {
+    color: theme.palette.text.primary,
+    fill: theme.palette.text.primary,
+    cursor: 'default',
+    padding: '2px 10px',
+    borderRadius: '15px',
+    fontSize: '13px',
+    minWidth: '100px',
+    maxWidth: '150px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.background.default,
+      fill: theme.palette.background.default,
+    },
+  },
+  icon: {
+    marginRight: '5px',
+  },
+}));
+
+export default BookmarksBar;

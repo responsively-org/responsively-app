@@ -22,6 +22,7 @@ import {
   NEW_PAGE_META_FIELD,
   TOGGLE_ALL_DEVICES_MUTED,
   TOGGLE_DEVICE_MUTED,
+  NEW_THEME,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -51,6 +52,7 @@ import {
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
 import {updateExistingUrl} from '../services/searchUrlSuggestions';
+import {SYSTEM_THEME} from '../constants/theme';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -295,6 +297,7 @@ export default function browser(
       : getHomepage(),
     currentPageMeta: {},
     zoomLevel: _getUserPreferences().zoomLevel || 0.6,
+    theme: _getUserPreferences().theme || SYSTEM_THEME,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
@@ -358,6 +361,12 @@ export default function browser(
         zoomLevel: action.zoomLevel,
       });
       return {...state, zoomLevel: action.zoomLevel};
+    case NEW_THEME:
+      _setUserPreferences({
+        ...state.userPreferences,
+        theme: action.theme,
+      });
+      return {...state, theme: action.theme};
     case NEW_SCROLL_POSITION:
       return {...state, scrollPosition: action.scrollPosition};
     case NEW_NAVIGATOR_STATUS:

@@ -1,9 +1,9 @@
-// @flow
 import React, {Component, createRef} from 'react';
 import {remote, ipcRenderer} from 'electron';
 import cx from 'classnames';
 import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
+import {withStyles, withTheme} from '@material-ui/core/styles';
 import debounce from 'lodash/debounce';
 import pubsub from 'pubsub.js';
 import BugIcon from '../icons/Bug';
@@ -12,7 +12,6 @@ import UnmutedIcon from '../icons/Unmuted';
 import FullScreenshotIcon from '../icons/FullScreenshot';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
-import {iconsColor} from '../../constants/colors';
 import {
   SCROLL_DOWN,
   SCROLL_UP,
@@ -34,7 +33,7 @@ import {
 import {CAPABILITIES} from '../../constants/devices';
 
 import styles from './style.module.css';
-import commonStyles from '../common.styles.css';
+import {styles as commonStyles} from '../useCommonStyles';
 import UnplugIcon from '../icons/Unplug';
 import {captureScreenshot} from './screenshotUtil';
 import {
@@ -767,7 +766,7 @@ class WebView extends Component {
     if (capabilities.includes(CAPABILITIES.responsive)) {
       return (
         <Resizable
-          className={cx(styles.resizableView)}
+          className={styles.resizableView}
           size={{width: deviceStyles.width, height: deviceStyles.height}}
           onResizeStart={() => {
             const updatedTempDims = {
@@ -841,6 +840,8 @@ class WebView extends Component {
     const {
       browser: {zoomLevel, previewer},
       device: {capabilities},
+      classes,
+      theme,
     } = this.props;
     const {
       deviceDimensions,
@@ -877,87 +878,64 @@ class WebView extends Component {
     const isResponsive = capabilities.includes(CAPABILITIES.responsive);
     const shouldMaximize = previewer.layout !== INDIVIDUAL_LAYOUT;
     const IconFocus = () => {
-      if (shouldMaximize)
-        return <Focus height={30} padding={6} color={iconsColor} />;
-      return <Unfocus height={30} padding={6} color={iconsColor} />;
+      if (shouldMaximize) return <Focus height={30} padding={6} />;
+      return <Unfocus height={30} padding={6} />;
     };
     return (
       <div
         className={cx(styles.webViewContainer, {
           [styles.withMarginRight]: isResponsive,
         })}
-        style={{
-          width: deviceStyles.width * zoomLevel,
-          height: deviceStyles.height * zoomLevel + 40,
-        }}
       >
         <div className={cx(styles.webViewToolbar)}>
           <div className={cx(styles.webViewToolbarLeft)}>
             <Tooltip title="Open DevTools">
               <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled,
-                  {
-                    [commonStyles.selected]: this._isDevToolsOpen(),
-                  }
-                )}
+                className={cx(styles.webViewToolbarIcons, classes.icon, {
+                  [classes.iconSelected]: this._isDevToolsOpen(),
+                })}
                 onClick={this._toggleDevTools}
               >
-                <BugIcon width={20} color={iconsColor} />
+                <BugIcon width={20} />
               </div>
             </Tooltip>
             <Tooltip title="Quick Screenshot">
               <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled
-                )}
+                className={cx(styles.webViewToolbarIcons, classes.icon)}
                 onClick={() => this.processScreenshotEvent({fullScreen: false})}
               >
-                <ScreenshotIcon height={18} color={iconsColor} />
+                <ScreenshotIcon height={18} />
               </div>
             </Tooltip>
             <Tooltip title="Full Page Screenshot">
               <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled
-                )}
+                className={cx(styles.webViewToolbarIcons, classes.icon)}
                 onClick={this.processScreenshotEvent}
               >
-                <FullScreenshotIcon height={18} color={iconsColor} />
+                <FullScreenshotIcon height={18} />
               </div>
             </Tooltip>
-            <Tooltip title="Tilt Device">
-              <div
-                className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
-                  [commonStyles.enabled]: this.isMobile,
-                  [commonStyles.disabled]: !this.isMobile,
-                  [commonStyles.selected]: this.state.isTilted,
-                })}
-                onClick={this._flipOrientation}
-              >
-                <DeviceRotateIcon height={17} color={iconsColor} />
-              </div>
-            </Tooltip>
+            {this.isMobile ? (
+              <Tooltip title="Tilt Device">
+                <div
+                  className={cx(styles.webViewToolbarIcons, classes.icon, {
+                    [classes.iconSelected]: this.state.isTilted,
+                  })}
+                  onClick={this._flipOrientation}
+                >
+                  <DeviceRotateIcon height={17} />
+                </div>
+              </Tooltip>
+            ) : null}
 
             <Tooltip title="Disable event mirroring">
               <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled,
-                  {
-                    [commonStyles.selected]: this.state.isUnplugged,
-                  }
-                )}
+                className={cx(styles.webViewToolbarIcons, classes.icon, {
+                  [classes.iconSelected]: this.state.isUnplugged,
+                })}
                 onClick={this._unPlug}
               >
-                <UnplugIcon height={30} color={iconsColor} />
+                <UnplugIcon height={30} />
               </div>
             </Tooltip>
           </div>
@@ -967,11 +945,7 @@ class WebView extends Component {
               disableFocusListener
             >
               <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled
-                )}
+                className={cx(styles.webViewToolbarIcons, classes.icon)}
                 onClick={
                   shouldMaximize ? this._focusDevice : this._unfocusDevice
                 }
@@ -982,10 +956,16 @@ class WebView extends Component {
           </div>
         </div>
         <div
-          className={cx(styles.deviceContainer)}
+          className={classes.deviceContainer}
           style={{
-            width: deviceStyles.width * zoomLevel,
-            height: deviceStyles.height * zoomLevel,
+            width:
+              deviceStyles.width * zoomLevel +
+              // On the light theme a border of 1px is added to the device. Adjusting the size to accommodate it.
+              theme.palette.mode({light: 2, dark: 0}),
+            height:
+              deviceStyles.height * zoomLevel +
+              // On the light theme a border of 1px is added to the device. Adjusting the size to accommodate it.
+              theme.palette.mode({light: 2, dark: 0}),
           }}
           onMouseEnter={this._onMouseEnter}
           onMouseLeave={this._onMouseLeave}
@@ -1017,4 +997,16 @@ class WebView extends Component {
   }
 }
 
-export default WebView;
+const webViewStyles = theme => ({
+  ...commonStyles(theme),
+  deviceContainer: {
+    position: 'relative',
+    display: 'inline-flex',
+    transformOrigin: 'top left',
+    border: theme.palette.mode({
+      light: `1px solid ${theme.palette.primary.main}`,
+      dark: 'none',
+    }),
+  },
+});
+export default withStyles(webViewStyles)(withTheme(WebView));

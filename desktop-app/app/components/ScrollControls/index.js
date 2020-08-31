@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import cx from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
 import ScrollDownIcon from '../icons/ScrollDown';
 import ScrollUpIcon from '../icons/ScrollUp';
 import ScreenshotIcon from '../icons/FullScreenshot';
@@ -10,14 +11,17 @@ import DeviceRotateIcon from '../icons/DeviceRotate';
 import InspectElementIcon from '../icons/InspectElement';
 import MutedIcon from '../icons/Muted';
 import UnmutedIcon from '../icons/Unmuted';
-
-import styles from './styles.module.css';
-import commonStyles from '../common.styles.css';
-import {iconsColor} from '../../constants/colors';
+import useCommonStyles from '../useCommonStyles';
 import ZoomContainer from '../../containers/ZoomContainer';
 import PrefersColorSchemeSwitch from '../PrefersColorSchemeSwitch';
 import ToggleTouch from '../ToggleTouch';
 import Muted from '../icons/Muted';
+
+const useStyles = makeStyles({
+  container: {
+    padding: '0 10px',
+  },
+});
 
 const ScrollControls = ({
   browser,
@@ -28,46 +32,50 @@ const ScrollControls = ({
   toggleInspector,
   onAllDevicesMutedChange,
 }) => {
+  const classes = useStyles();
+  const theme = useTheme();
+  const commonClasses = useCommonStyles();
   const iconProps = {
-    color: iconsColor,
+    color: 'currentColor',
     height: 25,
     width: 25,
   };
+
   return (
-    <div className={styles.scrollControls}>
+    <div className={classes.container}>
       <Grid container spacing={1} alignItems="center">
-        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
-          <PrefersColorSchemeSwitch />
+        <Grid item className={commonClasses.icon}>
+          <PrefersColorSchemeSwitch iconProps={iconProps} />
         </Grid>
-        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+        <Grid item className={commonClasses.icon}>
           <Tooltip title="Scroll Down">
             <div onClick={triggerScrollDown}>
               <ScrollDownIcon {...iconProps} />
             </div>
           </Tooltip>
         </Grid>
-        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+        <Grid item className={commonClasses.icon}>
           <Tooltip title="Scroll Up">
             <div onClick={triggerScrollUp}>
               <ScrollUpIcon {...iconProps} height={30} width={30} />
             </div>
           </Tooltip>
         </Grid>
-        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+        <Grid item className={commonClasses.icon}>
           <Tooltip title="Take Screenshot">
             <div onClick={screenshotAllDevices}>
               <ScreenshotIcon {...iconProps} />
             </div>
           </Tooltip>
         </Grid>
-        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+        <Grid item className={commonClasses.icon}>
           <Tooltip title="Tilt Devices">
             <div onClick={flipOrientationAllDevices}>
               <DeviceRotateIcon {...iconProps} />
             </div>
           </Tooltip>
         </Grid>
-        <Grid item className={cx(commonStyles.icons, commonStyles.enabled)}>
+        <Grid item className={commonClasses.icon}>
           <Tooltip
             title={
               browser.allDevicesMuted
@@ -86,8 +94,8 @@ const ScrollControls = ({
         </Grid>
         <Grid
           item
-          className={cx(commonStyles.icons, commonStyles.enabled, {
-            [commonStyles.selected]: browser.isInspecting,
+          className={cx(commonClasses.icon, {
+            [commonClasses.iconSelected]: browser.isInspecting,
           })}
         >
           <Tooltip title="Inspect Element">
@@ -98,8 +106,8 @@ const ScrollControls = ({
             </div>
           </Tooltip>
         </Grid>
-        <ToggleTouch />
-        <ZoomContainer />
+        <ToggleTouch iconProps={iconProps} />
+        <ZoomContainer iconProps={iconProps} />
       </Grid>
     </div>
   );
