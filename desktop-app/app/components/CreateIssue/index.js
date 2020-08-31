@@ -43,7 +43,7 @@ ${(state.errorInfo || '').split('\\n ').join('\n')}
 \`\`\`
 </details>
 
-Hope you found the issue, regards`;
+Hope you find the issue, regards`;
 
 const createIssue = state => {
   openNewGitHubIssue({
