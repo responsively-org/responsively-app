@@ -38,6 +38,9 @@ const AppUpdaterStatusInfoSection = () => {
     case 'downloaded':
       label = 'Update Info: Update Downloaded';
       break;
+    case 'newVersion':
+      label = 'Update Info: New version available!';
+      break;
     default:
       label = null;
       break;

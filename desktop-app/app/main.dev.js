@@ -53,9 +53,9 @@ import {captureOnSentry} from './utils/logUtils';
 import appMetadata from './services/db/appMetadata';
 import {convertToProxyConfig} from './utils/proxyUtils';
 import {PERMISSION_MANAGEMENT_OPTIONS} from './constants/permissionsManagement';
+import {endSession, startSession} from './utils/analytics';
 
 const path = require('path');
-const chokidar = require('chokidar');
 const URL = require('url').URL;
 
 migrateDeviceSchema();
@@ -157,6 +157,7 @@ app.on('open-url', async (event, url) => {
 });
 
 app.on('window-all-closed', () => {
+  endSession();
   hasActiveWindow = false;
   ipcMain.removeAllListeners();
   ipcMain.removeHandler('install-extension');
@@ -309,6 +310,7 @@ const createWindow = async () => {
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
+    startSession();
     if (process.platform === 'darwin') {
       // Trick to make the transparent title bar draggable
       mainWindow.webContents

@@ -124,7 +124,8 @@
     },
     "win": {
       "target": [
-        "nsis"
+        "nsis",
+        "portable"
       ],
       "fileAssociations": [
         {
@@ -135,6 +136,9 @@
           "role": "Viewer"
         }
       ]
+    },
+    "nsis": {
+      "deleteAppDataOnUninstall": true
     },
     "linux": {
       "target": [
@@ -321,6 +325,8 @@
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "source-map-support": "^0.5.9",
+    "universal-analytics": "^0.4.23",
+    "uuid": "^8.3.0",
     "validator": "^13.1.1"
   },
   "devEngines": {
