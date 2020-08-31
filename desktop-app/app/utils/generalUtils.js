@@ -2,16 +2,19 @@ import {app} from 'electron';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import isRenderer from 'is-electron-renderer';
 
 const getPackageJson = () => {
   let appPath;
   if (process.env.NODE_ENV === 'production') appPath = app.getAppPath();
-  else if (isRenderer) appPath = path.join(__dirname, '..');
-  else appPath = path.join(__dirname, '..', '..');
+  else appPath = process.cwd();
 
-  const pkgContent = fs.readFileSync(path.join(appPath, 'package.json'));
-  return JSON.parse(pkgContent);
+  const pkgPath = path.join(appPath, 'package.json');
+  if (fs.existsSync(pkgPath)) {
+    const pkgContent = fs.readFileSync(pkgPath);
+    return JSON.parse(pkgContent);
+  }
+  console.error(`cant find package.json in: '${appPath}'`);
+  return {};
 };
 
 export const pkg = getPackageJson();

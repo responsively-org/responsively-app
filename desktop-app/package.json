@@ -296,7 +296,6 @@
     "flwww": "^2.0.10",
     "framer-motion": "^2.2.0",
     "history": "^4.7.2",
-    "is-electron-renderer": "^2.0.1",
     "jimp": "^0.12.1",
     "lodash": "^4.17.19",
     "merge-img": "^2.1.3",
