@@ -257,6 +257,10 @@ export default class MenuBuilder {
         label = 'Downloading Update...';
         enabled = false;
         break;
+      case AppUpdaterStatus.NewVersion:
+        label = 'New version available';
+        enabled = false;
+        break;
       case AppUpdaterStatus.Downloaded:
         label = 'Update Downloaded';
         enabled = false;
