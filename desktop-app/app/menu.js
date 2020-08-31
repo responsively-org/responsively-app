@@ -10,7 +10,7 @@ import {
 } from 'electron';
 import * as os from 'os';
 import fs from 'fs';
-import {pkg} from './utils/generalUtils';
+import {pkg, getEnvironmentInfo} from './utils/generalUtils';
 import {
   getAllShortcuts,
   registerShortcut,
@@ -33,14 +33,10 @@ export default class MenuBuilder {
     const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
     const title = 'Responsively';
     const {description} = pkg;
-    const version = pkg.version || 'Unknown';
-    const electron = process.versions.electron || 'Unknown';
-    const chrome = process.versions.chrome || 'Unknown';
-    const node = process.versions.node || 'Unknown';
-    const v8 = process.versions.v8 || 'Unknown';
+    const {appVersion, electron, chrome, node, v8, os} = getEnvironmentInfo();
     const osText =
       `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
-    const usefulInfo = `Version: ${version}\nElectron: ${electron}\nChrome: ${chrome}\nNode.js: ${node}\nV8: ${v8}\nOS: ${osText}`;
+    const usefulInfo = `Version: ${appVersion}\nElectron: ${electron}\nChrome: ${chrome}\nNode.js: ${node}\nV8: ${v8}\nOS: ${osText}`;
     const detail = description ? `${description}\n\n${usefulInfo}` : usefulInfo;
     let buttons = ['OK', 'Copy'];
     let cancelId = 0;

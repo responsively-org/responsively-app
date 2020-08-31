@@ -1,27 +1,6 @@
 import React, {Fragment} from 'react';
 import TextAreaWithCopyButton from '../../utils/TextAreaWithCopyButton';
-import Button from '@material-ui/core/Button';
-
-const {openNewGitHubIssue} = require('electron-util');
-
-const reportBody = `Hi I'm reporting an app crash:
-<details>
-  <summary>Environment</summary>
-</details>
-<details>
-  <summary>Error Info</summary>
-</details>
-<details>
-  <summary>Stack Trace</summary>
-</details>`;
-
-const createIssue = () => {
-  openNewGitHubIssue({
-    user: 'responsively-org',
-    repo: 'responsively-app',
-    body: reportBody,
-  });
-};
+import CreateIssue from '../CreateIssue';
 
 export default class ErrorBoundary extends React.Component {
   static getDerivedStateFromError(error) {
@@ -55,18 +34,14 @@ export default class ErrorBoundary extends React.Component {
             App has crashed!
           </h1>
           <div style={{display: 'flex', justifyContent: 'center'}}>
-            <p style={{textAlign: 'center', margin: 40}}>
+            <p style={{textAlign: 'center', margin: 120}}>
               Stack Trace: <TextAreaWithCopyButton text={this.state.error} />
             </p>
-            <p style={{textAlign: 'center', margin: 40}}>
+            <p style={{textAlign: 'center', margin: 120}}>
               Error Info: <TextAreaWithCopyButton text={this.state.errorInfo} />
             </p>
           </div>
-          <p style={{textAlign: 'center'}}>
-            Please copy the contents in the above box and create an issue in the
-            github repo
-          </p>
-          <Button onClick={createIssue}>create issue</Button>
+          <CreateIssue state={this.state} />
         </Fragment>
       );
     }
