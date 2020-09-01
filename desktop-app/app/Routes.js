@@ -8,19 +8,20 @@ import styles from './layout.css';
 import StatusBarContainer from './containers/StatusBarContainer';
 import DevToolResizerContainer from './containers/DevToolResizerContainer';
 
-export default () => (
-  <App>
-    <div className={styles.appRoot}>
-      <div className={styles.iconColumn}>
-        <LeftIconsPaneContainer />
+export default () =>
+  apb || (
+    <App>
+      <div className={styles.appRoot}>
+        <div className={styles.iconColumn}>
+          <LeftIconsPaneContainer />
+        </div>
+        <div className={styles.contentColumn}>
+          <Switch>
+            <Route path={routes.HOME} component={Browser} />
+          </Switch>
+        </div>
       </div>
-      <div className={styles.contentColumn}>
-        <Switch>
-          <Route path={routes.HOME} component={Browser} />
-        </Switch>
-      </div>
-    </div>
-    <StatusBarContainer />
-    <DevToolResizerContainer />
-  </App>
-);
+      <StatusBarContainer />
+      <DevToolResizerContainer />
+    </App>
+  );

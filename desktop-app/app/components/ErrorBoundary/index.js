@@ -2,6 +2,7 @@ import React from 'react';
 import TextAreaWithCopyButton from '../../utils/TextAreaWithCopyButton';
 import CreateIssue from '../CreateIssue';
 import {withStyles} from '@material-ui/core/styles';
+import Logo from '../icons/Logo';
 
 const styles = {
   errorBoundaryContainer: {
@@ -58,7 +59,11 @@ class ErrorBoundary extends React.Component {
       // You can render any custom fallback UI
       return (
         <div className={classes.errorBoundaryContainer}>
-          <h1>😓 App has crashed!</h1>
+          <h1>
+            <Logo height={60} />
+            <br />
+            😓 Something went wrong!
+          </h1>
           <div className={classes.errorsContainer}>
             <p className={classes.errorContainer}>
               Stack Trace: <TextAreaWithCopyButton text={this.state.error} />

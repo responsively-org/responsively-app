@@ -57,7 +57,10 @@ const createIssue = state => {
 export default function CreateIssue(props) {
   return (
     <div style={{textAlign: 'center'}}>
-      <p>Please create a new issue in the github repo sending this info</p>
+      <p>
+        Please click on the below link to automatically create an issue on
+        GitHub.
+      </p>
       <Button
         variant="contained"
         color="primary"
