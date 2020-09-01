@@ -1,12 +1,12 @@
 {
   "statusBarMessage": {
-    "text": "Do you enjoy the app? Show us some support on twitter!",
-    "link": "https://twitter.com/ResponsivelyApp"
+    "text": "We are now on Open Collective! Check it out",
+    "link": "https://opencollective.com/responsively"
   },
   "notification": {
-    "id": "100001",
-    "text": "We are running a feedback campaign to make the app better. Please pitch in your thoughts. 🙏",
-    "link": "https://docs.google.com/forms/d/e/1FAIpQLSdjwMkFD5ftq6mGqQKUn6ITh175uTkxoQ2LXsTshnBN6rVavw/viewform?usp=sf_link",
+    "id": "open-collective-notification",
+    "text": "We are now on Open Collective! Please pitch in and support us.",
+    "link": "https://opencollective.com/responsively",
     "okText": "OK",
     "dismissText": "Dismiss"
   },
@@ -30,22 +30,22 @@
       "minOpenCount": 0
     },
     {
-      "id": "app-growth-udate",
-      "title": "It is been 100 days since the app is launched!",
-      "text": "We have some stats published about it, check it out.",
-      "link": "https://twitter.com/vivek_jonam/status/1298212909118562304",
-      "okText": "Open",
-      "dismissText": "Dismiss",
-      "minOpenCount": 1
-    },
-    {
       "id": "twitter-handle-intro",
       "title": "Keep yourselves informed!",
       "text": "Follow us on Twitter and stay up to date on the tricks and tips.",
       "link": "https://twitter.com/ResponsivelyApp",
       "okText": "Open",
       "dismissText": "Dismiss",
-      "minOpenCount": 5
+      "minOpenCount": 8
+    },
+    {
+      "id": "open-collective-intro",
+      "title": "Do you enjoy the App?",
+      "text": "Please show us your support on Open collective",
+      "link": "https://opencollective.com/responsively",
+      "okText": "Open",
+      "dismissText": "Dismiss",
+      "minOpenCount": 4
     }
   ]
 }
