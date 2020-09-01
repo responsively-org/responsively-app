@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import cx from 'classnames';
 import {shell} from 'electron';
-
-import styles from './styles.module.css';
+import useStyles from './useStyles';
 
 const Announcement = () => {
   const [data, setData] = useState(null);
+  const classes = useStyles();
   useEffect(() => {
     (async () => {
       try {
@@ -24,12 +24,12 @@ const Announcement = () => {
   }
 
   return (
-    <div className={styles.section}>
+    <div className={classes.section}>
       <div
-        className={cx(styles.text, styles.link)}
+        className={cx(classes.text, classes.link)}
         onClick={() => shell.openExternal(data.link)}
       >
-        <span className={cx('featureSuggestionLink', styles.linkText)}>
+        <span className={cx('featureSuggestionLink', classes.linkText)}>
           {data.text}
         </span>
       </div>
