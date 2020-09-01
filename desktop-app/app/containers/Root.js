@@ -56,7 +56,7 @@ const theme = createMuiTheme({
 });
 
 const getApp = history => {
-  if (process.env.NODE_ENV !== 'development1') {
+  if (process.env.NODE_ENV !== 'development') {
     return (
       <ErrorBoundary>
         <ConnectedRouter history={history}>
