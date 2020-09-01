@@ -6,10 +6,12 @@ import {ToastContainer} from 'react-toastify';
 import AddressBar from '../../containers/AddressBar';
 import ScrollControlsContainer from '../../containers/ScrollControlsContainer';
 import HttpAuthDialog from '../HttpAuthDialog';
+import PermissionPopup from '../PermissionPopup';
 
 import styles from './style.module.css';
 import NavigationControlsContainer from '../../containers/NavigationControlsContainer';
 import BookmarksBar from '../../containers/BookmarksBarContainer';
+import AppNotification from '../AppNotification/AppNotification';
 
 const Header = () => (
   <div className={styles.header}>
@@ -19,6 +21,7 @@ const Header = () => (
       </Grid>
       <Grid item style={{flex: 1}}>
         <AddressBar />
+        <PermissionPopup />
       </Grid>
       <Grid item>
         <ScrollControlsContainer />
@@ -38,6 +41,7 @@ const Header = () => (
       pauseOnHover
       toastClassName={styles.darkToast}
     />
+    <AppNotification />
   </div>
 );
 

@@ -38,6 +38,9 @@ const AppUpdaterStatusInfoSection = () => {
     case 'downloaded':
       label = 'Update Info: Update Downloaded';
       break;
+    case 'newVersion':
+      label = 'Update Info: New version available!';
+      break;
     default:
       label = null;
       break;
@@ -67,7 +70,9 @@ const StatusBar = ({visible, zoomLevel}) => {
         <div
           className={cx(styles.text, styles.link)}
           onClick={() =>
-            shell.openExternal('https://github.com/manojVivek/responsively-app')
+            shell.openExternal(
+              'https://github.com/responsively-org/responsively-app'
+            )
           }
         >
           <Github width={14} className={styles.linkIcon} />
@@ -87,7 +92,7 @@ const StatusBar = ({visible, zoomLevel}) => {
           className={cx('roadMapLink', styles.text, styles.link)}
           onClick={() =>
             shell.openExternal(
-              'https://github.com/manojVivek/responsively-app/projects/12?fullscreen=true'
+              'https://github.com/responsively-org/responsively-app/projects/12?fullscreen=true'
             )
           }
         >

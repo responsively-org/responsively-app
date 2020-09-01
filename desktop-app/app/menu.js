@@ -8,9 +8,9 @@ import {
   clipboard,
   screen,
 } from 'electron';
-import * as os from 'os';
 import fs from 'fs';
-import {pkg} from './utils/generalUtils';
+import url from 'url';
+import {getEnvironmentInfo, pkg} from './utils/generalUtils';
 import {
   getAllShortcuts,
   registerShortcut,
@@ -29,6 +29,48 @@ export default class MenuBuilder {
     this.mainWindow = mainWindow;
   }
 
+  aboutClick() {
+    const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
+    const title = 'Responsively';
+    const {description} = pkg;
+    const {
+      appVersion,
+      electronVersion,
+      chromeVersion,
+      nodeVersion,
+      v8Version,
+      osInfo,
+    } = getEnvironmentInfo();
+
+    const usefulInfo = `Version: ${appVersion}\nElectron: ${electronVersion}\nChrome: ${chromeVersion}\nNode.js: ${nodeVersion}\nV8: ${v8Version}\nOS: ${osInfo}`;
+    const detail = description ? `${description}\n\n${usefulInfo}` : usefulInfo;
+    let buttons = ['OK', 'Copy'];
+    let cancelId = 0;
+    let defaultId = 1;
+    if (process.platform === 'linux') {
+      buttons = ['Copy', 'OK'];
+      cancelId = 1;
+      defaultId = 0;
+    }
+    dialog
+      .showMessageBox(BrowserWindow.getAllWindows()[0], {
+        type: 'none',
+        buttons,
+        title,
+        message: title,
+        detail,
+        noLink: true,
+        icon: iconPath,
+        cancelId,
+        defaultId,
+      })
+      .then(({response}) => {
+        if (response === defaultId) {
+          clipboard.writeText(usefulInfo, 'clipboard');
+        }
+      });
+  }
+
   subMenuHelp = {
     label: 'Help',
     submenu: [
@@ -41,14 +83,16 @@ export default class MenuBuilder {
       {
         label: 'Open Source',
         click() {
-          shell.openExternal('https://github.com/manojVivek/responsively-app');
+          shell.openExternal(
+            'https://github.com/responsively-org/responsively-app'
+          );
         },
       },
       {
         label: 'Report Issues',
         click() {
           shell.openExternal(
-            'https://github.com/manojVivek/responsively-app/issues'
+            'https://github.com/responsively-org/responsively-app/issues'
           );
         },
       },
@@ -89,7 +133,12 @@ export default class MenuBuilder {
 
           win.center();
 
-          win.loadURL(`file://${__dirname}/shortcuts.html`);
+          win.loadURL(
+            url.format({
+              protocol: 'file',
+              pathname: path.join(__dirname, 'shortcuts.html'),
+            })
+          );
 
           win.once('ready-to-show', () => {
             win.show();
@@ -120,7 +169,7 @@ export default class MenuBuilder {
               dialog.showMessageBox(BrowserWindow.getAllWindows()[0], {
                 type: 'info',
                 title: 'Responsively',
-                message: 'There are currently no updates available',
+                message: 'The app is up to date! 🎉',
               });
             }
           });
@@ -132,47 +181,7 @@ export default class MenuBuilder {
       {
         label: 'About',
         accelerator: 'F1',
-        click() {
-          const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
-          const title = 'Responsively';
-          const {description} = pkg;
-          const version = pkg.version || 'Unknown';
-          const electron = process.versions.electron || 'Unknown';
-          const chrome = process.versions.chrome || 'Unknown';
-          const node = process.versions.node || 'Unknown';
-          const v8 = process.versions.v8 || 'Unknown';
-          const osText =
-            `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
-          const usefulInfo = `Version: ${version}\nElectron: ${electron}\nChrome: ${chrome}\nNode.js: ${node}\nV8: ${v8}\nOS: ${osText}`;
-          const detail = description
-            ? `${description}\n\n${usefulInfo}`
-            : usefulInfo;
-          let buttons = ['OK', 'Copy'];
-          let cancelId = 0;
-          let defaultId = 1;
-          if (process.platform === 'linux') {
-            buttons = ['Copy', 'OK'];
-            cancelId = 1;
-            defaultId = 0;
-          }
-          dialog
-            .showMessageBox(BrowserWindow.getAllWindows()[0], {
-              type: 'none',
-              buttons,
-              title,
-              message: title,
-              detail,
-              noLink: true,
-              icon: iconPath,
-              cancelId,
-              defaultId,
-            })
-            .then(({response}) => {
-              if (response === defaultId) {
-                clipboard.writeText(usefulInfo, 'clipboard');
-              }
-            });
-        },
+        click: this.aboutClick,
       },
     ],
   };
@@ -187,13 +196,16 @@ export default class MenuBuilder {
           const selected = dialog.showOpenDialogSync({
             filters: [{name: 'HTML', extensions: ['htm', 'html']}],
           });
+
           if (!selected || !selected.length || !selected[0]) {
             return;
           }
           let filePath = selected[0];
-          if (!filePath.startsWith('file://')) {
-            filePath = `file://${filePath}`;
-          }
+
+          filePath = url.format({
+            protocol: 'file',
+            pathname: filePath,
+          });
           this.mainWindow.webContents.send('address-change', filePath);
         },
       },
@@ -208,8 +220,10 @@ export default class MenuBuilder {
             if (!fs.existsSync(dir)) {
               fs.mkdirSync(dir);
             }
-            shell.openItem(dir);
-          } catch {}
+            shell.openPath(dir);
+          } catch (err) {
+            console.log('Error opening screenshots folder', err);
+          }
         },
       },
       {
@@ -241,6 +255,10 @@ export default class MenuBuilder {
         break;
       case AppUpdaterStatus.Downloading:
         label = 'Downloading Update...';
+        enabled = false;
+        break;
+      case AppUpdaterStatus.NewVersion:
+        label = 'New version available';
         enabled = false;
         break;
       case AppUpdaterStatus.Downloaded:
@@ -305,10 +323,11 @@ export default class MenuBuilder {
     const subMenuAbout = {
       label: 'Responsively',
       submenu: [
-        // {
-        //   label: 'About ResponsivelyApp',
-        //   selector: 'orderFrontStandardAboutPanel:',
-        // },
+        {
+          label: 'About ResponsivelyApp',
+          selector: 'orderFrontStandardAboutPanel:',
+          click: this.aboutClick,
+        },
         {type: 'separator'},
         // {label: 'Services', submenu: []},
         {type: 'separator'},

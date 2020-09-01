@@ -1,9 +1,6 @@
 // @flow
 import {ipcRenderer, remote} from 'electron';
 import settings from 'electron-settings';
-import {isIfStatement} from 'typescript';
-import console from 'electron-timber';
-import trimStart from 'lodash/trimStart';
 import {
   NEW_ADDRESS,
   NEW_ZOOM_LEVEL,
@@ -17,7 +14,6 @@ import {
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
   DELETE_CUSTOM_DEVICE,
-  TOGGLE_BOOKMARK,
   NEW_DEV_TOOLS_CONFIG,
   NEW_INSPECTOR_STATUS,
   NEW_WINDOW_SIZE,
@@ -119,6 +115,9 @@ type UserPreferenceType = {
   devToolsOpenMode: DevToolsOpenModeType,
   deviceOutlineStyle: string,
   zoomLevel: number,
+  removeFixedPositionedElements: boolean,
+  screenshotMechanism: string,
+  permissionManagement: 'Ask always' | 'Allow always' | 'Deny always',
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
@@ -195,7 +194,7 @@ function _getActiveDevices() {
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  return settings.get(USER_PREFERENCES) || {};
+  return settings.get(USER_PREFERENCES);
 }
 
 function _setUserPreferences(userPreferences) {
@@ -249,6 +248,12 @@ function _updateFileWatcher(newURL) {
       path: newURL,
     });
   else ipcRenderer.send('stop-watcher');
+}
+
+function _getHomepage() {
+  const homepage = getHomepage();
+  _updateFileWatcher(homepage);
+  return homepage;
 }
 
 function getDefaultNetworkThrottlingProfiles(): NetworkThrottlingProfileType[] {
@@ -305,7 +310,7 @@ function _setNetworkConfiguration(
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
-    homepage: getHomepage(),
+    homepage: _getHomepage(),
     address: _getUserPreferences().reopenLastAddress
       ? getLastOpenedAddress()
       : getHomepage(),
@@ -353,6 +358,10 @@ export default function browser(
       updateExistingUrl(action.address);
       return {...state, address: action.address, currentPageMeta: {}};
     case NEW_PAGE_META_FIELD:
+      updateExistingUrl(state.address, {
+        name: action.name,
+        value: action.value,
+      });
       return {
         ...state,
         currentPageMeta: {
@@ -451,9 +460,14 @@ export default function browser(
         devices: updatedDevices,
       };
     case TOGGLE_DEVICE_MUTED:
-      const updatedDevice = state.devices.find(x => x.id === action.deviceId);
-      if (updatedDevice == null) return {...state};
-      updatedDevice.isMuted = action.isMuted;
+      const updatedDeviceIndex = state.devices.findIndex(
+        x => x.id === action.deviceId
+      );
+      if (updatedDeviceIndex === -1) return {...state};
+      state.devices[updatedDeviceIndex] = {
+        ...state.devices[updatedDeviceIndex],
+        isMuted: action.isMuted,
+      };
       return {
         ...state,
         allDevicesMuted: state.devices.every(x => x.isMuted),

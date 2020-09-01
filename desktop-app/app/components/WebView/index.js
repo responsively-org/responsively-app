@@ -6,10 +6,10 @@ import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
 import debounce from 'lodash/debounce';
 import pubsub from 'pubsub.js';
-import console from 'electron-timber';
 import BugIcon from '../icons/Bug';
 import MutedIcon from '../icons/Muted';
 import UnmutedIcon from '../icons/Unmuted';
+import FullScreenshotIcon from '../icons/FullScreenshot';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
 import {iconsColor} from '../../constants/colors';
@@ -21,8 +21,6 @@ import {
   NAVIGATION_RELOAD,
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
-  ENABLE_INSPECTOR_ALL_DEVICES,
-  DISABLE_INSPECTOR_ALL_DEVICES,
   TOGGLE_DEVICE_MUTED_STATE,
   RELOAD_CSS,
   DELETE_STORAGE,
@@ -30,13 +28,14 @@ import {
   STOP_LOADING,
   CLEAR_NETWORK_CACHE,
   SET_NETWORK_TROTTLING_PROFILE,
+  OPEN_CONSOLE_FOR_DEVICE,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
 import styles from './style.module.css';
 import commonStyles from '../common.styles.css';
 import UnplugIcon from '../icons/Unplug';
-import {captureFullPage} from './screenshotUtil';
+import {captureScreenshot} from './screenshotUtil';
 import {
   DEVTOOLS_MODES,
   INDIVIDUAL_LAYOUT,
@@ -45,7 +44,9 @@ import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
 import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
-import {getBrowserSyncEmbedScriptURL} from '../../service/browserSync';
+import {captureOnSentry} from '../../utils/logUtils';
+import {getBrowserSyncEmbedScriptURL} from '../../services/browserSync';
+import Spinner from '../Spinner';
 
 const {BrowserWindow} = remote;
 
@@ -53,7 +54,6 @@ const MESSAGE_TYPES = {
   scroll: 'scroll',
   click: 'click',
   openDevToolsInspector: 'openDevToolsInspector',
-  disableInspector: 'disableInspector',
   openConsole: 'openConsole',
   tiltDevice: 'tiltDevice',
   takeScreenshot: 'takeScreenshot',
@@ -77,6 +77,9 @@ class WebView extends Component {
       },
       temporaryDims: null,
       address: this.props.browser.address,
+      fullDocumentHeight: null,
+      fullDocumentWidth: null,
+      zoomLevel: null,
     };
     this.subscriptions = [];
     this.dbg = null;
@@ -131,18 +134,6 @@ class WebView extends Component {
     this.subscriptions.push(
       pubsub.subscribe(TOGGLE_DEVICE_MUTED_STATE, this.processToggleMuteEvent)
     );
-    this.subscriptions.push(
-      pubsub.subscribe(
-        ENABLE_INSPECTOR_ALL_DEVICES,
-        this.processEnableInspectorEvent
-      )
-    );
-    this.subscriptions.push(
-      pubsub.subscribe(
-        DISABLE_INSPECTOR_ALL_DEVICES,
-        this.processDisableInspectorEvent
-      )
-    );
 
     this.subscriptions.push(
       pubsub.subscribe(
@@ -150,14 +141,26 @@ class WebView extends Component {
         this.setNetworkThrottlingProfile
       )
     );
+
     this.subscriptions.push(
       pubsub.subscribe(CLEAR_NETWORK_CACHE, this.clearNetworkCache)
+    );
+
+    this.subscriptions.push(
+      pubsub.subscribe(
+        OPEN_CONSOLE_FOR_DEVICE,
+        this.processOpenConsoleForDeviceEvent
+      )
     );
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
       this.dbg = this.getWebContents().debugger;
-      if (!this.dbg.isAttached()) this.dbg.attach();
+      if (!this.dbg.isAttached()) {
+        this.dbg.attach();
+        this.dbg.on('message', this._onDebuggerEvent);
+      }
+      if (this.isMobile) this.hideScrollbar();
     });
 
     if (this.props.transmitNavigatorStatus) {
@@ -249,6 +252,16 @@ class WebView extends Component {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.device.isMuted !== this.props.device.isMuted) {
+      if (this.props.device.isMuted) {
+        this._muteWebView();
+      } else {
+        this._unmuteWebView();
+      }
+    }
+  }
+
   getWebContentsId() {
     return this.webviewRef.current.getWebContentsId();
   }
@@ -298,7 +311,9 @@ class WebView extends Component {
   };
 
   processReloadCSSEvent = () => {
-    this.webviewRef.current.executeJavaScript(`
+    this.webviewRef.current
+      .executeJavaScript(
+        `{
         var elements = document.querySelectorAll('link[rel=stylesheet][href]');
         elements.forEach(element=>{
           var href = element.href;
@@ -307,7 +322,9 @@ class WebView extends Component {
             element.href = href + (href.indexOf('?')>=0?'&':'?') + 'invalidateCacheParam=' + (new Date().valueOf());
           }
         })
-    `);
+    }`
+      )
+      .catch(captureOnSentry);
   };
 
   processAddressChangeEvent = ({address, force}) => {
@@ -363,15 +380,33 @@ class WebView extends Component {
     this.webviewRef.current.send('scrollUpMessage');
   };
 
-  processScreenshotEvent = async ({now}) => {
+  processScreenshotEvent = async ({
+    now,
+    fullScreen = true,
+  }: {
+    now?: Date,
+    fullScreen?: boolean,
+  }) => {
     this.setState({screenshotInProgress: true});
-    await captureFullPage(
-      this.props.browser.address,
-      this.props.device,
-      this.webviewRef.current,
-      now != null,
-      now
-    );
+    try {
+      await this.closeBrowserSyncSocket(this.webviewRef.current);
+      await captureScreenshot({
+        address: this.props.browser.address,
+        device: this.props.device,
+        webView: this.webviewRef.current,
+        createSeparateDir: now != null,
+        fullScreen,
+        now,
+        removeFixedPositionedElements: this.props.browser.userPreferences
+          .removeFixedPositionedElements,
+        screenshotMechanism: this.props.browser.userPreferences
+          .screenshotMechanism,
+        setFullDocumentDimensions: this._setFullDocumentDimensions,
+      });
+    } catch (err) {
+      console.log('Error during screen capture', err);
+    }
+    await this.openBrowserSyncSocket(this.webviewRef.current);
     this.setState({screenshotInProgress: false});
   };
 
@@ -405,12 +440,12 @@ class WebView extends Component {
     );
   };
 
-  processEnableInspectorEvent = () => {
-    this.webviewRef.current.send('enableInspectorMessage');
-  };
-
-  processDisableInspectorEvent = message => {
-    this.webviewRef.current.send('disableInspectorMessage');
+  processOpenConsoleForDeviceEvent = message => {
+    const {deviceId} = message;
+    if (this.props.device.id !== deviceId) {
+      return;
+    }
+    this._toggleDevTools();
   };
 
   setNetworkThrottlingProfile = ({type, downloadKps, uploadKps, latencyMs}) => {
@@ -470,9 +505,6 @@ class WebView extends Component {
       case MESSAGE_TYPES.openDevToolsInspector:
         this.processOpenDevToolsInspectorEvent(message);
         return;
-      case MESSAGE_TYPES.disableInspector:
-        this.transmitDisableInspectorToAllDevices(message);
-        return;
       case MESSAGE_TYPES.openConsole:
         this._toggleDevTools();
         return;
@@ -490,64 +522,77 @@ class WebView extends Component {
     }
   };
 
-  transmitDisableInspectorToAllDevices = message => {
-    pubsub.publish(DISABLE_INSPECTOR_ALL_DEVICES, [message]);
+  initBrowserSync = async webview => {
+    await this.getWebContentForId(webview.getWebContentsId())
+      .executeJavaScript(
+        `
+          var bsScript= document.createElement('script');
+          bsScript.src = '${getBrowserSyncEmbedScriptURL()}';
+          bsScript.async = true;
+          document.body.appendChild(bsScript);
+          true
+        `
+      )
+      .catch(captureOnSentry);
   };
 
-  initBrowserSync = webview => {
-    this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-    var bsScript= document.createElement('script');
-      bsScript.src = '${getBrowserSyncEmbedScriptURL()}';
-      bsScript.async = true;
-      document.body.appendChild(bsScript);
-    `);
-  };
-
-  initEventTriggers = webview => {
-    this.initBrowserSync(webview);
-    this.getWebContentForId(webview.getWebContentsId()).executeJavaScript(`
-    
-      responsivelyApp.deviceId = '${this.props.device.id}';
-      document.addEventListener('mouseleave', () => {
-        window.responsivelyApp.mouseOn = false;
-        if (responsivelyApp.domInspectorEnabled) {
-          responsivelyApp.domInspector.disable();
+  closeBrowserSyncSocket = async webview => {
+    await this.getWebContentForId(webview.getWebContentsId())
+      .executeJavaScript(
+        `
+        if(window.___browserSync___){
+          window.___browserSync___.socket.close()
         }
-      });
-      document.addEventListener('mouseenter', () => {
-        responsivelyApp.mouseOn = true;
-        if (responsivelyApp.domInspectorEnabled) {
-          responsivelyApp.domInspector.enable();
-        }
-      });
-
-      document.addEventListener(
-        'click',
-        (e) => {
-          if (e.target === window.responsivelyApp.lastClickElement || e.responsivelyAppProcessed) {
-            window.responsivelyApp.lastClickElement = null;
-            e.responsivelyAppProcessed = true;
-            return;
-          }
-          if (window.responsivelyApp.domInspectorEnabled) {
-            e.preventDefault();
-            window.responsivelyApp.domInspector.disable();
-            window.responsivelyApp.domInspectorEnabled = false;
-            const targetRect = e.target.getBoundingClientRect();
-            window.responsivelyApp.sendMessageToHost(
-              '${MESSAGE_TYPES.disableInspector}'
-            );
-            window.responsivelyApp.sendMessageToHost(
-              '${MESSAGE_TYPES.openDevToolsInspector}',
-              {x: targetRect.left, y: targetRect.top}
-            );
-            return;
-          }
-          e.responsivelyAppProcessed = true;
-        },
         true
-      );
-    `);
+      `
+      )
+      .catch(captureOnSentry);
+  };
+
+  openBrowserSyncSocket = async webview => {
+    await this.getWebContentForId(webview.getWebContentsId())
+      .executeJavaScript(
+        `
+        if(window.___browserSync___){
+          window.___browserSync___.socket.open()
+        }
+        true
+      `
+      )
+      .catch(captureOnSentry);
+  };
+
+  initEventTriggers = async webview => {
+    await this.initBrowserSync(webview);
+    this.getWebContentForId(webview.getWebContentsId())
+      .executeJavaScript(
+        `{
+          responsivelyApp.deviceId = '${this.props.device.id}';
+        }`
+      )
+      .catch(captureOnSentry);
+
+    if (this.state.isUnplugged) {
+      await this.closeBrowserSyncSocket(webview);
+    }
+  };
+
+  hideScrollbar = () => {
+    this.webviewRef.current.insertCSS(
+      `
+        ::-webkit-scrollbar {
+          display: none;
+        }
+        `
+    );
+  };
+
+  _setFullDocumentDimensions = (
+    fullDocumentHeight,
+    fullDocumentWidth,
+    zoomLevel = null
+  ) => {
+    this.setState({fullDocumentHeight, fullDocumentWidth, zoomLevel});
   };
 
   _isDevToolsOpen = () =>
@@ -582,6 +627,11 @@ class WebView extends Component {
   };
 
   _unPlug = () => {
+    if (this.state.isUnplugged) {
+      this.openBrowserSyncSocket(this.webviewRef.current);
+    } else {
+      this.closeBrowserSyncSocket(this.webviewRef.current);
+    }
     this.setState({isUnplugged: !this.state.isUnplugged}, () => {
       this.webviewRef.current.send(
         'eventsMirroringState',
@@ -601,14 +651,12 @@ class WebView extends Component {
     }
   };
 
-  _muteDevice = () => {
+  _muteWebView = () => {
     this.getWebContents().setAudioMuted(true);
-    this.props.onDeviceMutedChange(this.props.device.id, true);
   };
 
-  _unmuteDevice = () => {
+  _unmuteWebView = () => {
     this.getWebContents().setAudioMuted(false);
-    this.props.onDeviceMutedChange(this.props.device.id, false);
   };
 
   get isMobile() {
@@ -631,6 +679,73 @@ class WebView extends Component {
         updateResponsiveDimensions(this.state.deviceDimensions);
       }
     );
+  };
+
+  _onDebuggerEvent = async (event, method, params) => {
+    switch (method) {
+      case 'Overlay.inspectNodeRequested':
+        await this._onInspectNodeRequested(params);
+        break;
+      default:
+        break;
+    }
+  };
+
+  _onInspectNodeRequested = async ({backendNodeId}) => {
+    if (!this.props.browser.isInspecting) {
+      return;
+    }
+    const [
+      {
+        model: {
+          content: [x, y],
+        },
+      },
+    ] = await Promise.all([
+      this.dbg.sendCommand('DOM.getBoxModel', {
+        backendNodeId,
+      }),
+      this.dbg.sendCommand('Overlay.setInspectMode', {
+        mode: 'none',
+        highlightConfig: {},
+      }),
+    ]);
+    this.processOpenDevToolsInspectorEvent({x, y});
+  };
+
+  _onMouseEnter = async () => {
+    if (!this.props.browser.isInspecting) {
+      return;
+    }
+    try {
+      await this.dbg.sendCommand('DOM.enable');
+      await this.dbg.sendCommand('Overlay.enable');
+      await this.dbg.sendCommand('Overlay.setInspectMode', {
+        mode: 'searchForNode',
+        highlightConfig: {
+          showInfo: true,
+          showStyles: true,
+          contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+          paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+          borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+          marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+        },
+      });
+    } catch (err) {
+      console.log('Error enabling overlay', err);
+    }
+  };
+
+  _onMouseLeave = async () => {
+    if (!this.props.browser.isInspecting) {
+      return;
+    }
+    try {
+      await this.dbg.sendCommand('Overlay.disable');
+      await this.dbg.sendCommand('DOM.disable');
+    } catch (err) {
+      console.log('Error disabling overlay', err);
+    }
   };
 
   _getWebViewTag = deviceStyles => {
@@ -699,14 +814,16 @@ class WebView extends Component {
     }
 
     return (
-      <webview
-        ref={this.webviewRef}
-        preload="./preload.js"
-        className={cx(styles.device)}
-        src={address || 'about:blank'}
-        useragent={useragent}
-        style={deviceStyles}
-      />
+      <>
+        <webview
+          ref={this.webviewRef}
+          preload="./preload.js"
+          className={cx(styles.device)}
+          src={address || 'about:blank'}
+          useragent={useragent}
+          style={deviceStyles}
+        />
+      </>
     );
   };
 
@@ -721,15 +838,30 @@ class WebView extends Component {
       errorDesc,
       screenshotInProgress,
     } = this.state;
+    const screenshotZoomLevel = screenshotInProgress && this.state.zoomLevel;
+    const outline = `4px solid ${
+      this._isDevToolsOpen()
+        ? `#6075ef`
+        : this.props.browser.userPreferences.deviceOutlineStyle ||
+          'rgba(0, 0, 0, 0)'
+    }`;
     const deviceStyles = {
-      outline: `4px solid ${
-        this._isDevToolsOpen()
-          ? `#6075ef`
-          : this.props.browser.userPreferences.deviceOutlineStyle
-      }`,
+      outline,
+      width:
+        (this.state.screenshotInProgress && this.state.fullDocumentWidth) ||
+        deviceDimensions.width,
+      height:
+        (this.state.screenshotInProgress && this.state.fullDocumentHeight) ||
+        deviceDimensions.height,
+      transform: `scale(${screenshotZoomLevel || zoomLevel})`,
+    };
+    const overlayStyles = {
+      outline,
       width: deviceDimensions.width,
       height: deviceDimensions.height,
+      transform: `scale(${zoomLevel})`,
     };
+
     const isMuted = this.props.device.isMuted;
     const isResponsive = capabilities.includes(CAPABILITIES.responsive);
     const shouldMaximize = previewer.layout !== INDIVIDUAL_LAYOUT;
@@ -765,16 +897,28 @@ class WebView extends Component {
                 <BugIcon width={20} color={iconsColor} />
               </div>
             </Tooltip>
-            <Tooltip title="Take Screenshot">
+            <Tooltip title="Quick Screenshot">
               <div
                 className={cx(
                   styles.webViewToolbarIcons,
                   commonStyles.icons,
                   commonStyles.enabled
                 )}
-                onClick={() => this.processScreenshotEvent({})}
+                onClick={() => this.processScreenshotEvent({fullScreen: false})}
               >
                 <ScreenshotIcon height={18} color={iconsColor} />
+              </div>
+            </Tooltip>
+            <Tooltip title="Full Page Screenshot">
+              <div
+                className={cx(
+                  styles.webViewToolbarIcons,
+                  commonStyles.icons,
+                  commonStyles.enabled
+                )}
+                onClick={this.processScreenshotEvent}
+              >
+                <FullScreenshotIcon height={18} color={iconsColor} />
               </div>
             </Tooltip>
             <Tooltip title="Tilt Device">
@@ -789,23 +933,20 @@ class WebView extends Component {
                 <DeviceRotateIcon height={17} color={iconsColor} />
               </div>
             </Tooltip>
-            <Tooltip
-              title={isMuted ? 'Unmute' : 'Mute'}
-              disableFocusListener={true}
-            >
+
+            <Tooltip title="Disable event mirroring">
               <div
                 className={cx(
                   styles.webViewToolbarIcons,
                   commonStyles.icons,
-                  commonStyles.enabled
+                  commonStyles.enabled,
+                  {
+                    [commonStyles.selected]: this.state.isUnplugged,
+                  }
                 )}
-                onClick={isMuted ? this._unmuteDevice : this._muteDevice}
+                onClick={this._unPlug}
               >
-                {isMuted ? (
-                  <MutedIcon height={20} color="white" />
-                ) : (
-                  <UnmutedIcon height={20} color="white" />
-                )}
+                <UnplugIcon height={30} color={iconsColor} />
               </div>
             </Tooltip>
           </div>
@@ -827,22 +968,25 @@ class WebView extends Component {
                 <IconFocus />
               </div>
             </Tooltip>
-            {/* {expandOrCollapse} */}
           </div>
         </div>
         <div
           className={cx(styles.deviceContainer)}
           style={{
-            width: deviceStyles.width,
-            transform: `scale(${zoomLevel})`,
+            width: deviceStyles.width * zoomLevel,
+            height: deviceStyles.height * zoomLevel,
           }}
+          onMouseEnter={this._onMouseEnter}
+          onMouseLeave={this._onMouseLeave}
         >
           <div
             className={cx(styles.deviceOverlay, {
               [styles.overlayEnabled]: screenshotInProgress,
             })}
-            style={deviceStyles}
-          />
+            style={overlayStyles}
+          >
+            <Spinner size={24} />
+          </div>
           <div
             className={cx(styles.deviceOverlay, {
               [styles.overlayEnabled]: errorCode,

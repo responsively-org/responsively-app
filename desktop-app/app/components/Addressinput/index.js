@@ -1,10 +1,10 @@
-// @flow
 import React from 'react';
 import cx from 'classnames';
 import FavIconOff from '@material-ui/icons/StarBorder';
 import FavIconOn from '@material-ui/icons/Star';
 import {Tooltip} from '@material-ui/core';
 import {Icon} from 'flwww';
+import fs from 'fs';
 import HomePlusIcon from '../icons/HomePlus';
 import DeleteCookieIcon from '../icons/DeleteCookie';
 import DeleteStorageIcon from '../icons/DeleteStorage';
@@ -19,6 +19,7 @@ import UrlSearchResults from '../UrlSearchResults';
 import commonStyles from '../common.styles.css';
 import styles from './style.css';
 import debounce from 'lodash/debounce';
+import {notifyPermissionToHandleReloadOrNewAddress} from '../../utils/permissionUtils.js';
 
 type Props = {
   address: string,
@@ -37,8 +38,9 @@ class AddressBar extends React.Component<Props> {
     this.state = {
       userTypedAddress: props.address,
       previousAddress: props.address,
-      finalUrlResult: null,
+      suggestionList: [],
       canShowSuggestions: false,
+      cursor: null,
     };
     this.inputRef = React.createRef();
   }
@@ -62,14 +64,18 @@ class AddressBar extends React.Component<Props> {
   }
 
   render() {
+    const {
+      suggestionList,
+      canShowSuggestions,
+      cursor,
+      userTypedAddress,
+    } = this.state;
+    const showSuggestions =
+      canShowSuggestions && !this._isSuggestionListEmpty();
     return (
       <div
         className={`${styles.addressBarContainer} ${
-          this.state.finalUrlResult
-            ? this.state.finalUrlResult.length && this.state.canShowSuggestions
-              ? styles.active
-              : ''
-            : ''
+          showSuggestions ? styles.active : ''
         }`}
       >
         <input
@@ -79,7 +85,7 @@ class AddressBar extends React.Component<Props> {
           name="address"
           className={styles.addressInput}
           placeholder="https://your-website.com"
-          value={this.state.userTypedAddress}
+          value={userTypedAddress}
           onKeyDown={this._handleKeyDown}
           onChange={this._handleInputChange}
         />
@@ -98,9 +104,7 @@ class AddressBar extends React.Component<Props> {
             >
               <div
                 className={cx(commonStyles.flexAlignVerticalMiddle)}
-                onClick={() =>
-                  this.props.toggleBookmark(this.state.userTypedAddress)
-                }
+                onClick={() => this.props.toggleBookmark(userTypedAddress)}
               >
                 <Icon
                   type={this.props.isBookmarked ? 'starFull' : 'star'}
@@ -170,53 +174,110 @@ class AddressBar extends React.Component<Props> {
             </Tooltip>
           </div>
         </div>
-        {this.state.finalUrlResult?.length && this.state.canShowSuggestions ? (
+        {showSuggestions ? (
           <UrlSearchResults
-            divClassName={cx(styles.searchBarSuggestionsContainer)}
-            listItemUiClassName={cx(styles.searchBarSuggestionsListUl)}
-            listItemsClassName={cx(styles.searchBarSuggestionsListItems)}
-            filteredSearchResults={this.state.finalUrlResult}
+            filteredSearchResults={suggestionList}
+            cursorIndex={cursor}
             handleUrlChange={this._onSearchedUrlClick}
           />
-        ) : (
-          ''
-        )}
+        ) : null}
       </div>
     );
   }
 
   _handleInputChange = e => {
-    this.setState(
-      {userTypedAddress: e.target.value, canShowSuggestions: true},
-      () => {
+    const {value} = e.target;
+    if (value) {
+      this.setState({userTypedAddress: value, canShowSuggestions: true}, () => {
         this._filterExistingUrl();
-      }
-    );
+      });
+    } else {
+      this.setState({userTypedAddress: value, suggestionList: []}, () => {
+        this._hideSuggestions();
+      });
+    }
   };
 
   _handleKeyDown = e => {
+    const {cursor, suggestionList} = this.state;
     if (e.key === 'Enter') {
       this.inputRef.current.blur();
       this.setState(
         {
-          finalUrlResult: [],
+          suggestionList: [],
           canShowSuggestions: false,
+          cursor: null,
         },
         () => {
           this._onChange();
         }
       );
+    } else if (e.key === 'ArrowUp' && !this._isSuggestionListEmpty()) {
+      // if the suggestion list just opened or the first suggestion is selected set the cursor to the last suggestion
+      if (cursor === null || cursor === 0) {
+        this._openSuggestionListAndSetCursorAt(suggestionList.length - 1);
+        // if cursor is down move it up by subtracting 1
+      } else if (cursor > 0) {
+        this._handleSuggestionSelection(-1);
+      }
+    } else if (e.key === 'ArrowDown' && !this._isSuggestionListEmpty()) {
+      // if the suggestion list just opened or the last suggestion is selected set the cursor to the first suggestion
+      if (cursor === null || cursor === suggestionList.length - 1) {
+        this._openSuggestionListAndSetCursorAt(0);
+        // if cursor is up move it down by adding 1
+      } else if (cursor < suggestionList.length - 1) {
+        this._handleSuggestionSelection(1);
+      }
+    } else if (e.key === 'Escape') {
+      this._hideSuggestions();
     }
   };
 
+  _hideSuggestions = () => {
+    this.setState({
+      canShowSuggestions: false,
+      cursor: null,
+    });
+  };
+
+  /**
+   * Open suggestion list and set current selection at cursor position.
+   * @param {number} cursor Cursor position.
+   */
+  _openSuggestionListAndSetCursorAt = cursor => {
+    this.setState(prevState => ({
+      cursor,
+      userTypedAddress: this.state.suggestionList[cursor].url,
+      canShowSuggestions: true,
+    }));
+  };
+  /**
+   * Handles the suggestion selection on arrow key up and down.
+   * @param {number} direction Indicates the direction. 1 for down, -1 for up.
+   */
+  _handleSuggestionSelection = direction => {
+    const modifier = 1 * direction;
+    this.setState(prevState => ({
+      cursor: prevState.cursor + modifier,
+      userTypedAddress: this.state.suggestionList[prevState.cursor + modifier]
+        .url,
+      canShowSuggestions: true,
+    }));
+  };
+
+  _isSuggestionListEmpty = () => this.state.suggestionList.length === 0;
+
+  _handleClickOutside = () => {
+    this._hideSuggestions();
+  };
+
   _onChange = () => {
-    if (!this.state.userTypedAddress) {
+    if (!this.state.userTypedAddress || !this.props.onChange) {
       return;
     }
-    return (
-      this.props.onChange &&
-      this.props.onChange(this._normalize(this.state.userTypedAddress), true)
-    );
+
+    notifyPermissionToHandleReloadOrNewAddress();
+    this.props.onChange(this._normalize(this.state.userTypedAddress), true);
   };
 
   _onSearchedUrlClick = (url, index) => {
@@ -226,15 +287,17 @@ class AddressBar extends React.Component<Props> {
 
     this.setState({
       userTypedAddress: url,
-      finalUrlResult: [],
+      suggestionList: [],
     });
   };
 
-  _normalize = address => {
+  _normalize = (address: string) => {
     if (address.indexOf('://') === -1) {
       let protocol = 'https://';
       if (address.startsWith('localhost') || address.startsWith('127.0.0.1')) {
         protocol = 'http://';
+      } else if (fs.existsSync(address)) {
+        protocol = 'file://';
       }
       address = `${protocol}${address}`;
     }
@@ -243,14 +306,10 @@ class AddressBar extends React.Component<Props> {
 
   _filterExistingUrl = debounce(() => {
     const finalResult = searchUrlUtils(this.state.userTypedAddress);
-    this.setState({finalUrlResult: finalResult});
+    this.setState({suggestionList: finalResult.slice(0, MAX_SUGGESTIONS)});
   }, 300);
-
-  _handleClickOutside = () => {
-    this.setState({
-      finalUrlResult: [],
-    });
-  };
 }
+
+const MAX_SUGGESTIONS = 8;
 
 export default AddressBar;

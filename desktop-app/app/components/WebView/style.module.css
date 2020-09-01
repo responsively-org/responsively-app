@@ -1,6 +1,7 @@
 .webViewContainer {
   display: flex;
   flex-direction: column;
+  min-width: 200px;
 }
 
 .webViewToolbar {
@@ -45,6 +46,9 @@
 .device {
   transform-origin: top left;
   background: white;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .deviceOverlay {
@@ -59,7 +63,7 @@
 
 .deviceOverlay.overlayEnabled {
   display: block;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .errorDesc {

@@ -253,11 +253,83 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "mehrdad-shokri",
+      "name": "Mehrdad Shokri",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/13661520?v=4",
+      "profile": "https://shokri.me",
+      "contributions": [
+        "infra"
+      ]
+    },
+    {
+      "login": "abakermi",
+      "name": "Abdelhak Akermi",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/60294727?v=4",
+      "profile": "https://github.com/abakermi",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "crperezt",
+      "name": "Carlos Perez",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/20329014?v=4",
+      "profile": "https://github.com/crperezt",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "JayArya",
+      "name": "Jayant Arya",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/42388314?v=4",
+      "profile": "https://github.com/JayArya",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "JohnRawlins",
+      "name": "John Rawlins",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/42707277?v=4",
+      "profile": "https://github.com/JohnRawlins",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "lepasq",
+      "name": "lepasq",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/53230128?v=4",
+      "profile": "https://github.com/lepasq",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mrfelfel",
+      "name": "mrfelfel",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/19575588?v=4",
+      "profile": "https://github.com/mrfelfel",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "gorogoroumaru",
+      "name": "gorogoroumaru",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/30716350?v=4",
+      "profile": "https://twitter.com/gorogoroumaru",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
   "projectName": "responsively-app",
-  "projectOwner": "manojVivek",
+  "projectOwner": "responsively-org",
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true,

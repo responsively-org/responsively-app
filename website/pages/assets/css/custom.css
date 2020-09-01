@@ -1,5 +1,5 @@
-/* 
-/* 
+/*
+/*
 /*  custom.css
 /*
 /*  If not using Gulp and Sass, add your custom CSS below then include it
@@ -33,4 +33,31 @@ html {
 
 #privacyPolicy ol, #privacyPolicy li {
   text-align: left !important;
+}
+
+.extensionButton {
+  width: 300px;
+}
+
+#github-contributors__thanks {
+  padding: 0 2rem;
+  max-width: 40rem;
+  margin: auto;
+}
+
+#github-contributors__users {
+  padding: 0 2rem;
+  max-width: 40rem;
+  margin: 2rem auto;
+}
+
+.github-contributors__avatar {
+  overflow: hidden;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  margin: .1rem .2rem;
+  display: inline-block;
+  background-color: hsla(0, 0%, 100%, .1);
+  background-size: contain;
 }

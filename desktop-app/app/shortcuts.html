@@ -42,7 +42,7 @@
         font-size: large;
         background-color: black;
         border-radius: 5px;
-        font-family: "Consolas", "Courier New", monospace;
+        font-family: 'Consolas', 'Courier New', monospace;
         white-space: pre;
       }
       .btn-wrapper {
@@ -71,6 +71,9 @@
     </div>
     <script>
       function firstToUpperCase(s) {
+        if (!s) {
+          return '';
+        }
         return s[0].toUpperCase() + s.slice(1);
       }
       function getNumPadName(n) {
@@ -84,38 +87,39 @@
       }
       function getKeyName(k) {
         const lo = k.toLowerCase();
-        if (lo === 'mod')
-          return 'Cmd/Ctrl';
-        if (lo === 'commandorcontrol' || lo === 'cmdorctrl')
-          return 'Cmd/Ctrl';
-        if (lo === 'command')
-          return 'Cmd';
-        if (lo === 'control')
-          return 'Ctrl';
-        if (lo === 'plus')
-          return '+';
-        if (lo === 'return')
-          return 'Enter';
-        if (lo === 'escape')
-          return 'Esc';
-        if (lo === 'prtsc')
-          return 'PrtSc';
-        if (lo.startsWith('num'))
-          return getNumPadName(k.slice(3));
+        if (lo === 'mod') return 'Cmd/Ctrl';
+        if (lo === 'commandorcontrol' || lo === 'cmdorctrl') return 'Cmd/Ctrl';
+        if (lo === 'command') return 'Cmd';
+        if (lo === 'control') return 'Ctrl';
+        if (lo === 'plus') return '+';
+        if (lo === 'return') return 'Enter';
+        if (lo === 'escape') return 'Esc';
+        if (lo === 'prtsc') return 'PrtSc';
+        if (lo.startsWith('num')) return getNumPadName(k.slice(3));
         return firstToUpperCase(k);
       }
       function mapAccelerator(acc) {
+        if (acc === 'mod++') {
+          return ['Cmd/Ctrl', '+'];
+        }
         return acc.split('+').map(getKeyName);
-      }    
+      }
 
       let registeredShortcuts = [];
       try {
-        registeredShortcuts = JSON.parse(window.process.argv.slice(-1)).reduce((arr, def) => {
-          arr.push([def.title, mapAccelerator(def.accelerators[0])]);
-          def.accelerators.slice(1).forEach(acc => arr.push(['', mapAccelerator(acc)]))
-          return arr;
-        }, []);
-      } catch { }
+        registeredShortcuts = JSON.parse(window.process.argv.slice(-1)).reduce(
+          (arr, def) => {
+            arr.push([def.title, mapAccelerator(def.accelerators[0])]);
+            def.accelerators
+              .slice(1)
+              .forEach(acc => arr.push(['', mapAccelerator(acc)]));
+            return arr;
+          },
+          []
+        );
+      } catch (err) {
+        console.log('Error while processing shortcuts', err);
+      }
 
       const shortcutNodes = registeredShortcuts.map(([label, keys]) => {
         const liElem = document.createElement('li');

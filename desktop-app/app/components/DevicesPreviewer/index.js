@@ -95,6 +95,7 @@ export default function DevicesPreviewer(props) {
               src={address}
               zoomLevel={zoomLevel}
               transmitNavigatorStatus={index === 0}
+              onDeviceMutedChange={props.onDeviceMutedChange}
             />
           </div>
         ))}
