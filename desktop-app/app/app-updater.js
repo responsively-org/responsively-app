@@ -1,6 +1,6 @@
 import {autoUpdater} from 'electron-updater';
 import log from 'electron-log';
-import {pkg} from './utils/generalUtils';
+import {getPackageJson} from './utils/generalUtils';
 import {shell, Notification} from 'electron';
 
 const {EventEmitter} = require('events');
@@ -51,6 +51,7 @@ class AppUpdater extends EventEmitter {
   }
 
   checkForUpdatesAndNotify() {
+    const pkg = getPackageJson();
     if (this.status === AppUpdaterStatus.Idle) {
       if (this.isPortableVersion) {
         return autoUpdater.checkForUpdates().then(r => {

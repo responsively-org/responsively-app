@@ -4,16 +4,16 @@ import Button from '@material-ui/core/Button';
 
 const {openNewGitHubIssue} = require('electron-util');
 
-const {
-  appVersion,
-  electronVersion,
-  chromeVersion,
-  nodeVersion,
-  v8Version,
-  osInfo,
-} = getEnvironmentInfo();
-
-const reportBody = state => `Hi I'm reporting an app crash:
+const reportBody = state => {
+  const {
+    appVersion,
+    electronVersion,
+    chromeVersion,
+    nodeVersion,
+    v8Version,
+    osInfo,
+  } = getEnvironmentInfo();
+  return `Hi I'm reporting an app crash:
 **PLEASE WRITE HERE ANY HINT THAT HELP US TO REPRODUCE THIS**
 
 <details>
@@ -44,6 +44,7 @@ ${(state.errorInfo || '').split('\\n ').join('\n')}
 </details>
 
 Hope you find the issue, regards`;
+};
 
 const createIssue = state => {
   openNewGitHubIssue({
@@ -57,7 +58,10 @@ const createIssue = state => {
 export default function CreateIssue(props) {
   return (
     <div style={{textAlign: 'center'}}>
-      <p>Please create a new issue in the github repo sending this info</p>
+      <p>
+        Please click on the below link to automatically create an issue on
+        GitHub.
+      </p>
       <Button
         variant="contained"
         color="primary"
