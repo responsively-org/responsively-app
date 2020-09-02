@@ -25,8 +25,9 @@ export default function DeviceList({
   const [filteredDevices, setFilteredList] = useState(devices);
   const subscriptions = [];
 
-  function focusSearchField() {
-    setSearchOpen(true);
+  function closeSearch() {
+    setSearchOpen(false);
+    setSearchText('');
   }
 
   useEffect(() => {
@@ -42,7 +43,9 @@ export default function DeviceList({
       onFiltering(filteredDevices);
     }
 
-    subscriptions.push(pubsub.subscribe(SEARCH_DEVICES, focusSearchField));
+    subscriptions.push(
+      pubsub.subscribe(SEARCH_DEVICES, () => setSearchOpen(true))
+    );
 
     return () => {
       subscriptions.forEach(sub => {
@@ -77,10 +80,7 @@ export default function DeviceList({
                     <InputAdornment>
                       <IconButton
                         className={styles.searchActiveIcon}
-                        onClick={() => {
-                          setSearchOpen(false);
-                          setSearchText('');
-                        }}
+                        onClick={() => closeSearch()}
                       >
                         <CancelIcon />
                       </IconButton>
