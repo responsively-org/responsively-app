@@ -291,10 +291,21 @@ class AddressBar extends React.Component<Props> {
     });
   };
 
+  _hostnameCharHints = [':', '/', '#', '&', '?'];
+  _inferHostname = (address: string) =>
+    this._hostnameCharHints.reduce(
+      (curr, char) => curr.split(char)[0],
+      address
+    );
+
   _normalize = (address: string) => {
     if (address.indexOf('://') === -1) {
       let protocol = 'https://';
-      if (address.startsWith('localhost') || address.startsWith('127.0.0.1') || address.split(':')[0].split('?')[0].endsWith('.localhost')) {
+      if (
+        address.startsWith('localhost') ||
+        address.startsWith('127.0.0.1') ||
+        this._inferHostname(address).indexOf('.localhost') !== -1
+      ) {
         protocol = 'http://';
       } else if (fs.existsSync(address)) {
         protocol = 'file://';
