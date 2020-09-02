@@ -1,6 +1,6 @@
 import {autoUpdater} from 'electron-updater';
 import log from 'electron-log';
-import {pkg} from './utils/generalUtils';
+import {getPackageJson} from './utils/generalUtils';
 import {shell, Notification} from 'electron';
 
 const {EventEmitter} = require('events');
@@ -21,7 +21,9 @@ class AppUpdater extends EventEmitter {
 
   timerId = null;
 
-  isPortableVersion = process.env.PORTABLE_EXECUTABLE_DIR != null && process.env.PORTABLE_EXECUTABLE_DIR.length !== 0;
+  isPortableVersion =
+    process.env.PORTABLE_EXECUTABLE_DIR != null &&
+    process.env.PORTABLE_EXECUTABLE_DIR.length !== 0;
 
   constructor() {
     super();
@@ -49,19 +51,25 @@ class AppUpdater extends EventEmitter {
   }
 
   checkForUpdatesAndNotify() {
-    if (this.status === AppUpdaterStatus.Idle)
-    {
+    const pkg = getPackageJson();
+    if (this.status === AppUpdaterStatus.Idle) {
       if (this.isPortableVersion) {
         return autoUpdater.checkForUpdates().then(r => {
-          if (r?.updateInfo?.version != null && r.updateInfo.version !== pkg.version) {
+          if (
+            r?.updateInfo?.version != null &&
+            r.updateInfo.version !== pkg.version
+          ) {
             this.handleStatusChange(AppUpdaterStatus.NewVersion, true);
             if (Notification.isSupported()) {
               const notif = new Notification({
                 title: `New version ${r.updateInfo.version} available`,
-                body: 'You have an outdated version of Responsively. Click here to download the latest version'
+                body:
+                  'You have an outdated version of Responsively. Click here to download the latest version',
               });
               notif.on('click', () => {
-                shell.openExternal('https://github.com/responsively-org/responsively-app/releases/latest');
+                shell.openExternal(
+                  'https://github.com/responsively-org/responsively-app/releases/latest'
+                );
               });
               notif.show();
             }

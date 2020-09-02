@@ -59,7 +59,7 @@ const _handlePermissionsDefaultPreferences = () => {
   }
 
   userPreferences.permissionManagement =
-    PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS;
+    PERMISSION_MANAGEMENT_OPTIONS.ASK_ALWAYS;
   settings.set(USER_PREFERENCES, userPreferences);
 };
 

@@ -3,23 +3,22 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 
-const getPackageJson = () => {
+export const getPackageJson = () => {
   let appPath;
   if (process.env.NODE_ENV === 'production') appPath = app.getAppPath();
   else appPath = process.cwd();
 
   const pkgPath = path.join(appPath, 'package.json');
   if (fs.existsSync(pkgPath)) {
-    const pkgContent = fs.readFileSync(pkgPath);
+    const pkgContent = fs.readFileSync(pkgPath, 'utf-8');
     return JSON.parse(pkgContent);
   }
   console.error(`cant find package.json in: '${appPath}'`);
   return {};
 };
 
-export const pkg = getPackageJson();
-
 export const getEnvironmentInfo = () => {
+  const pkg = getPackageJson();
   const appVersion = pkg.version || 'Unknown';
   const electronVersion = process.versions.electron || 'Unknown';
   const chromeVersion = process.versions.chrome || 'Unknown';
