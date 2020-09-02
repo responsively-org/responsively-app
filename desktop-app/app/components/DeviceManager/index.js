@@ -131,7 +131,7 @@ export default function DeviceManager(props) {
         Customize
         {/* <EditIcon style={{fontSize: 'inherit'}} /> */}
       </Button>
-      <Dialog fullScreen open={open} onClose={closeDialog}>
+      <Dialog fullScreen open={open}>
         <AppBar className={classes.appBar} color="secondary">
           <Toolbar>
             {/* <IconButton edge="start" onClick={closeDialog} aria-label="close">

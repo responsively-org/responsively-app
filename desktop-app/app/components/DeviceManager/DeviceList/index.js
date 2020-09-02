@@ -75,6 +75,9 @@ export default function DeviceList({
                 placeholder="Search..."
                 value={searchText}
                 onChange={e => setSearchText(e.target.value.toLowerCase())}
+                onKeyDown={e => {
+                  if (e.key === 'Escape') closeSearch();
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment>
