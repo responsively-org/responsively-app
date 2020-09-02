@@ -291,7 +291,7 @@ class AddressBar extends React.Component<Props> {
     });
   };
 
-  _hostnameCharHints = [':', '/', '#', '&', '?'];
+  _hostnameCharHints = [':', '/', '#', '?'];
   _inferHostname = (address: string) =>
     this._hostnameCharHints.reduce(
       (curr, char) => curr.split(char)[0],
