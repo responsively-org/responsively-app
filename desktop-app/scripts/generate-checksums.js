@@ -2,7 +2,12 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
-function hashFile(file, algorithm = 'sha512', encoding = 'base64', options) {
+function hashFile(
+  file,
+  algorithm = 'sha512',
+  encoding = 'base64',
+  options = {}
+) {
   return new Promise((resolve, reject) => {
     const hash = crypto.createHash(algorithm);
     hash.on('error', reject).setEncoding(encoding);
@@ -32,7 +37,7 @@ const generateChecksums = async () => {
   const result = [];
   const installerPath = path.resolve(__dirname, RELATIVE_FOLDER_PATH);
   const files = await fs.promises.readdir(installerPath);
-  console.log("Generating checksum files for files in: '%s'", installerPath);
+  console.log("\nGenerating checksum files for files in: '%s'", installerPath);
 
   for (const file of files) {
     if (SKIP_SUFFIX_LIST.some(s => file.endsWith(s))) continue;
