@@ -29,6 +29,7 @@ import {
   CLEAR_NETWORK_CACHE,
   SET_NETWORK_TROTTLING_PROFILE,
   OPEN_CONSOLE_FOR_DEVICE,
+  PROXY_AUTH_ERROR,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -77,6 +78,7 @@ class WebView extends Component {
       },
       temporaryDims: null,
       address: this.props.browser.address,
+      proxyAuthError: false,
       fullDocumentHeight: null,
       fullDocumentWidth: null,
       zoomLevel: null,
@@ -147,6 +149,10 @@ class WebView extends Component {
     );
 
     this.subscriptions.push(
+      pubsub.subscribe(PROXY_AUTH_ERROR, this.onProxyError)
+    );
+
+    this.subscriptions.push(
       pubsub.subscribe(
         OPEN_CONSOLE_FOR_DEVICE,
         this.processOpenConsoleForDeviceEvent
@@ -180,7 +186,7 @@ class WebView extends Component {
     }
 
     this.webviewRef.current.addEventListener('did-start-loading', () => {
-      this.setState({errorCode: null, errorDesc: null});
+      this.setState({errorCode: null, errorDesc: null, proxyAuthError: false});
       this.props.onLoadingStateChange(true);
       this.props.deviceLoadingChange({id: this.props.device.id, loading: true});
     });
@@ -489,6 +495,10 @@ class WebView extends Component {
 
   clearNetworkCache = () => {
     this.getWebContents().session.clearCache();
+  };
+
+  onProxyError = () => {
+    this.setState({proxyAuthError: true});
   };
 
   messageHandler = ({channel: type, args: [message]}) => {
@@ -837,6 +847,7 @@ class WebView extends Component {
       errorCode,
       errorDesc,
       screenshotInProgress,
+      proxyAuthError,
     } = this.state;
     const screenshotZoomLevel = screenshotInProgress && this.state.zoomLevel;
     const outline = `4px solid ${
@@ -995,6 +1006,9 @@ class WebView extends Component {
           >
             <p>ERROR: {errorCode}</p>
             <p className={cx(styles.errorDesc)}>{errorDesc}</p>
+            {proxyAuthError && (
+              <p className={cx(styles.errorDesc)}>Proxy Authentication Error</p>
+            )}
           </div>
           {this._getWebViewTag(deviceStyles)}
         </div>

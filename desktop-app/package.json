@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "A developer-friendly browser for developing responsive web apps",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -29,7 +29,6 @@
     "postinstall": "electron-builder install-app-deps && yarn build-dll",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{*{js,jsx,json},babelrc,eslintrc,prettierrc,stylelintrc}'",
     "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
-    "precommit": "lint-staged",
     "prestart": "yarn build",
     "start": "cross-env NODE_ENV=production electron ./app/main.prod.js",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r @babel/register ./app/main.dev.js",
@@ -40,24 +39,25 @@
     "test-e2e-live": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test testcafe-live electron:./ ./test/e2e/HomePage.e2e.js",
     "test-watch": "yarn test --watch"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "lint-staged": {
     "*.{js,jsx}": [
       "cross-env NODE_ENV=development eslint --cache --format=pretty",
-      "prettier --ignore-path .eslintignore --single-quote --write",
-      "git add"
+      "prettier --ignore-path .eslintignore --single-quote --write"
     ],
     "{*.json,.{babelrc,eslintrc,prettierrc,stylelintrc}}": [
-      "prettier --ignore-path .eslintignore --parser json --write",
-      "git add"
+      "prettier --ignore-path .eslintignore --parser json --write"
     ],
     "*.{css,scss}": [
       "stylelint --ignore-path .eslintignore --syntax scss --fix",
-      "prettier --ignore-path .eslintignore --single-quote --write",
-      "git add"
+      "prettier --ignore-path .eslintignore --single-quote --write"
     ],
     "*.{yml,md}": [
-      "prettier --ignore-path .eslintignore --single-quote --write",
-      "git add"
+      "prettier --ignore-path .eslintignore --single-quote --write"
     ]
   },
   "main": "./app/main.prod.js",
@@ -125,7 +125,8 @@
     },
     "win": {
       "target": [
-        "nsis"
+        "nsis",
+        "portable"
       ],
       "fileAssociations": [
         {
@@ -136,6 +137,9 @@
           "role": "Viewer"
         }
       ]
+    },
+    "nsis": {
+      "deleteAppDataOnUninstall": true
     },
     "linux": {
       "target": [
@@ -246,19 +250,19 @@
     "flow-bin": "^0.77.0",
     "flow-runtime": "^0.17.0",
     "flow-typed": "^3.2.0",
-    "husky": "^1.1.4",
+    "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^26.1.0",
-    "lint-staged": "^8.1.0",
+    "jest": "^23.6.0",
+    "lint-staged": "^10.2.11",
     "mini-css-extract-plugin": "^0.4.4",
-    "node-sass": "^4.10.0",
     "opencollective-postinstall": "^2.0.1",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "prettier": "^1.15.2",
     "react-test-renderer": "^16.6.3",
     "redux-logger": "^3.0.6",
     "rimraf": "^2.6.2",
-    "sass-loader": "^7.1.0",
+    "sass": "^1.26.10",
+    "sass-loader": "^9.0.2",
     "sinon": "^7.1.1",
     "style-loader": "^0.23.1",
     "stylelint": "^13.6.1",
@@ -294,6 +298,7 @@
     "electron-notarize": "^0.3.0",
     "electron-settings": "^3.2.0",
     "electron-updater": "^4.3.1",
+    "electron-util": "^0.14.2",
     "flwww": "^2.0.10",
     "framer-motion": "^2.2.0",
     "history": "^4.7.2",
@@ -322,6 +327,8 @@
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "source-map-support": "^0.5.9",
+    "universal-analytics": "^0.4.23",
+    "uuid": "^8.3.0",
     "validator": "^13.1.1"
   },
   "devEngines": {

@@ -316,6 +316,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "gorogoroumaru",
+      "name": "gorogoroumaru",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/30716350?v=4",
+      "profile": "https://twitter.com/gorogoroumaru",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ruisaraiva19",
+      "name": "Rui Saraiva",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/7356098?v=4",
+      "profile": "http://ruisaraiva.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
