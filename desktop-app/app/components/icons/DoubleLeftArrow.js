@@ -5,7 +5,6 @@ export default ({width, height, color, padding, margin}) => (
     <svg
       height={height}
       width={width}
-      fill={color}
       style={{padding, margin}}
       viewBox="0 0 1240 1240"
       version="1.1"
@@ -25,7 +24,7 @@ export default ({width, height, color, padding, margin}) => (
         <g
           id="Group"
           transform="translate(619.500000, 620.000000) rotate(90.000000) translate(-619.500000, -620.000000) translate(409.000000, 406.000000)"
-          stroke="white"
+          stroke={color}
           strokeWidth="50"
         >
           <polyline

@@ -4,43 +4,47 @@ import AndroidIcon from '@material-ui/icons/Android';
 import DesktopIcon from '@material-ui/icons/DesktopWindows';
 import MobileIcon from '@material-ui/icons/Smartphone';
 import TabletIcon from '@material-ui/icons/TabletMac';
-import {Icon} from 'flwww';
+import {useTheme, makeStyles} from '@material-ui/core/styles';
 import WindowsIcon from '../icons/Windows';
 import AppleIcon from '../icons/Apple';
-
-import styles from './styles.css';
-import commonStyles from '../common.styles.css';
-import {iconsColor} from '../../constants/colors';
+import FilterIcon from '../icons/Filter';
+import useCommonStyles from '../useCommonStyles';
 import {OS, DEVICE_TYPE} from '../../constants/devices';
 import {FILTER_FIELDS} from '../../reducers/browser';
 
-export default function QuickFilterDevices(props) {
+function QuickFilterDevices(props) {
+  const theme = useTheme();
+  const classes = useStyles();
+  const commonClasses = useCommonStyles();
+
   return (
-    <div className={cx(commonStyles.sidebarContentSection)}>
-      <div className={cx(commonStyles.sidebarContentSectionTitleBar)}>
-        <Icon type="filter" color="white" size="30px" /> Quick Filters
+    <div className={commonClasses.sidebarContentSection}>
+      <div className={commonClasses.sidebarContentSectionTitleBar}>
+        <FilterIcon
+          className={classes.filterIcon}
+          width="20"
+          height="20"
+          color={theme.palette.text.primary}
+        />
+        Quick Filters
       </div>
-      <div className={cx(commonStyles.sidebarContentSectionContainer)}>
-        <div className={cx(styles.filterSection)}>
-          <div className={cx(styles.sectionTitle)}>Operating System</div>
-          <div className={cx(styles.optionIconsContainer)}>
+      <div className={commonClasses.sidebarContentSectionContainer}>
+        <div className={classes.filterSection}>
+          <div className={classes.sectionTitle}>Operating System</div>
+          <div className={classes.optionIconsContainer}>
             <div
-              className={cx(styles.optionIcon, commonStyles.icons, {
-                [commonStyles.disabled]: false,
-                [commonStyles.enabled]: true,
-                [commonStyles.selected]:
+              className={cx(classes.optionIcon, commonClasses.icon, {
+                [commonClasses.iconSelected]:
                   props.browser.filters[FILTER_FIELDS.OS].indexOf(OS.ios) !==
                   -1,
               })}
               onClick={() => props.toggleFilter(FILTER_FIELDS.OS, OS.ios)}
             >
-              <AppleIcon color={iconsColor} height={40} />
+              <AppleIcon color="currentColor" height={40} />
             </div>
             <div
-              className={cx(styles.optionIcon, commonStyles.icons, {
-                [commonStyles.disabled]: false,
-                [commonStyles.enabled]: true,
-                [commonStyles.selected]:
+              className={cx(classes.optionIcon, commonClasses.icon, {
+                [commonClasses.iconSelected]:
                   props.browser.filters[FILTER_FIELDS.OS].indexOf(
                     OS.android
                   ) !== -1,
@@ -50,10 +54,8 @@ export default function QuickFilterDevices(props) {
               <AndroidIcon style={{fontSize: 40}} />
             </div>
             <div
-              className={cx(styles.optionIcon, commonStyles.icons, {
-                [commonStyles.disabled]: false,
-                [commonStyles.enabled]: true,
-                [commonStyles.selected]:
+              className={cx(classes.optionIcon, commonClasses.icon, {
+                [commonClasses.iconSelected]:
                   props.browser.filters[FILTER_FIELDS.OS].indexOf(
                     OS.windowsPhone
                   ) !== -1,
@@ -62,13 +64,11 @@ export default function QuickFilterDevices(props) {
                 props.toggleFilter(FILTER_FIELDS.OS, OS.windowsPhone)
               }
             >
-              <WindowsIcon color={iconsColor} height={34} padding={3} />
+              <WindowsIcon color="currentColor" height={34} padding={3} />
             </div>
             <div
-              className={cx(styles.optionIcon, commonStyles.icons, {
-                [commonStyles.disabled]: false,
-                [commonStyles.enabled]: true,
-                [commonStyles.selected]:
+              className={cx(classes.optionIcon, commonClasses.icon, {
+                [commonClasses.iconSelected]:
                   props.browser.filters[FILTER_FIELDS.OS].indexOf(OS.pc) !== -1,
               })}
               onClick={() => props.toggleFilter(FILTER_FIELDS.OS, OS.pc)}
@@ -77,14 +77,12 @@ export default function QuickFilterDevices(props) {
             </div>
           </div>
         </div>
-        <div className={cx(styles.filterSection)}>
-          <div className={cx(styles.sectionTitle)}>Device</div>
-          <div className={cx(styles.optionIconsContainer)}>
+        <div className={classes.filterSection}>
+          <div className={classes.sectionTitle}>Device</div>
+          <div className={classes.optionIconsContainer}>
             <div
-              className={cx(styles.optionIcon, commonStyles.icons, {
-                [commonStyles.disabled]: false,
-                [commonStyles.enabled]: true,
-                [commonStyles.selected]:
+              className={cx(classes.optionIcon, commonClasses.icon, {
+                [commonClasses.iconSelected]:
                   props.browser.filters[FILTER_FIELDS.DEVICE_TYPE].indexOf(
                     DEVICE_TYPE.phone
                   ) !== -1,
@@ -96,10 +94,8 @@ export default function QuickFilterDevices(props) {
               <MobileIcon style={{fontSize: 35}} />
             </div>
             <div
-              className={cx(styles.optionIcon, commonStyles.icons, {
-                [commonStyles.disabled]: false,
-                [commonStyles.enabled]: true,
-                [commonStyles.selected]:
+              className={cx(classes.optionIcon, commonClasses.icon, {
+                [commonClasses.iconSelected]:
                   props.browser.filters[FILTER_FIELDS.DEVICE_TYPE].indexOf(
                     DEVICE_TYPE.tablet
                   ) !== -1,
@@ -114,10 +110,8 @@ export default function QuickFilterDevices(props) {
               <TabletIcon style={{fontSize: 35}} />
             </div>
             <div
-              className={cx(styles.optionIcon, commonStyles.icons, {
-                [commonStyles.disabled]: false,
-                [commonStyles.enabled]: true,
-                [commonStyles.selected]:
+              className={cx(classes.optionIcon, commonClasses.icon, {
+                [commonClasses.iconSelected]:
                   props.browser.filters[FILTER_FIELDS.DEVICE_TYPE].indexOf(
                     DEVICE_TYPE.desktop
                   ) !== -1,
@@ -137,3 +131,36 @@ export default function QuickFilterDevices(props) {
     </div>
   );
 }
+
+const useStyles = makeStyles(theme => ({
+  filterSection: {
+    marginBottom: '10px',
+  },
+  filterIcon: {
+    marginRight: '5px',
+  },
+  sectionTitle: {
+    margin: '5px',
+  },
+  optionIconsContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  optionIcon: {
+    display: 'flex',
+    width: '40px',
+    height: '40px',
+    marginRight: '5px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...theme.palette.mode({
+      light: {},
+      dark: {background: '#000000b0'},
+    }),
+    '& svg': {
+      padding: '5px',
+    },
+  },
+}));
+
+export default QuickFilterDevices;

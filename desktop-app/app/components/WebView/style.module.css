@@ -37,12 +37,6 @@
   margin-left: 4px;
 }
 
-.deviceContainer {
-  position: relative;
-  display: inline-flex;
-  transform-origin: top left;
-}
-
 .device {
   transform-origin: top left;
   background: white;

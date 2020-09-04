@@ -40,6 +40,7 @@ export const DEVICE_LOADING = 'DEVICE_LOADING';
 export const NEW_FOCUSED_DEVICE = 'NEW_FOCUSED_DEVICE';
 export const TOGGLE_ALL_DEVICES_MUTED = 'TOGGLE_ALL_DEVICES_MUTED';
 export const TOGGLE_DEVICE_MUTED = 'TOGGLE_DEVICE_MUTED';
+export const NEW_THEME = 'NEW_THEME';
 
 export function newAddress(address) {
   return {
@@ -770,5 +771,13 @@ export function deleteStorage() {
 export function reloadCSS() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(RELOAD_CSS);
+  };
+}
+
+export function setTheme(theme) {
+  ipcRenderer.send('prefers-color-scheme-select', theme);
+  return {
+    type: NEW_THEME,
+    theme,
   };
 }

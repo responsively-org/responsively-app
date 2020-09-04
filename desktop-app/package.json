@@ -298,7 +298,6 @@
     "electron-settings": "^3.2.0",
     "electron-updater": "^4.3.1",
     "electron-util": "^0.14.2",
-    "flwww": "^2.0.10",
     "framer-motion": "^2.2.0",
     "history": "^4.7.2",
     "jimp": "^0.12.1",

@@ -1,6 +1,7 @@
 import React from 'react';
-import {getEnvironmentInfo} from '../../utils/generalUtils';
 import Button from '@material-ui/core/Button';
+import {makeStyles} from '@material-ui/core/styles';
+import {getEnvironmentInfo} from '../../utils/generalUtils';
 
 const {openNewGitHubIssue} = require('electron-util');
 
@@ -55,9 +56,10 @@ const createIssue = state => {
   });
 };
 
-export default function CreateIssue(props) {
+function CreateIssue(props) {
+  const classes = useStyles();
   return (
-    <div style={{textAlign: 'center'}}>
+    <div className={classes.container}>
       <p>
         Please click on the below link to automatically create an issue on
         GitHub.
@@ -72,3 +74,12 @@ export default function CreateIssue(props) {
     </div>
   );
 }
+
+const useStyles = makeStyles(theme => ({
+  container: {
+    textAlign: 'center',
+    color: theme.palette.text.primary,
+  },
+}));
+
+export default CreateIssue;

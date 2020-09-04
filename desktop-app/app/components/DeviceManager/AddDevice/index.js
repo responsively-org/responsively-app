@@ -3,7 +3,7 @@ import cx from 'classnames';
 import Dialog from '@material-ui/core/Dialog';
 import {green} from '@material-ui/core/colors';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import {makeStyles, withStyles} from '@material-ui/core/styles';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -11,6 +11,8 @@ import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import Radio from '@material-ui/core/Radio';
 import AddIcon from '@material-ui/icons/Add';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Input from '@material-ui/core/Input';
@@ -19,15 +21,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-// import Switch from '@material-ui/core/Switch';
-import {
-  Typography,
-  Grid,
-  MenuItem,
-  NativeSelect,
-  RadioGroup,
-  Radio,
-} from '@material-ui/core';
+import {Typography, Grid, MenuItem, NativeSelect} from '@material-ui/core';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
@@ -39,17 +33,12 @@ import {
   OS,
   SOURCE,
 } from '../../../constants/devices';
-import {lightIconsColor, themeColor} from '../../../constants/colors';
 
 const useStyles = makeStyles(theme => ({
   fab: {
-    position: 'absolute !important',
+    position: 'absolute',
     top: theme.spacing(10),
     right: theme.spacing(3),
-    color: '#fff !important',
-    backgroundColor: `${themeColor} !important`,
-    borderRadius: '24px !important',
-    padding: '0 16px !important',
   },
   extendedIcon: {
     marginRight: theme.spacing(1),
@@ -67,10 +56,10 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 150,
   },
   radioIcon: {
-    color: lightIconsColor,
+    color: theme.palette.lightIcon.main,
   },
   inputAdornment: {
-    color: lightIconsColor,
+    color: theme.palette.lightIcon.main,
   },
   userAgent: {
     fontSize: 12,
@@ -87,6 +76,7 @@ export default function AddDevice(props) {
   const [width, setWidth] = useState(400);
   const [height, setHeight] = useState(600);
   const [userAgentString, setUserAgentString] = useState('');
+  const theme = useTheme();
   const [previewState, setPreviewState] = useState(true);
   const [capabilities, setCapabilities] = useState({
     [CAPABILITIES.mobile]: false,
@@ -149,20 +139,6 @@ export default function AddDevice(props) {
     />
   );
 
-  const CustomSwitch = withStyles({
-    switchBase: {
-      color: lightIconsColor,
-      '&$checked': {
-        color: lightIconsColor,
-      },
-      '&$checked + $track': {
-        backgroundColor: lightIconsColor,
-      },
-    },
-    checked: {},
-    track: {},
-  })(Switch);
-
   const closeDialog = () => setOpen(false);
 
   const saveDevice = () => {
@@ -205,7 +181,7 @@ export default function AddDevice(props) {
       >
         <DialogTitle id="form-dialog-title">New Device</DialogTitle>
         <DialogContent>
-          <DialogContentText color="ternary">
+          <DialogContentText color="textPrimary">
             Please enter the details of the new device
           </DialogContentText>
           <TextField
@@ -432,7 +408,7 @@ export default function AddDevice(props) {
               <Switch
                 onChange={checked => setPreviewState(checked)}
                 checked={previewState}
-                onColor={themeColor}
+                onColor={theme.palette.primary.main}
               />
             </Grid>
             <Grid

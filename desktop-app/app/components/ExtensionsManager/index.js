@@ -19,9 +19,9 @@ import {
   Typography,
   ClickAwayListener,
 } from '@material-ui/core';
+import {useTheme} from '@material-ui/core/styles';
 import styles from './styles.css';
-import commonStyles from '../common.styles.css';
-import {lightIconsColor} from '../../constants/colors';
+import useCommonStyles from '../useCommonStyles';
 import helpScreenshot from './help-screenshot.png';
 
 const useStyles = makeStyles({
@@ -44,6 +44,8 @@ export default function ExtensionsManager({triggerNavigationReload}) {
   const [errorMessage, setErrorMessage] = useState('');
   const [extensionId, setExtensionId] = useState('');
   const [extensions, setExtensions] = useState(getInstalledExtensions());
+  const commonClasses = useCommonStyles();
+  const theme = useTheme();
 
   useEffect(() => {
     setErrorMessage('');
@@ -132,12 +134,12 @@ export default function ExtensionsManager({triggerNavigationReload}) {
           </ClickAwayListener>
         )}
       </Popper>
-      <div className={cx(commonStyles.sidebarContentSection)}>
-        <div className={cx(commonStyles.sidebarContentSectionTitleBar)}>
+      <div className={commonClasses.sidebarContentSection}>
+        <div className={commonClasses.sidebarContentSectionTitleBar}>
           <ExtensionsIcon className={styles.extensionManagerIcon} /> Manage
           Extensions
         </div>
-        <div className={cx(commonStyles.sidebarContentSectionContainer)}>
+        <div className={commonClasses.sidebarContentSectionContainer}>
           <form className={styles.extensionAdd} onSubmit={handleSubmit}>
             <div>
               <TextField
@@ -162,7 +164,7 @@ export default function ExtensionsManager({triggerNavigationReload}) {
                       >
                         <HelpOutlineIcon
                           fontSize="small"
-                          htmlColor={lightIconsColor}
+                          htmlColor={theme.palette.lightIcon.main}
                         />
                       </IconButton>
 
@@ -173,7 +175,7 @@ export default function ExtensionsManager({triggerNavigationReload}) {
                       >
                         <FolderOpenIcon
                           fontSize="small"
-                          htmlColor={lightIconsColor}
+                          htmlColor={theme.palette.lightIcon.main}
                         />
                       </IconButton>
                     </InputAdornment>
@@ -213,6 +215,8 @@ export default function ExtensionsManager({triggerNavigationReload}) {
 }
 
 function ExtensionItem({extension, onDelete}) {
+  const theme = useTheme();
+
   const handleDelete = () => {
     onDelete(extension.name);
   };
@@ -224,7 +228,7 @@ function ExtensionItem({extension, onDelete}) {
         <span className={styles.extensionVersion}>{extension.version}</span>
       </div>
       <IconButton onClick={handleDelete} size="small" title="Delete extension">
-        <DeleteIcon fontSize="small" htmlColor={lightIconsColor} />
+        <DeleteIcon fontSize="small" htmlColor={theme.palette.lightIcon.main} />
       </IconButton>
     </div>
   );

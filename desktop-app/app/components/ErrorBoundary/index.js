@@ -1,31 +1,9 @@
 import React from 'react';
+import {withStyles} from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import TextAreaWithCopyButton from '../../utils/TextAreaWithCopyButton';
 import CreateIssue from '../CreateIssue';
-import {withStyles} from '@material-ui/core/styles';
 import Logo from '../icons/Logo';
-
-const styles = {
-  errorBoundaryContainer: {
-    overflowY: 'auto',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    height: '100%',
-    '& h1': {
-      textAlign: 'center',
-    },
-  },
-  errorsContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  errorContainer: {
-    textAlign: 'center',
-    justifyContent: 'center',
-    margin: '3rem 6rem',
-    width: '30vw',
-  },
-};
 
 class ErrorBoundary extends React.Component {
   static getDerivedStateFromError(error) {
@@ -59,18 +37,26 @@ class ErrorBoundary extends React.Component {
       // You can render any custom fallback UI
       return (
         <div className={classes.errorBoundaryContainer}>
-          <h1>
+          <h1 className={classes.title}>
             <Logo height={60} />
             <br />
             😓 Something went wrong!
           </h1>
           <div className={classes.errorsContainer}>
-            <p className={classes.errorContainer}>
+            <Typography
+              variant="body1"
+              color="textPrimary"
+              className={classes.errorContainer}
+            >
               Stack Trace: <TextAreaWithCopyButton text={this.state.error} />
-            </p>
-            <p className={classes.errorContainer}>
+            </Typography>
+            <Typography
+              variant="body1"
+              color="textPrimary"
+              className={classes.errorContainer}
+            >
               Error Info: <TextAreaWithCopyButton text={this.state.errorInfo} />
-            </p>
+            </Typography>
           </div>
           <CreateIssue state={this.state} />
         </div>
@@ -80,5 +66,31 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+const styles = theme => ({
+  errorBoundaryContainer: {
+    overflowY: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '100%',
+    '& h1': {
+      textAlign: 'center',
+    },
+  },
+  title: {
+    color: theme.palette.text.primary,
+  },
+  errorsContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  errorContainer: {
+    textAlign: 'center',
+    justifyContent: 'center',
+    margin: '3rem 6rem',
+    width: '30vw',
+  },
+});
 
 export default withStyles(styles)(ErrorBoundary);

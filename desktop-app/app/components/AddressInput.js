@@ -3,34 +3,23 @@ import cx from 'classnames';
 import FavIconOff from '@material-ui/icons/StarBorder';
 import FavIconOn from '@material-ui/icons/Star';
 import {Tooltip} from '@material-ui/core';
-import {Icon} from 'flwww';
+import {withTheme, withStyles, styled} from '@material-ui/core/styles';
 import fs from 'fs';
-import HomePlusIcon from '../icons/HomePlus';
-import DeleteCookieIcon from '../icons/DeleteCookie';
-import DeleteStorageIcon from '../icons/DeleteStorage';
-import {iconsColor, lightIconsColor} from '../../constants/colors';
+import debounce from 'lodash/debounce';
+import HomePlusIcon from './icons/HomePlus';
+import DeleteCookieIcon from './icons/DeleteCookie';
+import DeleteStorageIcon from './icons/DeleteStorage';
+import StartIcon from './icons/Start';
 import {
   getExistingSearchResults,
   updateExistingUrl,
   searchUrlUtils,
-} from '../../services/searchUrlSuggestions';
-import UrlSearchResults from '../UrlSearchResults';
+} from '../services/searchUrlSuggestions';
+import UrlSearchResults from './UrlSearchResults';
+import {styles as commonStyles} from './useCommonStyles';
+import {notifyPermissionToHandleReloadOrNewAddress} from '../utils/permissionUtils';
 
-import commonStyles from '../common.styles.css';
-import styles from './style.css';
-import debounce from 'lodash/debounce';
-import {notifyPermissionToHandleReloadOrNewAddress} from '../../utils/permissionUtils.js';
-
-type Props = {
-  address: string,
-  onChange: () => void,
-};
-
-type State = {
-  address: string,
-};
-
-class AddressBar extends React.Component<Props> {
+class AddressBar extends React.Component {
   props: Props;
 
   constructor(props) {
@@ -70,31 +59,30 @@ class AddressBar extends React.Component<Props> {
       cursor,
       userTypedAddress,
     } = this.state;
+    const {theme, classes, address, homepage} = this.props;
+    const addressBarSameAsHomepage = address === homepage;
     const showSuggestions =
       canShowSuggestions && !this._isSuggestionListEmpty();
+
     return (
       <div
-        className={`${styles.addressBarContainer} ${
-          showSuggestions ? styles.active : ''
-        }`}
+        className={cx(classes.addressBarContainer, {
+          [classes.showSuggestions]: showSuggestions,
+        })}
       >
         <input
           ref={this.inputRef}
           type="text"
           id="adress"
           name="address"
-          className={styles.addressInput}
+          className={classes.addressInput}
           placeholder="https://your-website.com"
           value={userTypedAddress}
           onKeyDown={this._handleKeyDown}
           onChange={this._handleInputChange}
         />
-        <div className={cx(styles.floatingOptionsContainer)}>
-          <div
-            className={cx(commonStyles.icons, commonStyles.roundIcon, {
-              [commonStyles.enabled]: true,
-            })}
-          >
+        <div className={classes.optionsContainer}>
+          <div className={cx(classes.icon, classes.iconRound)}>
             <Tooltip
               title={
                 this.props.isBookmarked
@@ -103,60 +91,53 @@ class AddressBar extends React.Component<Props> {
               }
             >
               <div
-                className={cx(commonStyles.flexAlignVerticalMiddle)}
+                className={classes.flexAlignVerticalMiddle}
                 onClick={() => this.props.toggleBookmark(userTypedAddress)}
               >
-                <Icon
-                  type={this.props.isBookmarked ? 'starFull' : 'star'}
-                  color={lightIconsColor}
+                <StartIcon
+                  width={22}
+                  height={22}
+                  padding={5}
+                  strokeColor="currentColor"
+                  fillColor={this.props.isBookmarked ? 'currentColor' : 'none'}
                 />
               </div>
             </Tooltip>
           </div>
-          <div
-            className={cx(commonStyles.icons, commonStyles.roundIcon, {
-              [commonStyles.enabled]: true,
-            })}
-          >
+          <div className={cx(classes.icon, classes.iconRound)}>
             <Tooltip title="Delete Storage">
               <div
-                className={cx(commonStyles.flexAlignVerticalMiddle)}
+                className={classes.flexAlignVerticalMiddle}
                 onClick={this.props.deleteStorage}
               >
                 <DeleteStorageIcon
                   height={22}
                   width={22}
-                  color={iconsColor}
+                  color="currentColor"
                   padding={5}
                 />
               </div>
             </Tooltip>
           </div>
-          <div
-            className={cx(commonStyles.icons, commonStyles.roundIcon, {
-              [commonStyles.enabled]: true,
-            })}
-          >
+          <div className={cx(classes.icon, classes.iconRound)}>
             <Tooltip title="Delete Cookies">
               <div
-                className={cx(commonStyles.flexAlignVerticalMiddle)}
+                className={classes.flexAlignVerticalMiddle}
                 onClick={this.props.deleteCookies}
               >
                 <DeleteCookieIcon
                   height={22}
                   width={22}
-                  color={iconsColor}
+                  color="currentColor"
                   padding={5}
                 />
               </div>
             </Tooltip>
           </div>
           <div
-            className={cx(commonStyles.icons, commonStyles.roundIcon, {
-              [commonStyles.enabled]:
-                this.props.address !== this.props.homepage,
-              [commonStyles.disabled]:
-                this.props.address === this.props.homepage,
+            className={cx(classes.icon, classes.iconRound, {
+              [classes.iconHoverDisabled]: addressBarSameAsHomepage,
+              [classes.iconDisabled]: addressBarSameAsHomepage,
             })}
           >
             <Tooltip title="Set as Homepage">
@@ -167,7 +148,11 @@ class AddressBar extends React.Component<Props> {
                 <HomePlusIcon
                   height={22}
                   width={22}
-                  color={iconsColor}
+                  color={
+                    addressBarSameAsHomepage
+                      ? theme.palette.text.primary
+                      : 'currentColor'
+                  }
                   padding={5}
                 />
               </div>
@@ -323,4 +308,60 @@ class AddressBar extends React.Component<Props> {
 
 const MAX_SUGGESTIONS = 8;
 
-export default AddressBar;
+const styles = theme => {
+  const {mode} = theme.palette;
+  return {
+    ...commonStyles(theme),
+    addressBarContainer: {
+      display: 'flex',
+      position: 'relative',
+      alignItems: 'center',
+      height: '20px',
+      width: '100%',
+      padding: '14px 10px',
+      borderRadius: '20px',
+      backgroundColor: mode({light: theme.palette.grey['300'], dark: 'unset'}),
+      color: mode({
+        light: theme.palette.grey[600],
+        dark: theme.palette.text.primary,
+      }),
+      border: mode({
+        light: 'none',
+        dark: `1px solid ${theme.palette.lightIcon.main}`,
+      }),
+      outline: 'none',
+      transition: 'border 500ms ease-out',
+      '&:focus-within': mode({
+        light: {
+          color: theme.palette.text.primary,
+        },
+        dark: {
+          borderColor: theme.palette.primary.main,
+        },
+      }),
+    },
+    showSuggestions: {
+      borderRadius: '14px 14px 0 0',
+    },
+    addressInput: {
+      height: '20px',
+      background: 'unset',
+      fontSize: '16px',
+      color: 'inherit',
+      border: 'none',
+      width: '92%',
+      margin: '0',
+      outline: 'none',
+      textOverflow: 'ellipsis',
+    },
+    optionsContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      position: 'absolute',
+      right: 5,
+      color: theme.palette.text.primary,
+    },
+  };
+};
+
+export default withStyles(styles)(withTheme(AddressBar));

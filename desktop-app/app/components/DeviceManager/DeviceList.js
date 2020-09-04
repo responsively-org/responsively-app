@@ -5,12 +5,11 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
 import TextField from '@material-ui/core/TextField';
 import CancelIcon from '@material-ui/icons/Cancel';
+import {makeStyles} from '@material-ui/core/styles';
 import cx from 'classnames';
-import DeviceItem from '../DeviceItem';
+import DeviceItem from './DeviceItem';
 
-import styles from './styles.css';
-
-export default function DeviceList({
+function DeviceList({
   droppableId,
   devices,
   enableFiltering,
@@ -21,6 +20,7 @@ export default function DeviceList({
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filteredDevices, setFilteredList] = useState(devices);
+  const classes = useStyles();
   useEffect(() => {
     const filteredDevices = devices.filter(device => {
       if (!searchText) {
@@ -36,12 +36,12 @@ export default function DeviceList({
   }, [searchText, devices]);
   return (
     <>
-      <div className={cx(styles.searchContainer)}>
+      <div className={classes.searchContainer}>
         {enableFiltering && (
           <>
             {!searchOpen ? (
               <IconButton
-                className={styles.searchIcon}
+                className={classes.searchIcon}
                 onClick={() => setSearchOpen(true)}
               >
                 <SearchIcon fontSize="default" />
@@ -59,7 +59,7 @@ export default function DeviceList({
                   endAdornment: (
                     <InputAdornment>
                       <IconButton
-                        className={styles.searchActiveIcon}
+                        className={classes.searchActiveIcon}
                         onClick={() => {
                           setSearchOpen(false);
                           setSearchText('');
@@ -80,7 +80,7 @@ export default function DeviceList({
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={cx(styles.listHolder)}
+            className={classes.listHolder}
           >
             {filteredDevices.map((device, index) => (
               <DeviceItem
@@ -98,3 +98,33 @@ export default function DeviceList({
     </>
   );
 }
+
+const useStyles = makeStyles(theme => ({
+  listHolder: {
+    padding: '20px',
+    background: theme.palette.mode({
+      light: theme.palette.background.primary,
+      dark: '#00000030',
+    }),
+    borderRadius: '10px',
+    border: '1px solid lightgrey',
+    height: '65vh',
+    width: '400px',
+    overflow: 'scroll',
+  },
+  searchContainer: {
+    height: '50px',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  searchIcon: {
+    margin: '0 14px 0 !important',
+    color: 'white !important',
+  },
+  searchActiveIcon: {
+    color: 'white !important',
+  },
+}));
+
+export default DeviceList;

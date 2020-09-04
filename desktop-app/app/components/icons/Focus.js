@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 
-export default ({width, height, color, padding, margin}) => (
+const Focus = ({width, height, color, padding, margin}) => (
   <Fragment>
     <svg
       height={height}
@@ -51,3 +51,9 @@ export default ({width, height, color, padding, margin}) => (
     </svg>
   </Fragment>
 );
+
+Focus.defaultProps = {
+  color: 'currentColor',
+};
+
+export default Focus;

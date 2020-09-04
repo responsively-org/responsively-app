@@ -2,18 +2,21 @@ import React, {useState, useEffect} from 'react';
 import cx from 'classnames';
 import {shell, ipcRenderer} from 'electron';
 import PropTypes from 'prop-types';
+import Paper from '@material-ui/core/Paper';
+import useStyles from './useStyles';
 import Announcement from './Announcement';
-import styles from './styles.module.css';
 import Github from '../icons/Github';
 import Twitter from '../icons/Twitter';
 import RoadMap from '../icons/RoadMap';
 
-const Spacer = ({width = 10}) => (
-  <div className={cx(styles.text)} style={{width}} />
-);
+const Spacer = ({width = 10}) => {
+  const classes = useStyles();
+  return <div className={classes.text} style={{width}} />;
+};
 
 const AppUpdaterStatusInfoSection = () => {
   const [status, setAppUpdaterStatus] = useState('idle');
+  const classes = useStyles();
   useEffect(() => {
     const handler = (event, args) => {
       setAppUpdaterStatus(args.nextStatus);
@@ -47,9 +50,9 @@ const AppUpdaterStatusInfoSection = () => {
   }
   if (label == null) return null;
   return (
-    <div className={styles.section}>
+    <div className={classes.section}>
       <div>
-        <span className={cx('appUpdaterStatusInfo', styles.linkText)}>
+        <span className={cx('appUpdaterStatusInfo', classes.linkText)}>
           {label}
         </span>
       </div>
@@ -58,6 +61,7 @@ const AppUpdaterStatusInfoSection = () => {
 };
 
 const StatusBar = ({visible, zoomLevel}) => {
+  const classes = useStyles();
   if (!visible) {
     return null;
   }
@@ -65,63 +69,63 @@ const StatusBar = ({visible, zoomLevel}) => {
   const zoomPercent = Math.round(zoomLevel * 100);
 
   return (
-    <div className={styles.statusBar}>
-      <div className={styles.section}>
+    <Paper elevation={0} className={classes.statusBar}>
+      <div className={classes.section}>
         <div
-          className={cx(styles.text, styles.link)}
+          className={cx(classes.text, classes.link)}
           onClick={() =>
             shell.openExternal(
               'https://github.com/responsively-org/responsively-app'
             )
           }
         >
-          <Github width={14} className={styles.linkIcon} />
+          <Github width={14} className={classes.linkIcon} />
         </div>
         <div
-          className={cx(styles.text, styles.link)}
+          className={cx(classes.text, classes.link)}
           onClick={() =>
             shell.openExternal(
               'https://twitter.com/intent/follow?original_referer=app&ref_src=twsrc%5Etfw&region=follow_link&screen_name=ResponsivelyApp&tw_p=followbutton'
             )
           }
         >
-          <Twitter width={14} className={styles.linkIcon} />
+          <Twitter width={14} className={classes.linkIcon} />
         </div>
         <Spacer />
         <div
-          className={cx('roadMapLink', styles.text, styles.link)}
+          className={cx('roadMapLink', classes.text, classes.link)}
           onClick={() =>
             shell.openExternal(
               'https://github.com/responsively-org/responsively-app/projects/12?fullscreen=true'
             )
           }
         >
-          <RoadMap width={14} color="grey" className={styles.linkIcon} />
-          <span className={cx('roadMapLink', styles.linkText)}>RoadMap</span>
+          <RoadMap width={14} color="grey" className={classes.linkIcon} />
+          <span className={cx('roadMapLink', classes.linkText)}>RoadMap</span>
         </div>
         <Spacer />
         <div
-          className={cx(styles.text, styles.link)}
+          className={cx(classes.text, classes.link)}
           onClick={() =>
             shell.openExternal('https://headwayapp.co/responsively-changelog')
           }
         >
-          <span className={cx('changeLogLink', styles.linkText)}>
+          <span className={cx('changeLogLink', classes.linkText)}>
             Changelog
           </span>
         </div>
         <Spacer />
-        <div className={cx(styles.text)}>
-          <span className={cx('zoomText', styles.linkText)}>
+        <div className={classes.text}>
+          <span className={cx('zoomText', classes.linkText)}>
             Zoom: {zoomPercent}%
           </span>
         </div>
       </div>
       <AppUpdaterStatusInfoSection />
-      <div className={styles.section}>
+      <div className={classes.section}>
         <Announcement />
       </div>
-    </div>
+    </Paper>
   );
 };
 
