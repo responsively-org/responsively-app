@@ -28,7 +28,6 @@ import {
   triggerNavigationForward,
   deleteCookies,
   deleteStorage,
-  onSearchActivated,
 } from '../actions/browser';
 import {toggleBookmarkUrl} from '../actions/bookmarks';
 
@@ -224,18 +223,6 @@ export default class Root extends Component<Props> {
       },
       () => {
         store.dispatch(toggleBookmarkUrl(store.getState().browser.address));
-      },
-      true
-    );
-
-    registerShortcut(
-      {
-        id: 'SearchDevices',
-        title: 'Search Devices',
-        accelerators: ['mod+f'],
-      },
-      () => {
-        store.dispatch(onSearchActivated());
       },
       true
     );

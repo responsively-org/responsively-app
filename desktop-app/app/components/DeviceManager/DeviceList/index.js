@@ -8,7 +8,6 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import pubsub from 'pubsub.js';
 import cx from 'classnames';
 import DeviceItem from '../DeviceItem';
-import {SEARCH_DEVICES} from '../../../constants/pubsubEvents';
 
 import styles from './styles.css';
 
@@ -23,7 +22,6 @@ export default function DeviceList({
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filteredDevices, setFilteredList] = useState(devices);
-  const subscriptions = [];
 
   function closeSearch() {
     setSearchOpen(false);
@@ -42,16 +40,6 @@ export default function DeviceList({
     if (onFiltering) {
       onFiltering(filteredDevices);
     }
-
-    subscriptions.push(
-      pubsub.subscribe(SEARCH_DEVICES, () => setSearchOpen(true))
-    );
-
-    return () => {
-      subscriptions.forEach(sub => {
-        pubsub.unsubscribe(sub);
-      });
-    };
   }, [searchText, devices]);
 
   return (
