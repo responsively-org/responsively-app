@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {Component} from 'react';
 import {Droppable} from 'react-beautiful-dnd';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -11,98 +11,120 @@ import DeviceItem from '../DeviceItem';
 
 import styles from './styles.css';
 
-export default function DeviceList({
-  droppableId,
-  devices,
-  enableFiltering,
-  onFiltering,
-  enableCustomDeviceDeletion,
-  deleteDevice,
-}) {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchText, setSearchText] = useState('');
-  const [filteredDevices, setFilteredList] = useState(devices);
+class DeviceList extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchOpen: false,
+      searchText: '',
+      filteredDevices: [],
+    };
+  }
 
-  const closeSearch = () => {
-    setSearchOpen(false);
-    setSearchText('');
+  openSearch = () => {
+    this.setState({searchOpen: true});
   };
 
-  useEffect(() => {
-    const filteredDevices = devices.filter(device => {
-      if (!searchText) {
+  closeSearch = () => {
+    this.setState({searchOpen: false, searchText: ''});
+  };
+
+  componentDidMount() {
+    this.setState({filteredDevices: this.props.devices});
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.searchText === this.state.searchText) return;
+
+    const filteredDevices = this.props.devices.filter(device => {
+      if (!this.state.searchText) {
         return true;
       }
-      return device.name.toLowerCase().indexOf(searchText) > -1;
+      return device.name.toLowerCase().indexOf(this.state.searchText) > -1;
     });
 
-    setFilteredList(filteredDevices);
-    if (onFiltering) {
-      onFiltering(filteredDevices);
-    }
-  }, [searchText, devices]);
+    this.updateFilteredDevices(filteredDevices);
 
-  return (
-    <>
-      <div className={cx(styles.searchContainer)}>
-        {enableFiltering && (
-          <>
-            {!searchOpen ? (
-              <IconButton
-                className={styles.searchIcon}
-                onClick={() => setSearchOpen(true)}
-              >
-                <SearchIcon fontSize="default" />
-              </IconButton>
-            ) : null}
-            {searchOpen ? (
-              <TextField
-                autoFocus
-                fullWidth
-                variant="outlined"
-                placeholder="Search..."
-                value={searchText}
-                onChange={e => setSearchText(e.target.value.toLowerCase())}
-                onKeyDown={e => {
-                  if (e.key === 'Escape') closeSearch();
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment>
-                      <IconButton
-                        className={styles.searchActiveIcon}
-                        onClick={() => closeSearch()}
-                      >
-                        <CancelIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            ) : null}
-          </>
-        )}
-      </div>
-      <Droppable droppableId={droppableId}>
-        {provided => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className={cx(styles.listHolder)}
-          >
-            {filteredDevices.map((device, index) => (
-              <DeviceItem
-                device={device}
-                index={index}
-                key={device.id}
-                enableCustomDeviceDeletion={enableCustomDeviceDeletion}
-                deleteDevice={deleteDevice}
-              />
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </>
-  );
+    if (this.props.onFiltering) {
+      this.props.onFiltering(filteredDevices);
+    }
+  }
+
+  updateFilteredDevices = filteredDevices => {
+    this.setState({filteredDevices});
+  };
+
+  render() {
+    return (
+      <>
+        <div className={cx(styles.searchContainer)}>
+          {this.props.enableFiltering && (
+            <>
+              {!this.state.searchOpen ? (
+                <IconButton
+                  className={styles.searchIcon}
+                  onClick={this.openSearch}
+                >
+                  <SearchIcon fontSize="default" />
+                </IconButton>
+              ) : null}
+              {this.state.searchOpen ? (
+                <TextField
+                  autoFocus
+                  fullWidth
+                  variant="outlined"
+                  placeholder="Search..."
+                  value={this.state.searchText}
+                  onChange={e =>
+                    this.setState({
+                      searchText: e.target.value.toLowerCase(),
+                    })
+                  }
+                  onKeyDown={e => {
+                    if (e.key === 'Escape') this.closeSearch();
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment>
+                        <IconButton
+                          className={styles.searchActiveIcon}
+                          onClick={() => this.closeSearch()}
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              ) : null}
+            </>
+          )}
+        </div>
+        <Droppable droppableId={this.props.droppableId}>
+          {provided => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className={cx(styles.listHolder)}
+            >
+              {this.state.filteredDevices.map((device, index) => (
+                <DeviceItem
+                  device={device}
+                  index={index}
+                  key={device.id}
+                  enableCustomDeviceDeletion={
+                    this.props.enableCustomDeviceDeletion
+                  }
+                  deleteDevice={this.props.deleteDevice}
+                />
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </>
+    );
+  }
 }
+
+export default DeviceList;

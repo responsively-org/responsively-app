@@ -41,7 +41,7 @@ class DeviceManager extends Component {
         inactiveFiltered: [],
       },
     };
-    // this.inactiveDeviceList = createRef();
+    this.inactiveDeviceSearch = createRef();
   }
 
   componentDidMount() {
@@ -78,8 +78,7 @@ class DeviceManager extends Component {
     });
 
     Mousetrap.bind('mod+f', () => {
-      console.log('Working?');
-      // inactiveDeviceList.current.setSearchOpen(true);
+      this.inactiveDeviceSearch.current.openSearch();
     });
   }
 
@@ -87,12 +86,12 @@ class DeviceManager extends Component {
     Mousetrap.unbind('mod+f');
   }
 
-  onInactiveListFiltering = f => {
+  onInactiveListFiltering = inactiveFiltered => {
     this.setState((state, props) => ({
       devices: {
         active: state.devices.active,
         inactive: state.devices.inactive,
-        inactiveFiltered: f,
+        inactiveFiltered,
       },
     }));
   };
@@ -112,6 +111,8 @@ class DeviceManager extends Component {
     if (!sourceList || !destinationList) {
       return;
     }
+
+    console.log(this.state.devices.inactiveFiltered);
 
     const itemDragged =
       source.droppableId === 'inactive'
@@ -147,6 +148,7 @@ class DeviceManager extends Component {
 
   render() {
     const {classes} = this.props;
+    // console.log(this.inactiveDeviceSearch);
     return (
       <Fragment>
         <Button
@@ -202,7 +204,7 @@ class DeviceManager extends Component {
                     onFiltering={this.onInactiveListFiltering}
                     enableCustomDeviceDeletion
                     deleteDevice={this.props.deleteDevice}
-                    // ref={this.inactiveDeviceList}
+                    ref={this.inactiveDeviceSearch}
                   />
                 </Grid>
               </Grid>
