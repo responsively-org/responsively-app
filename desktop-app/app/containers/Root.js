@@ -10,7 +10,7 @@ import Routes from '../Routes';
 import type {Store} from '../reducers/types';
 import {themeColor} from '../constants/colors';
 import ErrorBoundary from '../components/ErrorBoundary';
-
+import {remote} from 'electron';
 import {
   registerShortcut,
   clearAllShortcuts,
@@ -30,6 +30,8 @@ import {
   deleteStorage,
 } from '../actions/browser';
 import {toggleBookmarkUrl} from '../actions/bookmarks';
+import pubsub from 'pubsub.js';
+import {PROXY_AUTH_ERROR} from '../constants/pubsubEvents';
 
 type Props = {
   store: Store,
@@ -75,11 +77,19 @@ const getApp = history => {
 export default class Root extends Component<Props> {
   componentDidMount() {
     this.registerAllShortcuts();
+    remote.session.defaultSession.webRequest.onErrorOccurred(details => {
+      if (
+        this.props.store.getState().browser.address === details.url &&
+        details.statusCode === 407
+      )
+        pubsub.publish(PROXY_AUTH_ERROR);
+    });
   }
 
   componentWillUnmount() {
     clearAllShortcuts();
     document.removeEventListener('wheel', this.onWheel);
+    remote.session.defaultSession.webRequest.onErrorOccurred(null);
   }
 
   registerAllShortcuts = () => {

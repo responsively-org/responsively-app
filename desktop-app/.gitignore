@@ -50,6 +50,7 @@ main.js.map
 
 .idea
 npm-debug.log.*
+package-lock.json
 
 # local configs
 setCreds.sh
