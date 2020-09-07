@@ -23,10 +23,10 @@ export default function DeviceList({
   const [searchText, setSearchText] = useState('');
   const [filteredDevices, setFilteredList] = useState(devices);
 
-  function closeSearch() {
+  const closeSearch = () => {
     setSearchOpen(false);
     setSearchText('');
-  }
+  };
 
   useEffect(() => {
     const filteredDevices = devices.filter(device => {

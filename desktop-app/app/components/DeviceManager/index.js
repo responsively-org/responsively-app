@@ -1,4 +1,4 @@
-import React, {useState, Fragment, useEffect} from 'react';
+import React, {useState, Fragment, useEffect, useRef} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => ({
 export default function DeviceManager(props) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
+  // const inactiveDeviceList = useRef();
 
   const [devices, setDevices] = useState({
     active: [],
@@ -66,6 +67,14 @@ export default function DeviceManager(props) {
     ];
 
     setDevices({active: activeDevices, inactive: inactiveDevices});
+
+    Mousetrap.bind('mod+f', () => {
+      console.log('Working?');
+      // inactiveDeviceList.current.setSearchOpen(true);
+    });
+    return () => {
+      Mousetrap.unbind('mod+f');
+    };
   }, [props.browser.devices, props.browser.allDevices]);
 
   const onInactiveListFiltering = inactiveFiltered => {
@@ -170,6 +179,7 @@ export default function DeviceManager(props) {
                   onFiltering={onInactiveListFiltering}
                   enableCustomDeviceDeletion
                   deleteDevice={props.deleteDevice}
+                  // ref={inactiveDeviceList}
                 />
               </Grid>
             </Grid>
