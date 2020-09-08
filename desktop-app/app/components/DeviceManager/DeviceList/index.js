@@ -10,7 +10,7 @@ import DeviceItem from '../DeviceItem';
 
 import styles from './styles.css';
 
-const DeviceHandler = props => {
+const DeviceListHandler = props => {
   const [filteredDevices, setFilteredList] = useState(props.devices);
   useEffect(() => {
     const filteredDevices = props.devices.filter(device => {
@@ -101,7 +101,7 @@ class DeviceList extends Component {
               {...provided.droppableProps}
               className={cx(styles.listHolder)}
             >
-              <DeviceHandler
+              <DeviceListHandler
                 devices={this.props.devices}
                 onFiltering={this.props.onFiltering}
                 searchText={this.state.searchText}
