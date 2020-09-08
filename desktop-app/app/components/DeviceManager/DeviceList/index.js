@@ -1,15 +1,35 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {Droppable} from 'react-beautiful-dnd';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
 import TextField from '@material-ui/core/TextField';
 import CancelIcon from '@material-ui/icons/Cancel';
-import pubsub from 'pubsub.js';
 import cx from 'classnames';
 import DeviceItem from '../DeviceItem';
 
 import styles from './styles.css';
+
+const DeviceHandler = props => {
+  const [filteredDevices, setFilteredList] = useState(props.devices);
+  useEffect(() => {
+    const filteredDevices = props.devices.filter(device => {
+      if (!props.searchText) {
+        return true;
+      }
+      return device.name.toLowerCase().indexOf(props.searchText) > -1;
+    });
+
+    setFilteredList(filteredDevices);
+    if (props.onFiltering) {
+      props.onFiltering(filteredDevices);
+    }
+  }, [props.searchText, props.devices]);
+
+  return filteredDevices.map((device, index) => (
+    <DeviceItem device={device} index={index} key={device.id} />
+  ));
+};
 
 class DeviceList extends Component {
   constructor(props) {
@@ -17,7 +37,6 @@ class DeviceList extends Component {
     this.state = {
       searchOpen: false,
       searchText: '',
-      filteredDevices: [],
     };
   }
 
@@ -27,31 +46,6 @@ class DeviceList extends Component {
 
   closeSearch = () => {
     this.setState({searchOpen: false, searchText: ''});
-  };
-
-  componentDidMount() {
-    this.setState({filteredDevices: this.props.devices});
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.searchText === this.state.searchText) return;
-
-    const filteredDevices = this.props.devices.filter(device => {
-      if (!this.state.searchText) {
-        return true;
-      }
-      return device.name.toLowerCase().indexOf(this.state.searchText) > -1;
-    });
-
-    this.updateFilteredDevices(filteredDevices);
-
-    if (this.props.onFiltering) {
-      this.props.onFiltering(filteredDevices);
-    }
-  }
-
-  updateFilteredDevices = filteredDevices => {
-    this.setState({filteredDevices});
   };
 
   render() {
@@ -107,17 +101,11 @@ class DeviceList extends Component {
               {...provided.droppableProps}
               className={cx(styles.listHolder)}
             >
-              {this.state.filteredDevices.map((device, index) => (
-                <DeviceItem
-                  device={device}
-                  index={index}
-                  key={device.id}
-                  enableCustomDeviceDeletion={
-                    this.props.enableCustomDeviceDeletion
-                  }
-                  deleteDevice={this.props.deleteDevice}
-                />
-              ))}
+              <DeviceHandler
+                devices={this.props.devices}
+                onFiltering={this.props.onFiltering}
+                searchText={this.state.searchText}
+              />
               {provided.placeholder}
             </div>
           )}
