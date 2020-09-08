@@ -9,7 +9,7 @@ import * as NetworkConfigActions from '../../actions/networkConfig';
 function mapStateToProps(state) {
   return {
     throttling: state.browser.networkConfiguration.throttling,
-    // proxy: state.browser.networkConfiguration.proxy,
+    proxy: state.browser.networkConfiguration.proxy,
   };
 }
 

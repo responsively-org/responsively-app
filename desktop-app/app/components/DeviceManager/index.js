@@ -1,4 +1,4 @@
-import React, {useState, Fragment, useEffect} from 'react';
+import React, {useState, Fragment, useEffect, useRef} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
@@ -16,6 +16,7 @@ import LightBulbIcon from '../icons/LightBulb';
 import DeviceList from './DeviceList';
 import AddDeviceContainer from '../../containers/AddDeviceContainer';
 import ErrorBoundary from '../ErrorBoundary';
+import Mousetrap from 'mousetrap';
 
 import styles from './styles.css';
 
@@ -38,6 +39,8 @@ export default function DeviceManager(props) {
     inactive: [],
     inactiveFiltered: [],
   });
+
+  const inactiveDeviceList = useRef(null);
 
   useEffect(() => {
     const activeDevices = props.browser.devices;
@@ -66,6 +69,14 @@ export default function DeviceManager(props) {
     ];
 
     setDevices({active: activeDevices, inactive: inactiveDevices});
+
+    Mousetrap.bind('mod+f', () => {
+      inactiveDeviceList.current.openSearch();
+    });
+
+    return () => {
+      Mousetrap.unbind('mod+f');
+    };
   }, [props.browser.devices, props.browser.allDevices]);
 
   const onInactiveListFiltering = inactiveFiltered => {
@@ -131,7 +142,15 @@ export default function DeviceManager(props) {
         Customize
         {/* <EditIcon style={{fontSize: 'inherit'}} /> */}
       </Button>
-      <Dialog fullScreen open={open}>
+      <Dialog
+        fullScreen
+        open={open}
+        onClose={() => {
+          if (!inactiveDeviceList.current.state.searchOpen) {
+            closeDialog();
+          }
+        }}
+      >
         <AppBar className={classes.appBar} color="secondary">
           <Toolbar>
             {/* <IconButton edge="start" onClick={closeDialog} aria-label="close">
@@ -165,6 +184,7 @@ export default function DeviceManager(props) {
                 </div>
                 <DeviceList
                   droppableId="inactive"
+                  ref={inactiveDeviceList}
                   devices={devices.inactive}
                   enableFiltering
                   onFiltering={onInactiveListFiltering}
