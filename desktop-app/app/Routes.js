@@ -14,9 +14,6 @@ const Routes = () => {
   return (
     <Fragment>
       <Paper elevation={0} className={classes.root}>
-        <div className={classes.iconColumn}>
-          <LeftIconsPaneContainer />
-        </div>
         <div className={classes.contentColumn}>
           <Switch>
             <Route path={routes.HOME} component={Browser} />

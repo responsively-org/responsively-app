@@ -8,53 +8,57 @@ import DevicePreviewerContainer from '../DevicePreviewerContainer';
 import DrawerContainer from '../DrawerContainer';
 import * as BrowserActions from '../../actions/browser';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
+import LeftIconsPaneContainer from '../LeftIconsPaneContainer';
 
 type Props = {};
 
 const Browser = ({browser}) => (
   <Fragment>
     <Header />
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        overflowX: 'hidden',
-        flexGrow: 1,
-        flexBasis: 0,
-      }}
-    >
-      <DrawerContainer />
+    <div style={{display: 'flex', height: '100%'}}>
+      <LeftIconsPaneContainer />
       <div
         style={{
           display: 'flex',
-          flex: 1,
-          height: '100%',
-          flexDirection: 'column',
-          overflow: 'hidden',
+          flexDirection: 'row',
+          overflowX: 'hidden',
+          flexGrow: 1,
+          flexBasis: 0,
         }}
       >
-        <DevicePreviewerContainer />
+        <DrawerContainer />
+        <div
+          style={{
+            display: 'flex',
+            flex: 1,
+            height: '100%',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}
+        >
+          <DevicePreviewerContainer />
+          {browser.devToolsConfig.open &&
+          browser.devToolsConfig.mode === DEVTOOLS_MODES.BOTTOM ? (
+            <div
+              style={{
+                display: 'flex',
+                width: '100%',
+                height: browser.devToolsConfig.size.height,
+              }}
+            />
+          ) : null}
+        </div>
         {browser.devToolsConfig.open &&
-        browser.devToolsConfig.mode === DEVTOOLS_MODES.BOTTOM ? (
+        browser.devToolsConfig.mode === DEVTOOLS_MODES.RIGHT ? (
           <div
             style={{
+              height: '100%',
+              width: browser.devToolsConfig.size.width,
               display: 'flex',
-              width: '100%',
-              height: browser.devToolsConfig.size.height,
             }}
           />
         ) : null}
       </div>
-      {browser.devToolsConfig.open &&
-      browser.devToolsConfig.mode === DEVTOOLS_MODES.RIGHT ? (
-        <div
-          style={{
-            height: '100%',
-            width: browser.devToolsConfig.size.width,
-            display: 'flex',
-          }}
-        />
-      ) : null}
     </div>
   </Fragment>
 );
