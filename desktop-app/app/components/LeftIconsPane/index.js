@@ -21,21 +21,18 @@ import {
 } from '../../constants/DrawerContents';
 import {makeStyles} from '@material-ui/core/styles';
 
-const useStyles = makeStyles(theme => {
-  console.log('theme', theme);
-  return {
-    container: {
-      backgroundColor: theme.palette.background.l2,
-      display: 'flex',
-      flexFlow: 'column',
-      width: 50,
-      boxShadow: `0 ${theme.palette.mode({
-        light: '3px',
-        dark: '3px',
-      })} 5px rgba(0, 0, 0, 0.35)`,
-    },
-  };
-});
+const useStyles = makeStyles(theme => ({
+  container: {
+    backgroundColor: theme.palette.background.l2,
+    display: 'flex',
+    flexFlow: 'column',
+    width: 50,
+    boxShadow: `0 ${theme.palette.mode({
+      light: '3px',
+      dark: '3px',
+    })} 5px rgba(0, 0, 0, 0.35)`,
+  },
+}));
 
 const LeftIconsPane = props => {
   const commonClasses = useCommonStyles();

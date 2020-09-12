@@ -19,8 +19,21 @@ const lightTheme = {
     secondary: {
       main: '#F5F5F5',
     },
+    background: {
+      l1: '#ffffff',
+      l2: '#e7e7e7',
+    },
     header: {
       main: '#F5F5F5',
+    },
+    gray: {
+      l1: '#eff1f2',
+    },
+    text: {
+      active: '#1e1e1e',
+      dim: '#606060',
+      inactive: '#b7b7b7',
+      normal: '#363636',
     },
     lightIcon: {
       main: 'black',
@@ -43,9 +56,20 @@ const darkTheme = {
     divider: grey[500],
     background: {
       default: '#1e1e1e',
+      l1: '#2f2f33',
+      l2: '#383838',
     },
     header: {
       main: '#252526',
+    },
+    gray: {
+      l1: '#1e1e1e',
+    },
+    text: {
+      active: '#ffffff',
+      dim: '#868686',
+      inactive: '#838383',
+      normal: '#ffffff',
     },
     lightIcon: {
       main: '#ffffff90',

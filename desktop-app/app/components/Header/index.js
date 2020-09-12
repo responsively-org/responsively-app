@@ -10,6 +10,7 @@ import PermissionPopup from '../PermissionPopup';
 import NavigationControlsContainer from '../../containers/NavigationControlsContainer';
 import BookmarksBar from '../../containers/BookmarksBarContainer';
 import AppNotification from '../AppNotification/AppNotification';
+import Logo from '../icons/Logo';
 
 const Header = () => {
   const classes = useStyles();
@@ -17,6 +18,7 @@ const Header = () => {
 
   return (
     <div className={classes.container}>
+      <Logo className={classes.logo} width={40} height={40} />
       <Grid container direction="row" justify="flex-start" alignItems="center">
         <Grid item>
           <NavigationControlsContainer />
@@ -49,14 +51,18 @@ const Header = () => {
 
 const useStyles = makeStyles(theme => ({
   container: {
+    background: theme.palette.background.l1,
+    display: 'flex',
     width: '100%',
     padding: '20px 0 5px',
-    background: theme.palette.header.main,
     boxShadow: `0 ${theme.palette.mode({
       light: '0px',
       dark: '3px',
     })} 5px rgba(0, 0, 0, 0.35)`,
     zIndex: 5,
+  },
+  logo: {
+    margin: '0 3px',
   },
   darkToast: {
     background: '#696969 !important',

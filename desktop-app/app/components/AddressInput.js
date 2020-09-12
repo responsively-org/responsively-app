@@ -320,25 +320,21 @@ const styles = theme => {
       width: '100%',
       padding: '14px 10px',
       borderRadius: '20px',
-      backgroundColor: mode({light: theme.palette.grey['300'], dark: 'unset'}),
-      color: mode({
-        light: theme.palette.grey[600],
-        dark: theme.palette.text.primary,
-      }),
+      backgroundColor: theme.palette.gray.l1,
+      color: theme.palette.text.normal,
       border: mode({
         light: 'none',
         dark: `1px solid ${theme.palette.lightIcon.main}`,
       }),
       outline: 'none',
       transition: 'border 500ms ease-out',
-      '&:focus-within': mode({
-        light: {
-          color: theme.palette.text.primary,
-        },
-        dark: {
-          borderColor: theme.palette.primary.main,
-        },
-      }),
+      '&:focus-within': {
+        color: theme.palette.text.active,
+        borderColor: mode({
+          light: null,
+          dark: theme.palette.primary.main,
+        }),
+      },
     },
     showSuggestions: {
       borderRadius: '14px 14px 0 0',

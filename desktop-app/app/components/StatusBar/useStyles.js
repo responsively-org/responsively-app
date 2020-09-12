@@ -8,6 +8,7 @@ const useStyles = makeStyles({
     boxShadow: '0 -3px 5px rgba(0, 0, 0, 0.35)',
     color: '#fffc',
     justifyContent: 'space-between',
+    zIndex: 1,
   },
   section: {
     display: 'flex',
