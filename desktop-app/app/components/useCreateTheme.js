@@ -14,12 +14,14 @@ const lightTheme = {
   palette: {
     type: 'light',
     primary: {
-      main: '#6075ef',
+      light: '#3450db',
+      main: '#2e47d0',
     },
     secondary: {
       main: '#F5F5F5',
     },
     background: {
+      l0: '#f8f8f8',
       l1: '#ffffff',
       l2: '#e7e7e7',
     },
@@ -48,14 +50,15 @@ const darkTheme = {
   palette: {
     type: 'dark',
     primary: {
-      main: '#7587ec',
+      light: '#7587ec',
+      main: '#536be7',
     },
     secondary: {
       main: '#424242',
     },
     divider: grey[500],
     background: {
-      default: '#1e1e1e',
+      l0: '#1e1e1e',
       l1: '#2f2f33',
       l2: '#383838',
     },
@@ -69,7 +72,7 @@ const darkTheme = {
       active: '#ffffff',
       dim: '#868686',
       inactive: '#838383',
-      normal: '#ffffff',
+      normal: '#f8f8f8',
     },
     lightIcon: {
       main: '#ffffff90',

@@ -141,48 +141,43 @@ export default function ExtensionsManager({triggerNavigationReload}) {
         </div>
         <div className={commonClasses.sidebarContentSectionContainer}>
           <form className={styles.extensionAdd} onSubmit={handleSubmit}>
-            <div>
-              <TextField
-                type="text"
-                color="secondary"
-                value={extensionId}
-                onChange={handleChange}
-                disabled={loading}
-                placeholder="Extension ID"
-                variant="outlined"
-                error={errorMessage !== ''}
-                InputProps={{
-                  classes: {
-                    adornedEnd: classes.adornedEnd,
-                  },
-                  endAdornment: (
-                    <InputAdornment position="start">
-                      <IconButton
-                        onClick={toggleHelp}
-                        size="small"
-                        title="Help"
-                      >
-                        <HelpOutlineIcon
-                          fontSize="small"
-                          htmlColor={theme.palette.lightIcon.main}
-                        />
-                      </IconButton>
+            <TextField
+              type="text"
+              color="secondary"
+              value={extensionId}
+              onChange={handleChange}
+              disabled={loading}
+              placeholder="Extension ID"
+              variant="outlined"
+              error={errorMessage !== ''}
+              size="small"
+              InputProps={{
+                classes: {
+                  adornedEnd: classes.adornedEnd,
+                },
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton onClick={toggleHelp} size="small" title="Help">
+                      <HelpOutlineIcon
+                        fontSize="small"
+                        htmlColor={theme.palette.lightIcon.main}
+                      />
+                    </IconButton>
 
-                      <IconButton
-                        onClick={getLocalExtensionPath}
-                        size="small"
-                        title="Install local devtools extension"
-                      >
-                        <FolderOpenIcon
-                          fontSize="small"
-                          htmlColor={theme.palette.lightIcon.main}
-                        />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </div>
+                    <IconButton
+                      onClick={getLocalExtensionPath}
+                      size="small"
+                      title="Install local devtools extension"
+                    >
+                      <FolderOpenIcon
+                        fontSize="small"
+                        htmlColor={theme.palette.lightIcon.main}
+                      />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
             <Button onClick={handleSubmit} disabled={extensionId.trim() === ''}>
               {loading ? <CircularProgress size={22} /> : 'Add'}
             </Button>

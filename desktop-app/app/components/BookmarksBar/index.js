@@ -132,8 +132,8 @@ const useStyles = makeStyles(theme => ({
     whiteSpace: 'nowrap',
     '&:hover': {
       backgroundColor: theme.palette.primary.main,
-      color: theme.palette.background.default,
-      fill: theme.palette.background.default,
+      color: theme.palette.background.l0,
+      fill: theme.palette.background.l0,
     },
   },
   icon: {

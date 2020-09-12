@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => {
       display: 'flex',
       boxSizing: 'border-box',
       borderRadius: 0,
-      backgroundColor: theme.palette.background.default,
+      backgroundColor: theme.palette.background.l0,
     },
     iconColumn: {
       flexShrink: 0,

@@ -330,10 +330,7 @@ const styles = theme => {
       transition: 'border 500ms ease-out',
       '&:focus-within': {
         color: theme.palette.text.active,
-        borderColor: mode({
-          light: null,
-          dark: theme.palette.primary.main,
-        }),
+        border: `1px solid ${theme.palette.primary.main}`,
       },
     },
     showSuggestions: {
