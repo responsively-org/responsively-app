@@ -18,6 +18,7 @@ import {
   USER_PREFERENCES,
   EXTENSIONS_MANAGER,
   NETWORK_CONFIGURATION,
+  LIVE_CSS_EDITOR,
 } from '../../constants/DrawerContents';
 import {makeStyles} from '@material-ui/core/styles';
 
@@ -58,6 +59,16 @@ const LeftIconsPane = props => {
         alignItems="center"
         className={cx(styles.utilitySection)}
       >
+        <Grid
+          item
+          className={cx(commonClasses.icon, styles.icon, {
+            [commonClasses.iconSelected]:
+              props.drawer.open && props.drawer.content === LIVE_CSS_EDITOR,
+          })}
+          onClick={() => toggleState(LIVE_CSS_EDITOR)}
+        >
+          <div>CSS</div>
+        </Grid>
         <Grid
           item
           className={cx(commonClasses.icon, styles.icon, {

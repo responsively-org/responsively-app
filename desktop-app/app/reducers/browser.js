@@ -38,7 +38,7 @@ import {
   INDIVIDUAL_LAYOUT,
   DEVTOOLS_MODES,
 } from '../constants/previewerLayouts';
-import {DEVICE_MANAGER} from '../constants/DrawerContents';
+import {DEVICE_MANAGER, LIVE_CSS_EDITOR} from '../constants/DrawerContents';
 import {
   ACTIVE_DEVICES,
   USER_PREFERENCES,
@@ -306,7 +306,7 @@ export default function browser(
         _getUserPreferences().drawerState === null
           ? true
           : _getUserPreferences().drawerState,
-      content: DEVICE_MANAGER,
+      content: LIVE_CSS_EDITOR,
     },
     previewer: {layout: FLEXIGRID_LAYOUT},
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},

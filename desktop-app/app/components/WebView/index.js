@@ -29,6 +29,7 @@ import {
   SET_NETWORK_TROTTLING_PROFILE,
   OPEN_CONSOLE_FOR_DEVICE,
   PROXY_AUTH_ERROR,
+  APPLY_CSS,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
@@ -83,6 +84,8 @@ class WebView extends Component {
       zoomLevel: null,
     };
     this.subscriptions = [];
+    this.domLoaded = false;
+    this.liveCssKey = null;
     this.dbg = null;
   }
 
@@ -94,6 +97,9 @@ class WebView extends Component {
     );
     this.subscriptions.push(
       pubsub.subscribe('scroll', this.processScrollEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(APPLY_CSS, this.processApplyCssEvent)
     );
     this.subscriptions.push(pubsub.subscribe('click', this.processClickEvent));
     this.subscriptions.push(
@@ -571,6 +577,17 @@ class WebView extends Component {
       .catch(captureOnSentry);
   };
 
+  processApplyCssEvent = async message => {
+    if (!message.css || !this.domLoaded) {
+      return;
+    }
+    if (this.liveCssKey) {
+      this.webviewRef.current.removeInsertedCSS(this.liveCssKey);
+      this.liveCssKey = null;
+    }
+    this.liveCssKey = await this.webviewRef.current.insertCSS(message.css);
+  };
+
   initEventTriggers = async webview => {
     await this.initBrowserSync(webview);
     this.getWebContentForId(webview.getWebContentsId())
@@ -584,6 +601,7 @@ class WebView extends Component {
     if (this.state.isUnplugged) {
       await this.closeBrowserSyncSocket(webview);
     }
+    this.domLoaded = true;
   };
 
   hideScrollbar = () => {
