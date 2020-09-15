@@ -11,7 +11,6 @@ import {
   USER_PREFERENCES,
   EXTENSIONS_MANAGER,
   NETWORK_CONFIGURATION,
-  LIVE_CSS_EDITOR,
 } from '../constants/DrawerContents';
 import DoubleLeftArrowIcon from './icons/DoubleLeftArrow';
 import LiveCssEditor from './LiveCssEditor';
@@ -66,8 +65,6 @@ const useStyles = makeStyles(theme => ({
 
 function getDrawerContent(type) {
   switch (type) {
-    case LIVE_CSS_EDITOR:
-      return <LiveCssEditor />;
     case DEVICE_MANAGER:
       return <DeviceDrawerContainer />;
     case USER_PREFERENCES:

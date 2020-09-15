@@ -1,45 +1,23 @@
 import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
-  preferenceName: {
-    fontSize: '14px',
+  container: {
+    background: theme.palette.background.l2,
+    margin: 5,
+    padding: 10,
+    borderRadius: 2,
+    boxShadow: `0 ${theme.palette.mode({
+      light: '0px',
+      dark: '3px',
+    })} 5px rgba(0, 0, 0, 0.35)`,
   },
-  preferenceColor: {
-    width: '24px',
-    height: '20px',
-    margin: '0 10px',
-    border: 'transparent',
-    '& input': {
-      width: '26px',
-      height: '40px',
-      border: 'transparent',
-    },
+  titleBar: {
+    cursor: 'move',
+    padding: '5px 0',
   },
-  sectionTitle: {
-    margin: '5px 0',
-  },
-  sectionHeader: {
-    '&:after': {
-      content: '""',
-      flex: 1,
-      marginLeft: 5,
-      height: 1,
-      backgroundColor: theme.palette.text.primary,
-    },
-  },
-  marginTop: {
-    marginTop: '10px',
-  },
-  permissionsSelectorSmallNote: {
-    color: theme.palette.text.primary,
-    margin: 0,
-    fontSize: '0.75rem',
-    marginTop: '10px',
-    textAlign: 'left',
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-    fontWeight: 400,
-    lineHeight: 1.66,
-    letterSpacing: '0.03333em',
+  editor: {
+    minHeight: 200,
+    height: 'auto',
   },
 }));
 
