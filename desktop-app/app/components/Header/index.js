@@ -1,11 +1,11 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import {ToastContainer} from 'react-toastify';
-import {makeStyles, useTheme} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import AddressBar from '../../containers/AddressBar';
 import ScrollControlsContainer from '../../containers/ScrollControlsContainer';
 import HttpAuthDialog from '../HttpAuthDialog';
-import PermissionPopup from '../PermissionPopup';
+import os from 'os';
 
 import NavigationControlsContainer from '../../containers/NavigationControlsContainer';
 import BookmarksBar from '../../containers/BookmarksBarContainer';
@@ -14,7 +14,6 @@ import Logo from '../icons/Logo';
 
 const Header = () => {
   const classes = useStyles();
-  const theme = useTheme();
 
   return (
     <div className={classes.container}>
@@ -54,7 +53,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.l1,
     display: 'flex',
     width: '100%',
-    padding: '20px 0 5px',
+    padding: os.platform() === 'darwin' ? '20px 0 5px' : '0 0 0',
     boxShadow: `0 ${theme.palette.mode({
       light: '0px',
       dark: '3px',
