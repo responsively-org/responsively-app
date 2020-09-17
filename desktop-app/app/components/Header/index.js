@@ -6,6 +6,7 @@ import AddressBar from '../../containers/AddressBar';
 import ScrollControlsContainer from '../../containers/ScrollControlsContainer';
 import HttpAuthDialog from '../HttpAuthDialog';
 import os from 'os';
+import PermissionPopup from '../PermissionPopup';
 
 import NavigationControlsContainer from '../../containers/NavigationControlsContainer';
 import BookmarksBar from '../../containers/BookmarksBarContainer';
@@ -24,6 +25,7 @@ const Header = () => {
         </Grid>
         <Grid item style={{flex: 1}}>
           <AddressBar />
+          <PermissionPopup />
         </Grid>
         <Grid item>
           <ScrollControlsContainer />

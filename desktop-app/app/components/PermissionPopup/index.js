@@ -29,6 +29,29 @@ const useStyles = makeStyles(theme => ({
     top: theme.spacing(1),
     color: theme.palette.grey[500],
   },
+  themeBackground: {
+    backgroundColor: theme.palette.mode({
+      light: theme.palette.grey[100],
+      dark: '#252526',
+    }),
+    color: theme.palette.mode({
+      light: 'black',
+      dark: 'white',
+    }),
+  },
+}));
+
+const tooltipUseStyles = makeStyles(theme => ({
+  tooltip: {
+    backgroundColor: theme.palette.mode({
+      light: `${theme.palette.grey[200]} !important`,
+      dark: `${theme.palette.grey.A700} !important`,
+    }),
+    color: theme.palette.mode({
+      light: 'black !important',
+      dark: 'white !important',
+    }),
+  },
 }));
 
 function getMessage(info) {
@@ -98,13 +121,13 @@ export default function PermissionPopup() {
 
   return (
     <div
-      className={cx(styles.permissionPopup, {
+      className={cx(styles.permissionPopup, classes.themeBackground, {
         [styles.permissionPopupActive]: permissionInfos.length !== 0,
       })}
     >
       <h4 className={styles.permissionPopupTitle}>
         Permission Request
-        <Tooltip title="Ignore" placement="left">
+        <Tooltip classes={tooltipUseStyles()} title="Ignore" placement="left">
           <IconButton
             aria-label="close"
             className={classes.closeButton}
