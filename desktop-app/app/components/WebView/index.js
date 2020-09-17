@@ -757,7 +757,7 @@ class WebView extends Component {
     }
   };
 
-  _getWebViewTag = deviceStyles => {
+  _getWebViewTag = (deviceStyles, containerWidth, containerHeight) => {
     const {
       device: {id, useragent, capabilities},
     } = this.props;
@@ -767,7 +767,7 @@ class WebView extends Component {
       return (
         <Resizable
           className={styles.resizableView}
-          size={{width: deviceStyles.width, height: deviceStyles.height}}
+          size={{width: containerWidth, height: containerHeight}}
           onResizeStart={() => {
             const updatedTempDims = {
               width: deviceDimensions.width,
@@ -874,6 +874,12 @@ class WebView extends Component {
       transform: `scale(${zoomLevel})`,
     };
 
+    // On the light theme a border of 1px is added to the device. Adjusting the size to accommodate it.
+    const containerWidth =
+      deviceStyles.width * zoomLevel + theme.palette.mode({light: 2, dark: 0});
+    const containerHeight =
+      deviceStyles.height * zoomLevel + theme.palette.mode({light: 2, dark: 0});
+
     const isMuted = this.props.device.isMuted;
     const isResponsive = capabilities.includes(CAPABILITIES.responsive);
     const shouldMaximize = previewer.layout !== INDIVIDUAL_LAYOUT;
@@ -958,14 +964,8 @@ class WebView extends Component {
         <div
           className={classes.deviceContainer}
           style={{
-            width:
-              deviceStyles.width * zoomLevel +
-              // On the light theme a border of 1px is added to the device. Adjusting the size to accommodate it.
-              theme.palette.mode({light: 2, dark: 0}),
-            height:
-              deviceStyles.height * zoomLevel +
-              // On the light theme a border of 1px is added to the device. Adjusting the size to accommodate it.
-              theme.palette.mode({light: 2, dark: 0}),
+            width: containerWidth,
+            height: containerHeight,
           }}
           onMouseEnter={this._onMouseEnter}
           onMouseLeave={this._onMouseLeave}
@@ -990,7 +990,7 @@ class WebView extends Component {
               <p className={cx(styles.errorDesc)}>Proxy Authentication Error</p>
             )}
           </div>
-          {this._getWebViewTag(deviceStyles)}
+          {this._getWebViewTag(deviceStyles, containerWidth, containerHeight)}
         </div>
       </div>
     );
