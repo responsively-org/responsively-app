@@ -17,7 +17,7 @@
   
   
 
-  <a href="https://join.slack.com/t/responsively/shared_invite/zt-h0ouywhs-IIeHj39ymz5IOrgcOa_tRA" target="_blank">
+  <a href="https://join.slack.com/t/responsively/shared_invite/zt-haoieftz-IsMw64H6jXC23pJ16ROLzw" target="_blank">
     <img src="https://img.shields.io/badge/Join%20on-Slack-brightgreen?logo=slack" alt="Slack">
   </a>
 
@@ -84,7 +84,7 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 
 ## Get in touch
 
-Come say hi to us on [Slack](https://join.slack.com/t/responsively/shared_invite/zt-h0ouywhs-IIeHj39ymz5IOrgcOa_tRA)! :wave:
+Come say hi to us on [Slack](https://join.slack.com/t/responsively/shared_invite/zt-haoieftz-IsMw64H6jXC23pJ16ROLzw)! :wave:
 
 ## Contributors ✨
 
