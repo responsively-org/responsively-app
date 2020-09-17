@@ -145,6 +145,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
   </tr>
   <tr>
     <td align="center"><a href="http://ruisaraiva.dev"><img src="https://avatars2.githubusercontent.com/u/7356098?v=4" width="100px;" alt=""/><br /><sub><b>Rui Saraiva</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=ruisaraiva19" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.bakirci.nl"><img src="https://avatars2.githubusercontent.com/u/9880089?v=4" width="100px;" alt=""/><br /><sub><b>Mehmet Bakirci</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=MBakirci" title="Code">💻</a></td>
   </tr>
 </table>
 
