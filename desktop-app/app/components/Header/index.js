@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.l1,
     display: 'flex',
     width: '100%',
-    padding: os.platform() === 'win32' ? '0 0 0' : '20px 0 5px',
+    padding: os.platform() === 'darwin' ? '20px 0 5px' : '0 0 0',
     boxShadow: `0 ${theme.palette.mode({
       light: '0px',
       dark: '3px',
