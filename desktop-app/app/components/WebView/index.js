@@ -763,12 +763,18 @@ class WebView extends Component {
       device: {id, useragent, capabilities},
     } = this.props;
     const {deviceDimensions, address, isTilted} = this.state;
+    const outlinePx = this.props.browser.userPreferences.deviceOutlineStyle
+      ? 3
+      : 0;
 
     if (capabilities.includes(CAPABILITIES.responsive)) {
       return (
         <Resizable
           className={styles.resizableView}
-          size={{width: containerWidth, height: containerHeight}}
+          size={{
+            width: containerWidth + outlinePx,
+            height: containerHeight + outlinePx,
+          }}
           onResizeStart={() => {
             const updatedTempDims = {
               width: deviceDimensions.width,
