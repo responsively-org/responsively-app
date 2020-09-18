@@ -18,7 +18,7 @@ const lightTheme = {
       main: '#2e47d0',
     },
     secondary: {
-      main: '#000',
+      main: '#424242',
     },
     background: {
       l0: '#f8f8f8',

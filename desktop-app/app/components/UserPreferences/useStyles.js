@@ -10,8 +10,8 @@ const useStyles = makeStyles(theme => ({
     margin: '0 10px',
     border: 'transparent',
     '& input': {
-      width: '26px',
-      height: '40px',
+      width: '24px',
+      height: '26px',
       border: 'transparent',
     },
   },
