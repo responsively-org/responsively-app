@@ -24,6 +24,7 @@ const lightTheme = {
       l0: '#f8f8f8',
       l1: '#ffffff',
       l2: '#e7e7e7',
+      l5: '#8a8a8a',
     },
     header: {
       main: '#F5F5F5',
@@ -61,6 +62,7 @@ const darkTheme = {
       l0: '#1e1e1e',
       l1: '#2f2f33',
       l2: '#383838',
+      l5: '#8a8a8a',
     },
     header: {
       main: '#252526',
