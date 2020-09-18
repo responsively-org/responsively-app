@@ -18,19 +18,26 @@ const Header = () => {
 
   return (
     <div className={classes.container}>
-      <Logo className={classes.logo} width={40} height={40} />
-      <Grid container direction="row" justify="flex-start" alignItems="center">
-        <Grid item>
-          <NavigationControlsContainer />
+      <div className={classes.firstRow}>
+        <Logo className={classes.logo} width={40} height={40} />
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+        >
+          <Grid item>
+            <NavigationControlsContainer />
+          </Grid>
+          <Grid item style={{flex: 1}}>
+            <AddressBar />
+            <PermissionPopup />
+          </Grid>
+          <Grid item>
+            <ScrollControlsContainer />
+          </Grid>
         </Grid>
-        <Grid item style={{flex: 1}}>
-          <AddressBar />
-          <PermissionPopup />
-        </Grid>
-        <Grid item>
-          <ScrollControlsContainer />
-        </Grid>
-      </Grid>
+      </div>
       <BookmarksBar />
       <HttpAuthDialog />
       <ToastContainer
@@ -54,6 +61,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     background: theme.palette.background.l1,
     display: 'flex',
+    flexDirection: 'column',
     width: '100%',
     padding: os.platform() === 'darwin' ? '20px 0 5px' : '0 0 0',
     boxShadow: `0 ${theme.palette.mode({
@@ -61,6 +69,9 @@ const useStyles = makeStyles(theme => ({
       dark: '3px',
     })} 5px rgba(0, 0, 0, 0.35)`,
     zIndex: 5,
+  },
+  firstRow: {
+    display: 'flex',
   },
   logo: {
     margin: '0 3px',
