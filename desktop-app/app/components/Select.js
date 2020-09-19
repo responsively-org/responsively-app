@@ -1,11 +1,25 @@
 import React, {useMemo} from 'react';
 import ReactSelect from 'react-select';
 import {useTheme} from '@material-ui/core/styles';
+import useIsDarkTheme from './useIsDarkTheme';
 
 function Select(props) {
   const appTheme = useTheme();
+  const isDark = useIsDarkTheme();
   const styles = useMemo(() => ({
-    control: styles => ({...styles, backgroundColor: '#ffffff10'}),
+    control: styles => ({
+      ...styles,
+      backgroundColor: '#ffffff10',
+      borderColor: isDark ? '#cccccc' : '#00000042',
+    }),
+    indicatorSeparator: styles => ({
+      ...styles,
+      backgroundColor: isDark ? '#cccccc' : '#00000042',
+    }),
+    dropdownIndicator: styles => ({
+      ...styles,
+      color: isDark ? '#cccccc' : '#00000042',
+    }),
     option: (styles, {data, isDisabled, isFocused, isSelected}) => ({
       ...styles,
       backgroundColor: isDisabled
