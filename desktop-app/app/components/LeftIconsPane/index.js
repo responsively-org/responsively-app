@@ -32,6 +32,11 @@ const useStyles = makeStyles(theme => ({
       dark: '3px',
     })} 5px rgba(0, 0, 0, 0.35)`,
   },
+  leftPaneIcon: {
+    '& svg': {
+      verticalAlign: 'middle',
+    },
+  },
 }));
 
 const LeftIconsPane = props => {
@@ -66,7 +71,7 @@ const LeftIconsPane = props => {
           })}
           onClick={() => toggleState(DEVICE_MANAGER)}
         >
-          <div>
+          <div className={cx(mStyles.leftPaneIcon)}>
             <DevicesIcon {...iconProps} className="deviceManagerIcon" />
           </div>
         </Grid>
@@ -78,7 +83,7 @@ const LeftIconsPane = props => {
           })}
           onClick={() => toggleState(USER_PREFERENCES)}
         >
-          <div>
+          <div className={cx(mStyles.leftPaneIcon)}>
             <SettingsIcon {...iconProps} className="settingsIcon" />
           </div>
         </Grid>
@@ -90,7 +95,7 @@ const LeftIconsPane = props => {
           })}
           onClick={() => toggleState(EXTENSIONS_MANAGER)}
         >
-          <div>
+          <div className={cx(mStyles.leftPaneIcon)}>
             <ExtensionIcon {...iconProps} className="extensionsIcon" />
           </div>
         </Grid>
@@ -103,7 +108,7 @@ const LeftIconsPane = props => {
           })}
           onClick={() => toggleState(NETWORK_CONFIGURATION)}
         >
-          <div>
+          <div className={cx(mStyles.leftPaneIcon)}>
             <NetworkIcon
               {...iconProps}
               color="currentColor"

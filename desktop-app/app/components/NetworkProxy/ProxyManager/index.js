@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import NumberFormat from 'react-number-format';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Select from 'react-select';
+import Select from '../../Select';
 import {getEmptyProxySchemeConfig} from '../../../utils/proxyUtils';
 import {isNullOrWhiteSpaces} from '../../../utils/stringUtils';
 import cloneDeep from 'lodash/cloneDeep';
@@ -17,36 +17,6 @@ import {shell} from 'electron';
 import Link from '@material-ui/core/Link';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import {makeStyles} from '@material-ui/core/styles';
-
-const selectStylesObj = {
-  control: selectStyles => ({
-    ...selectStyles,
-    backgroundColor: '#00000000',
-    minHeight: '37px',
-    height: '37px',
-    borderColor: '#ffffff3b',
-  }),
-  option: (selectStyles, {data, isDisabled, isFocused, isSelected}) => ({
-    ...selectStyles,
-    backgroundColor: isDisabled
-      ? null
-      : isSelected
-      ? '#ffffff40'
-      : isFocused
-      ? '#ffffff20'
-      : null,
-    color: 'white',
-
-    ':active': {
-      ...selectStyles[':active'],
-      backgroundColor: !isDisabled && '#ffffff40',
-    },
-  }),
-  input: selectStyles => ({...selectStyles}),
-  placeholder: selectStyles => ({...selectStyles}),
-  singleValue: (selectStyles, {data}) => ({...selectStyles, color: 'white'}),
-  menu: selectStyles => ({...selectStyles, background: '#4b4b4b', zIndex: 100}),
-};
 
 const schemes = ['default', 'http', 'https', 'ftp'];
 
@@ -66,7 +36,6 @@ function ProtocolSelector({value, onChange, allowUseDefault = false}) {
       options={opts}
       value={opts.find(x => x.value === value) || opts[0]}
       onChange={onChange}
-      styles={selectStylesObj}
     />
   );
 }

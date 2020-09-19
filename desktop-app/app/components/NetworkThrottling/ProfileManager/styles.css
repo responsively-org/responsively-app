@@ -23,16 +23,6 @@ td {
   cursor: pointer;
 }
 
-.actionIcon {
-  pointer-events: all;
-  cursor: pointer;
-  color: white;
-}
-
-.actionIcon:hover {
-  color: #6075ef;
-}
-
 .saveButton {
   position: absolute !important;
   bottom: 25px;
@@ -42,12 +32,6 @@ td {
 .numericField * {
   text-align: right;
   font-size: 14px !important;
-}
-.numericFieldDisabled fieldset {
-  border: 0 !important;
-}
-.numericFieldDisabled input {
-  color: white !important;
 }
 
 .titleField * {
