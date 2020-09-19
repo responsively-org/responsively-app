@@ -146,7 +146,6 @@ export default function PermissionPopup() {
       <DialogActions>
         <Button
           variant="contained"
-          color="secondary"
           type="submit"
           onClick={() => handleClose(false)}
           size="small"
