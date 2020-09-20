@@ -25,12 +25,13 @@ const lightTheme = {
       l1: '#ffffff',
       l2: '#e7e7e7',
       l5: '#8a8a8a',
+      l10: '#eff1f2',
     },
     header: {
       main: '#F5F5F5',
     },
-    gray: {
-      l1: '#eff1f2',
+    scrollbar: {
+      main: '#7c7c7c',
     },
     text: {
       active: '#1e1e1e',
@@ -63,12 +64,13 @@ const darkTheme = {
       l1: '#2f2f33',
       l2: '#383838',
       l5: '#8a8a8a',
+      l10: '#1e1e1e',
     },
     header: {
       main: '#252526',
     },
-    gray: {
-      l1: '#1e1e1e',
+    scrollbar: {
+      main: '#9c9c9c',
     },
     text: {
       active: '#ffffff',

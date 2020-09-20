@@ -108,9 +108,7 @@ Add device form styles */
 
 /* The scrollbar Track */
 ::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  -webkit-border-radius: 8px;
-  border-radius: 8px;
+  display: none;
 }
 
 /* When the box area between the horzontal scrollbar and the vertical scrollbar */
