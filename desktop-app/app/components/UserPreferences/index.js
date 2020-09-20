@@ -112,7 +112,17 @@ function UserPreference({
             }
           />
         </div>
-        <div>
+      </div>
+      <div className={commonClasses.sidebarContentSectionContainer}>
+        <div
+          className={cx(
+            commonClasses.flexAlignVerticalMiddle,
+            classes.sectionHeader
+          )}
+        >
+          Appearance
+        </div>
+        <div className={classes.marginTop}>
           <FormControlLabel
             control={
               <Input
@@ -208,7 +218,14 @@ function UserPreference({
         />
       </div>
       <div className={commonClasses.sidebarContentSectionContainer}>
-        <div className={classes.preferenceName}>Permissions</div>
+        <div
+          className={cx(
+            commonClasses.flexAlignVerticalMiddle,
+            classes.sectionHeader
+          )}
+        >
+          Permissions
+        </div>
         <div className={classes.marginTop}>
           <Select
             options={permissionsOptions}
