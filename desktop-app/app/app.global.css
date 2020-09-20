@@ -44,28 +44,6 @@ a:hover {
   cursor: pointer;
 }
 
-.react-tabs {
-  position: sticky;
-  left: 0;
-  top: 0;
-  margin-bottom: 10px;
-  z-index: 4;
-  background-color: #1e1e1e;
-}
-
-.react-tabs__tab {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  bottom: unset;
-}
-
-.react-tabs__tab-list {
-  display: flex;
-  margin-bottom: 0;
-  overflow: auto;
-}
-
 .spin::before {
   animation: fa-spin 1s linear infinite;
 }

@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => {
       },
       /* When the scrollbar is inactive */
       '::-webkit-scrollbar-thumb:window-inactive': {
-        backgroundColor: scrollBarBackgroundColor,
+        backgroundColor: 'red',
       },
     },
     root: {

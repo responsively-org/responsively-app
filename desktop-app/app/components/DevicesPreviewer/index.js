@@ -4,7 +4,6 @@ import cx from 'classnames';
 import {Tab, Tabs, TabList} from 'react-tabs';
 import Renderer from '../Renderer';
 
-import styles from './style.module.css';
 import {
   HORIZONTAL_LAYOUT,
   FLEXIGRID_LAYOUT,
@@ -13,6 +12,7 @@ import {
 } from '../../constants/previewerLayouts';
 import {isDeviceEligible} from '../../utils/filterUtils';
 import {getDeviceIcon} from '../../utils/iconUtils';
+import useStyes from './useStyles';
 
 export default function DevicesPreviewer(props) {
   const {
@@ -24,6 +24,7 @@ export default function DevicesPreviewer(props) {
     },
   } = props;
   const [activeTab, changeTab] = useState(0);
+  const classes = useStyes();
 
   const newActiveTab = activeTab;
   const devicesAfterFiltering = devices
@@ -61,12 +62,22 @@ export default function DevicesPreviewer(props) {
   };
 
   return (
-    <div className={cx(styles.container)}>
+    <div className={cx(classes.container)}>
       {layout === INDIVIDUAL_LAYOUT && (
-        <Tabs onSelect={onTabClick} selectedIndex={focusedDeviceIndex}>
-          <TabList>
+        <Tabs
+          className={cx('react-tabs', classes.reactTabs)}
+          onSelect={onTabClick}
+          selectedIndex={focusedDeviceIndex}
+        >
+          <TabList
+            className={cx('react-tabs__tab-list', classes.reactTabs__tabList)}
+          >
             {devicesAfterFiltering.map(device => (
-              <Tab tabId={device.id} key={device.id}>
+              <Tab
+                className={cx('react-tabs__tab', classes.reactTabs__tab)}
+                tabId={device.id}
+                key={device.id}
+              >
                 {getDeviceIcon(device.type)}
                 {device.name}
               </Tab>
@@ -75,17 +86,17 @@ export default function DevicesPreviewer(props) {
         </Tabs>
       )}
       <div
-        className={cx(styles.devicesContainer, {
-          [styles.flexigrid]: layout === FLEXIGRID_LAYOUT,
-          [styles.horizontal]: layout === HORIZONTAL_LAYOUT,
+        className={cx(classes.devicesContainer, {
+          [classes.flexigrid]: layout === FLEXIGRID_LAYOUT,
+          [classes.horizontal]: layout === HORIZONTAL_LAYOUT,
         })}
       >
         {devices.map((device, index) => (
           <div
             key={device.id}
             className={cx({
-              [styles.tab]: layout === INDIVIDUAL_LAYOUT,
-              [styles.activeTab]:
+              [classes.tab]: layout === INDIVIDUAL_LAYOUT,
+              [classes.activeTab]:
                 layout === INDIVIDUAL_LAYOUT && focusedDeviceId === device.id,
             })}
           >
