@@ -1,21 +1,22 @@
 .toolbarContainer {
   height: 20px;
-  color: rgb(165, 165, 165);
-  border-color: rgb(61, 61, 61);
   border-style: solid;
   border-width: 1px 0;
-  background-color: #333;
   display: flex;
   justify-content: space-between;
   z-index: 1400;
 }
 
-@media (prefers-color-scheme: light) {
-  .toolbarContainer {
-    background: #f3f3f3;
-    color: #555;
-    border-color: #d0d0d0;
-  }
+.toolbarContainer.darkMode {
+  color: rgb(165, 165, 165);
+  border-color: rgb(61, 61, 61);
+  background-color: #333;
+}
+
+.toolbarContainer.lightMode {
+  background-color: #f3f3f3;
+  color: #555;
+  border-color: #d0d0d0;
 }
 
 .toolsGroup {
@@ -35,6 +36,10 @@
 
 .icon svg {
   fill: rgb(165, 165, 165);
+}
+
+.toolbarContainer.lightMode .icon svg {
+  fill: #555;
 }
 
 .inputSection {
@@ -97,12 +102,6 @@
 .chromeSelect option {
   background-color: #eee;
   color: #222;
-}
-
-@media (prefers-color-scheme: light) {
-  .icon svg {
-    fill: #555;
-  }
 }
 
 .resizable {
