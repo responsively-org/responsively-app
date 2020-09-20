@@ -1,22 +1,26 @@
 import React, {useState, useEffect} from 'react';
+import {ipcRenderer} from 'electron';
 import Tooltip from '@material-ui/core/Tooltip';
-import {useDispatch} from 'react-redux';
 import LightColorSchemeIcon from '../icons/LightColorScheme';
 import DarkColorSchemeIcon from '../icons/DarkColorScheme';
-import {LIGHT_THEME, DARK_THEME} from '../../constants/theme';
-import {setTheme} from '../../actions/browser';
-import useIsDarkTheme from '../useIsDarkTheme';
 
-function PrefersColorSchemeSwitch({iconProps}) {
-  const dispatch = useDispatch();
-  const isDark = useIsDarkTheme();
+export default function PrefersColorSchemeSwitch({iconProps}) {
+  const [colorScheme, setColorScheme] = useState(
+    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  );
+
+  const handleSwitch = () => {
+    setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
+  };
+
+  useEffect(() => {
+    ipcRenderer.send('prefers-color-scheme-select', colorScheme);
+  }, [colorScheme]);
 
   return (
     <Tooltip title="Switch color scheme">
-      <div
-        onClick={() => dispatch(setTheme(isDark ? LIGHT_THEME : DARK_THEME))}
-      >
-        {isDark ? (
+      <div onClick={handleSwitch}>
+        {colorScheme === 'dark' ? (
           <DarkColorSchemeIcon {...iconProps} />
         ) : (
           <LightColorSchemeIcon {...iconProps} />
@@ -25,5 +29,3 @@ function PrefersColorSchemeSwitch({iconProps}) {
     </Tooltip>
   );
 }
-
-export default PrefersColorSchemeSwitch;

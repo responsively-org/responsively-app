@@ -52,7 +52,6 @@ import {
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
 import {updateExistingUrl} from '../services/searchUrlSuggestions';
-import {SYSTEM_THEME} from '../constants/theme';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -297,7 +296,7 @@ export default function browser(
       : getHomepage(),
     currentPageMeta: {},
     zoomLevel: _getUserPreferences().zoomLevel || 0.6,
-    theme: _getUserPreferences().theme || SYSTEM_THEME,
+    theme: _getUserPreferences().theme,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},

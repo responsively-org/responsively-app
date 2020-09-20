@@ -6,6 +6,7 @@ import {
 } from '../constants/settingKeys';
 import {SCREENSHOT_MECHANISM} from '../constants/values';
 import {PERMISSION_MANAGEMENT_OPTIONS} from '../constants/permissionsManagement';
+import {DARK_THEME} from '../constants/theme';
 
 export function migrateDeviceSchema() {
   if (settings.get('USER_PREFERENCES')) {
@@ -18,6 +19,7 @@ export function migrateDeviceSchema() {
   _handleScreenshotFixedElementsPreferences();
   _handleDeviceSchema();
   _handlePermissionsDefaultPreferences();
+  _handleColorThemePreferences();
 }
 
 function _ensureDefaultNetworkConfig() {
@@ -119,6 +121,17 @@ const _handlePermissionsDefaultPreferences = () => {
 
   userPreferences.permissionManagement =
     PERMISSION_MANAGEMENT_OPTIONS.ASK_ALWAYS;
+  settings.set(USER_PREFERENCES, userPreferences);
+};
+
+const _handleColorThemePreferences = () => {
+  const userPreferences = settings.get(USER_PREFERENCES) || {};
+
+  if (userPreferences.theme != null) {
+    return;
+  }
+
+  userPreferences.theme = DARK_THEME;
   settings.set(USER_PREFERENCES, userPreferences);
 };
 

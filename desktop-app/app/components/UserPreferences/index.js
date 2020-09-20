@@ -12,7 +12,7 @@ import useCommonStyles from '../useCommonStyles';
 import useStyles from './useStyles';
 import Select from '../Select';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
-import {SYSTEM_THEME, LIGHT_THEME, DARK_THEME} from '../../constants/theme';
+import {LIGHT_THEME, DARK_THEME} from '../../constants/theme';
 import ScreenShotSavePreference from '../ScreenShotSavePreference/index';
 import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 import {SCREENSHOT_MECHANISM} from '../../constants/values';
@@ -248,7 +248,6 @@ const permissionsOptions = [
 ];
 
 const themeOptions = [
-  {value: SYSTEM_THEME, label: 'System preference'},
   {value: LIGHT_THEME, label: 'Light'},
   {value: DARK_THEME, label: 'Dark'},
 ];
