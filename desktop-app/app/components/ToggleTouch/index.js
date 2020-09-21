@@ -26,7 +26,7 @@ export default function ToggleTouch({iconProps}) {
 
   const handleToggleTouch = () => {
     setIsTouchMode(!isTouchMode);
-    setTooltip(!isTouchMode);
+    setTooltip(isTouchMode);
     if (isHover) {
       return setPendingState(true);
     }
@@ -51,19 +51,23 @@ export default function ToggleTouch({iconProps}) {
       className={cx(commonClasses.icon, {
         [commonClasses.iconSelected]: isTouchMode,
       })}
-      onMouseEnter={() => setHover(true)}
       onPointerLeave={() => {
         setHover(false);
+        setTooltip(false);
       }}
       onPointerMove={() => {
+        setTooltip(true);
         if (!hasPendingState) {
           return;
         }
         syncState(isTouchMode);
         setPendingState(false);
       }}
+      onPointerUp={() => {
+        setTooltip(false);
+      }}
     >
-      <Tooltip title={hasTooltip ? '' : 'Toggle Touch Mode'}>
+      <Tooltip title="Toggle Touch Mode" open={hasTooltip}>
         <div onClick={handleToggleTouch}>
           <ToggleTouchIcon {...iconProps} />
         </div>
