@@ -17,7 +17,7 @@
   
   
 
-  <a href="https://join.slack.com/t/responsively/shared_invite/zt-haoieftz-IsMw64H6jXC23pJ16ROLzw" target="_blank">
+  <a href="https://responsively.app/join-slack" target="_blank">
     <img src="https://img.shields.io/badge/Join%20on-Slack-brightgreen?logo=slack" alt="Slack">
   </a>
 
