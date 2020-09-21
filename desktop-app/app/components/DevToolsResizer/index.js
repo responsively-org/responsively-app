@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
+import cx from 'classnames';
 import {ipcRenderer} from 'electron';
 import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
@@ -12,6 +13,7 @@ import InspectElementChrome from '../icons/InspectElementChrome';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 import CrossChrome from '../icons/CrossChrome';
 import {OPEN_CONSOLE_FOR_DEVICE} from '../../constants/pubsubEvents';
+import {DARK_THEME, LIGHT_THEME} from '../../constants/theme';
 
 const getResizingDirections = mode => {
   if (mode === DEVTOOLS_MODES.RIGHT) {
@@ -47,6 +49,7 @@ const DevToolsResizer = ({
   onDevToolsModeChange,
   onWindowResize,
   toggleInspector,
+  isDarkTheme,
 }) => {
   useEffect(() => {
     const handler = debounce(
@@ -62,6 +65,10 @@ const DevToolsResizer = ({
       ipcRenderer.removeListener('window-resize', handler);
     };
   }, []);
+
+  const initialTheme = useMemo(() => (isDarkTheme ? DARK_THEME : LIGHT_THEME), [
+    activeDevTools[0]?.deviceId,
+  ]);
 
   const [sizeBeforeDrag, setSizeBeforeDrag] = useState(null);
 
@@ -93,7 +100,10 @@ const DevToolsResizer = ({
         enable={getResizingDirections(mode)}
       >
         <div
-          className={styles.toolbarContainer}
+          className={cx(
+            styles.toolbarContainer,
+            initialTheme === DARK_THEME ? styles.darkMode : styles.lightMode
+          )}
           style={{width: '100%', ...getToolbarPosition(mode, bounds)}}
         >
           <div className={styles.toolsGroup}>
