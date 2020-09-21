@@ -8,8 +8,8 @@
 This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Reference. Chocolatey uses a special version of NuGet.Core that allows us to do more than was initially possible. As such there are certain things to be aware of:
 
 * the package xmlns schema url may cause issues with nuget.exe
-* Any of the following elements can ONLY be used by choco tools - projectSourceUrl, docsUrl, mailingListUrl, bugTrackerUrl, packageSourceUrl, provides, conflicts, replaces 
-* nuget.exe can still install packages with those elements but they are ignored. Any authoring tools or commands will error on those elements 
+* Any of the following elements can ONLY be used by choco tools - projectSourceUrl, docsUrl, mailingListUrl, bugTrackerUrl, packageSourceUrl, provides, conflicts, replaces
+* nuget.exe can still install packages with those elements but they are ignored. Any authoring tools or commands will error on those elements
 -->
 
 <!-- You can embed software files directly into packages, as long as you are not bound by distribution rights. -->
@@ -20,7 +20,7 @@ This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Refe
   <metadata>
     <id>responsively</id>
     <version>#VERSION#</version>
-    <!-- <packageSourceUrl>Where is this Chocolatey package located (think GitHub)? packageSourceUrl is highly recommended for the community feed</packageSourceUrl>-->
+    <packageSourceUrl>https://github.com/responsively-org/responsively-app</packageSourceUrl>
     <!-- owners is a poor name for maintainers of the package. It sticks around by this name for compatibility reasons. It basically means you. -->
     <!--<owners>__REPLACE_YOUR_NAME__</owners>-->
     <!-- ============================== -->
@@ -46,7 +46,7 @@ This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Refe
 # Responsively App
 **A must-have devtool for web developers for quicker responsive web development. 🚀**
 Save time by becoming 5x faster!
-A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development. 
+A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development.
 
 ![Quick Demo](https://responsively.app/assets/img/responsively-app.gif)
 
@@ -58,6 +58,8 @@ A modified browser built using [Electron](https://www.electronjs.org/) that help
 5. One-click screenshot all your devices.
 6. Hot reloading supported for developers.
 
+## Get in touch
+
 Please visit the website to know more about the application - https://responsively.app
 
 Check it out our GitHub repo - [![GitHub stars](https://img.shields.io/github/stars/responsively-org/responsively-app.svg?style=social&amp;label=Star&amp;maxAge=2592000)](https://github.com/responsively-org/responsively-app) This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
@@ -67,10 +69,9 @@ Follow on Twitter for future updates - [![Twitter Follow](https://img.shields.io
 Sponsor this project on [Open Collective](opencollective.com/responsively)
 
 Come say hi to us on [Slack](https://join.slack.com/t/responsively/shared_invite/zt-haoieftz-IsMw64H6jXC23pJ16ROLzw)!
-</description>
-    <!-- <releaseNotes>
-    </releaseNotes> -->
-    <!-- =============================== -->      
+  </description>
+  <releaseNotes>https://github.com/responsively-org/responsively-app/releases/tag/v#VERSION#</releaseNotes>
+    <!-- =============================== -->
 
     <!-- Specifying dependencies and version ranges? https://docs.nuget.org/create/versioning#specifying-version-ranges-in-.nuspec-files -->
     <!--<dependencies>
