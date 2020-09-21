@@ -50,8 +50,10 @@ export default function ToggleTouch({iconProps}) {
         [commonClasses.iconSelected]: isTouchMode,
       })}
       onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => {
+      onPointerLeave={() => {
         setHover(false);
+      }}
+      onPointerMove={() => {
         if (!hasPendingState) {
           return;
         }
