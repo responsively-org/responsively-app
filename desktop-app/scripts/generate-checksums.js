@@ -2,12 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
-function hashFile(
-  file,
-  algorithm = 'sha512',
-  encoding = 'base64',
-  options = {}
-) {
+function hashFile(file, algorithm = 'sha512', encoding = 'hex', options = {}) {
   return new Promise((resolve, reject) => {
     const hash = crypto.createHash(algorithm);
     hash.on('error', reject).setEncoding(encoding);
