@@ -84,7 +84,7 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 
 ## Get in touch
 
-Come say hi to us on [Slack](https://join.slack.com/t/responsively/shared_invite/zt-haoieftz-IsMw64H6jXC23pJ16ROLzw)! :wave:
+Come say hi to us on [Slack](https://responsively.app/join-slack)! :wave:
 
 ## Contributors ✨
 
