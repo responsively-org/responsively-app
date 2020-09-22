@@ -11,7 +11,6 @@ import logo from '../../../resources/logo.svg';
 
 function updateNotificationStatus(id, action) {
   const notifications = settings.get(APP_NOTIFICATION) || [];
-  const commonClasses = useCommonStyles();
 
   const notificationStatusObject = {
     id,
