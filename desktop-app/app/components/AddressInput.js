@@ -320,7 +320,7 @@ const styles = theme => {
       width: '100%',
       padding: '14px 10px',
       borderRadius: '20px',
-      backgroundColor: theme.palette.background.l10,
+      backgroundColor: theme.palette.background.l0,
       color: theme.palette.text.normal,
       border: mode({
         light: 'none',
