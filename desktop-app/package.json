@@ -66,6 +66,7 @@
   "main": "./app/main.prod.js",
   "build": {
     "afterSign": "scripts/notarize.js",
+    "afterAllArtifactBuild": "scripts/extraPublishFiles.js",
     "productName": "ResponsivelyApp",
     "appId": "app.responsively",
     "files": [
