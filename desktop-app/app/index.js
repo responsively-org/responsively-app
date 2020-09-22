@@ -6,7 +6,7 @@ import {remote} from 'electron';
 import {render} from 'react-dom';
 import {AppContainer} from 'react-hot-loader';
 import Root from './containers/Root';
-import {configureStore, history} from './store/configureStore';
+import {configureStore} from './store/configureStore';
 import './app.global.css';
 import * as Sentry from '@sentry/electron';
 import appMetadata from './services/db/appMetadata';
@@ -40,7 +40,7 @@ const store = configureStore();
 
 render(
   <AppContainer>
-    <Root store={store} history={history} />
+    <Root store={store} />
   </AppContainer>,
   document.getElementById('root')
 );
@@ -51,7 +51,7 @@ if (module.hot) {
     const NextRoot = require('./containers/Root').default;
     render(
       <AppContainer>
-        <NextRoot store={store} history={history} />
+        <NextRoot store={store} />
       </AppContainer>,
       document.getElementById('root')
     );

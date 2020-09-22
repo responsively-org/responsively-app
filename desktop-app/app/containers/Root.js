@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Provider} from 'react-redux';
-import {ConnectedRouter} from 'connected-react-router';
 import log from 'electron-log';
 import {makeStyles} from '@material-ui/core/styles';
 import {ThemeProvider} from '@material-ui/styles';
@@ -30,21 +29,17 @@ import pubsub from 'pubsub.js';
 import {PROXY_AUTH_ERROR} from '../constants/pubsubEvents';
 import useCreateTheme from '../components/useCreateTheme';
 
-function App({history}) {
+function App() {
   const theme = useCreateTheme();
 
   return (
     <ThemeProvider theme={theme}>
       {process.env.NODE_ENV !== 'development' ? (
         <ErrorBoundary>
-          <ConnectedRouter history={history}>
-            <Routes />
-          </ConnectedRouter>
+          <Routes />
         </ErrorBoundary>
       ) : (
-        <ConnectedRouter history={history}>
-          <Routes />
-        </ConnectedRouter>
+        <Routes />
       )}
     </ThemeProvider>
   );
@@ -226,10 +221,10 @@ export default class Root extends Component {
   };
 
   render() {
-    const {store, history} = this.props;
+    const {store} = this.props;
     return (
       <Provider store={store}>
-        <App history={history} />
+        <App />
       </Provider>
     );
   }

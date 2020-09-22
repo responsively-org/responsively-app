@@ -1,5 +1,4 @@
 import React, {Fragment} from 'react';
-import {Switch, Route} from 'react-router';
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
 import {makeStyles} from '@material-ui/core/styles';
@@ -15,9 +14,7 @@ const Routes = () => {
     <Fragment>
       <Paper elevation={0} className={classes.root}>
         <div className={classes.contentColumn}>
-          <Switch>
-            <Route path={routes.HOME} component={Browser} />
-          </Switch>
+          <Browser />
         </div>
       </Paper>
       <StatusBarContainer />
