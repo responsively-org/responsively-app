@@ -113,7 +113,8 @@
       },
       "icon": "resources/icon.icns",
       "target": [
-        "dmg"
+        "dmg",
+        "zip"
       ],
       "fileAssociations": [
         {
