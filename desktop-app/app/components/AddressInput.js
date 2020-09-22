@@ -322,10 +322,7 @@ const styles = theme => {
       borderRadius: '20px',
       backgroundColor: theme.palette.background.l0,
       color: theme.palette.text.normal,
-      border: mode({
-        light: 'none',
-        dark: `1px solid ${theme.palette.lightIcon.main}`,
-      }),
+      border: `1px solid ${theme.palette.lightIcon.main}`,
       outline: 'none',
       transition: 'border 500ms ease-out',
       '&:focus-within': {
