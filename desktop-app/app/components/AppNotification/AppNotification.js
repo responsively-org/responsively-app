@@ -39,6 +39,8 @@ function checkIfInteracted(id) {
 const AppNotification = () => {
   const [notificationInteracted, setNotificationInteracted] = useState(false);
   const [data, setData] = useState(null);
+  const commonClasses = useCommonStyles();
+
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       return;
