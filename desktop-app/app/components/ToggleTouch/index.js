@@ -51,12 +51,15 @@ export default function ToggleTouch({iconProps}) {
       className={cx(commonClasses.icon, {
         [commonClasses.iconSelected]: isTouchMode,
       })}
+      onPointerEnter={() => {
+        setHover(true);
+        setTooltip(true);
+      }}
       onPointerLeave={() => {
         setHover(false);
         setTooltip(false);
       }}
       onPointerMove={() => {
-        setTooltip(true);
         if (!hasPendingState) {
           return;
         }
