@@ -4,7 +4,7 @@ import log from 'electron-log';
 import {makeStyles} from '@material-ui/core/styles';
 import {ThemeProvider} from '@material-ui/styles';
 import {remote} from 'electron';
-import Routes from '../Routes';
+import AppContent from '../AppContent';
 import ErrorBoundary from '../components/ErrorBoundary';
 import {
   registerShortcut,
@@ -36,10 +36,10 @@ function App() {
     <ThemeProvider theme={theme}>
       {process.env.NODE_ENV !== 'development' ? (
         <ErrorBoundary>
-          <Routes />
+          <AppContent />
         </ErrorBoundary>
       ) : (
-        <Routes />
+        <AppContent />
       )}
     </ThemeProvider>
   );

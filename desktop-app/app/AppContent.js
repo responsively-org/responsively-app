@@ -8,7 +8,7 @@ import LeftIconsPaneContainer from './containers/LeftIconsPaneContainer';
 import StatusBarContainer from './containers/StatusBarContainer';
 import DevToolResizerContainer from './containers/DevToolResizerContainer';
 
-const Routes = () => {
+const AppContent = () => {
   const classes = useStyles();
   return (
     <Fragment>
@@ -66,4 +66,4 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default Routes;
+export default AppContent;
