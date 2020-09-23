@@ -72,7 +72,7 @@ const darkTheme = {
       l20: '#aeaeae',
     },
     border: {
-      color: '#FFFFFF',
+      color: '#ffffff',
     },
     header: {
       main: '#252526',
