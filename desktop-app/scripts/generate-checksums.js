@@ -1,6 +1,17 @@
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const pkg = require('../package.json');
+
+const version = pkg.version;
+const requiredFiles = [
+  `Responsively-App-${version}.x86_64.rpm`,
+  `ResponsivelyApp-${version}-mac.zip`,
+  `ResponsivelyApp-${version}.AppImage`,
+  `ResponsivelyApp-${version}.dmg`,
+  `ResponsivelyApp ${version}.exe`,
+  `ResponsivelyApp Setup ${version}.exe`,
+];
 
 function hashFile(file, algorithm = 'sha512', encoding = 'hex', options = {}) {
   return new Promise((resolve, reject) => {
@@ -31,17 +42,16 @@ const SKIP_SUFFIX_LIST = [CHECKSUM_SUFFIX, '.yml', '.yaml', '.txt'];
 const generateChecksums = async () => {
   const result = [];
   const installerPath = path.resolve(__dirname, RELATIVE_FOLDER_PATH);
-  const files = await fs.promises.readdir(installerPath);
   console.log("\nGenerating checksum files for files in: '%s'", installerPath);
 
-  for (const file of files) {
+  for (const file of requiredFiles) {
     if (SKIP_SUFFIX_LIST.some(s => file.endsWith(s))) continue;
 
     const filePath = path.join(installerPath, file);
     const stat = await fs.promises.stat(filePath);
 
     if (stat.isFile()) {
-      const checksumFile = `${file}${CHECKSUM_SUFFIX}`;
+      const checksumFile = `${file.replace(/ /g, '-')}${CHECKSUM_SUFFIX}`;
       const checksumFilePath = path.join(installerPath, checksumFile);
       const checksum = await hashFile(filePath);
       await fs.promises.writeFile(checksumFilePath, checksum);
