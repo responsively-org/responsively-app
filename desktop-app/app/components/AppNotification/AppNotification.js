@@ -11,7 +11,6 @@ import logo from '../../../resources/logo.svg';
 
 function updateNotificationStatus(id, action) {
   const notifications = settings.get(APP_NOTIFICATION) || [];
-  const commonClasses = useCommonStyles();
 
   const notificationStatusObject = {
     id,
@@ -39,6 +38,8 @@ function checkIfInteracted(id) {
 const AppNotification = () => {
   const [notificationInteracted, setNotificationInteracted] = useState(false);
   const [data, setData] = useState(null);
+  const commonClasses = useCommonStyles();
+
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       return;
