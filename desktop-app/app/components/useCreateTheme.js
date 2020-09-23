@@ -28,6 +28,9 @@ const lightTheme = {
       l10: '#d2d2d2',
       l20: '#8a8a8a',
     },
+    border: {
+      color: '#000000',
+    },
     header: {
       main: '#F5F5F5',
     },
@@ -67,6 +70,9 @@ const darkTheme = {
       l5: '#8a8a8a',
       l10: '#9e9e9e',
       l20: '#aeaeae',
+    },
+    border: {
+      color: '#ffffff',
     },
     header: {
       main: '#252526',

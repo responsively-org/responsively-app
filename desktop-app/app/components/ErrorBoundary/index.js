@@ -69,6 +69,7 @@ class ErrorBoundary extends React.Component {
 
 const styles = theme => ({
   errorBoundaryContainer: {
+    background: theme.palette.background.default,
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
