@@ -1,5 +1,4 @@
 import React, {Fragment} from 'react';
-import {Switch, Route} from 'react-router';
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
 import {makeStyles} from '@material-ui/core/styles';
@@ -9,15 +8,13 @@ import LeftIconsPaneContainer from './containers/LeftIconsPaneContainer';
 import StatusBarContainer from './containers/StatusBarContainer';
 import DevToolResizerContainer from './containers/DevToolResizerContainer';
 
-const Routes = () => {
+const AppContent = () => {
   const classes = useStyles();
   return (
     <Fragment>
       <Paper elevation={0} className={classes.root}>
         <div className={classes.contentColumn}>
-          <Switch>
-            <Route path={routes.HOME} component={Browser} />
-          </Switch>
+          <Browser />
         </div>
       </Paper>
       <StatusBarContainer />
@@ -69,4 +66,4 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default Routes;
+export default AppContent;
