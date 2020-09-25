@@ -16,6 +16,7 @@ import styles from './styles.module.css';
 import useCommonStyles from '../useCommonStyles';
 import './otherStyles.css';
 import {Tooltip} from '@material-ui/core';
+import {MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL} from '../../constants';
 
 function BrowserZoom(props) {
   const [showExpanded, setShowExpanded] = useState(false);
@@ -51,7 +52,7 @@ function BrowserZoom(props) {
     }
   };
 
-  const value = Math.round(props.browser.zoomLevel * 100);
+  const zoomLevel = props.browser.zoomLevel;
 
   return (
     <div
@@ -69,7 +70,11 @@ function BrowserZoom(props) {
         })}
       >
         <ToggleButtonGroup value={[]} onChange={_zoomChange}>
-          <ToggleButton value="zoomOut" disabled={value === 20} disableRipple>
+          <ToggleButton
+            value="zoomOut"
+            disabled={zoomLevel === MIN_ZOOM_LEVEL}
+            disableRipple
+          >
             &ndash;
           </ToggleButton>
           <Typography
@@ -79,9 +84,13 @@ function BrowserZoom(props) {
               'MuiToggleButton-root'
             )}
           >
-            {value}%
+            {Math.round(props.browser.zoomLevel * 100)}%
           </Typography>
-          <ToggleButton value="zoomIn" disabled={value === 200} disableRipple>
+          <ToggleButton
+            value="zoomIn"
+            disabled={zoomLevel === MAX_ZOOM_LEVEL}
+            disableRipple
+          >
             +
           </ToggleButton>
         </ToggleButtonGroup>
