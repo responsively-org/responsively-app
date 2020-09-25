@@ -28,6 +28,7 @@ import {toggleBookmarkUrl} from '../actions/bookmarks';
 import pubsub from 'pubsub.js';
 import {PROXY_AUTH_ERROR} from '../constants/pubsubEvents';
 import useCreateTheme from '../components/useCreateTheme';
+import {DEFAULT_ZOOM_LEVEL} from '../constants';
 
 function App() {
   const theme = useCreateTheme();
@@ -90,7 +91,7 @@ export default class Root extends Component {
     registerShortcut(
       {id: 'ZoomReset', title: 'Zoom Reset', accelerators: ['mod+0']},
       () => {
-        store.dispatch(onZoomChange(0.6));
+        store.dispatch(onZoomChange(DEFAULT_ZOOM_LEVEL));
       },
       true
     );

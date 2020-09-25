@@ -52,6 +52,8 @@ import {
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
 import {updateExistingUrl} from '../services/searchUrlSuggestions';
+import {normalizeZoomLevel} from '../utils/browserUtils';
+import {DEFAULT_ZOOM_LEVEL} from '../constants';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -295,7 +297,8 @@ export default function browser(
       ? getLastOpenedAddress()
       : getHomepage(),
     currentPageMeta: {},
-    zoomLevel: _getUserPreferences().zoomLevel || 0.6,
+    zoomLevel:
+      normalizeZoomLevel(_getUserPreferences().zoomLevel) || DEFAULT_ZOOM_LEVEL,
     theme: _getUserPreferences().theme,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},

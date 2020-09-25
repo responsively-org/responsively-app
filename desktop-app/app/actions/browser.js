@@ -18,6 +18,7 @@ import {
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
+import {normalizeZoomLevel} from '../utils/browserUtils';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_PAGE_META_FIELD = 'NEW_PAGE_META_FIELD';
@@ -225,12 +226,13 @@ export function onZoomChange(newLevel) {
     const {
       browser: {zoomLevel},
     } = getState();
+    const normalizedZoomLevel = normalizeZoomLevel(newLevel);
 
-    if (newLevel === zoomLevel) {
+    if (normalizedZoomLevel === zoomLevel) {
       return;
     }
 
-    dispatch(newZoomLevel(newLevel));
+    dispatch(newZoomLevel(normalizedZoomLevel));
   };
 }
 
