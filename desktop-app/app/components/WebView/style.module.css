@@ -64,6 +64,16 @@
   font-size: 20px;
 }
 
+.errorHelpSuggestion {
+  position: absolute;
+  top: 25%;
+  width: 100%;
+  padding: 35px;
+  text-align: justify;
+  letter-spacing: -1.3px;
+  background: darkcyan;
+}
+
 .iconWrapperS {
   width: 100%;
   height: 15px;

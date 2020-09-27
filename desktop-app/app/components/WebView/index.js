@@ -990,9 +990,18 @@ class WebView extends Component {
           >
             <p>ERROR: {errorCode}</p>
             <p className={cx(styles.errorDesc)}>{errorDesc}</p>
+
             {proxyAuthError && (
               <p className={cx(styles.errorDesc)}>Proxy Authentication Error</p>
             )}
+
+            {errorCode <= -200 && errorCode >= -299 && (
+              <p className={cx(styles.errorHelpSuggestion)}>
+                If you wish to proceed, you can disable the SSL validation in
+                the user preferences.
+              </p>
+            )}
+            
           </div>
           {this._getWebViewTag(deviceStyles, containerWidth, containerHeight)}
         </div>
