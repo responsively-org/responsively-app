@@ -5,10 +5,8 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import NumberFormat from 'react-number-format';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Select from 'react-select';
-import {
-  getEmptyProxySchemeConfig,
-} from '../../../utils/proxyUtils';
+import Select from '../../Select';
+import {getEmptyProxySchemeConfig} from '../../../utils/proxyUtils';
 import {isNullOrWhiteSpaces} from '../../../utils/stringUtils';
 import cloneDeep from 'lodash/cloneDeep';
 import trim from 'lodash/trim';
@@ -19,38 +17,6 @@ import {shell} from 'electron';
 import Link from '@material-ui/core/Link';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import {makeStyles} from '@material-ui/core/styles';
-
-const selectStylesObj = {
-  control: selectStyles => ({
-    ...selectStyles,
-    backgroundColor: '#00000000',
-    minHeight: '37px',
-    height: '37px',
-    borderColor: '#ffffff3b',
-  }),
-  option: (selectStyles, {data, isDisabled, isFocused, isSelected}) => (
-     {
-      ...selectStyles,
-      backgroundColor: isDisabled
-        ? null
-        : isSelected
-        ? '#ffffff40'
-        : isFocused
-        ? '#ffffff20'
-        : null,
-      color: 'white',
-
-      ':active': {
-        ...selectStyles[':active'],
-        backgroundColor: !isDisabled && '#ffffff40',
-      },
-    }
-  ),
-  input: selectStyles => ({...selectStyles}),
-  placeholder: selectStyles => ({...selectStyles}),
-  singleValue: (selectStyles, {data}) => ({...selectStyles, color: 'white'}),
-  menu: selectStyles => ({...selectStyles, background: '#4b4b4b', zIndex: 100}),
-};
 
 const schemes = ['default', 'http', 'https', 'ftp'];
 
@@ -70,7 +36,6 @@ function ProtocolSelector({value, onChange, allowUseDefault = false}) {
       options={opts}
       value={opts.find(x => x.value === value) || opts[0]}
       onChange={onChange}
-      styles={selectStylesObj}
     />
   );
 }
@@ -97,54 +62,54 @@ function NumberFormatCustom(props) {
 }
 
 const useStyles = makeStyles(theme => ({
-  proxyManagerContainer:  {
+  proxyManagerContainer: {
     minHeight: '600px',
     padding: '20px 0',
   },
   saveButton: {
     position: 'absolute',
     bottom: '25px',
-    right: '25px'
+    right: '25px',
   },
   numericField: {
     '& *': {
-      fontSize: '14px'
-    }
+      fontSize: '14px',
+    },
   },
   numericFieldDisabled: {
     '& fieldset': {
-      border: '0'
+      border: '0',
     },
     '& input': {
-      color: 'white'
-    }
+      color: 'white',
+    },
   },
   titleField: {
     '& *': {
-      fontSize: '14px'
-    }
+      fontSize: '14px',
+    },
   },
   removeMarginTop: {
-    marginTop: 0
+    marginTop: 0,
   },
   removeMarginBottom: {
-    marginBottom: 0
+    marginBottom: 0,
   },
   wilcardsAndMoreLink: {
     color: 'white',
-    textDecoration: 'underline'
+    textDecoration: 'underline',
   },
-  bypassListField:  {
+  bypassListField: {
     marginTop: '18px',
     width: '50%',
   },
-  bypassListFieldTextArea:{
-     '& *': {
-    fontFamily: "'Consolas', 'Courier New', monospace",
-    whiteSpace: 'pre',
-    fontSize: '14px'
-     }
-  }
+  bypassListFieldTextArea: {
+    '& *': {
+      fontFamily: "'Consolas', 'Courier New', monospace",
+      whiteSpace: 'pre',
+      fontSize: '14px',
+    },
+  },
 }));
 
 export default function ProxyManager({proxy, onSave}) {
@@ -208,9 +173,7 @@ export default function ProxyManager({proxy, onSave}) {
   };
 
   const isTextFieldDisabled = scheme =>
-    (
-      !!profile[scheme].useDefault || profile[scheme].protocol === 'direct'
-    );
+    !!profile[scheme].useDefault || profile[scheme].protocol === 'direct';
 
   return (
     <div className={cx(classes.proxyManagerContainer)}>
@@ -272,6 +235,7 @@ export default function ProxyManager({proxy, onSave}) {
                   profile[scheme].protocol !== 'direct' &&
                   isNullOrWhiteSpaces(profile[scheme].server)
                 }
+                size="small"
               />
             </Grid>
             <Grid item xs={1}>
@@ -287,6 +251,7 @@ export default function ProxyManager({proxy, onSave}) {
                   inputComponent: NumberFormatCustom,
                 }}
                 disabled={isTextFieldDisabled(scheme)}
+                size="small"
               />
             </Grid>
             <Grid item xs={2}>
@@ -299,6 +264,7 @@ export default function ProxyManager({proxy, onSave}) {
                   changeValue(scheme, 'user', e.target.value);
                 }}
                 disabled={isTextFieldDisabled(scheme)}
+                size="small"
               />
             </Grid>
             <Grid item xs={3}>
@@ -318,7 +284,6 @@ export default function ProxyManager({proxy, onSave}) {
                       <IconButton
                         aria-label="toggle password visibility"
                         onClick={() => handleShowPassword(scheme)}
-                        onMouseDown={() => handleShowPassword(scheme)}
                       >
                         {visiblePasswords[scheme] ? (
                           <VisibilityIcon />
@@ -329,6 +294,7 @@ export default function ProxyManager({proxy, onSave}) {
                     </InputAdornment>
                   ),
                 }}
+                size="small"
               />
             </Grid>
           </Grid>

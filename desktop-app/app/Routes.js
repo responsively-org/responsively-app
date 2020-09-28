@@ -26,53 +26,47 @@ const Routes = () => {
   );
 };
 
-const useStyles = makeStyles(theme => {
-  const scrollBarBackgroundColor = theme.palette.mode({
-    light: theme.palette.grey[300],
-    dark: 'rgba(49, 49, 49, 1)',
-  });
-  return {
-    '@global': {
-      /* The scrollbar Handle */
-      '::-webkit-scrollbar-thumb': {
-        WebkitBorderRadius: '10px',
-        borderRadius: '10px',
-        backgroundColor: scrollBarBackgroundColor,
-        WebkitBoxShadow: 'inset 0 0 6px rgba(0, 0, 0, 0.2)',
-      },
-      /* When the scrollbar is inactive */
-      '::-webkit-scrollbar-thumb:window-inactive': {
-        backgroundColor: scrollBarBackgroundColor,
-      },
+const useStyles = makeStyles(theme => ({
+  '@global': {
+    /* The scrollbar Handle */
+    '::-webkit-scrollbar-thumb': {
+      WebkitBorderRadius: '10px',
+      borderRadius: '10px',
+      backgroundColor: theme.palette.scrollbar.main,
+      WebkitBoxShadow: 'inset 0 0 6px rgba(0, 0, 0, 0.2)',
     },
-    root: {
-      height: '100%',
-      overflow: 'hidden',
-      margin: 0,
-      display: 'flex',
-      boxSizing: 'border-box',
-      borderRadius: 0,
-      backgroundColor: theme.palette.background.l0,
+    /* When the scrollbar is inactive */
+    '::-webkit-scrollbar-thumb:window-inactive': {
+      backgroundColor: theme.palette.scrollbar.main,
     },
-    iconColumn: {
-      flexShrink: 0,
-      width: '50px',
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      background: '#ffffff15',
-      boxShadow: '0 3px 5px rgba(0, 0, 0, 0.35)',
-      paddingTop: '20px',
-    },
-    contentColumn: {
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      flexGrow: 1,
-      overflow: 'hidden',
-      flexBasis: 0,
-    },
-  };
-});
+  },
+  root: {
+    height: '100%',
+    overflow: 'hidden',
+    margin: 0,
+    display: 'flex',
+    boxSizing: 'border-box',
+    borderRadius: 0,
+    backgroundColor: theme.palette.background.l0,
+  },
+  iconColumn: {
+    flexShrink: 0,
+    width: '50px',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    background: '#ffffff15',
+    boxShadow: '0 3px 5px rgba(0, 0, 0, 0.35)',
+    paddingTop: '20px',
+  },
+  contentColumn: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
+    overflow: 'hidden',
+    flexBasis: 0,
+  },
+}));
 
 export default Routes;

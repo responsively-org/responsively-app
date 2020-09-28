@@ -6,6 +6,7 @@ import fs from 'fs-extra';
 
 const isDev = process.env.NODE_ENV !== 'production';
 let uid = null;
+let appActive = false;
 
 try {
   const filePath = path.join(app.getPath('userData'), 'uid');
@@ -22,10 +23,27 @@ try {
 
 const visitor = ua('UA-150751006-1', uid);
 
-export const startSession = () =>
-  !isDev &&
+export const startSession = () => {
+  appActive = true;
+  if (isDev) {
+    return;
+  }
   visitor.event({ec: 'App', ea: 'Open', sessionControl: 'start'}).send();
+};
 
-export const endSession = () =>
-  !isDev &&
+export const endSession = () => {
+  appActive = false;
+  if (isDev) {
+    return;
+  }
   visitor.event({ec: 'App', ea: 'Close', sessionControl: 'end'}).send();
+};
+
+export const sendEvent = (ec, ea) => !isDev && visitor.event({ec, ea}).send();
+
+setInterval(() => {
+  if (!appActive) {
+    return;
+  }
+  sendEvent('App', 'Ping');
+}, 20000);

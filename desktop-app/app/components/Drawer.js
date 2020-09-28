@@ -34,7 +34,9 @@ function Drawer(props) {
           <DoubleLeftArrowIcon color="currentColor" height={30} />
         </div>
       </div>
-      <div>{getDrawerContent(props.drawer.content)}</div>
+      <div className={classes.drawerContent}>
+        {getDrawerContent(props.drawer.content)}
+      </div>
     </div>
   );
 }
@@ -60,6 +62,10 @@ const useStyles = makeStyles(theme => ({
       light: '0px 2px 4px',
       dark: '5px 7px 5px',
     })} 0 rgba(0, 0, 0, 0.75)`,
+  },
+  drawerContent: {
+    height: '85%',
+    overflow: 'auto',
   },
 }));
 

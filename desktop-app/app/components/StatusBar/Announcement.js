@@ -24,15 +24,13 @@ const Announcement = () => {
   }
 
   return (
-    <div className={classes.section}>
-      <div
-        className={cx(classes.text, classes.link)}
-        onClick={() => shell.openExternal(data.link)}
-      >
-        <span className={cx('featureSuggestionLink', classes.linkText)}>
-          {data.text}
-        </span>
-      </div>
+    <div
+      className={cx(classes.text, classes.link)}
+      onClick={() => shell.openExternal(data.link)}
+    >
+      <span className={cx('featureSuggestionLink', classes.linkText)}>
+        {data.text}
+      </span>
     </div>
   );
 };

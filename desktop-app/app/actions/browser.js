@@ -775,7 +775,6 @@ export function reloadCSS() {
 }
 
 export function setTheme(theme) {
-  ipcRenderer.send('prefers-color-scheme-select', theme);
   return {
     type: NEW_THEME,
     theme,

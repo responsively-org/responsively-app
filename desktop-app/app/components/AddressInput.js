@@ -320,12 +320,9 @@ const styles = theme => {
       width: '100%',
       padding: '14px 10px',
       borderRadius: '20px',
-      backgroundColor: theme.palette.gray.l1,
+      backgroundColor: theme.palette.background.l0,
       color: theme.palette.text.normal,
-      border: mode({
-        light: 'none',
-        dark: `1px solid ${theme.palette.lightIcon.main}`,
-      }),
+      border: `1px solid ${theme.palette.lightIcon.main}`,
       outline: 'none',
       transition: 'border 500ms ease-out',
       '&:focus-within': {

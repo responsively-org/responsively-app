@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "A developer-friendly browser for developing responsive web apps",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -37,7 +37,10 @@
     "test-all": "yarn lint && yarn flow && yarn build && yarn test && yarn build-e2e && yarn test-e2e",
     "test-e2e": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test testcafe electron:./ ./test/e2e/HomePage.e2e.js",
     "test-e2e-live": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test testcafe-live electron:./ ./test/e2e/HomePage.e2e.js",
-    "test-watch": "yarn test --watch"
+    "test-watch": "yarn test --watch",
+    "choco-pkg": "node scripts/chocolatey/generateChocoPkg.js",
+    "choco-apikey": "choco apikey -k %RESPONSIVELY_CHOCO_KEY% -source https://push.chocolatey.org/",
+    "choco-publish": "cd release/choco && choco push -s https://push.chocolatey.org/"
   },
   "husky": {
     "hooks": {
@@ -63,6 +66,7 @@
   "main": "./app/main.prod.js",
   "build": {
     "afterSign": "scripts/notarize.js",
+    "afterAllArtifactBuild": "scripts/extraPublishFiles.js",
     "productName": "ResponsivelyApp",
     "appId": "app.responsively",
     "files": [
@@ -110,7 +114,8 @@
       },
       "icon": "resources/icon.icns",
       "target": [
-        "dmg"
+        "dmg",
+        "zip"
       ],
       "fileAssociations": [
         {
@@ -254,11 +259,13 @@
     "jest": "^23.6.0",
     "lint-staged": "^10.2.11",
     "mini-css-extract-plugin": "^0.4.4",
+    "ncp": "^2.0.0",
     "opencollective-postinstall": "^2.0.1",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "prettier": "^1.15.2",
     "react-test-renderer": "^16.6.3",
     "redux-logger": "^3.0.6",
+    "replace-in-file": "^6.1.0",
     "rimraf": "^2.6.2",
     "sass": "^1.26.10",
     "sass-loader": "^9.0.2",

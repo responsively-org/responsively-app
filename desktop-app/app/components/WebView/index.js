@@ -775,17 +775,24 @@ class WebView extends Component {
     }
   };
 
-  _getWebViewTag = deviceStyles => {
+  _getWebViewTag = (deviceStyles, containerWidth, containerHeight) => {
     const {
+      classes,
       device: {id, useragent, capabilities},
     } = this.props;
     const {deviceDimensions, address, isTilted} = this.state;
+    const outlinePx = this.props.browser.userPreferences.deviceOutlineStyle
+      ? 3
+      : 0;
 
     if (capabilities.includes(CAPABILITIES.responsive)) {
       return (
         <Resizable
           className={styles.resizableView}
-          size={{width: deviceStyles.width, height: deviceStyles.height}}
+          size={{
+            width: containerWidth + outlinePx,
+            height: containerHeight + outlinePx,
+          }}
           onResizeStart={() => {
             const updatedTempDims = {
               width: deviceDimensions.width,
@@ -804,26 +811,26 @@ class WebView extends Component {
           handleComponent={{
             right: (
               <div
-                className={cx(styles.iconWrapper, styles.iconWrapperE)}
+                className={cx(classes.iconWrapper, styles.iconWrapperE)}
                 {...this.props}
               >
-                <div className={styles.iconHolder} />
+                <div className={classes.iconHolder} />
               </div>
             ),
             bottom: (
               <div
-                className={cx(styles.iconWrapper, styles.iconWrapperS)}
+                className={cx(classes.iconWrapper, styles.iconWrapperS)}
                 {...this.props}
               >
-                <div className={styles.iconHolder} />
+                <div className={classes.iconHolder} />
               </div>
             ),
             bottomRight: (
               <div
-                className={cx(styles.iconWrapper, styles.iconWrapperSE)}
+                className={cx(classes.iconWrapper, styles.iconWrapperSE)}
                 {...this.props}
               >
-                <div className={styles.iconHolder} />
+                <div className={classes.iconHolder} />
               </div>
             ),
           }}
@@ -891,6 +898,9 @@ class WebView extends Component {
       height: deviceDimensions.height,
       transform: `scale(${zoomLevel})`,
     };
+
+    const containerWidth = deviceStyles.width * zoomLevel;
+    const containerHeight = deviceStyles.height * zoomLevel;
 
     const isMuted = this.props.device.isMuted;
     const isResponsive = capabilities.includes(CAPABILITIES.responsive);
@@ -976,14 +986,8 @@ class WebView extends Component {
         <div
           className={classes.deviceContainer}
           style={{
-            width:
-              deviceStyles.width * zoomLevel +
-              // On the light theme a border of 1px is added to the device. Adjusting the size to accommodate it.
-              theme.palette.mode({light: 2, dark: 0}),
-            height:
-              deviceStyles.height * zoomLevel +
-              // On the light theme a border of 1px is added to the device. Adjusting the size to accommodate it.
-              theme.palette.mode({light: 2, dark: 0}),
+            width: containerWidth,
+            height: containerHeight,
           }}
           onMouseEnter={this._onMouseEnter}
           onMouseLeave={this._onMouseLeave}
@@ -1008,7 +1012,7 @@ class WebView extends Component {
               <p className={cx(styles.errorDesc)}>Proxy Authentication Error</p>
             )}
           </div>
-          {this._getWebViewTag(deviceStyles)}
+          {this._getWebViewTag(deviceStyles, containerWidth, containerHeight)}
         </div>
       </div>
     );
@@ -1021,10 +1025,41 @@ const webViewStyles = theme => ({
     position: 'relative',
     display: 'inline-flex',
     transformOrigin: 'top left',
-    border: theme.palette.mode({
-      light: `1px solid ${theme.palette.primary.main}`,
-      dark: 'none',
-    }),
+  },
+  iconWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    backgroundPosition: 'center',
+    padding: 0,
+    backgroundColor: theme.palette.background.l2,
+    '&:hover': {
+      backgroundColor: theme.palette.background.l5,
+    },
+  },
+  iconHolder: {
+    position: 'relative',
+    display: 'block',
+    height: '7px',
+    cursor: 'pointer',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      width: '15px',
+      height: '2px',
+      backgroundColor: theme.palette.text.dim,
+    },
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      width: '15px',
+      height: '2px',
+      backgroundColor: theme.palette.text.dim,
+      bottom: 0,
+    },
   },
 });
 export default withStyles(webViewStyles)(withTheme(WebView));

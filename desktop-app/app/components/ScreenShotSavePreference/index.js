@@ -36,6 +36,7 @@ function ScreenShotSavePreference({
         value={screenShotSavePath}
         placeholder="Screenshot save path"
         variant="outlined"
+        size="small"
         InputProps={{
           endAdornment: (
             <InputAdornment>
