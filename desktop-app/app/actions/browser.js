@@ -42,6 +42,8 @@ export const NEW_FOCUSED_DEVICE = 'NEW_FOCUSED_DEVICE';
 export const TOGGLE_ALL_DEVICES_MUTED = 'TOGGLE_ALL_DEVICES_MUTED';
 export const TOGGLE_DEVICE_MUTED = 'TOGGLE_DEVICE_MUTED';
 export const NEW_THEME = 'NEW_THEME';
+export const SET_HEADER_VISIBILITY = 'SET_HEADER_VISIBILITY';
+export const SET_LEFT_PANE_VISIBILITY = 'SET_LEFT_PANE_VISIBILITY';
 
 export function newAddress(address) {
   return {
@@ -780,5 +782,27 @@ export function setTheme(theme) {
   return {
     type: NEW_THEME,
     theme,
+  };
+}
+
+/**
+ * Shows/Hides the top control pane.
+ * @param {boolean} isVisible Shows the top pane when true and hides when false.
+ */
+export function setHeaderVisibility(isVisible: boolean) {
+  return {
+    type: SET_HEADER_VISIBILITY,
+    isVisible,
+  };
+}
+
+/**
+ * Shows/Hides the left control pane.
+ * @param {boolean} isVisible Shows the left control pane when true and hides when false.
+ */
+export function setLeftPaneVisibility(isVisible: boolean) {
+  return {
+    type: SET_LEFT_PANE_VISIBILITY,
+    isVisible,
   };
 }
