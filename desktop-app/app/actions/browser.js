@@ -27,6 +27,7 @@ export const NEW_ZOOM_LEVEL = 'NEW_ZOOM_LEVEL';
 export const NEW_SCROLL_POSITION = 'NEW_SCROLL_POSITION';
 export const NEW_NAVIGATOR_STATUS = 'NEW_NAVIGATOR_STATUS';
 export const NEW_INSPECTOR_STATUS = 'NEW_INSPECTOR_STATUS';
+export const NEW_CSS_EDITOR_STATUS = 'NEW_CSS_EDITOR_STATUS';
 export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
 export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
@@ -81,6 +82,13 @@ export function newHomepage(homepage) {
 export function newInspectorState(status) {
   return {
     type: NEW_INSPECTOR_STATUS,
+    status,
+  };
+}
+
+export function newCSSEditorState(status) {
+  return {
+    type: NEW_CSS_EDITOR_STATUS,
     status,
   };
 }
@@ -703,6 +711,17 @@ export function toggleInspector() {
     } = getState();
 
     dispatch(newInspectorState(!isInspecting));
+  };
+}
+
+export function toggleCSSEditor() {
+  console.log('toggleCSSEditor');
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {isCSSEditorOpen},
+    } = getState();
+
+    dispatch(newCSSEditorState(!isCSSEditorOpen));
   };
 }
 

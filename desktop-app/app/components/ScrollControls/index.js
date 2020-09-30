@@ -31,6 +31,7 @@ const ScrollControls = ({
   screenshotAllDevices,
   flipOrientationAllDevices,
   toggleInspector,
+  toggleCSSEditor,
   onAllDevicesMutedChange,
 }) => {
   const classes = useStyles();
@@ -42,8 +43,6 @@ const ScrollControls = ({
     width: 25,
   };
 
-  const [cssEditorOpen, setCssEditorOpen] = useState(true);
-
   return (
     <>
       <div className={classes.container}>
@@ -51,9 +50,14 @@ const ScrollControls = ({
           <Grid item className={commonClasses.icon}>
             <PrefersColorSchemeSwitch iconProps={iconProps} />
           </Grid>
-          <Grid item className={commonClasses.icon}>
+          <Grid
+            item
+            className={cx(commonClasses.icon, {
+              [commonClasses.iconSelected]: browser.isCSSEditorOpen,
+            })}
+          >
             <Tooltip title="Live CSS Editor">
-              <div onClick={() => setCssEditorOpen(!cssEditorOpen)}>CSS</div>
+              <div onClick={toggleCSSEditor}>CSS</div>
             </Tooltip>
           </Grid>
           <Grid item className={commonClasses.icon}>
@@ -105,7 +109,7 @@ const ScrollControls = ({
           <ZoomContainer iconProps={iconProps} />
         </Grid>
       </div>
-      {cssEditorOpen && <LiveCssEditor />}
+      {browser.isCSSEditorOpen && <LiveCssEditor />}
     </>
   );
 };

@@ -23,6 +23,7 @@ import {
   TOGGLE_ALL_DEVICES_MUTED,
   TOGGLE_DEVICE_MUTED,
   NEW_THEME,
+  NEW_CSS_EDITOR_STATUS,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -173,6 +174,7 @@ export type BrowserStateType = {
   userPreferences: UserPreferenceType,
   bookmarks: BookmarksType,
   devToolsConfig: DevToolsConfigType,
+  isCSSEditorOpen: boolean,
   isInspecting: boolean,
   windowSize: WindowSizeType,
   allDevicesMuted: boolean,
@@ -326,6 +328,7 @@ export default function browser(
       ),
     },
     isInspecting: false,
+    isCSSEditorOpen: true,
     windowSize: getWindowSize(),
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),
@@ -427,6 +430,8 @@ export default function browser(
         newState.userPreferences = newUserPreferences;
       }
       return newState;
+    case NEW_CSS_EDITOR_STATUS:
+      return {...state, isCSSEditorOpen: action.status};
     case NEW_INSPECTOR_STATUS:
       return {...state, isInspecting: action.status};
     case NEW_WINDOW_SIZE:

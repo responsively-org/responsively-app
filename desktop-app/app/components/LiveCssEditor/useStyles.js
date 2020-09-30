@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
   editor: {
     minHeight: 200,
     height: 'auto',
+    marginBottom: 10,
   },
 }));
 

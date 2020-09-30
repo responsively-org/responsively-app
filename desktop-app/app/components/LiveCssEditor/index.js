@@ -15,7 +15,7 @@ import 'ace-builds/src-noconflict/theme-github';
 import useCommonStyles from '../useCommonStyles';
 import useStyles from './useStyles';
 import TextAreaWithCopyButton from '../../utils/TextAreaWithCopyButton';
-import {Button} from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import {APPLY_CSS} from '../../constants/pubsubEvents';
 
 const LiveCssEditor = ({
@@ -55,8 +55,8 @@ const LiveCssEditor = ({
             className={classes.editor}
             placeholder="Enter CSS to apply"
             mode="css"
-            theme="monokai"
-            name="blah2"
+            theme="twilight"
+            name="css"
             onChange={setCss}
             fontSize={14}
             showPrintMargin={true}
@@ -74,7 +74,14 @@ const LiveCssEditor = ({
             }}
           />
 
-          <Button onClick={onApply}>Apply</Button>
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={onApply}
+          >
+            Apply
+          </Button>
         </div>
       </div>
     </Rnd>
