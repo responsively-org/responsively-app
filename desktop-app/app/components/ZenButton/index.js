@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     width: '80px',
     cursor: 'pointer',
-    boxShadow: '0 3px 5px rgba(0, 0, 0, 0.35)',
+    boxShadow: '0 5px 5px rgba(0, 0, 0, 0.35)',
     '&.zenButton': {
       background: 'red',
     },
