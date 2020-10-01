@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import Tooltip from '@material-ui/core/Tooltip';
 import {useTheme, makeStyles} from '@material-ui/core/styles';
 import Chevron from '../icons/Chevron';
 
@@ -12,7 +13,11 @@ const ZenButton = ({onClick}) => {
   const theme = useTheme();
   return (
     <div className={`zenButton ${classes.container}`} onClick={onClick}>
-      <Chevron width={19} height={8} color={theme.palette.lightIcon.main} />
+      <Tooltip title="Hide/Show">
+        <div className={classes.icon}>
+          <Chevron width={19} height={8} color={theme.palette.lightIcon.main} />
+        </div>
+      </Tooltip>
     </div>
   );
 };
@@ -28,6 +33,12 @@ const useStyles = makeStyles(theme => ({
     width: '80px',
     cursor: 'pointer',
     boxShadow: '0 3px 5px rgba(0, 0, 0, 0.35)',
+    '&.zenButton': {
+      background: 'red',
+    },
+  },
+  icon: {
+    marginTop: '-5px',
   },
 }));
 
