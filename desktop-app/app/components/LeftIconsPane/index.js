@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
       light: '3px',
       dark: '3px',
     })} 5px rgba(0, 0, 0, 0.35)`,
+    zIndex: 1,
     transform: 'translateX(0)',
     transition: 'transform .1s ease-out',
     '& .zenButton': {
