@@ -12,12 +12,17 @@ import NavigationControlsContainer from '../../containers/NavigationControlsCont
 import BookmarksBar from '../../containers/BookmarksBarContainer';
 import AppNotification from '../AppNotification/AppNotification';
 import Logo from '../icons/Logo';
+import ZenButton from '../ZenButton';
 
-const Header = () => {
+const Header = props => {
   const classes = useStyles();
 
   return (
-    <div className={classes.container}>
+    <div
+      className={`${classes.container} ${
+        props.isHeaderVisible ? '' : 'zenMode'
+      }`}
+    >
       <div className={classes.firstRow}>
         <Logo className={classes.logo} width={40} height={40} />
         <Grid
@@ -53,22 +58,45 @@ const Header = () => {
         toastClassName={classes.darkToast}
       />
       <AppNotification />
+      <ZenButton
+        onClick={() => props.setHeaderVisibility(!props.isHeaderVisible)}
+      />
     </div>
   );
 };
 
 const useStyles = makeStyles(theme => ({
   container: {
+    position: 'relative',
     background: theme.palette.background.l1,
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
-    padding: os.platform() === 'darwin' ? '20px 0 5px' : '0 0 0',
+    padding: os.platform() === 'darwin' ? '0 0 5px' : '0 0 0',
     boxShadow: `0 ${theme.palette.mode({
       light: '0px',
       dark: '3px',
     })} 5px rgba(0, 0, 0, 0.35)`,
     zIndex: 5,
+    transform: 'translateY(0)',
+    transition: 'transform .1s ease-out',
+    '& .zenButton': {
+      display: 'none',
+      background: theme.palette.background.l1,
+      position: 'absolute',
+      bottom: '0px',
+      left: '50%',
+      transform: 'translate(-50%, 100%)',
+    },
+    '&:hover .zenButton': {
+      display: 'flex',
+    },
+    '&.zenMode': {
+      transform: 'translateY(-100%)',
+    },
+    '&.zenMode .zenButton': {
+      display: 'flex',
+    },
   },
   firstRow: {
     display: 'flex',

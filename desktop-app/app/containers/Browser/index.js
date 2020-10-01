@@ -3,18 +3,19 @@ import React, {Fragment} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import Grid from '@material-ui/core/Grid';
-import Header from '../../components/Header';
 import DevicePreviewerContainer from '../DevicePreviewerContainer';
 import DrawerContainer from '../DrawerContainer';
 import * as BrowserActions from '../../actions/browser';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 import LeftIconsPaneContainer from '../LeftIconsPaneContainer';
-
-type Props = {};
+import HeaderContainer from '../HeaderContainer';
+import Toolbar from '../../components/Toolbar';
+import os from 'os';
 
 const Browser = ({browser}) => (
   <Fragment>
-    <Header />
+    {os.platform() === 'darwin' && <Toolbar />}
+    <HeaderContainer />
     <div style={{display: 'flex', height: '100%'}}>
       <LeftIconsPaneContainer />
       <div
