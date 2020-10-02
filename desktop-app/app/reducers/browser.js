@@ -335,7 +335,7 @@ export default function browser(
       ),
     },
     isInspecting: false,
-    CSSEditor: {isOpen: true, position: CSS_EDITOR_MODES.TOP, content: ''},
+    CSSEditor: {isOpen: true, position: CSS_EDITOR_MODES.LEFT, content: ''},
     windowSize: getWindowSize(),
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),

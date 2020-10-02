@@ -10,6 +10,7 @@ import {
   INDIVIDUAL_LAYOUT,
   DEVTOOLS_MODES,
   CSS_EDITOR_MODES,
+  isHorizontallyStacked,
 } from '../../constants/previewerLayouts';
 import {isDeviceEligible} from '../../utils/filterUtils';
 import {getDeviceIcon} from '../../utils/iconUtils';
@@ -72,11 +73,9 @@ export default function DevicesPreviewer(props) {
     <div
       className={cx(classes.container)}
       style={{
-        flexDirection:
-          CSSEditor.position === CSS_EDITOR_MODES.BOTTOM ||
-          CSSEditor.position === CSS_EDITOR_MODES.TOP
-            ? 'column'
-            : null,
+        flexDirection: isHorizontallyStacked(CSSEditor.position)
+          ? 'column'
+          : null,
       }}
     >
       {(CSSEditor.position === CSS_EDITOR_MODES.LEFT ||

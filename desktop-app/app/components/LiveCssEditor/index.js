@@ -17,12 +17,22 @@ import useStyles from './useStyles';
 import TextAreaWithCopyButton from '../../utils/TextAreaWithCopyButton';
 import Button from '@material-ui/core/Button';
 import {APPLY_CSS} from '../../constants/pubsubEvents';
-import {CSS_EDITOR_MODES} from '../../constants/previewerLayouts';
+import {
+  CSS_EDITOR_MODES,
+  isHorizontallyStacked,
+  isVeriticallyStacked,
+} from '../../constants/previewerLayouts';
 
 const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const [css, setCss] = useState(null);
+  const [height, setHeight] = useState(
+    isVeriticallyStacked(position) ? '100%' : 200
+  );
+  const [width, setWidth] = useState(
+    isHorizontallyStacked(position) ? '100%' : 400
+  );
 
   const onApply = () => {
     if (!css) {
@@ -34,18 +44,27 @@ const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
   useEffect(onApply, [css]);
 
   return (
-    <div className={classes.wrapper}>
+    <div className={classes.wrapper} style={{height, width}}>
       <Rnd
         dragHandleClassName={classes.titleBar}
         disableDragging={position !== CSS_EDITOR_MODES.UNDOCKED}
         style={{zIndex: 100}}
         default={{
-          width: 400,
-          height: 200,
+          width: isHorizontallyStacked(position) ? '100%' : 400,
+          height: isVeriticallyStacked(position) ? '100%' : 200,
           x: 0,
           y: 0,
         }}
         bounds={`.${boundaryClass}`}
+        onResize={(e, dir, ref) => {
+          const {width: _width, height: _height} = ref.getBoundingClientRect();
+          if (width !== _width) {
+            setWidth(_width);
+          }
+          if (height !== _height) {
+            setHeight(_height);
+          }
+        }}
       >
         <div className={classes.container}>
           <div className={classes.titleBar}>Live CSS Editor</div>
