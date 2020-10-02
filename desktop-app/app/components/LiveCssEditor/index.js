@@ -17,13 +17,9 @@ import useStyles from './useStyles';
 import TextAreaWithCopyButton from '../../utils/TextAreaWithCopyButton';
 import Button from '@material-ui/core/Button';
 import {APPLY_CSS} from '../../constants/pubsubEvents';
+import {CSS_EDITOR_MODES} from '../../constants/previewerLayouts';
 
-const LiveCssEditor = ({
-  devToolsConfig,
-  userPreferences,
-  onUserPreferencesChange,
-  onDevToolsModeChange,
-}) => {
+const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const [css, setCss] = useState(null);
@@ -38,53 +34,57 @@ const LiveCssEditor = ({
   useEffect(onApply, [css]);
 
   return (
-    <Rnd
-      dragHandleClassName={classes.titleBar}
-      style={{zIndex: 100}}
-      default={{
-        width: 400,
-        height: 200,
-        x: -200,
-        y: 50,
-      }}
-    >
-      <div className={classes.container}>
-        <div className={classes.titleBar}>Live CSS Editor</div>
-        <div className="">
-          <AceEditor
-            className={classes.editor}
-            placeholder="Enter CSS to apply"
-            mode="css"
-            theme="twilight"
-            name="css"
-            onChange={setCss}
-            fontSize={14}
-            showPrintMargin={true}
-            showGutter={true}
-            highlightActiveLine={true}
-            value={css}
-            width="100%"
-            height="auto"
-            setOptions={{
-              enableBasicAutocompletion: true,
-              enableLiveAutocompletion: true,
-              enableSnippets: false,
-              showLineNumbers: true,
-              tabSize: 2,
-            }}
-          />
+    <div className={classes.wrapper}>
+      <Rnd
+        dragHandleClassName={classes.titleBar}
+        disableDragging={position !== CSS_EDITOR_MODES.UNDOCKED}
+        style={{zIndex: 100}}
+        default={{
+          width: 400,
+          height: 200,
+          x: 0,
+          y: 0,
+        }}
+        bounds={`.${boundaryClass}`}
+      >
+        <div className={classes.container}>
+          <div className={classes.titleBar}>Live CSS Editor</div>
+          <div className="">
+            <AceEditor
+              className={classes.editor}
+              placeholder="Enter CSS to apply"
+              mode="css"
+              theme="twilight"
+              name="css"
+              onChange={setCss}
+              fontSize={14}
+              showPrintMargin={true}
+              showGutter={true}
+              highlightActiveLine={true}
+              value={css}
+              width="100%"
+              height="auto"
+              setOptions={{
+                enableBasicAutocompletion: true,
+                enableLiveAutocompletion: true,
+                enableSnippets: false,
+                showLineNumbers: true,
+                tabSize: 2,
+              }}
+            />
 
-          <Button
-            size="small"
-            color="primary"
-            variant="contained"
-            onClick={onApply}
-          >
-            Apply
-          </Button>
+            <Button
+              size="small"
+              color="primary"
+              variant="contained"
+              onClick={onApply}
+            >
+              Apply
+            </Button>
+          </div>
         </div>
-      </div>
-    </Rnd>
+      </Rnd>
+    </div>
   );
 };
 export default LiveCssEditor;

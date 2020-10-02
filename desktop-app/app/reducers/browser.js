@@ -38,6 +38,7 @@ import {
   FLEXIGRID_LAYOUT,
   INDIVIDUAL_LAYOUT,
   DEVTOOLS_MODES,
+  CSS_EDITOR_MODES,
 } from '../constants/previewerLayouts';
 import {DEVICE_MANAGER} from '../constants/DrawerContents';
 import {
@@ -160,6 +161,12 @@ type NetworkConfigurationType = {
   proxy: NetworkProxyProfileType,
 };
 
+type CSSEditorStateType = {
+  isOpen: boolean,
+  position: String,
+  content: String,
+};
+
 export type BrowserStateType = {
   devices: Array<Device>,
   homepage: string,
@@ -174,7 +181,7 @@ export type BrowserStateType = {
   userPreferences: UserPreferenceType,
   bookmarks: BookmarksType,
   devToolsConfig: DevToolsConfigType,
-  isCSSEditorOpen: boolean,
+  cssEditor: CSSEditorStateType,
   isInspecting: boolean,
   windowSize: WindowSizeType,
   allDevicesMuted: boolean,
@@ -328,7 +335,7 @@ export default function browser(
       ),
     },
     isInspecting: false,
-    isCSSEditorOpen: true,
+    CSSEditor: {isOpen: true, position: CSS_EDITOR_MODES.TOP, content: ''},
     windowSize: getWindowSize(),
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),
@@ -431,7 +438,7 @@ export default function browser(
       }
       return newState;
     case NEW_CSS_EDITOR_STATUS:
-      return {...state, isCSSEditorOpen: action.status};
+      return {...state, CSSEditor: {...state.CSSEditor, isOpen: action.status}};
     case NEW_INSPECTOR_STATUS:
       return {...state, isInspecting: action.status};
     case NEW_WINDOW_SIZE:

@@ -16,7 +16,6 @@ import ZoomContainer from '../../containers/ZoomContainer';
 import PrefersColorSchemeSwitch from '../PrefersColorSchemeSwitch';
 import ToggleTouch from '../ToggleTouch';
 import Muted from '../icons/Muted';
-import LiveCssEditor from '../LiveCssEditor';
 
 const useStyles = makeStyles({
   container: {
@@ -53,11 +52,12 @@ const ScrollControls = ({
           <Grid
             item
             className={cx(commonClasses.icon, {
-              [commonClasses.iconSelected]: browser.isCSSEditorOpen,
+              [commonClasses.iconSelected]: browser.CSSEditor.isOpen,
             })}
+            onClick={toggleCSSEditor}
           >
             <Tooltip title="Live CSS Editor">
-              <div onClick={toggleCSSEditor}>CSS</div>
+              <div>CSS</div>
             </Tooltip>
           </Grid>
           <Grid item className={commonClasses.icon}>
@@ -109,7 +109,6 @@ const ScrollControls = ({
           <ZoomContainer iconProps={iconProps} />
         </Grid>
       </div>
-      {browser.isCSSEditorOpen && <LiveCssEditor />}
     </>
   );
 };

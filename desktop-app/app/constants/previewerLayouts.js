@@ -7,3 +7,11 @@ export const DEVTOOLS_MODES = {
   RIGHT: 'RIGHT',
   UNDOCKED: 'UNDOCKED',
 };
+
+export const CSS_EDITOR_MODES = {
+  BOTTOM: 'BOTTOM',
+  LEFT: 'LEFT',
+  RIGHT: 'RIGHT',
+  TOP: 'TOP',
+  UNDOCKED: 'UNDOCKED',
+};

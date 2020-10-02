@@ -9,16 +9,19 @@ import {
   FLEXIGRID_LAYOUT,
   INDIVIDUAL_LAYOUT,
   DEVTOOLS_MODES,
+  CSS_EDITOR_MODES,
 } from '../../constants/previewerLayouts';
 import {isDeviceEligible} from '../../utils/filterUtils';
 import {getDeviceIcon} from '../../utils/iconUtils';
 import useStyes from './useStyles';
+import LiveCssEditor from '../LiveCssEditor';
 
 export default function DevicesPreviewer(props) {
   const {
     browser: {
       devices,
       address,
+      CSSEditor,
       zoomLevel,
       previewer: {layout},
     },
@@ -61,56 +64,78 @@ export default function DevicesPreviewer(props) {
     props.setFocusedDevice(devicesAfterFiltering[newTabIndex].id);
   };
 
+  const editor = CSSEditor.isOpen && (
+    <LiveCssEditor {...CSSEditor} boundaryClass={classes.container} />
+  );
+
   return (
-    <div className={cx(classes.container)}>
-      {layout === INDIVIDUAL_LAYOUT && (
-        <Tabs
-          className={cx('react-tabs', classes.reactTabs)}
-          onSelect={onTabClick}
-          selectedIndex={focusedDeviceIndex}
+    <div
+      className={cx(classes.container)}
+      style={{
+        flexDirection:
+          CSSEditor.position === CSS_EDITOR_MODES.BOTTOM ||
+          CSSEditor.position === CSS_EDITOR_MODES.TOP
+            ? 'column'
+            : null,
+      }}
+    >
+      {(CSSEditor.position === CSS_EDITOR_MODES.LEFT ||
+        CSSEditor.position === CSS_EDITOR_MODES.UNDOCKED ||
+        CSSEditor.position === CSS_EDITOR_MODES.TOP) &&
+        editor}
+      <div className={cx(classes.previewer)}>
+        {layout === INDIVIDUAL_LAYOUT && (
+          <Tabs
+            className={cx('react-tabs', classes.reactTabs)}
+            onSelect={onTabClick}
+            selectedIndex={focusedDeviceIndex}
+          >
+            <TabList
+              className={cx('react-tabs__tab-list', classes.reactTabs__tabList)}
+            >
+              {devicesAfterFiltering.map(device => (
+                <Tab
+                  className={cx('react-tabs__tab', classes.reactTabs__tab)}
+                  tabId={device.id}
+                  key={device.id}
+                >
+                  {getDeviceIcon(device.type)}
+                  {device.name}
+                </Tab>
+              ))}
+            </TabList>
+          </Tabs>
+        )}
+        <div
+          className={cx(classes.devicesContainer, {
+            [classes.flexigrid]: layout === FLEXIGRID_LAYOUT,
+            [classes.horizontal]: layout === HORIZONTAL_LAYOUT,
+          })}
         >
-          <TabList
-            className={cx('react-tabs__tab-list', classes.reactTabs__tabList)}
-          >
-            {devicesAfterFiltering.map(device => (
-              <Tab
-                className={cx('react-tabs__tab', classes.reactTabs__tab)}
-                tabId={device.id}
-                key={device.id}
-              >
-                {getDeviceIcon(device.type)}
-                {device.name}
-              </Tab>
-            ))}
-          </TabList>
-        </Tabs>
-      )}
-      <div
-        className={cx(classes.devicesContainer, {
-          [classes.flexigrid]: layout === FLEXIGRID_LAYOUT,
-          [classes.horizontal]: layout === HORIZONTAL_LAYOUT,
-        })}
-      >
-        {devices.map((device, index) => (
-          <div
-            key={device.id}
-            className={cx({
-              [classes.tab]: layout === INDIVIDUAL_LAYOUT,
-              [classes.activeTab]:
-                layout === INDIVIDUAL_LAYOUT && focusedDeviceId === device.id,
-            })}
-          >
-            <Renderer
-              hidden={!isDeviceEligible(device, props.browser.filters)}
-              device={device}
-              src={address}
-              zoomLevel={zoomLevel}
-              transmitNavigatorStatus={index === 0}
-              onDeviceMutedChange={props.onDeviceMutedChange}
-            />
-          </div>
-        ))}
+          {devices.map((device, index) => (
+            <div
+              key={device.id}
+              className={cx({
+                [classes.tab]: layout === INDIVIDUAL_LAYOUT,
+                [classes.activeTab]:
+                  layout === INDIVIDUAL_LAYOUT && focusedDeviceId === device.id,
+              })}
+            >
+              <Renderer
+                hidden={!isDeviceEligible(device, props.browser.filters)}
+                device={device}
+                src={address}
+                zoomLevel={zoomLevel}
+                transmitNavigatorStatus={index === 0}
+                onDeviceMutedChange={props.onDeviceMutedChange}
+              />
+            </div>
+          ))}
+        </div>
       </div>
+      {(CSSEditor.position === CSS_EDITOR_MODES.RIGHT ||
+        CSSEditor.position === CSS_EDITOR_MODES.BOTTOM) &&
+        editor}
     </div>
   );
 }

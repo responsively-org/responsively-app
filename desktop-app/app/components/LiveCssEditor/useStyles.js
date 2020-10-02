@@ -1,6 +1,13 @@
 import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
+  wrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexShrink: 0,
+    width: 400,
+    height: 400,
+  },
   container: {
     background: theme.palette.background.l2,
     margin: 5,

@@ -715,13 +715,14 @@ export function toggleInspector() {
 }
 
 export function toggleCSSEditor() {
-  console.log('toggleCSSEditor');
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
-      browser: {isCSSEditorOpen},
+      browser: {
+        CSSEditor: {isOpen},
+      },
     } = getState();
 
-    dispatch(newCSSEditorState(!isCSSEditorOpen));
+    dispatch(newCSSEditorState(!isOpen));
   };
 }
 
