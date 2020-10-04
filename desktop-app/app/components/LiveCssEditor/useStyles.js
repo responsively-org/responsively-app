@@ -5,8 +5,12 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     display: 'flex',
     flexShrink: 0,
+    marginBottom: 10,
   },
   container: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
     background: theme.palette.background.l2,
     margin: 5,
     padding: 10,
@@ -20,9 +24,13 @@ const useStyles = makeStyles(theme => ({
     cursor: 'move',
     padding: '5px 0',
   },
+  mainContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+  },
   editor: {
-    minHeight: 200,
-    height: 'auto',
+    height: '100%',
     marginBottom: 10,
   },
 }));

@@ -52,11 +52,12 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     transition: 'margin-left 0.2s',
     background: theme.palette.header.main,
-    margin: '0 10px 0 -310px',
+    margin: '0 0 0 -310px',
     padding: '5px 5px 0 5px',
   },
   drawerOpen: {
     marginLeft: 0,
+    marginRight: 5,
     flexShrink: 0,
     boxShadow: `${theme.palette.mode({
       light: '0px 2px 4px',

@@ -22,16 +22,34 @@ import {
   isHorizontallyStacked,
   isVeriticallyStacked,
 } from '../../constants/previewerLayouts';
+import KebabMenu from '../KebabMenu';
+import {Tooltip} from '@material-ui/core';
+import DockRight from '../icons/DockRight';
+
+const getResizingDirections = position => {
+  switch (position) {
+    case CSS_EDITOR_MODES.LEFT:
+      return {right: true};
+    case CSS_EDITOR_MODES.RIGHT:
+      return {left: true};
+    case CSS_EDITOR_MODES.TOP:
+      return {bottom: true};
+    case CSS_EDITOR_MODES.BOTTOM:
+      return {top: true};
+    default:
+      return null;
+  }
+};
 
 const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const [css, setCss] = useState(null);
   const [height, setHeight] = useState(
-    isVeriticallyStacked(position) ? '100%' : 200
+    isVeriticallyStacked(position) ? 'calc(100vh - 70px - 30px)' : 300
   );
   const [width, setWidth] = useState(
-    isHorizontallyStacked(position) ? '100%' : 400
+    isHorizontallyStacked(position) ? 'calc(100vw - 50px)' : 400
   );
 
   const onApply = () => {
@@ -43,15 +61,24 @@ const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
 
   useEffect(onApply, [css]);
 
+  const enableResizing = useMemo(() => getResizingDirections(position), [
+    position,
+  ]);
+  const disableDragging = useMemo(
+    () => position !== CSS_EDITOR_MODES.UNDOCKED,
+    [position]
+  );
+
   return (
     <div className={classes.wrapper} style={{height, width}}>
       <Rnd
         dragHandleClassName={classes.titleBar}
-        disableDragging={position !== CSS_EDITOR_MODES.UNDOCKED}
+        disableDragging={disableDragging}
+        enableResizing={enableResizing}
         style={{zIndex: 100}}
         default={{
-          width: isHorizontallyStacked(position) ? '100%' : 400,
-          height: isVeriticallyStacked(position) ? '100%' : 200,
+          width: '100%',
+          height: '100%',
           x: 0,
           y: 0,
         }}
@@ -67,8 +94,23 @@ const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
         }}
       >
         <div className={classes.container}>
-          <div className={classes.titleBar}>Live CSS Editor</div>
-          <div className="">
+          <div
+            className={cx(
+              classes.titleBar,
+              commonClasses.flexContainerSpaceBetween
+            )}
+          >
+            Live CSS Editor{' '}
+            <KebabMenu>
+              <div onClick={() => {}}>
+                Dock to Right{' '}
+                <span className="" onClick={() => {}}>
+                  <DockRight height={10} />
+                </span>
+              </div>
+            </KebabMenu>
+          </div>
+          <div className={classes.mainContent}>
             <AceEditor
               className={classes.editor}
               placeholder="Enter CSS to apply"
@@ -82,7 +124,7 @@ const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
               highlightActiveLine={true}
               value={css}
               width="100%"
-              height="auto"
+              height="100%"
               setOptions={{
                 enableBasicAutocompletion: true,
                 enableLiveAutocompletion: true,

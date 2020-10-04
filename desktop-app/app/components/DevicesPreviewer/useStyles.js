@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
   devicesContainer: {
     display: 'flex',
     paddingBottom: '100px',
+    paddingLeft: 5,
   },
   tab: {
     display: 'none',
