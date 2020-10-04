@@ -16,6 +16,7 @@ import ZoomContainer from '../../containers/ZoomContainer';
 import PrefersColorSchemeSwitch from '../PrefersColorSchemeSwitch';
 import ToggleTouch from '../ToggleTouch';
 import Muted from '../icons/Muted';
+import CSSEditor from '../icons/CSSEditor';
 
 const useStyles = makeStyles({
   container: {
@@ -57,7 +58,9 @@ const ScrollControls = ({
             onClick={toggleCSSEditor}
           >
             <Tooltip title="Live CSS Editor">
-              <div>CSS</div>
+              <div>
+                <CSSEditor {...iconProps} />
+              </div>
             </Tooltip>
           </Grid>
           <Grid item className={commonClasses.icon}>

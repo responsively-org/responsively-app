@@ -21,7 +21,8 @@ const useStyles = makeStyles(theme => ({
     })} 5px rgba(0, 0, 0, 0.35)`,
   },
   titleBar: {
-    padding: '5px 0',
+    margin: '5px 0 10px',
+    alignItems: 'center',
   },
   dragHandle: {
     cursor: 'move',

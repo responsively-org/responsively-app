@@ -27,6 +27,7 @@ import KebabMenu from '../KebabMenu';
 import {Tooltip} from '@material-ui/core';
 import DockRight from '../icons/DockRight';
 import {debounce} from 'lodash';
+import CSSEditor from '../icons/CSSEditor';
 
 const getResizingDirections = position => {
   switch (position) {
@@ -173,7 +174,15 @@ const LiveCssEditor = ({
               }
             )}
           >
-            Live CSS Editor
+            <span className={commonClasses.flexContainer}>
+              <CSSEditor
+                color="currentColor"
+                height={20}
+                width={25}
+                margin="0 5px 0 0"
+              />
+              Live CSS Editor
+            </span>
             <KebabMenu>
               {position !== CSS_EDITOR_MODES.UNDOCKED && (
                 <KebabMenu.Item
