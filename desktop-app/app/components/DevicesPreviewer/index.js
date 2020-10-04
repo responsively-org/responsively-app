@@ -21,6 +21,7 @@ export default function DevicesPreviewer(props) {
   const {
     browser: {
       devices,
+      devToolsConfig,
       address,
       CSSEditor,
       zoomLevel,
@@ -66,7 +67,11 @@ export default function DevicesPreviewer(props) {
   };
 
   const editor = CSSEditor.isOpen && (
-    <LiveCssEditor {...CSSEditor} boundaryClass={classes.container} />
+    <LiveCssEditor
+      boundaryClass={classes.container}
+      devToolsConfig={devToolsConfig}
+      {...CSSEditor}
+    />
   );
 
   return (

@@ -21,8 +21,10 @@ const useStyles = makeStyles(theme => ({
     })} 5px rgba(0, 0, 0, 0.35)`,
   },
   titleBar: {
-    cursor: 'move',
     padding: '5px 0',
+  },
+  dragHandle: {
+    cursor: 'move',
   },
   mainContent: {
     display: 'flex',

@@ -19,6 +19,7 @@ import Button from '@material-ui/core/Button';
 import {APPLY_CSS} from '../../constants/pubsubEvents';
 import {
   CSS_EDITOR_MODES,
+  DEVTOOLS_MODES,
   isHorizontallyStacked,
   isVeriticallyStacked,
 } from '../../constants/previewerLayouts';
@@ -37,20 +38,52 @@ const getResizingDirections = position => {
     case CSS_EDITOR_MODES.BOTTOM:
       return {top: true};
     default:
-      return null;
+      return true;
   }
 };
 
-const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
+const computeHeight = (position, devToolsConfig) => {
+  if (position === CSS_EDITOR_MODES.UNDOCKED) {
+    return null;
+  }
+  return isVeriticallyStacked(position)
+    ? `calc(100vh - ${10 +
+        headerHeight +
+        statusBarHeight +
+        (devToolsConfig.open && devToolsConfig.mode === DEVTOOLS_MODES.BOTTOM
+          ? devToolsConfig.size.height
+          : 0)}px)`
+    : 300;
+};
+
+const computeWidth = (position, devToolsConfig) => {
+  if (position === CSS_EDITOR_MODES.UNDOCKED) {
+    return null;
+  }
+  return isHorizontallyStacked(position) ? 'calc(100vw - 50px)' : 400;
+};
+
+const headerHeight = 70;
+const statusBarHeight = 20;
+
+const LiveCssEditor = ({
+  browser,
+  isOpen,
+  position,
+  content,
+  boundaryClass,
+  devToolsConfig,
+}) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const [css, setCss] = useState(null);
-  const [height, setHeight] = useState(
-    isVeriticallyStacked(position) ? 'calc(100vh - 70px - 30px)' : 300
-  );
-  const [width, setWidth] = useState(
-    isHorizontallyStacked(position) ? 'calc(100vw - 50px)' : 400
-  );
+  console.log('devToolsConfig', devToolsConfig);
+  const [height, setHeight] = useState(computeHeight(position, devToolsConfig));
+  const [width, setWidth] = useState(computeWidth(position, devToolsConfig));
+
+  useEffect(() => {
+    setHeight(computeHeight(position, devToolsConfig));
+  }, [devToolsConfig]);
 
   const onApply = () => {
     if (!css) {
@@ -61,13 +94,13 @@ const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
 
   useEffect(onApply, [css]);
 
+  const isUndocked = useMemo(() => position === CSS_EDITOR_MODES.UNDOCKED, [
+    position,
+  ]);
   const enableResizing = useMemo(() => getResizingDirections(position), [
     position,
   ]);
-  const disableDragging = useMemo(
-    () => position !== CSS_EDITOR_MODES.UNDOCKED,
-    [position]
-  );
+  const disableDragging = useMemo(() => !isUndocked, [isUndocked]);
 
   return (
     <div className={classes.wrapper} style={{height, width}}>
@@ -77,13 +110,16 @@ const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
         enableResizing={enableResizing}
         style={{zIndex: 100}}
         default={{
-          width: '100%',
-          height: '100%',
-          x: 0,
-          y: 0,
+          width: isUndocked ? 400 : '100%',
+          height: isUndocked ? 300 : '100%',
+          x: isUndocked ? 100 : 0,
+          y: isUndocked ? 100 : 0,
         }}
         bounds={`.${boundaryClass}`}
         onResize={(e, dir, ref) => {
+          if (isUndocked) {
+            return;
+          }
           const {width: _width, height: _height} = ref.getBoundingClientRect();
           if (width !== _width) {
             setWidth(_width);
@@ -97,17 +133,15 @@ const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
           <div
             className={cx(
               classes.titleBar,
-              commonClasses.flexContainerSpaceBetween
+              commonClasses.flexContainerSpaceBetween,
+              {
+                [classes.dragHandle]: !disableDragging,
+              }
             )}
           >
             Live CSS Editor{' '}
             <KebabMenu>
-              <div onClick={() => {}}>
-                Dock to Right{' '}
-                <span className="" onClick={() => {}}>
-                  <DockRight height={10} />
-                </span>
-              </div>
+              <div onClick={() => {}}>Un-dock Editor</div>
             </KebabMenu>
           </div>
           <div className={classes.mainContent}>
@@ -133,7 +167,6 @@ const LiveCssEditor = ({isOpen, position, content, boundaryClass}) => {
                 tabSize: 2,
               }}
             />
-
             <Button
               size="small"
               color="primary"
