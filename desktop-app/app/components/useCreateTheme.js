@@ -10,7 +10,10 @@ function useCreateTheme() {
   ]);
 }
 
+const themeProps = {MuiButtonBase: {disableRipple: true}};
+
 const lightTheme = {
+  props: themeProps,
   palette: {
     type: 'light',
     primary: {
@@ -50,6 +53,7 @@ const lightTheme = {
 };
 
 const darkTheme = {
+  props: themeProps,
   palette: {
     type: 'dark',
     primary: {

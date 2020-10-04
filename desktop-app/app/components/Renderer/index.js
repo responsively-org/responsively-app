@@ -62,9 +62,11 @@ function Renderer(props) {
           </div>
         </div>
         <KebabMenu>
-          <div onClick={props.device.isMuted ? _unmuteDevice : _muteDevice}>
+          <KebabMenu.Item
+            onClick={props.device.isMuted ? _unmuteDevice : _muteDevice}
+          >
             {props.device.isMuted ? 'Unmute Audio' : 'Mute Audio'}
-          </div>
+          </KebabMenu.Item>
         </KebabMenu>
       </div>
       <div>

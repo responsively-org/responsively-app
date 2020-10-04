@@ -92,6 +92,7 @@ const LiveCssEditor = ({
   const rndRef = useRef();
   const classes = useStyles();
   const commonClasses = useCommonStyles();
+  const [autoApply, setAuotApply] = useState(true);
   const [prevPosition, setPrevPosition] = useState(null);
   const [height, setHeight] = useState(computeHeight(position, devToolsConfig));
   const [width, setWidth] = useState(computeWidth(position, devToolsConfig));
@@ -107,7 +108,13 @@ const LiveCssEditor = ({
     pubsub.publish(APPLY_CSS, [{css: content}]);
   };
 
-  useEffect(onApply, [content]);
+  useEffect(() => {
+    if (!autoApply) {
+      return;
+    }
+    onApply();
+  }, [content]);
+
   useEffect(() => {
     refreshHeight();
     refreshWidth();
@@ -169,20 +176,20 @@ const LiveCssEditor = ({
             Live CSS Editor
             <KebabMenu>
               {position !== CSS_EDITOR_MODES.UNDOCKED && (
-                <div
+                <KebabMenu.Item
                   onClick={() =>
                     changeCSSEditorPosition(CSS_EDITOR_MODES.UNDOCKED)
                   }
                 >
                   Un-dock Editor
-                </div>
+                </KebabMenu.Item>
               )}
               {position !== CSS_EDITOR_MODES.LEFT && (
-                <div
+                <KebabMenu.Item
                   onClick={() => changeCSSEditorPosition(CSS_EDITOR_MODES.LEFT)}
                 >
                   Dock to Left
-                </div>
+                </KebabMenu.Item>
               )}
             </KebabMenu>
           </div>
@@ -209,14 +216,28 @@ const LiveCssEditor = ({
                 tabSize: 2,
               }}
             />
-            <Button
-              size="small"
-              color="primary"
-              variant="contained"
-              onClick={onApply}
-            >
-              Apply
-            </Button>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={autoApply}
+                  onChange={e => setAuotApply(e.target.checked)}
+                  name="Auto apply changes"
+                  color="primary"
+                  size="small"
+                />
+              }
+              label="Auto apply changes"
+            />
+            {!autoApply && (
+              <Button
+                size="small"
+                color="primary"
+                variant="contained"
+                onClick={onApply}
+              >
+                Apply
+              </Button>
+            )}
           </div>
         </div>
       </Rnd>
