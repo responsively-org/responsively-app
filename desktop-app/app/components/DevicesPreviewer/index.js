@@ -70,6 +70,8 @@ export default function DevicesPreviewer(props) {
     <LiveCssEditor
       boundaryClass={classes.container}
       devToolsConfig={devToolsConfig}
+      changeCSSEditorPosition={props.changeCSSEditorPosition}
+      onCSSEditorContentChange={props.onCSSEditorContentChange}
       {...CSSEditor}
     />
   );

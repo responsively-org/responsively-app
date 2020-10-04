@@ -1,4 +1,4 @@
-import React, {useMemo, useState, useEffect} from 'react';
+import React, {useMemo, useState, useEffect, useRef} from 'react';
 import {Rnd} from 'react-rnd';
 import {useSelector, useDispatch} from 'react-redux';
 import cx from 'classnames';
@@ -26,6 +26,7 @@ import {
 import KebabMenu from '../KebabMenu';
 import {Tooltip} from '@material-ui/core';
 import DockRight from '../icons/DockRight';
+import {debounce} from 'lodash';
 
 const getResizingDirections = position => {
   switch (position) {
@@ -63,6 +64,18 @@ const computeWidth = (position, devToolsConfig) => {
   return isHorizontallyStacked(position) ? 'calc(100vw - 50px)' : 400;
 };
 
+const getDefaultSize = isUndocked => ({
+  width: isUndocked ? 400 : '100%',
+  height: isUndocked ? 300 : '100%',
+});
+
+const getDefaultPosition = isUndocked => ({
+  x: isUndocked ? 100 : 0,
+  y: isUndocked ? 100 : 0,
+});
+
+const computeIsUndocked = position => position === CSS_EDITOR_MODES.UNDOCKED;
+
 const headerHeight = 70;
 const statusBarHeight = 20;
 
@@ -73,11 +86,13 @@ const LiveCssEditor = ({
   content,
   boundaryClass,
   devToolsConfig,
+  changeCSSEditorPosition,
+  onCSSEditorContentChange,
 }) => {
+  const rndRef = useRef();
   const classes = useStyles();
   const commonClasses = useCommonStyles();
-  const [css, setCss] = useState(null);
-  console.log('devToolsConfig', devToolsConfig);
+  const [prevPosition, setPrevPosition] = useState(null);
   const [height, setHeight] = useState(computeHeight(position, devToolsConfig));
   const [width, setWidth] = useState(computeWidth(position, devToolsConfig));
 
@@ -86,17 +101,30 @@ const LiveCssEditor = ({
   }, [devToolsConfig]);
 
   const onApply = () => {
-    if (!css) {
+    if (!content) {
       return;
     }
-    pubsub.publish(APPLY_CSS, [{css}]);
+    pubsub.publish(APPLY_CSS, [{css: content}]);
   };
 
-  useEffect(onApply, [css]);
+  useEffect(onApply, [content]);
+  useEffect(() => {
+    refreshHeight();
+    refreshWidth();
+    if (prevPosition !== position && rndRef) {
+      rndRef.current.updateSize(getDefaultSize(computeIsUndocked(position)));
+      rndRef.current.updatePosition(
+        getDefaultPosition(computeIsUndocked(position))
+      );
+      setPrevPosition(position);
+    }
+  }, [position, devToolsConfig, rndRef]);
 
-  const isUndocked = useMemo(() => position === CSS_EDITOR_MODES.UNDOCKED, [
-    position,
-  ]);
+  const refreshHeight = () =>
+    setHeight(computeHeight(position, devToolsConfig));
+  const refreshWidth = () => setWidth(computeWidth(position, devToolsConfig));
+
+  const isUndocked = useMemo(() => computeIsUndocked(position), [position]);
   const enableResizing = useMemo(() => getResizingDirections(position), [
     position,
   ]);
@@ -105,15 +133,14 @@ const LiveCssEditor = ({
   return (
     <div className={classes.wrapper} style={{height, width}}>
       <Rnd
+        ref={rndRef}
         dragHandleClassName={classes.titleBar}
         disableDragging={disableDragging}
         enableResizing={enableResizing}
         style={{zIndex: 100}}
         default={{
-          width: isUndocked ? 400 : '100%',
-          height: isUndocked ? 300 : '100%',
-          x: isUndocked ? 100 : 0,
-          y: isUndocked ? 100 : 0,
+          ...getDefaultPosition(isUndocked),
+          ...getDefaultSize(isUndocked),
         }}
         bounds={`.${boundaryClass}`}
         onResize={(e, dir, ref) => {
@@ -139,9 +166,24 @@ const LiveCssEditor = ({
               }
             )}
           >
-            Live CSS Editor{' '}
+            Live CSS Editor
             <KebabMenu>
-              <div onClick={() => {}}>Un-dock Editor</div>
+              {position !== CSS_EDITOR_MODES.UNDOCKED && (
+                <div
+                  onClick={() =>
+                    changeCSSEditorPosition(CSS_EDITOR_MODES.UNDOCKED)
+                  }
+                >
+                  Un-dock Editor
+                </div>
+              )}
+              {position !== CSS_EDITOR_MODES.LEFT && (
+                <div
+                  onClick={() => changeCSSEditorPosition(CSS_EDITOR_MODES.LEFT)}
+                >
+                  Dock to Left
+                </div>
+              )}
             </KebabMenu>
           </div>
           <div className={classes.mainContent}>
@@ -151,12 +193,12 @@ const LiveCssEditor = ({
               mode="css"
               theme="twilight"
               name="css"
-              onChange={setCss}
+              onChange={debounce(onCSSEditorContentChange, 25, {maxWait: 50})}
               fontSize={14}
               showPrintMargin={true}
               showGutter={true}
               highlightActiveLine={true}
-              value={css}
+              value={content}
               width="100%"
               height="100%"
               setOptions={{

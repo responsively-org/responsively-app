@@ -48,7 +48,7 @@ const KebabMenu = ({children}) => {
               className={classes.menu}
               onClick={() => setMouseOn(false)}
             >
-              {children.map((child, idx) => (
+              {children.filter(Boolean).map((child, idx) => (
                 <motion.div className={classes.option} key={idx}>
                   {child}
                 </motion.div>

@@ -24,6 +24,8 @@ import {
   TOGGLE_DEVICE_MUTED,
   NEW_THEME,
   NEW_CSS_EDITOR_STATUS,
+  NEW_CSS_EDITOR_POSITION,
+  NEW_CSS_EDITOR_CONTENT,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -439,6 +441,16 @@ export default function browser(
       return newState;
     case NEW_CSS_EDITOR_STATUS:
       return {...state, CSSEditor: {...state.CSSEditor, isOpen: action.status}};
+    case NEW_CSS_EDITOR_POSITION:
+      return {
+        ...state,
+        CSSEditor: {...state.CSSEditor, position: action.position},
+      };
+    case NEW_CSS_EDITOR_CONTENT:
+      return {
+        ...state,
+        CSSEditor: {...state.CSSEditor, content: action.content},
+      };
     case NEW_INSPECTOR_STATUS:
       return {...state, isInspecting: action.status};
     case NEW_WINDOW_SIZE:
