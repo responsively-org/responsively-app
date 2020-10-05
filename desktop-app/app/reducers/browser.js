@@ -23,6 +23,8 @@ import {
   TOGGLE_ALL_DEVICES_MUTED,
   TOGGLE_DEVICE_MUTED,
   NEW_THEME,
+  TOGGLE_ALL_DEVICES_DESIGN_MODE,
+  TOGGLE_DEVICE_DESIGN_MODE,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -179,6 +181,7 @@ export type BrowserStateType = {
   windowSize: WindowSizeType,
   allDevicesMuted: boolean,
   networkConfiguration: NetworkConfigurationType,
+  allDevicesInDesignMode: boolean,
 };
 
 let _activeDevices = null;
@@ -332,6 +335,7 @@ export default function browser(
     windowSize: getWindowSize(),
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),
+    allDevicesInDesignMode: false,
   },
   action: Action
 ) {
@@ -516,6 +520,28 @@ export default function browser(
           ...state.networkConfiguration,
           proxy: action.profile,
         },
+      };
+    case TOGGLE_ALL_DEVICES_DESIGN_MODE:
+      const nextDevices = state.devices;
+      nextDevices.forEach(d => (d.designMode = action.allDevicesInDesignMode));
+      return {
+        ...state,
+        allDevicesInDesignMode: action.allDevicesInDesignMode,
+        devices: nextDevices,
+      };
+    case TOGGLE_DEVICE_DESIGN_MODE:
+      const deviceIndex = state.devices.findIndex(
+        x => x.id === action.deviceId
+      );
+      if (deviceIndex === -1) return {...state};
+      state.devices[deviceIndex] = {
+        ...state.devices[deviceIndex],
+        designMode: action.designModeOn,
+      };
+      return {
+        ...state,
+        allDevicesInDesignMode: state.devices.every(x => x.designMode),
+        devices: [...state.devices],
       };
     default:
       return state;

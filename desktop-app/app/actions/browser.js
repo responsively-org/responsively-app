@@ -15,6 +15,7 @@ import {
   DELETE_STORAGE,
   ADDRESS_CHANGE,
   STOP_LOADING,
+  TOGGLE_DEVICE_DESIGN_MODE_STATE,
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
@@ -42,6 +43,8 @@ export const NEW_FOCUSED_DEVICE = 'NEW_FOCUSED_DEVICE';
 export const TOGGLE_ALL_DEVICES_MUTED = 'TOGGLE_ALL_DEVICES_MUTED';
 export const TOGGLE_DEVICE_MUTED = 'TOGGLE_DEVICE_MUTED';
 export const NEW_THEME = 'NEW_THEME';
+export const TOGGLE_ALL_DEVICES_DESIGN_MODE = 'TOGGLE_ALL_DEVICES_DESIGN_MODE';
+export const TOGGLE_DEVICE_DESIGN_MODE = 'TOGGLE_DEVICE_DESIGN_MODE';
 
 export function newAddress(address) {
   return {
@@ -182,6 +185,21 @@ export function toggleDeviceMuted(deviceId, isMuted) {
     type: TOGGLE_DEVICE_MUTED,
     deviceId,
     isMuted,
+  };
+}
+
+export function toggleAllDevicesDesignMode(allDevicesInDesignMode) {
+  return {
+    type: TOGGLE_ALL_DEVICES_DESIGN_MODE,
+    allDevicesInDesignMode,
+  };
+}
+
+export function toggleDeviceDesignMode(deviceId, designModeOn) {
+  return {
+    type: TOGGLE_DEVICE_DESIGN_MODE,
+    deviceId,
+    designModeOn,
   };
 }
 
@@ -695,6 +713,23 @@ export function onAllDevicesMutedChange() {
 export function onDeviceMutedChange(deviceId, isMuted) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     dispatch(toggleDeviceMuted(deviceId, isMuted));
+  };
+}
+
+export function onAllDevicesDesignModeChange() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {allDevicesInDesignMode},
+    } = getState();
+    const next = !allDevicesInDesignMode;
+    pubsub.publish(TOGGLE_DEVICE_DESIGN_MODE_STATE, [{designMode: next}]);
+    dispatch(toggleAllDevicesDesignMode(next));
+  };
+}
+
+export function onDeviceDesignModeChange(deviceId, designModeOn) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(toggleDeviceDesignMode(deviceId, designModeOn));
   };
 }
 
