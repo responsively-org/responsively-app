@@ -355,6 +355,7 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+    mainWindow.maximize();
     onResize();
   });
 
