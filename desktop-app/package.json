@@ -337,7 +337,7 @@
     "npm": ">=4.x",
     "yarn": ">=0.21.3"
   },
-  "browserslist": "electron 9.3.1",
+  "browserslist": "electron 9.0.0",
   "resolutions": {
     "node-gyp": "^6.1.0",
     "node-pre-gyp": "^0.14.0"
