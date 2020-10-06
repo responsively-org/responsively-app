@@ -44,6 +44,7 @@ import {
   USER_PREFERENCES,
   CUSTOM_DEVICES,
   NETWORK_CONFIGURATION,
+  ACTIVE_WORKSPACE_CONFIGURATION,
 } from '../constants/settingKeys';
 import {
   getHomepage,
@@ -161,6 +162,12 @@ type NetworkConfigurationType = {
   proxy: NetworkProxyProfileType,
 };
 
+type WorkspaceType = {
+  id: string,
+  name: string,
+  devices: Array<Device>,
+};
+
 export type BrowserStateType = {
   devices: Array<Device>,
   homepage: string,
@@ -179,6 +186,8 @@ export type BrowserStateType = {
   windowSize: WindowSizeType,
   allDevicesMuted: boolean,
   networkConfiguration: NetworkConfigurationType,
+  workspace: WorkspaceType,
+  availableWorkspaces: Array<WorkspaceType>,
 };
 
 let _activeDevices = null;
@@ -289,6 +298,19 @@ function _setNetworkConfiguration(
   settings.set(NETWORK_CONFIGURATION, networkConfiguration);
 }
 
+function _getWorkspaces() {
+  const defaultWorkspace = {
+    id: 'default-workspace',
+    name: 'Default Workspace',
+    devices: _getActiveDevices(),
+  };
+
+  // TODO: load devices from settings or electron-store
+  const userWorkspaces = [];
+
+  return [defaultWorkspace].concat(userWorkspaces);
+}
+
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
@@ -332,6 +354,11 @@ export default function browser(
     windowSize: getWindowSize(),
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),
+    availableWorkspaces: _getWorkspaces(),
+    workspace: settings.get(
+      ACTIVE_WORKSPACE_CONFIGURATION,
+      'default-workspace'
+    ),
   },
   action: Action
 ) {

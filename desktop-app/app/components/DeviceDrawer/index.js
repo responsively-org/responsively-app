@@ -7,16 +7,23 @@ import QuickFilterDevicesContainer from '../../containers/QuickFilterDevicesCont
 import DevicesIcon from '../icons/Devices';
 import DevicesOverviewContainer from '../../containers/DevicesOverviewContainer';
 import styles from './styles.css';
+import WorkspaceSelector from '../WorkspaceSelector';
 
 export default function DeviceDrawer({
   browser: {
     previewer: {layout},
+    availableWorkspaces,
+    workspace,
   },
   setPreviewLayout,
 }) {
   return (
     <div>
-      <DevicesOverviewContainer />
+      {/* <DevicesOverviewContainer /> */}
+      <WorkspaceSelector
+        value={workspace}
+        availableWorkspaces={availableWorkspaces}
+      />
       <PreviewerLayoutSelector
         value={layout}
         onChange={val => setPreviewLayout(val.value)}

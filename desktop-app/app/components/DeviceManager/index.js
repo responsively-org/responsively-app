@@ -18,6 +18,7 @@ import AddDeviceContainer from '../../containers/AddDeviceContainer';
 import ErrorBoundary from '../ErrorBoundary';
 
 import styles from './styles.css';
+import {ButtonGroup} from '@material-ui/core';
 
 function DeviceManager(props) {
   const [open, setOpen] = useState(false);
@@ -110,16 +111,28 @@ function DeviceManager(props) {
 
   return (
     <Fragment>
-      <Button
-        variant="contained"
+      <ButtonGroup
         color="primary"
-        aria-label="upload picture"
-        component="span"
-        onClick={() => setOpen(true)}
-        className={styles.editButton}
+        size="small"
+        variant="outlined"
+        disableRipple
+        disableElevation
       >
-        Customize
-      </Button>
+        <IconButton
+          aria-label="Edit selected workspace"
+          onClick={() => setOpen(true)}
+          className={styles.editButton}
+        >
+          <EditIcon />
+        </IconButton>
+        <IconButton
+          aria-label="Create new workspace"
+          onClick={() => setOpen(true)}
+          className={styles.editButton}
+        >
+          <AddIcon />
+        </IconButton>
+      </ButtonGroup>
       {open ? (
         <Dialog fullScreen open={open} onClose={closeDialog}>
           <AppBar className={classes.appBar} color="secondary">
