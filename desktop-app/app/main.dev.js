@@ -63,6 +63,19 @@ migrateDeviceSchema();
 if (process.env.NODE_ENV !== 'development') {
   Sentry.init({
     dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
+    environment: process.env.NODE_ENV,
+    beforeSend: (event, hint) => {
+      // Suppress address already in use error
+      if (
+        (event?.exception?.values?.[0]?.value || '').indexOf(
+          'listen EADDRINUSE: address already in use'
+        ) > -1
+      ) {
+        return null;
+      }
+      event.tags = {appVersion: app.getVersion()};
+      return event;
+    },
   });
 }
 
