@@ -36,3 +36,9 @@ export const getEnvironmentInfo = () => {
     osInfo,
   };
 };
+
+export function isSslValidationFailed(errorCode) {
+  const FirstSSLError = -200;
+  const LastSSLError = -299;
+  return errorCode <= FirstSSLError && errorCode >= LastSSLError;
+}
