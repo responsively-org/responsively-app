@@ -4,7 +4,7 @@ import {makeStyles} from '@material-ui/core/styles';
 /**
  * Application toolbar that appears at the top of a window.
  */
-const Toolbar = () => {
+const HorizontalSpacer = () => {
   const classes = useStyles();
   return <div className={classes.container} />;
 };
@@ -17,4 +17,4 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default Toolbar;
+export default HorizontalSpacer;

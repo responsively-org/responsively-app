@@ -9,12 +9,12 @@ import * as BrowserActions from '../../actions/browser';
 import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 import LeftIconsPaneContainer from '../LeftIconsPaneContainer';
 import HeaderContainer from '../HeaderContainer';
-import Toolbar from '../../components/Toolbar';
 import os from 'os';
+import HorizontalSpacer from '../../components/HorizontalSpacer';
 
 const Browser = ({browser}) => (
   <Fragment>
-    {os.platform() === 'darwin' && <Toolbar />}
+    {os.platform() === 'darwin' && <HorizontalSpacer />}
     <HeaderContainer />
     <div style={{display: 'flex', height: '100%'}}>
       <LeftIconsPaneContainer />

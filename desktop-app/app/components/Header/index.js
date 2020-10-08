@@ -13,16 +13,13 @@ import BookmarksBar from '../../containers/BookmarksBarContainer';
 import AppNotification from '../AppNotification/AppNotification';
 import Logo from '../icons/Logo';
 import ZenButton from '../ZenButton';
+import cx from 'classnames';
 
 const Header = props => {
   const classes = useStyles();
 
   return (
-    <div
-      className={`${classes.container} ${
-        props.isHeaderVisible ? '' : 'zenMode'
-      }`}
-    >
+    <div className={cx([classes.container, {zenMode: !props.isHeaderVisible}])}>
       <div className={classes.firstRow}>
         <Logo className={classes.logo} width={40} height={40} />
         <Grid
@@ -59,6 +56,7 @@ const Header = props => {
       />
       <AppNotification />
       <ZenButton
+        active={!props.isHeaderVisible}
         onClick={() => props.setHeaderVisibility(!props.isHeaderVisible)}
       />
     </div>
@@ -82,7 +80,6 @@ const useStyles = makeStyles(theme => ({
     transition: 'transform .1s ease-out',
     '& .zenButton': {
       display: 'none',
-      background: theme.palette.background.l1,
       position: 'absolute',
       bottom: '0px',
       left: '50%',

@@ -40,7 +40,6 @@ const useStyles = makeStyles(theme => ({
     transition: 'transform .1s ease-out',
     '& .zenButton': {
       position: 'absolute',
-      background: theme.palette.background.l2,
       top: '50%',
       right: '0',
       transformOrigin: 'center',
@@ -81,9 +80,7 @@ const LeftIconsPane = props => {
   };
   return (
     <div
-      className={`${mStyles.container} ${
-        props.isLeftPaneVisible ? '' : 'zenMode'
-      }`}
+      className={cx([mStyles.container, {zenMode: !props.isLeftPaneVisible}])}
     >
       <Grid
         container
@@ -147,9 +144,12 @@ const LeftIconsPane = props => {
         </Grid>
       </Grid>
       <Headway />
-      <ZenButton
-        onClick={() => props.setLeftPaneVisibility(!props.isLeftPaneVisible)}
-      />
+      {!props.drawer.open && (
+        <ZenButton
+          active={!props.isLeftPaneVisible}
+          onClick={() => props.setLeftPaneVisibility(!props.isLeftPaneVisible)}
+        />
+      )}
     </div>
   );
 };
