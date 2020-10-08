@@ -28,7 +28,6 @@ const useStyles = makeStyles(theme => ({
   container: {
     alignItems: 'center',
     borderRadius: '0 0 8px 8px',
-    background: theme.palette.background.l1,
     display: 'flex',
     height: '20px',
     justifyContent: 'center',

@@ -79,6 +79,7 @@ const useStyles = makeStyles(theme => ({
     transform: 'translateY(0)',
     transition: 'transform .1s ease-out',
     '& .zenButton': {
+      background: theme.palette.background.l1,
       display: 'none',
       position: 'absolute',
       bottom: '0px',

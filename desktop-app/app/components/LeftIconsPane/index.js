@@ -40,6 +40,7 @@ const useStyles = makeStyles(theme => ({
     transition: 'transform .1s ease-out',
     '& .zenButton': {
       position: 'absolute',
+      background: theme.palette.background.l2,
       top: '50%',
       right: '0',
       transformOrigin: 'center',
@@ -80,7 +81,9 @@ const LeftIconsPane = props => {
   };
   return (
     <div
-      className={cx([mStyles.container, {zenMode: !props.isLeftPaneVisible}])}
+      className={`${mStyles.container} ${
+        props.isLeftPaneVisible ? '' : 'zenMode'
+      }`}
     >
       <Grid
         container
