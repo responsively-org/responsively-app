@@ -3,7 +3,6 @@ import type {Dispatch, GetState} from '../reducers/types';
 import {
   SET_NETWORK_TROTTLING_PROFILE,
   CLEAR_NETWORK_CACHE,
-  SET_NETWORK_PROXY_PROFILE,
 } from '../constants/pubsubEvents';
 import {convertToProxyConfig, proxyRuleToString} from '../utils/proxyUtils';
 import {ipcRenderer} from 'electron';

@@ -37,7 +37,7 @@
 </p>
 
 <p align="center">
-  Download Now(free!): <a href="https://responsively.app" target="_blank">
+  Download Now (free!): <a href="https://responsively.app" target="_blank">
     responsively.app
   </a>
 </p>

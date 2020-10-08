@@ -96,7 +96,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 0,
   },
   wilcardsAndMoreLink: {
-    color: 'white',
+    color: theme.palette.text.normal,
     textDecoration: 'underline',
   },
   bypassListField: {

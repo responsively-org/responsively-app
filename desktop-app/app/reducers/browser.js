@@ -221,7 +221,7 @@ function _getActiveDevices() {
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  return settings.get(USER_PREFERENCES);
+  return settings.get(USER_PREFERENCES) || {};
 }
 
 function _setUserPreferences(userPreferences) {
