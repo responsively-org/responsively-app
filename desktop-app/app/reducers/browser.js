@@ -23,6 +23,8 @@ import {
   TOGGLE_ALL_DEVICES_MUTED,
   TOGGLE_DEVICE_MUTED,
   NEW_THEME,
+  SET_HEADER_VISIBILITY,
+  SET_LEFT_PANE_VISIBILITY,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -179,6 +181,8 @@ export type BrowserStateType = {
   windowSize: WindowSizeType,
   allDevicesMuted: boolean,
   networkConfiguration: NetworkConfigurationType,
+  isHeaderVisible: boolean,
+  isLeftPaneVisible: boolean,
 };
 
 let _activeDevices = null;
@@ -332,6 +336,8 @@ export default function browser(
     windowSize: getWindowSize(),
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),
+    isHeaderVisible: true,
+    isLeftPaneVisible: true,
   },
   action: Action
 ) {
@@ -517,6 +523,18 @@ export default function browser(
           proxy: action.profile,
         },
       };
+    case SET_HEADER_VISIBILITY:
+      return {
+        ...state,
+        isHeaderVisible: action.isVisible,
+      };
+
+    case SET_LEFT_PANE_VISIBILITY:
+      return {
+        ...state,
+        isLeftPaneVisible: action.isVisible,
+      };
+
     default:
       return state;
   }
