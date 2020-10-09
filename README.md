@@ -68,6 +68,11 @@ Alternatively, MacOS users can use brew to install it:
 brew cask install responsively
 ```
 
+Also, Windows users can use chocolatey to install it:
+```bash
+choco install responsively
+```
+
 Follow on Twitter for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
 
 ## Issues
