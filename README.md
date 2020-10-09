@@ -63,9 +63,14 @@ Please visit the website to know more about the application - https://responsive
 ## Download
 The application is available for Mac, Windows and Linux platforms. Please download it from here - https://github.com/responsively-org/responsively-app/releases
 
-Alternatively, MacOS users can use brew to install it:
+Alternatively, MacOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) to install it:
 ```bash
 brew cask install responsively
+```
+
+Also, Windows users can use [`chocolatey`](https://chocolatey.org/packages/responsively/) to install it:
+```bash
+choco install responsively
 ```
 
 Follow on Twitter for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
