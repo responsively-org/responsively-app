@@ -47,6 +47,7 @@ import Unfocus from '../icons/Unfocus';
 import {captureOnSentry} from '../../utils/logUtils';
 import {getBrowserSyncEmbedScriptURL} from '../../services/browserSync';
 import Spinner from '../Spinner';
+import {isSslValidationFailed} from '../../utils/generalUtils';
 
 const {BrowserWindow} = remote;
 
@@ -990,8 +991,16 @@ class WebView extends Component {
           >
             <p>ERROR: {errorCode}</p>
             <p className={cx(styles.errorDesc)}>{errorDesc}</p>
+
             {proxyAuthError && (
               <p className={cx(styles.errorDesc)}>Proxy Authentication Error</p>
+            )}
+
+            {isSslValidationFailed(errorCode) && (
+              <p className={cx(styles.errorHelpSuggestion)}>
+                If you wish to proceed, you can disable the SSL validation in
+                the user preferences.
+              </p>
             )}
           </div>
           {this._getWebViewTag(deviceStyles, containerWidth, containerHeight)}
