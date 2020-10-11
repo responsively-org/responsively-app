@@ -30,6 +30,7 @@ import {
   TOGGLE_DEVICE_DESIGN_MODE_STATE,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
+import {DESIGN_MODE_JS_VALUES} from '../../constants/values';
 
 import styles from './style.module.css';
 import {styles as commonStyles} from '../useCommonStyles';
@@ -139,7 +140,7 @@ class WebView extends Component {
     this.subscriptions.push(
       pubsub.subscribe(
         TOGGLE_DEVICE_DESIGN_MODE_STATE,
-        this.processToggleDesignModeEvent
+        this.changeDesignModeState
       )
     );
 
@@ -202,7 +203,7 @@ class WebView extends Component {
         id: this.props.device.id,
         loading: false,
       });
-      this.processToggleDesignModeEvent({
+      this.changeDesignModeState({
         designMode: !!this.props.device.designMode,
       });
     });
@@ -277,7 +278,7 @@ class WebView extends Component {
     }
 
     if (prevProps.device.designMode !== this.props.device.designMode) {
-      this.processToggleDesignModeEvent({
+      this.changeDesignModeState({
         designMode: !!this.props.device.designMode,
       });
     }
@@ -442,10 +443,12 @@ class WebView extends Component {
     this.getWebContents().setAudioMuted(muted);
   };
 
-  processToggleDesignModeEvent = ({designMode}) => {
+  changeDesignModeState = ({designMode}) => {
     this.webviewRef.current
       .executeJavaScript(
-        `document.designMode = "${designMode ? 'on' : 'off'}";`
+        `document.designMode = "${
+          designMode ? DESIGN_MODE_JS_VALUES.ON : DESIGN_MODE_JS_VALUES.OFF
+        }";`
       )
       .catch(captureOnSentry);
   };
@@ -674,8 +677,8 @@ class WebView extends Component {
   };
 
   _toggleDesignMode = () => {
-    const {id: deviceId, designMode: designModeOn} = this.props.device;
-    this.props.onDeviceDesignModeChange(deviceId, !designModeOn);
+    const {id: deviceId} = this.props.device;
+    this.props.onToggleDeviceDesignMode(deviceId);
   };
 
   _focusDevice = () => {

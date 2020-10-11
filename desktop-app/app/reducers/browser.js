@@ -218,6 +218,7 @@ function _getActiveDevices() {
     activeDevices.forEach(device => {
       device.loading = false;
       device.isMuted = false;
+      device.designMode = false;
     });
   }
   return activeDevices;
@@ -529,10 +530,11 @@ export default function browser(
       };
     case TOGGLE_ALL_DEVICES_DESIGN_MODE:
       const nextDevices = state.devices;
-      nextDevices.forEach(d => (d.designMode = action.allDevicesInDesignMode));
+      const nextDesginModeForAll = !state.allDevicesInDesignMode;
+      nextDevices.forEach(d => (d.designMode = nextDesginModeForAll));
       return {
         ...state,
-        allDevicesInDesignMode: action.allDevicesInDesignMode,
+        allDevicesInDesignMode: nextDesginModeForAll,
         devices: nextDevices,
       };
     case TOGGLE_DEVICE_DESIGN_MODE:
@@ -540,9 +542,10 @@ export default function browser(
         x => x.id === action.deviceId
       );
       if (deviceIndex === -1) return {...state};
+      const nextDesignModeForDevice = !state.devices[deviceIndex].designMode;
       state.devices[deviceIndex] = {
         ...state.devices[deviceIndex],
-        designMode: action.designModeOn,
+        designMode: nextDesignModeForDevice,
       };
       return {
         ...state,

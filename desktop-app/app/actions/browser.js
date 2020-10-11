@@ -190,18 +190,16 @@ export function toggleDeviceMuted(deviceId, isMuted) {
   };
 }
 
-export function toggleAllDevicesDesignMode(allDevicesInDesignMode) {
+export function toggleAllDevicesDesignMode() {
   return {
     type: TOGGLE_ALL_DEVICES_DESIGN_MODE,
-    allDevicesInDesignMode,
   };
 }
 
-export function toggleDeviceDesignMode(deviceId, designModeOn) {
+export function toggleDeviceDesignMode(deviceId) {
   return {
     type: TOGGLE_DEVICE_DESIGN_MODE,
     deviceId,
-    designModeOn,
   };
 }
 
@@ -718,20 +716,20 @@ export function onDeviceMutedChange(deviceId, isMuted) {
   };
 }
 
-export function onAllDevicesDesignModeChange() {
+export function onToggleAllDeviceDesignMode() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
       browser: {allDevicesInDesignMode},
     } = getState();
     const next = !allDevicesInDesignMode;
     pubsub.publish(TOGGLE_DEVICE_DESIGN_MODE_STATE, [{designMode: next}]);
-    dispatch(toggleAllDevicesDesignMode(next));
+    dispatch(toggleAllDevicesDesignMode());
   };
 }
 
-export function onDeviceDesignModeChange(deviceId, designModeOn) {
+export function onToggleDeviceDesignMode(deviceId) {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    dispatch(toggleDeviceDesignMode(deviceId, designModeOn));
+    dispatch(toggleDeviceDesignMode(deviceId));
   };
 }
 

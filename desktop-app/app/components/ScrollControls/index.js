@@ -32,7 +32,7 @@ const ScrollControls = ({
   flipOrientationAllDevices,
   toggleInspector,
   onAllDevicesMutedChange,
-  onAllDevicesDesignModeChange,
+  onToggleAllDeviceDesignMode,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
@@ -121,7 +121,7 @@ const ScrollControls = ({
                 : 'Enable Design Mode on all devices'
             }
           >
-            <div onClick={onAllDevicesDesignModeChange}>
+            <div onClick={onToggleAllDeviceDesignMode}>
               <DesignModeIcon {...{...iconProps, ...{height: 22, width: 22}}} />
             </div>
           </Tooltip>
