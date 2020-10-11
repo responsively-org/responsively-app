@@ -1,8 +1,0 @@
-// Theme Functions
-//
-// 
-// 
-
-@function dropdown-arrow($color,$rotate:0){
-  @return str-replace(url("data:image/svg+xml;charset=utf8,<svg width='9' height='7' viewBox='0 0 9 7' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M4.09852 0.540851C4.29843 0.271544 4.70157 0.271544 4.90148 0.540851L7.80474 4.45198C8.04964 4.7819 7.81415 5.25 7.40326 5.25H1.59674C1.18585 5.25 0.950358 4.7819 1.19526 4.45198L4.09852 0.540851Z' fill='#{$color}' style='transform:rotate(#{$rotate}deg); transform-origin:center;'/></svg>"), "#", "%23");
-}

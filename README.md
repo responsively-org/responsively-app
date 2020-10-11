@@ -17,8 +17,8 @@
   
   
 
-  <a href="https://gitter.im/responsively-app" target="_blank">
-    <img src="https://img.shields.io/gitter/room/badges/shields.svg?style=flat" alt="Gitter">
+  <a href="https://responsively.app/join-slack" target="_blank">
+    <img src="https://img.shields.io/badge/Join%20on-Slack-brightgreen?logo=slack" alt="Slack">
   </a>
 
   <a href="https://xscode.com/manojvivek/responsively-app" target="_blank">
@@ -37,7 +37,7 @@
 </p>
 
 <p align="center">
-  Download Now(free!): <a href="https://responsively.app" target="_blank">
+  Download Now (free!): <a href="https://responsively.app" target="_blank">
     responsively.app
   </a>
 </p>
@@ -77,22 +77,14 @@ If you face any problems while using the application, please open an issue here 
 Here is the roadmap of the desktop app - https://github.com/responsively-org/responsively-app/projects/12?fullscreen=true.
 
 ## Contribute
-1. Goto `desktop-app` folder
-2. Run `yarn dev`. This will start the app for local development with live reloading.
+1. Ensure you have installed `node` and `yarn`
+2. Go to `desktop-app` folder
+3. Run `yarn` to install dependencies
+4. Run `yarn dev`. This will start the app for local development with live reloading.
 
-## Distribution
-You can build the app for distribution by running:
-```yarn package-all```
+## Get in touch
 
-This will build the binaries for all the platforms and place it in the `releases` folder.
-
-If you want to build the binary for a specific platform, run one of the following commands:
-
-**Mac** - ```yarn package-mac```
-
-**Windows(NSIS)** - ```yarn package-win```
-
-**Linux(AppImage)** - ```yarn package-linux```
+Come say hi to us on [Slack](https://responsively.app/join-slack)! :wave:
 
 ## Contributors ✨
 
@@ -146,6 +138,16 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/JayArya"><img src="https://avatars0.githubusercontent.com/u/42388314?v=4" width="100px;" alt=""/><br /><sub><b>Jayant Arya</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=JayArya" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/JohnRawlins"><img src="https://avatars3.githubusercontent.com/u/42707277?v=4" width="100px;" alt=""/><br /><sub><b>John Rawlins</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=JohnRawlins" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/lepasq"><img src="https://avatars3.githubusercontent.com/u/53230128?v=4" width="100px;" alt=""/><br /><sub><b>lepasq</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=lepasq" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/mrfelfel"><img src="https://avatars0.githubusercontent.com/u/19575588?v=4" width="100px;" alt=""/><br /><sub><b>mrfelfel</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=mrfelfel" title="Code">💻</a></td>
+    <td align="center"><a href="https://twitter.com/gorogoroumaru"><img src="https://avatars3.githubusercontent.com/u/30716350?v=4" width="100px;" alt=""/><br /><sub><b>gorogoroumaru</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=gorogoroumaru" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://ruisaraiva.dev"><img src="https://avatars2.githubusercontent.com/u/7356098?v=4" width="100px;" alt=""/><br /><sub><b>Rui Saraiva</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=ruisaraiva19" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.bakirci.nl"><img src="https://avatars2.githubusercontent.com/u/9880089?v=4" width="100px;" alt=""/><br /><sub><b>Mehmet Bakirci</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=MBakirci" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/JLambertazzo"><img src="https://avatars0.githubusercontent.com/u/42924425?v=4" width="100px;" alt=""/><br /><sub><b>Julien Bertazzo Lambert</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=JLambertazzo" title="Code">💻</a></td>
+    <td align="center"><a href="http://dbwriteups.wordpress.com"><img src="https://avatars3.githubusercontent.com/u/4656109?v=4" width="100px;" alt=""/><br /><sub><b>Dinesh Balaji</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=sidthesloth92" title="Code">💻</a></td>
   </tr>
 </table>
 

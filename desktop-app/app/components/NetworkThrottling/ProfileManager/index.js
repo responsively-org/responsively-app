@@ -13,9 +13,8 @@ import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOut
 import TextField from '@material-ui/core/TextField';
 import NumberFormat from 'react-number-format';
 import InputAdornment from '@material-ui/core/InputAdornment';
-
-import commonStyles from '../../common.styles.css';
 import styles from './styles.css';
+import {makeStyles} from '@material-ui/core/styles';
 
 function NumberFormatCustom(props) {
   const {inputRef, onChange, ...other} = props;
@@ -42,6 +41,21 @@ export default function ProfileManager({profiles, onSave}) {
   const [currentProfiles, updateProfiles] = useState(profiles);
   const [newElement, setNewElement] = useState({type: 'Custom'});
   const [editModeRows, toggleEditModeRows] = useState({});
+  const themedClasses = useThemedStyles();
+
+  const placeholderIfOnline = (row, component) => {
+    if (row.type !== 'Online') return component;
+    return (
+      <TextField
+        size="small"
+        className={cx(styles.numericField, themedClasses.numericFieldDisabled)}
+        value="-"
+        fullWidth
+        variant="outlined"
+        disabled
+      />
+    );
+  };
 
   const newElementIsInvalid =
     newElement.title != null &&
@@ -107,10 +121,12 @@ export default function ProfileManager({profiles, onSave}) {
                   {row.title}
                 </TableCell>
                 <TableCell align="right">
-                  {row.type !== 'Online' && (
+                  {placeholderIfOnline(
+                    row,
                     <TextField
+                      size="small"
                       className={cx(styles.numericField, {
-                        [styles.numericFieldDisabled]:
+                        [themedClasses.numericFieldDisabled]:
                           row.type !== 'Custom' || !editModeRows[row.title],
                       })}
                       value={row.downloadKps == null ? '' : row.downloadKps}
@@ -137,10 +153,12 @@ export default function ProfileManager({profiles, onSave}) {
                   )}
                 </TableCell>
                 <TableCell align="right">
-                  {row.type !== 'Online' && (
+                  {placeholderIfOnline(
+                    row,
                     <TextField
+                      size="small"
                       className={cx(styles.numericField, {
-                        [styles.numericFieldDisabled]:
+                        [themedClasses.numericFieldDisabled]:
                           row.type !== 'Custom' || !editModeRows[row.title],
                       })}
                       value={row.uploadKps == null ? '' : row.uploadKps}
@@ -167,10 +185,12 @@ export default function ProfileManager({profiles, onSave}) {
                   )}
                 </TableCell>
                 <TableCell align="right">
-                  {row.type !== 'Online' && (
+                  {placeholderIfOnline(
+                    row,
                     <TextField
+                      size="small"
                       className={cx(styles.numericField, {
-                        [styles.numericFieldDisabled]:
+                        [themedClasses.numericFieldDisabled]:
                           row.type !== 'Custom' || !editModeRows[row.title],
                       })}
                       value={row.latencyMs == null ? '' : row.latencyMs}
@@ -199,7 +219,7 @@ export default function ProfileManager({profiles, onSave}) {
                 <TableCell align="right">
                   {row.type === 'Custom' && (
                     <CancelOutlinedIcon
-                      className={cx(styles.actionIcon)}
+                      className={cx(themedClasses.actionIcon)}
                       onClick={() => removeProfile(row.title)}
                     />
                   )}
@@ -214,6 +234,7 @@ export default function ProfileManager({profiles, onSave}) {
           <TableRow>
             <TableCell style={{width: '32%'}}>
               <TextField
+                size="small"
                 autoFocus
                 value={newElement.title || ''}
                 onChange={e =>
@@ -228,6 +249,7 @@ export default function ProfileManager({profiles, onSave}) {
             </TableCell>
             <TableCell style={{width: '21%'}} align="right">
               <TextField
+                size="small"
                 className={cx(styles.numericField)}
                 value={
                   newElement.downloadKps == null ? '' : newElement.downloadKps
@@ -248,6 +270,7 @@ export default function ProfileManager({profiles, onSave}) {
             </TableCell>
             <TableCell style={{width: '21%'}} align="right">
               <TextField
+                size="small"
                 className={cx(styles.numericField)}
                 value={newElement.uploadKps == null ? '' : newElement.uploadKps}
                 onChange={e =>
@@ -266,6 +289,7 @@ export default function ProfileManager({profiles, onSave}) {
             </TableCell>
             <TableCell style={{width: '21%'}} align="right">
               <TextField
+                size="small"
                 className={cx(styles.numericField)}
                 value={newElement.latencyMs == null ? '' : newElement.latencyMs}
                 onChange={e =>
@@ -284,7 +308,7 @@ export default function ProfileManager({profiles, onSave}) {
             </TableCell>
             <TableCell style={{width: '5%'}} align="right">
               <AddCircleOutlineOutlinedIcon
-                className={cx(styles.actionIcon)}
+                className={cx(themedClasses.actionIcon)}
                 onClick={addNewElement}
               />
             </TableCell>
@@ -305,3 +329,29 @@ export default function ProfileManager({profiles, onSave}) {
     </div>
   );
 }
+
+const useThemedStyles = makeStyles(theme => ({
+  actionIcon: {
+    color: theme.palette.mode({
+      light: theme.palette.grey[500],
+      dark: 'white',
+    }),
+    pointerEvents: 'all',
+    cursor: 'pointer',
+    verticalAlign: 'middle',
+    '&:hover': {
+      color: '#6075ef',
+    },
+  },
+  numericFieldDisabled: {
+    '& input': {
+      color: theme.palette.mode({
+        light: '#000000de',
+        dark: 'white',
+      }),
+    },
+    '& fieldset': {
+      border: 0,
+    },
+  },
+}));

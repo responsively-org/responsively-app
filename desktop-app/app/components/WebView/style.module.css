@@ -37,15 +37,12 @@
   margin-left: 4px;
 }
 
-.deviceContainer {
-  position: relative;
-  display: inline-flex;
-  transform-origin: top left;
-}
-
 .device {
   transform-origin: top left;
   background: white;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .deviceOverlay {
@@ -60,28 +57,11 @@
 
 .deviceOverlay.overlayEnabled {
   display: block;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .errorDesc {
   font-size: 20px;
-}
-
-.iconWrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  background-position: center;
-  height: '100%';
-  width: '100%';
-  padding: 0;
-  background-color: #3b3b3b;
-}
-
-.iconWrapper:hover {
-  background-color: #575757;
 }
 
 .iconWrapperS {
@@ -104,53 +84,29 @@
   width: 15px;
 }
 
-.iconHolder {
-  position: relative;
-  display: block;
-  height: 7px;
-  cursor: pointer;
-}
-
-.iconHolder::before,
-.iconHolder::after {
-  content: '';
-  position: absolute;
-  width: 15px;
-  height: 2px;
-  background-color: #000;
-}
-
-.iconWrapperE .iconHolder {
+.iconWrapperE div {
   right: 1px;
   transform: rotate(90deg);
 }
 
-.iconWrapperS .iconHolder {
+.iconWrapperS div {
   bottom: 0;
 }
 
-.iconWrapperSE .iconHolder {
+.iconWrapperSE div {
   right: 3px;
   top: 2px;
   height: 6px;
   transform: rotate(-45deg);
 }
 
-.iconHolder::before {
-  left: 0;
-}
-
-.iconHolder::after {
-  bottom: 0;
-}
-
-.iconWrapperSE .iconHolder::before {
+.iconWrapperSE div::before {
   left: -2px;
   width: 11px;
   height: 2px;
 }
 
-.iconWrapperSE .iconHolder::after {
+.iconWrapperSE div::after {
   bottom: 0;
   width: 7px;
   height: 2px;

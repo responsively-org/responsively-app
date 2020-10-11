@@ -2,15 +2,15 @@ import React, {useState, useEffect} from 'react';
 import cx from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
-import {iconsColor} from '../../constants/colors';
 import ToggleTouchIcon from '../icons/ToggleTouch';
+import useCommonStyles from '../useCommonStyles';
 
-import commonStyles from '../common.styles.css';
-
-export default function ToggleTouch() {
+export default function ToggleTouch({iconProps}) {
   const [isTouchMode, setIsTouchMode] = useState(false);
   const [isHover, setHover] = useState(false);
   const [hasPendingState, setPendingState] = useState(false);
+  const [hasTooltip, setTooltip] = useState(false);
+  const commonClasses = useCommonStyles();
 
   useEffect(() => {
     const handler = e => {
@@ -26,6 +26,7 @@ export default function ToggleTouch() {
 
   const handleToggleTouch = () => {
     setIsTouchMode(!isTouchMode);
+    setTooltip(!isTouchMode);
     if (isHover) {
       return setPendingState(true);
     }
@@ -44,21 +45,17 @@ export default function ToggleTouch() {
     });
   };
 
-  const iconProps = {
-    color: iconsColor,
-    height: 25,
-    width: 25,
-  };
-
   return (
     <Grid
       item
-      className={cx(commonStyles.icons, commonStyles.enabled, {
-        [commonStyles.selected]: isTouchMode,
+      className={cx(commonClasses.icon, {
+        [commonClasses.iconSelected]: isTouchMode,
       })}
       onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => {
+      onPointerLeave={() => {
         setHover(false);
+      }}
+      onPointerMove={() => {
         if (!hasPendingState) {
           return;
         }
@@ -66,7 +63,7 @@ export default function ToggleTouch() {
         setPendingState(false);
       }}
     >
-      <Tooltip title="Toggle Touch Mode">
+      <Tooltip title={hasTooltip ? '' : 'Toggle Touch Mode'}>
         <div onClick={handleToggleTouch}>
           <ToggleTouchIcon {...iconProps} />
         </div>

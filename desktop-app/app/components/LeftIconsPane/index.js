@@ -1,18 +1,17 @@
-// @flow
-import React, {useRef} from 'react';
-import {Icon} from 'flwww';
+import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import DevicesIcon from '@material-ui/icons/Devices';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibraryOutlined';
 import ExtensionIcon from '@material-ui/icons/Extension';
-import NetworkIcon from '../icons/Network';
 import cx from 'classnames';
+import NetworkIcon from '../icons/Network';
 import Logo from '../icons/Logo';
+import Gift from '../icons/Gift';
+import Headway from '../Headway';
 
 import styles from './styles.css';
-import commonStyles from '../common.styles.css';
-import {iconsColor} from '../../constants/colors';
+import useCommonStyles from '../useCommonStyles';
 import {
   DEVICE_MANAGER,
   SCREENSHOT_MANAGER,
@@ -20,9 +19,29 @@ import {
   EXTENSIONS_MANAGER,
   NETWORK_CONFIGURATION,
 } from '../../constants/DrawerContents';
+import {makeStyles} from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+  container: {
+    backgroundColor: theme.palette.background.l2,
+    display: 'flex',
+    flexFlow: 'column',
+    width: 50,
+    boxShadow: `0 ${theme.palette.mode({
+      light: '3px',
+      dark: '3px',
+    })} 5px rgba(0, 0, 0, 0.35)`,
+  },
+  leftPaneIcon: {
+    '& svg': {
+      verticalAlign: 'middle',
+    },
+  },
+}));
 
 const LeftIconsPane = props => {
-  const headwayRef = useRef();
+  const commonClasses = useCommonStyles();
+  const mStyles = useStyles();
   const iconProps = {
     style: {fontSize: 30},
     height: 30,
@@ -36,10 +55,7 @@ const LeftIconsPane = props => {
     props.openDrawerAndSetContent(content);
   };
   return (
-    <div className={styles.iconsContainer}>
-      <div className={cx(styles.logo, styles.icon)}>
-        <Logo width={40} height={40} />
-      </div>
+    <div className={mStyles.container}>
       <Grid
         container
         spacing={1}
@@ -49,65 +65,59 @@ const LeftIconsPane = props => {
       >
         <Grid
           item
-          className={cx(commonStyles.icons, styles.icon, commonStyles.enabled, {
-            [commonStyles.selected]:
+          className={cx(commonClasses.icon, styles.icon, {
+            [commonClasses.iconSelected]:
               props.drawer.open && props.drawer.content === DEVICE_MANAGER,
           })}
           onClick={() => toggleState(DEVICE_MANAGER)}
         >
-          <div>
+          <div className={cx(mStyles.leftPaneIcon)}>
             <DevicesIcon {...iconProps} className="deviceManagerIcon" />
           </div>
         </Grid>
         <Grid
           item
-          className={cx(commonStyles.icons, styles.icon, commonStyles.enabled, {
-            [commonStyles.selected]:
+          className={cx(commonClasses.icon, styles.icon, {
+            [commonClasses.iconSelected]:
               props.drawer.open && props.drawer.content === USER_PREFERENCES,
           })}
           onClick={() => toggleState(USER_PREFERENCES)}
         >
-          <div>
+          <div className={cx(mStyles.leftPaneIcon)}>
             <SettingsIcon {...iconProps} className="settingsIcon" />
           </div>
         </Grid>
         <Grid
           item
-          className={cx(commonStyles.icons, styles.icon, commonStyles.enabled, {
-            [commonStyles.selected]:
+          className={cx(commonClasses.icon, styles.icon, {
+            [commonClasses.iconSelected]:
               props.drawer.open && props.drawer.content === EXTENSIONS_MANAGER,
           })}
           onClick={() => toggleState(EXTENSIONS_MANAGER)}
         >
-          <div>
+          <div className={cx(mStyles.leftPaneIcon)}>
             <ExtensionIcon {...iconProps} className="extensionsIcon" />
           </div>
         </Grid>
         <Grid
           item
-          className={cx(commonStyles.icons, styles.icon, commonStyles.enabled, {
-            [commonStyles.selected]:
+          className={cx(commonClasses.icon, styles.icon, {
+            [commonClasses.iconSelected]:
               props.drawer.open &&
               props.drawer.content === NETWORK_CONFIGURATION,
           })}
           onClick={() => toggleState(NETWORK_CONFIGURATION)}
         >
-          <div>
-            <NetworkIcon {...iconProps} color="white" className="networkIcon" />
+          <div className={cx(mStyles.leftPaneIcon)}>
+            <NetworkIcon
+              {...iconProps}
+              color="currentColor"
+              className="networkIcon"
+            />
           </div>
         </Grid>
       </Grid>
-      <div style={{position: 'relative'}}>
-        <div
-          id="headway"
-          ref={headwayRef}
-          className={cx(
-            styles.updates,
-            commonStyles.icons,
-            commonStyles.enabled
-          )}
-        />
-      </div>
+      <Headway />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 
-export default ({width, height, color, padding, margin}) => (
+const Screenshot = ({width, height, color, padding, margin}) => (
   <svg
     width={width}
     height={height}
@@ -22,3 +22,9 @@ export default ({width, height, color, padding, margin}) => (
     />
   </svg>
 );
+
+Screenshot.defaultProps = {
+  color: 'currentColor',
+};
+
+export default Screenshot;

@@ -1,10 +1,9 @@
-// @flow
 import React, {useEffect} from 'react';
 import {ipcRenderer} from 'electron';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
-import AddressInput from '../../components/Addressinput';
+import AddressInput from '../../components/AddressInput';
 import * as BrowserActions from '../../actions/browser';
 import {toggleBookmarkUrl} from '../../actions/bookmarks';
 

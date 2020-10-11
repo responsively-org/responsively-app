@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 
-export default ({width, height, color, padding, margin}) => (
+const Unplug = ({width, height, color, padding, margin}) => (
   <Fragment>
     <svg
       height={height}
@@ -26,3 +26,9 @@ export default ({width, height, color, padding, margin}) => (
     </svg>
   </Fragment>
 );
+
+Unplug.defaultProps = {
+  color: 'currentColor',
+};
+
+export default Unplug;

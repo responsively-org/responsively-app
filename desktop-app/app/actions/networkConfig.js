@@ -4,10 +4,15 @@ import {
   SET_NETWORK_TROTTLING_PROFILE,
   CLEAR_NETWORK_CACHE,
 } from '../constants/pubsubEvents';
+import {convertToProxyConfig, proxyRuleToString} from '../utils/proxyUtils';
+import {ipcRenderer} from 'electron';
 
 export const CHANGE_ACTIVE_THROTTLING_PROFILE =
   'CHANGE_ACTIVE_THROTTLING_PROFILE';
 export const SAVE_THROTTLING_PROFILES = 'SAVE_THROTTLING_PROFILES';
+
+export const TOGGLE_USE_PROXY = 'TOGGLE_USE_PROXY';
+export const CHANGE_PROXY_PROFILE = 'CHANGE_PROXY_PROFILE';
 
 export function changeActiveThrottlingProfile(title = 'Online') {
   return {
@@ -51,5 +56,41 @@ export function onThrottlingProfilesListChanged(profiles) {
 export function onClearNetworkCache() {
   return (dispatch: Dispatch, getState: GetState) => {
     pubsub.publish(CLEAR_NETWORK_CACHE);
+  };
+}
+
+export function toggleUseProxy(useProxy: boolean = false) {
+  return {
+    type: TOGGLE_USE_PROXY,
+    useProxy,
+  };
+}
+
+export function changeProxyProfile(profile) {
+  return {
+    type: CHANGE_PROXY_PROFILE,
+    profile,
+  };
+}
+
+export function onToggleUseProxy(useProxy: boolean = false) {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      browser: {
+        networkConfiguration: {proxy},
+      },
+    } = getState();
+    ipcRenderer.send(
+      'set-proxy-profile',
+      convertToProxyConfig({...proxy, active: !!useProxy})
+    );
+    dispatch(toggleUseProxy(useProxy));
+  };
+}
+
+export function onProxyProfileChanged(profile) {
+  return (dispatch: Dispatch, getState: GetState) => {
+    ipcRenderer.send('set-proxy-profile', convertToProxyConfig(profile));
+    dispatch(changeProxyProfile(profile));
   };
 }

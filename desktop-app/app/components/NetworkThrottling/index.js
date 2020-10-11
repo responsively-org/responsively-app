@@ -2,45 +2,17 @@ import React, {useState} from 'react';
 import cx from 'classnames';
 import Button from '@material-ui/core/Button';
 import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
-import Select from 'react-select';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import ProfileManager from './ProfileManager';
-
 import {makeStyles} from '@material-ui/core/styles';
-import commonStyles from '../common.styles.css';
+import ProfileManager from './ProfileManager';
+import Select from '../Select';
+import useCommonStyles from '../useCommonStyles';
 import styles from './styles.css';
-
-const selectStyles = {
-  control: selectStyles => ({...selectStyles, backgroundColor: '#ffffff10'}),
-  option: (selectStyles, {data, isDisabled, isFocused, isSelected}) => {
-    const color = 'white';
-    return {
-      ...selectStyles,
-      backgroundColor: isDisabled
-        ? null
-        : isSelected
-        ? '#ffffff40'
-        : isFocused
-        ? '#ffffff20'
-        : null,
-      color: 'white',
-
-      ':active': {
-        ...selectStyles[':active'],
-        backgroundColor: !isDisabled && '#ffffff40',
-      },
-    };
-  },
-  input: selectStyles => ({...selectStyles}),
-  placeholder: selectStyles => ({...selectStyles}),
-  singleValue: (selectStyles, {data}) => ({...selectStyles, color: 'white'}),
-  menu: selectStyles => ({...selectStyles, background: '#4b4b4b', zIndex: 100}),
-};
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -52,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function NetworkThrottling({
+function NetworkThrottling({
   throttling,
   onActiveThrottlingProfileChanged,
   onThrottlingProfilesListChanged,
@@ -60,6 +32,7 @@ export default function NetworkThrottling({
   const [open, setOpen] = useState(false);
   const closeDialog = () => setOpen(false);
   const classes = useStyles();
+  const commonClasses = useCommonStyles();
 
   const selectedIdx = throttling.findIndex(p => p.active);
   const options = throttling.map(p => ({
@@ -79,18 +52,17 @@ export default function NetworkThrottling({
   };
 
   return (
-    <div className={cx(commonStyles.sidebarContentSection)}>
-      <div className={cx(commonStyles.sidebarContentSectionTitleBar)}>
+    <div className={commonClasses.sidebarContentSection}>
+      <div className={commonClasses.sidebarContentSectionTitleBar}>
         <NetworkCheckIcon className={cx(styles.networkThrottlingIcon)} />{' '}
         Network Throttling
       </div>
-      <div className={cx(commonStyles.sidebarContentSectionContainer)}>
+      <div className={commonClasses.sidebarContentSectionContainer}>
         <div className={cx(styles.throttlingProfileSelectorContainer)}>
           <Select
             options={options}
             value={selectedOption}
             onChange={onThrottlingProfileChanged}
-            styles={selectStyles}
           />
         </div>
 
@@ -132,3 +104,5 @@ export default function NetworkThrottling({
     </div>
   );
 }
+
+export default NetworkThrottling;

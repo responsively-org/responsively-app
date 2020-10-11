@@ -1,9 +1,3 @@
-.iconsContainer {
-  display: flex;
-  flex-flow: column;
-  flex: 1;
-}
-
 .icon {
   margin-bottom: 10px !important;
 }
@@ -20,12 +14,4 @@
   display: flex;
   justify-content: center;
   margin: 3px;
-}
-
-.updates {
-  position: relative;
-  height: 50px;
-  align-items: center;
-  justify-content: center;
-  display: flex;
 }

@@ -14,10 +14,6 @@ td {
   padding-right: 16px !important;
 }
 
-.profilesRow > th {
-  cursor: default;
-}
-
 .profilesHeader > tr > th {
   font-size: 20px;
   font-weight: bold;
@@ -25,16 +21,6 @@ td {
 
 .profilesRow > th.customProfile {
   cursor: pointer;
-}
-
-.actionIcon {
-  pointer-events: all;
-  cursor: pointer;
-  color: white;
-}
-
-.actionIcon:hover {
-  color: #6075ef;
 }
 
 .saveButton {
@@ -46,12 +32,6 @@ td {
 .numericField * {
   text-align: right;
   font-size: 14px !important;
-}
-.numericFieldDisabled fieldset {
-  border: 0 !important;
-}
-.numericFieldDisabled input {
-  color: white !important;
 }
 
 .titleField * {

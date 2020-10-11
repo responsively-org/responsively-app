@@ -19,6 +19,7 @@ import {
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
+import {normalizeZoomLevel} from '../utils/browserUtils';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_PAGE_META_FIELD = 'NEW_PAGE_META_FIELD';
@@ -41,6 +42,7 @@ export const DEVICE_LOADING = 'DEVICE_LOADING';
 export const NEW_FOCUSED_DEVICE = 'NEW_FOCUSED_DEVICE';
 export const TOGGLE_ALL_DEVICES_MUTED = 'TOGGLE_ALL_DEVICES_MUTED';
 export const TOGGLE_DEVICE_MUTED = 'TOGGLE_DEVICE_MUTED';
+export const NEW_THEME = 'NEW_THEME';
 
 export function newAddress(address) {
   return {
@@ -225,12 +227,13 @@ export function onZoomChange(newLevel) {
     const {
       browser: {zoomLevel},
     } = getState();
+    const normalizedZoomLevel = normalizeZoomLevel(newLevel);
 
-    if (newLevel === zoomLevel) {
+    if (normalizedZoomLevel === zoomLevel) {
       return;
     }
 
-    dispatch(newZoomLevel(newLevel));
+    dispatch(newZoomLevel(normalizedZoomLevel));
   };
 }
 
@@ -777,5 +780,12 @@ export function reloadCSS() {
 export function findText(findOptions) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(FIND_TEXT, [{findOptions}]);
+  };
+}
+
+export function setTheme(theme) {
+  return {
+    type: NEW_THEME,
+    theme,
   };
 }

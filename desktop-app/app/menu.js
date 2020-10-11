@@ -8,9 +8,9 @@ import {
   clipboard,
   screen,
 } from 'electron';
-import * as os from 'os';
 import fs from 'fs';
-import {pkg} from './utils/generalUtils';
+import url from 'url';
+import {getEnvironmentInfo, getPackageJson} from './utils/generalUtils';
 import {
   getAllShortcuts,
   registerShortcut,
@@ -32,15 +32,17 @@ export default class MenuBuilder {
   aboutClick() {
     const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
     const title = 'Responsively';
-    const {description} = pkg;
-    const version = pkg.version || 'Unknown';
-    const electron = process.versions.electron || 'Unknown';
-    const chrome = process.versions.chrome || 'Unknown';
-    const node = process.versions.node || 'Unknown';
-    const v8 = process.versions.v8 || 'Unknown';
-    const osText =
-      `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
-    const usefulInfo = `Version: ${version}\nElectron: ${electron}\nChrome: ${chrome}\nNode.js: ${node}\nV8: ${v8}\nOS: ${osText}`;
+    const {description} = getPackageJson();
+    const {
+      appVersion,
+      electronVersion,
+      chromeVersion,
+      nodeVersion,
+      v8Version,
+      osInfo,
+    } = getEnvironmentInfo();
+
+    const usefulInfo = `Version: ${appVersion}\nElectron: ${electronVersion}\nChrome: ${chromeVersion}\nNode.js: ${nodeVersion}\nV8: ${v8Version}\nOS: ${osInfo}`;
     const detail = description ? `${description}\n\n${usefulInfo}` : usefulInfo;
     let buttons = ['OK', 'Copy'];
     let cancelId = 0;
@@ -131,7 +133,12 @@ export default class MenuBuilder {
 
           win.center();
 
-          win.loadURL(`file://${__dirname}/shortcuts.html`);
+          win.loadURL(
+            url.format({
+              protocol: 'file',
+              pathname: path.join(__dirname, 'shortcuts.html'),
+            })
+          );
 
           win.once('ready-to-show', () => {
             win.show();
@@ -157,7 +164,7 @@ export default class MenuBuilder {
             if (
               r == null ||
               r.updateInfo == null ||
-              r.updateInfo.version === pkg.version
+              r.updateInfo.version === getPackageJson().version
             ) {
               dialog.showMessageBox(BrowserWindow.getAllWindows()[0], {
                 type: 'info',
@@ -189,13 +196,16 @@ export default class MenuBuilder {
           const selected = dialog.showOpenDialogSync({
             filters: [{name: 'HTML', extensions: ['htm', 'html']}],
           });
+
           if (!selected || !selected.length || !selected[0]) {
             return;
           }
           let filePath = selected[0];
-          if (!filePath.startsWith('file://')) {
-            filePath = `file://${filePath}`;
-          }
+
+          filePath = url.format({
+            protocol: 'file',
+            pathname: filePath,
+          });
           this.mainWindow.webContents.send('address-change', filePath);
         },
       },
@@ -245,6 +255,10 @@ export default class MenuBuilder {
         break;
       case AppUpdaterStatus.Downloading:
         label = 'Downloading Update...';
+        enabled = false;
+        break;
+      case AppUpdaterStatus.NewVersion:
+        label = 'New version available';
         enabled = false;
         break;
       case AppUpdaterStatus.Downloaded:

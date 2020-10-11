@@ -1,8 +1,6 @@
 // @flow
 import {ipcRenderer, remote} from 'electron';
 import settings from 'electron-settings';
-import {isIfStatement} from 'typescript';
-import trimStart from 'lodash/trimStart';
 import {
   NEW_ADDRESS,
   NEW_ZOOM_LEVEL,
@@ -16,7 +14,6 @@ import {
   NEW_HOMEPAGE,
   NEW_USER_PREFERENCES,
   DELETE_CUSTOM_DEVICE,
-  TOGGLE_BOOKMARK,
   NEW_DEV_TOOLS_CONFIG,
   NEW_INSPECTOR_STATUS,
   NEW_WINDOW_SIZE,
@@ -25,10 +22,13 @@ import {
   NEW_PAGE_META_FIELD,
   TOGGLE_ALL_DEVICES_MUTED,
   TOGGLE_DEVICE_MUTED,
+  NEW_THEME,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
   SAVE_THROTTLING_PROFILES,
+  CHANGE_PROXY_PROFILE,
+  TOGGLE_USE_PROXY,
 } from '../actions/networkConfig';
 import type {Action} from './types';
 import getAllDevices from '../constants/devices';
@@ -52,6 +52,8 @@ import {
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
 import {updateExistingUrl} from '../services/searchUrlSuggestions';
+import {normalizeZoomLevel} from '../utils/browserUtils';
+import {DEFAULT_ZOOM_LEVEL} from '../constants';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -119,6 +121,8 @@ type UserPreferenceType = {
   deviceOutlineStyle: string,
   zoomLevel: number,
   removeFixedPositionedElements: boolean,
+  screenshotMechanism: string,
+  permissionManagement: 'Ask always' | 'Allow always' | 'Deny always',
 };
 
 type FilterFieldType = FILTER_FIELDS.OS | FILTER_FIELDS.DEVICE_TYPE;
@@ -134,9 +138,27 @@ type NetworkThrottlingProfileType = {
   active: boolean,
 };
 
+type ProxyRuleType = {
+  protocol: 'direct' | 'http' | 'https' | 'socks4' | 'socks5',
+  server: string,
+  port: number,
+  user: string,
+  password: string,
+  useDefault: boolean,
+};
+
+type NetworkProxyProfileType = {
+  active: boolean,
+  default: ProxyRuleType,
+  http: ProxyRuleType,
+  https: ProxyRuleType,
+  ftp: ProxyRuleType,
+  bypassList: string[],
+};
+
 type NetworkConfigurationType = {
   throttling: NetworkThrottlingProfileType[],
-  // proxy: NetworkProxyProfileType[],
+  proxy: NetworkProxyProfileType,
 };
 
 export type BrowserStateType = {
@@ -195,9 +217,7 @@ function _getActiveDevices() {
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  return (
-    settings.get(USER_PREFERENCES) || {removeFixedPositionedElements: true}
-  );
+  return settings.get(USER_PREFERENCES) || {};
 }
 
 function _setUserPreferences(userPreferences) {
@@ -259,49 +279,8 @@ function _getHomepage() {
   return homepage;
 }
 
-function getDefaultNetworkThrottlingProfiles(): NetworkThrottlingProfileType[] {
-  return [
-    {
-      type: 'Online',
-      title: 'Online',
-      active: true,
-    },
-    {
-      type: 'Offline',
-      title: 'Offline',
-      downloadKps: 0,
-      uploadKps: 0,
-      latencyMs: 0,
-    },
-    // https://github.com/ChromeDevTools/devtools-frontend/blob/4f404fa8beab837367e49f68e29da427361b1f81/front_end/sdk/NetworkManager.js#L251-L265
-    {
-      type: 'Preset',
-      title: 'Slow 3G',
-      downloadKps: 400,
-      uploadKps: 400,
-      latencyMs: 2000,
-    },
-    {
-      type: 'Preset',
-      title: 'Fast 3G',
-      downloadKps: 1475,
-      uploadKps: 675,
-      latencyMs: 563,
-    },
-  ];
-}
-
 function _getNetworkConfiguration(): NetworkConfigurationType {
-  const ntwrk: NetworkConfigurationType =
-    settings.get(NETWORK_CONFIGURATION) || {};
-
-  if (ntwrk.throttling == null)
-    ntwrk.throttling = getDefaultNetworkThrottlingProfiles();
-
-  // if (ntwrk.proxy == null)
-  //   ntwrk.proxy = getDefaultNetworkProxyProfiles();
-
-  return ntwrk;
+  return settings.get(NETWORK_CONFIGURATION) || {};
 }
 
 function _setNetworkConfiguration(
@@ -318,7 +297,9 @@ export default function browser(
       ? getLastOpenedAddress()
       : getHomepage(),
     currentPageMeta: {},
-    zoomLevel: _getUserPreferences().zoomLevel || 0.6,
+    zoomLevel:
+      normalizeZoomLevel(_getUserPreferences().zoomLevel) || DEFAULT_ZOOM_LEVEL,
+    theme: _getUserPreferences().theme,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
     navigatorStatus: {backEnabled: false, forwardEnabled: false},
@@ -361,6 +342,10 @@ export default function browser(
       updateExistingUrl(action.address);
       return {...state, address: action.address, currentPageMeta: {}};
     case NEW_PAGE_META_FIELD:
+      updateExistingUrl(state.address, {
+        name: action.name,
+        value: action.value,
+      });
       return {
         ...state,
         currentPageMeta: {
@@ -378,6 +363,12 @@ export default function browser(
         zoomLevel: action.zoomLevel,
       });
       return {...state, zoomLevel: action.zoomLevel};
+    case NEW_THEME:
+      _setUserPreferences({
+        ...state.userPreferences,
+        theme: action.theme,
+      });
+      return {...state, theme: action.theme};
     case NEW_SCROLL_POSITION:
       return {...state, scrollPosition: action.scrollPosition};
     case NEW_NAVIGATOR_STATUS:
@@ -498,6 +489,32 @@ export default function browser(
         networkConfiguration: {
           ...state.networkConfiguration,
           throttling: action.profiles,
+        },
+      };
+    case TOGGLE_USE_PROXY:
+      const proxy = state.networkConfiguration.proxy;
+      proxy.active = !!action.useProxy;
+      _setNetworkConfiguration({
+        ...state.networkConfiguration,
+        proxy,
+      });
+      return {
+        ...state,
+        networkConfiguration: {
+          ...state.networkConfiguration,
+          proxy: {...proxy},
+        },
+      };
+    case CHANGE_PROXY_PROFILE:
+      _setNetworkConfiguration({
+        ...state.networkConfiguration,
+        proxy: action.profile,
+      });
+      return {
+        ...state,
+        networkConfiguration: {
+          ...state.networkConfiguration,
+          proxy: action.profile,
         },
       };
     default:

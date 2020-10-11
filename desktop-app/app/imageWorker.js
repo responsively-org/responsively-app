@@ -4,9 +4,10 @@ const {promisify} = require('util');
 const Jimp = require('jimp');
 const os = require('os');
 const path = require('path');
-const UUID = require('uuid/v4');
+const uuid = require('uuid');
 const fs = require('fs-extra');
 
+const UUID = uuid.v4;
 const tempDir = path.join(os.tmpdir(), UUID());
 
 registerPromiseWorker(({images, direction, resultFilename}) => {
@@ -30,7 +31,7 @@ async function stitchHorizontally(images) {
 async function writeToTempFile(image) {
   return new Promise(async (resolve, reject) => {
     await fs.ensureDir(tempDir);
-    const tempPath = path.join(tempDir, `${UUID()}.png`);
+    const tempPath = path.join(tempDir, `${UUID()}.jpg`);
     await image.write(tempPath, err => {
       if (err) {
         return reject(err);
@@ -41,23 +42,19 @@ async function writeToTempFile(image) {
 }
 
 async function stitchVertically(images, {dir, file}) {
-  const result = (
-    await mergeImg(
-      await Promise.all(
-        images.map(async img => {
-          const JimpImg = await Jimp.read(img);
-          return {
-            src: await JimpImg.getBufferAsync('image/png'),
-          };
-        })
-      ),
-      {
-        direction: true,
-      }
-    )
-  )
-    .rgba(false)
-    .background(0xffffffff);
+  const result = await mergeImg(
+    await Promise.all(
+      images.map(async img => {
+        const JimpImg = await Jimp.read(img);
+        return {
+          src: await JimpImg.getBufferAsync('image/jpeg'),
+        };
+      })
+    ),
+    {
+      direction: true,
+    }
+  );
   await fs.ensureDir(dir);
   await Promise.all([
     result.write(path.join(dir, file)),

@@ -20,6 +20,7 @@ import electron, {
   webContents,
   shell,
   dialog,
+  session,
 } from 'electron';
 import settings from 'electron-settings';
 import log from 'electron-log';
@@ -30,7 +31,7 @@ import installExtension, {
 } from 'electron-devtools-installer';
 import fs from 'fs';
 import MenuBuilder from './menu';
-import {USER_PREFERENCES} from './constants/settingKeys';
+import {USER_PREFERENCES, NETWORK_CONFIGURATION} from './constants/settingKeys';
 import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
@@ -46,12 +47,15 @@ import {
   watchFiles,
 } from './utils/browserSync';
 import {getHostFromURL} from './utils/urlUtils';
+import {getPermissionSettingPreference} from './utils/permissionUtils';
 import browserSync from 'browser-sync';
 import {captureOnSentry} from './utils/logUtils';
 import appMetadata from './services/db/appMetadata';
+import {convertToProxyConfig} from './utils/proxyUtils';
+import {PERMISSION_MANAGEMENT_OPTIONS} from './constants/permissionsManagement';
+import {endSession, startSession} from './utils/analytics';
 
 const path = require('path');
-const chokidar = require('chokidar');
 const URL = require('url').URL;
 
 migrateDeviceSchema();
@@ -59,6 +63,19 @@ migrateDeviceSchema();
 if (process.env.NODE_ENV !== 'development') {
   Sentry.init({
     dsn: 'https://f2cdbc6a88aa4a068a738d4e4cfd3e12@sentry.io/1553155',
+    environment: process.env.NODE_ENV,
+    beforeSend: (event, hint) => {
+      // Suppress address already in use error
+      if (
+        (event?.exception?.values?.[0]?.value || '').indexOf(
+          'listen EADDRINUSE: address already in use'
+        ) > -1
+      ) {
+        return null;
+      }
+      event.tags = {appVersion: app.getVersion()};
+      return event;
+    },
   });
 }
 
@@ -72,6 +89,7 @@ let devToolsView = null;
 let fileToOpen = null;
 
 const httpAuthCallbacks = {};
+const permissionCallbacks = {};
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -96,6 +114,13 @@ const openWithHandler = filePath => {
     return true;
   }
   return false;
+};
+
+const setProxyOnStart = () => {
+  const proxyConfig = (settings.get(NETWORK_CONFIGURATION) || {}).proxy;
+  if (proxyConfig != null && proxyConfig.active) {
+    session.defaultSession.setProxy(convertToProxyConfig(proxyConfig));
+  }
 };
 
 /**
@@ -145,6 +170,7 @@ app.on('open-url', async (event, url) => {
 });
 
 app.on('window-all-closed', () => {
+  endSession();
   hasActiveWindow = false;
   ipcMain.removeAllListeners();
   ipcMain.removeHandler('install-extension');
@@ -175,11 +201,30 @@ app.on(
 app.on('login', (event, webContents, request, authInfo, callback) => {
   event.preventDefault();
   const {url} = request;
-  if (httpAuthCallbacks[url]) {
-    return httpAuthCallbacks[url].push(callback);
+  if (authInfo.isProxy) {
+    const proxyConfig = (settings.get(NETWORK_CONFIGURATION) || {}).proxy;
+    if (proxyConfig != null && proxyConfig.active) {
+      const schConfig =
+        proxyConfig[url.substr(0, url.indexOf(':')).toLowerCase()];
+      if (schConfig != null && !schConfig.useDefault) {
+        callback(schConfig.user, schConfig.password);
+      } else {
+        callback(proxyConfig.default.user, proxyConfig.default.password);
+      }
+    }
+  } else {
+    if (httpAuthCallbacks[url]) {
+      return httpAuthCallbacks[url].push(callback);
+    }
+    httpAuthCallbacks[url] = [callback];
+    mainWindow.webContents.send('http-auth-prompt', {url});
   }
-  httpAuthCallbacks[url] = [callback];
-  mainWindow.webContents.send('http-auth-prompt', {url});
+});
+
+ipcMain.on('set-proxy-profile', async (_, proxyProfile) => {
+  if (proxyProfile == null || proxyProfile.length === 0) return;
+  await session.defaultSession.clearAuthCache();
+  await session.defaultSession.setProxy(proxyProfile);
 });
 
 app.on('activate', async (event, hasVisibleWindows) => {
@@ -192,6 +237,11 @@ app.on('activate', async (event, hasVisibleWindows) => {
 app.on('ready', async () => {
   if (hasActiveWindow) {
     return;
+  }
+  // Set theme based on user preference
+  const themeSource = (settings.get(USER_PREFERENCES) || {}).theme;
+  if (themeSource) {
+    nativeTheme.themeSource = themeSource;
   }
   await createWindow();
 });
@@ -244,6 +294,7 @@ const openFile = filePath => {
 const createWindow = async () => {
   appMetadata.incrementOpenCount();
   hasActiveWindow = true;
+  setProxyOnStart();
 
   if (process.env.NODE_ENV === 'development') {
     await installExtensions();
@@ -277,6 +328,7 @@ const createWindow = async () => {
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
+    startSession();
     if (process.platform === 'darwin') {
       // Trick to make the transparent title bar draggable
       mainWindow.webContents
@@ -316,7 +368,100 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+    mainWindow.maximize();
     onResize();
+  });
+
+  session.defaultSession.setPermissionRequestHandler(
+    (webContents, permission, callback, details) => {
+      const preferences = getPermissionSettingPreference();
+
+      const reqUrl = webContents.getURL();
+
+      if (permissionCallbacks[reqUrl] == null) permissionCallbacks[reqUrl] = {};
+
+      if (permissionCallbacks[reqUrl][permission] == null) {
+        permissionCallbacks[reqUrl][permission] = {
+          called: false,
+          allowed: null,
+          callbacks: [],
+        };
+      }
+
+      const entry = permissionCallbacks[reqUrl][permission];
+
+      if (preferences === PERMISSION_MANAGEMENT_OPTIONS.ALLOW_ALWAYS) {
+        entry.callbacks.forEach(callback => callback(true));
+        entry.callbacks = [];
+        entry.allowed = true;
+        entry.called = true;
+        return callback(true);
+      }
+      if (preferences === PERMISSION_MANAGEMENT_OPTIONS.DENY_ALWAYS) {
+        entry.callbacks.forEach(callback => callback(false));
+        entry.callbacks = [];
+        entry.allowed = false;
+        entry.called = true;
+        return callback(false);
+      }
+
+      if (entry.called) {
+        if (entry.allowed == null) return;
+        return callback(entry.allowed);
+      }
+
+      if (entry.callbacks.length === 0) {
+        entry.callbacks.push(callback);
+
+        mainWindow.webContents.send('permission-prompt', {
+          url: reqUrl,
+          permission,
+          details,
+        });
+      } else {
+        entry.callbacks.push(callback);
+      }
+    }
+  );
+
+  session.defaultSession.setPermissionCheckHandler(
+    (webContents, permission) => {
+      const reqUrl = webContents.getURL();
+
+      let entry = permissionCallbacks[reqUrl];
+      if (entry != null) entry = entry[permission];
+
+      if (entry == null || !entry.called) {
+        return null;
+      }
+
+      return entry.allowed;
+    }
+  );
+
+  ipcMain.on('permission-response', (evnt, ...args) => {
+    if (args[0] == null) return;
+    const {url, permission, allowed} = args[0];
+
+    let entry = permissionCallbacks[url];
+    if (entry != null) entry = entry[permission];
+
+    if (entry != null && !entry.called) {
+      entry.called = true;
+      entry.allowed = allowed;
+      if (allowed != null)
+        entry.callbacks.forEach(callback => callback(allowed));
+      entry.callbacks = [];
+    }
+  });
+
+  ipcMain.on('reset-ignored-permissions', evnt => {
+    Object.entries(permissionCallbacks).forEach(([_, permissions]) => {
+      Object.entries(permissions).forEach(([_, entry]) => {
+        if (entry.called && entry.allowed == null) entry.called = false;
+        entry.callbacks = [];
+      });
+    });
   });
 
   ipcMain.on('start-watching-file', async (event, fileInfo) => {
@@ -370,7 +515,10 @@ const createWindow = async () => {
   });
 
   ipcMain.on('prefers-color-scheme-select', (event, scheme) => {
-    nativeTheme.themeSource = scheme || 'system';
+    if (!scheme) {
+      return;
+    }
+    nativeTheme.themeSource = scheme;
   });
 
   ipcMain.handle('install-extension', (event, extensionId) => {

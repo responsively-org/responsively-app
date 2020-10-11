@@ -1,11 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {ipcRenderer} from 'electron';
 import Tooltip from '@material-ui/core/Tooltip';
-import {iconsColor} from '../../constants/colors';
-import LightColorScheme from '../icons/LightColorScheme';
-import DarkColorScheme from '../icons/DarkColorScheme';
+import LightColorSchemeIcon from '../icons/LightColorScheme';
+import DarkColorSchemeIcon from '../icons/DarkColorScheme';
 
-export default function PrefersColorSchemeSwitch() {
+export default function PrefersColorSchemeSwitch({iconProps}) {
   const [colorScheme, setColorScheme] = useState(
     window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   );
@@ -18,19 +17,13 @@ export default function PrefersColorSchemeSwitch() {
     ipcRenderer.send('prefers-color-scheme-select', colorScheme);
   }, [colorScheme]);
 
-  const iconProps = {
-    color: iconsColor,
-    height: 25,
-    width: 25,
-  };
-
   return (
     <Tooltip title="Switch color scheme">
       <div onClick={handleSwitch}>
         {colorScheme === 'dark' ? (
-          <DarkColorScheme {...iconProps} />
+          <DarkColorSchemeIcon {...iconProps} />
         ) : (
-          <LightColorScheme {...iconProps} />
+          <LightColorSchemeIcon {...iconProps} />
         )}
       </div>
     </Tooltip>

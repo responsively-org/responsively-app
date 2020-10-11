@@ -289,6 +289,78 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "JohnRawlins",
+      "name": "John Rawlins",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/42707277?v=4",
+      "profile": "https://github.com/JohnRawlins",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "lepasq",
+      "name": "lepasq",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/53230128?v=4",
+      "profile": "https://github.com/lepasq",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mrfelfel",
+      "name": "mrfelfel",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/19575588?v=4",
+      "profile": "https://github.com/mrfelfel",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "gorogoroumaru",
+      "name": "gorogoroumaru",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/30716350?v=4",
+      "profile": "https://twitter.com/gorogoroumaru",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ruisaraiva19",
+      "name": "Rui Saraiva",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/7356098?v=4",
+      "profile": "http://ruisaraiva.dev",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "MBakirci",
+      "name": "Mehmet Bakirci",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/9880089?v=4",
+      "profile": "http://www.bakirci.nl",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "JLambertazzo",
+      "name": "Julien Bertazzo Lambert",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/42924425?v=4",
+      "profile": "https://github.com/JLambertazzo",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "sidthesloth92",
+      "name": "Dinesh Balaji",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/4656109?v=4",
+      "profile": "http://dbwriteups.wordpress.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,

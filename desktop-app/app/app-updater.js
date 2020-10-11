@@ -1,5 +1,7 @@
 import {autoUpdater} from 'electron-updater';
 import log from 'electron-log';
+import {getPackageJson} from './utils/generalUtils';
+import {shell, Notification} from 'electron';
 
 const {EventEmitter} = require('events');
 
@@ -7,6 +9,7 @@ const AppUpdaterStatus = {
   Idle: 'idle',
   Checking: 'checking',
   NoUpdate: 'noUpdate',
+  NewVersion: 'newVersion',
   Downloading: 'downloading',
   Downloaded: 'downloaded',
 };
@@ -18,10 +21,15 @@ class AppUpdater extends EventEmitter {
 
   timerId = null;
 
+  isPortableVersion =
+    process.env.PORTABLE_EXECUTABLE_DIR != null &&
+    process.env.PORTABLE_EXECUTABLE_DIR.length !== 0;
+
   constructor() {
     super();
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
+    autoUpdater.autoDownload = !this.isPortableVersion;
     this.status = AppUpdaterStatus.Idle;
 
     autoUpdater.on('checking-for-update', () =>
@@ -43,8 +51,34 @@ class AppUpdater extends EventEmitter {
   }
 
   checkForUpdatesAndNotify() {
-    if (this.status === AppUpdaterStatus.Idle)
+    const pkg = getPackageJson();
+    if (this.status === AppUpdaterStatus.Idle) {
+      if (this.isPortableVersion) {
+        return autoUpdater.checkForUpdates().then(r => {
+          if (
+            r?.updateInfo?.version != null &&
+            r.updateInfo.version !== pkg.version
+          ) {
+            this.handleStatusChange(AppUpdaterStatus.NewVersion, true);
+            if (Notification.isSupported()) {
+              const notif = new Notification({
+                title: `New version ${r.updateInfo.version} available`,
+                body:
+                  'You have an outdated version of Responsively. Click here to download the latest version',
+              });
+              notif.on('click', () => {
+                shell.openExternal(
+                  'https://github.com/responsively-org/responsively-app/releases/latest'
+                );
+              });
+              notif.show();
+            }
+          }
+          return r;
+        });
+      }
       return autoUpdater.checkForUpdatesAndNotify();
+    }
   }
 
   handleStatusChange(nextStatus: string, backToIdle: boolean) {

@@ -1,11 +1,10 @@
-// @flow
 import React, {useCallback} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
 import * as BrowserActions from '../../actions/browser';
 import * as BookmarksActions from '../../actions/bookmarks';
-import {BookmarksBar} from '../../components/BookmarksBar';
+import BookmarksBar from '../../components/BookmarksBar';
 
 const BookmarksBarContainer = props => {
   const handleBookmarkClick = useCallback(bookmark => {

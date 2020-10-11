@@ -1,21 +1,25 @@
 import React from 'react';
 import cx from 'classnames';
+import {useTheme} from '@material-ui/core/styles';
 import DeviceManagerContainer from '../../containers/DeviceManagerContainer';
 import DevicesIcon from '../icons/Devices';
+import useCommonStyles from '../useCommonStyles';
 
-import commonStyles from '../common.styles.css';
+function DevicesOverview(props) {
+  const theme = useTheme();
+  const commonClasses = useCommonStyles();
 
-export default function DevicesOverview(props) {
   return (
-    <div className={cx(commonStyles.sidebarContentSection)}>
-      <div className={cx(commonStyles.sidebarContentSectionTitleBar)}>
-        <DevicesIcon color="white" width={26} margin={2} /> Devices
+    <div className={commonClasses.sidebarContentSection}>
+      <div className={commonClasses.sidebarContentSectionTitleBar}>
+        <DevicesIcon color={theme.palette.text.primary} width={26} margin={2} />{' '}
+        Devices
       </div>
-      <div className={cx(commonStyles.sidebarContentSectionContainer)}>
+      <div className={commonClasses.sidebarContentSectionContainer}>
         <div
           className={cx(
-            commonStyles.flexContainer,
-            commonStyles.flexContainerSpaceBetween
+            commonClasses.flexContainer,
+            commonClasses.flexContainerSpaceBetween
           )}
         >
           {props.browser.devices.length} active device
@@ -26,3 +30,5 @@ export default function DevicesOverview(props) {
     </div>
   );
 }
+
+export default DevicesOverview;

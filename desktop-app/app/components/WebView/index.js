@@ -1,9 +1,9 @@
-// @flow
 import React, {Component, createRef} from 'react';
 import {remote, ipcRenderer} from 'electron';
 import cx from 'classnames';
 import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
+import {withStyles, withTheme} from '@material-ui/core/styles';
 import debounce from 'lodash/debounce';
 import pubsub from 'pubsub.js';
 import BugIcon from '../icons/Bug';
@@ -12,7 +12,6 @@ import UnmutedIcon from '../icons/Unmuted';
 import FullScreenshotIcon from '../icons/FullScreenshot';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
-import {iconsColor} from '../../constants/colors';
 import {
   SCROLL_DOWN,
   SCROLL_UP,
@@ -30,11 +29,12 @@ import {
   SET_NETWORK_TROTTLING_PROFILE,
   OPEN_CONSOLE_FOR_DEVICE,
   FIND_TEXT,
+  PROXY_AUTH_ERROR,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 
 import styles from './style.module.css';
-import commonStyles from '../common.styles.css';
+import {styles as commonStyles} from '../useCommonStyles';
 import UnplugIcon from '../icons/Unplug';
 import {captureScreenshot} from './screenshotUtil';
 import {
@@ -47,6 +47,7 @@ import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
 import {captureOnSentry} from '../../utils/logUtils';
 import {getBrowserSyncEmbedScriptURL} from '../../services/browserSync';
+import Spinner from '../Spinner';
 
 const {BrowserWindow} = remote;
 
@@ -77,6 +78,10 @@ class WebView extends Component {
       },
       temporaryDims: null,
       address: this.props.browser.address,
+      proxyAuthError: false,
+      fullDocumentHeight: null,
+      fullDocumentWidth: null,
+      zoomLevel: null,
     };
     this.subscriptions = [];
     this.dbg = null;
@@ -145,6 +150,10 @@ class WebView extends Component {
     this.subscriptions.push(pubsub.subscribe(FIND_TEXT, this.findText));
 
     this.subscriptions.push(
+      pubsub.subscribe(PROXY_AUTH_ERROR, this.onProxyError)
+    );
+
+    this.subscriptions.push(
       pubsub.subscribe(
         OPEN_CONSOLE_FOR_DEVICE,
         this.processOpenConsoleForDeviceEvent
@@ -178,7 +187,7 @@ class WebView extends Component {
     }
 
     this.webviewRef.current.addEventListener('did-start-loading', () => {
-      this.setState({errorCode: null, errorDesc: null});
+      this.setState({errorCode: null, errorDesc: null, proxyAuthError: false});
       this.props.onLoadingStateChange(true);
       this.props.deviceLoadingChange({id: this.props.device.id, loading: true});
     });
@@ -390,18 +399,24 @@ class WebView extends Component {
     fullScreen?: boolean,
   }) => {
     this.setState({screenshotInProgress: true});
-
-    await this.closeBrowserSyncSocket(this.webviewRef.current);
-    await captureScreenshot({
-      address: this.props.browser.address,
-      device: this.props.device,
-      webView: this.webviewRef.current,
-      createSeparateDir: now != null,
-      fullScreen,
-      now,
-      removeFixedPositionedElements: this.props.browser.userPreferences
-        .removeFixedPositionedElements,
-    });
+    try {
+      await this.closeBrowserSyncSocket(this.webviewRef.current);
+      await captureScreenshot({
+        address: this.props.browser.address,
+        device: this.props.device,
+        webView: this.webviewRef.current,
+        createSeparateDir: now != null,
+        fullScreen,
+        now,
+        removeFixedPositionedElements: this.props.browser.userPreferences
+          .removeFixedPositionedElements,
+        screenshotMechanism: this.props.browser.userPreferences
+          .screenshotMechanism,
+        setFullDocumentDimensions: this._setFullDocumentDimensions,
+      });
+    } catch (err) {
+      console.log('Error during screen capture', err);
+    }
     await this.openBrowserSyncSocket(this.webviewRef.current);
     this.setState({screenshotInProgress: false});
   };
@@ -485,6 +500,10 @@ class WebView extends Component {
 
   clearNetworkCache = () => {
     this.getWebContents().session.clearCache();
+  };
+
+  onProxyError = () => {
+    this.setState({proxyAuthError: true});
   };
 
   messageHandler = ({channel: type, args: [message]}) => {
@@ -596,6 +615,14 @@ class WebView extends Component {
         }
         `
     );
+  };
+
+  _setFullDocumentDimensions = (
+    fullDocumentHeight,
+    fullDocumentWidth,
+    zoomLevel = null
+  ) => {
+    this.setState({fullDocumentHeight, fullDocumentWidth, zoomLevel});
   };
 
   _isDevToolsOpen = () =>
@@ -751,17 +778,24 @@ class WebView extends Component {
     }
   };
 
-  _getWebViewTag = deviceStyles => {
+  _getWebViewTag = (deviceStyles, containerWidth, containerHeight) => {
     const {
+      classes,
       device: {id, useragent, capabilities},
     } = this.props;
     const {deviceDimensions, address, isTilted} = this.state;
+    const outlinePx = this.props.browser.userPreferences.deviceOutlineStyle
+      ? 3
+      : 0;
 
     if (capabilities.includes(CAPABILITIES.responsive)) {
       return (
         <Resizable
-          className={cx(styles.resizableView)}
-          size={{width: deviceStyles.width, height: deviceStyles.height}}
+          className={styles.resizableView}
+          size={{
+            width: containerWidth + outlinePx,
+            height: containerHeight + outlinePx,
+          }}
           onResizeStart={() => {
             const updatedTempDims = {
               width: deviceDimensions.width,
@@ -780,26 +814,26 @@ class WebView extends Component {
           handleComponent={{
             right: (
               <div
-                className={cx(styles.iconWrapper, styles.iconWrapperE)}
+                className={cx(classes.iconWrapper, styles.iconWrapperE)}
                 {...this.props}
               >
-                <div className={styles.iconHolder} />
+                <div className={classes.iconHolder} />
               </div>
             ),
             bottom: (
               <div
-                className={cx(styles.iconWrapper, styles.iconWrapperS)}
+                className={cx(classes.iconWrapper, styles.iconWrapperS)}
                 {...this.props}
               >
-                <div className={styles.iconHolder} />
+                <div className={classes.iconHolder} />
               </div>
             ),
             bottomRight: (
               <div
-                className={cx(styles.iconWrapper, styles.iconWrapperSE)}
+                className={cx(classes.iconWrapper, styles.iconWrapperSE)}
                 {...this.props}
               >
-                <div className={styles.iconHolder} />
+                <div className={classes.iconHolder} />
               </div>
             ),
           }}
@@ -834,108 +868,105 @@ class WebView extends Component {
     const {
       browser: {zoomLevel, previewer},
       device: {capabilities},
+      classes,
+      theme,
     } = this.props;
     const {
       deviceDimensions,
       errorCode,
       errorDesc,
       screenshotInProgress,
+      proxyAuthError,
     } = this.state;
+    const screenshotZoomLevel = screenshotInProgress && this.state.zoomLevel;
+    const outline = `4px solid ${
+      this._isDevToolsOpen()
+        ? `#6075ef`
+        : this.props.browser.userPreferences.deviceOutlineStyle ||
+          'rgba(0, 0, 0, 0)'
+    }`;
     const deviceStyles = {
-      outline: `4px solid ${
-        this._isDevToolsOpen()
-          ? `#6075ef`
-          : this.props.browser.userPreferences.deviceOutlineStyle ||
-            'rgba(0, 0, 0, 0)'
-      }`,
+      outline,
+      width:
+        (this.state.screenshotInProgress && this.state.fullDocumentWidth) ||
+        deviceDimensions.width,
+      height:
+        (this.state.screenshotInProgress && this.state.fullDocumentHeight) ||
+        deviceDimensions.height,
+      transform: `scale(${screenshotZoomLevel || zoomLevel})`,
+    };
+    const overlayStyles = {
+      outline,
       width: deviceDimensions.width,
       height: deviceDimensions.height,
+      transform: `scale(${zoomLevel})`,
     };
+
+    const containerWidth = deviceStyles.width * zoomLevel;
+    const containerHeight = deviceStyles.height * zoomLevel;
+
     const isMuted = this.props.device.isMuted;
     const isResponsive = capabilities.includes(CAPABILITIES.responsive);
     const shouldMaximize = previewer.layout !== INDIVIDUAL_LAYOUT;
     const IconFocus = () => {
-      if (shouldMaximize)
-        return <Focus height={30} padding={6} color={iconsColor} />;
-      return <Unfocus height={30} padding={6} color={iconsColor} />;
+      if (shouldMaximize) return <Focus height={30} padding={6} />;
+      return <Unfocus height={30} padding={6} />;
     };
     return (
       <div
         className={cx(styles.webViewContainer, {
           [styles.withMarginRight]: isResponsive,
         })}
-        style={{
-          width: deviceStyles.width * zoomLevel,
-          height: deviceStyles.height * zoomLevel + 40,
-        }}
       >
         <div className={cx(styles.webViewToolbar)}>
           <div className={cx(styles.webViewToolbarLeft)}>
             <Tooltip title="Open DevTools">
               <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled,
-                  {
-                    [commonStyles.selected]: this._isDevToolsOpen(),
-                  }
-                )}
+                className={cx(styles.webViewToolbarIcons, classes.icon, {
+                  [classes.iconSelected]: this._isDevToolsOpen(),
+                })}
                 onClick={this._toggleDevTools}
               >
-                <BugIcon width={20} color={iconsColor} />
+                <BugIcon width={20} />
               </div>
             </Tooltip>
             <Tooltip title="Quick Screenshot">
               <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled
-                )}
+                className={cx(styles.webViewToolbarIcons, classes.icon)}
                 onClick={() => this.processScreenshotEvent({fullScreen: false})}
               >
-                <ScreenshotIcon height={18} color={iconsColor} />
+                <ScreenshotIcon height={18} />
               </div>
             </Tooltip>
             <Tooltip title="Full Page Screenshot">
               <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled
-                )}
+                className={cx(styles.webViewToolbarIcons, classes.icon)}
                 onClick={this.processScreenshotEvent}
               >
-                <FullScreenshotIcon height={18} color={iconsColor} />
+                <FullScreenshotIcon height={18} />
               </div>
             </Tooltip>
-            <Tooltip title="Tilt Device">
-              <div
-                className={cx(styles.webViewToolbarIcons, commonStyles.icons, {
-                  [commonStyles.enabled]: this.isMobile,
-                  [commonStyles.disabled]: !this.isMobile,
-                  [commonStyles.selected]: this.state.isTilted,
-                })}
-                onClick={this._flipOrientation}
-              >
-                <DeviceRotateIcon height={17} color={iconsColor} />
-              </div>
-            </Tooltip>
+            {this.isMobile ? (
+              <Tooltip title="Tilt Device">
+                <div
+                  className={cx(styles.webViewToolbarIcons, classes.icon, {
+                    [classes.iconSelected]: this.state.isTilted,
+                  })}
+                  onClick={this._flipOrientation}
+                >
+                  <DeviceRotateIcon height={17} />
+                </div>
+              </Tooltip>
+            ) : null}
 
             <Tooltip title="Disable event mirroring">
               <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled,
-                  {
-                    [commonStyles.selected]: this.state.isUnplugged,
-                  }
-                )}
+                className={cx(styles.webViewToolbarIcons, classes.icon, {
+                  [classes.iconSelected]: this.state.isUnplugged,
+                })}
                 onClick={this._unPlug}
               >
-                <UnplugIcon height={30} color={iconsColor} />
+                <UnplugIcon height={30} />
               </div>
             </Tooltip>
           </div>
@@ -945,11 +976,7 @@ class WebView extends Component {
               disableFocusListener
             >
               <div
-                className={cx(
-                  styles.webViewToolbarIcons,
-                  commonStyles.icons,
-                  commonStyles.enabled
-                )}
+                className={cx(styles.webViewToolbarIcons, classes.icon)}
                 onClick={
                   shouldMaximize ? this._focusDevice : this._unfocusDevice
                 }
@@ -960,10 +987,10 @@ class WebView extends Component {
           </div>
         </div>
         <div
-          className={cx(styles.deviceContainer)}
+          className={classes.deviceContainer}
           style={{
-            width: deviceStyles.width,
-            transform: `scale(${zoomLevel})`,
+            width: containerWidth,
+            height: containerHeight,
           }}
           onMouseEnter={this._onMouseEnter}
           onMouseLeave={this._onMouseLeave}
@@ -972,8 +999,10 @@ class WebView extends Component {
             className={cx(styles.deviceOverlay, {
               [styles.overlayEnabled]: screenshotInProgress,
             })}
-            style={deviceStyles}
-          />
+            style={overlayStyles}
+          >
+            <Spinner size={24} />
+          </div>
           <div
             className={cx(styles.deviceOverlay, {
               [styles.overlayEnabled]: errorCode,
@@ -982,12 +1011,58 @@ class WebView extends Component {
           >
             <p>ERROR: {errorCode}</p>
             <p className={cx(styles.errorDesc)}>{errorDesc}</p>
+            {proxyAuthError && (
+              <p className={cx(styles.errorDesc)}>Proxy Authentication Error</p>
+            )}
           </div>
-          {this._getWebViewTag(deviceStyles)}
+          {this._getWebViewTag(deviceStyles, containerWidth, containerHeight)}
         </div>
       </div>
     );
   }
 }
 
-export default WebView;
+const webViewStyles = theme => ({
+  ...commonStyles(theme),
+  deviceContainer: {
+    position: 'relative',
+    display: 'inline-flex',
+    transformOrigin: 'top left',
+  },
+  iconWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    backgroundPosition: 'center',
+    padding: 0,
+    backgroundColor: theme.palette.background.l2,
+    '&:hover': {
+      backgroundColor: theme.palette.background.l5,
+    },
+  },
+  iconHolder: {
+    position: 'relative',
+    display: 'block',
+    height: '7px',
+    cursor: 'pointer',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      width: '15px',
+      height: '2px',
+      backgroundColor: theme.palette.text.dim,
+    },
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      width: '15px',
+      height: '2px',
+      backgroundColor: theme.palette.text.dim,
+      bottom: 0,
+    },
+  },
+});
+export default withStyles(webViewStyles)(withTheme(WebView));

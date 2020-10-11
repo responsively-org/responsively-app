@@ -1,9 +1,17 @@
-import React, {Fragment} from 'react';
+import React from 'react';
+import {withStyles} from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import TextAreaWithCopyButton from '../../utils/TextAreaWithCopyButton';
+import CreateIssue from '../CreateIssue';
+import Logo from '../icons/Logo';
 
-export default class ErrorBoundary extends React.Component {
+class ErrorBoundary extends React.Component {
   static getDerivedStateFromError(error) {
     // Update state so the next render will show the fallback UI.
-    return {hasError: true, error};
+    return {
+      hasError: true,
+      error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
+    };
   }
 
   componentDidCatch(error, errorInfo) {
@@ -11,7 +19,10 @@ export default class ErrorBoundary extends React.Component {
     this.setState({
       err: error,
       error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
-      errorInfo,
+      errorInfo: JSON.stringify(
+        errorInfo,
+        Object.getOwnPropertyNames(errorInfo)
+      ),
     });
   }
 
@@ -21,29 +32,66 @@ export default class ErrorBoundary extends React.Component {
   }
 
   render() {
+    const {classes} = this.props;
     if (this.state.hasError) {
       // You can render any custom fallback UI
       return (
-        <Fragment>
-          <h1 style={{textAlign: 'center', marginTop: 100}}>
-            Something went wrong.
+        <div className={classes.errorBoundaryContainer}>
+          <h1 className={classes.title}>
+            <Logo height={60} />
+            <br />
+            😓 Something went wrong!
           </h1>
-          <div style={{display: 'flex', justifyContent: 'center'}}>
-            <pre
-              style={{overflow: 'scroll', background: '#6d6d6d', width: '80%'}}
+          <div className={classes.errorsContainer}>
+            <Typography
+              variant="body1"
+              color="textPrimary"
+              className={classes.errorContainer}
             >
-              {JSON.stringify(this.state, null, 2)}
-            </pre>
+              Stack Trace: <TextAreaWithCopyButton text={this.state.error} />
+            </Typography>
+            <Typography
+              variant="body1"
+              color="textPrimary"
+              className={classes.errorContainer}
+            >
+              Error Info: <TextAreaWithCopyButton text={this.state.errorInfo} />
+            </Typography>
           </div>
-          <p style={{width: '80%', textAlign: 'center'}}>
-            Please copy the contents in the above box and create an issue in the
-            github repo:
-            https://github.com/responsively-org/responsively-app/issues
-          </p>
-        </Fragment>
+          <CreateIssue state={this.state} />
+        </div>
       );
     }
 
     return this.props.children;
   }
 }
+
+const styles = theme => ({
+  errorBoundaryContainer: {
+    background: theme.palette.background.default,
+    overflowY: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '100%',
+    '& h1': {
+      textAlign: 'center',
+    },
+  },
+  title: {
+    color: theme.palette.text.primary,
+  },
+  errorsContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  errorContainer: {
+    textAlign: 'center',
+    justifyContent: 'center',
+    margin: '3rem 6rem',
+    width: '30vw',
+  },
+});
+
+export default withStyles(styles)(ErrorBoundary);

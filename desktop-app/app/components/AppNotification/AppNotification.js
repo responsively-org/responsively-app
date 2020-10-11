@@ -4,7 +4,7 @@ import {motion} from 'framer-motion';
 import {shell} from 'electron';
 import settings from 'electron-settings';
 import {APP_NOTIFICATION} from '../../constants/settingKeys';
-import commonStyles from '../common.styles.css';
+import useCommonStyles from '../useCommonStyles';
 import styles from './styles.module.css';
 import appMetadata from '../../services/db/appMetadata';
 import logo from '../../../resources/logo.svg';
@@ -38,6 +38,8 @@ function checkIfInteracted(id) {
 const AppNotification = () => {
   const [notificationInteracted, setNotificationInteracted] = useState(false);
   const [data, setData] = useState(null);
+  const commonClasses = useCommonStyles();
+
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       return;
@@ -90,18 +92,18 @@ const AppNotification = () => {
         delay: notificationInteracted ? 0 : 3,
       }}
     >
-      <div className={commonStyles.flexContainer}>
+      <div className={commonClasses.flexContainer}>
         <img src={logo} width={150} />
       </div>
-      <div className={cx(styles.titleContainer, commonStyles.flexContainer)}>
+      <div className={cx(styles.titleContainer, commonClasses.flexContainer)}>
         <div
-          className={cx(commonStyles.flexContainer)}
+          className={cx(commonClasses.flexContainer)}
           onClick={notificationClicked}
         >
           {title}
         </div>
       </div>
-      <div className={commonStyles.flexContainer}>
+      <div className={commonClasses.flexContainer}>
         <div className={styles.content} onClick={notificationClicked}>
           {text}
         </div>
