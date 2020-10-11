@@ -115,7 +115,10 @@ function DeviceManager(props) {
         color="primary"
         aria-label="upload picture"
         component="span"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          props.onDevToolsClose(null, true);
+          setOpen(true);
+        }}
         className={styles.editButton}
       >
         Customize
