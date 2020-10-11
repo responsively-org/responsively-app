@@ -25,6 +25,8 @@ import {
   NEW_THEME,
   TOGGLE_ALL_DEVICES_DESIGN_MODE,
   TOGGLE_DEVICE_DESIGN_MODE,
+  SET_HEADER_VISIBILITY,
+  SET_LEFT_PANE_VISIBILITY,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -182,6 +184,8 @@ export type BrowserStateType = {
   allDevicesMuted: boolean,
   networkConfiguration: NetworkConfigurationType,
   allDevicesInDesignMode: boolean,
+  isHeaderVisible: boolean,
+  isLeftPaneVisible: boolean,
 };
 
 let _activeDevices = null;
@@ -220,7 +224,7 @@ function _getActiveDevices() {
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  return settings.get(USER_PREFERENCES);
+  return settings.get(USER_PREFERENCES) || {};
 }
 
 function _setUserPreferences(userPreferences) {
@@ -336,6 +340,8 @@ export default function browser(
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),
     allDevicesInDesignMode: false,
+    isHeaderVisible: true,
+    isLeftPaneVisible: true,
   },
   action: Action
 ) {
@@ -543,6 +549,18 @@ export default function browser(
         allDevicesInDesignMode: state.devices.every(x => x.designMode),
         devices: [...state.devices],
       };
+    case SET_HEADER_VISIBILITY:
+      return {
+        ...state,
+        isHeaderVisible: action.isVisible,
+      };
+
+    case SET_LEFT_PANE_VISIBILITY:
+      return {
+        ...state,
+        isLeftPaneVisible: action.isVisible,
+      };
+
     default:
       return state;
   }

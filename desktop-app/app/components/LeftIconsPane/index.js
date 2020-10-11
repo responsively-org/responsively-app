@@ -9,6 +9,7 @@ import NetworkIcon from '../icons/Network';
 import Logo from '../icons/Logo';
 import Gift from '../icons/Gift';
 import Headway from '../Headway';
+import ZenButton from '../ZenButton';
 
 import styles from './styles.css';
 import useCommonStyles from '../useCommonStyles';
@@ -23,14 +24,38 @@ import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
   container: {
+    position: 'relative',
     backgroundColor: theme.palette.background.l2,
     display: 'flex',
     flexFlow: 'column',
+    marginTop: '-50px',
+    paddingTop: '50px',
     width: 50,
     boxShadow: `0 ${theme.palette.mode({
       light: '3px',
       dark: '3px',
     })} 5px rgba(0, 0, 0, 0.35)`,
+    zIndex: 1,
+    transform: 'translateX(0)',
+    transition: 'transform .1s ease-out',
+    '& .zenButton': {
+      position: 'absolute',
+      background: theme.palette.background.l2,
+      top: '50%',
+      right: '0',
+      transformOrigin: 'center',
+      transform: 'translate(100%, -50%) rotate(-90deg) translateY(-30px)',
+      display: 'none',
+    },
+    '&:hover .zenButton': {
+      display: 'flex',
+    },
+    '&.zenMode': {
+      transform: 'translateX(-100%)',
+    },
+    '&.zenMode .zenButton': {
+      display: 'flex',
+    },
   },
   leftPaneIcon: {
     '& svg': {
@@ -55,7 +80,11 @@ const LeftIconsPane = props => {
     props.openDrawerAndSetContent(content);
   };
   return (
-    <div className={mStyles.container}>
+    <div
+      className={`${mStyles.container} ${
+        props.isLeftPaneVisible ? '' : 'zenMode'
+      }`}
+    >
       <Grid
         container
         spacing={1}
@@ -118,6 +147,12 @@ const LeftIconsPane = props => {
         </Grid>
       </Grid>
       <Headway />
+      {!props.drawer.open && (
+        <ZenButton
+          active={!props.isLeftPaneVisible}
+          onClick={() => props.setLeftPaneVisibility(!props.isLeftPaneVisible)}
+        />
+      )}
     </div>
   );
 };

@@ -37,7 +37,7 @@
 </p>
 
 <p align="center">
-  Download Now(free!): <a href="https://responsively.app" target="_blank">
+  Download Now (free!): <a href="https://responsively.app" target="_blank">
     responsively.app
   </a>
 </p>
@@ -63,9 +63,14 @@ Please visit the website to know more about the application - https://responsive
 ## Download
 The application is available for Mac, Windows and Linux platforms. Please download it from here - https://github.com/responsively-org/responsively-app/releases
 
-Alternatively, MacOS users can use brew to install it:
+Alternatively, MacOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) to install it:
 ```bash
 brew cask install responsively
+```
+
+Also, Windows users can use [`chocolatey`](https://chocolatey.org/packages/responsively/) to install it:
+```bash
+choco install responsively
 ```
 
 Follow on Twitter for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
@@ -148,6 +153,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     <td align="center"><a href="http://www.bakirci.nl"><img src="https://avatars2.githubusercontent.com/u/9880089?v=4" width="100px;" alt=""/><br /><sub><b>Mehmet Bakirci</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=MBakirci" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/JLambertazzo"><img src="https://avatars0.githubusercontent.com/u/42924425?v=4" width="100px;" alt=""/><br /><sub><b>Julien Bertazzo Lambert</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=JLambertazzo" title="Code">💻</a></td>
     <td align="center"><a href="http://dbwriteups.wordpress.com"><img src="https://avatars3.githubusercontent.com/u/4656109?v=4" width="100px;" alt=""/><br /><sub><b>Dinesh Balaji</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=sidthesloth92" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/med1001"><img src="https://avatars3.githubusercontent.com/u/26111211?v=4" width="100px;" alt=""/><br /><sub><b>MedBMoussa</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=med1001" title="Code">💻</a></td>
   </tr>
 </table>
 

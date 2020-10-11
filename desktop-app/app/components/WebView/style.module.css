@@ -62,6 +62,15 @@
 
 .errorDesc {
   font-size: 20px;
+  word-break: break-all;
+}
+
+.errorHelpSuggestion {
+  position: absolute;
+  top: 25%;
+  width: 100%;
+  padding: 35px;
+  background: darkcyan;
 }
 
 .iconWrapperS {
