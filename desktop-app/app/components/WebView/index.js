@@ -28,6 +28,7 @@ import {
   CLEAR_NETWORK_CACHE,
   SET_NETWORK_TROTTLING_PROFILE,
   OPEN_CONSOLE_FOR_DEVICE,
+  FIND_TEXT,
   PROXY_AUTH_ERROR,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
@@ -146,6 +147,7 @@ class WebView extends Component {
     this.subscriptions.push(
       pubsub.subscribe(CLEAR_NETWORK_CACHE, this.clearNetworkCache)
     );
+    this.subscriptions.push(pubsub.subscribe(FIND_TEXT, this.findText));
 
     this.subscriptions.push(
       pubsub.subscribe(PROXY_AUTH_ERROR, this.onProxyError)
@@ -255,6 +257,10 @@ class WebView extends Component {
         this._toggleDevTools();
       }
     });
+
+    // this.webviewRef.current.addEventListener('found-in-page', event => {
+
+    // });
   }
 
   componentDidUpdate(prevProps) {
@@ -528,6 +534,21 @@ class WebView extends Component {
         break;
       default:
         break;
+    }
+  };
+
+  findText = ({findOptions}) => {
+    try {
+      if (findOptions.stop) {
+        this.webviewRef.current.stopFindInPage('clearSelection');
+      } else {
+        this.webviewRef.current.findInPage(
+          findOptions.textToFind,
+          findOptions.options
+        );
+      }
+    } catch (err) {
+      // ignore
     }
   };
 

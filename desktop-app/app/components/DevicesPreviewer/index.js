@@ -12,6 +12,7 @@ import {
 } from '../../constants/previewerLayouts';
 import {isDeviceEligible} from '../../utils/filterUtils';
 import {getDeviceIcon} from '../../utils/iconUtils';
+import FindTextContainer from '../../containers/FindTextContainer';
 import useStyes from './useStyles';
 
 export default function DevicesPreviewer(props) {
@@ -111,6 +112,7 @@ export default function DevicesPreviewer(props) {
           </div>
         ))}
       </div>
+      <FindTextContainer />
     </div>
   );
 }
