@@ -2,6 +2,7 @@ import {app} from 'electron';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
+import {SSL_ERROR_CODES} from '../constants/values';
 
 export const getPackageJson = () => {
   let appPath;
@@ -38,7 +39,7 @@ export const getEnvironmentInfo = () => {
 };
 
 export function isSslValidationFailed(errorCode) {
-  const FirstSSLError = -200;
-  const LastSSLError = -299;
-  return errorCode <= FirstSSLError && errorCode >= LastSSLError;
+  return (
+    errorCode <= SSL_ERROR_CODES.FIRST && errorCode >= SSL_ERROR_CODES.LAST
+  );
 }
