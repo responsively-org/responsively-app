@@ -8,6 +8,7 @@ import UpIcon from '@material-ui/icons/KeyboardArrowUp';
 import CloseIcon from '@material-ui/icons/Close';
 import {Tooltip} from '@material-ui/core';
 import {ipcRenderer} from 'electron';
+import {debounce} from 'lodash';
 
 const FindText = props => {
   useEffect(() => {
@@ -28,7 +29,8 @@ const FindText = props => {
     } else if (findTextEnabled === false) {
       document.removeEventListener('keydown', _handleKeyDown);
     }
-  }, [findTextEnabled]);
+    return () => document.removeEventListener('keydown', _handleKeyDown);
+  }, [findTextEnabled, inputRef.current]);
 
   const _enable = () => {
     setFindTextEnabled(true);
@@ -36,21 +38,24 @@ const FindText = props => {
 
   const _handleChange = e => {
     setTextToFind(e.target.value);
-    if (e.target.value) {
-      _find(e.target.value);
+  };
+
+  useEffect(() => {
+    if (textToFind) {
+      _find(textToFind);
     } else {
       _stopFind();
     }
-  };
+  }, [textToFind]);
 
-  const _find = text => {
+  const _find = debounce(text => {
     const findOptions = {
       textToFind: text,
     };
     props.findText(findOptions);
-  };
+  }, 25);
 
-  const _findNext = () => {
+  const _findNext = debounce(() => {
     const findOptions = {
       textToFind,
       options: {
@@ -58,9 +63,9 @@ const FindText = props => {
       },
     };
     props.findText(findOptions);
-  };
+  }, 25);
 
-  const _findPrevious = () => {
+  const _findPrevious = debounce(() => {
     const findOptions = {
       textToFind,
       options: {
@@ -69,7 +74,7 @@ const FindText = props => {
       },
     };
     props.findText(findOptions);
-  };
+  }, 25);
 
   const _stopFind = () => {
     const findOptions = {
@@ -81,7 +86,6 @@ const FindText = props => {
   const _closeFind = () => {
     _stopFind();
     setFindTextEnabled(false);
-    setTextToFind(null);
   };
 
   const _handleInputKeyDown = e => {

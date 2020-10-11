@@ -519,13 +519,17 @@ class WebView extends Component {
   };
 
   findText = ({findOptions}) => {
-    if (findOptions.stop) {
-      this.webviewRef.current.stopFindInPage('keepSelection');
-    } else {
-      this.webviewRef.current.findInPage(
-        findOptions.textToFind,
-        findOptions.options
-      );
+    try {
+      if (findOptions.stop) {
+        this.webviewRef.current.stopFindInPage('clearSelection');
+      } else {
+        this.webviewRef.current.findInPage(
+          findOptions.textToFind,
+          findOptions.options
+        );
+      }
+    } catch (err) {
+      // ignore
     }
   };
 
