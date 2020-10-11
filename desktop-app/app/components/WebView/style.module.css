@@ -62,6 +62,7 @@
 
 .errorDesc {
   font-size: 20px;
+  word-break: break-all;
 }
 
 .errorHelpSuggestion {
