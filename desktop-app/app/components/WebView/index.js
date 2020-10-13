@@ -402,13 +402,24 @@ class WebView extends Component {
     this.webviewRef.current.send('scrollUpMessage');
   };
 
+  processTiltEvent = async ({deviceId}) => {
+    if (deviceId && this.props.device.id !== deviceId) {
+      return;
+    }
+    this._flipOrientation();
+  };
+
   processScreenshotEvent = async ({
     now,
     fullScreen = true,
+    deviceId,
   }: {
     now?: Date,
     fullScreen?: boolean,
   }) => {
+    if (deviceId && this.props.device.id !== deviceId) {
+      return;
+    }
     this.setState({screenshotInProgress: true});
     try {
       await this.closeBrowserSyncSocket(this.webviewRef.current);
@@ -432,8 +443,8 @@ class WebView extends Component {
     this.setState({screenshotInProgress: false});
   };
 
-  processFlipOrientationEvent = () => {
-    if (!this.isMobile) {
+  processFlipOrientationEvent = ({deviceId}) => {
+    if (deviceId && this.props.device.id !== deviceId) {
       return;
     }
     this._flipOrientation();
@@ -949,27 +960,6 @@ class WebView extends Component {
                 <ScreenshotIcon height={18} />
               </div>
             </Tooltip>
-            <Tooltip title="Full Page Screenshot">
-              <div
-                className={cx(styles.webViewToolbarIcons, classes.icon)}
-                onClick={this.processScreenshotEvent}
-              >
-                <FullScreenshotIcon height={18} />
-              </div>
-            </Tooltip>
-            {this.isMobile ? (
-              <Tooltip title="Tilt Device">
-                <div
-                  className={cx(styles.webViewToolbarIcons, classes.icon, {
-                    [classes.iconSelected]: this.state.isTilted,
-                  })}
-                  onClick={this._flipOrientation}
-                >
-                  <DeviceRotateIcon height={17} />
-                </div>
-              </Tooltip>
-            ) : null}
-
             <Tooltip title="Disable event mirroring">
               <div
                 className={cx(styles.webViewToolbarIcons, classes.icon, {
