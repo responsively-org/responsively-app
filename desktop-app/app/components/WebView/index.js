@@ -1032,7 +1032,7 @@ class WebView extends Component {
             )}
 
             {isSslValidationFailed(errorCode) && (
-              <p className={cx(styles.errorHelpSuggestion)}>
+              <p className={cx(classes.errorHelpSuggestion)}>
                 If you wish to proceed, you can disable the SSL validation in
                 the user preferences.
               </p>
@@ -1086,6 +1086,13 @@ const webViewStyles = theme => ({
       backgroundColor: theme.palette.text.dim,
       bottom: 0,
     },
+  },
+  errorHelpSuggestion: {
+    position: 'absolute',
+    top: '25%',
+    width: '100%',
+    padding: 35,
+    background: theme.palette.primary.main,
   },
 });
 export default withStyles(webViewStyles)(withTheme(WebView));
