@@ -7,8 +7,6 @@ import {withStyles, withTheme} from '@material-ui/core/styles';
 import debounce from 'lodash/debounce';
 import pubsub from 'pubsub.js';
 import BugIcon from '../icons/Bug';
-import MutedIcon from '../icons/Muted';
-import UnmutedIcon from '../icons/Unmuted';
 import FullScreenshotIcon from '../icons/FullScreenshot';
 import ScreenshotIcon from '../icons/Screenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
@@ -29,8 +27,10 @@ import {
   SET_NETWORK_TROTTLING_PROFILE,
   OPEN_CONSOLE_FOR_DEVICE,
   PROXY_AUTH_ERROR,
+  TOGGLE_DEVICE_DESIGN_MODE_STATE,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
+import {DESIGN_MODE_JS_VALUES} from '../../constants/values';
 
 import styles from './style.module.css';
 import {styles as commonStyles} from '../useCommonStyles';
@@ -44,6 +44,7 @@ import Maximize from '../icons/Maximize';
 import Minimize from '../icons/Minimize';
 import Focus from '../icons/Focus';
 import Unfocus from '../icons/Unfocus';
+import DesignModeIcon from '../icons/DesignMode';
 import {captureOnSentry} from '../../utils/logUtils';
 import {getBrowserSyncEmbedScriptURL} from '../../services/browserSync';
 import Spinner from '../Spinner';
@@ -136,6 +137,12 @@ class WebView extends Component {
     this.subscriptions.push(
       pubsub.subscribe(TOGGLE_DEVICE_MUTED_STATE, this.processToggleMuteEvent)
     );
+    this.subscriptions.push(
+      pubsub.subscribe(
+        TOGGLE_DEVICE_DESIGN_MODE_STATE,
+        this.changeDesignModeState
+      )
+    );
 
     this.subscriptions.push(
       pubsub.subscribe(
@@ -195,6 +202,9 @@ class WebView extends Component {
       this.props.deviceLoadingChange({
         id: this.props.device.id,
         loading: false,
+      });
+      this.changeDesignModeState({
+        designMode: !!this.props.device.designMode,
       });
     });
     this.webviewRef.current.addEventListener(
@@ -265,6 +275,12 @@ class WebView extends Component {
       } else {
         this._unmuteWebView();
       }
+    }
+
+    if (prevProps.device.designMode !== this.props.device.designMode) {
+      this.changeDesignModeState({
+        designMode: !!this.props.device.designMode,
+      });
     }
   }
 
@@ -425,6 +441,16 @@ class WebView extends Component {
 
   processToggleMuteEvent = ({muted}) => {
     this.getWebContents().setAudioMuted(muted);
+  };
+
+  changeDesignModeState = ({designMode}) => {
+    this.webviewRef.current
+      .executeJavaScript(
+        `document.designMode = "${
+          designMode ? DESIGN_MODE_JS_VALUES.ON : DESIGN_MODE_JS_VALUES.OFF
+        }";`
+      )
+      .catch(captureOnSentry);
   };
 
   processOpenDevToolsInspectorEvent = message => {
@@ -648,6 +674,11 @@ class WebView extends Component {
         !this.state.isUnplugged
       );
     });
+  };
+
+  _toggleDesignMode = () => {
+    const {id: deviceId} = this.props.device;
+    this.props.onToggleDeviceDesignMode(deviceId);
   };
 
   _focusDevice = () => {
@@ -947,6 +978,20 @@ class WebView extends Component {
                 onClick={this._unPlug}
               >
                 <UnplugIcon height={30} />
+              </div>
+            </Tooltip>
+            <Tooltip
+              title={`${
+                this.props.device.designMode ? 'Disable' : 'Enable'
+              } Design Mode`}
+            >
+              <div
+                className={cx(styles.webViewToolbarIcons, classes.icon, {
+                  [classes.iconSelected]: this.props.device.designMode,
+                })}
+                onClick={this._toggleDesignMode}
+              >
+                <DesignModeIcon height={20} />
               </div>
             </Tooltip>
           </div>

@@ -23,6 +23,8 @@ import {
   TOGGLE_ALL_DEVICES_MUTED,
   TOGGLE_DEVICE_MUTED,
   NEW_THEME,
+  TOGGLE_ALL_DEVICES_DESIGN_MODE,
+  TOGGLE_DEVICE_DESIGN_MODE,
   SET_HEADER_VISIBILITY,
   SET_LEFT_PANE_VISIBILITY,
 } from '../actions/browser';
@@ -181,6 +183,7 @@ export type BrowserStateType = {
   windowSize: WindowSizeType,
   allDevicesMuted: boolean,
   networkConfiguration: NetworkConfigurationType,
+  allDevicesInDesignMode: boolean,
   isHeaderVisible: boolean,
   isLeftPaneVisible: boolean,
 };
@@ -215,6 +218,7 @@ function _getActiveDevices() {
     activeDevices.forEach(device => {
       device.loading = false;
       device.isMuted = false;
+      device.designMode = false;
     });
   }
   return activeDevices;
@@ -336,6 +340,7 @@ export default function browser(
     windowSize: getWindowSize(),
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),
+    allDevicesInDesignMode: false,
     isHeaderVisible: true,
     isLeftPaneVisible: true,
   },
@@ -522,6 +527,30 @@ export default function browser(
           ...state.networkConfiguration,
           proxy: action.profile,
         },
+      };
+    case TOGGLE_ALL_DEVICES_DESIGN_MODE:
+      const nextDevices = state.devices;
+      const nextDesginModeForAll = !state.allDevicesInDesignMode;
+      nextDevices.forEach(d => (d.designMode = nextDesginModeForAll));
+      return {
+        ...state,
+        allDevicesInDesignMode: nextDesginModeForAll,
+        devices: nextDevices,
+      };
+    case TOGGLE_DEVICE_DESIGN_MODE:
+      const deviceIndex = state.devices.findIndex(
+        x => x.id === action.deviceId
+      );
+      if (deviceIndex === -1) return {...state};
+      const nextDesignModeForDevice = !state.devices[deviceIndex].designMode;
+      state.devices[deviceIndex] = {
+        ...state.devices[deviceIndex],
+        designMode: nextDesignModeForDevice,
+      };
+      return {
+        ...state,
+        allDevicesInDesignMode: state.devices.every(x => x.designMode),
+        devices: [...state.devices],
       };
     case SET_HEADER_VISIBILITY:
       return {
