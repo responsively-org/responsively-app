@@ -115,3 +115,7 @@ Add device form styles */
 ::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0);
 }
+
+.ace_mobile-menu {
+  display: none;
+}
