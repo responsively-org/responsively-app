@@ -12,23 +12,35 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import {remote, ipcRenderer} from 'electron';
 import cx from 'classnames';
 import {
-  makeStyles,
   Popper,
   Fade,
   Paper,
   Typography,
   ClickAwayListener,
 } from '@material-ui/core';
-import {useTheme} from '@material-ui/core/styles';
+import {useTheme, makeStyles} from '@material-ui/core/styles';
 import styles from './styles.css';
 import useCommonStyles from '../useCommonStyles';
 import helpScreenshot from './help-screenshot.png';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   adornedEnd: {
     paddingRight: 0,
   },
-});
+  extensionsHelp: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: 500,
+    padding: 12,
+    color: 'white',
+    borderRadius: 4,
+    background: theme.palette.mode({
+      light: theme.palette.secondary.main,
+      dark: '#313131',
+    }),
+    boxShadow: '3px 3px 6px 1px black',
+  },
+}));
 
 export default function ExtensionsManager({triggerNavigationReload}) {
   const {BrowserWindow} = remote;
@@ -114,22 +126,25 @@ export default function ExtensionsManager({triggerNavigationReload}) {
 
   return (
     <>
-      <Popper open={helpOpen} anchorEl={anchorEl} placement="bottom" transition>
+      <Popper
+        open={helpOpen}
+        anchorEl={anchorEl}
+        placement="bottom-start"
+        transition
+      >
         {({TransitionProps}) => (
           <ClickAwayListener onClickAway={toggleHelp}>
             <Fade {...TransitionProps} timeout={350}>
-              <Paper>
-                <div className={styles.extensionsHelp}>
-                  <p className={cx(styles.extensionsHelpText)}>
-                    Find the extension on Chrome Web Store and copy the
-                    extension ID from the address bar(as shown below).
-                  </p>
-                  <img
-                    className={styles.extensionsHelpImg}
-                    src={helpScreenshot}
-                  />
-                </div>
-              </Paper>
+              <div className={classes.extensionsHelp}>
+                <p className={cx(styles.extensionsHelpText)}>
+                  Find the extension on Chrome Web Store and copy the extension
+                  ID from the address bar(as shown below).
+                </p>
+                <img
+                  className={styles.extensionsHelpImg}
+                  src={helpScreenshot}
+                />
+              </div>
             </Fade>
           </ClickAwayListener>
         )}
