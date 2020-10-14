@@ -49,19 +49,9 @@
   margin-top: 12px !important;
 }
 
-.extensionsHelp {
-  display: flex;
-  flex-direction: column;
-  width: 500px;
-  padding: 12px;
-  color: white;
-  border-radius: 4px;
-  background: #252526;
-  box-shadow: 3px 3px 6px 1px black;
-}
-
 .extensionsHelpText {
   font-size: 12px;
+  margin-top: 0;
 }
 
 .extensionsHelpImg {
