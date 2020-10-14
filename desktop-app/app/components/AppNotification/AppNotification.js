@@ -41,7 +41,7 @@ const AppNotification = () => {
   const commonClasses = useCommonStyles();
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development1') {
       return;
     }
     (async () => {
