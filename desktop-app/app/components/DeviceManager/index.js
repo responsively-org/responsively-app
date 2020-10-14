@@ -9,6 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
+import Alert from '@material-ui/lab/Alert';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
@@ -16,6 +17,7 @@ import LightBulbIcon from '../icons/LightBulb';
 import DeviceList from './DeviceList';
 import AddDeviceContainer from '../../containers/AddDeviceContainer';
 import ErrorBoundary from '../ErrorBoundary';
+import {recommendedMaxNumberOfDevices} from '../../utils/deviceManagerUtils';
 
 import styles from './styles.css';
 
@@ -29,12 +31,16 @@ function DeviceManager(props) {
     inactiveFiltered: [],
   });
 
+  const [maxDevicesWarning, setMaxDevicesWarning] = useState(false);
+
   useEffect(() => {
     const activeDevices = props.browser.devices;
     const activeDevicesById = activeDevices.reduce((acc, val) => {
       acc[val.id] = val;
       return acc;
     }, {});
+
+    setMaxDevicesWarning(activeDevices.length >= recommendedMaxNumberOfDevices);
 
     const currentInactiveDevicesById = devices.inactive.reduce((acc, val) => {
       acc[val.id] = val;
@@ -104,6 +110,7 @@ function DeviceManager(props) {
   const updateDevices = devices => {
     const active = [...devices.active];
     const inactive = [...devices.inactive];
+    setMaxDevicesWarning(active.length >= recommendedMaxNumberOfDevices);
     setDevices({active, inactive});
     props.setActiveDevices(active);
   };
@@ -133,6 +140,12 @@ function DeviceManager(props) {
             </Toolbar>
           </AppBar>
           <div className={styles.container}>
+            {maxDevicesWarning && (
+              <Alert severity="warning" className={classes.maxDevicesWarning}>
+                Adding more than {recommendedMaxNumberOfDevices} devices may
+                slow down the system.
+              </Alert>
+            )}
             <Typography variant="body1" className={classes.toolTip}>
               <span>✨</span>Drag and drop the devices across to re-order them.
             </Typography>
@@ -189,6 +202,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: '14px',
     color: theme.palette.text.primary,
     width: 'fit-content',
+  },
+  maxDevicesWarning: {
+    position: 'absolute',
+    top: '80px',
   },
 }));
 
