@@ -1,38 +1,80 @@
-// @flow
-import {
-  app,
-  dialog,
-  Menu,
-  shell,
-  BrowserWindow,
-  clipboard,
-  screen,
-} from 'electron';
+import {DARK_THEME} from '../constants/theme';
+import {Titlebar, Color} from 'custom-electron-titlebar';
 import fs from 'fs';
 import url from 'url';
-import {getEnvironmentInfo, getPackageJson} from './utils/generalUtils';
 import {
-  getAllShortcuts,
-  registerShortcut,
-} from './shortcut-manager/main-shortcut-manager';
-import {appUpdater, AppUpdaterStatus} from './app-updater';
-import {statusBarSettings} from './settings/statusBarSettings';
-import {STATUS_BAR_VISIBILITY_CHANGE} from './constants/pubsubEvents';
-import {userPreferenceSettings} from './settings/userPreferenceSettings';
+  getEnvironmentInfo,
+  getPackageJson,
+  getAppPath,
+} from '../utils/generalUtils';
+import {ShortcutManager} from './shortcut-manager';
+import {statusBarSettings} from '../settings/statusBarSettings';
+import {STATUS_BAR_VISIBILITY_CHANGE} from '../constants/pubsubEvents';
+import {APP_UPDATER_STATUS} from '../constants/app-updater-status';
+import {userPreferenceSettings} from '../settings/userPreferenceSettings';
+import {remote, ipcRenderer, nativeImage} from 'electron';
+import {set} from 'core-js/fn/dict';
+import logo32 from '../../resources/icons/32x32.png';
 
+const {app, dialog, Menu, shell, BrowserWindow, clipboard, screen} = remote;
 const path = require('path');
 
-export default class MenuBuilder {
+class AppTitleBarManager {
+  titleBar: Titlebar = null;
   mainWindow: BrowserWindow;
+  currentTheme: string;
 
-  constructor(mainWindow: BrowserWindow) {
-    this.mainWindow = mainWindow;
+  constructor() {
+    this.mainWindow = BrowserWindow.getAllWindows()[0];
+    ipcRenderer.on('updater-status-changed', (event, args) => {
+      if (this.titleBar != null)
+        this.titleBar.updateMenu(this._buildMenu(true, args.nextStatus));
+    });
   }
 
-  aboutClick() {
-    const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
+  _getColorFromTheme(theme) {
+    return Color.fromHex(theme === DARK_THEME ? '#313131' : '#ECECEC');
+  }
+
+  initTitleBar(theme) {
+    if (this.titleBar == null) {
+      this.currentTheme = theme;
+      this.titleBar = new Titlebar({
+        backgroundColor: this._getColorFromTheme(theme),
+        icon: logo32,
+        menu: this._buildMenu(),
+      });
+    }
+  }
+
+  refreshMenu() {
+    if (this.titleBar == null) this.initTitleBar(theme);
+    else this.titleBar.updateMenu(this._buildMenu());
+  }
+
+  updateBackground(theme) {
+    this.currentTheme = theme;
+    if (this.titleBar == null) this.initTitleBar(theme);
+    else this.titleBar.updateBackground(this._getColorFromTheme(theme));
+  }
+
+  dispose() {
+    if (this.titleBar != null) {
+      this.titleBar.dispose();
+      this.titleBar = null;
+    }
+  }
+
+  _toggleStatusBarClick() {
+    this.mainWindow.webContents.send(STATUS_BAR_VISIBILITY_CHANGE);
+    setTimeout(() => {
+      this.refreshMenu();
+    }, 100);
+  }
+
+  _aboutClick() {
     const title = 'Responsively';
-    const {description} = getPackageJson();
+    const {description} = getPackageJson(false);
     const {
       appVersion,
       electronVersion,
@@ -40,7 +82,7 @@ export default class MenuBuilder {
       nodeVersion,
       v8Version,
       osInfo,
-    } = getEnvironmentInfo();
+    } = getEnvironmentInfo(false);
 
     const usefulInfo = `Version: ${appVersion}\nElectron: ${electronVersion}\nChrome: ${chromeVersion}\nNode.js: ${nodeVersion}\nV8: ${v8Version}\nOS: ${osInfo}`;
     const detail = description ? `${description}\n\n${usefulInfo}` : usefulInfo;
@@ -53,14 +95,14 @@ export default class MenuBuilder {
       defaultId = 0;
     }
     dialog
-      .showMessageBox(BrowserWindow.getAllWindows()[0], {
+      .showMessageBox(this.mainWindow, {
         type: 'none',
         buttons,
         title,
         message: title,
         detail,
         noLink: true,
-        icon: iconPath,
+        icon: path.resolve(getAppPath(false), './resources/icons/64x64.png'),
         cancelId,
         defaultId,
       })
@@ -119,12 +161,19 @@ export default class MenuBuilder {
           const {getCursorScreenPoint, getDisplayNearestPoint} = screen;
 
           let win = new BrowserWindow({
-            parent: BrowserWindow.getFocusedWindow(),
+            parent: this.mainWindow,
             frame: false,
+            show: false,
             webPreferences: {
               devTools: false,
               nodeIntegration: true,
-              additionalArguments: [JSON.stringify(getAllShortcuts())],
+              additionalArguments: [
+                JSON.stringify(ShortcutManager.getAllShortcuts()),
+                path.resolve(
+                  getAppPath(false),
+                  `./app/shortcuts-${this.currentTheme}.css`
+                ),
+              ],
             },
           });
 
@@ -136,7 +185,7 @@ export default class MenuBuilder {
           win.loadURL(
             url.format({
               protocol: 'file',
-              pathname: path.join(__dirname, 'shortcuts.html'),
+              pathname: path.resolve(getAppPath(false), './app/shortcuts.html'),
             })
           );
 
@@ -160,19 +209,7 @@ export default class MenuBuilder {
         label: 'Check for Updates...',
         id: 'CHECK_FOR_UPDATES',
         click() {
-          appUpdater.checkForUpdatesAndNotify().then(r => {
-            if (
-              r == null ||
-              r.updateInfo == null ||
-              r.updateInfo.version === getPackageJson().version
-            ) {
-              dialog.showMessageBox(BrowserWindow.getAllWindows()[0], {
-                type: 'info',
-                title: 'Responsively',
-                message: 'The app is up to date! 🎉',
-              });
-            }
-          });
+          ipcRenderer.send('check-for-updates');
         },
       },
       {
@@ -181,7 +218,7 @@ export default class MenuBuilder {
       {
         label: 'About',
         accelerator: 'F1',
-        click: this.aboutClick,
+        click: this._aboutClick,
       },
     ],
   };
@@ -235,49 +272,24 @@ export default class MenuBuilder {
     ],
   };
 
-  getCheckForUpdatesMenuState() {
-    const updaterStatus = appUpdater.getCurrentStatus();
-    let label = 'Check for Updates...';
-    let enabled = true;
+  _getCheckForUpdatesMenuState(statusId) {
+    let label = APP_UPDATER_STATUS.Idle.title;
+    let enabled = APP_UPDATER_STATUS.Idle.enabled;
 
-    switch (updaterStatus) {
-      case AppUpdaterStatus.Idle:
-        label = 'Check for Updates...';
-        enabled = true;
-        break;
-      case AppUpdaterStatus.Checking:
-        label = 'Checking for Updates...';
-        enabled = false;
-        break;
-      case AppUpdaterStatus.NoUpdate:
-        label = 'No Updates';
-        enabled = false;
-        break;
-      case AppUpdaterStatus.Downloading:
-        label = 'Downloading Update...';
-        enabled = false;
-        break;
-      case AppUpdaterStatus.NewVersion:
-        label = 'New version available';
-        enabled = false;
-        break;
-      case AppUpdaterStatus.Downloaded:
-        label = 'Update Downloaded';
-        enabled = false;
-        break;
-      default:
-        break;
+    if (statusId in APP_UPDATER_STATUS) {
+      label = APP_UPDATER_STATUS[statusId].title;
+      enabled = APP_UPDATER_STATUS[statusId].enabled;
     }
 
     return {label, enabled};
   }
 
-  buildMenu(isUpdate: boolean = false) {
-    if (isUpdate) {
+  _buildMenu(isUpdate: boolean = false, nextStatus: string = null) {
+    if (isUpdate && nextStatus) {
       const chkUpdtMenu = this.subMenuHelp.submenu.find(
         x => x.id === 'CHECK_FOR_UPDATES'
       );
-      const {label, enabled} = this.getCheckForUpdatesMenuState();
+      const {label, enabled} = this._getCheckForUpdatesMenuState(nextStatus);
       chkUpdtMenu.label = label;
       chkUpdtMenu.enabled = enabled;
     }
@@ -286,24 +298,23 @@ export default class MenuBuilder {
       process.env.NODE_ENV === 'development' ||
       process.env.DEBUG_PROD === 'true'
     ) {
-      this.setupDevelopmentEnvironment();
+      this._setupDevelopmentEnvironment();
     }
 
     const template =
       process.platform === 'darwin'
-        ? this.buildDarwinTemplate()
-        : this.buildDefaultTemplate();
+        ? this._buildDarwinTemplate()
+        : this._buildDefaultTemplate();
 
     if (!isUpdate) {
-      this.registerMenuShortcuts(template);
+      this._registerMenuShortcuts(template);
     }
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
-
     return menu;
   }
 
-  setupDevelopmentEnvironment() {
+  _setupDevelopmentEnvironment() {
     this.mainWindow.openDevTools();
     this.mainWindow.webContents.on('context-menu', (e, props) => {
       const {x, y} = props;
@@ -319,14 +330,14 @@ export default class MenuBuilder {
     });
   }
 
-  buildDarwinTemplate() {
+  _buildDarwinTemplate() {
     const subMenuAbout = {
       label: 'Responsively',
       submenu: [
         {
           label: 'About ResponsivelyApp',
           selector: 'orderFrontStandardAboutPanel:',
-          click: this.aboutClick,
+          click: this._aboutClick,
         },
         {type: 'separator'},
         // {label: 'Services', submenu: []},
@@ -414,9 +425,7 @@ export default class MenuBuilder {
           label: 'Show Status Bar',
           type: 'checkbox',
           checked: statusBarSettings.getVisibility(),
-          click: () => {
-            this.mainWindow.webContents.send(STATUS_BAR_VISIBILITY_CHANGE);
-          },
+          click: () => this._toggleStatusBarClick(),
         },
       ],
     };
@@ -455,9 +464,7 @@ export default class MenuBuilder {
           label: 'Show Status Bar',
           type: 'checkbox',
           checked: statusBarSettings.getVisibility(),
-          click: () => {
-            this.mainWindow.webContents.send(STATUS_BAR_VISIBILITY_CHANGE);
-          },
+          click: () => this._toggleStatusBarClick(),
         },
       ],
     };
@@ -492,7 +499,7 @@ export default class MenuBuilder {
     ];
   }
 
-  buildDefaultTemplate() {
+  _buildDefaultTemplate() {
     const templateDefault = [
       this.subMenuFile,
       {
@@ -536,11 +543,7 @@ export default class MenuBuilder {
                   label: 'Show Status Bar',
                   type: 'checkbox',
                   checked: statusBarSettings.getVisibility(),
-                  click: () => {
-                    this.mainWindow.webContents.send(
-                      STATUS_BAR_VISIBILITY_CHANGE
-                    );
-                  },
+                  click: () => this._toggleStatusBarClick(),
                 },
               ]
             : [
@@ -580,11 +583,7 @@ export default class MenuBuilder {
                   label: 'Show Status Bar',
                   type: 'checkbox',
                   checked: statusBarSettings.getVisibility(),
-                  click: () => {
-                    this.mainWindow.webContents.send(
-                      STATUS_BAR_VISIBILITY_CHANGE
-                    );
-                  },
+                  click: () => this._toggleStatusBarClick(),
                 },
               ],
       },
@@ -594,7 +593,7 @@ export default class MenuBuilder {
     return templateDefault;
   }
 
-  registerMenuShortcuts(
+  _registerMenuShortcuts(
     template: Array<MenuItemConstructorOptions | MenuItem>,
     id: string = 'Menu'
   ) {
@@ -608,7 +607,7 @@ export default class MenuBuilder {
       const levelId = `${id}_${label}`;
 
       if (item.accelerator != null)
-        registerShortcut({
+        ShortcutManager.registerShortcut({
           id: levelId,
           title: label,
           accelerators: [item.accelerator],
@@ -617,8 +616,11 @@ export default class MenuBuilder {
       if (item.submenu == null) continue;
 
       if (Array.isArray(item.submenu))
-        this.registerMenuShortcuts(item.submenu, levelId);
-      else this.registerMenuShortcuts([item.submenu], levelId);
+        this._registerMenuShortcuts(item.submenu, levelId);
+      else this._registerMenuShortcuts([item.submenu], levelId);
     }
   }
 }
+
+const instance = new AppTitleBarManager();
+export {instance as AppTitleBarManager};

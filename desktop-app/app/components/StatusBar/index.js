@@ -8,6 +8,7 @@ import Announcement from './Announcement';
 import Github from '../icons/Github';
 import Twitter from '../icons/Twitter';
 import RoadMap from '../icons/RoadMap';
+import {APP_UPDATER_STATUS} from '../../constants/app-updater-status';
 
 const Spacer = ({width = 10}) => {
   const classes = useStyles();
@@ -27,27 +28,11 @@ const AppUpdaterStatusInfoSection = () => {
     };
   }, []);
 
-  let label = '';
-  switch (status) {
-    case 'checking':
-      label = 'Update Info: Checking for Updates...';
-      break;
-    case 'noUpdate':
-      label = 'Update Info: The App is up to date!';
-      break;
-    case 'downloading':
-      label = 'Update Info: Downloading Update...';
-      break;
-    case 'downloaded':
-      label = 'Update Info: Update Downloaded';
-      break;
-    case 'newVersion':
-      label = 'Update Info: New version available!';
-      break;
-    default:
-      label = null;
-      break;
+  let label = null;
+  if (status in APP_UPDATER_STATUS && status !== APP_UPDATER_STATUS.Idle.id) {
+    label = `Update Info: ${APP_UPDATER_STATUS[status].title}`;
   }
+
   if (label == null) return null;
   return (
     <div className={classes.section}>

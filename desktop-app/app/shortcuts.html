@@ -1,10 +1,7 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="app.global.css" />
     <style>
       body {
-        background-color: #1e1e1e;
-        color: white;
         display: flex;
         justify-content: space-between;
         flex-direction: column;
@@ -40,7 +37,6 @@
         justify-content: center;
         align-items: center;
         font-size: large;
-        background-color: black;
         border-radius: 5px;
         font-family: 'Consolas', 'Courier New', monospace;
         white-space: pre;
@@ -57,8 +53,6 @@
         padding: 10 20 10 20px;
         border: 0;
         border-radius: 5px;
-        background-color: black;
-        color: white;
         cursor: pointer;
       }
     </style>
@@ -70,6 +64,20 @@
       <button id="close-btn">Close</button>
     </div>
     <script>
+      function addStyleTag(cssFile) {
+        const head = document.head || document.getElementsByTagName('head')[0];
+        const style = document.createElement('link');
+        head.appendChild(style);
+
+        style.type = 'text/css';
+        style.rel = 'stylesheet';
+        style.href = cssFile;
+      }
+
+      const themeCssFile = window.process.argv.pop();
+      addStyleTag(themeCssFile);
+      const shortcutsJson = window.process.argv.pop();
+
       function firstToUpperCase(s) {
         if (!s) {
           return '';
@@ -107,16 +115,13 @@
 
       let registeredShortcuts = [];
       try {
-        registeredShortcuts = JSON.parse(window.process.argv.slice(-1)).reduce(
-          (arr, def) => {
-            arr.push([def.title, mapAccelerator(def.accelerators[0])]);
-            def.accelerators
-              .slice(1)
-              .forEach(acc => arr.push(['', mapAccelerator(acc)]));
-            return arr;
-          },
-          []
-        );
+        registeredShortcuts = JSON.parse(shortcutsJson).reduce((arr, def) => {
+          arr.push([def.title, mapAccelerator(def.accelerators[0])]);
+          def.accelerators
+            .slice(1)
+            .forEach(acc => arr.push(['', mapAccelerator(acc)]));
+          return arr;
+        }, []);
       } catch (err) {
         console.log('Error while processing shortcuts', err);
       }

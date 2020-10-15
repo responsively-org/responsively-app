@@ -10,7 +10,7 @@ require('dotenv').config();
  *
  * @flow
  */
-import electron, {
+import {
   app,
   BrowserWindow,
   BrowserView,
@@ -21,6 +21,7 @@ import electron, {
   shell,
   dialog,
   session,
+  screen,
 } from 'electron';
 import settings from 'electron-settings';
 import log from 'electron-log';
@@ -30,12 +31,10 @@ import installExtension, {
   REDUX_DEVTOOLS,
 } from 'electron-devtools-installer';
 import fs from 'fs';
-import MenuBuilder from './menu';
 import {USER_PREFERENCES, NETWORK_CONFIGURATION} from './constants/settingKeys';
 import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
-import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
-import {appUpdater} from './app-updater';
+import {AppUpdateManager} from './managers/app-update-manager';
 import trimStart from 'lodash/trimStart';
 import isURL from 'validator/lib/isURL';
 import {
@@ -300,7 +299,7 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
+  const {width, height} = screen.getPrimaryDisplay().workAreaSize;
 
   const iconPath = path.resolve(__dirname, '../resources/icons/64x64.png');
   mainWindow = new BrowserWindow({
@@ -314,6 +313,7 @@ const createWindow = async () => {
       enableRemoteModule: true,
     },
     titleBarStyle: 'hidden',
+    frame: false,
     icon: iconPath,
   });
 
@@ -348,8 +348,6 @@ const createWindow = async () => {
         .catch(captureOnSentry);
     }
   });
-
-  initMainShortcutManager();
 
   const onResize = () => {
     const [width, height] = mainWindow.getContentSize();
@@ -531,7 +529,7 @@ const createWindow = async () => {
     }
 
     if (isLocalExtension) {
-      return electron.BrowserWindow.addDevToolsExtension(extensionId);
+      return BrowserWindow.addDevToolsExtension(extensionId);
     }
 
     const id = extensionId
@@ -647,15 +645,30 @@ const createWindow = async () => {
     }
   );
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  ipcMain.on('check-for-updates', () => {
+    AppUpdateManager.checkForUpdatesAndNotify()
+      .then(r => {
+        if (
+          r == null ||
+          r.updateInfo == null ||
+          r.updateInfo.version === getPackageJson().version
+        ) {
+          dialog.showMessageBox(BrowserWindow.getAllWindows()[0], {
+            type: 'info',
+            title: 'Responsively',
+            message: 'The app is up to date! 🎉',
+          });
+        }
+      })
+      .catch(err => console.log('Error while updating app', err));
+  });
 
-  appUpdater.on('status-changed', nextStatus => {
-    menuBuilder.buildMenu(true);
+  AppUpdateManager.on('status-changed', nextStatus => {
     mainWindow.webContents.send('updater-status-changed', {nextStatus});
   });
+
   // Remove this if your app does not use auto updates
-  appUpdater
-    .checkForUpdatesAndNotify()
-    .catch(err => console.log('Error while updating app', err));
+  AppUpdateManager.checkForUpdatesAndNotify().catch(err =>
+    console.log('Error while updating app', err)
+  );
 };

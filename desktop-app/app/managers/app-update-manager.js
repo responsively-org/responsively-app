@@ -1,22 +1,12 @@
 import {autoUpdater} from 'electron-updater';
 import log from 'electron-log';
-import {getPackageJson} from './utils/generalUtils';
+import {getPackageJson} from '../utils/generalUtils';
 import {shell, Notification} from 'electron';
+import {APP_UPDATER_STATUS} from '../constants/app-updater-status';
 
 const {EventEmitter} = require('events');
 
-const AppUpdaterStatus = {
-  Idle: 'idle',
-  Checking: 'checking',
-  NoUpdate: 'noUpdate',
-  NewVersion: 'newVersion',
-  Downloading: 'downloading',
-  Downloaded: 'downloaded',
-};
-
-Object.freeze(AppUpdaterStatus);
-
-class AppUpdater extends EventEmitter {
+class AppUpdateManager extends EventEmitter {
   status: string;
 
   timerId = null;
@@ -30,20 +20,22 @@ class AppUpdater extends EventEmitter {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
     autoUpdater.autoDownload = !this.isPortableVersion;
-    this.status = AppUpdaterStatus.Idle;
+    this.status = APP_UPDATER_STATUS.Idle.id;
 
     autoUpdater.on('checking-for-update', () =>
-      this.handleStatusChange(AppUpdaterStatus.Checking, false)
+      this.handleStatusChange(APP_UPDATER_STATUS.Checking.id, false)
     );
     autoUpdater.on('update-not-available', () =>
-      this.handleStatusChange(AppUpdaterStatus.NoUpdate, true)
+      this.handleStatusChange(APP_UPDATER_STATUS.NoUpdate.id, true)
     );
-    autoUpdater.on('download-progress', () =>
-      this.handleStatusChange(AppUpdaterStatus.Downloading, false)
-    );
-    autoUpdater.on('update-downloaded', () =>
-      this.handleStatusChange(AppUpdaterStatus.Downloaded, true)
-    );
+    autoUpdater.on('download-progress', () => {
+      if (!this.isPortableVersion)
+        this.handleStatusChange(APP_UPDATER_STATUS.Downloading.id, false);
+    });
+    autoUpdater.on('update-downloaded', () => {
+      if (!this.isPortableVersion)
+        this.handleStatusChange(APP_UPDATER_STATUS.Downloaded.id, true);
+    });
   }
 
   getCurrentStatus() {
@@ -52,14 +44,14 @@ class AppUpdater extends EventEmitter {
 
   checkForUpdatesAndNotify() {
     const pkg = getPackageJson();
-    if (this.status === AppUpdaterStatus.Idle) {
+    if (this.status === APP_UPDATER_STATUS.Idle.id) {
       if (this.isPortableVersion) {
         return autoUpdater.checkForUpdates().then(r => {
           if (
             r?.updateInfo?.version != null &&
             r.updateInfo.version !== pkg.version
           ) {
-            this.handleStatusChange(AppUpdaterStatus.NewVersion, true);
+            this.handleStatusChange(APP_UPDATER_STATUS.NewVersion.id, true);
             if (Notification.isSupported()) {
               const notif = new Notification({
                 title: `New version ${r.updateInfo.version} available`,
@@ -90,9 +82,9 @@ class AppUpdater extends EventEmitter {
 
       if (backToIdle) {
         this.timerId = setTimeout(() => {
-          if (this.status !== AppUpdaterStatus.Idle) {
-            this.status = AppUpdaterStatus.Idle;
-            this.emit('status-changed', AppUpdaterStatus.Idle);
+          if (this.status !== APP_UPDATER_STATUS.Idle.id) {
+            this.status = APP_UPDATER_STATUS.Idle.id;
+            this.emit('status-changed', APP_UPDATER_STATUS.Idle.id);
           }
         }, 2000);
       }
@@ -100,5 +92,5 @@ class AppUpdater extends EventEmitter {
   }
 }
 
-const appUpdaterInstance = new AppUpdater();
-export {AppUpdaterStatus, appUpdaterInstance as appUpdater};
+const instance = new AppUpdateManager();
+export {instance as AppUpdateManager};

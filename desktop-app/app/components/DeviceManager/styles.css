@@ -1,6 +1,11 @@
+.devicesManagerDialog {
+  height: calc(100vh - 30px);
+  top: 30px !important;
+}
+
 .container {
   margin: 50px;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 200px - 30px);
 }
 
 .content {

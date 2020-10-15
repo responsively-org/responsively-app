@@ -124,7 +124,12 @@ function DeviceManager(props) {
         Customize
       </Button>
       {open ? (
-        <Dialog fullScreen open={open} onClose={closeDialog}>
+        <Dialog
+          className={styles.devicesManagerDialog}
+          fullScreen
+          open={open}
+          onClose={closeDialog}
+        >
           <AppBar className={classes.appBar} color="secondary">
             <Toolbar>
               <Typography variant="h6" className={classes.title}>

@@ -1,0 +1,13 @@
+body {
+  background-color: #1e1e1e;
+  color: white;
+}
+
+.key {
+  background-color: black;
+}
+
+#close-btn {
+  background-color: black;
+  color: white;
+}

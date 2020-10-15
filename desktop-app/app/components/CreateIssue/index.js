@@ -13,7 +13,7 @@ const reportBody = state => {
     nodeVersion,
     v8Version,
     osInfo,
-  } = getEnvironmentInfo();
+  } = getEnvironmentInfo(false);
   return `Hi I'm reporting an app crash:
 **PLEASE WRITE HERE ANY HINT THAT HELP US TO REPRODUCE THIS**
 

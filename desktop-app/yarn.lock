@@ -5649,6 +5649,11 @@ cuint@^0.2.2:
   resolved "https://registry.yarnpkg.com/cuint/-/cuint-0.2.2.tgz#408086d409550c2631155619e9fa7bcadc3b991b"
   integrity sha1-QICG1AlVDCYxFVYZ6fp7ytw7mRs=
 
+custom-electron-titlebar@^3.2.4:
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/custom-electron-titlebar/-/custom-electron-titlebar-3.2.4.tgz#671b7871f47f2da7ca9f5f659aec6ca7294aa4ed"
+  integrity sha512-zjjw8lcn2JwYaqLSLZtPWnP6IjPSix+nr3QNf5OPsNzdFDGORAUsIhU7A6vNg8aWpsjNc8rsvOW6MVcHwPrUDQ==
+
 cyclist@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz#596e9698fd0c80e12038c2b82d6eb1b35b6224d9"

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect} from 'react';
 import {Provider} from 'react-redux';
 import log from 'electron-log';
 import {makeStyles} from '@material-ui/core/styles';
@@ -6,11 +6,7 @@ import {ThemeProvider} from '@material-ui/styles';
 import {remote} from 'electron';
 import AppContent from '../AppContent';
 import ErrorBoundary from '../components/ErrorBoundary';
-import {
-  registerShortcut,
-  clearAllShortcuts,
-  unregisterShortcut,
-} from '../shortcut-manager/renderer-shortcut-manager';
+import {ShortcutManager} from '../managers/shortcut-manager';
 import {
   onZoomChange,
   triggerScrollUp,
@@ -29,9 +25,14 @@ import pubsub from 'pubsub.js';
 import {PROXY_AUTH_ERROR} from '../constants/pubsubEvents';
 import useCreateTheme from '../components/useCreateTheme';
 import {DEFAULT_ZOOM_LEVEL} from '../constants';
+import {AppTitleBarManager} from '../managers/app-title-bar-manager';
 
 function App() {
   const theme = useCreateTheme();
+
+  useEffect(() => {
+    AppTitleBarManager.updateBackground(theme.palette.type);
+  }, [theme]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -48,6 +49,7 @@ function App() {
 
 export default class Root extends Component {
   componentDidMount() {
+    AppTitleBarManager.initTitleBar(this.props.store.getState().browser.theme);
     this.registerAllShortcuts();
     remote.session.defaultSession.webRequest.onErrorOccurred(details => {
       if (
@@ -59,7 +61,8 @@ export default class Root extends Component {
   }
 
   componentWillUnmount() {
-    clearAllShortcuts();
+    AppTitleBarManager.dispose();
+    ShortcutManager.clearAllShortcuts();
     document.removeEventListener('wheel', this.onWheel);
     remote.session.defaultSession.webRequest.onErrorOccurred(null);
   }
@@ -68,7 +71,7 @@ export default class Root extends Component {
     const {store} = this.props;
     document.addEventListener('wheel', this.onWheel);
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {
         id: 'ZoomIn',
         title: 'Zoom In',
@@ -80,7 +83,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {id: 'ZoomOut', title: 'Zoom Out', accelerators: ['mod+-']},
       () => {
         store.dispatch(onZoomChange(store.getState().browser.zoomLevel - 0.1));
@@ -88,7 +91,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {id: 'ZoomReset', title: 'Zoom Reset', accelerators: ['mod+0']},
       () => {
         store.dispatch(onZoomChange(DEFAULT_ZOOM_LEVEL));
@@ -96,7 +99,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {id: 'EditUrl', title: 'Edit URL', accelerators: ['mod+l']},
       () => {
         document.getElementById('adress').select();
@@ -104,7 +107,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {id: 'ScroolUp', title: 'Scroll Up', accelerators: ['mod+pageup']},
       () => {
         store.dispatch(triggerScrollUp());
@@ -112,7 +115,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {id: 'ScroolDown', title: 'Scroll Down', accelerators: ['mod+pagedown']},
       () => {
         store.dispatch(triggerScrollDown());
@@ -120,7 +123,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {id: 'Screenshot', title: 'Take Screenshot', accelerators: ['mod+prtsc']},
       () => {
         store.dispatch(screenshotAllDevices());
@@ -129,7 +132,7 @@ export default class Root extends Component {
       'keyup'
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {id: 'TiltDevices', title: 'Tilt Devices', accelerators: ['mod+tab']},
       () => {
         store.dispatch(flipOrientationAllDevices());
@@ -137,7 +140,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {
         id: 'ToggleInspector',
         title: 'Toggle Inspector',
@@ -149,7 +152,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {id: 'OpenHome', title: 'Go to Homepage', accelerators: ['alt+home']},
       () => {
         store.dispatch(goToHomepage());
@@ -157,7 +160,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {id: 'BackAPage', title: 'Back a Page', accelerators: ['alt+left']},
       () => {
         store.dispatch(triggerNavigationBack());
@@ -165,7 +168,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {
         id: 'ForwardAPage',
         title: 'Forward a Page',
@@ -177,7 +180,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {id: 'DeleteStorage', title: 'Delete Storage', accelerators: ['mod+del']},
       () => {
         store.dispatch(deleteStorage());
@@ -185,7 +188,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {
         id: 'DeleteCookies',
         title: 'Delete Cookies',
@@ -197,7 +200,7 @@ export default class Root extends Component {
       true
     );
 
-    registerShortcut(
+    ShortcutManager.registerShortcut(
       {
         id: 'AddBookmark',
         title: 'Add Bookmark',

@@ -77,6 +77,8 @@
       "resources/icons",
       "app/app.html",
       "app/shortcuts.html",
+      "app/shortcuts-dark.css",
+      "app/shortcuts-light.css",
       "app/main.prod.js",
       "app/main.prod.js.map",
       "package.json"
@@ -296,6 +298,7 @@
     "browser-sync": "^2.26.7",
     "classnames": "^2.2.6",
     "core-js": "2",
+    "custom-electron-titlebar": "^3.2.4",
     "dotenv": "^8.1.0",
     "electron-cookies": "heap/electron-cookies",
     "electron-debug": "^3.1.0",
