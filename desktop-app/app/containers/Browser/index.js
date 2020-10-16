@@ -11,6 +11,7 @@ import LeftIconsPaneContainer from '../LeftIconsPaneContainer';
 import HeaderContainer from '../HeaderContainer';
 import os from 'os';
 import HorizontalSpacer from '../../components/HorizontalSpacer';
+import AppNotification from '../../components/AppNotification/AppNotification';
 
 const Browser = ({browser}) => (
   <Fragment>
@@ -61,6 +62,7 @@ const Browser = ({browser}) => (
         ) : null}
       </div>
     </div>
+    <AppNotification />
   </Fragment>
 );
 

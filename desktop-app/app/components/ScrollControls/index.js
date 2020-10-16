@@ -9,6 +9,7 @@ import ScrollUpIcon from '../icons/ScrollUp';
 import ScreenshotIcon from '../icons/FullScreenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
 import InspectElementIcon from '../icons/InspectElement';
+import DesignModeIcon from '../icons/DesignMode';
 import MutedIcon from '../icons/Muted';
 import UnmutedIcon from '../icons/Unmuted';
 import useCommonStyles from '../useCommonStyles';
@@ -31,6 +32,7 @@ const ScrollControls = ({
   flipOrientationAllDevices,
   toggleInspector,
   onAllDevicesMutedChange,
+  onToggleAllDeviceDesignMode,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
@@ -103,6 +105,24 @@ const ScrollControls = ({
               <InspectElementIcon
                 {...{...iconProps, ...{height: 22, width: 22}}}
               />
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid
+          item
+          className={cx(commonClasses.icon, {
+            [commonClasses.iconSelected]: browser.allDevicesInDesignMode,
+          })}
+        >
+          <Tooltip
+            title={
+              browser.allDevicesInDesignMode
+                ? 'Disable Design Mode on all devices'
+                : 'Enable Design Mode on all devices'
+            }
+          >
+            <div onClick={onToggleAllDeviceDesignMode}>
+              <DesignModeIcon {...{...iconProps, ...{height: 22, width: 22}}} />
             </div>
           </Tooltip>
         </Grid>

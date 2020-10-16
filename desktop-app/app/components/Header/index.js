@@ -10,7 +10,6 @@ import PermissionPopup from '../PermissionPopup';
 
 import NavigationControlsContainer from '../../containers/NavigationControlsContainer';
 import BookmarksBar from '../../containers/BookmarksBarContainer';
-import AppNotification from '../AppNotification/AppNotification';
 import Logo from '../icons/Logo';
 import ZenButton from '../ZenButton';
 import cx from 'classnames';
@@ -54,7 +53,6 @@ const Header = props => {
         pauseOnHover
         toastClassName={classes.darkToast}
       />
-      <AppNotification />
       <ZenButton
         active={!props.isHeaderVisible}
         onClick={() => props.setHeaderVisibility(!props.isHeaderVisible)}
