@@ -402,13 +402,6 @@ class WebView extends Component {
     this.webviewRef.current.send('scrollUpMessage');
   };
 
-  processTiltEvent = async ({deviceId}) => {
-    if (deviceId && this.props.device.id !== deviceId) {
-      return;
-    }
-    this._flipOrientation();
-  };
-
   processScreenshotEvent = async ({
     now,
     fullScreen = true,
@@ -443,7 +436,8 @@ class WebView extends Component {
     this.setState({screenshotInProgress: false});
   };
 
-  processFlipOrientationEvent = ({deviceId}) => {
+  processFlipOrientationEvent = (message = {}) => {
+    const {deviceId} = message;
     if (deviceId && this.props.device.id !== deviceId) {
       return;
     }
