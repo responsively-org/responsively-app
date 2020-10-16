@@ -121,10 +121,14 @@ export default class MenuBuilder {
           let win = new BrowserWindow({
             parent: BrowserWindow.getFocusedWindow(),
             frame: false,
+            show: false,
             webPreferences: {
               devTools: false,
               nodeIntegration: true,
-              additionalArguments: [JSON.stringify(getAllShortcuts())],
+              additionalArguments: [
+                JSON.stringify(getAllShortcuts()),
+                userPreferenceSettings.getCurrentTheme(),
+              ],
             },
           });
 

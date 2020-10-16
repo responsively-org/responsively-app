@@ -9,6 +9,7 @@ class UserPreferenceSettings {
     (settings.get(USER_PREFERENCES) || {}).screenShotSavePath;
   getDefaultScreenshotpath = () =>
     path.join(os.homedir(), `Desktop/Responsively-Screenshots`);
+  getCurrentTheme = () => (settings.get(USER_PREFERENCES) || {}).theme;
 }
 
 const userPreferenceSettingsInstance = new UserPreferenceSettings();

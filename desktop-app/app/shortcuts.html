@@ -1,14 +1,19 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="app.global.css" />
     <style>
-      body {
-        background-color: #1e1e1e;
-        color: white;
+      #body {
         display: flex;
         justify-content: space-between;
         flex-direction: column;
         font-family: 'Roboto', sans-serif;
+      }
+      #body.dark {
+        background-color: #1e1e1e;
+        color: white;
+      }
+      #body.light {
+        background-color: white;
+        color: #1e1e1e;
       }
       ul {
         margin: 20px 50px;
@@ -40,10 +45,17 @@
         justify-content: center;
         align-items: center;
         font-size: large;
-        background-color: black;
         border-radius: 5px;
         font-family: 'Consolas', 'Courier New', monospace;
         white-space: pre;
+      }
+      .key.dark {
+        background-color: black;
+        color: white;
+      }
+      .key.light {
+        background-color: #e0e0e0;
+        color: black;
       }
       .btn-wrapper {
         display: flex;
@@ -57,13 +69,19 @@
         padding: 10 20 10 20px;
         border: 0;
         border-radius: 5px;
+        cursor: pointer;
+      }
+      #close-btn.dark {
         background-color: black;
         color: white;
-        cursor: pointer;
+      }
+      #close-btn.light {
+        color: black;
+        background-color: #e0e0e0;
       }
     </style>
   </head>
-  <body>
+  <body id="body">
     <div class="header">Keyboard Shortcuts</div>
     <ul id="list"></ul>
     <div class="btn-wrapper">
@@ -105,9 +123,18 @@
         return acc.split('+').map(getKeyName);
       }
 
+      function updateTheme(theme) {
+        document.getElementById('body').classList.add(theme);
+        document.getElementById('close-btn').classList.add(theme);
+      }
+
       let registeredShortcuts = [];
+      let currentTheme = 'dark';
       try {
-        registeredShortcuts = JSON.parse(window.process.argv.slice(-1)).reduce(
+        currentTheme = window.process.argv.pop();
+        updateTheme(currentTheme);
+
+        registeredShortcuts = JSON.parse(window.process.argv.pop()).reduce(
           (arr, def) => {
             arr.push([def.title, mapAccelerator(def.accelerators[0])]);
             def.accelerators
@@ -135,6 +162,7 @@
           const keyElem = document.createElement('div');
           const keyTextNode = document.createTextNode(k);
           keyElem.classList.add('key');
+          keyElem.classList.add(currentTheme);
           keyElem.appendChild(keyTextNode);
           if (idx != 0) {
             liElem.append('+');
