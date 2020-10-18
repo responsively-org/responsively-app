@@ -26,6 +26,10 @@ import {
   NEW_CSS_EDITOR_STATUS,
   NEW_CSS_EDITOR_POSITION,
   NEW_CSS_EDITOR_CONTENT,
+  TOGGLE_ALL_DEVICES_DESIGN_MODE,
+  TOGGLE_DEVICE_DESIGN_MODE,
+  SET_HEADER_VISIBILITY,
+  SET_LEFT_PANE_VISIBILITY,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -56,6 +60,8 @@ import {
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
 import {updateExistingUrl} from '../services/searchUrlSuggestions';
+import {normalizeZoomLevel} from '../utils/browserUtils';
+import {DEFAULT_ZOOM_LEVEL} from '../constants';
 
 export const FILTER_FIELDS = {
   OS: 'OS',
@@ -188,6 +194,9 @@ export type BrowserStateType = {
   windowSize: WindowSizeType,
   allDevicesMuted: boolean,
   networkConfiguration: NetworkConfigurationType,
+  allDevicesInDesignMode: boolean,
+  isHeaderVisible: boolean,
+  isLeftPaneVisible: boolean,
 };
 
 let _activeDevices = null;
@@ -220,13 +229,14 @@ function _getActiveDevices() {
     activeDevices.forEach(device => {
       device.loading = false;
       device.isMuted = false;
+      device.designMode = false;
     });
   }
   return activeDevices;
 }
 
 function _getUserPreferences(): UserPreferenceType {
-  return settings.get(USER_PREFERENCES);
+  return settings.get(USER_PREFERENCES) || {};
 }
 
 function _setUserPreferences(userPreferences) {
@@ -306,7 +316,8 @@ export default function browser(
       ? getLastOpenedAddress()
       : getHomepage(),
     currentPageMeta: {},
-    zoomLevel: _getUserPreferences().zoomLevel || 0.6,
+    zoomLevel:
+      normalizeZoomLevel(_getUserPreferences().zoomLevel) || DEFAULT_ZOOM_LEVEL,
     theme: _getUserPreferences().theme,
     previousZoomLevel: null,
     scrollPosition: {x: 0, y: 0},
@@ -341,6 +352,9 @@ export default function browser(
     windowSize: getWindowSize(),
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),
+    allDevicesInDesignMode: false,
+    isHeaderVisible: true,
+    isLeftPaneVisible: true,
   },
   action: Action
 ) {
@@ -538,6 +552,42 @@ export default function browser(
           proxy: action.profile,
         },
       };
+    case TOGGLE_ALL_DEVICES_DESIGN_MODE:
+      const nextDevices = state.devices;
+      const nextDesginModeForAll = !state.allDevicesInDesignMode;
+      nextDevices.forEach(d => (d.designMode = nextDesginModeForAll));
+      return {
+        ...state,
+        allDevicesInDesignMode: nextDesginModeForAll,
+        devices: nextDevices,
+      };
+    case TOGGLE_DEVICE_DESIGN_MODE:
+      const deviceIndex = state.devices.findIndex(
+        x => x.id === action.deviceId
+      );
+      if (deviceIndex === -1) return {...state};
+      const nextDesignModeForDevice = !state.devices[deviceIndex].designMode;
+      state.devices[deviceIndex] = {
+        ...state.devices[deviceIndex],
+        designMode: nextDesignModeForDevice,
+      };
+      return {
+        ...state,
+        allDevicesInDesignMode: state.devices.every(x => x.designMode),
+        devices: [...state.devices],
+      };
+    case SET_HEADER_VISIBILITY:
+      return {
+        ...state,
+        isHeaderVisible: action.isVisible,
+      };
+
+    case SET_LEFT_PANE_VISIBILITY:
+      return {
+        ...state,
+        isLeftPaneVisible: action.isVisible,
+      };
+
     default:
       return state;
   }

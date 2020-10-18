@@ -15,9 +15,11 @@ import {
   DELETE_STORAGE,
   ADDRESS_CHANGE,
   STOP_LOADING,
+  TOGGLE_DEVICE_DESIGN_MODE_STATE,
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
+import {normalizeZoomLevel} from '../utils/browserUtils';
 
 export const NEW_ADDRESS = 'NEW_ADDRESS';
 export const NEW_PAGE_META_FIELD = 'NEW_PAGE_META_FIELD';
@@ -44,6 +46,10 @@ export const NEW_FOCUSED_DEVICE = 'NEW_FOCUSED_DEVICE';
 export const TOGGLE_ALL_DEVICES_MUTED = 'TOGGLE_ALL_DEVICES_MUTED';
 export const TOGGLE_DEVICE_MUTED = 'TOGGLE_DEVICE_MUTED';
 export const NEW_THEME = 'NEW_THEME';
+export const TOGGLE_ALL_DEVICES_DESIGN_MODE = 'TOGGLE_ALL_DEVICES_DESIGN_MODE';
+export const TOGGLE_DEVICE_DESIGN_MODE = 'TOGGLE_DEVICE_DESIGN_MODE';
+export const SET_HEADER_VISIBILITY = 'SET_HEADER_VISIBILITY';
+export const SET_LEFT_PANE_VISIBILITY = 'SET_LEFT_PANE_VISIBILITY';
 
 export function newAddress(address) {
   return {
@@ -208,6 +214,19 @@ export function toggleDeviceMuted(deviceId, isMuted) {
   };
 }
 
+export function toggleAllDevicesDesignMode() {
+  return {
+    type: TOGGLE_ALL_DEVICES_DESIGN_MODE,
+  };
+}
+
+export function toggleDeviceDesignMode(deviceId) {
+  return {
+    type: TOGGLE_DEVICE_DESIGN_MODE,
+    deviceId,
+  };
+}
+
 export function onAddressChange(newURL, force) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
@@ -249,12 +268,13 @@ export function onZoomChange(newLevel) {
     const {
       browser: {zoomLevel},
     } = getState();
+    const normalizedZoomLevel = normalizeZoomLevel(newLevel);
 
-    if (newLevel === zoomLevel) {
+    if (normalizedZoomLevel === zoomLevel) {
       return;
     }
 
-    dispatch(newZoomLevel(newLevel));
+    dispatch(newZoomLevel(normalizedZoomLevel));
   };
 }
 
@@ -720,6 +740,23 @@ export function onDeviceMutedChange(deviceId, isMuted) {
   };
 }
 
+export function onToggleAllDeviceDesignMode() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {allDevicesInDesignMode},
+    } = getState();
+    const next = !allDevicesInDesignMode;
+    pubsub.publish(TOGGLE_DEVICE_DESIGN_MODE_STATE, [{designMode: next}]);
+    dispatch(toggleAllDevicesDesignMode());
+  };
+}
+
+export function onToggleDeviceDesignMode(deviceId) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(toggleDeviceDesignMode(deviceId));
+  };
+}
+
 export function toggleInspector() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
@@ -846,5 +883,27 @@ export function setTheme(theme) {
   return {
     type: NEW_THEME,
     theme,
+  };
+}
+
+/**
+ * Shows/Hides the top control pane.
+ * @param {boolean} isVisible Shows the top pane when true and hides when false.
+ */
+export function setHeaderVisibility(isVisible: boolean) {
+  return {
+    type: SET_HEADER_VISIBILITY,
+    isVisible,
+  };
+}
+
+/**
+ * Shows/Hides the left control pane.
+ * @param {boolean} isVisible Shows the left control pane when true and hides when false.
+ */
+export function setLeftPaneVisibility(isVisible: boolean) {
+  return {
+    type: SET_LEFT_PANE_VISIBILITY,
+    isVisible,
   };
 }

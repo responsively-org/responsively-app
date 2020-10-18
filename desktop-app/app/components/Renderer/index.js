@@ -7,6 +7,11 @@ import {CAPABILITIES} from '../../constants/devices';
 import useCommonStyles from '../useCommonStyles';
 import {getDeviceIcon} from '../../utils/iconUtils';
 import KebabMenu from '../KebabMenu';
+import {
+  FLIP_ORIENTATION_ALL_DEVICES,
+  SCREENSHOT_ALL_DEVICES,
+} from '../../constants/pubsubEvents';
+import pubsub from 'pubsub.js';
 
 function Renderer(props) {
   const {device, hidden, transmitNavigatorStatus} = props;
@@ -62,6 +67,22 @@ function Renderer(props) {
           </div>
         </div>
         <KebabMenu>
+          <KebabMenu.Item
+            onClick={() =>
+              pubsub.publish(SCREENSHOT_ALL_DEVICES, [{deviceId: device.id}])
+            }
+          >
+            Full Page Screenshot
+          </KebabMenu.Item>
+          <KebabMenu.Item
+            onClick={() =>
+              pubsub.publish(FLIP_ORIENTATION_ALL_DEVICES, [
+                {deviceId: device.id},
+              ])
+            }
+          >
+            Tilt Device
+          </KebabMenu.Item>
           <KebabMenu.Item
             onClick={props.device.isMuted ? _unmuteDevice : _muteDevice}
           >

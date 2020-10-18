@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
 import {Provider} from 'react-redux';
-import {ConnectedRouter} from 'connected-react-router';
 import log from 'electron-log';
 import {makeStyles} from '@material-ui/core/styles';
 import {ThemeProvider} from '@material-ui/styles';
 import {remote} from 'electron';
-import Routes from '../Routes';
+import AppContent from '../AppContent';
 import ErrorBoundary from '../components/ErrorBoundary';
 import {
   registerShortcut,
@@ -29,22 +28,19 @@ import {toggleBookmarkUrl} from '../actions/bookmarks';
 import pubsub from 'pubsub.js';
 import {PROXY_AUTH_ERROR} from '../constants/pubsubEvents';
 import useCreateTheme from '../components/useCreateTheme';
+import {DEFAULT_ZOOM_LEVEL} from '../constants';
 
-function App({history}) {
+function App() {
   const theme = useCreateTheme();
 
   return (
     <ThemeProvider theme={theme}>
       {process.env.NODE_ENV !== 'development' ? (
         <ErrorBoundary>
-          <ConnectedRouter history={history}>
-            <Routes />
-          </ConnectedRouter>
+          <AppContent />
         </ErrorBoundary>
       ) : (
-        <ConnectedRouter history={history}>
-          <Routes />
-        </ConnectedRouter>
+        <AppContent />
       )}
     </ThemeProvider>
   );
@@ -95,7 +91,7 @@ export default class Root extends Component {
     registerShortcut(
       {id: 'ZoomReset', title: 'Zoom Reset', accelerators: ['mod+0']},
       () => {
-        store.dispatch(onZoomChange(0.6));
+        store.dispatch(onZoomChange(DEFAULT_ZOOM_LEVEL));
       },
       true
     );
@@ -226,10 +222,10 @@ export default class Root extends Component {
   };
 
   render() {
-    const {store, history} = this.props;
+    const {store} = this.props;
     return (
       <Provider store={store}>
-        <App history={history} />
+        <App />
       </Provider>
     );
   }

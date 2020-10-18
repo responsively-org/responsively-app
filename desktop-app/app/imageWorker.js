@@ -4,9 +4,10 @@ const {promisify} = require('util');
 const Jimp = require('jimp');
 const os = require('os');
 const path = require('path');
-const UUID = require('uuid/v4');
+const uuid = require('uuid');
 const fs = require('fs-extra');
 
+const UUID = uuid.v4;
 const tempDir = path.join(os.tmpdir(), UUID());
 
 registerPromiseWorker(({images, direction, resultFilename}) => {

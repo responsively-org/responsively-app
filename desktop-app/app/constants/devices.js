@@ -49,6 +49,7 @@ export type Device = {
   type: DeviceType,
   source: Source,
   isMuted: boolean,
+  designMode: boolean,
 };
 
 function getOS(device) {
