@@ -1,5 +1,5 @@
 // @flow
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import cx from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -17,6 +17,7 @@ import ZoomContainer from '../../containers/ZoomContainer';
 import PrefersColorSchemeSwitch from '../PrefersColorSchemeSwitch';
 import ToggleTouch from '../ToggleTouch';
 import Muted from '../icons/Muted';
+import CSSEditor from '../icons/CSSEditor';
 
 const useStyles = makeStyles({
   container: {
@@ -31,6 +32,7 @@ const ScrollControls = ({
   screenshotAllDevices,
   flipOrientationAllDevices,
   toggleInspector,
+  toggleCSSEditor,
   onAllDevicesMutedChange,
   onToggleAllDeviceDesignMode,
 }) => {
@@ -49,17 +51,16 @@ const ScrollControls = ({
         <Grid item className={commonClasses.icon}>
           <PrefersColorSchemeSwitch iconProps={iconProps} />
         </Grid>
-        <Grid item className={commonClasses.icon}>
-          <Tooltip title="Scroll Down">
-            <div onClick={triggerScrollDown}>
-              <ScrollDownIcon {...iconProps} />
-            </div>
-          </Tooltip>
-        </Grid>
-        <Grid item className={commonClasses.icon}>
-          <Tooltip title="Scroll Up">
-            <div onClick={triggerScrollUp}>
-              <ScrollUpIcon {...iconProps} height={30} width={30} />
+        <Grid
+          item
+          className={cx(commonClasses.icon, {
+            [commonClasses.iconSelected]: browser.CSSEditor.isOpen,
+          })}
+          onClick={toggleCSSEditor}
+        >
+          <Tooltip title="Live CSS Editor">
+            <div>
+              <CSSEditor {...iconProps} />
             </div>
           </Tooltip>
         </Grid>

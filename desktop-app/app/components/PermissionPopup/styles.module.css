@@ -15,10 +15,6 @@
   height: auto;
 }
 
-.permissionPopupTitle {
-  margin: 14px;
-}
-
 .permissionPopupMsg {
   margin-bottom: 0 !important;
   font-size: 0.9rem !important;
