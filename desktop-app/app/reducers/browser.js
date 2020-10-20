@@ -24,6 +24,7 @@ import {
   TOGGLE_DEVICE_MUTED,
   NEW_THEME,
   NEW_WORKSPACE,
+  SET_WORKSPACE,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -546,9 +547,16 @@ export default function browser(
         },
       };
 
+    case SET_WORKSPACE:
+      return {
+        ...state,
+        workspace: action.workspaceId,
+      };
+
     case NEW_WORKSPACE:
       return {
         ...state,
+        workspace: action.workspace.id,
         availableWorkspaces: [
           ...state.availableWorkspaces,
           {...action.workspace, devices: []},

@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {useTheme} from '@material-ui/core/styles';
 import {components} from 'react-select';
 import {v4 as uuidv4} from 'uuid';
@@ -31,6 +31,8 @@ function WorkspaceSelector({
   const theme = useTheme();
   const commonClasses = useCommonStyles();
   const classes = useWorkspaceSelectorStyles();
+  const [open, setMenuOpen] = useState(false);
+
   const options = useMemo(
     () =>
       availableWorkspaces.map(workspace => ({
@@ -44,6 +46,21 @@ function WorkspaceSelector({
     () => availableWorkspaces.find(workspace => workspace.id === value),
     [availableWorkspaces, value]
   );
+
+  const handleChange = option => {
+    if (onChange) {
+      onChange(option.value);
+    }
+    setMenuOpen(false);
+  };
+
+  const handleMenuOpen = () => {
+    setMenuOpen(true);
+  };
+
+  const handleMenuClose = () => {
+    setMenuOpen(false);
+  };
 
   return (
     <div className={commonClasses.sidebarContentSection}>
@@ -60,7 +77,7 @@ function WorkspaceSelector({
       </div>
       <div className={commonClasses.sidebarContentSectionContainer}>
         <Select
-          // menuIsOpen
+          menuIsOpen={open}
           options={options}
           components={{
             Menu: props => (
@@ -73,19 +90,25 @@ function WorkspaceSelector({
                     devices: undefined,
                   };
                   onNewWorkspace(newWorkspace);
-                  props.selectOption({
-                    value: newWorkspace.id,
-                    label: newWorkspace.name,
-                  });
+                  setMenuOpen(false);
                 }}
               />
             ),
           }}
-          value={{
-            label: selectedWorkspace.name,
-            value: selectedWorkspace.id,
+          value={
+            selectedWorkspace
+              ? {
+                  label: selectedWorkspace.name,
+                  value: selectedWorkspace.id,
+                }
+              : undefined
+          }
+          innerProps={{
+            onClick: handleMenuOpen,
           }}
-          onChange={onChange}
+          onMenuOpen={handleMenuOpen}
+          onMenuClose={handleMenuClose}
+          onChange={handleChange}
         />
       </div>
     </div>
@@ -101,7 +124,6 @@ const Menu = props => {
       <div
         style={menuProps.getStyles('option', props)}
         onClick={() => {
-          menuProps.selectOption({isDisabled: false});
           onAddWorkspace();
         }}
       >
