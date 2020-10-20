@@ -1,5 +1,8 @@
 import React, {useMemo} from 'react';
 import {useTheme} from '@material-ui/core/styles';
+import {components} from 'react-select';
+import {v4 as uuidv4} from 'uuid';
+
 import DevicesIcon from '../icons/Devices';
 import {
   HORIZONTAL_LAYOUT,
@@ -10,6 +13,7 @@ import Select from '../Select';
 import useCommonStyles from '../useCommonStyles';
 import DeviceManagerContainer from '../../containers/DeviceManagerContainer';
 import useWorkspaceSelectorStyles from './useWorkspaceSelectorStyles';
+import {uniqueId} from 'lodash';
 
 /**
  * Allows to select a workspace
@@ -18,7 +22,12 @@ import useWorkspaceSelectorStyles from './useWorkspaceSelectorStyles';
  * @param {function} props.onChange Called once workspace selected
  * @param {array} props.availableWorkspaces Available workspaces
  */
-function WorkspaceSelector({availableWorkspaces, value, onChange}) {
+function WorkspaceSelector({
+  availableWorkspaces,
+  value,
+  onChange,
+  onNewWorkspace,
+}) {
   const theme = useTheme();
   const commonClasses = useCommonStyles();
   const classes = useWorkspaceSelectorStyles();
@@ -51,7 +60,27 @@ function WorkspaceSelector({availableWorkspaces, value, onChange}) {
       </div>
       <div className={commonClasses.sidebarContentSectionContainer}>
         <Select
+          // menuIsOpen
           options={options}
+          components={{
+            Menu: props => (
+              <Menu
+                {...props}
+                onAddWorkspace={() => {
+                  const newWorkspace = {
+                    id: uuidv4(),
+                    name: 'Workspace',
+                    devices: undefined,
+                  };
+                  onNewWorkspace(newWorkspace);
+                  props.selectOption({
+                    value: newWorkspace.id,
+                    label: newWorkspace.name,
+                  });
+                }}
+              />
+            ),
+          }}
           value={{
             label: selectedWorkspace.name,
             value: selectedWorkspace.id,
@@ -62,5 +91,24 @@ function WorkspaceSelector({availableWorkspaces, value, onChange}) {
     </div>
   );
 }
+
+const Menu = props => {
+  const {onAddWorkspace, ...menuProps} = props;
+
+  return (
+    <components.Menu {...props}>
+      {props.children}
+      <div
+        style={menuProps.getStyles('option', props)}
+        onClick={() => {
+          menuProps.selectOption({isDisabled: false});
+          onAddWorkspace();
+        }}
+      >
+        Add New Workspace ...
+      </div>
+    </components.Menu>
+  );
+};
 
 export default WorkspaceSelector;

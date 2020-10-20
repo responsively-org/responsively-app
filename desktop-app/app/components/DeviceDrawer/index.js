@@ -16,12 +16,14 @@ export default function DeviceDrawer({
     workspace,
   },
   setPreviewLayout,
+  newWorkspace,
 }) {
   return (
     <div>
       {/* <DevicesOverviewContainer /> */}
       <WorkspaceSelector
         value={workspace}
+        onNewWorkspace={newWorkspace}
         availableWorkspaces={availableWorkspaces}
       />
       <PreviewerLayoutSelector

@@ -42,6 +42,7 @@ export const NEW_FOCUSED_DEVICE = 'NEW_FOCUSED_DEVICE';
 export const TOGGLE_ALL_DEVICES_MUTED = 'TOGGLE_ALL_DEVICES_MUTED';
 export const TOGGLE_DEVICE_MUTED = 'TOGGLE_DEVICE_MUTED';
 export const NEW_THEME = 'NEW_THEME';
+export const NEW_WORKSPACE = 'NEW_WORKSPACE';
 
 export function newAddress(address) {
   return {
@@ -182,6 +183,13 @@ export function toggleDeviceMuted(deviceId, isMuted) {
     type: TOGGLE_DEVICE_MUTED,
     deviceId,
     isMuted,
+  };
+}
+
+export function newWorkspace(workspace) {
+  return {
+    type: NEW_WORKSPACE,
+    workspace,
   };
 }
 

@@ -23,6 +23,7 @@ import {
   TOGGLE_ALL_DEVICES_MUTED,
   TOGGLE_DEVICE_MUTED,
   NEW_THEME,
+  NEW_WORKSPACE,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -543,6 +544,15 @@ export default function browser(
           ...state.networkConfiguration,
           proxy: action.profile,
         },
+      };
+
+    case NEW_WORKSPACE:
+      return {
+        ...state,
+        availableWorkspaces: [
+          ...state.availableWorkspaces,
+          {...action.workspace, devices: []},
+        ],
       };
     default:
       return state;
