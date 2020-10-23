@@ -21,9 +21,7 @@ import styles from './styles.css';
 import {ButtonGroup} from '@material-ui/core';
 
 function DeviceManager(props) {
-  const [open, setOpen] = useState(false);
   const classes = useStyles();
-
   const [devices, setDevices] = useState({
     active: [],
     inactive: [],
@@ -63,7 +61,7 @@ function DeviceManager(props) {
     setDevices({...devices, inactiveFiltered});
   };
 
-  const closeDialog = () => setOpen(false);
+  const closeDialog = () => props.onClose();
 
   const onDragEnd = result => {
     const {source, destination} = result;
@@ -110,75 +108,49 @@ function DeviceManager(props) {
   };
 
   return (
-    <Fragment>
-      <ButtonGroup
-        color="primary"
-        size="small"
-        variant="outlined"
-        disableRipple
-        disableElevation
-      >
-        <IconButton
-          aria-label="Edit selected workspace"
-          onClick={() => setOpen(true)}
-          className={styles.editButton}
-        >
-          <EditIcon />
-        </IconButton>
-        <IconButton
-          aria-label="Create new workspace"
-          onClick={() => setOpen(true)}
-          className={styles.editButton}
-        >
-          <AddIcon />
-        </IconButton>
-      </ButtonGroup>
-      {open ? (
-        <Dialog fullScreen open={open} onClose={closeDialog}>
-          <AppBar className={classes.appBar} color="secondary">
-            <Toolbar>
-              <Typography variant="h6" className={classes.title}>
-                Manage Devices
-              </Typography>
-              <Button color="inherit" onClick={closeDialog}>
-                close
-              </Button>
-            </Toolbar>
-          </AppBar>
-          <div className={styles.container}>
-            <Typography variant="body1" className={classes.toolTip}>
-              <span>✨</span>Drag and drop the devices across to re-order them.
-            </Typography>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Grid container className={styles.content}>
-                <Grid item className={styles.section}>
-                  <div className={styles.listTitle}>
-                    <LightBulbIcon height={30} color="#FFD517" />
-                    Active Devices
-                  </div>
-                  <DeviceList droppableId="active" devices={devices.active} />
-                </Grid>
-                <Grid item className={styles.section}>
-                  <div className={styles.listTitle}>
-                    <LightBulbIcon height={30} color="darkgrey" />
-                    Inactive Devices
-                  </div>
-                  <DeviceList
-                    droppableId="inactive"
-                    devices={devices.inactive}
-                    enableFiltering
-                    onFiltering={onInactiveListFiltering}
-                    enableCustomDeviceDeletion
-                    deleteDevice={props.deleteDevice}
-                  />
-                </Grid>
-              </Grid>
-            </DragDropContext>
-            <AddDeviceContainer />
-          </div>
-        </Dialog>
-      ) : null}
-    </Fragment>
+    <Dialog fullScreen open={props.open} onClose={closeDialog}>
+      <AppBar className={classes.appBar} color="secondary">
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}>
+            Manage Devices
+          </Typography>
+          <Button color="inherit" onClick={closeDialog}>
+            close
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <div className={styles.container}>
+        <Typography variant="body1" className={classes.toolTip}>
+          <span>✨</span>Drag and drop the devices across to re-order them.
+        </Typography>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Grid container className={styles.content}>
+            <Grid item className={styles.section}>
+              <div className={styles.listTitle}>
+                <LightBulbIcon height={30} color="#FFD517" />
+                Active Devices
+              </div>
+              <DeviceList droppableId="active" devices={devices.active} />
+            </Grid>
+            <Grid item className={styles.section}>
+              <div className={styles.listTitle}>
+                <LightBulbIcon height={30} color="darkgrey" />
+                Inactive Devices
+              </div>
+              <DeviceList
+                droppableId="inactive"
+                devices={devices.inactive}
+                enableFiltering
+                onFiltering={onInactiveListFiltering}
+                enableCustomDeviceDeletion
+                deleteDevice={props.deleteDevice}
+              />
+            </Grid>
+          </Grid>
+        </DragDropContext>
+        <AddDeviceContainer />
+      </div>
+    </Dialog>
   );
 }
 

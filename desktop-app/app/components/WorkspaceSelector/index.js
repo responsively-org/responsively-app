@@ -14,6 +14,7 @@ import useCommonStyles from '../useCommonStyles';
 import DeviceManagerContainer from '../../containers/DeviceManagerContainer';
 import useWorkspaceSelectorStyles from './useWorkspaceSelectorStyles';
 import {uniqueId} from 'lodash';
+import {Button} from '@material-ui/core';
 
 /**
  * Allows to select a workspace
@@ -32,6 +33,7 @@ function WorkspaceSelector({
   const commonClasses = useCommonStyles();
   const classes = useWorkspaceSelectorStyles();
   const [open, setMenuOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   const options = useMemo(
     () =>
@@ -73,7 +75,6 @@ function WorkspaceSelector({
           />
           Workspace
         </div>
-        <DeviceManagerContainer />
       </div>
       <div className={commonClasses.sidebarContentSectionContainer}>
         <Select
@@ -86,11 +87,12 @@ function WorkspaceSelector({
                 onAddWorkspace={() => {
                   const newWorkspace = {
                     id: uuidv4(),
-                    name: 'Workspace',
+                    name: `Workspace ${availableWorkspaces.length}`,
                     devices: undefined,
                   };
                   onNewWorkspace(newWorkspace);
                   setMenuOpen(false);
+                  setOpenModal(true);
                 }}
               />
             ),
@@ -111,6 +113,13 @@ function WorkspaceSelector({
           onChange={handleChange}
         />
       </div>
+      <Button color="primary" onClick={() => setOpenModal(true)}>
+        Customize
+      </Button>
+      <DeviceManagerContainer
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+      />
     </div>
   );
 }
