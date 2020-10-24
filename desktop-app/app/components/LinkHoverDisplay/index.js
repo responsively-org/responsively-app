@@ -50,6 +50,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: '0.7rem',
     margin: 0,
     opacity: 0.7,
+    color: '#fff',
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
