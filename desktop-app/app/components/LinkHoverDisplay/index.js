@@ -38,13 +38,13 @@ const useStyles = makeStyles(theme => ({
     opacity: 0,
     zIndex: theme.zIndex.tooltip,
     borderTopRightRadius: theme.shape.borderRadius,
-    willChange: 'opacity',
     transitionDuration: theme.transitions.duration.enteringScreen,
     transitionTimingFunction: theme.transitions.easing.easeInOut,
   },
   show: {
     opacity: 1,
-    maxWidth: '25%',
+    maxWidth: '95%',
+    padding: '3px 4px',
   },
   text: {
     fontSize: '0.7rem',
