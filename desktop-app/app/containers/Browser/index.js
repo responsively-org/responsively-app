@@ -12,6 +12,7 @@ import HeaderContainer from '../HeaderContainer';
 import os from 'os';
 import HorizontalSpacer from '../../components/HorizontalSpacer';
 import AppNotification from '../../components/AppNotification/AppNotification';
+import LinkHoverDisplayContainer from '../LinkHoverDisplayContainer';
 
 const Browser = ({browser}) => (
   <Fragment>
@@ -63,6 +64,7 @@ const Browser = ({browser}) => (
       </div>
     </div>
     <AppNotification />
+    <LinkHoverDisplayContainer />
   </Fragment>
 );
 

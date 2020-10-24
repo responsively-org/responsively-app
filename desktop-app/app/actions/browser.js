@@ -50,6 +50,7 @@ export const TOGGLE_ALL_DEVICES_DESIGN_MODE = 'TOGGLE_ALL_DEVICES_DESIGN_MODE';
 export const TOGGLE_DEVICE_DESIGN_MODE = 'TOGGLE_DEVICE_DESIGN_MODE';
 export const SET_HEADER_VISIBILITY = 'SET_HEADER_VISIBILITY';
 export const SET_LEFT_PANE_VISIBILITY = 'SET_LEFT_PANE_VISIBILITY';
+export const SET_HOVERED_LINK = 'SET_HOVERED_LINK';
 
 export function newAddress(address) {
   return {
@@ -905,5 +906,18 @@ export function setLeftPaneVisibility(isVisible: boolean) {
   return {
     type: SET_LEFT_PANE_VISIBILITY,
     isVisible,
+  };
+}
+
+/**
+ * Sets the url being hovered in a webview. When empty, it means that no anchor element is being hovered.
+ *
+ * @param {string} url URL from the anchor tag that is being hovered. Pass empty string to indicate no links are being hovered.
+ * @returns Redux action with type as SET_HOVERED_LINK
+ */
+export function setHoveredLink(url) {
+  return {
+    type: SET_HOVERED_LINK,
+    url,
   };
 }
