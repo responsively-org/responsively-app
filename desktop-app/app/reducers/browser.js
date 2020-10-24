@@ -27,6 +27,7 @@ import {
   TOGGLE_DEVICE_DESIGN_MODE,
   SET_HEADER_VISIBILITY,
   SET_LEFT_PANE_VISIBILITY,
+  SET_HOVERED_LINK,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -343,6 +344,7 @@ export default function browser(
     allDevicesInDesignMode: false,
     isHeaderVisible: true,
     isLeftPaneVisible: true,
+    hoveredLink: '',
   },
   action: Action
 ) {
@@ -563,7 +565,11 @@ export default function browser(
         ...state,
         isLeftPaneVisible: action.isVisible,
       };
-
+    case SET_HOVERED_LINK:
+      return {
+        ...state,
+        hoveredLink: action.url,
+      };
     default:
       return state;
   }
