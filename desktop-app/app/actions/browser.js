@@ -44,6 +44,7 @@ export const TOGGLE_DEVICE_MUTED = 'TOGGLE_DEVICE_MUTED';
 export const NEW_THEME = 'NEW_THEME';
 export const NEW_WORKSPACE = 'NEW_WORKSPACE';
 export const SET_WORKSPACE = 'SET_WORKSPACE';
+export const UPDATE_WORKSPACE = 'UPDATE_WORKSPACE';
 
 export function newAddress(address) {
   return {
@@ -187,6 +188,9 @@ export function toggleDeviceMuted(deviceId, isMuted) {
   };
 }
 
+/**
+ * Add workspace action
+ */
 export function newWorkspace(workspace) {
   return {
     type: NEW_WORKSPACE,
@@ -202,6 +206,13 @@ export function setActiveWorkspace(workspaceId) {
   return {
     type: SET_WORKSPACE,
     workspaceId,
+  };
+}
+
+export function updateActiveWorkspace(workspace) {
+  return {
+    type: UPDATE_WORKSPACE,
+    workspace,
   };
 }
 

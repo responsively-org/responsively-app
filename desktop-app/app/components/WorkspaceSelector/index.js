@@ -37,17 +37,18 @@ function WorkspaceSelector({
 
   const options = useMemo(
     () =>
-      availableWorkspaces.map(workspace => ({
-        value: workspace.id,
-        label: workspace.name,
-      })),
+      availableWorkspaces.ids.map(workspaceId => {
+        const workspace = availableWorkspaces.byId[workspaceId];
+
+        return {
+          value: workspace.id,
+          label: workspace.name,
+        };
+      }),
     [availableWorkspaces]
   );
 
-  const selectedWorkspace = useMemo(
-    () => availableWorkspaces.find(workspace => workspace.id === value),
-    [availableWorkspaces, value]
-  );
+  const selectedWorkspace = availableWorkspaces.byId[value];
 
   const handleChange = option => {
     if (onChange) {
@@ -87,7 +88,7 @@ function WorkspaceSelector({
                 onAddWorkspace={() => {
                   const newWorkspace = {
                     id: uuidv4(),
-                    name: `Workspace ${availableWorkspaces.length}`,
+                    name: `Workspace ${availableWorkspaces.ids.length}`,
                     devices: undefined,
                   };
                   onNewWorkspace(newWorkspace);
@@ -113,7 +114,11 @@ function WorkspaceSelector({
           onChange={handleChange}
         />
       </div>
-      <Button color="primary" onClick={() => setOpenModal(true)}>
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={() => setOpenModal(true)}
+      >
         Customize
       </Button>
       <DeviceManagerContainer

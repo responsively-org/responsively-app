@@ -17,12 +17,15 @@ import useStyes from './useStyles';
 export default function DevicesPreviewer(props) {
   const {
     browser: {
-      devices,
+      workspace,
       address,
       zoomLevel,
+      availableWorkspaces,
       previewer: {layout},
     },
   } = props;
+  const activeWorkspace = availableWorkspaces.byId[workspace];
+  const devices = activeWorkspace.devices;
   const [activeTab, changeTab] = useState(0);
   const classes = useStyes();
 

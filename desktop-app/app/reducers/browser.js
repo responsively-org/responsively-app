@@ -25,6 +25,7 @@ import {
   NEW_THEME,
   NEW_WORKSPACE,
   SET_WORKSPACE,
+  UPDATE_WORKSPACE,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -305,12 +306,20 @@ function _getWorkspaces() {
     id: 'default-workspace',
     name: 'Default Workspace',
     devices: _getActiveDevices(),
+    isDefault: true,
   };
 
   // TODO: load devices from settings or electron-store
   const userWorkspaces = [];
 
-  return [defaultWorkspace].concat(userWorkspaces);
+  const normalized = {
+    ids: ['default-workspace'],
+    byId: {
+      'default-workspace': defaultWorkspace,
+    },
+  };
+
+  return normalized;
 }
 
 export default function browser(
@@ -557,10 +566,28 @@ export default function browser(
       return {
         ...state,
         workspace: action.workspace.id,
-        availableWorkspaces: [
-          ...state.availableWorkspaces,
-          {...action.workspace, devices: []},
-        ],
+        availableWorkspaces: {
+          ids: [...state.availableWorkspaces.ids, action.workspace.id],
+          byId: Object.assign(state.availableWorkspaces.byId, {
+            [action.workspace.id]: {
+              ...action.workspace,
+              devices: _getActiveDevices(),
+            },
+          }),
+        },
+      };
+
+    case UPDATE_WORKSPACE:
+      return {
+        ...state,
+        availableWorkspaces: {
+          ids: [...state.availableWorkspaces.ids],
+          byId: Object.assign(state.availableWorkspaces.byId, {
+            [action.workspace.id]: {
+              ...action.workspace,
+            },
+          }),
+        },
       };
     default:
       return state;

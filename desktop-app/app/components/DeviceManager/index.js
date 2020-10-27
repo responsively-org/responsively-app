@@ -1,5 +1,5 @@
 import React, {useState, Fragment, useEffect} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles, withStyles} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -11,6 +11,7 @@ import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import SaveIcon from '@material-ui/icons/Save';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import LightBulbIcon from '../icons/LightBulb';
 import DeviceList from './DeviceList';
@@ -18,24 +19,31 @@ import AddDeviceContainer from '../../containers/AddDeviceContainer';
 import ErrorBoundary from '../ErrorBoundary';
 
 import styles from './styles.css';
-import {ButtonGroup} from '@material-ui/core';
+import {Box, ButtonGroup, InputBase, TextField} from '@material-ui/core';
 
 function DeviceManager(props) {
   const classes = useStyles();
+
   const [devices, setDevices] = useState({
     active: [],
     inactive: [],
     inactiveFiltered: [],
   });
 
-  useEffect(() => {
-    const activeDevices = props.browser.devices;
-    const activeDevicesById = activeDevices.reduce((acc, val) => {
-      acc[val.id] = val;
-      return acc;
-    }, {});
+  const activeWorkspace =
+    props.browser.availableWorkspaces.byId[props.browser.workspace];
+  const [workspaceName, setWorkspaceName] = useState(activeWorkspace.name);
 
-    const currentInactiveDevicesById = devices.inactive.reduce((acc, val) => {
+  const [editedWorkspace, setEditedWorkspace] = useState(false);
+
+  // Update workspace name
+  useEffect(() => {
+    setWorkspaceName(activeWorkspace.name);
+  }, [activeWorkspace]);
+
+  useEffect(() => {
+    const activeDevices = activeWorkspace.devices;
+    const activeDevicesById = activeDevices.reduce((acc, val) => {
       acc[val.id] = val;
       return acc;
     }, {});
@@ -47,15 +55,12 @@ function DeviceManager(props) {
 
     const inactiveDevices = [
       ...props.browser.allDevices.filter(
-        device =>
-          !activeDevicesById[device.id] &&
-          !currentInactiveDevicesById[device.id]
+        device => !activeDevicesById[device.id]
       ),
-      ...devices.inactive.filter(device => devicesById[device.id]),
     ];
 
     setDevices({active: activeDevices, inactive: inactiveDevices});
-  }, [props.browser.devices, props.browser.allDevices]);
+  }, [activeWorkspace, props.browser.allDevices]);
 
   const onInactiveListFiltering = inactiveFiltered => {
     setDevices({...devices, inactiveFiltered});
@@ -100,11 +105,26 @@ function DeviceManager(props) {
     updateDevices(devices);
   };
 
+  const handleNameChange = e => {
+    setWorkspaceName(e.currentTarget.value);
+    setEditedWorkspace(true);
+  };
+
   const updateDevices = devices => {
     const active = [...devices.active];
     const inactive = [...devices.inactive];
     setDevices({active, inactive});
-    props.setActiveDevices(active);
+    setEditedWorkspace(true);
+  };
+
+  const updateWorkspace = () => {
+    props.updateActiveWorkspace({
+      ...activeWorkspace,
+      name: workspaceName,
+      devices: devices.active,
+    });
+
+    setEditedWorkspace(false);
   };
 
   return (
@@ -112,14 +132,39 @@ function DeviceManager(props) {
       <AppBar className={classes.appBar} color="secondary">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            Manage Devices
+            Manage Workspace
           </Typography>
+          <Button
+            color="inherit"
+            disabled={!editedWorkspace}
+            onClick={updateWorkspace}
+            startIcon={<SaveIcon />}
+          >
+            Save
+          </Button>
           <Button color="inherit" onClick={closeDialog}>
             close
           </Button>
         </Toolbar>
       </AppBar>
       <div className={styles.container}>
+        <Box mb={2}>
+          <Grid container direction="row" justify="center">
+            <Grid item xs={12} sm={6}>
+              <TextField
+                value={workspaceName}
+                onChange={handleNameChange}
+                disabled={activeWorkspace.isDefault}
+                InputProps={{
+                  classes: {
+                    root: classes.workspaceNameInput,
+                  },
+                }}
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+        </Box>
         <Typography variant="body1" className={classes.toolTip}>
           <span>✨</span>Drag and drop the devices across to re-order them.
         </Typography>
@@ -161,6 +206,9 @@ const useStyles = makeStyles(theme => ({
   title: {
     marginLeft: theme.spacing(2),
     flex: 1,
+  },
+  workspaceNameInput: {
+    color: theme.palette.text.primary,
   },
   toolTip: {
     background: theme.palette.mode({
