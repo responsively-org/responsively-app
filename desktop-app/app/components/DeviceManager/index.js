@@ -148,23 +148,6 @@ function DeviceManager(props) {
         </Toolbar>
       </AppBar>
       <div className={styles.container}>
-        <Box mb={2}>
-          <Grid container direction="row" justify="center">
-            <Grid item xs={12} sm={6}>
-              <TextField
-                value={workspaceName}
-                onChange={handleNameChange}
-                disabled={activeWorkspace.isDefault}
-                InputProps={{
-                  classes: {
-                    root: classes.workspaceNameInput,
-                  },
-                }}
-                fullWidth
-              />
-            </Grid>
-          </Grid>
-        </Box>
         <Typography variant="body1" className={classes.toolTip}>
           <span>✨</span>Drag and drop the devices across to re-order them.
         </Typography>
@@ -175,6 +158,20 @@ function DeviceManager(props) {
                 <LightBulbIcon height={30} color="#FFD517" />
                 Active Devices
               </div>
+              <Box mb={1}>
+                <TextField
+                  label="Workspace name"
+                  value={workspaceName}
+                  onChange={handleNameChange}
+                  disabled={activeWorkspace.isDefault}
+                  InputProps={{
+                    classes: {
+                      root: classes.workspaceNameInput,
+                    },
+                  }}
+                  fullWidth
+                />
+              </Box>
               <DeviceList droppableId="active" devices={devices.active} />
             </Grid>
             <Grid item className={styles.section}>
