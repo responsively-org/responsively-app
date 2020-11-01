@@ -25,6 +25,16 @@ const useStyles = makeStyles({
   },
 });
 
+const useRulerStyles = makeStyles(theme => ({
+  ruler: {borderRight: `1px solid ${theme.palette.text.inactive}`, height: 20},
+}));
+
+const VerticalRuler = () => {
+  const styles = useRulerStyles();
+
+  return <div className={styles.ruler} />;
+};
+
 const ScrollControls = ({
   browser,
   triggerScrollDown,
@@ -48,9 +58,6 @@ const ScrollControls = ({
   return (
     <div className={classes.container}>
       <Grid container spacing={1} alignItems="center">
-        <Grid item className={commonClasses.icon}>
-          <PrefersColorSchemeSwitch iconProps={iconProps} />
-        </Grid>
         <Grid
           item
           className={cx(commonClasses.icon, {
@@ -61,37 +68,6 @@ const ScrollControls = ({
           <Tooltip title="Live CSS Editor">
             <div>
               <CSSEditor {...iconProps} />
-            </div>
-          </Tooltip>
-        </Grid>
-        <Grid item className={commonClasses.icon}>
-          <Tooltip title="Take Screenshot">
-            <div onClick={screenshotAllDevices}>
-              <ScreenshotIcon {...iconProps} />
-            </div>
-          </Tooltip>
-        </Grid>
-        <Grid item className={commonClasses.icon}>
-          <Tooltip title="Tilt Devices">
-            <div onClick={flipOrientationAllDevices}>
-              <DeviceRotateIcon {...iconProps} />
-            </div>
-          </Tooltip>
-        </Grid>
-        <Grid item className={commonClasses.icon}>
-          <Tooltip
-            title={
-              browser.allDevicesMuted
-                ? 'Unmute all devices'
-                : 'Mute all devices'
-            }
-          >
-            <div onClick={onAllDevicesMutedChange}>
-              {browser.allDevicesMuted ? (
-                <MutedIcon {...iconProps} />
-              ) : (
-                <UnmutedIcon {...iconProps} />
-              )}
             </div>
           </Tooltip>
         </Grid>
@@ -127,7 +103,48 @@ const ScrollControls = ({
             </div>
           </Tooltip>
         </Grid>
+        <Grid item>
+          <VerticalRuler />
+        </Grid>
+        <Grid item className={commonClasses.icon}>
+          <PrefersColorSchemeSwitch iconProps={iconProps} />
+        </Grid>
         <ToggleTouch iconProps={iconProps} />
+        <Grid item className={commonClasses.icon}>
+          <Tooltip
+            title={
+              browser.allDevicesMuted
+                ? 'Unmute all devices'
+                : 'Mute all devices'
+            }
+          >
+            <div onClick={onAllDevicesMutedChange}>
+              {browser.allDevicesMuted ? (
+                <MutedIcon {...iconProps} />
+              ) : (
+                <UnmutedIcon {...iconProps} />
+              )}
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid item className={commonClasses.icon}>
+          <Tooltip title="Tilt Devices">
+            <div onClick={flipOrientationAllDevices}>
+              <DeviceRotateIcon {...iconProps} />
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid item>
+          <VerticalRuler />
+        </Grid>
+        <Grid item className={commonClasses.icon}>
+          <Tooltip title="Take Screenshot">
+            <div onClick={screenshotAllDevices}>
+              <ScreenshotIcon {...iconProps} />
+            </div>
+          </Tooltip>
+        </Grid>
+
         <ZoomContainer iconProps={iconProps} />
       </Grid>
     </div>
