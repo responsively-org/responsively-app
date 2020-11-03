@@ -1,5 +1,5 @@
 import React, {useState, Fragment, useEffect} from 'react';
-import {makeStyles, withStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -17,9 +17,12 @@ import LightBulbIcon from '../icons/LightBulb';
 import DeviceList from './DeviceList';
 import AddDeviceContainer from '../../containers/AddDeviceContainer';
 import ErrorBoundary from '../ErrorBoundary';
+import Box from '@material-ui/core/Box';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import InputBase from '@material-ui/core/InputBase';
+import TextField from '@material-ui/core/TextField';
 
 import styles from './styles.css';
-import {Box, ButtonGroup, InputBase, TextField} from '@material-ui/core';
 
 function DeviceManager(props) {
   const classes = useStyles();
@@ -151,6 +154,24 @@ function DeviceManager(props) {
         <Typography variant="body1" className={classes.toolTip}>
           <span>✨</span>Drag and drop the devices across to re-order them.
         </Typography>
+        <Grid container className="nameWrapper" justify="center">
+          <Grid item sm="12" md="9">
+            <Box mb={3}>
+              <TextField
+                label="Workspace name"
+                value={workspaceName}
+                onChange={handleNameChange}
+                disabled={activeWorkspace.isDefault}
+                InputProps={{
+                  classes: {
+                    root: classes.workspaceNameInput,
+                  },
+                }}
+                fullWidth
+              />
+            </Box>
+          </Grid>
+        </Grid>
         <DragDropContext onDragEnd={onDragEnd}>
           <Grid container className={styles.content}>
             <Grid item className={styles.section}>
@@ -158,20 +179,6 @@ function DeviceManager(props) {
                 <LightBulbIcon height={30} color="#FFD517" />
                 Active Devices
               </div>
-              <Box mb={1}>
-                <TextField
-                  label="Workspace name"
-                  value={workspaceName}
-                  onChange={handleNameChange}
-                  disabled={activeWorkspace.isDefault}
-                  InputProps={{
-                    classes: {
-                      root: classes.workspaceNameInput,
-                    },
-                  }}
-                  fullWidth
-                />
-              </Box>
               <DeviceList droppableId="active" devices={devices.active} />
             </Grid>
             <Grid item className={styles.section}>

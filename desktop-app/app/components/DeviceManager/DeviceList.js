@@ -36,43 +36,45 @@ function DeviceList({
   }, [searchText, devices]);
   return (
     <>
-      {enableFiltering && (
-        <div className={classes.searchContainer}>
-          {!searchOpen ? (
-            <IconButton
-              className={classes.searchIcon}
-              onClick={() => setSearchOpen(true)}
-            >
-              <SearchIcon fontSize="default" />
-            </IconButton>
-          ) : null}
-          {searchOpen ? (
-            <TextField
-              autoFocus
-              fullWidth
-              variant="outlined"
-              placeholder="Search..."
-              value={searchText}
-              onChange={e => setSearchText(e.target.value.toLowerCase())}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment>
-                    <IconButton
-                      className={classes.searchActiveIcon}
-                      onClick={() => {
-                        setSearchOpen(false);
-                        setSearchText('');
-                      }}
-                    >
-                      <CancelIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          ) : null}
-        </div>
-      )}
+      <div className={classes.searchContainer}>
+        {enableFiltering && (
+          <>
+            {!searchOpen ? (
+              <IconButton
+                className={classes.searchIcon}
+                onClick={() => setSearchOpen(true)}
+              >
+                <SearchIcon fontSize="default" />
+              </IconButton>
+            ) : null}
+            {searchOpen ? (
+              <TextField
+                autoFocus
+                fullWidth
+                variant="outlined"
+                placeholder="Search..."
+                value={searchText}
+                onChange={e => setSearchText(e.target.value.toLowerCase())}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment>
+                      <IconButton
+                        className={classes.searchActiveIcon}
+                        onClick={() => {
+                          setSearchOpen(false);
+                          setSearchText('');
+                        }}
+                      >
+                        <CancelIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            ) : null}
+          </>
+        )}
+      </div>
 
       <Droppable droppableId={droppableId}>
         {provided => (
