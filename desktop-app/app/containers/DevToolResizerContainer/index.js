@@ -17,7 +17,8 @@ function mapStateToProps(state) {
   return {
     ...state.browser.devToolsConfig,
     isInspecting: state.browser.isInspecting,
-    devices: state.availableWorkspaces.byId[state.workspace].devices,
+    devices:
+      state.browser.availableWorkspaces.byId[state.browser.workspace].devices,
   };
 }
 

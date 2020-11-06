@@ -14,7 +14,7 @@ import useCommonStyles from '../useCommonStyles';
 import DeviceManagerContainer from '../../containers/DeviceManagerContainer';
 import useWorkspaceSelectorStyles from './useWorkspaceSelectorStyles';
 import {uniqueId} from 'lodash';
-import {Button} from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 
 /**
  * Allows to select a workspace
