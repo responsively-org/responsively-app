@@ -388,6 +388,7 @@ export function setFocusedDevice(focusedDeviceId) {
   };
 }
 
+// TODO: orest
 export function setActiveDevices(newDevices) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
@@ -403,13 +404,16 @@ export function setActiveDevices(newDevices) {
   };
 }
 
+// TODO: orest
 export function addCustomDevice(newDevice) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     const {
-      browser: {devices},
+      browser: {workspace, availableWorkspaces},
     } = getState();
 
     dispatch(newCustomDevice(newDevice));
+
+    const devices = availableWorkspaces.byId[workspace].devices;
 
     if (newDevice.added) {
       dispatch(newActiveDevices([...devices, newDevice]));

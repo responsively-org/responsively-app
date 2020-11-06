@@ -1,9 +1,16 @@
 import React, {Fragment, useState} from 'react';
 import cx from 'classnames';
-import Dialog from '@material-ui/core/Dialog';
 import {green} from '@material-ui/core/colors';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
+
+import AddIcon from '@material-ui/icons/Add';
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -13,7 +20,6 @@ import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Radio from '@material-ui/core/Radio';
-import AddIcon from '@material-ui/icons/Add';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Input from '@material-ui/core/Input';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -22,10 +28,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {Typography, Grid, MenuItem, NativeSelect} from '@material-ui/core';
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
+
 import Switch from 'react-switch';
 import {
   DEVICE_TYPE,
@@ -34,41 +37,7 @@ import {
   SOURCE,
 } from '../../../constants/devices';
 
-const useStyles = makeStyles(theme => ({
-  fab: {
-    position: 'absolute',
-    top: theme.spacing(10),
-    right: theme.spacing(3),
-  },
-  extendedIcon: {
-    marginRight: theme.spacing(1),
-  },
-  inputField: {
-    marginRight: '1%',
-    width: '49%',
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  select: {
-    marginTop: theme.spacing(2),
-    maxWidth: 150,
-  },
-  radioIcon: {
-    color: theme.palette.lightIcon.main,
-  },
-  inputAdornment: {
-    color: theme.palette.lightIcon.main,
-  },
-  userAgent: {
-    fontSize: 12,
-  },
-  actionButton: {
-    padding: '10px !important',
-    borderRadius: '5px !important',
-  },
-}));
+import {useStyles} from './useStyles';
 
 export default function AddDevice(props) {
   const [open, setOpen] = useState(false);
@@ -159,7 +128,12 @@ export default function AddDevice(props) {
     setWidth(400);
     setHeight(600);
     setPreviewState(true);
+
+    if (props.onSubmit) {
+      props.onSubmit();
+    }
   };
+
   return (
     <Fragment>
       <Fab

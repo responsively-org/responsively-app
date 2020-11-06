@@ -439,8 +439,21 @@ export default function browser(
     case NEW_FOCUSED_DEVICE:
       return {...state, previewer: action.previewer};
     case NEW_ACTIVE_DEVICES:
+      // TODO: orest
       _saveActiveDevices(action.devices);
-      return {...state, devices: action.devices};
+      return {
+        ...state,
+        availableWorkspaces: {
+          ...state.availableWorkspaces,
+          byId: {
+            ...state.availableWorkspaces.byId,
+            [state.workspace]: {
+              ...state.availableWorkspaces.byId[state.workspace],
+              devices: action.devices,
+            },
+          },
+        },
+      };
     case NEW_CUSTOM_DEVICE:
       const existingDevices = settings.get(CUSTOM_DEVICES) || [];
       settings.set(CUSTOM_DEVICES, [action.device, ...existingDevices]);
@@ -472,6 +485,7 @@ export default function browser(
       return {...state, isInspecting: action.status};
     case NEW_WINDOW_SIZE:
       return {...state, windowSize: action.size};
+    // TODO:: orest
     case DEVICE_LOADING:
       const newDevicesList = state.devices.map(device =>
         device.id === action.device.id
@@ -480,6 +494,7 @@ export default function browser(
       );
       return {...state, devices: newDevicesList};
     case TOGGLE_ALL_DEVICES_MUTED:
+      // TODO: orest
       const updatedDevices = state.devices;
       updatedDevices.forEach(d => (d.isMuted = action.allDevicesMuted));
       return {
@@ -488,6 +503,7 @@ export default function browser(
         devices: updatedDevices,
       };
     case TOGGLE_DEVICE_MUTED:
+      // TODO: orest
       const updatedDeviceIndex = state.devices.findIndex(
         x => x.id === action.deviceId
       );
@@ -568,12 +584,13 @@ export default function browser(
         workspace: action.workspace.id,
         availableWorkspaces: {
           ids: [...state.availableWorkspaces.ids, action.workspace.id],
-          byId: Object.assign(state.availableWorkspaces.byId, {
+          byId: {
+            ...state.availableWorkspaces.byId,
             [action.workspace.id]: {
               ...action.workspace,
               devices: _getActiveDevices(),
             },
-          }),
+          },
         },
       };
 
@@ -582,11 +599,12 @@ export default function browser(
         ...state,
         availableWorkspaces: {
           ids: [...state.availableWorkspaces.ids],
-          byId: Object.assign(state.availableWorkspaces.byId, {
+          byId: {
+            ...state.availableWorkspaces.byId,
             [action.workspace.id]: {
               ...action.workspace,
             },
-          }),
+          },
         },
       };
     default:

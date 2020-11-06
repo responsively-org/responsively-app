@@ -155,7 +155,7 @@ function DeviceManager(props) {
           <span>✨</span>Drag and drop the devices across to re-order them.
         </Typography>
         <Grid container className="nameWrapper" justify="center">
-          <Grid item sm="12" md="9">
+          <Grid item sm={12} md={9}>
             <Box mb={3}>
               <TextField
                 label="Workspace name"
@@ -197,7 +197,7 @@ function DeviceManager(props) {
             </Grid>
           </Grid>
         </DragDropContext>
-        <AddDeviceContainer />
+        <AddDeviceContainer onSubmit={() => setEditedWorkspace(true)} />
       </div>
     </Dialog>
   );
