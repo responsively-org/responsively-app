@@ -18,6 +18,8 @@ import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 import {SCREENSHOT_MECHANISM} from '../../constants/values';
 import {notifyPermissionPreferenceChanged} from '../../utils/permissionUtils.js';
 import {PERMISSION_MANAGEMENT_OPTIONS} from '../../constants/permissionsManagement';
+import {notifyStartPreferenceChanged} from '../../utils/startUtils.js';
+import {START_MANAGEMENT_OPTIONS} from '../../constants/startManagement';
 import {setTheme} from '../../actions/browser';
 
 function UserPreference({
@@ -245,6 +247,30 @@ function UserPreference({
           </p>
         </div>
       </div>
+      <div className={commonClasses.sidebarContentSectionContainer}>
+        <div
+          className={cx(
+            commonClasses.flexAlignVerticalMiddle,
+            classes.sectionHeader
+          )}
+        >
+          Start Page
+        </div>
+        <div className={classes.marginTop}>
+          <Select
+            options={startOptions}
+            value={
+              startOptions.find(
+                x => x.value === userPreferences?.startManagement
+              ) || startOptions[0]
+            }
+            onChange={val => {
+              notifyStartPreferenceChanged(val.value);
+              onChange('startManagement', val.value);
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -261,6 +287,17 @@ const permissionsOptions = [
   {
     value: PERMISSION_MANAGEMENT_OPTIONS.ASK_ALWAYS,
     label: PERMISSION_MANAGEMENT_OPTIONS.ASK_ALWAYS,
+  },
+];
+
+const startOptions = [
+  {
+    value: START_MANAGEMENT_OPTIONS.HOME,
+    label: START_MANAGEMENT_OPTIONS.HOME,
+  },
+  {
+    value: START_MANAGEMENT_OPTIONS.BLANK,
+    label: START_MANAGEMENT_OPTIONS.BLANK,
   },
 ];
 
