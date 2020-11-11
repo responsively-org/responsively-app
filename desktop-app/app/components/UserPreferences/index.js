@@ -19,7 +19,7 @@ import {SCREENSHOT_MECHANISM} from '../../constants/values';
 import {notifyPermissionPreferenceChanged} from '../../utils/permissionUtils.js';
 import {PERMISSION_MANAGEMENT_OPTIONS} from '../../constants/permissionsManagement';
 import {notifyStartPreferenceChanged} from '../../utils/startUtils.js';
-import {START_MANAGEMENT_OPTIONS} from '../../constants/startManagement';
+import {START_MANAGEMENT_OPTIONS} from '../../constants/startPageManagement';
 import {setTheme} from '../../actions/browser';
 
 function UserPreference({

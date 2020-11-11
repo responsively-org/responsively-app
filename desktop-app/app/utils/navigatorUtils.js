@@ -1,6 +1,6 @@
 import settings from 'electron-settings';
 import {userPreferenceSettings} from '../settings/userPreferenceSettings';
-import {START_MANAGEMENT_OPTIONS} from '../constants/startManagement';
+import {START_MANAGEMENT_OPTIONS} from '../constants/startPageManagement';
 import path from 'path';
 
 const HOME_PAGE = 'HOME_PAGE';
