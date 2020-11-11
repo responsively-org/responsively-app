@@ -9,6 +9,7 @@ class UserPreferenceSettings {
     (settings.get(USER_PREFERENCES) || {}).screenShotSavePath;
   getDefaultScreenshotpath = () =>
     path.join(os.homedir(), `Desktop/Responsively-Screenshots`);
+  getDefaultStartPage = () => (settings.get(USER_PREFERENCES) || {}).startPage;
 }
 
 const userPreferenceSettingsInstance = new UserPreferenceSettings();

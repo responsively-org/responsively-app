@@ -260,13 +260,12 @@ function UserPreference({
           <Select
             options={startOptions}
             value={
-              startOptions.find(
-                x => x.value === userPreferences?.startManagement
-              ) || startOptions[0]
+              startOptions.find(x => x.value === userPreferences?.startPage) ||
+              startOptions[0]
             }
             onChange={val => {
               notifyStartPreferenceChanged(val.value);
-              onChange('startManagement', val.value);
+              onChange('startPage', val.value);
             }}
           />
         </div>
