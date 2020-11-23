@@ -28,6 +28,7 @@ import {
   NEW_WORKSPACE,
   SET_WORKSPACE,
   UPDATE_WORKSPACE,
+  DELETE_WORKSPACE,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -304,6 +305,7 @@ function _setNetworkConfiguration(
 }
 
 function _getWorkspaces() {
+  // TODO: orest - use id from const
   const defaultWorkspace = {
     id: 'default-workspace',
     name: 'Default Workspace',
@@ -342,8 +344,6 @@ function addNewWorkspace(state, action) {
   Store.set('workspace', action.workspace.id);
   Store.set('availableWorkspaces', availableWorkspaces);
 
-  console.log(Store.store, 'add new Workspace');
-
   return {
     ...state,
     workspace: action.workspace.id,
@@ -363,9 +363,30 @@ function updateWorkspace(state, action) {
   };
 
   Store.set('availableWorkspaces', availableWorkspaces);
-  console.log(Store.store, 'update Workspace');
+
   return {
     ...state,
+    availableWorkspaces,
+  };
+}
+
+function deleteWorkspace(state, action) {
+  const {
+    [action.workspace]: deletedWorkspace,
+    ...restWorkspaces
+  } = state.availableWorkspaces.byId;
+
+  const availableWorkspaces = {
+    ids: state.availableWorkspaces.ids.filter(id => id !== action.workspace),
+    byId: restWorkspaces,
+  };
+
+  Store.set('availableWorkspaces', availableWorkspaces);
+  Store.set('workspace', 'default-workspace'); // TODO: orest - replace with const
+
+  return {
+    ...state,
+    workspace: 'default-workspace', // TODO: orest - replace with const
     availableWorkspaces,
   };
 }
@@ -414,7 +435,7 @@ export default function browser(
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),
     availableWorkspaces: _getWorkspaces(),
-    workspace: Store.get('workspace') || 'default-workspace',
+    workspace: Store.get('workspace') || 'default-workspace', // TODO: orest - use id from const
   },
   action: Action
 ) {
@@ -629,6 +650,9 @@ export default function browser(
 
     case UPDATE_WORKSPACE:
       return updateWorkspace(state, action);
+
+    case DELETE_WORKSPACE:
+      return deleteWorkspace(state, action);
 
     default:
       return state;

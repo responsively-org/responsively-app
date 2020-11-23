@@ -18,6 +18,7 @@ export default function DeviceDrawer({
   setPreviewLayout,
   newWorkspace,
   setActiveWorkspace,
+  deleteWorkspace,
 }) {
   return (
     <div>
@@ -26,6 +27,7 @@ export default function DeviceDrawer({
         value={workspace}
         onChange={setActiveWorkspace}
         onNewWorkspace={newWorkspace}
+        onDeleteWorkspace={deleteWorkspace}
         availableWorkspaces={availableWorkspaces}
       />
       <PreviewerLayoutSelector

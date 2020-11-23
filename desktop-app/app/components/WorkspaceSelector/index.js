@@ -1,8 +1,8 @@
 import React, {useMemo, useState} from 'react';
 import {useTheme} from '@material-ui/core/styles';
-import {components} from 'react-select';
 import {v4 as uuidv4} from 'uuid';
-
+import Button from '@material-ui/core/Button';
+import DeleteIcon from '@material-ui/icons/Delete';
 import DevicesIcon from '../icons/Devices';
 import {
   HORIZONTAL_LAYOUT,
@@ -13,8 +13,8 @@ import Select from '../Select';
 import useCommonStyles from '../useCommonStyles';
 import DeviceManagerContainer from '../../containers/DeviceManagerContainer';
 import useWorkspaceSelectorStyles from './useWorkspaceSelectorStyles';
-import {uniqueId} from 'lodash';
-import Button from '@material-ui/core/Button';
+import Menu from './Menu';
+import DeleteWorkspaceDialog from './DeleteWorkspaceDialog';
 
 /**
  * Allows to select a workspace
@@ -28,12 +28,17 @@ function WorkspaceSelector({
   value,
   onChange,
   onNewWorkspace,
+  onDeleteWorkspace,
 }) {
   const theme = useTheme();
   const commonClasses = useCommonStyles();
   const classes = useWorkspaceSelectorStyles();
   const [open, setMenuOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [
+    deleteWorkspaceConfirmation,
+    showDeleteWorkspaceConfirmation,
+  ] = useState(false);
 
   const options = useMemo(
     () =>
@@ -65,6 +70,17 @@ function WorkspaceSelector({
     setMenuOpen(false);
   };
 
+  const handleAddWorkspace = () => {
+    const newWorkspace = {
+      id: uuidv4(),
+      name: `Workspace ${availableWorkspaces.ids.length}`,
+      devices: undefined,
+    };
+    onNewWorkspace(newWorkspace);
+    setMenuOpen(false);
+    setOpenModal(true);
+  };
+
   return (
     <div className={commonClasses.sidebarContentSection}>
       <div className={classes.navBar}>
@@ -83,19 +99,7 @@ function WorkspaceSelector({
           options={options}
           components={{
             Menu: props => (
-              <Menu
-                {...props}
-                onAddWorkspace={() => {
-                  const newWorkspace = {
-                    id: uuidv4(),
-                    name: `Workspace ${availableWorkspaces.ids.length}`,
-                    devices: undefined,
-                  };
-                  onNewWorkspace(newWorkspace);
-                  setMenuOpen(false);
-                  setOpenModal(true);
-                }}
-              />
+              <Menu {...props} onAddWorkspace={handleAddWorkspace} />
             ),
           }}
           value={
@@ -114,13 +118,34 @@ function WorkspaceSelector({
           onChange={handleChange}
         />
       </div>
-      <Button
-        color="primary"
-        variant="contained"
-        onClick={() => setOpenModal(true)}
-      >
-        Customize
-      </Button>
+      <div className={commonClasses.sidebarContentSectionFooter}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => setOpenModal(true)}
+        >
+          Customize
+        </Button>
+        {value !== 'default-workspace' && (
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.button}
+            onClick={() => showDeleteWorkspaceConfirmation(true)}
+            startIcon={<DeleteIcon />}
+          >
+            Delete
+          </Button>
+        )}
+      </div>
+      <DeleteWorkspaceDialog
+        open={deleteWorkspaceConfirmation}
+        onCancel={() => showDeleteWorkspaceConfirmation(false)}
+        onOk={() => {
+          onDeleteWorkspace(value);
+          showDeleteWorkspaceConfirmation(false);
+        }}
+      />
       <DeviceManagerContainer
         open={openModal}
         onClose={() => setOpenModal(false)}
@@ -128,23 +153,5 @@ function WorkspaceSelector({
     </div>
   );
 }
-
-const Menu = props => {
-  const {onAddWorkspace, ...menuProps} = props;
-
-  return (
-    <components.Menu {...props}>
-      {props.children}
-      <div
-        style={menuProps.getStyles('option', props)}
-        onClick={() => {
-          onAddWorkspace();
-        }}
-      >
-        Add New Workspace ...
-      </div>
-    </components.Menu>
-  );
-};
 
 export default WorkspaceSelector;

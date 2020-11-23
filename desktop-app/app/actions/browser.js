@@ -45,6 +45,7 @@ export const NEW_THEME = 'NEW_THEME';
 export const NEW_WORKSPACE = 'NEW_WORKSPACE';
 export const SET_WORKSPACE = 'SET_WORKSPACE';
 export const UPDATE_WORKSPACE = 'UPDATE_WORKSPACE';
+export const DELETE_WORKSPACE = 'DELETE_WORKSPACE';
 
 export function newAddress(address) {
   return {
@@ -212,6 +213,13 @@ export function setActiveWorkspace(workspaceId) {
 export function updateActiveWorkspace(workspace) {
   return {
     type: UPDATE_WORKSPACE,
+    workspace,
+  };
+}
+
+export function deleteWorkspace(workspace) {
+  return {
+    type: DELETE_WORKSPACE,
     workspace,
   };
 }

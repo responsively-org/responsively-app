@@ -21,6 +21,11 @@ const styles = theme => ({
   sidebarContentSectionContainer: {
     margin: '8px 8px 25px 8px',
   },
+  sidebarContentSectionFooter: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    margin: '8px 8px 25px 8px',
+  },
   icon: {
     cursor: 'pointer',
     position: 'relative',
