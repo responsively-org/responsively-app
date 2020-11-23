@@ -1,6 +1,8 @@
 // @flow
 import {ipcRenderer, remote} from 'electron';
 import settings from 'electron-settings';
+import Store from '../settings/store';
+
 import {
   NEW_ADDRESS,
   NEW_ZOOM_LEVEL,
@@ -309,17 +311,63 @@ function _getWorkspaces() {
     isDefault: true,
   };
 
-  // TODO: load devices from settings or electron-store
-  const userWorkspaces = [];
+  let availableWorkspaces;
 
-  const normalized = {
-    ids: ['default-workspace'],
+  if (Store.has('availableWorkspaces')) {
+    availableWorkspaces = Store.get('availableWorkspaces');
+  } else {
+    Store.set('availableWorkspaces', {
+      ids: [defaultWorkspace.id],
+      byId: {
+        [defaultWorkspace.id]: defaultWorkspace,
+      },
+    });
+  }
+
+  return availableWorkspaces;
+}
+
+function addNewWorkspace(state, action) {
+  const availableWorkspaces = {
+    ids: [...state.availableWorkspaces.ids, action.workspace.id],
     byId: {
-      'default-workspace': defaultWorkspace,
+      ...state.availableWorkspaces.byId,
+      [action.workspace.id]: {
+        ...action.workspace,
+        devices: _getActiveDevices(),
+      },
     },
   };
 
-  return normalized;
+  Store.set('workspace', action.workspace.id);
+  Store.set('availableWorkspaces', availableWorkspaces);
+
+  console.log(Store.store, 'add new Workspace');
+
+  return {
+    ...state,
+    workspace: action.workspace.id,
+    availableWorkspaces,
+  };
+}
+
+function updateWorkspace(state, action) {
+  const availableWorkspaces = {
+    ids: [...state.availableWorkspaces.ids],
+    byId: {
+      ...state.availableWorkspaces.byId,
+      [action.workspace.id]: {
+        ...action.workspace,
+      },
+    },
+  };
+
+  Store.set('availableWorkspaces', availableWorkspaces);
+  console.log(Store.store, 'update Workspace');
+  return {
+    ...state,
+    availableWorkspaces,
+  };
 }
 
 export default function browser(
@@ -366,10 +414,7 @@ export default function browser(
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),
     availableWorkspaces: _getWorkspaces(),
-    workspace: settings.get(
-      ACTIVE_WORKSPACE_CONFIGURATION,
-      'default-workspace'
-    ),
+    workspace: Store.get('workspace') || 'default-workspace',
   },
   action: Action
 ) {
@@ -573,40 +618,18 @@ export default function browser(
       };
 
     case SET_WORKSPACE:
+      Store.set('workspace', action.workspaceId);
       return {
         ...state,
         workspace: action.workspaceId,
       };
 
     case NEW_WORKSPACE:
-      return {
-        ...state,
-        workspace: action.workspace.id,
-        availableWorkspaces: {
-          ids: [...state.availableWorkspaces.ids, action.workspace.id],
-          byId: {
-            ...state.availableWorkspaces.byId,
-            [action.workspace.id]: {
-              ...action.workspace,
-              devices: _getActiveDevices(),
-            },
-          },
-        },
-      };
+      return addNewWorkspace(state, action);
 
     case UPDATE_WORKSPACE:
-      return {
-        ...state,
-        availableWorkspaces: {
-          ids: [...state.availableWorkspaces.ids],
-          byId: {
-            ...state.availableWorkspaces.byId,
-            [action.workspace.id]: {
-              ...action.workspace,
-            },
-          },
-        },
-      };
+      return updateWorkspace(state, action);
+
     default:
       return state;
   }
