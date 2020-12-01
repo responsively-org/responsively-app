@@ -140,7 +140,7 @@ const _handleColorThemePreferences = () => {
 
 const _handleLayout = () => {
   const layout = settings.get(LAYOUT);
-  if (!layout) {
+  if (layout) {
     return;
   }
 
