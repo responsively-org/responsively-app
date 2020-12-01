@@ -3,10 +3,12 @@ import {
   ACTIVE_DEVICES,
   USER_PREFERENCES,
   NETWORK_CONFIGURATION,
+  LAYOUT,
 } from '../constants/settingKeys';
 import {SCREENSHOT_MECHANISM} from '../constants/values';
 import {PERMISSION_MANAGEMENT_OPTIONS} from '../constants/permissionsManagement';
 import {DARK_THEME} from '../constants/theme';
+import {FLEXIGRID_LAYOUT} from '../constants/previewerLayouts';
 
 export function migrateDeviceSchema() {
   if (settings.get('USER_PREFERENCES')) {
@@ -20,6 +22,7 @@ export function migrateDeviceSchema() {
   _handleDeviceSchema();
   _handlePermissionsDefaultPreferences();
   _handleColorThemePreferences();
+  _handleLayout();
 }
 
 function _ensureDefaultNetworkConfig() {
@@ -133,6 +136,15 @@ const _handleColorThemePreferences = () => {
 
   userPreferences.theme = DARK_THEME;
   settings.set(USER_PREFERENCES, userPreferences);
+};
+
+const _handleLayout = () => {
+  const layout = settings.get(LAYOUT);
+  if (!layout) {
+    return;
+  }
+
+  settings.set(LAYOUT, FLEXIGRID_LAYOUT);
 };
 
 export default {migrateDeviceSchema};
