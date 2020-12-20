@@ -945,6 +945,11 @@ class WebView extends Component {
           src={address || 'about:blank'}
           useragent={useragent}
           style={deviceStyles}
+          webpreferences={
+            this.props.browser.userPreferences.disableSpellCheck
+              ? 'spellcheck=no'
+              : 'spellcheck=yes'
+          }
         />
       </>
     );
