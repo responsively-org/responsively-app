@@ -124,6 +124,7 @@ type PageMetaType = {
 type UserPreferenceType = {
   disableSSLValidation: boolean,
   reopenLastAddress: boolean,
+  disableSpellCheck: boolean,
   drawerState: boolean,
   devToolsOpenMode: DevToolsOpenModeType,
   deviceOutlineStyle: string,
