@@ -125,7 +125,14 @@ function UserPreference({
               />
             }
             label={
-              <span className={classes.preferenceName}>Disable spellcheck</span>
+              <div>
+                <span className={classes.preferenceName}>
+                  Disable spellcheck
+                </span>
+                <p className={classes.spellCheckToggleSmallNote}>
+                  Note: Restart required
+                </p>
+              </div>
             }
           />
         </div>

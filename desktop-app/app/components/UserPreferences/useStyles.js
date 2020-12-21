@@ -41,6 +41,11 @@ const useStyles = makeStyles(theme => ({
     lineHeight: 1.66,
     letterSpacing: '0.03333em',
   },
+  spellCheckToggleSmallNote: {
+    color: theme.palette.text.primary,
+    margin: 0,
+    fontSize: '10px',
+  },
 }));
 
 export default useStyles;
