@@ -65,7 +65,7 @@ The application is available for Mac, Windows and Linux platforms. Please downlo
 
 Alternatively, MacOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) to install it:
 ```bash
-brew cask install responsively
+brew install --cask responsively
 ```
 
 Also, Windows users can use [`chocolatey`](https://chocolatey.org/packages/responsively/) to install it:
