@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 
-const FullScreenShort = ({width, height, color, padding, margin}) => (
+const FullScreenshot = ({width, height, color, padding, margin}) => (
   <Fragment>
     <svg
       width={width}
@@ -30,8 +30,8 @@ const FullScreenShort = ({width, height, color, padding, margin}) => (
   </Fragment>
 );
 
-FullScreenShort.defaultProps = {
+FullScreenshot.defaultProps = {
   color: 'currentColor',
 };
 
-export default FullScreenShort;
+export default FullScreenshot;
