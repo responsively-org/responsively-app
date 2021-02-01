@@ -370,6 +370,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "lucievr",
+      "name": "Lucie Vrsovska",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46979603?v=4",
+      "profile": "http://www.lucie.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
