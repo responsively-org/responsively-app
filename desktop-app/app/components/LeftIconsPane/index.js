@@ -10,6 +10,7 @@ import Logo from '../icons/Logo';
 import Gift from '../icons/Gift';
 import Headway from '../Headway';
 import ZenButton from '../ZenButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import styles from './styles.css';
 import useCommonStyles from '../useCommonStyles';
@@ -100,9 +101,11 @@ const LeftIconsPane = props => {
           })}
           onClick={() => toggleState(DEVICE_MANAGER)}
         >
-          <div className={cx(mStyles.leftPaneIcon)}>
-            <DevicesIcon {...iconProps} className="deviceManagerIcon" />
-          </div>
+          <Tooltip title="Device manager">
+            <div className={cx(mStyles.leftPaneIcon)}>
+              <DevicesIcon {...iconProps} className="deviceManagerIcon" />
+            </div>
+          </Tooltip>
         </Grid>
         <Grid
           item
@@ -112,9 +115,11 @@ const LeftIconsPane = props => {
           })}
           onClick={() => toggleState(USER_PREFERENCES)}
         >
-          <div className={cx(mStyles.leftPaneIcon)}>
-            <SettingsIcon {...iconProps} className="settingsIcon" />
-          </div>
+          <Tooltip title="Preferences">
+            <div className={cx(mStyles.leftPaneIcon)}>
+              <SettingsIcon {...iconProps} className="settingsIcon" />
+            </div>
+          </Tooltip>
         </Grid>
         <Grid
           item
@@ -124,9 +129,11 @@ const LeftIconsPane = props => {
           })}
           onClick={() => toggleState(EXTENSIONS_MANAGER)}
         >
-          <div className={cx(mStyles.leftPaneIcon)}>
-            <ExtensionIcon {...iconProps} className="extensionsIcon" />
-          </div>
+          <Tooltip title="Manage extensions">
+            <div className={cx(mStyles.leftPaneIcon)}>
+              <ExtensionIcon {...iconProps} className="extensionsIcon" />
+            </div>
+          </Tooltip>
         </Grid>
         <Grid
           item
@@ -137,13 +144,15 @@ const LeftIconsPane = props => {
           })}
           onClick={() => toggleState(NETWORK_CONFIGURATION)}
         >
-          <div className={cx(mStyles.leftPaneIcon)}>
-            <NetworkIcon
-              {...iconProps}
-              color="currentColor"
-              className="networkIcon"
-            />
-          </div>
+          <Tooltip title="Manage network">
+            <div className={cx(mStyles.leftPaneIcon)}>
+              <NetworkIcon
+                {...iconProps}
+                color="currentColor"
+                className="networkIcon"
+              />
+            </div>
+          </Tooltip>
         </Grid>
       </Grid>
       <Headway />
