@@ -379,6 +379,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jcabak",
+      "name": "Jakub Cabak",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1818155?v=4",
+      "profile": "https://github.com/jcabak",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
