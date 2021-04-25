@@ -29,6 +29,7 @@ import {
   PROXY_AUTH_ERROR,
   APPLY_CSS,
   TOGGLE_DEVICE_DESIGN_MODE_STATE,
+  TOGGLE_EVENT_MIRRORING,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 import {DESIGN_MODE_JS_VALUES} from '../../constants/values';
@@ -127,6 +128,9 @@ class WebView extends Component {
     );
     this.subscriptions.push(
       pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(TOGGLE_EVENT_MIRRORING, this.processToggleEventMirroring)
     );
     this.subscriptions.push(
       pubsub.subscribe(ADDRESS_CHANGE, this.processAddressChangeEvent)
@@ -442,6 +446,10 @@ class WebView extends Component {
     this.setState({screenshotInProgress: false});
   };
 
+  processToggleEventMirroring = async ({status}) => {
+    this._unPlug(status);
+  };
+
   processFlipOrientationEvent = (message = {}) => {
     const {deviceId} = message;
     if (deviceId && this.props.device.id !== deviceId) {
@@ -685,8 +693,8 @@ class WebView extends Component {
     });
   };
 
-  _unPlug = () => {
-    if (this.state.isUnplugged) {
+  _unPlug = (status: boolean = this.state.isUnplugged) => {
+    if (status) {
       this.openBrowserSyncSocket(this.webviewRef.current);
     } else {
       this.closeBrowserSyncSocket(this.webviewRef.current);
@@ -879,6 +887,7 @@ class WebView extends Component {
             src={address || 'about:blank'}
             useragent={useragent}
             style={deviceStyles}
+            id={id}
           />
         </Resizable>
       );
@@ -893,6 +902,7 @@ class WebView extends Component {
           src={address || 'about:blank'}
           useragent={useragent}
           style={deviceStyles}
+          id={id}
         />
       </>
     );

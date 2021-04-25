@@ -1,5 +1,5 @@
 // @flow
-import React, {Component, useState} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import cx from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -18,6 +18,9 @@ import PrefersColorSchemeSwitch from '../PrefersColorSchemeSwitch';
 import ToggleTouch from '../ToggleTouch';
 import Muted from '../icons/Muted';
 import CSSEditor from '../icons/CSSEditor';
+import pubsub from 'pubsub.js';
+import {SCREENSHOT_ALL_DEVICES_V2} from '../../constants/pubsubEvents';
+import Capture from '../ScreenshotManager/capture';
 
 const useStyles = makeStyles({
   container: {
@@ -54,6 +57,14 @@ const ScrollControls = ({
     height: 25,
     width: 25,
   };
+
+  useEffect(() => {
+    pubsub.subscribe(SCREENSHOT_ALL_DEVICES_V2, Capture);
+
+    return () => {
+      pubsub.unsubscribe(Capture);
+    };
+  }, []);
 
   return (
     <div className={classes.container}>

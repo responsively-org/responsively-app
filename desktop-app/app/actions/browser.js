@@ -16,6 +16,8 @@ import {
   ADDRESS_CHANGE,
   STOP_LOADING,
   TOGGLE_DEVICE_DESIGN_MODE_STATE,
+  SCREENSHOT_ALL_DEVICES_V2,
+  TOGGLE_EVENT_MIRRORING,
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
@@ -713,7 +715,12 @@ export function triggerScrollDown() {
 
 export function screenshotAllDevices() {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    pubsub.publish(SCREENSHOT_ALL_DEVICES, [{now: new Date()}]);
+    // console.log('devices', document.querySelectorAll('webview'));
+    const {
+      browser: {devices},
+    } = getState();
+    pubsub.publish(SCREENSHOT_ALL_DEVICES_V2, [{now: new Date(), devices}]);
+    // pubsub.publish(TOGGLE_EVENT_MIRRORING, [{ status: false }]);
   };
 }
 
