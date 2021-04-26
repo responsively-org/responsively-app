@@ -18,14 +18,12 @@ class FileSystemUtils {
 
   async writeImageToFile(image: Buffer, newDir: boolean, ext: string) {
     try {
-      console.log('saving...');
       const dir = this.createNewDirectoryName(newDir);
       const fileName = this.createNewFileName(true);
       const ensureDirPromise = fs.ensureDir(dir);
       await ensureDirPromise;
       const fileWithExt = `${fileName}.${ext}`;
       await fs.writeFileSync(path.join(dir, fileWithExt), image);
-      console.log('saved....');
     } catch (err) {
       console.log(err);
     }
@@ -41,7 +39,6 @@ class FileSystemUtils {
       const ext = matches[1];
       const data = matches[2];
       const buffer = Buffer.from(data, 'base64');
-      console.log('converted to buffer...');
       const fileWithExt = `merged-full.${ext}`;
       await fs.writeFileSync(path.join(dir, fileWithExt), buffer);
     } catch (err) {
@@ -102,7 +99,6 @@ class FileSystemUtils {
 
   openCurrentDir(newDir: boolean) {
     const dir = this.createNewDirectoryName(newDir);
-    console.log(dir);
     shell.showItemInFolder(path.join(dir));
   }
 }

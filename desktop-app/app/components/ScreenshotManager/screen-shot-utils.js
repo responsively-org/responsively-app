@@ -120,7 +120,7 @@ export default class WebViewUtils {
       let scrollPercent: number = await this.getScrollPercent();
       while (scrollPercent !== 100 && !Number.isNaN(scrollPercent)) {
         await this.scrollViewPort();
-        await _delay(2000);
+        await _delay(200);
         scrollPercent = Math.ceil(await this.getScrollPercent());
       }
     } catch (err) {
@@ -186,6 +186,7 @@ export default class WebViewUtils {
     await _delay(500);
     const image = await this.takeSnapShot();
     await this.resetBg();
+    console.log(previous);
     this.webView.setAttribute(
       'style',
       `
@@ -200,5 +201,34 @@ export default class WebViewUtils {
       previous.previousScrollPosition.top
     );
     return image;
+  }
+
+  captureWithRetry(retry: number = 3): Promise<Electron.NativeImage> {
+    return new Promise((resolve, reject) => {
+      let retryCount = 0;
+      const address = this.webView.getAttribute('src');
+      this.webContents.on('crashed', (event, killed) => {
+        if (!killed) {
+          this.webView.setAttribute('src', address);
+        } else {
+          reject(new Error('WebView killed.... : ('));
+        }
+      });
+
+      this.webContents.on('dom-ready', async () => {
+        getImage();
+      });
+
+      const getImage = async () => {
+        if (retryCount === retry) {
+          reject(new Error('Unable to produce image'));
+        }
+        retryCount += 1;
+        const image = await this.captureFullHeightScreenShot();
+        resolve(image);
+      };
+
+      getImage();
+    });
   }
 }

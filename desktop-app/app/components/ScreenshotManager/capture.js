@@ -33,68 +33,109 @@ function sortWebViewsByDeviceIds(
 export default async function Capture(data: Data) {
   const {now, devices} = data;
   const toastId = showNotification('start Capturing', false, true, false, null);
+
+  // get All web views
   const webViews = document.querySelectorAll('webview');
+
+  // sort web views based on devices order
   const sortedWebViews = sortWebViewsByDeviceIds(webViews, devices);
 
+  // get user preference path
+  // TODO: update fs utils where it should consider both default and preferred path
   const {
     getDefaultScreenshotpath,
     getScreenShotSavePath,
   } = userPreferenceSettings;
-
   const defaultPath = getDefaultScreenshotpath();
   const path = getScreenShotSavePath();
+
+  // remove event mirroring between webviews
+  // TODO: bug prone, change logic webview component based on status we sending here
   pubsub.publish(TOGGLE_EVENT_MIRRORING, [{status: false}]);
+
+  // store image objects
   const images = [];
   for (let i = 0; i < sortedWebViews.length; i += 1) {
-    showNotification(
-      `start Capturing ${devices[i].name}`,
-      false,
-      true,
-      false,
-      toastId
-    );
-    const currentView = sortedWebViews[i];
-    const address = currentView.getURL();
-    const webUtils = new WebViewUtils(currentView);
-    const image = await webUtils.captureFullHeightScreenShot();
-    const fsUtils = new FileSystemUtils(
-      path || defaultPath,
-      now,
-      address,
-      devices[i].name || 'device'
-    );
-    images.push(image);
+    try {
+      const currentView = sortedWebViews[i];
+      showNotification(
+        `Capturing ${devices[i].name}`,
+        false,
+        true,
+        false,
+        'info',
+        toastId
+      );
 
-    const jpg = fsUtils.convertNativeImageToJPEG(image);
-    await fsUtils.writeImageToFile(jpg, true, 'jpg');
-    showNotification(
-      `captured and saved: ${devices[i].name}`,
-      false,
-      false,
-      true,
-      toastId
-    );
+      const address = currentView.getURL();
+      const webUtils = new WebViewUtils(currentView);
+      const image = await webUtils.captureWithRetry();
+      const fsUtils = new FileSystemUtils(
+        path || defaultPath,
+        now,
+        address,
+        devices[i].name || 'device'
+      );
+      images.push(image);
+
+      const jpg = fsUtils.convertNativeImageToJPEG(image);
+      await fsUtils.writeImageToFile(jpg, true, 'jpg');
+      showNotification(
+        `captured and saved: ${devices[i].name}`,
+        false,
+        false,
+        true,
+        'success',
+        toastId
+      );
+    } catch (error) {
+      showNotification(
+        `${error.message}: ${devices[i].name}`,
+        false,
+        false,
+        false,
+        'error',
+        toastId
+      );
+    }
   }
+
+  // remove event mirroring between webviews
+  // TODO: bug prone, change logic webview component based on status we sending here
   pubsub.publish(TOGGLE_EVENT_MIRRORING, [{status: true}]);
+
+  // get web address of Webviews
   const address = sortedWebViews[0].getURL();
+
+  // create fs Utils to save file
   const fsUtils = new FileSystemUtils(
     path || defaultPath,
     now,
     address,
     devices[0].name || 'device'
   );
-  showNotification(`merging images`, false, true, false, toastId);
+
+  showNotification(`merging images`, false, true, false, 'info', toastId);
   const mergedImage = await mergeImages(images);
   showNotification(
     `Converting data to binary && saving`,
     false,
     true,
     false,
+    'info',
     toastId
   );
   await fsUtils.writeBitImageToFile(mergedImage, true);
-  showNotification(`saved merged images`, 2000, false, true, toastId);
+  showNotification(
+    `saved merged images`,
+    2000,
+    false,
+    true,
+    'success',
+    toastId
+  );
   // open directory
+  // TODO: openCurrentDir with true as argument does not make sense
   fsUtils.openCurrentDir(true);
 }
 
@@ -136,6 +177,7 @@ export async function mergeImages(images: Array<Electron.NativeImage>) {
 
   return canvas.toDataURL('image/png', 0.6);
 }
+
 function loadImage(image: Electron.NativeImage): Promise<any> {
   return new Promise((resolve, reject) => {
     const htmlImg = new Image();
@@ -152,6 +194,7 @@ function showNotification(
   autoClose: number | boolean,
   spinner: boolean,
   tick: boolean,
+  type = 'info',
   toastId: any
 ) {
   const messageUI = (
@@ -163,7 +206,7 @@ function showNotification(
 
   toast.update(toastId, {
     render: messageUI,
-    type: toast.TYPE.INFO,
+    type,
     autoClose,
   });
 }
