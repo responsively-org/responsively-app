@@ -117,15 +117,16 @@ export default async function Capture(data: Data) {
 
   showNotification(`merging images`, false, true, false, 'info', toastId);
   const mergedImage = await mergeImages(images);
-  const [img, ext] = await fsUtils.createCombinedImage(mergedImage);
   showNotification(
-    `Converting data to binary && saving`,
+    `Converting data to binary`,
     false,
     true,
     false,
     'info',
     toastId
   );
+  const [img, ext] = await fsUtils.createCombinedImage(mergedImage);
+  showNotification(`saving`, false, true, false, 'info', toastId);
   await fsUtils.writeImageToFile(img, true, ext);
   showNotification(
     `saved merged images`,
