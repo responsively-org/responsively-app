@@ -112,11 +112,12 @@ export default async function Capture(data: Data) {
     path || defaultPath,
     now,
     address,
-    devices[0].name || 'device'
+    'merged-image'
   );
 
   showNotification(`merging images`, false, true, false, 'info', toastId);
   const mergedImage = await mergeImages(images);
+  const [img, ext] = await fsUtils.createCombinedImage(mergedImage);
   showNotification(
     `Converting data to binary && saving`,
     false,
@@ -125,7 +126,7 @@ export default async function Capture(data: Data) {
     'info',
     toastId
   );
-  await fsUtils.writeBitImageToFile(mergedImage, true);
+  await fsUtils.writeImageToFile(img, true, ext);
   showNotification(
     `saved merged images`,
     2000,

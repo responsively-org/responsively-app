@@ -191,8 +191,8 @@ export default class WebViewUtils {
       'style',
       `
         outline: rgba(0, 0, 0, 0) solid 4px;
-        width: ${previous.scrollWidth}px;
-        height: ${previous.scrollHeight}px;
+        width: ${previous.viewPortWidth}px;
+        height: ${previous.viewPortHeight}px;
         transform: scale(1);
       `
     );

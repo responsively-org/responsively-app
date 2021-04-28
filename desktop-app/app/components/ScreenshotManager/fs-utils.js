@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import DateUtils from './date-utils';
 import {shell} from 'electron';
+import PromiseWorker from 'promise-worker';
 
 class FileSystemUtils {
   path: string;
@@ -44,6 +45,14 @@ class FileSystemUtils {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  createCombinedImage(image) {
+    const worker = new Worker(
+      path.join(__dirname, './components/ScreenshotManager/image-worker.js')
+    );
+    const promiseWorker = new PromiseWorker(worker);
+    return promiseWorker.postMessage({mergedImg: image});
   }
 
   convertNativeImageToJPEG(image: Electron.NativeImage) {
