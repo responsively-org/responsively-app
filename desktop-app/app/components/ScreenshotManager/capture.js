@@ -11,7 +11,8 @@ import pubsub from 'pubsub.js';
 
 function sortWebViewsByDeviceIds(
   webViews: NodeList<WebviewElement>,
-  devices: Array<{id: number}>
+  devices: Array<{id: number}>,
+  selectedDevices
 ): Array<any> {
   const hashTable = new Map<number, number>();
   const sorted = new Array(devices.length).fill(null);
@@ -27,18 +28,32 @@ function sortWebViewsByDeviceIds(
       sorted[index] = webViews[i];
     }
   }
-  return sorted;
+  const selected = [];
+  for (let i = 0; i < sorted.length; i += 1) {
+    if (selectedDevices[i].selected) {
+      selected.push(sorted[i]);
+    }
+  }
+  return selected;
 }
 
 export default async function Capture(data: Data) {
-  const {now, devices} = data;
+  const {
+    now,
+    devices,
+    selectedDevices: {deviceChecks, isMergeImages},
+  } = data;
   const toastId = showNotification('start Capturing', false, true, false, null);
 
   // get All web views
   const webViews = document.querySelectorAll('webview');
 
   // sort web views based on devices order
-  const sortedWebViews = sortWebViewsByDeviceIds(webViews, devices);
+  const sortedWebViews = sortWebViewsByDeviceIds(
+    webViews,
+    devices,
+    deviceChecks
+  );
 
   // get user preference path
   // TODO: update fs utils where it should consider both default and preferred path
@@ -48,13 +63,19 @@ export default async function Capture(data: Data) {
   } = userPreferenceSettings;
   const defaultPath = getDefaultScreenshotpath();
   const path = getScreenShotSavePath();
-
+  if (!sortedWebViews.length) return;
   // remove event mirroring between webviews
   // TODO: bug prone, change logic webview component based on status we sending here
   pubsub.publish(TOGGLE_EVENT_MIRRORING, [{status: false}]);
 
   // store image objects
   const images = [];
+
+  // get web address of Webviews
+  const address = sortedWebViews[0].getURL();
+
+  const fsUtils = new FileSystemUtils(path, defaultPath, now, address);
+
   for (let i = 0; i < sortedWebViews.length; i += 1) {
     try {
       const currentView = sortedWebViews[i];
@@ -66,20 +87,12 @@ export default async function Capture(data: Data) {
         'info',
         toastId
       );
-
-      const address = currentView.getURL();
       const webUtils = new WebViewUtils(currentView);
       const image = await webUtils.captureWithRetry();
-      const fsUtils = new FileSystemUtils(
-        path || defaultPath,
-        now,
-        address,
-        devices[i].name || 'device'
-      );
       images.push(image);
 
       const jpg = fsUtils.convertNativeImageToJPEG(image);
-      await fsUtils.writeImageToFile(jpg, true, 'jpg');
+      await fsUtils.writeImageToFile(jpg, true, deviceChecks[i].name, 'jpg');
       showNotification(
         `captured and saved: ${devices[i].name}`,
         false,
@@ -103,42 +116,33 @@ export default async function Capture(data: Data) {
   // remove event mirroring between webviews
   // TODO: bug prone, change logic webview component based on status we sending here
   pubsub.publish(TOGGLE_EVENT_MIRRORING, [{status: true}]);
+  if (isMergeImages) {
+    showNotification(`merging images`, false, true, false, 'info', toastId);
+    const mergedImage = await mergeImages(images);
+    showNotification(
+      `Converting data to binary`,
+      false,
+      true,
+      false,
+      'info',
+      toastId
+    );
+    const [img, ext] = await fsUtils.convertToImageBuffer(mergedImage);
+    showNotification(`saving`, false, true, false, 'info', toastId);
+    await fsUtils.writeImageToFile(img, true, 'all', ext);
+    showNotification(
+      `saved merged images`,
+      2000,
+      false,
+      true,
+      'success',
+      toastId
+    );
+  }
 
-  // get web address of Webviews
-  const address = sortedWebViews[0].getURL();
-
-  // create fs Utils to save file
-  const fsUtils = new FileSystemUtils(
-    path || defaultPath,
-    now,
-    address,
-    'merged-image'
-  );
-
-  showNotification(`merging images`, false, true, false, 'info', toastId);
-  const mergedImage = await mergeImages(images);
-  showNotification(
-    `Converting data to binary`,
-    false,
-    true,
-    false,
-    'info',
-    toastId
-  );
-  const [img, ext] = await fsUtils.createCombinedImage(mergedImage);
-  showNotification(`saving`, false, true, false, 'info', toastId);
-  await fsUtils.writeImageToFile(img, true, ext);
-  showNotification(
-    `saved merged images`,
-    2000,
-    false,
-    true,
-    'success',
-    toastId
-  );
+  // TODO: zip things
   // open directory
-  // TODO: openCurrentDir with true as argument does not make sense
-  fsUtils.openCurrentDir(true);
+  fsUtils.openCurrentDir();
 }
 
 export async function mergeImages(images: Array<Electron.NativeImage>) {

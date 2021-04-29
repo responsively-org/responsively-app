@@ -21,6 +21,7 @@ import CSSEditor from '../icons/CSSEditor';
 import pubsub from 'pubsub.js';
 import {SCREENSHOT_ALL_DEVICES_V2} from '../../constants/pubsubEvents';
 import Capture from '../ScreenshotManager/capture';
+import ScreenshotManager from '../ScreenshotManager';
 
 const useStyles = makeStyles({
   container: {
@@ -49,6 +50,7 @@ const ScrollControls = ({
   onAllDevicesMutedChange,
   onToggleAllDeviceDesignMode,
 }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const theme = useTheme();
   const commonClasses = useCommonStyles();
@@ -65,6 +67,19 @@ const ScrollControls = ({
       pubsub.unsubscribe(Capture);
     };
   }, []);
+
+  const handleScreenShotDialog = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const closeDialog = () => {
+    setAnchorEl(null);
+  };
+
+  const handleScreenshot = data => {
+    screenshotAllDevices(data);
+    setAnchorEl(null);
+  };
 
   return (
     <div className={classes.container}>
@@ -150,7 +165,7 @@ const ScrollControls = ({
         </Grid>
         <Grid item className={commonClasses.icon}>
           <Tooltip title="Take Screenshot">
-            <div onClick={screenshotAllDevices}>
+            <div onClick={handleScreenShotDialog}>
               <ScreenshotIcon {...iconProps} />
             </div>
           </Tooltip>
@@ -158,6 +173,12 @@ const ScrollControls = ({
 
         <ZoomContainer iconProps={iconProps} />
       </Grid>
+      <ScreenshotManager
+        browser={browser}
+        isOpen={Boolean(anchorEl)}
+        handleClose={closeDialog}
+        handleOk={data => handleScreenshot(data)}
+      />
     </div>
   );
 };

@@ -215,9 +215,11 @@ export default class WebViewUtils {
         }
       });
 
-      this.webContents.on('dom-ready', async () => {
+      const callGetImage = () => {
         getImage();
-      });
+      };
+
+      this.webContents.on('dom-ready', callGetImage);
 
       const getImage = async () => {
         if (retryCount === retry) {
@@ -225,6 +227,7 @@ export default class WebViewUtils {
         }
         retryCount += 1;
         const image = await this.captureFullHeightScreenShot();
+        this.webView.removeEventListener('dom-ready', callGetImage);
         resolve(image);
       };
 

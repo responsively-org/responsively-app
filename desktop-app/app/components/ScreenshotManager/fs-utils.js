@@ -5,49 +5,47 @@ import {shell} from 'electron';
 import PromiseWorker from 'promise-worker';
 
 class FileSystemUtils {
-  path: string;
+  userPath: string;
+  defaultPath: string;
   date: Date;
   address: string;
-  device: string;
+  currentDir: string;
 
-  constructor(path: string, date: Date, address: string, device: string) {
-    this.path = path;
+  constructor(path: string, defaultPath: string, date: Date, address: string) {
+    this.userPath = path;
+    this.defaultPath = defaultPath;
     this.date = date;
     this.address = address;
-    this.device = device;
   }
 
-  async writeImageToFile(image: Buffer, newDir: boolean, ext: string) {
+  // save image to file
+  async writeImageToFile(
+    image: Buffer,
+    newDir: boolean,
+    deviceName: string,
+    ext: string
+  ) {
     try {
-      const dir = this.createNewDirectoryName(newDir);
-      const fileName = this.createNewFileName(true);
-      const ensureDirPromise = fs.ensureDir(dir);
+      if (!this.currentDir) {
+        this.createNewDirectoryName(newDir);
+      }
+      const fileName = this.createNewFileName(deviceName);
+      const ensureDirPromise = fs.ensureDir(this.currentDir);
       await ensureDirPromise;
       const fileWithExt = `${fileName}.${ext}`;
-      await fs.writeFileSync(path.join(dir, fileWithExt), image);
+      await fs.writeFileSync(path.join(this.currentDir, fileWithExt), image);
     } catch (err) {
       console.log(err);
     }
   }
 
-  async writeBitImageToFile(image: any, newDir: boolean) {
-    try {
-      const dir = this.createNewDirectoryName(newDir);
-      const ensureDirPromise = fs.ensureDir(dir);
-      await ensureDirPromise;
-      const regex = /^data:.+\/(.+);base64,(.*)$/;
-      const matches = image.match(regex);
-      const ext = matches[1];
-      const data = matches[2];
-      const buffer = Buffer.from(data, 'base64');
-      const fileWithExt = `merged-full.${ext}`;
-      await fs.writeFileSync(path.join(dir, fileWithExt), buffer);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  createCombinedImage(image) {
+  /**
+   * converts existing canvas URI string to buffer
+   * It uses web worker so that it does not actually blocks render thread.
+   * @param image : string
+   * @returns {Promise<[Buffer, string]>} buffer gets returned along with extension (normally png)
+   */
+  convertToImageBuffer(image) {
     const worker = new Worker(
       path.join(__dirname, './components/ScreenshotManager/image-worker.js')
     );
@@ -68,24 +66,26 @@ class FileSystemUtils {
     if (createNew) {
       dir = `${dateString} at ${timeString}/`;
     }
-
-    return path.join(this.path, dir);
+    this.currentDir = path.join(this.userPath || this.defaultPath, dir);
   }
 
-  createNewFileName(createNew: boolean): string {
+  /**
+   * base is generally device name it can take urls
+   * @param base:string
+   * @returns {string}
+   */
+  createNewFileName(base: string): string {
     const dateUtils = new DateUtils(this.date);
     let fileName = this.parseWebAddress(this.address);
-    if (createNew) {
-      fileName += '- Full - ';
-    }
-    const deviceName = this.device.replace(/\//g, '-');
+    const fileBaseName = base.replace(/\//g, '-');
     const dateString = dateUtils.getDateString();
-    fileName += deviceName;
-    fileName += dateString;
+    fileName += `-${fileBaseName}`;
+    fileName += `-${dateString}`;
 
     return fileName;
   }
 
+  // TODO: duplicate code remove other one
   parseWebAddress(address: string): string {
     let domain: string = '';
     if (address.startsWith('file://')) {
@@ -106,9 +106,10 @@ class FileSystemUtils {
     return domain.charAt(0).toUpperCase() + domain.slice(1);
   }
 
-  openCurrentDir(newDir: boolean) {
-    const dir = this.createNewDirectoryName(newDir);
-    shell.showItemInFolder(path.join(dir));
+  async openCurrentDir() {
+    if (!this.currentDir) return;
+    await shell.openPath(path.join(this.currentDir));
+    shell.beep();
   }
 }
 

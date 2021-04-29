@@ -713,14 +713,15 @@ export function triggerScrollDown() {
   };
 }
 
-export function screenshotAllDevices() {
+export function screenshotAllDevices(selectedDevices) {
   return (dispatch: Dispatch, getState: RootStateType) => {
     // console.log('devices', document.querySelectorAll('webview'));
     const {
       browser: {devices},
     } = getState();
-    pubsub.publish(SCREENSHOT_ALL_DEVICES_V2, [{now: new Date(), devices}]);
-    // pubsub.publish(TOGGLE_EVENT_MIRRORING, [{ status: false }]);
+    pubsub.publish(SCREENSHOT_ALL_DEVICES_V2, [
+      {now: new Date(), devices, selectedDevices},
+    ]);
   };
 }
 
