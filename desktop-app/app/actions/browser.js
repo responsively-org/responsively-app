@@ -11,6 +11,7 @@ import {
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
   TOGGLE_DEVICE_MUTED_STATE,
+  TOGGLE_EVENT_MIRRORING_ALL_DEVICES,
   RELOAD_CSS,
   DELETE_STORAGE,
   ADDRESS_CHANGE,
@@ -709,6 +710,12 @@ export function onUserPreferencesChange(userPreferences) {
 export function triggerScrollDown() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(SCROLL_DOWN);
+  };
+}
+
+export function toggleEventMirroringAllDevices(status: boolean) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(TOGGLE_EVENT_MIRRORING_ALL_DEVICES, [{status}]);
   };
 }
 

@@ -29,6 +29,7 @@ import {
   PROXY_AUTH_ERROR,
   APPLY_CSS,
   TOGGLE_DEVICE_DESIGN_MODE_STATE,
+  TOGGLE_EVENT_MIRRORING_ALL_DEVICES,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 import {DESIGN_MODE_JS_VALUES} from '../../constants/values';
@@ -128,6 +129,12 @@ class WebView extends Component {
     );
     this.subscriptions.push(
       pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(
+        TOGGLE_EVENT_MIRRORING_ALL_DEVICES,
+        this.processToggleEventMirroring
+      )
     );
     this.subscriptions.push(
       pubsub.subscribe(ADDRESS_CHANGE, this.processAddressChangeEvent)
@@ -420,6 +427,30 @@ class WebView extends Component {
       return;
     }
     this.webviewRef.current.send('scrollUpMessage');
+  };
+
+  processToggleEventMirroring = async ({status}) => {
+    if (status) {
+      this.setState(
+        () => ({
+          ...this.state,
+          isUnplugged: !status,
+        }),
+        async () => {
+          await this.openBrowserSyncSocket(this.webviewRef.current);
+        }
+      );
+    } else {
+      this.setState(
+        () => ({
+          ...this.state,
+          isUnplugged: !status,
+        }),
+        async () => {
+          await this.closeBrowserSyncSocket(this.webviewRef.current);
+        }
+      );
+    }
   };
 
   processScreenshotEvent = async ({
