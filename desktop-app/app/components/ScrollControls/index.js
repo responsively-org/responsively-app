@@ -1,11 +1,12 @@
 // @flow
-import React, {Component, useState} from 'react';
+import React, {Component, useEffect, useRef, useState} from 'react';
 import cx from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import ScrollDownIcon from '../icons/ScrollDown';
 import ScrollUpIcon from '../icons/ScrollUp';
+import Unplug from '../icons/Unplug';
 import ScreenshotIcon from '../icons/FullScreenshot';
 import DeviceRotateIcon from '../icons/DeviceRotate';
 import InspectElementIcon from '../icons/InspectElement';
@@ -18,6 +19,7 @@ import PrefersColorSchemeSwitch from '../PrefersColorSchemeSwitch';
 import ToggleTouch from '../ToggleTouch';
 import Muted from '../icons/Muted';
 import CSSEditor from '../icons/CSSEditor';
+import styles from '../WebView/style.module.css';
 
 const useStyles = makeStyles({
   container: {
@@ -36,6 +38,7 @@ const VerticalRuler = () => {
 };
 
 const ScrollControls = ({
+  toggleEventMirroringAllDevices,
   browser,
   triggerScrollDown,
   triggerScrollUp,
@@ -46,6 +49,8 @@ const ScrollControls = ({
   onAllDevicesMutedChange,
   onToggleAllDeviceDesignMode,
 }) => {
+  const [eventMirroring, setEventMirroring] = useState(true);
+  const initialRender = useRef(true);
   const classes = useStyles();
   const theme = useTheme();
   const commonClasses = useCommonStyles();
@@ -53,6 +58,18 @@ const ScrollControls = ({
     color: 'currentColor',
     height: 25,
     width: 25,
+  };
+
+  useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+    } else {
+      toggleEventMirroringAllDevices(eventMirroring);
+    }
+  }, [eventMirroring]);
+
+  const handleEventMirroring = () => {
+    setEventMirroring(!eventMirroring);
   };
 
   return (
@@ -141,6 +158,18 @@ const ScrollControls = ({
           <Tooltip title="Take Screenshot">
             <div onClick={screenshotAllDevices}>
               <ScreenshotIcon {...iconProps} />
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid
+          item
+          className={cx(commonClasses.icon, {
+            [commonClasses.iconSelected]: !eventMirroring,
+          })}
+        >
+          <Tooltip title="Disable event mirroring">
+            <div onClick={handleEventMirroring}>
+              <Unplug {...iconProps} />
             </div>
           </Tooltip>
         </Grid>
