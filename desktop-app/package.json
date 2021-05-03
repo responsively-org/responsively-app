@@ -191,6 +191,9 @@
       "./internals/scripts/CheckBuiltsExist.js"
     ]
   },
+  "babel": {
+    "plugins": ["transform-flow-strip-types"]
+  },
   "devDependencies": {
     "@babel/core": "^7.1.6",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
@@ -222,6 +225,7 @@
     "babel-loader": "^8.0.4",
     "babel-plugin-dev-expression": "^0.2.1",
     "babel-plugin-transform-es2015-classes": "^6.24.1",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.20",
     "chalk": "^2.4.1",
     "concurrently": "^5.2.0",
