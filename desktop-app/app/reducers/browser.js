@@ -52,6 +52,7 @@ import {
   USER_PREFERENCES,
   CUSTOM_DEVICES,
   NETWORK_CONFIGURATION,
+  LAYOUT
 } from '../constants/settingKeys';
 import {
   getHomepage,
@@ -308,6 +309,14 @@ function _setNetworkConfiguration(
   settings.set(NETWORK_CONFIGURATION, networkConfiguration);
 }
 
+function getLayout() {
+  return settings.get(LAYOUT) || FLEXIGRID_LAYOUT;
+}
+
+function setLayout(layout) {
+  settings.set(LAYOUT, layout);
+}
+
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
@@ -329,7 +338,7 @@ export default function browser(
           : _getUserPreferences().drawerState,
       content: DEVICE_MANAGER,
     },
-    previewer: {layout: FLEXIGRID_LAYOUT},
+    previewer: {layout: getLayout()},
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
     userPreferences: _getUserPreferences(),
     allDevices: getAllDevices(),
@@ -405,6 +414,7 @@ export default function browser(
     case NEW_PREVIEWER_CONFIG:
       const updateObject = {previewer: action.previewer};
       updateObject.previewer.previousLayout = state.previewer.layout;
+      setLayout(action.previewer.layout);
 
       if (
         state.previewer.layout !== INDIVIDUAL_LAYOUT &&
