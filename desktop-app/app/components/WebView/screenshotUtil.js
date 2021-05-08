@@ -16,6 +16,7 @@ import {type Device} from '../../constants/devices';
 import {captureOnSentry} from '../../utils/logUtils';
 import {SCREENSHOT_MECHANISM} from '../../constants/values';
 import mutexify from 'mutexify/promise';
+import {getWebSiteName} from '../../utils/urlUtils';
 
 const mergeImg = Promise.promisifyAll(_mergeImg);
 const snapshotLock = mutexify();
@@ -428,24 +429,6 @@ function _getScreenshotFileName(
   };
 }
 
-const getWebsiteName = (address: string) => {
-  let domain = '';
-  if (address.startsWith('file://')) {
-    const fileNameStartingIndex = address.lastIndexOf('/') + 1;
-    let htmIndex = address.indexOf('.htm');
-    if (htmIndex === -1) {
-      htmIndex = address.length;
-    }
-    domain = address.substring(fileNameStartingIndex, htmIndex);
-  } else {
-    domain = new URL(address).hostname;
-    domain = domain.replace('www.', '');
-    const dotIndex = domain.indexOf('.');
-    if (dotIndex > -1) {
-      domain = domain.substr(0, domain.indexOf('.'));
-    }
-  }
-  return domain.charAt(0).toUpperCase() + domain.slice(1);
-};
+const getWebsiteName = getWebSiteName;
 
 export {getWebsiteName, captureScreenshot};

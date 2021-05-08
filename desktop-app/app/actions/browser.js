@@ -1,7 +1,7 @@
 // @flow
-import {ipcRenderer, remote} from 'electron';
+import {ipcRenderer} from 'electron';
 import pubsub from 'pubsub.js';
-import type {Dispatch, BrowserStateType} from '../reducers/types';
+import type {Dispatch, RootStateType} from '../reducers/types';
 import {
   SCROLL_DOWN,
   SCROLL_UP,
@@ -718,9 +718,15 @@ export function toggleEventMirroringAllDevices(status: boolean) {
   };
 }
 
-export function screenshotAllDevices() {
+export function screenshotAllDevices(selectedDevices: any) {
   return (dispatch: Dispatch, getState: RootStateType) => {
-    pubsub.publish(SCREENSHOT_ALL_DEVICES, [{now: new Date()}]);
+    const {
+      browser: {devices},
+    } = getState();
+
+    pubsub.publish(SCREENSHOT_ALL_DEVICES, [
+      {now: new Date(), devices, selectedDevices},
+    ]);
   };
 }
 
