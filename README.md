@@ -159,6 +159,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     <td align="center"><a href="http://www.lucie.dev"><img src="https://avatars.githubusercontent.com/u/46979603?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lucie Vrsovska</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=lucievr" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/jcabak"><img src="https://avatars.githubusercontent.com/u/1818155?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jakub Cabak</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=jcabak" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/durgakiran"><img src="https://avatars.githubusercontent.com/u/17452039?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Palakurthi Durga Kiran Kumar</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=durgakiran" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/karllabrador"><img src="https://avatars.githubusercontent.com/u/58193703?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Karl Labrador</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=karllabrador" title="Code">💻</a></td>
   </tr>
 </table>
 
