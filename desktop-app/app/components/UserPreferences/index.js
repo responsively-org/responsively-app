@@ -112,6 +112,30 @@ function UserPreference({
             }
           />
         </div>
+        <div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={userPreferences.disableSpellCheck || false}
+                onChange={e => {
+                  onChange('disableSpellCheck', e.target.checked);
+                }}
+                name="Disable spellcheck"
+                color="primary"
+              />
+            }
+            label={
+              <div>
+                <span className={classes.preferenceName}>
+                  Disable spellcheck
+                </span>
+                <p className={classes.spellCheckToggleSmallNote}>
+                  Note: Restart required
+                </p>
+              </div>
+            }
+          />
+        </div>
       </div>
       <div className={commonClasses.sidebarContentSectionContainer}>
         <div
