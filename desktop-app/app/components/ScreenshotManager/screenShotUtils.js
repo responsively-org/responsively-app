@@ -169,7 +169,6 @@ export default class WebViewUtils {
     }
     await this.setScrollBehaviourToAuto();
     const previous = await this.getWindowSizeAndScrollDetails();
-    console.log(previous);
     await this.doFullPageLageLoad();
     const {
       scrollHeight,
@@ -187,7 +186,6 @@ export default class WebViewUtils {
     await _delay(500);
     const image = await this.takeSnapShot();
     await this.resetBg();
-    console.log(previous);
     this.webView.setAttribute(
       'style',
       `

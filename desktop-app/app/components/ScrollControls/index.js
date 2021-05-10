@@ -193,12 +193,14 @@ const ScrollControls = ({
         <ZoomContainer iconProps={iconProps} />
       </Grid>
 
-      <ScreenshotManager
-        browser={browser}
-        isOpen={Boolean(anchorEl)}
-        handleClose={closeDialog}
-        handleOk={data => handleScreenshot(data)}
-      />
+      {Boolean(anchorEl) && (
+        <ScreenshotManager
+          browser={browser}
+          isOpen={Boolean(anchorEl)}
+          handleClose={closeDialog}
+          handleOk={data => handleScreenshot(data)}
+        />
+      )}
     </div>
   );
 };

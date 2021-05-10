@@ -74,9 +74,12 @@ export default async function Capture(data: Data) {
 
   // remove event mirroring between web views
   pubsub.publish(TOGGLE_EVENT_MIRRORING_ALL_DEVICES, [{status: false}]);
+  // set loader in each webview
   pubsub.publish(SCREENSHOT_IN_PROGRESS, [{isInProgress: true}]);
   // store image objects
   const images = [];
+  // device names
+  const deviceNames = [];
 
   // get web address of Web views
   const address = sortedWebViews[0].getURL();
@@ -106,7 +109,9 @@ export default async function Capture(data: Data) {
       images.push(image);
 
       const jpg = convertNativeImageToJPEG(image);
-      await fsUtils.writeImageToFile(jpg, deviceChecks[i].name, 'jpg');
+      const deviceName = deviceChecks[i].name;
+      deviceNames.push(deviceName);
+      await fsUtils.writeImageToFile(jpg, deviceName, 'jpg');
       showNotification(
         `captured and saved: ${devices[i].name}`,
         false,
@@ -130,10 +135,12 @@ export default async function Capture(data: Data) {
 
   // remove event mirroring between web views
   pubsub.publish(TOGGLE_EVENT_MIRRORING_ALL_DEVICES, [{status: true}]);
+  // remove loader
   pubsub.publish(SCREENSHOT_IN_PROGRESS, [{isInProgress: false}]);
 
   // account for browser to settle
   await _delay(100);
+
   if (isMergeImages) {
     const toastId = showNotification(
       'start Capturing',
@@ -143,7 +150,7 @@ export default async function Capture(data: Data) {
       null
     );
     showNotification(`merging images`, false, true, false, 'info', toastId);
-    const mergedImage = await mergeImages(images);
+    const mergedImage = await mergeImages(images, deviceNames);
     showNotification(
       `Converting data to binary`,
       false,
@@ -170,7 +177,10 @@ export default async function Capture(data: Data) {
 }
 
 // noinspection JSUndefinedPropertyAssignment
-export async function mergeImages(images: Array<Electron.NativeImage>) {
+export async function mergeImages(
+  images: Array<Electron.NativeImage>,
+  deviceNames: Array<string>
+) {
   const canvas = document.createElement('canvas');
   const imageDim = images.map(img => img.getSize());
   const width = imageDim.reduce(
@@ -200,10 +210,14 @@ export async function mergeImages(images: Array<Electron.NativeImage>) {
   for (let i = 0; i < imageData.length; i += 1) {
     const lastPos = currentPosition;
     currentPosition += imageDim[i].width + 30;
+    ctx.font = '32px serif';
+    ctx.fillStyle = '#fc2403';
+    ctx.strokeStyle = '#fc2403';
+    ctx.fillText(deviceNames[i], lastPos, 40);
     ctx.drawImage(
       imageData[i],
       lastPos,
-      0,
+      60,
       imageDim[i].width,
       imageDim[i].height
     );
