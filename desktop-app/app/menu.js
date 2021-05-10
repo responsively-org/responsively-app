@@ -182,6 +182,7 @@ export default class MenuBuilder {
         label: 'About',
         accelerator: 'F1',
         click: this.aboutClick,
+        shortcutIndex: 5,
       },
     ],
   };
@@ -192,6 +193,7 @@ export default class MenuBuilder {
       {
         label: 'Open HTML file',
         accelerator: 'CommandOrControl+O',
+        shortcutIndex: 0,
         click: () => {
           const selected = dialog.showOpenDialogSync({
             filters: [{name: 'HTML', extensions: ['htm', 'html']}],
@@ -378,6 +380,7 @@ export default class MenuBuilder {
         {
           label: 'Reload',
           accelerator: 'CommandOrControl+R',
+          skipRegistration: true,
           click: () => {
             this.mainWindow.webContents.reload();
           },
@@ -385,6 +388,7 @@ export default class MenuBuilder {
         {
           label: 'Reload Ignoring Cache',
           accelerator: 'CommandOrControl+Shift+R',
+          shortcutIndex: 3,
           click: () => {
             this.mainWindow.webContents.send('reload-url', {ignoreCache: true});
           },
@@ -392,6 +396,7 @@ export default class MenuBuilder {
         {
           label: '&ReloadCSS',
           accelerator: 'Alt+R',
+          shortcutIndex: 2,
           click: () => {
             this.mainWindow.webContents.send('reload-css');
           },
@@ -399,6 +404,7 @@ export default class MenuBuilder {
         {
           label: 'Toggle Full Screen',
           accelerator: 'Ctrl+Command+F',
+          shortcutIndex: 4,
           click: () => {
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
           },
@@ -426,6 +432,7 @@ export default class MenuBuilder {
         {
           label: 'Reload',
           accelerator: 'CommandOrControl+R',
+          skipRegistration: true,
           click: () => {
             this.mainWindow.webContents.send('reload-url');
           },
@@ -433,6 +440,7 @@ export default class MenuBuilder {
         {
           label: 'Reload Ignoring Cache',
           accelerator: 'CommandOrControl+Shift+R',
+          shortcutIndex: 3,
           click: () => {
             this.mainWindow.webContents.send('reload-url', {ignoreCache: true});
           },
@@ -440,6 +448,7 @@ export default class MenuBuilder {
         {
           label: '&ReloadCSS',
           accelerator: 'Alt+R',
+          shortcutIndex: 2,
           click: () => {
             this.mainWindow.webContents.send('reload-css');
           },
@@ -447,6 +456,7 @@ export default class MenuBuilder {
         {
           label: 'Toggle Full Screen',
           accelerator: 'Ctrl+Command+F',
+          shortcutIndex: 4,
           click: () => {
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
           },
@@ -502,7 +512,8 @@ export default class MenuBuilder {
             ? [
                 {
                   label: '&Reload',
-                  accelerator: 'Ctrl+R',
+                  accelerator: 'CommandOrControl+R',
+                  skipRegistration: true,
                   click: () => {
                     this.mainWindow.webContents.reload();
                   },
@@ -510,6 +521,7 @@ export default class MenuBuilder {
                 {
                   label: 'Reload Ignoring Cache',
                   accelerator: 'CommandOrControl+Shift+R',
+                  shortcutIndex: 3,
                   click: () => {
                     this.mainWindow.webContents.send('reload-url', {
                       ignoreCache: true,
@@ -519,6 +531,7 @@ export default class MenuBuilder {
                 {
                   label: 'Toggle &Full Screen',
                   accelerator: 'F11',
+                  shortcutIndex: 4,
                   click: () => {
                     this.mainWindow.setFullScreen(
                       !this.mainWindow.isFullScreen()
@@ -547,6 +560,7 @@ export default class MenuBuilder {
                 {
                   label: '&Reload',
                   accelerator: 'CommandOrControl+R',
+                  skipRegistration: true,
                   click: () => {
                     this.mainWindow.webContents.send('reload-url');
                   },
@@ -554,6 +568,7 @@ export default class MenuBuilder {
                 {
                   label: '&ReloadCSS',
                   accelerator: 'Alt+R',
+                  shortcutIndex: 2,
                   click: () => {
                     this.mainWindow.webContents.send('reload-css');
                   },
@@ -561,6 +576,7 @@ export default class MenuBuilder {
                 {
                   label: 'Reload Ignoring Cache',
                   accelerator: 'CommandOrControl+Shift+R',
+                  shortcutIndex: 3,
                   click: () => {
                     this.mainWindow.webContents.send('reload-url', {
                       ignoreCache: true,
@@ -570,6 +586,7 @@ export default class MenuBuilder {
                 {
                   label: 'Toggle &Full Screen',
                   accelerator: 'F11',
+                  shortcutIndex: 4,
                   click: () => {
                     this.mainWindow.setFullScreen(
                       !this.mainWindow.isFullScreen()
@@ -602,7 +619,7 @@ export default class MenuBuilder {
 
     for (let i = 0; i < template.length; i++) {
       const item = template[i];
-      if (item == null) continue;
+      if (item == null || item.skipRegistration) continue;
 
       const label = (item.label || `submenu${i}`).split('&').join('');
       const levelId = `${id}_${label}`;
@@ -612,6 +629,7 @@ export default class MenuBuilder {
           id: levelId,
           title: label,
           accelerators: [item.accelerator],
+          index: item.shortcutIndex,
         });
 
       if (item.submenu == null) continue;

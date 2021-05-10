@@ -34,7 +34,11 @@ export function clearAllShortcuts() {
 }
 
 export function getAllShortcuts(): ShortcutDefinition[] {
-  return [...shortcuts.values()];
+  return [...shortcuts.values()].sort(
+    (a, b) =>
+      (a.index ?? Number.MAX_SAFE_INTEGER) -
+      (b.index ?? Number.MAX_SAFE_INTEGER)
+  );
 }
 
 export function initMainShortcutManager() {
