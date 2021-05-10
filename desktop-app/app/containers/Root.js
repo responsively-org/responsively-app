@@ -121,7 +121,11 @@ export default class Root extends Component {
     );
 
     registerShortcut(
-      {id: 'Screenshot', title: 'Take Screenshot', accelerators: ['mod+prtsc']},
+      {
+        id: 'Screenshot',
+        title: 'Take Screenshot',
+        accelerators: ['mod+prtsc', 'mod+shift+s'],
+      },
       () => {
         store.dispatch(screenshotAllDevices());
       },
