@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import {makeStyles} from '@material-ui/core/styles';
 import React from 'react';
 import cx from 'classnames';
-import styles from './styles.css';
 
 const LinkHoverDisplay = ({visible, url = ''}) => {
   const componentStyles = useStyles();
@@ -10,7 +9,7 @@ const LinkHoverDisplay = ({visible, url = ''}) => {
   const activeClasses = React.useMemo(() => {
     const classes = {[componentStyles.container]: true};
     classes[componentStyles.show] = visible;
-    return cx(classes, styles.container);
+    return cx(classes);
   }, [visible]);
 
   return (
@@ -42,6 +41,8 @@ const useStyles = makeStyles(theme => ({
     transitionTimingFunction: theme.transitions.easing.easeInOut,
     backgroundColor: theme.palette.background.l2,
     border: `1px solid ${theme.palette.background.l0}`,
+    boxSizing: 'border-box',
+    maxHeight: '2rem',
   },
   show: {
     opacity: 1,
