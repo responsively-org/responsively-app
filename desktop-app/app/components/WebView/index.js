@@ -62,7 +62,6 @@ const MESSAGE_TYPES = {
   tiltDevice: 'tiltDevice',
   takeScreenshot: 'takeScreenshot',
   toggleEventMirroring: 'toggleEventMirroring',
-  linkHover: 'linkHover',
 };
 
 class WebView extends Component {
@@ -283,6 +282,10 @@ class WebView extends Component {
     this.webviewRef.current.addEventListener('did-navigate', event => {
       urlChangeHandler(event);
       navigationHandler(event);
+    });
+
+    this.webviewRef.current.addEventListener('update-target-url', event => {
+      this.props.setHoveredLink(event.url);
     });
 
     this.webviewRef.current.addEventListener('devtools-closed', () => {
@@ -609,9 +612,6 @@ class WebView extends Component {
       case MESSAGE_TYPES.toggleEventMirroring:
         this._unPlug();
         break;
-      case MESSAGE_TYPES.linkHover:
-        this._handleLinkHover(message);
-        break;
       default:
         break;
     }
@@ -715,10 +715,6 @@ class WebView extends Component {
       });
     }
     this.props.onDevToolsOpen(this.props.device.id, this.getWebContentsId());
-  };
-
-  _handleLinkHover = message => {
-    this.props.setHoveredLink(message.url);
   };
 
   _flipOrientation = () => {

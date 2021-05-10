@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import {makeStyles} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
 import React from 'react';
 import cx from 'classnames';
 import styles from './styles.css';
@@ -40,6 +40,8 @@ const useStyles = makeStyles(theme => ({
     borderTopRightRadius: theme.shape.borderRadius,
     transitionDuration: theme.transitions.duration.enteringScreen,
     transitionTimingFunction: theme.transitions.easing.easeInOut,
+    backgroundColor: theme.palette.background.l2,
+    border: `1px solid ${theme.palette.background.l0}`,
   },
   show: {
     opacity: 1,
@@ -50,7 +52,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: '0.7rem',
     margin: 0,
     opacity: 0.7,
-    color: '#fff',
+    color: theme.palette.mode({light: '#000', dark: '#fff'}),
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
