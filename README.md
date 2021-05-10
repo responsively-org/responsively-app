@@ -73,6 +73,16 @@ Also, Windows users can use [`chocolatey`](https://chocolatey.org/packages/respo
 choco install responsively
 ```
 
+or [`winget`](https://github.com/microsoft/winget-cli):
+```bash
+winget install ResponsivelyApp
+```
+
+Linux users can use `rpm`
+```bash
+sudo rpm -i https://github.com/responsively-org/responsively-app/releases/download/v[VERSION]/Responsively-App-[VERSION].x86_64.rpm
+```
+
 Follow on Twitter for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
 
 ## Issues
