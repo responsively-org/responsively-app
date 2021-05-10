@@ -1,4 +1,5 @@
 // https://cs.chromium.org/codesearch/f/chromium/src/third_party/blink/renderer/devtools/front_end/emulated_devices/module.json
+// https://source.chromium.org/chromium/chromium/src/+/master:third_party/devtools-frontend/src/front_end/emulated_devices/module.json?q=emulated_devices%2Fmodule.json&ss=chromium
 
 export default {
   extensions: [
@@ -129,7 +130,7 @@ export default {
         },
         capabilities: ['touch', 'mobile'],
         'user-agent':
-          'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
         type: 'phone',
         modes: [
           {
@@ -183,7 +184,7 @@ export default {
         },
         capabilities: ['touch', 'mobile'],
         'user-agent':
-          'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
         type: 'phone',
         modes: [
           {
@@ -219,7 +220,7 @@ export default {
         },
         capabilities: ['touch', 'mobile'],
         'user-agent':
-          'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
         type: 'phone',
         modes: [
           {
@@ -1494,12 +1495,192 @@ export default {
         },
         capabilities: ['responsive', 'mobile'],
         'user-agent':
-          'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
         type: 'phone',
         modes: [
           {
             title: 'default',
             orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
+    {
+      id: '42',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': true,
+        title: 'Moto G4',
+        screen: {
+          horizontal: {
+            outline: {
+              image: '@url(optimized/MotoG4-landscape.avif)',
+              insets: {
+                left: 91,
+                top: 30,
+                right: 74,
+                bottom: 30,
+              },
+            },
+            width: 640,
+            height: 360,
+          },
+          'device-pixel-ratio': 3,
+          vertical: {
+            outline: {
+              image: '@url(optimized/MotoG4-portrait.avif)',
+              insets: {
+                left: 30,
+                top: 91,
+                right: 30,
+                bottom: 74,
+              },
+            },
+            width: 360,
+            height: 640,
+          },
+        },
+        capabilities: ['touch', 'mobile'],
+        'user-agent':
+          'Mozilla/5.0 (Linux; Android 6.0.1; Moto G (4)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%s Mobile Safari/537.36',
+        'user-agent-metadata': {
+          platform: 'Android',
+          platformVersion: '6.0.1',
+          architecture: '',
+          model: 'Moto G (4)',
+          mobile: true,
+        },
+        type: 'phone',
+      },
+    },
+    {
+      id: '43',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': true,
+        'dual-screen': true,
+        title: 'Surface Duo',
+        screen: {
+          horizontal: {
+            width: 720,
+            height: 540,
+          },
+          'device-pixel-ratio': 2.5,
+          vertical: {
+            width: 540,
+            height: 720,
+          },
+          'vertical-spanned': {
+            width: 1114,
+            height: 720,
+            hinge: {
+              width: 34,
+              height: 720,
+              x: 540,
+              y: 0,
+              contentColor: {
+                r: 38,
+                g: 38,
+                b: 38,
+                a: 1,
+              },
+            },
+          },
+          'horizontal-spanned': {
+            width: 720,
+            height: 1114,
+            hinge: {
+              width: 720,
+              height: 34,
+              x: 0,
+              y: 540,
+              contentColor: {
+                r: 38,
+                g: 38,
+                b: 38,
+                a: 1,
+              },
+            },
+          },
+        },
+        capabilities: ['touch', 'mobile'],
+        'user-agent':
+          'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%s Mobile Safari/537.36',
+        type: 'phone',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'vertical',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'spanned',
+            orientation: 'vertical-spanned',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'spanned',
+            orientation: 'horizontal-spanned',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
+    {
+      id: '44',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': true,
+        'dual-screen': true,
+        title: 'Galaxy Fold',
+        screen: {
+          horizontal: {
+            width: 653,
+            height: 280,
+          },
+          'device-pixel-ratio': 3,
+          vertical: {
+            width: 280,
+            height: 653,
+          },
+          'vertical-spanned': {
+            width: 717,
+            height: 512,
+          },
+          'horizontal-spanned': {
+            width: 512,
+            height: 717,
+          },
+        },
+        capabilities: ['touch', 'mobile'],
+        'user-agent':
+          'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%s Mobile Safari/537.36',
+        type: 'phone',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'vertical',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'spanned',
+            orientation: 'vertical-spanned',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'spanned',
+            orientation: 'horizontal-spanned',
             insets: {left: 0, top: 0, right: 0, bottom: 0},
           },
         ],

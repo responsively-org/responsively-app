@@ -3,6 +3,10 @@ import {makeStyles} from '@material-ui/core/styles';
 const useStyles = makeStyles(theme => ({
   container: {
     display: 'flex',
+    height: 'inherit',
+  },
+  previewer: {
+    display: 'flex',
     flex: '1',
     height: '100%',
     width: '100%',
@@ -18,6 +22,7 @@ const useStyles = makeStyles(theme => ({
   devicesContainer: {
     display: 'flex',
     paddingBottom: '100px',
+    paddingLeft: 5,
   },
   tab: {
     display: 'none',

@@ -67,14 +67,14 @@ function Renderer(props) {
           </div>
         </div>
         <KebabMenu>
-          <div
+          <KebabMenu.Item
             onClick={() =>
               pubsub.publish(SCREENSHOT_ALL_DEVICES, [{deviceId: device.id}])
             }
           >
             Full Page Screenshot
-          </div>
-          <div
+          </KebabMenu.Item>
+          <KebabMenu.Item
             onClick={() =>
               pubsub.publish(FLIP_ORIENTATION_ALL_DEVICES, [
                 {deviceId: device.id},
@@ -82,10 +82,12 @@ function Renderer(props) {
             }
           >
             Tilt Device
-          </div>
-          <div onClick={props.device.isMuted ? _unmuteDevice : _muteDevice}>
+          </KebabMenu.Item>
+          <KebabMenu.Item
+            onClick={props.device.isMuted ? _unmuteDevice : _muteDevice}
+          >
             {props.device.isMuted ? 'Unmute Audio' : 'Mute Audio'}
-          </div>
+          </KebabMenu.Item>
         </KebabMenu>
       </div>
       <div>

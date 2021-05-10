@@ -27,7 +27,9 @@ import {
   SET_NETWORK_TROTTLING_PROFILE,
   OPEN_CONSOLE_FOR_DEVICE,
   PROXY_AUTH_ERROR,
+  APPLY_CSS,
   TOGGLE_DEVICE_DESIGN_MODE_STATE,
+  TOGGLE_EVENT_MIRRORING_ALL_DEVICES,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 import {DESIGN_MODE_JS_VALUES} from '../../constants/values';
@@ -86,6 +88,8 @@ class WebView extends Component {
       zoomLevel: null,
     };
     this.subscriptions = [];
+    this.domLoaded = false;
+    this.liveCssKey = null;
     this.dbg = null;
   }
 
@@ -97,6 +101,9 @@ class WebView extends Component {
     );
     this.subscriptions.push(
       pubsub.subscribe('scroll', this.processScrollEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(APPLY_CSS, this.processApplyCssEvent)
     );
     this.subscriptions.push(pubsub.subscribe('click', this.processClickEvent));
     this.subscriptions.push(
@@ -122,6 +129,12 @@ class WebView extends Component {
     );
     this.subscriptions.push(
       pubsub.subscribe(SCREENSHOT_ALL_DEVICES, this.processScreenshotEvent)
+    );
+    this.subscriptions.push(
+      pubsub.subscribe(
+        TOGGLE_EVENT_MIRRORING_ALL_DEVICES,
+        this.processToggleEventMirroring
+      )
     );
     this.subscriptions.push(
       pubsub.subscribe(ADDRESS_CHANGE, this.processAddressChangeEvent)
@@ -189,6 +202,19 @@ class WebView extends Component {
       );
 
       this.webviewRef.current.addEventListener('new-window', e => {
+        if (
+          e.url.startsWith('file://') &&
+          !this.webviewRef.current.getURL().startsWith('file://')
+        ) {
+          this.webviewRef.current
+            .executeJavaScript(
+              `{
+                console.error('Not allowed to load local resource');
+              }`
+            )
+            .catch(captureOnSentry);
+          return;
+        }
         ipcRenderer.send('open-new-window', {url: e.url});
       });
     }
@@ -403,6 +429,30 @@ class WebView extends Component {
     this.webviewRef.current.send('scrollUpMessage');
   };
 
+  processToggleEventMirroring = async ({status}) => {
+    if (status) {
+      this.setState(
+        () => ({
+          ...this.state,
+          isUnplugged: !status,
+        }),
+        async () => {
+          await this.openBrowserSyncSocket(this.webviewRef.current);
+        }
+      );
+    } else {
+      this.setState(
+        () => ({
+          ...this.state,
+          isUnplugged: !status,
+        }),
+        async () => {
+          await this.closeBrowserSyncSocket(this.webviewRef.current);
+        }
+      );
+    }
+  };
+
   processScreenshotEvent = async ({
     now,
     fullScreen = true,
@@ -607,6 +657,17 @@ class WebView extends Component {
       .catch(captureOnSentry);
   };
 
+  processApplyCssEvent = async message => {
+    if (!message.css || !this.domLoaded) {
+      return;
+    }
+    if (this.liveCssKey) {
+      this.webviewRef.current.removeInsertedCSS(this.liveCssKey);
+      this.liveCssKey = null;
+    }
+    this.liveCssKey = await this.webviewRef.current.insertCSS(message.css);
+  };
+
   initEventTriggers = async webview => {
     await this.initBrowserSync(webview);
     this.getWebContentForId(webview.getWebContentsId())
@@ -620,6 +681,7 @@ class WebView extends Component {
     if (this.state.isUnplugged) {
       await this.closeBrowserSyncSocket(webview);
     }
+    this.domLoaded = true;
   };
 
   hideScrollbar = () => {
@@ -883,6 +945,11 @@ class WebView extends Component {
           src={address || 'about:blank'}
           useragent={useragent}
           style={deviceStyles}
+          webpreferences={
+            this.props.browser.userPreferences.disableSpellCheck
+              ? 'spellcheck=no'
+              : 'spellcheck=yes'
+          }
         />
       </>
     );

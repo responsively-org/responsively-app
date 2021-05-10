@@ -29,6 +29,12 @@ const useStyles = makeStyles(theme => ({
     top: theme.spacing(1),
     color: theme.palette.grey[500],
   },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    margin: '10px',
+    fontWeight: '500',
+  },
   themeBackground: {
     backgroundColor: theme.palette.mode({
       light: theme.palette.grey[100],
@@ -125,19 +131,18 @@ export default function PermissionPopup() {
         [styles.permissionPopupActive]: permissionInfos.length !== 0,
       })}
     >
-      <h4 className={styles.permissionPopupTitle}>
-        Permission Request
+      <div className={cx(classes.header)}>
+        <div>Permission Request</div>
         <Tooltip classes={tooltipUseStyles()} title="Ignore" placement="left">
           <IconButton
             aria-label="close"
-            className={classes.closeButton}
             onClick={() => handleClose(null)}
             size="small"
           >
             <CloseIcon />
           </IconButton>
         </Tooltip>
-      </h4>
+      </div>
       <DialogContent className={styles.permissionPopupMsgContainer}>
         <DialogContentText className={styles.permissionPopupMsg}>
           {getMessage(permissionInfos[0])}

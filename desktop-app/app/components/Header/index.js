@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
       light: '0px',
       dark: '3px',
     })} 5px rgba(0, 0, 0, 0.35)`,
-    zIndex: 5,
+    zIndex: 500,
     transform: 'translateY(0)',
     transition: 'transform .1s ease-out',
     '& .zenButton': {

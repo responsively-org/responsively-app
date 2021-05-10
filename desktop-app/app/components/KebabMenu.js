@@ -4,6 +4,15 @@ import {motion} from 'framer-motion';
 import {useTheme, makeStyles} from '@material-ui/core/styles';
 import Kebab from './icons/Kebab';
 
+export const KebabMenuItem = ({children, ...otherProps}) => {
+  const classes = useStyles();
+  return (
+    <motion.div className={classes.option} {...otherProps}>
+      {children}
+    </motion.div>
+  );
+};
+
 const KebabMenu = ({children}) => {
   const [mouseOn, setMouseOn] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -48,11 +57,7 @@ const KebabMenu = ({children}) => {
               className={classes.menu}
               onClick={() => setMouseOn(false)}
             >
-              {children.map((child, idx) => (
-                <motion.div className={classes.option} key={idx}>
-                  {child}
-                </motion.div>
-              ))}
+              {children.filter(Boolean)}
             </motion.div>
           ) : null}
         </div>
@@ -101,5 +106,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+KebabMenu.Item = KebabMenuItem;
 
 export default KebabMenu;

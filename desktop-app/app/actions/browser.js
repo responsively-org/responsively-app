@@ -11,6 +11,7 @@ import {
   SCREENSHOT_ALL_DEVICES,
   FLIP_ORIENTATION_ALL_DEVICES,
   TOGGLE_DEVICE_MUTED_STATE,
+  TOGGLE_EVENT_MIRRORING_ALL_DEVICES,
   RELOAD_CSS,
   DELETE_STORAGE,
   ADDRESS_CHANGE,
@@ -29,6 +30,9 @@ export const NEW_ZOOM_LEVEL = 'NEW_ZOOM_LEVEL';
 export const NEW_SCROLL_POSITION = 'NEW_SCROLL_POSITION';
 export const NEW_NAVIGATOR_STATUS = 'NEW_NAVIGATOR_STATUS';
 export const NEW_INSPECTOR_STATUS = 'NEW_INSPECTOR_STATUS';
+export const NEW_CSS_EDITOR_STATUS = 'NEW_CSS_EDITOR_STATUS';
+export const NEW_CSS_EDITOR_POSITION = 'NEW_CSS_EDITOR_POSITION';
+export const NEW_CSS_EDITOR_CONTENT = 'NEW_CSS_EDITOR_CONTENT';
 export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
 export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
@@ -89,6 +93,27 @@ export function newInspectorState(status) {
   return {
     type: NEW_INSPECTOR_STATUS,
     status,
+  };
+}
+
+export function newCSSEditorState(status) {
+  return {
+    type: NEW_CSS_EDITOR_STATUS,
+    status,
+  };
+}
+
+export function newCSSEditorPosition(position) {
+  return {
+    type: NEW_CSS_EDITOR_POSITION,
+    position,
+  };
+}
+
+export function newCSSEditorContent(content) {
+  return {
+    type: NEW_CSS_EDITOR_CONTENT,
+    content,
   };
 }
 
@@ -688,6 +713,12 @@ export function triggerScrollDown() {
   };
 }
 
+export function toggleEventMirroringAllDevices(status: boolean) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(TOGGLE_EVENT_MIRRORING_ALL_DEVICES, [{status}]);
+  };
+}
+
 export function screenshotAllDevices() {
   return (dispatch: Dispatch, getState: RootStateType) => {
     pubsub.publish(SCREENSHOT_ALL_DEVICES, [{now: new Date()}]);
@@ -741,6 +772,50 @@ export function toggleInspector() {
     } = getState();
 
     dispatch(newInspectorState(!isInspecting));
+  };
+}
+
+export function toggleCSSEditor() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {
+        CSSEditor: {isOpen},
+      },
+    } = getState();
+
+    dispatch(newCSSEditorState(!isOpen));
+  };
+}
+
+export function changeCSSEditorPosition(newPosition) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {
+        CSSEditor: {position},
+      },
+    } = getState();
+
+    if (position === newPosition) {
+      return;
+    }
+
+    dispatch(newCSSEditorPosition(newPosition));
+  };
+}
+
+export function onCSSEditorContentChange(newContent) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {
+        CSSEditor: {content},
+      },
+    } = getState();
+
+    if (content === newContent) {
+      return;
+    }
+
+    dispatch(newCSSEditorContent(newContent));
   };
 }
 

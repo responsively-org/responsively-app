@@ -18,7 +18,7 @@ const Browser = ({browser}) => (
   <Fragment>
     {os.platform() === 'darwin' && <HorizontalSpacer />}
     <HeaderContainer />
-    <div style={{display: 'flex', height: '100%'}}>
+    <div style={{display: 'flex', height: '100%', overflow: 'auto'}}>
       <LeftIconsPaneContainer />
       <div
         style={{

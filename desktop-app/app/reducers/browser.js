@@ -23,6 +23,9 @@ import {
   TOGGLE_ALL_DEVICES_MUTED,
   TOGGLE_DEVICE_MUTED,
   NEW_THEME,
+  NEW_CSS_EDITOR_STATUS,
+  NEW_CSS_EDITOR_POSITION,
+  NEW_CSS_EDITOR_CONTENT,
   TOGGLE_ALL_DEVICES_DESIGN_MODE,
   TOGGLE_DEVICE_DESIGN_MODE,
   SET_HEADER_VISIBILITY,
@@ -42,6 +45,7 @@ import {
   FLEXIGRID_LAYOUT,
   INDIVIDUAL_LAYOUT,
   DEVTOOLS_MODES,
+  CSS_EDITOR_MODES,
 } from '../constants/previewerLayouts';
 import {DEVICE_MANAGER} from '../constants/DrawerContents';
 import {
@@ -49,6 +53,7 @@ import {
   USER_PREFERENCES,
   CUSTOM_DEVICES,
   NETWORK_CONFIGURATION,
+  LAYOUT
 } from '../constants/settingKeys';
 import {
   getHomepage,
@@ -121,6 +126,7 @@ type PageMetaType = {
 type UserPreferenceType = {
   disableSSLValidation: boolean,
   reopenLastAddress: boolean,
+  disableSpellCheck: boolean,
   drawerState: boolean,
   devToolsOpenMode: DevToolsOpenModeType,
   deviceOutlineStyle: string,
@@ -166,6 +172,12 @@ type NetworkConfigurationType = {
   proxy: NetworkProxyProfileType,
 };
 
+type CSSEditorStateType = {
+  isOpen: boolean,
+  position: String,
+  content: String,
+};
+
 export type BrowserStateType = {
   devices: Array<Device>,
   homepage: string,
@@ -180,6 +192,7 @@ export type BrowserStateType = {
   userPreferences: UserPreferenceType,
   bookmarks: BookmarksType,
   devToolsConfig: DevToolsConfigType,
+  cssEditor: CSSEditorStateType,
   isInspecting: boolean,
   windowSize: WindowSizeType,
   allDevicesMuted: boolean,
@@ -298,6 +311,14 @@ function _setNetworkConfiguration(
   settings.set(NETWORK_CONFIGURATION, networkConfiguration);
 }
 
+function getLayout() {
+  return settings.get(LAYOUT) || FLEXIGRID_LAYOUT;
+}
+
+function setLayout(layout) {
+  settings.set(LAYOUT, layout);
+}
+
 export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
@@ -319,7 +340,7 @@ export default function browser(
           : _getUserPreferences().drawerState,
       content: DEVICE_MANAGER,
     },
-    previewer: {layout: FLEXIGRID_LAYOUT},
+    previewer: {layout: getLayout()},
     filters: {[FILTER_FIELDS.OS]: [], [FILTER_FIELDS.DEVICE_TYPE]: []},
     userPreferences: _getUserPreferences(),
     allDevices: getAllDevices(),
@@ -338,6 +359,7 @@ export default function browser(
       ),
     },
     isInspecting: false,
+    CSSEditor: {isOpen: false, position: CSS_EDITOR_MODES.LEFT, content: ''},
     windowSize: getWindowSize(),
     allDevicesMuted: false,
     networkConfiguration: _getNetworkConfiguration(),
@@ -395,6 +417,7 @@ export default function browser(
     case NEW_PREVIEWER_CONFIG:
       const updateObject = {previewer: action.previewer};
       updateObject.previewer.previousLayout = state.previewer.layout;
+      setLayout(action.previewer.layout);
 
       if (
         state.previewer.layout !== INDIVIDUAL_LAYOUT &&
@@ -443,6 +466,18 @@ export default function browser(
         newState.userPreferences = newUserPreferences;
       }
       return newState;
+    case NEW_CSS_EDITOR_STATUS:
+      return {...state, CSSEditor: {...state.CSSEditor, isOpen: action.status}};
+    case NEW_CSS_EDITOR_POSITION:
+      return {
+        ...state,
+        CSSEditor: {...state.CSSEditor, position: action.position},
+      };
+    case NEW_CSS_EDITOR_CONTENT:
+      return {
+        ...state,
+        CSSEditor: {...state.CSSEditor, content: action.content},
+      };
     case NEW_INSPECTOR_STATUS:
       return {...state, isInspecting: action.status};
     case NEW_WINDOW_SIZE:
