@@ -1,6 +1,5 @@
 .container {
-  background-color: #424242;
   border-top-right-radius: 5px;
   box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-height: 2rem;
 }

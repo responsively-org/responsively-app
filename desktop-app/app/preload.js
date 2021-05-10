@@ -160,15 +160,3 @@ ipcRenderer.on('scrollUpMessage', (event, args) => {
 ipcRenderer.on('eventsMirroringState', (event, args) => {
   menu.getMenuItemById('mirror-events').checked = args;
 });
-
-document.addEventListener('mouseover', event => {
-  if (event.target.tagName === 'A')
-    window.responsivelyApp.sendMessageToHost('linkHover', {
-      url: event.target.href,
-    });
-});
-
-document.addEventListener('mouseout', event => {
-  if (event.target.tagName === 'A')
-    window.responsivelyApp.sendMessageToHost('linkHover', {url: ''});
-});
