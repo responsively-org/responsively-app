@@ -23,6 +23,7 @@ import {
   triggerNavigationForward,
   deleteCookies,
   deleteStorage,
+  triggerNavigationReload,
 } from '../actions/browser';
 import {toggleBookmarkUrl} from '../actions/bookmarks';
 import pubsub from 'pubsub.js';
@@ -70,9 +71,23 @@ export default class Root extends Component {
 
     registerShortcut(
       {
+        id: 'Reload',
+        title: 'Reload',
+        accelerators: ['mod+r', 'f5'],
+        index: 1,
+      },
+      () => {
+        store.dispatch(triggerNavigationReload());
+      },
+      true
+    );
+
+    registerShortcut(
+      {
         id: 'ZoomIn',
         title: 'Zoom In',
         accelerators: ['mod+=', 'mod++', 'mod+shift+='],
+        index: 6,
       },
       () => {
         store.dispatch(onZoomChange(store.getState().browser.zoomLevel + 0.1));
@@ -81,7 +96,7 @@ export default class Root extends Component {
     );
 
     registerShortcut(
-      {id: 'ZoomOut', title: 'Zoom Out', accelerators: ['mod+-']},
+      {id: 'ZoomOut', title: 'Zoom Out', accelerators: ['mod+-'], index: 7},
       () => {
         store.dispatch(onZoomChange(store.getState().browser.zoomLevel - 0.1));
       },
@@ -89,7 +104,7 @@ export default class Root extends Component {
     );
 
     registerShortcut(
-      {id: 'ZoomReset', title: 'Zoom Reset', accelerators: ['mod+0']},
+      {id: 'ZoomReset', title: 'Zoom Reset', accelerators: ['mod+0'], index: 8},
       () => {
         store.dispatch(onZoomChange(DEFAULT_ZOOM_LEVEL));
       },
@@ -97,7 +112,7 @@ export default class Root extends Component {
     );
 
     registerShortcut(
-      {id: 'EditUrl', title: 'Edit URL', accelerators: ['mod+l']},
+      {id: 'EditUrl', title: 'Edit URL', accelerators: ['mod+l'], index: 9},
       () => {
         document.getElementById('adress').select();
       },
@@ -105,7 +120,12 @@ export default class Root extends Component {
     );
 
     registerShortcut(
-      {id: 'ScroolUp', title: 'Scroll Up', accelerators: ['mod+pageup']},
+      {
+        id: 'ScroolUp',
+        title: 'Scroll Up',
+        accelerators: ['mod+pageup'],
+        index: 10,
+      },
       () => {
         store.dispatch(triggerScrollUp());
       },
@@ -113,7 +133,12 @@ export default class Root extends Component {
     );
 
     registerShortcut(
-      {id: 'ScroolDown', title: 'Scroll Down', accelerators: ['mod+pagedown']},
+      {
+        id: 'ScroolDown',
+        title: 'Scroll Down',
+        accelerators: ['mod+pagedown'],
+        index: 11,
+      },
       () => {
         store.dispatch(triggerScrollDown());
       },
@@ -125,6 +150,7 @@ export default class Root extends Component {
         id: 'Screenshot',
         title: 'Take Screenshot',
         accelerators: ['mod+prtsc', 'mod+shift+s'],
+        index: 12,
       },
       () => {
         store.dispatch(screenshotAllDevices());
@@ -134,7 +160,12 @@ export default class Root extends Component {
     );
 
     registerShortcut(
-      {id: 'TiltDevices', title: 'Tilt Devices', accelerators: ['mod+tab']},
+      {
+        id: 'TiltDevices',
+        title: 'Tilt Devices',
+        accelerators: ['mod+tab'],
+        index: 13,
+      },
       () => {
         store.dispatch(flipOrientationAllDevices());
       },
@@ -146,6 +177,7 @@ export default class Root extends Component {
         id: 'ToggleInspector',
         title: 'Toggle Inspector',
         accelerators: ['mod+i'],
+        index: 14,
       },
       () => {
         store.dispatch(toggleInspector());
@@ -154,7 +186,12 @@ export default class Root extends Component {
     );
 
     registerShortcut(
-      {id: 'OpenHome', title: 'Go to Homepage', accelerators: ['alt+home']},
+      {
+        id: 'OpenHome',
+        title: 'Go to Homepage',
+        accelerators: ['alt+home'],
+        index: 15,
+      },
       () => {
         store.dispatch(goToHomepage());
       },
@@ -162,7 +199,12 @@ export default class Root extends Component {
     );
 
     registerShortcut(
-      {id: 'BackAPage', title: 'Back a Page', accelerators: ['alt+left']},
+      {
+        id: 'BackAPage',
+        title: 'Back a Page',
+        accelerators: ['alt+left'],
+        index: 16,
+      },
       () => {
         store.dispatch(triggerNavigationBack());
       },
@@ -174,6 +216,7 @@ export default class Root extends Component {
         id: 'ForwardAPage',
         title: 'Forward a Page',
         accelerators: ['alt+right'],
+        index: 17,
       },
       () => {
         store.dispatch(triggerNavigationForward());
@@ -182,7 +225,12 @@ export default class Root extends Component {
     );
 
     registerShortcut(
-      {id: 'DeleteStorage', title: 'Delete Storage', accelerators: ['mod+del']},
+      {
+        id: 'DeleteStorage',
+        title: 'Delete Storage',
+        accelerators: ['mod+del'],
+        index: 18,
+      },
       () => {
         store.dispatch(deleteStorage());
       },
@@ -194,6 +242,7 @@ export default class Root extends Component {
         id: 'DeleteCookies',
         title: 'Delete Cookies',
         accelerators: ['mod+shift+del'],
+        index: 19,
       },
       () => {
         store.dispatch(deleteCookies());
@@ -206,6 +255,7 @@ export default class Root extends Component {
         id: 'AddBookmark',
         title: 'Add Bookmark',
         accelerators: ['mod+d'],
+        index: 20,
       },
       () => {
         store.dispatch(toggleBookmarkUrl(store.getState().browser.address));
