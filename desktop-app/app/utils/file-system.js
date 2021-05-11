@@ -72,7 +72,8 @@ class FileSystemUtils {
   createNewFileName(base: string): string {
     const dateUtils = new DateUtils(this.date);
     let fileName = getWebSiteName(this.address);
-    const fileBaseName = base.replace(/\//g, '-');
+    // eslint-disable-next-line no-useless-escape
+    const fileBaseName = base.replace(/[\/"]/g, '-');
     const dateString = dateUtils.getDateString();
     fileName += `-${fileBaseName}`;
     fileName += `-${dateString}`;

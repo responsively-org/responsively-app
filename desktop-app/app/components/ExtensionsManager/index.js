@@ -44,6 +44,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function ExtensionsManager({triggerNavigationReload}) {
   const {BrowserWindow} = remote;
+
   const getInstalledExtensions = () =>
     Object.values(BrowserWindow.getDevToolsExtensions()).sort((a, b) =>
       a.name.localeCompare(b.name)

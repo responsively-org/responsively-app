@@ -96,6 +96,7 @@ export default async function Capture(data: Data) {
     );
     try {
       const currentView = sortedWebViews[i];
+      currentView.scrollIntoView();
       showNotification(
         `Capturing ${devices[i].name}`,
         false,
@@ -201,17 +202,24 @@ export async function mergeImages(
   const ctx = canvas.getContext('2d');
   const imageData = [];
   for (let i = 0; i < images.length; i += 1) {
-    const image = images[i];
-    const imageDatum = await loadImage(image);
-    imageData.push(imageDatum);
+    try {
+      const image = images[i];
+      const imageDatum = await loadImage(image);
+      imageData.push(imageDatum);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   let currentPosition = 0;
   for (let i = 0; i < imageData.length; i += 1) {
     const lastPos = currentPosition;
     currentPosition += imageDim[i].width + 30;
+    // noinspection JSUndefinedPropertyAssignment
     ctx.font = '32px serif';
+    // noinspection JSUndefinedPropertyAssignment
     ctx.fillStyle = '#fc2403';
+    // noinspection JSUndefinedPropertyAssignment
     ctx.strokeStyle = '#fc2403';
     ctx.fillText(deviceNames[i], lastPos, 40);
     ctx.drawImage(
