@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
     width: '80px',
     cursor: 'pointer',
     boxShadow: '0 5px 5px rgba(0, 0, 0, 0.35)',
+    zIndex: 90000,
   },
   icon: {
     marginTop: '-5px',

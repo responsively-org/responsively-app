@@ -5,6 +5,7 @@ export const UNREGISTER_REPLY_CHANNEL = 'unregister-shortcut-reply';
 export const GET_ALL_CHANNEL = 'get-all-shortcuts';
 export const CLEAR_CHANNEL = 'clear-shortcuts';
 export type ShortcutDefinition = {
+  index: Number,
   id: string,
   title: string,
   accelerators: string[],

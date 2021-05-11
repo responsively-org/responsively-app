@@ -73,6 +73,16 @@ Also, Windows users can use [`chocolatey`](https://chocolatey.org/packages/respo
 choco install responsively
 ```
 
+or [`winget`](https://github.com/microsoft/winget-cli):
+```bash
+winget install ResponsivelyApp
+```
+
+Linux users can use `rpm`
+```bash
+sudo rpm -i https://github.com/responsively-org/responsively-app/releases/download/v[VERSION]/Responsively-App-[VERSION].x86_64.rpm
+```
+
 Follow on Twitter for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
 
 ## Issues
@@ -159,6 +169,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     <td align="center"><a href="http://www.lucie.dev"><img src="https://avatars.githubusercontent.com/u/46979603?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lucie Vrsovska</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=lucievr" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/jcabak"><img src="https://avatars.githubusercontent.com/u/1818155?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jakub Cabak</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=jcabak" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/durgakiran"><img src="https://avatars.githubusercontent.com/u/17452039?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Palakurthi Durga Kiran Kumar</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=durgakiran" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/karllabrador"><img src="https://avatars.githubusercontent.com/u/58193703?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Karl Labrador</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=karllabrador" title="Code">💻</a></td>
   </tr>
 </table>
 

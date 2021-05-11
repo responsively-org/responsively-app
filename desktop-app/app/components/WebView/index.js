@@ -199,6 +199,19 @@ class WebView extends Component {
       );
 
       this.webviewRef.current.addEventListener('new-window', e => {
+        if (
+          e.url.startsWith('file://') &&
+          !this.webviewRef.current.getURL().startsWith('file://')
+        ) {
+          this.webviewRef.current
+            .executeJavaScript(
+              `{
+                console.error('Not allowed to load local resource');
+              }`
+            )
+            .catch(captureOnSentry);
+          return;
+        }
         ipcRenderer.send('open-new-window', {url: e.url});
       });
     }
@@ -928,6 +941,11 @@ class WebView extends Component {
           useragent={useragent}
           style={deviceStyles}
           id={id}
+          webpreferences={
+            this.props.browser.userPreferences.disableSpellCheck
+              ? 'spellcheck=no'
+              : 'spellcheck=yes'
+          }
         />
       </>
     );

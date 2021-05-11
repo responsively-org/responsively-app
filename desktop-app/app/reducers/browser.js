@@ -52,7 +52,7 @@ import {
   USER_PREFERENCES,
   CUSTOM_DEVICES,
   NETWORK_CONFIGURATION,
-  LAYOUT
+  LAYOUT,
 } from '../constants/settingKeys';
 import {
   getHomepage,
@@ -125,6 +125,7 @@ type PageMetaType = {
 type UserPreferenceType = {
   disableSSLValidation: boolean,
   reopenLastAddress: boolean,
+  disableSpellCheck: boolean,
   drawerState: boolean,
   devToolsOpenMode: DevToolsOpenModeType,
   deviceOutlineStyle: string,
