@@ -284,6 +284,10 @@ class WebView extends Component {
       navigationHandler(event);
     });
 
+    this.webviewRef.current.addEventListener('update-target-url', event => {
+      this.props.setHoveredLink(event.url);
+    });
+
     this.webviewRef.current.addEventListener('devtools-closed', () => {
       if (
         this.props.browser.devToolsConfig.mode === DEVTOOLS_MODES.UNDOCKED &&
