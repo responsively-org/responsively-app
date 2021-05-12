@@ -9,7 +9,10 @@ export const getExistingSearchResults = () => settings.get(ADD_SEARCH_RESULTS);
 
 const addUrlToSearchResults = url => settings.set(ADD_SEARCH_RESULTS, url);
 
-const deleteSearchResults = () => settings.delete(ADD_SEARCH_RESULTS);
+export const deleteSearchResults = () => {
+  settings.delete(ADD_SEARCH_RESULTS);
+  previousSearchResults = [];
+};
 
 const _sortedExistingUrlSearchResult = filteredData => {
   // Most visited site should appear first in the list

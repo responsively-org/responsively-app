@@ -65,7 +65,7 @@ const useStyles = makeStyles(theme => ({
     })} 0 rgba(0, 0, 0, 0.75)`,
   },
   drawerContent: {
-    height: '85%',
+    height: '95%',
     overflow: 'auto',
   },
 }));
