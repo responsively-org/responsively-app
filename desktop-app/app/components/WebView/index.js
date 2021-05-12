@@ -924,7 +924,7 @@ class WebView extends Component {
             ref={this.webviewRef}
             preload="./preload.js"
             className={cx(styles.device)}
-            src={address || 'about:blank'}
+            src={address}
             useragent={useragent}
             style={deviceStyles}
           />
@@ -938,7 +938,7 @@ class WebView extends Component {
           ref={this.webviewRef}
           preload="./preload.js"
           className={cx(styles.device)}
-          src={address || 'about:blank'}
+          src={address}
           useragent={useragent}
           style={deviceStyles}
           webpreferences={

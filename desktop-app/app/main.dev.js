@@ -46,7 +46,7 @@ import {
   stopWatchFiles,
   watchFiles,
 } from './utils/browserSync';
-import {getHostFromURL} from './utils/urlUtils';
+import {getHostFromURL, normalize} from './utils/urlUtils';
 import {getPermissionSettingPreference} from './utils/permissionUtils';
 import browserSync from 'browser-sync';
 import {captureOnSentry} from './utils/logUtils';
@@ -57,6 +57,9 @@ import {endSession, startSession} from './utils/analytics';
 
 const path = require('path');
 const URL = require('url').URL;
+
+const HOME_PAGE = 'HOME_PAGE';
+const LAST_OPENED_ADDRESS = 'LAST_OPENED_ADDRESS';
 
 migrateDeviceSchema();
 
@@ -140,6 +143,15 @@ app.on('will-finish-launching', () => {
     } else {
       app.setAsDefaultProtocolClient(protocol);
     }
+  }
+  if (
+    !fileToOpen &&
+    !urlToOpen &&
+    process.argv.length >= 2 &&
+    !openWithHandler(process.argv[1]) &&
+    isURL(process.argv[1], {protocols: ['http', 'https', 'file']})
+  ) {
+    urlToOpen = process.argv[1];
   }
 });
 
@@ -281,15 +293,27 @@ const installExtensions = async () => {
 const openUrl = url => {
   mainWindow.webContents.send(
     'address-change',
-    url.replace(`${protocol}://`, '')
+    normalize(url.replace(`${protocol}://`, ''))
   );
   mainWindow.show();
 };
 
 const openFile = filePath => {
-  mainWindow.webContents.send('address-change', filePath);
+  mainWindow.webContents.send('address-change', normalize(filePath));
   mainWindow.show();
 };
+
+function getUserPreferences(): UserPreferenceType {
+  return settings.get(USER_PREFERENCES) || {};
+}
+
+function getLastOpenedAddress() {
+  return settings.get(LAST_OPENED_ADDRESS) || getHomepage();
+}
+
+function getHomepage() {
+  return settings.get(HOME_PAGE) || 'https://www.google.com/';
+}
 
 const createWindow = async () => {
   appMetadata.incrementOpenCount();
@@ -366,6 +390,11 @@ const createWindow = async () => {
       openFile(fileToOpen);
       fileToOpen = null;
     } else {
+      openUrl(
+        getUserPreferences().reopenLastAddress
+          ? getLastOpenedAddress()
+          : getHomepage()
+      );
       mainWindow.show();
     }
     mainWindow.maximize();
