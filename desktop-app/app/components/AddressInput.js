@@ -4,7 +4,6 @@ import FavIconOff from '@material-ui/icons/StarBorder';
 import FavIconOn from '@material-ui/icons/Star';
 import {Tooltip} from '@material-ui/core';
 import {withTheme, withStyles, styled} from '@material-ui/core/styles';
-import fs from 'fs';
 import debounce from 'lodash/debounce';
 import HomePlusIcon from './icons/HomePlus';
 import DeleteCookieIcon from './icons/DeleteCookie';
@@ -18,6 +17,7 @@ import {
 import UrlSearchResults from './UrlSearchResults';
 import {styles as commonStyles} from './useCommonStyles';
 import {notifyPermissionToHandleReloadOrNewAddress} from '../utils/permissionUtils';
+import {normalize} from '../utils/urlUtils';
 
 class AddressBar extends React.Component {
   props: Props;
@@ -262,42 +262,18 @@ class AddressBar extends React.Component {
     }
 
     notifyPermissionToHandleReloadOrNewAddress();
-    this.props.onChange(this._normalize(this.state.userTypedAddress), true);
+    this.props.onChange(normalize(this.state.userTypedAddress), true);
   };
 
   _onSearchedUrlClick = (url, index) => {
     if (url !== this.state.previousAddress) {
-      this.props.onChange(this._normalize(url), true);
+      this.props.onChange(normalize(url), true);
     }
 
     this.setState({
       userTypedAddress: url,
       suggestionList: [],
     });
-  };
-
-  _hostnameCharHints = [':', '/', '#', '?'];
-  _inferHostname = (address: string) =>
-    this._hostnameCharHints.reduce(
-      (curr, char) => curr.split(char)[0],
-      address
-    );
-
-  _normalize = (address: string) => {
-    if (address.indexOf('://') === -1) {
-      let protocol = 'https://';
-      if (
-        address.startsWith('localhost') ||
-        address.startsWith('127.0.0.1') ||
-        this._inferHostname(address).indexOf('.localhost') !== -1
-      ) {
-        protocol = 'http://';
-      } else if (fs.existsSync(address)) {
-        protocol = 'file://';
-      }
-      address = `${protocol}${address}`;
-    }
-    return address;
   };
 
   _filterExistingUrl = debounce(() => {
