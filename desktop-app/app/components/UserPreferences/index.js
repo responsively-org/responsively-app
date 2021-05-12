@@ -250,27 +250,6 @@ function UserPreference({
             classes.sectionHeader
           )}
         >
-          Adress History
-        </div>
-        <div className={commonClasses.sidebarContentSectionContainer}>
-          <Button
-            variant="contained"
-            color="primary"
-            aria-label="clear address history"
-            component="span"
-            onClick={deleteSearchResults}
-          >
-            Clear Address History
-          </Button>
-        </div>
-      </div>
-      <div className={commonClasses.sidebarContentSectionContainer}>
-        <div
-          className={cx(
-            commonClasses.flexAlignVerticalMiddle,
-            classes.sectionHeader
-          )}
-        >
           Permissions
         </div>
         <div className={classes.marginTop}>
@@ -290,6 +269,27 @@ function UserPreference({
             <strong>Note:</strong> To ensure this behaviour you should restart
             Responsively
           </p>
+        </div>
+      </div>
+      <div className={commonClasses.sidebarContentSectionContainer}>
+        <div
+          className={cx(
+            commonClasses.flexAlignVerticalMiddle,
+            classes.sectionHeader
+          )}
+        >
+          Adress History
+        </div>
+        <div className={commonClasses.sidebarContentSectionContainer}>
+          <Button
+            variant="contained"
+            color="primary"
+            aria-label="clear address history"
+            component="span"
+            onClick={deleteSearchResults}
+          >
+            Clear Address History
+          </Button>
         </div>
       </div>
     </div>
