@@ -53,11 +53,10 @@ import {
   USER_PREFERENCES,
   CUSTOM_DEVICES,
   NETWORK_CONFIGURATION,
-  LAYOUT
+  LAYOUT,
 } from '../constants/settingKeys';
 import {
   getHomepage,
-  getLastOpenedAddress,
   saveHomepage,
   saveLastOpenedAddress,
 } from '../utils/navigatorUtils';
@@ -323,9 +322,6 @@ export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
     homepage: _getHomepage(),
-    address: _getUserPreferences().reopenLastAddress
-      ? getLastOpenedAddress()
-      : getHomepage(),
     currentPageMeta: {},
     zoomLevel:
       normalizeZoomLevel(_getUserPreferences().zoomLevel) || DEFAULT_ZOOM_LEVEL,
