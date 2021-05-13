@@ -278,7 +278,7 @@ function UserPreference({
             classes.sectionHeader
           )}
         >
-          Adress History
+          Address History
         </div>
         <div className={commonClasses.sidebarContentSectionContainer}>
           <Button
