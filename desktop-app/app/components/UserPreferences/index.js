@@ -4,6 +4,7 @@ import cx from 'classnames';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
+import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Input from '@material-ui/core/Input';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -19,6 +20,7 @@ import {SCREENSHOT_MECHANISM} from '../../constants/values';
 import {notifyPermissionPreferenceChanged} from '../../utils/permissionUtils.js';
 import {PERMISSION_MANAGEMENT_OPTIONS} from '../../constants/permissionsManagement';
 import {setTheme} from '../../actions/browser';
+import {deleteSearchResults} from '../../services/searchUrlSuggestions';
 
 function UserPreference({
   devToolsConfig,
@@ -267,6 +269,27 @@ function UserPreference({
             <strong>Note:</strong> To ensure this behaviour you should restart
             Responsively
           </p>
+        </div>
+      </div>
+      <div className={commonClasses.sidebarContentSectionContainer}>
+        <div
+          className={cx(
+            commonClasses.flexAlignVerticalMiddle,
+            classes.sectionHeader
+          )}
+        >
+          Address History
+        </div>
+        <div className={commonClasses.sidebarContentSectionContainer}>
+          <Button
+            variant="contained"
+            color="primary"
+            aria-label="clear address history"
+            component="span"
+            onClick={deleteSearchResults}
+          >
+            Clear Address History
+          </Button>
         </div>
       </div>
     </div>
