@@ -64,6 +64,17 @@ class FileSystemUtils {
     }
   }
 
+  async writeBase64Data(image: string, deviceName: string, ext: string) {
+    const fileName = this.createNewFileName(deviceName);
+    const fileWithExt = `${fileName}.${ext}`;
+    const data = image.replace(/^data:image\/png;base64,/, '');
+    await fs.writeFileSync(
+      path.join(this.currentDir, fileWithExt),
+      data,
+      'base64'
+    );
+  }
+
   /**
    * base is generally device name it can take urls
    * @param base:string

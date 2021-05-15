@@ -12,10 +12,7 @@ import {
   TOGGLE_EVENT_MIRRORING_ALL_DEVICES,
 } from '../../constants/pubsubEvents';
 import pubsub from 'pubsub.js';
-import {
-  convertNativeImageToJPEG,
-  convertURIImageToBuffer,
-} from '../../utils/imageUtils';
+import {convertNativeImageToPNG} from '../../utils/imageUtils';
 import {_delay} from './functionUtils';
 
 function sortWebViewsByDeviceIds(
@@ -109,7 +106,7 @@ export default async function Capture(data: Data) {
       const image = await webUtils.captureWithRetry();
       images.push(image);
 
-      const jpg = convertNativeImageToJPEG(image);
+      const jpg = convertNativeImageToPNG(image);
       const deviceName = deviceChecks[i].name;
       deviceNames.push(deviceName);
       await fsUtils.writeImageToFile(jpg, deviceName, 'jpg');
@@ -141,7 +138,6 @@ export default async function Capture(data: Data) {
 
   // account for browser to settle
   await _delay(100);
-
   if (isMergeImages) {
     const toastId = showNotification(
       'start Capturing',
@@ -152,17 +148,8 @@ export default async function Capture(data: Data) {
     );
     showNotification(`merging images`, false, true, false, 'info', toastId);
     const mergedImage = await mergeImages(images, deviceNames);
-    showNotification(
-      `Converting data to binary`,
-      false,
-      true,
-      false,
-      'info',
-      toastId
-    );
-    const [img, ext] = await convertURIImageToBuffer(mergedImage);
     showNotification(`saving`, false, true, false, 'info', toastId);
-    await fsUtils.writeImageToFile(img, 'all', ext);
+    await fsUtils.writeBase64Data(mergedImage, 'all-URI', 'png');
     showNotification(
       `saved merged images`,
       2000,
@@ -230,7 +217,6 @@ export async function mergeImages(
       imageDim[i].height
     );
   }
-
   return canvas.toDataURL('image/png', 0.6);
 }
 

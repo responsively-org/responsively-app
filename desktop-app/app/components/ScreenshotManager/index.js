@@ -34,7 +34,6 @@ export default function ScreenshotManager({
   handleClose,
 }) {
   const [mergeImages, setMergeImages] = useState(false);
-  const [zip, setZip] = useState(false);
   const [deviceChecks, setDeviceChecks] = useState(() =>
     browser.devices.map(device => ({
       id: device.id,
@@ -57,7 +56,6 @@ export default function ScreenshotManager({
 
   const handleGo = () => {
     const payload = {
-      zip,
       isMergeImages: mergeImages,
       deviceChecks,
     };
