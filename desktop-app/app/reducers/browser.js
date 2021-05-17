@@ -31,6 +31,7 @@ import {
   SET_HEADER_VISIBILITY,
   SET_LEFT_PANE_VISIBILITY,
   SET_HOVERED_LINK,
+  SET_STARTUP_PAGE,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -59,6 +60,7 @@ import {
   getHomepage,
   saveHomepage,
   saveLastOpenedAddress,
+  saveStartupPage,
 } from '../utils/navigatorUtils';
 import {updateExistingUrl} from '../services/searchUrlSuggestions';
 import {normalizeZoomLevel} from '../utils/browserUtils';
@@ -601,6 +603,9 @@ export default function browser(
         ...state,
         hoveredLink: action.url,
       };
+    case SET_STARTUP_PAGE:
+      saveStartupPage(action.value);
+      return {...state};
     default:
       return state;
   }

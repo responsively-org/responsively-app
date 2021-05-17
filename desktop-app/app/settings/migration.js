@@ -5,7 +5,7 @@ import {
   NETWORK_CONFIGURATION,
   LAYOUT,
 } from '../constants/settingKeys';
-import {SCREENSHOT_MECHANISM} from '../constants/values';
+import {SCREENSHOT_MECHANISM, STARTUP_PAGE} from '../constants/values';
 import {PERMISSION_MANAGEMENT_OPTIONS} from '../constants/permissionsManagement';
 import {DARK_THEME} from '../constants/theme';
 import {FLEXIGRID_LAYOUT} from '../constants/previewerLayouts';
@@ -23,6 +23,16 @@ export function migrateDeviceSchema() {
   _handlePermissionsDefaultPreferences();
   _handleColorThemePreferences();
   _handleLayout();
+  _ensureDefaultStartupPage();
+}
+
+function _ensureDefaultStartupPage() {
+  const userPreferences = settings.get(USER_PREFERENCES) || {};
+  const defaultStartupPage = userPreferences.startupPage;
+  if (defaultStartupPage != null) return;
+
+  userPreferences.startupPage = STARTUP_PAGE.HOME;
+  settings.set(USER_PREFERENCES, userPreferences);
 }
 
 function _ensureDefaultNetworkConfig() {
