@@ -32,6 +32,7 @@ import installExtension, {
 import fs from 'fs';
 import MenuBuilder from './menu';
 import {USER_PREFERENCES, NETWORK_CONFIGURATION} from './constants/settingKeys';
+import {STARTUP_PAGE} from './constants/values';
 import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
@@ -54,6 +55,7 @@ import appMetadata from './services/db/appMetadata';
 import {convertToProxyConfig} from './utils/proxyUtils';
 import {PERMISSION_MANAGEMENT_OPTIONS} from './constants/permissionsManagement';
 import {endSession, startSession} from './utils/analytics';
+import {getStartupPage, getLastOpenedAddress} from './utils/navigatorUtils';
 
 const path = require('path');
 const URL = require('url').URL;
@@ -307,14 +309,6 @@ function getUserPreferences(): UserPreferenceType {
   return settings.get(USER_PREFERENCES) || {};
 }
 
-function getLastOpenedAddress() {
-  return settings.get(LAST_OPENED_ADDRESS) || getHomepage();
-}
-
-function getHomepage() {
-  return settings.get(HOME_PAGE) || 'https://www.google.com/';
-}
-
 const createWindow = async () => {
   appMetadata.incrementOpenCount();
   hasActiveWindow = true;
@@ -393,7 +387,7 @@ const createWindow = async () => {
       openUrl(
         getUserPreferences().reopenLastAddress
           ? getLastOpenedAddress()
-          : getHomepage()
+          : getStartupPage()
       );
       mainWindow.show();
     }
