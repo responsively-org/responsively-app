@@ -30,6 +30,7 @@ import {
   APPLY_CSS,
   TOGGLE_DEVICE_DESIGN_MODE_STATE,
   TOGGLE_EVENT_MIRRORING_ALL_DEVICES,
+  PAGE_NAVIGATOR_CHANGED,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 import {DESIGN_MODE_JS_VALUES} from '../../constants/values';
@@ -177,6 +178,10 @@ class WebView extends Component {
         OPEN_CONSOLE_FOR_DEVICE,
         this.processOpenConsoleForDeviceEvent
       )
+    );
+
+    this.subscriptions.push(
+      pubsub.subscribe(PAGE_NAVIGATOR_CHANGED, this.selectorNavigationChanged)
     );
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
@@ -345,6 +350,23 @@ class WebView extends Component {
     } catch (err) {
       console.log('err', err);
     }
+  };
+
+  selectorNavigationChanged = ({selector, index}) => {
+    if (selector == null || index == null) return;
+    this.webviewRef.current
+      .executeJavaScript(
+        `{
+          var elements = document.querySelectorAll('${selector}');
+          var len = elements.length; 
+          if (len !== 0) {
+            var idx = ((${index} % len) + len) % len;
+            var el = elements[idx];
+            el.scrollIntoView(true);
+          }
+        }`
+      )
+      .catch(captureOnSentry);
   };
 
   processNavigationBackEvent = () => {
