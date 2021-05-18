@@ -20,6 +20,7 @@ import ToggleTouch from '../ToggleTouch';
 import Muted from '../icons/Muted';
 import CSSEditor from '../icons/CSSEditor';
 import styles from '../WebView/style.module.css';
+import PageNavigatorIcon from '../icons/PageNavigator';
 
 const useStyles = makeStyles({
   container: {
@@ -48,6 +49,7 @@ const ScrollControls = ({
   toggleCSSEditor,
   onAllDevicesMutedChange,
   onToggleAllDeviceDesignMode,
+  onChangePageNavigatorActive,
 }) => {
   const [eventMirroring, setEventMirroring] = useState(true);
   const initialRender = useRef(true);
@@ -117,6 +119,22 @@ const ScrollControls = ({
           >
             <div onClick={onToggleAllDeviceDesignMode}>
               <DesignModeIcon {...{...iconProps, ...{height: 22, width: 22}}} />
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid
+          item
+          className={cx(commonClasses.icon, {
+            [commonClasses.iconSelected]: browser.pageNavigator.active,
+          })}
+        >
+          <Tooltip title="Page Navigator">
+            <div
+              onClick={() => {
+                onChangePageNavigatorActive(!browser.pageNavigator.active);
+              }}
+            >
+              <PageNavigatorIcon {...iconProps} height={22} width={22} />
             </div>
           </Tooltip>
         </Grid>

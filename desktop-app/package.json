@@ -306,6 +306,7 @@
     "electron-util": "^0.14.2",
     "framer-motion": "^2.2.0",
     "jimp": "^0.12.1",
+    "jsdom": "^16.5.3",
     "lodash": "^4.17.19",
     "merge-img": "^2.1.3",
     "mousetrap": "^1.6.5",
