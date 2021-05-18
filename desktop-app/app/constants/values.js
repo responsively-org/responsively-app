@@ -12,3 +12,8 @@ export const DESIGN_MODE_JS_VALUES = {
   ON: 'on',
   OFF: 'off',
 };
+
+export const STARTUP_PAGE = {
+  BLANK: 'BLANK',
+  HOME: 'HOME',
+};

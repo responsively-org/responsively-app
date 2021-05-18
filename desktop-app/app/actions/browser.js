@@ -52,6 +52,7 @@ export const TOGGLE_DEVICE_DESIGN_MODE = 'TOGGLE_DEVICE_DESIGN_MODE';
 export const SET_HEADER_VISIBILITY = 'SET_HEADER_VISIBILITY';
 export const SET_LEFT_PANE_VISIBILITY = 'SET_LEFT_PANE_VISIBILITY';
 export const SET_HOVERED_LINK = 'SET_HOVERED_LINK';
+export const SET_STARTUP_PAGE = 'SET_STARTUP_PAGE';
 
 export function newAddress(address) {
   return {
@@ -926,5 +927,18 @@ export function setHoveredLink(url) {
   return {
     type: SET_HOVERED_LINK,
     url,
+  };
+}
+
+export function setStartupPage(value: 'BLANK' | 'HOME') {
+  return {
+    type: SET_STARTUP_PAGE,
+    value,
+  };
+}
+
+export function changeStartupPage(value: 'BLANK' | 'HOME') {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(setStartupPage(value));
   };
 }

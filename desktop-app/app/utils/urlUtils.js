@@ -10,7 +10,7 @@ export function getHostFromURL(url: String) {
 }
 
 export const normalize = (address: string) => {
-  if (address.indexOf('://') === -1) {
+  if (address !== 'about:blank' && address.indexOf('://') === -1) {
     let protocol = 'https://';
     if (
       address.startsWith('localhost') ||
