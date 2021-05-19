@@ -40,6 +40,11 @@ import {appUpdater} from './app-updater';
 import trimStart from 'lodash/trimStart';
 import isURL from 'validator/lib/isURL';
 import {
+  confirmMove,
+  conflictHandler,
+  movingFailed,
+} from './move-to-applications';
+import {
   initBrowserSync,
   getBrowserSyncHost,
   getBrowserSyncEmbedScriptURL,
@@ -252,6 +257,15 @@ app.on('ready', async () => {
   if (hasActiveWindow) {
     return;
   }
+  if (!app.isInApplicationsFolder() && confirmMove(dialog)) {
+    try {
+      app.moveToApplicationsFolder({
+        conflictHandler: conflictHandler.bind(this, dialog),
+      });
+    } catch (e) {
+      movingFailed(dialog);
+    }
+  }
   // Set theme based on user preference
   const themeSource = (settings.get(USER_PREFERENCES) || {}).theme;
   if (themeSource) {
@@ -330,6 +344,7 @@ const createWindow = async () => {
       nodeIntegrationInWorker: true,
       webviewTag: true,
       enableRemoteModule: true,
+      contextIsolation: false,
     },
     titleBarStyle: 'hidden',
     icon: iconPath,
