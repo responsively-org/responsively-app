@@ -257,7 +257,7 @@ app.on('ready', async () => {
   if (hasActiveWindow) {
     return;
   }
-  if (!app.isInApplicationsFolder() && confirmMove(dialog)) {
+  if (!app.isInApplicationsFolder() && (await confirmMove(dialog))) {
     try {
       app.moveToApplicationsFolder({
         conflictHandler: conflictHandler.bind(this, dialog),
