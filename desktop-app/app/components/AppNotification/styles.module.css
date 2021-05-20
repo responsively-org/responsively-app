@@ -11,6 +11,7 @@
   min-width: 250px;
   max-width: 320px;
   color: #f8f8f8;
+  z-index: 2;
 }
 
 .titleContainer {
