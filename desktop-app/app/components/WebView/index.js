@@ -28,6 +28,7 @@ import {
   TOGGLE_DEVICE_DESIGN_MODE_STATE,
   TOGGLE_EVENT_MIRRORING_ALL_DEVICES,
   SCREENSHOT_IN_PROGRESS,
+  PAGE_NAVIGATOR_CHANGED,
 } from '../../constants/pubsubEvents';
 import {CAPABILITIES} from '../../constants/devices';
 import {DESIGN_MODE_JS_VALUES} from '../../constants/values';
@@ -177,6 +178,10 @@ class WebView extends Component {
       )
     );
 
+    this.subscriptions.push(
+      pubsub.subscribe(PAGE_NAVIGATOR_CHANGED, this.selectorNavigationChanged)
+    );
+
     this.webviewRef.current.addEventListener('dom-ready', () => {
       this.initEventTriggers(this.webviewRef.current);
       this.dbg = this.getWebContents().debugger;
@@ -282,6 +287,10 @@ class WebView extends Component {
       navigationHandler(event);
     });
 
+    this.webviewRef.current.addEventListener('update-target-url', event => {
+      this.props.setHoveredLink(event.url);
+    });
+
     this.webviewRef.current.addEventListener('devtools-closed', () => {
       if (
         this.props.browser.devToolsConfig.mode === DEVTOOLS_MODES.UNDOCKED &&
@@ -339,6 +348,23 @@ class WebView extends Component {
     } catch (err) {
       console.log('err', err);
     }
+  };
+
+  selectorNavigationChanged = ({selector, index}) => {
+    if (selector == null || index == null) return;
+    this.webviewRef.current
+      .executeJavaScript(
+        `{
+          var elements = document.querySelectorAll('${selector}');
+          var len = elements.length; 
+          if (len !== 0) {
+            var idx = ((${index} % len) + len) % len;
+            var el = elements[idx];
+            el.scrollIntoView(true);
+          }
+        }`
+      )
+      .catch(captureOnSentry);
   };
 
   processNavigationBackEvent = () => {
@@ -922,7 +948,7 @@ class WebView extends Component {
             ref={this.webviewRef}
             preload="./preload.js"
             className={cx(styles.device)}
-            src={address || 'about:blank'}
+            src={address}
             useragent={useragent}
             style={deviceStyles}
             id={id}
@@ -937,7 +963,7 @@ class WebView extends Component {
           ref={this.webviewRef}
           preload="./preload.js"
           className={cx(styles.device)}
-          src={address || 'about:blank'}
+          src={address}
           useragent={useragent}
           style={deviceStyles}
           id={id}

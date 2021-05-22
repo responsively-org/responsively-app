@@ -30,6 +30,10 @@ import {
   TOGGLE_DEVICE_DESIGN_MODE,
   SET_HEADER_VISIBILITY,
   SET_LEFT_PANE_VISIBILITY,
+  SET_HOVERED_LINK,
+  SET_STARTUP_PAGE,
+  UPDATE_PAGE_NAVIGATOR,
+  TOGGLE_PAGE_NAVIGATOR,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -56,9 +60,9 @@ import {
 } from '../constants/settingKeys';
 import {
   getHomepage,
-  getLastOpenedAddress,
   saveHomepage,
   saveLastOpenedAddress,
+  saveStartupPage,
 } from '../utils/navigatorUtils';
 import {updateExistingUrl} from '../services/searchUrlSuggestions';
 import {normalizeZoomLevel} from '../utils/browserUtils';
@@ -177,6 +181,12 @@ type CSSEditorStateType = {
   content: String,
 };
 
+type PageNavigator = {
+  active: boolean,
+  selector: string,
+  index: number | null,
+};
+
 export type BrowserStateType = {
   devices: Array<Device>,
   homepage: string,
@@ -199,6 +209,7 @@ export type BrowserStateType = {
   allDevicesInDesignMode: boolean,
   isHeaderVisible: boolean,
   isLeftPaneVisible: boolean,
+  pageNavigator: PageNavigator,
 };
 
 let _activeDevices = null;
@@ -322,9 +333,6 @@ export default function browser(
   state: BrowserStateType = {
     devices: _getActiveDevices(),
     homepage: _getHomepage(),
-    address: _getUserPreferences().reopenLastAddress
-      ? getLastOpenedAddress()
-      : getHomepage(),
     currentPageMeta: {},
     zoomLevel:
       normalizeZoomLevel(_getUserPreferences().zoomLevel) || DEFAULT_ZOOM_LEVEL,
@@ -365,6 +373,8 @@ export default function browser(
     allDevicesInDesignMode: false,
     isHeaderVisible: true,
     isLeftPaneVisible: true,
+    hoveredLink: '',
+    pageNavigator: {selector: null, index: null, active: false},
   },
   action: Action
 ) {
@@ -598,7 +608,25 @@ export default function browser(
         ...state,
         isLeftPaneVisible: action.isVisible,
       };
-
+    case SET_HOVERED_LINK:
+      return {
+        ...state,
+        hoveredLink: action.url,
+      };
+    case SET_STARTUP_PAGE:
+      saveStartupPage(action.value);
+      return {...state};
+    case UPDATE_PAGE_NAVIGATOR:
+      state.pageNavigator.selector = action.selector;
+      state.pageNavigator.index = action.index;
+      return {
+        ...state,
+      };
+    case TOGGLE_PAGE_NAVIGATOR:
+      state.pageNavigator.active = action.active;
+      return {
+        ...state,
+      };
     default:
       return state;
   }

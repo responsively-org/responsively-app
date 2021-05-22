@@ -17,6 +17,7 @@ import {
   ADDRESS_CHANGE,
   STOP_LOADING,
   TOGGLE_DEVICE_DESIGN_MODE_STATE,
+  PAGE_NAVIGATOR_CHANGED,
 } from '../constants/pubsubEvents';
 import {getBounds, getDefaultDevToolsWindowSize} from '../reducers/browser';
 import {DEVTOOLS_MODES} from '../constants/previewerLayouts';
@@ -51,6 +52,10 @@ export const TOGGLE_ALL_DEVICES_DESIGN_MODE = 'TOGGLE_ALL_DEVICES_DESIGN_MODE';
 export const TOGGLE_DEVICE_DESIGN_MODE = 'TOGGLE_DEVICE_DESIGN_MODE';
 export const SET_HEADER_VISIBILITY = 'SET_HEADER_VISIBILITY';
 export const SET_LEFT_PANE_VISIBILITY = 'SET_LEFT_PANE_VISIBILITY';
+export const SET_HOVERED_LINK = 'SET_HOVERED_LINK';
+export const SET_STARTUP_PAGE = 'SET_STARTUP_PAGE';
+export const UPDATE_PAGE_NAVIGATOR = 'UPDATE_PAGE_NAVIGATOR';
+export const TOGGLE_PAGE_NAVIGATOR = 'TOGGLE_PAGE_NAVIGATOR';
 
 export function newAddress(address) {
   return {
@@ -918,5 +923,103 @@ export function setLeftPaneVisibility(isVisible: boolean) {
   return {
     type: SET_LEFT_PANE_VISIBILITY,
     isVisible,
+  };
+}
+
+/**
+ * Sets the url being hovered in a webview. When empty, it means that no anchor element is being hovered.
+ *
+ * @param {string} url URL from the anchor tag that is being hovered. Pass empty string to indicate no links are being hovered.
+ * @returns Redux action with type as SET_HOVERED_LINK
+ */
+export function setHoveredLink(url) {
+  return {
+    type: SET_HOVERED_LINK,
+    url,
+  };
+}
+
+export function setStartupPage(value: 'BLANK' | 'HOME') {
+  return {
+    type: SET_STARTUP_PAGE,
+    value,
+  };
+}
+
+export function changeStartupPage(value: 'BLANK' | 'HOME') {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    dispatch(setStartupPage(value));
+  };
+}
+
+export function updatePageNavigator(selector, index) {
+  return {
+    type: UPDATE_PAGE_NAVIGATOR,
+    selector,
+    index,
+  };
+}
+
+export function resetPageNavigator() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    const {
+      browser: {
+        pageNavigator: {selector, index},
+      },
+    } = getState();
+    if (selector == null && index == null) return;
+    dispatch(updatePageNavigator(null, null));
+  };
+}
+
+export function navigateToNextSelector(selector) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    if ((selector || '').length === 0) return;
+
+    const {
+      browser: {pageNavigator},
+    } = getState();
+
+    let index = pageNavigator.index;
+
+    if (pageNavigator.selector !== selector || index == null) index = -1;
+
+    pubsub.publish(PAGE_NAVIGATOR_CHANGED, [
+      {selector, index: (index || 0) + 1},
+    ]);
+    dispatch(updatePageNavigator(selector, (index || 0) + 1));
+  };
+}
+
+export function navigateToPrevSelector(selector) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    if ((selector || '').length === 0) return;
+
+    const {
+      browser: {pageNavigator},
+    } = getState();
+
+    let index = pageNavigator.index;
+
+    if (pageNavigator.selector !== selector || index == null) index = 0;
+
+    pubsub.publish(PAGE_NAVIGATOR_CHANGED, [
+      {selector, index: (index || 0) - 1},
+    ]);
+    dispatch(updatePageNavigator(selector, (index || 0) - 1));
+  };
+}
+
+export function setPageNavigatorActive(active) {
+  return {
+    type: TOGGLE_PAGE_NAVIGATOR,
+    active,
+  };
+}
+
+export function onChangePageNavigatorActive(active) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    pubsub.publish(TOGGLE_EVENT_MIRRORING_ALL_DEVICES, [{status: !active}]);
+    dispatch(setPageNavigatorActive(active));
   };
 }

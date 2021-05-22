@@ -58,6 +58,7 @@ const useStyles = makeStyles(theme => ({
   },
   contentColumn: {
     height: '100%',
+    position: 'relative',
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,

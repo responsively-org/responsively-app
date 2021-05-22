@@ -32,12 +32,18 @@ import installExtension, {
 import fs from 'fs';
 import MenuBuilder from './menu';
 import {USER_PREFERENCES, NETWORK_CONFIGURATION} from './constants/settingKeys';
+import {STARTUP_PAGE} from './constants/values';
 import {migrateDeviceSchema} from './settings/migration';
 import {DEVTOOLS_MODES} from './constants/previewerLayouts';
 import {initMainShortcutManager} from './shortcut-manager/main-shortcut-manager';
 import {appUpdater} from './app-updater';
 import trimStart from 'lodash/trimStart';
 import isURL from 'validator/lib/isURL';
+import {
+  confirmMove,
+  conflictHandler,
+  movingFailed,
+} from './move-to-applications';
 import {
   initBrowserSync,
   getBrowserSyncHost,
@@ -46,7 +52,7 @@ import {
   stopWatchFiles,
   watchFiles,
 } from './utils/browserSync';
-import {getHostFromURL} from './utils/urlUtils';
+import {getHostFromURL, normalize} from './utils/urlUtils';
 import {getPermissionSettingPreference} from './utils/permissionUtils';
 import browserSync from 'browser-sync';
 import {captureOnSentry} from './utils/logUtils';
@@ -54,9 +60,13 @@ import appMetadata from './services/db/appMetadata';
 import {convertToProxyConfig} from './utils/proxyUtils';
 import {PERMISSION_MANAGEMENT_OPTIONS} from './constants/permissionsManagement';
 import {endSession, startSession} from './utils/analytics';
+import {getStartupPage, getLastOpenedAddress} from './utils/navigatorUtils';
 
 const path = require('path');
 const URL = require('url').URL;
+
+const HOME_PAGE = 'HOME_PAGE';
+const LAST_OPENED_ADDRESS = 'LAST_OPENED_ADDRESS';
 
 migrateDeviceSchema();
 
@@ -140,6 +150,15 @@ app.on('will-finish-launching', () => {
     } else {
       app.setAsDefaultProtocolClient(protocol);
     }
+  }
+  if (
+    !fileToOpen &&
+    !urlToOpen &&
+    process.argv.length >= 2 &&
+    !openWithHandler(process.argv[1]) &&
+    isURL(process.argv[1], {protocols: ['http', 'https', 'file']})
+  ) {
+    urlToOpen = process.argv[1];
   }
 });
 
@@ -238,6 +257,19 @@ app.on('ready', async () => {
   if (hasActiveWindow) {
     return;
   }
+  if (
+    process.platform === 'darwin' &&
+    !app.isInApplicationsFolder() &&
+    (await confirmMove(dialog))
+  ) {
+    try {
+      app.moveToApplicationsFolder({
+        conflictHandler: conflictHandler.bind(this, dialog),
+      });
+    } catch (e) {
+      movingFailed(dialog);
+    }
+  }
   // Set theme based on user preference
   const themeSource = (settings.get(USER_PREFERENCES) || {}).theme;
   if (themeSource) {
@@ -281,15 +313,19 @@ const installExtensions = async () => {
 const openUrl = url => {
   mainWindow.webContents.send(
     'address-change',
-    url.replace(`${protocol}://`, '')
+    normalize(url.replace(`${protocol}://`, ''))
   );
   mainWindow.show();
 };
 
 const openFile = filePath => {
-  mainWindow.webContents.send('address-change', filePath);
+  mainWindow.webContents.send('address-change', normalize(filePath));
   mainWindow.show();
 };
+
+function getUserPreferences(): UserPreferenceType {
+  return settings.get(USER_PREFERENCES) || {};
+}
 
 const createWindow = async () => {
   appMetadata.incrementOpenCount();
@@ -312,6 +348,7 @@ const createWindow = async () => {
       nodeIntegrationInWorker: true,
       webviewTag: true,
       enableRemoteModule: true,
+      contextIsolation: false,
     },
     titleBarStyle: 'hidden',
     icon: iconPath,
@@ -366,6 +403,11 @@ const createWindow = async () => {
       openFile(fileToOpen);
       fileToOpen = null;
     } else {
+      openUrl(
+        getUserPreferences().reopenLastAddress
+          ? getLastOpenedAddress()
+          : getStartupPage()
+      );
       mainWindow.show();
     }
     mainWindow.maximize();

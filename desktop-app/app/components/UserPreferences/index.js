@@ -4,6 +4,7 @@ import cx from 'classnames';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
+import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Input from '@material-ui/core/Input';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -15,10 +16,11 @@ import {DEVTOOLS_MODES} from '../../constants/previewerLayouts';
 import {LIGHT_THEME, DARK_THEME} from '../../constants/theme';
 import ScreenShotSavePreference from '../ScreenShotSavePreference/index';
 import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
-import {SCREENSHOT_MECHANISM} from '../../constants/values';
+import {SCREENSHOT_MECHANISM, STARTUP_PAGE} from '../../constants/values';
 import {notifyPermissionPreferenceChanged} from '../../utils/permissionUtils.js';
 import {PERMISSION_MANAGEMENT_OPTIONS} from '../../constants/permissionsManagement';
 import {setTheme} from '../../actions/browser';
+import {deleteSearchResults} from '../../services/searchUrlSuggestions';
 
 function UserPreference({
   devToolsConfig,
@@ -34,6 +36,17 @@ function UserPreference({
     () => themeOptions.find(option => option.value === themeSource),
     [themeSource]
   );
+
+  const startupPageOptions = [
+    {
+      label: 'Homepage',
+      value: STARTUP_PAGE.HOME,
+    },
+    {
+      label: 'Blank Page',
+      value: STARTUP_PAGE.BLANK,
+    },
+  ];
 
   const onChange = (field, value) => {
     onUserPreferencesChange({...userPreferences, [field]: value});
@@ -267,6 +280,50 @@ function UserPreference({
             <strong>Note:</strong> To ensure this behaviour you should restart
             Responsively
           </p>
+        </div>
+      </div>
+      <div className={commonClasses.sidebarContentSectionContainer}>
+        <div
+          className={cx(
+            commonClasses.flexAlignVerticalMiddle,
+            classes.sectionHeader
+          )}
+        >
+          Startup Page
+        </div>
+        <div className={classes.marginTop}>
+          <Select
+            options={startupPageOptions}
+            value={
+              startupPageOptions.find(
+                x => x.value === userPreferences?.startupPage
+              ) || startupPageOptions[0]
+            }
+            onChange={val => {
+              onChange('startupPage', val.value);
+            }}
+          />
+        </div>
+      </div>
+      <div className={commonClasses.sidebarContentSectionContainer}>
+        <div
+          className={cx(
+            commonClasses.flexAlignVerticalMiddle,
+            classes.sectionHeader
+          )}
+        >
+          Address History
+        </div>
+        <div className={commonClasses.sidebarContentSectionContainer}>
+          <Button
+            variant="contained"
+            color="primary"
+            aria-label="clear address history"
+            component="span"
+            onClick={deleteSearchResults}
+          >
+            Clear Address History
+          </Button>
         </div>
       </div>
     </div>

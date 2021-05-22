@@ -16,6 +16,8 @@ import {isDeviceEligible} from '../../utils/filterUtils';
 import {getDeviceIcon} from '../../utils/iconUtils';
 import useStyes from './useStyles';
 import LiveCssEditor from '../LiveCssEditor';
+import LinkHoverDisplayContainer from '../../containers/LinkHoverDisplayContainer';
+import PageNavigatorContainer from '../../containers/PageNavigatorContainer';
 
 export default function DevicesPreviewer(props) {
   const {
@@ -142,6 +144,8 @@ export default function DevicesPreviewer(props) {
       {(CSSEditor.position === CSS_EDITOR_MODES.RIGHT ||
         CSSEditor.position === CSS_EDITOR_MODES.BOTTOM) &&
         editor}
+      <LinkHoverDisplayContainer />
+      <PageNavigatorContainer />
     </div>
   );
 }
