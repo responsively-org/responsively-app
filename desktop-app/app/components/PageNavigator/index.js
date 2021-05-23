@@ -13,6 +13,7 @@ import {makeStyles, useTheme} from '@material-ui/core/styles';
 
 const {document} = new JSDOM('').window;
 const queryCheck = s => document.createDocumentFragment().querySelector(s);
+const INPUT_SOURCES = {TEXT_BOX: 'TEXT_BOX', OPTION_CLICK: 'OPTION_CLICK'};
 
 const isSelectorValid = selector => {
   try {
@@ -74,6 +75,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   btn: {
+    margin: 1,
     cursor: 'pointer',
     color: theme.palette.mode({light: '#636363', dark: '#fffc'}),
     '&:hover': {
@@ -90,6 +92,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   btnActive: {
+    borderRadius: 2,
     '& div': {
       backgroundColor: theme.palette.primary.light,
       color: '#fff',
@@ -99,6 +102,7 @@ const useStyles = makeStyles(theme => ({
 
 const PageNavigator = props => {
   const [selector, setSelector] = useState(props.selector || '');
+  const [inputSource, setInputSource] = useState(null);
   const inputRef = React.createRef();
   const styles = useStyles();
 
@@ -112,8 +116,22 @@ const PageNavigator = props => {
     return () => document.removeEventListener('keydown', _handleKeyDown);
   }, [props.active, inputRef.current]);
 
+  useEffect(() => {
+    if (inputSource === INPUT_SOURCES.OPTION_CLICK) {
+      _navigateNext();
+    }
+  }, [selector, inputSource]);
+
   const _handleChange = e => {
     setSelector(e.target.value);
+    if (inputSource !== INPUT_SOURCES.TEXT_BOX) {
+      setInputSource(INPUT_SOURCES.TEXT_BOX);
+    }
+  };
+
+  const handleOptionClick = val => {
+    setSelector(val);
+    setInputSource(INPUT_SOURCES.OPTION_CLICK);
   };
 
   const _navigateNext = debounce(() => {
@@ -172,25 +190,27 @@ const PageNavigator = props => {
           className={cx(styles.btn, {
             [styles.btnActive]: selector === 'section',
           })}
-          onClick={() => setSelector('section')}
+          onClick={() => handleOptionClick('section')}
         >
           <div>section</div>
         </span>
         <span
           className={cx(styles.btn, {[styles.btnActive]: selector === 'h1'})}
-          onClick={() => setSelector('h1')}
+          onClick={() => {
+            handleOptionClick('h1');
+          }}
         >
           <div>h1</div>
         </span>
         <span
           className={cx(styles.btn, {[styles.btnActive]: selector === 'h2'})}
-          onClick={() => setSelector('h2')}
+          onClick={() => handleOptionClick('h2')}
         >
           <div>h2</div>
         </span>
         <span
           className={cx(styles.btn, {[styles.btnActive]: selector === 'h3'})}
-          onClick={() => setSelector('h3')}
+          onClick={() => handleOptionClick('h3')}
         >
           <div>h3</div>
         </span>
