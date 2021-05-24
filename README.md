@@ -1,6 +1,6 @@
 <div align="center">
   <img src="https://responsively.app/assets/img/responsively-logo.png" alt="Responsively Logo" width="150">
-  <h1>Responsively App</h1>
+  <h1>Responsively App <a href="https://github.com/responsively-org/responsively-app/releases/latest" target="_blank"><img alt="GitHub release" src="https://img.shields.io/github/v/release/responsively-org/responsively-app"></a></h1>
   <strong>A must-have devtool for web developers for quicker responsive web development. 🚀</strong>
   <h6>Save time by becoming 5x faster!</h6>
 </div>
@@ -12,7 +12,7 @@
   </a>
   
   <a href="#contributors-" target="_blank">
-    <img src="https://img.shields.io/github/all-contributors/responsively-org/responsively-app?style=flat" alt="Twitter">
+    <img src="https://img.shields.io/github/all-contributors/responsively-org/responsively-app?style=flat" alt="contributors">
   </a>
   
   
@@ -27,6 +27,10 @@
 
   <a href="https://github.com/responsively-org/responsively-app/issues" target="_blank">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" alt="PRs Welcome">
+  </a>
+  
+   <a href="https://opencollective.com/responsively" target="_blank">
+    <img alt="Open Collective backers and sponsors" src="https://img.shields.io/opencollective/all/responsively">
   </a>
 </p>
 
@@ -63,12 +67,12 @@ Please visit the website to know more about the application - https://responsive
 ## Download
 The application is available for Mac, Windows and Linux platforms. Please download it from here - https://github.com/responsively-org/responsively-app/releases
 
-Alternatively, MacOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) to install it:
+Alternatively, MacOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) <a href="https://formulae.brew.sh/cask/responsively" target="_blank"> <img src="https://badgen.net/homebrew/cask/dy/responsively" alt="Homebrew installs"></a>
 ```bash
 brew install --cask responsively
 ```
 
-Also, Windows users can use [`chocolatey`](https://chocolatey.org/packages/responsively/) to install it:
+Also, Windows users can use [`chocolatey`](https://chocolatey.org/packages/responsively/) <a href="https://chocolatey.org/packages/responsively/" target="_blank"> <img src="https://img.shields.io/chocolatey/dt/responsively" alt="Chocolatey installs"></a> 
 ```bash
 choco install responsively
 ```
@@ -84,6 +88,13 @@ sudo rpm -i https://github.com/responsively-org/responsively-app/releases/downlo
 ```
 
 Follow on Twitter for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
+
+## Browser Extension
+
+Install the handy browser extension to easily send links from your browser to the app and preview instantly.
+- [Download for Chrome](https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj) <a href="https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj" target="_blank"><img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/users/jhphiidjkooiaollfiknkokgodbaddcj"></a>
+- [Download for Firefox](https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/) <a href="https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/" target="_blank"><img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/responsively-helper"></a>
+- [Download for Edge](https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn)
 
 ## Issues
 If you face any problems while using the application, please open an issue here - https://github.com/responsively-org/responsively-app/issues
