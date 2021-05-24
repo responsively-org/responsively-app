@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "A developer-friendly browser for developing responsive web apps",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
