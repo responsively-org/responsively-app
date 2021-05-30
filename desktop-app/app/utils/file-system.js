@@ -21,20 +21,20 @@ class FileSystemUtils {
     this.createFolder();
   }
 
-  ensureDirExists(dir): boolean {
+  ensureDirExists(dir: any): boolean {
     return fs.existsSync(dir);
   }
 
-  createFileNameFromAddress(): string {
-    const dateUtils = new DateUtils(this.date);
-    let fileName = getWebSiteName(this.address);
-    const fileBaseName = base.replace(/\//g, '-');
-    const dateString = dateUtils.getDateString();
-    fileName += `-${fileBaseName}`;
-    fileName += `-${dateString}`;
+  // createFileNameFromAddress(): string {
+  //   const dateUtils = new DateUtils(this.date);
+  //   let fileName = getWebSiteName(this.address);
+  //   const fileBaseName = base.replace(/\//g, '-');
+  //   const dateString = dateUtils.getDateString();
+  //   fileName += `-${fileBaseName}`;
+  //   fileName += `-${dateString}`;
 
-    return fileName;
-  }
+  //   return fileName;
+  // }
 
   createFolderNameFromDate(): string {
     const dateUtils = new DateUtils(this.date);

@@ -115,12 +115,12 @@ export default class WebViewUtils {
     );
   }
 
-  async doFullPageLageLoad() {
+  async doFullPageLoad(delay: number = 100) {
     try {
       let scrollPercent: number = await this.getScrollPercent();
       while (scrollPercent !== 100 && !Number.isNaN(scrollPercent)) {
         await this.scrollViewPort();
-        await _delay(200);
+        await _delay(delay);
         scrollPercent = Math.ceil(await this.getScrollPercent());
       }
     } catch (err) {
@@ -169,7 +169,7 @@ export default class WebViewUtils {
     }
     await this.setScrollBehaviourToAuto();
     const previous = await this.getWindowSizeAndScrollDetails();
-    await this.doFullPageLageLoad();
+    await this.doFullPageLoad();
     const {
       scrollHeight,
       scrollWidth,

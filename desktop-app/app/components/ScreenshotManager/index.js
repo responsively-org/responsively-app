@@ -11,11 +11,12 @@ import {
   FormControlLabel,
   Typography,
 } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    backgroundColor: 'inherit', // include theme colors here
-    color: 'inherit',
+    color: '#fff!important',
+    backgroundColor: '#424242!important',
   },
   formItems: {
     padding: '0 2ch',
@@ -41,6 +42,7 @@ export default function ScreenshotManager({
       selected: false,
     }))
   );
+  const [delay, setDelay] = useState(100);
   const styles = useStyles();
 
   const handleChange = (id: string) => {
@@ -58,8 +60,13 @@ export default function ScreenshotManager({
     const payload = {
       isMergeImages: mergeImages,
       deviceChecks,
+      delay,
     };
     handleOk(payload);
+  };
+
+  const handleDelay = event => {
+    setDelay(event.target.delay);
   };
 
   return (
@@ -71,14 +78,6 @@ export default function ScreenshotManager({
     >
       <DialogTitle>Choose Screenshot Options</DialogTitle>
       <DialogContent>
-        <Typography
-          color="error"
-          variant="overline"
-          display="block"
-          gutterBottom
-        >
-          Merging Images is an expensive process and takes time
-        </Typography>
         <form className={styles.formItems}>
           <FormControlLabel
             control={
@@ -88,6 +87,11 @@ export default function ScreenshotManager({
               />
             }
             label="Merge Images"
+          />
+          <TextField
+            label="Delay between scroll operation"
+            value={delay}
+            onChange={handleDelay}
           />
         </form>
         <Divider />

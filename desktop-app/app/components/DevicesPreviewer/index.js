@@ -123,11 +123,15 @@ export default function DevicesPreviewer(props) {
           {devices.map((device, index) => (
             <div
               key={device.id}
-              className={cx({
-                [classes.tab]: layout === INDIVIDUAL_LAYOUT,
-                [classes.activeTab]:
-                  layout === INDIVIDUAL_LAYOUT && focusedDeviceId === device.id,
-              })}
+              className={cx(
+                {
+                  [classes.tab]: layout === INDIVIDUAL_LAYOUT,
+                  [classes.activeTab]:
+                    layout === INDIVIDUAL_LAYOUT &&
+                    focusedDeviceId === device.id,
+                },
+                'webview-container'
+              )}
             >
               <Renderer
                 hidden={!isDeviceEligible(device, props.browser.filters)}

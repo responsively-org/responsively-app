@@ -356,7 +356,7 @@ class WebView extends Component {
       .executeJavaScript(
         `{
           var elements = document.querySelectorAll('${selector}');
-          var len = elements.length; 
+          var len = elements.length;
           if (len !== 0) {
             var idx = ((${index} % len) + len) % len;
             var el = elements[idx];
@@ -452,7 +452,16 @@ class WebView extends Component {
     this.webviewRef.current.send('scrollUpMessage');
   };
 
-  processToggleEventMirroring = async ({status}) => {
+  processToggleEventMirroring = async ({status, idsToConsider}) => {
+    // if ids to consider is empty, assumes all ids need to be toggled
+    if (idsToConsider && idsToConsider.length) {
+      const currentId = this.getWebContentsId();
+      const present = idsToConsider.includes(currentId);
+      if (!present) {
+        return;
+      }
+    }
+
     if (status) {
       this.setState(
         () => ({
