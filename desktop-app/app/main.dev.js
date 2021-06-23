@@ -117,10 +117,12 @@ const openWithHandler = filePath => {
   fileToOpen = null;
   if (
     filePath != null &&
+    !filePath.startsWith('http://') &&
+    !filePath.startsWith('https://') &&
     (filePath.endsWith('.html') || filePath.endsWith('.htm'))
   ) {
-    const url = `file://${filePath}`;
-    fileToOpen = url;
+    if (filePath.startsWith('file://')) fileToOpen = filePath;
+    else fileToOpen = `file://${filePath}`;
     return true;
   }
   return false;
@@ -156,7 +158,10 @@ app.on('will-finish-launching', () => {
     !urlToOpen &&
     process.argv.length >= 2 &&
     !openWithHandler(process.argv[1]) &&
-    isURL(process.argv[1], {protocols: ['http', 'https', 'file']})
+    isURL(process.argv[1], {
+      protocols: ['http', 'https', 'file'],
+      require_tld: false,
+    })
   ) {
     urlToOpen = process.argv[1];
   }
@@ -284,7 +289,8 @@ const chooseOpenWindowHandler = url => {
 
   if (url === 'about:blank') return 'useWindow';
 
-  if (isURL(url, {protocols: ['http', 'https']})) return 'useWindow';
+  if (isURL(url, {protocols: ['http', 'https'], require_tld: false}))
+    return 'useWindow';
 
   let urlObj = null;
   try {
