@@ -416,6 +416,7 @@ function _getScreenshotFileName(
     .toUpperCase()}`;
   const directoryPath = createSeparateDir ? `${dateString}/` : '';
   const userSelectedScreenShotSavePath = userPreferenceSettings.getScreenShotSavePath();
+  const specialCharactersRegex = /["\\/*|:?<>]/g;
   return {
     dir: path.join(
       userSelectedScreenShotSavePath ||
@@ -424,7 +425,7 @@ function _getScreenshotFileName(
     ),
     file: `${getWebsiteName(address)} ${
       fullScreen ? '- Full ' : ''
-    }- ${device.name.replace(/\//g, '-')} - ${dateString}.${format}`,
+    }- ${device.name.replace(/\//g, '-').replace(specialCharactersRegex, '')} - ${dateString}.${format}`,
   };
 }
 
