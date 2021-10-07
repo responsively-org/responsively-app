@@ -155,7 +155,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     ...theme.palette.mode({
       light: {},
-      dark: {background: '#000000b0'},
+      dark: {},
     }),
     '& svg': {
       padding: '5px',
