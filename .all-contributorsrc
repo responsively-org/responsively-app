@@ -424,6 +424,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "zachOS-tech",
+      "name": "Zach Hoskins",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50255197?v=4",
+      "profile": "http://zachos.tech",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
