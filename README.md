@@ -185,6 +185,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/crocarneiro"><img src="https://avatars.githubusercontent.com/u/10589421?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Carlos Rafael de Oliveira Carneiro</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=crocarneiro" title="Code">💻</a></td>
+    <td align="center"><a href="http://zachos.tech"><img src="https://avatars.githubusercontent.com/u/50255197?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Zach Hoskins</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=zachOS-tech" title="Code">💻</a></td>
   </tr>
 </table>
 
