@@ -102,6 +102,18 @@ If you face any problems while using the application, please open an issue here 
 ## Roadmap
 Here is the roadmap of the desktop app - https://github.com/responsively-org/responsively-app/projects/12?fullscreen=true.
 
+## Gold sponsors 🥇
+
+<p>&nbsp;</p>
+
+<p align="center">
+  <a href="https://mockswitch.com/" target="_blank">
+    <img src="https://responsively.app/static/MockSwitch-6b7ae7d9bc8df23ac41a4e653f71c9bf.jpg" height="120px">
+  </a>
+</p>
+
+[Become a sponsor and have your company logo here](https://opencollective.com/responsively)
+
 ## Contribute
 1. Ensure you have installed `node` and `yarn`
 2. Go to `desktop-app` folder
