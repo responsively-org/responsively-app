@@ -26,7 +26,11 @@ function DeviceList({
       if (!searchText) {
         return true;
       }
-      return device.name.toLowerCase().indexOf(searchText) > -1;
+      return (
+        device.name.toLowerCase().indexOf(searchText) > -1 ||
+        String(device.width).indexOf(searchText) > -1 ||
+        String(device.height).indexOf(searchText) > -1
+      );
     });
 
     setFilteredList(filteredDevices);
