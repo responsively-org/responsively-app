@@ -65,7 +65,7 @@ Please visit the website to know more about the application - https://responsive
 
 
 ## Download
-The application is available for Mac, Windows and Linux platforms. Please download it from here - https://github.com/responsively-org/responsively-app/releases
+The application is available for Mac, Windows and Linux platforms. Please download it from [the releases page](https://github.com/responsively-org/responsively-app/releases)
 
 Alternatively, MacOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) <a href="https://formulae.brew.sh/cask/responsively" target="_blank"> <img src="https://badgen.net/homebrew/cask/dy/responsively" alt="Homebrew installs"></a>
 ```bash
@@ -82,10 +82,12 @@ or [`winget`](https://github.com/microsoft/winget-cli):
 winget install ResponsivelyApp
 ```
 
-Linux users can use `rpm`
+Linux users using an RPM Package Manager can use `rpm`
 ```bash
 sudo rpm -i https://github.com/responsively-org/responsively-app/releases/download/v[VERSION]/Responsively-App-[VERSION].x86_64.rpm
 ```
+
+otherwise download an AppImage from [the releases page](https://github.com/responsively-org/responsively-app/releases)
 
 Follow on Twitter for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
 
