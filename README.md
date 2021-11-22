@@ -109,10 +109,11 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 <p>&nbsp;</p>
 
 <p align="center">
-  <a href="https://mockswitch.com/" target="_blank">
-    <img src="https://responsively.app/static/MockSwitch-6b7ae7d9bc8df23ac41a4e653f71c9bf.jpg" height="120px">
+  <a href="https://opencollective.com/responsively" target="_blank">
+    <img src="https://user-images.githubusercontent.com/1283424/142834528-4cd5b8eb-eeae-4437-b749-d09c96dde160.png" height="120px" alt="Sponsor to add your company logo here">
   </a>
 </p>
+
 
 [Become a sponsor and have your company logo here](https://opencollective.com/responsively)
 
