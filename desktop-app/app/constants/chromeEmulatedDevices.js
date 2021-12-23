@@ -531,7 +531,7 @@ export default {
       type: 'emulated-device',
       order: 20,
       device: {
-        'show-by-default': true,
+        'show-by-default': false,
         title: 'Pixel 2',
         screen: {
           horizontal: {
@@ -1510,7 +1510,7 @@ export default {
       id: '42',
       type: 'emulated-device',
       device: {
-        'show-by-default': true,
+        'show-by-default': false,
         title: 'Moto G4',
         screen: {
           horizontal: {
@@ -1558,7 +1558,7 @@ export default {
       id: '43',
       type: 'emulated-device',
       device: {
-        'show-by-default': true,
+        'show-by-default': false,
         'dual-screen': true,
         title: 'Surface Duo',
         screen: {
@@ -1636,7 +1636,7 @@ export default {
       id: '44',
       type: 'emulated-device',
       device: {
-        'show-by-default': true,
+        'show-by-default': false,
         'dual-screen': true,
         title: 'Galaxy Fold',
         screen: {
