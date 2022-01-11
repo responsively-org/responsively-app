@@ -60,7 +60,6 @@ function UserPreference({
   };
 
   const downloadConfiguration = () => {
-    console.log();
     const configuration = {
       devices: state.devices,
       homepage: state.homepage,
