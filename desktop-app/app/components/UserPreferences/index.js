@@ -19,8 +19,14 @@ import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 import {SCREENSHOT_MECHANISM, STARTUP_PAGE} from '../../constants/values';
 import {notifyPermissionPreferenceChanged} from '../../utils/permissionUtils.js';
 import {PERMISSION_MANAGEMENT_OPTIONS} from '../../constants/permissionsManagement';
-import {setTheme} from '../../actions/browser';
+import {
+  setTheme,
+  downloadPreferences,
+  uploadPreferences,
+} from '../../actions/browser';
 import {deleteSearchResults} from '../../services/searchUrlSuggestions';
+import FileDownloadIcon from '@material-ui/icons/CloudDownload';
+import FileUploadIcon from '@material-ui/icons/CloudUpload';
 
 function UserPreference({
   devToolsConfig,
@@ -31,7 +37,8 @@ function UserPreference({
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const dispatch = useDispatch();
-  const themeSource = useSelector(state => state.browser.theme);
+  const state = useSelector(state => state.browser);
+  const themeSource = state.theme;
   const selectedThemeOption = useMemo(
     () => themeOptions.find(option => option.value === themeSource),
     [themeSource]
@@ -52,6 +59,26 @@ function UserPreference({
     onUserPreferencesChange({...userPreferences, [field]: value});
   };
 
+  const downloadConfiguration = () => {
+    console.log();
+    const configuration = {
+      devices: state.devices,
+      homepage: state.homepage,
+      userPreferences: state.userPreferences,
+      customDevices: state.allDevices.slice(
+        0,
+        state.allDevices.findIndex(item => item.id === '1')
+      ),
+    };
+    const data = JSON.stringify(configuration);
+    const blob = new Blob([data], {type: 'application/json'});
+    const url = window.URL.createObjectURL(blob);
+    dispatch(downloadPreferences(url));
+  };
+
+  const uploadConfiguration = () => {
+    dispatch(uploadPreferences());
+  };
   return (
     <div className={commonClasses.sidebarContentSection}>
       <div className={commonClasses.sidebarContentSectionTitleBar}>
@@ -323,6 +350,39 @@ function UserPreference({
             onClick={deleteSearchResults}
           >
             Clear Address History
+          </Button>
+        </div>
+        <div
+          className={cx(
+            commonClasses.flexAlignVerticalMiddle,
+            classes.sectionHeader
+          )}
+        >
+          Import / Export preferences
+        </div>
+        <div
+          className={cx(
+            commonClasses.sidebarContentSectionContainer,
+            classes.exportPreferencesButtons
+          )}
+        >
+          <Button
+            variant="contained"
+            color="secondary"
+            aria-label="download preferences"
+            component="span"
+            onClick={downloadConfiguration}
+          >
+            <FileDownloadIcon />
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            aria-label="upload preferences"
+            component="span"
+            onClick={uploadConfiguration}
+          >
+            <FileUploadIcon />
           </Button>
         </div>
       </div>

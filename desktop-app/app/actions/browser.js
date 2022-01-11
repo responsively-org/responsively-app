@@ -38,6 +38,7 @@ export const NEW_DRAWER_CONTENT = 'NEW_DRAWER_CONTENT';
 export const NEW_PREVIEWER_CONFIG = 'NEW_PREVIEWER_CONFIG';
 export const NEW_ACTIVE_DEVICES = 'NEW_ACTIVE_DEVICES';
 export const NEW_CUSTOM_DEVICE = 'NEW_CUSTOM_DEVICE';
+export const LOAD_CUSTOM_DEVICES = 'LOAD_CUSTOM_DEVICES';
 export const DELETE_CUSTOM_DEVICE = 'DELETE_CUSTOM_DEVICE';
 export const NEW_FILTERS = 'NEW_FILTERS';
 export const NEW_USER_PREFERENCES = 'NEW_USER_PREFERENCES';
@@ -181,6 +182,13 @@ export function newCustomDevice(device) {
   return {
     type: NEW_CUSTOM_DEVICE,
     device,
+  };
+}
+
+export function loadCustomDevices(devices) {
+  return {
+    type: LOAD_CUSTOM_DEVICES,
+    devices,
   };
 }
 
@@ -688,6 +696,39 @@ export function onDevToolsClose(devToolsInfo, closeAll) {
         activeDevTools: newActiveDevTools,
       })
     );
+  };
+}
+
+export function downloadPreferences(url) {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    ipcRenderer.send('download-preferences', {url});
+  };
+}
+
+export function uploadPreferences() {
+  return (dispatch: Dispatch, getState: RootStateType) => {
+    remote.dialog
+      .showOpenDialog({
+        title: 'Select user configuration file',
+        buttonLabel: 'Upload',
+        filters: [
+          {
+            name: 'Json file',
+            extensions: ['json'],
+          },
+        ],
+        properties: ['openFile'],
+      })
+      .then(async file => {
+        if (!file.canceled) {
+          const response = await (await fetch(file.filePaths[0])).json();
+          const preferencesObj = response;
+          dispatch(newActiveDevices(preferencesObj.devices));
+          dispatch(loadCustomDevices(preferencesObj.customDevices));
+          dispatch(newUserPreferences(preferencesObj.userPreferences));
+          dispatch(setTheme(preferencesObj.userPreferences.theme));
+        }
+      });
   };
 }
 

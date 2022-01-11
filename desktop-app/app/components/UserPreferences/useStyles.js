@@ -46,6 +46,10 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     fontSize: '10px',
   },
+  exportPreferencesButtons: {
+    display: 'flex',
+    justifyContent: 'space-around',
+  },
 }));
 
 export default useStyles;
