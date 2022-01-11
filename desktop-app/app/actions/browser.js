@@ -710,7 +710,7 @@ export function uploadPreferences() {
     remote.dialog
       .showOpenDialog({
         title: 'Select user configuration file',
-        buttonLabel: 'Upload',
+        buttonLabel: 'Upload File',
         filters: [
           {
             name: 'Json file',
