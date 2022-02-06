@@ -1686,6 +1686,41 @@ export default {
         ],
       },
     },
+    {
+      id: '45',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': false,
+        title: 'FUJITSU Display E24-9 TOUCH',
+        screen: {
+          horizontal: {
+            width: 1920,
+            height: 1080,
+          },
+          'device-pixel-ratio': 1,
+          vertical: {
+            width: 1080,
+            height: 1920,
+          },
+        },
+        capabilities: ['touch', 'responsive'],
+        'user-agent':
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%s Safari/537.36',
+        type: 'notebook',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'vertical',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
   ],
   dependencies: ['emulation'],
   scripts: [],
