@@ -8,6 +8,9 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Input from '@material-ui/core/Input';
 import SettingsIcon from '@material-ui/icons/Settings';
+import FileDownloadIcon from '@material-ui/icons/CloudDownload';
+import FileUploadIcon from '@material-ui/icons/CloudUpload';
+import KebabMenu from '../KebabMenu';
 
 import useCommonStyles from '../useCommonStyles';
 import useStyles from './useStyles';
@@ -25,8 +28,6 @@ import {
   uploadPreferences,
 } from '../../actions/browser';
 import {deleteSearchResults} from '../../services/searchUrlSuggestions';
-import FileDownloadIcon from '@material-ui/icons/CloudDownload';
-import FileUploadIcon from '@material-ui/icons/CloudUpload';
 
 function UserPreference({
   devToolsConfig,
@@ -80,8 +81,39 @@ function UserPreference({
   };
   return (
     <div className={commonClasses.sidebarContentSection}>
-      <div className={commonClasses.sidebarContentSectionTitleBar}>
+      <div
+        className={cx(
+          commonClasses.sidebarContentSectionTitleBar,
+          classes.exportPreferencesButtons
+        )}
+      >
         <SettingsIcon width={26} margin={2} /> User Preferences
+        <KebabMenu>
+          <div>
+            <Button
+              variant="contained"
+              color="secondary"
+              aria-label="download preferences"
+              component="span"
+              onClick={downloadConfiguration}
+            >
+              <span className={classes.importAndExportLabels}>Export</span>
+              <FileDownloadIcon />
+            </Button>
+          </div>
+          <div>
+            <Button
+              variant="contained"
+              color="secondary"
+              aria-label="upload preferences"
+              component="span"
+              onClick={uploadConfiguration}
+            >
+              <span className={classes.importAndExportLabels}>Import</span>
+              <FileUploadIcon />
+            </Button>
+          </div>
+        </KebabMenu>
       </div>
       <div className={commonClasses.sidebarContentSectionContainer}>
         <div
@@ -349,39 +381,6 @@ function UserPreference({
             onClick={deleteSearchResults}
           >
             Clear Address History
-          </Button>
-        </div>
-        <div
-          className={cx(
-            commonClasses.flexAlignVerticalMiddle,
-            classes.sectionHeader
-          )}
-        >
-          Import / Export preferences
-        </div>
-        <div
-          className={cx(
-            commonClasses.sidebarContentSectionContainer,
-            classes.exportPreferencesButtons
-          )}
-        >
-          <Button
-            variant="contained"
-            color="secondary"
-            aria-label="download preferences"
-            component="span"
-            onClick={downloadConfiguration}
-          >
-            <FileDownloadIcon />
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            aria-label="upload preferences"
-            component="span"
-            onClick={uploadConfiguration}
-          >
-            <FileUploadIcon />
           </Button>
         </div>
       </div>

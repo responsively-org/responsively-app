@@ -50,6 +50,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-around',
   },
+  importAndExportLabels: {
+    fontSize: '12px',
+    paddingRight: '1.5em',
+  },
 }));
 
 export default useStyles;
