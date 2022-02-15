@@ -89,10 +89,10 @@ function UserPreference({
       >
         <SettingsIcon width={26} margin={2} /> User Preferences
         <KebabMenu>
-          <div>
+          <div className={classes.containerImportButton}>
             <Button
               variant="contained"
-              color="secondary"
+              color="primary"
               aria-label="download preferences"
               component="span"
               onClick={downloadConfiguration}
@@ -101,10 +101,10 @@ function UserPreference({
               <FileDownloadIcon />
             </Button>
           </div>
-          <div>
+          <div className={classes.containerImportButton}>
             <Button
               variant="contained"
-              color="secondary"
+              color="primary"
               aria-label="upload preferences"
               component="span"
               onClick={uploadConfiguration}

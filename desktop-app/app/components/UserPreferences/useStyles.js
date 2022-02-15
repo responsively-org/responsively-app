@@ -54,6 +54,9 @@ const useStyles = makeStyles(theme => ({
     fontSize: '12px',
     paddingRight: '1.5em',
   },
+  containerImportButton: {
+    padding: '5px',
+  },
 }));
 
 export default useStyles;
