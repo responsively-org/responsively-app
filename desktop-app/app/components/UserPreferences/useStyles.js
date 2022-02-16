@@ -55,7 +55,8 @@ const useStyles = makeStyles(theme => ({
     paddingRight: '1.5em',
   },
   containerImportButton: {
-    padding: '5px',
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 

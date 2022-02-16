@@ -89,30 +89,18 @@ function UserPreference({
       >
         <SettingsIcon width={26} margin={2} /> User Preferences
         <KebabMenu>
-          <div className={classes.containerImportButton}>
-            <Button
-              variant="contained"
-              color="primary"
-              aria-label="download preferences"
-              component="span"
-              onClick={downloadConfiguration}
-            >
+          <KebabMenu.Item onClick={downloadConfiguration}>
+            <div className={classes.containerImportButton}>
               <span className={classes.importAndExportLabels}>Export</span>
               <FileDownloadIcon />
-            </Button>
-          </div>
-          <div className={classes.containerImportButton}>
-            <Button
-              variant="contained"
-              color="primary"
-              aria-label="upload preferences"
-              component="span"
-              onClick={uploadConfiguration}
-            >
+            </div>
+          </KebabMenu.Item>
+          <KebabMenu.Item onClick={uploadConfiguration}>
+            <div className={classes.containerImportButton}>
               <span className={classes.importAndExportLabels}>Import</span>
               <FileUploadIcon />
-            </Button>
-          </div>
+            </div>
+          </KebabMenu.Item>
         </KebabMenu>
       </div>
       <div className={commonClasses.sidebarContentSectionContainer}>
