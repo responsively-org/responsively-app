@@ -8,6 +8,9 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Input from '@material-ui/core/Input';
 import SettingsIcon from '@material-ui/icons/Settings';
+import FileDownloadIcon from '@material-ui/icons/CloudDownload';
+import FileUploadIcon from '@material-ui/icons/CloudUpload';
+import KebabMenu from '../KebabMenu';
 
 import useCommonStyles from '../useCommonStyles';
 import useStyles from './useStyles';
@@ -19,7 +22,11 @@ import {userPreferenceSettings} from '../../settings/userPreferenceSettings';
 import {SCREENSHOT_MECHANISM, STARTUP_PAGE} from '../../constants/values';
 import {notifyPermissionPreferenceChanged} from '../../utils/permissionUtils.js';
 import {PERMISSION_MANAGEMENT_OPTIONS} from '../../constants/permissionsManagement';
-import {setTheme} from '../../actions/browser';
+import {
+  setTheme,
+  downloadPreferences,
+  uploadPreferences,
+} from '../../actions/browser';
 import {deleteSearchResults} from '../../services/searchUrlSuggestions';
 
 function UserPreference({
@@ -31,7 +38,8 @@ function UserPreference({
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const dispatch = useDispatch();
-  const themeSource = useSelector(state => state.browser.theme);
+  const state = useSelector(state => state.browser);
+  const themeSource = state.theme;
   const selectedThemeOption = useMemo(
     () => themeOptions.find(option => option.value === themeSource),
     [themeSource]
@@ -52,10 +60,48 @@ function UserPreference({
     onUserPreferencesChange({...userPreferences, [field]: value});
   };
 
+  const downloadConfiguration = () => {
+    const configuration = {
+      devices: state.devices,
+      homepage: state.homepage,
+      userPreferences: state.userPreferences,
+      customDevices: state.allDevices.slice(
+        0,
+        state.allDevices.findIndex(item => item.id === '1')
+      ),
+    };
+    const data = JSON.stringify(configuration);
+    const blob = new Blob([data], {type: 'application/json'});
+    const url = window.URL.createObjectURL(blob);
+    dispatch(downloadPreferences(url));
+  };
+
+  const uploadConfiguration = () => {
+    dispatch(uploadPreferences());
+  };
   return (
     <div className={commonClasses.sidebarContentSection}>
-      <div className={commonClasses.sidebarContentSectionTitleBar}>
+      <div
+        className={cx(
+          commonClasses.sidebarContentSectionTitleBar,
+          classes.exportPreferencesButtons
+        )}
+      >
         <SettingsIcon width={26} margin={2} /> User Preferences
+        <KebabMenu>
+          <KebabMenu.Item onClick={downloadConfiguration}>
+            <div className={classes.containerImportButton}>
+              <span className={classes.importAndExportLabels}>Export</span>
+              <FileDownloadIcon />
+            </div>
+          </KebabMenu.Item>
+          <KebabMenu.Item onClick={uploadConfiguration}>
+            <div className={classes.containerImportButton}>
+              <span className={classes.importAndExportLabels}>Import</span>
+              <FileUploadIcon />
+            </div>
+          </KebabMenu.Item>
+        </KebabMenu>
       </div>
       <div className={commonClasses.sidebarContentSectionContainer}>
         <div

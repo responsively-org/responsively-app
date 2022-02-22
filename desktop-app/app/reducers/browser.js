@@ -34,6 +34,7 @@ import {
   SET_STARTUP_PAGE,
   UPDATE_PAGE_NAVIGATOR,
   TOGGLE_PAGE_NAVIGATOR,
+  LOAD_CUSTOM_DEVICES,
 } from '../actions/browser';
 import {
   CHANGE_ACTIVE_THROTTLING_PROFILE,
@@ -450,6 +451,10 @@ export default function browser(
     case NEW_CUSTOM_DEVICE:
       const existingDevices = settings.get(CUSTOM_DEVICES) || [];
       settings.set(CUSTOM_DEVICES, [action.device, ...existingDevices]);
+      return {...state, allDevices: getAllDevices()};
+    case LOAD_CUSTOM_DEVICES:
+      const actualDevices = settings.get(CUSTOM_DEVICES);
+      settings.set(CUSTOM_DEVICES, [...action.devices, ...actualDevices]);
       return {...state, allDevices: getAllDevices()};
     case DELETE_CUSTOM_DEVICE:
       const existingCustomDevices = settings.get(CUSTOM_DEVICES) || [];

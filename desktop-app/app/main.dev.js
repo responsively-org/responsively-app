@@ -681,6 +681,10 @@ const createWindow = async () => {
     devToolsView.setBounds(bounds);
   });
 
+  ipcMain.on('download-preferences', (event, ...args) => {
+    session.defaultSession.downloadURL(args[0].url);
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });

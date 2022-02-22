@@ -46,6 +46,18 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     fontSize: '10px',
   },
+  exportPreferencesButtons: {
+    display: 'flex',
+    justifyContent: 'space-around',
+  },
+  importAndExportLabels: {
+    fontSize: '12px',
+    paddingRight: '1.5em',
+  },
+  containerImportButton: {
+    display: 'flex',
+    alignItems: 'center',
+  },
 }));
 
 export default useStyles;
