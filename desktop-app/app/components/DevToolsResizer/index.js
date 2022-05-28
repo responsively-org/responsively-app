@@ -24,14 +24,14 @@ const getResizingDirections = mode => {
 
 const getResizerPosition = (mode, bounds) => {
   if (mode === DEVTOOLS_MODES.RIGHT) {
-    return {right: 0, top: 0};
+    return {right: 0, top: bounds.y - 30};
   }
   return {bottom: 0};
 };
 
 const getToolbarPosition = (mode, bounds) => {
   if (mode === DEVTOOLS_MODES.RIGHT) {
-    return {position: 'absolute', top: bounds.y - 20};
+    return {position: 'absolute', top: 0};
   }
   return {};
 };
