@@ -26,9 +26,8 @@ const isSelectorValid = selector => {
 
 const useStyles = makeStyles(theme => ({
   container: {
-    height: 45,
+    height: 30,
     position: 'absolute',
-    top: 50,
     right: 25,
     display: 'flex',
     backgroundColor: theme.palette.background.l2,
@@ -66,6 +65,7 @@ const useStyles = makeStyles(theme => ({
     cursor: 'pointer',
     width: 30,
     padding: 5,
+    paddingBottom: 0,
     color: theme.palette.mode({light: '#636363', dark: '#fffc'}),
     '&:hover': {
       '& svg': {
