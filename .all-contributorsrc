@@ -451,6 +451,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "p4nu",
+      "name": "Panu Valtanen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28947061?v=4",
+      "profile": "https://www.linkedin.com/in/panu-valtanen-446ba9108/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
