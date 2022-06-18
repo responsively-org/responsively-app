@@ -1,5 +1,5 @@
 import {ipcRenderer} from 'electron';
-import browserSync from 'browser-sync';
+//import browserSync from 'browser-sync';
 
 let browserSyncOptions;
 

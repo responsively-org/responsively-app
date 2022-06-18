@@ -1,5 +1,6 @@
 import React, {Component, createRef} from 'react';
-import {remote, ipcRenderer} from 'electron';
+import {ipcRenderer} from 'electron';
+import remote,{BrowserWindow} from '@electron/remote';
 import cx from 'classnames';
 import {Resizable} from 're-resizable';
 import {Tooltip} from '@material-ui/core';
@@ -52,8 +53,6 @@ import {captureOnSentry} from '../../utils/logUtils';
 import {getBrowserSyncEmbedScriptURL} from '../../services/browserSync';
 import Spinner from '../Spinner';
 import {isSslValidationFailed} from '../../utils/generalUtils';
-
-const {BrowserWindow} = remote;
 
 const MESSAGE_TYPES = {
   scroll: 'scroll',
@@ -691,20 +690,24 @@ class WebView extends Component {
   };
 
   initEventTriggers = async webview => {
-    await this.initBrowserSync(webview);
-    this.getWebContentForId(webview.getWebContentsId())
-      .executeJavaScript(
-        `{
+                                         //await this.initBrowserSync(webview);
+                                         this.getWebContentForId(
+                                           webview.getWebContentsId()
+                                         )
+                                           .executeJavaScript(
+                                             `{
           responsivelyApp.deviceId = '${this.props.device.id}';
         }`
-      )
-      .catch(captureOnSentry);
+                                           )
+                                           .catch(captureOnSentry);
 
-    if (this.state.isUnplugged) {
-      await this.closeBrowserSyncSocket(webview);
-    }
-    this.domLoaded = true;
-  };
+                                         if (this.state.isUnplugged) {
+                                           await this.closeBrowserSyncSocket(
+                                             webview
+                                           );
+                                         }
+                                         this.domLoaded = true;
+                                       };
 
   hideScrollbar = () => {
     this.webviewRef.current.insertCSS(

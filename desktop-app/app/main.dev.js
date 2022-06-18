@@ -54,13 +54,15 @@ import {
 } from './utils/browserSync';
 import {getHostFromURL, normalize} from './utils/urlUtils';
 import {getPermissionSettingPreference} from './utils/permissionUtils';
-import browserSync from 'browser-sync';
+//import browserSync from 'browser-sync';
 import {captureOnSentry} from './utils/logUtils';
 import appMetadata from './services/db/appMetadata';
 import {convertToProxyConfig} from './utils/proxyUtils';
 import {PERMISSION_MANAGEMENT_OPTIONS} from './constants/permissionsManagement';
 import {endSession, startSession} from './utils/analytics';
 import {getStartupPage, getLastOpenedAddress} from './utils/navigatorUtils';
+
+settings.setPath(path.join(remote.app.getPath("userData"), "Settings"));
 
 const path = require('path');
 const URL = require('url').URL;
