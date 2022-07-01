@@ -185,13 +185,6 @@ class WebView extends Component {
     );
 
     this.webviewRef.current.addEventListener('dom-ready', () => {
-      this.getWebContentForId(this.webviewRef.current.getWebContentsId())
-        .executeJavaScript(
-          `{
-            window._bot = true;
-          }`
-        )
-        .catch(captureOnSentry);
       this.initEventTriggers(this.webviewRef.current);
       this.dbg = this.getWebContents().debugger;
       if (!this.dbg.isAttached()) {
