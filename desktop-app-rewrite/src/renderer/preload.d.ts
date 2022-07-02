@@ -10,7 +10,9 @@ declare global {
           func: (...args: unknown[]) => void
         ): (() => void) | undefined;
         once(channel: string, func: (...args: unknown[]) => void): void;
+        invoke(channel: string, ...args: unknown[]): Promise<unknown>;
       };
+      webviewPreloadPath: string;
     };
   }
 }

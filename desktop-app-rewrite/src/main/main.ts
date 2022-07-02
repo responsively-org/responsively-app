@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
 
 export default class AppUpdater {
   constructor() {
@@ -29,6 +30,14 @@ ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
+});
+
+ipcMain.handle('app-meta', async (event, arg) => {
+  return {
+    webviewPreloadPath: app.isPackaged
+      ? path.join(__dirname, 'preload-webview.js')
+      : path.join(__dirname, '../../.erb/dll/preload-webview.js'),
+  };
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -84,7 +93,8 @@ const createWindow = async () => {
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-  mainWindow.on('ready-to-show', () => {
+  mainWindow.on('ready-to-show', async () => {
+    await initInstance();
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -124,6 +134,18 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+app.on(
+  'certificate-error',
+  (event, webContents, url, error, certificate, callback) => {
+    console.log('certificate-error event', url, BROWSER_SYNC_HOST);
+    if (url.indexOf(BROWSER_SYNC_HOST) !== -1) {
+      event.preventDefault();
+      return callback(true);
+    }
+    callback(false);
+  }
+);
 
 app
   .whenReady()

@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
-export type Channels = 'ipc-example';
+export type Channels = 'ipc-example' | 'app-meta';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -17,5 +17,11 @@ contextBridge.exposeInMainWorld('electron', {
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
+    invoke(channel: Channels, ...args: unknown[]) {
+      return ipcRenderer.invoke(channel, ...args);
+    },
   },
+  /*webviewPreloadPath: app.isPackaged
+    ? path.join(__dirname, 'preload-webview.js')
+    : path.join(__dirname, '../../.erb/dll/preload-webview.js'),*/
 });
