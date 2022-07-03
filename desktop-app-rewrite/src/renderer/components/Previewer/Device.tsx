@@ -1,11 +1,15 @@
 import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'renderer/store';
+import { setAddress } from 'renderer/store/features/renderer';
 
 interface Props {
-  url: string;
   width: number;
   height: number;
 }
-const Device = ({ url, height, width }: Props) => {
+const Device = ({ height, width }: Props) => {
+  const address = useSelector((state: RootState) => state.renderer?.address);
+  const dispatch = useDispatch();
   const ref = useRef<Electron.WebviewTag>(null);
 
   useEffect(() => {
@@ -21,15 +25,21 @@ const Device = ({ url, height, width }: Props) => {
     });
     webview.addEventListener('certificate-error', function (e) {
       console.log('certificate-error', e);
-      //e.preventDefault();
+      // e.preventDefault();
+    });
+    webview.addEventListener('did-navigate', (e) => {
+      console.log('did-navigate', e.url);
+      dispatch(setAddress(e.url));
     });
     console.log('Added listerner');
-  }, [ref]);
+  }, [ref, dispatch]);
+
+  console.log('address', address);
 
   return (
     <div>
       <webview
-        src={url}
+        src={address}
         style={{ height, width, display: 'inline-flex' }}
         ref={ref}
         preload={`file://${window.responsively.webviewPreloadPath}`}

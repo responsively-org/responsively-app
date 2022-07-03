@@ -16,12 +16,7 @@ const Previewer = () => {
     <div className="flex gap-4">
       {devices.map(({ height, width }) => {
         return (
-          <Device
-            key={`${height}-${width}`}
-            url="https://responsively.app"
-            height={height}
-            width={width}
-          />
+          <Device key={`${height}-${width}`} height={height} width={width} />
         );
       })}
     </div>
