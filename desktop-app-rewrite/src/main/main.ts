@@ -32,7 +32,7 @@ ipcMain.on('ipc-example', async (event, arg) => {
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
-ipcMain.handle('app-meta', async (event, arg) => {
+ipcMain.handle('app-meta', async () => {
   return {
     webviewPreloadPath: app.isPackaged
       ? path.join(__dirname, 'preload-webview.js')
