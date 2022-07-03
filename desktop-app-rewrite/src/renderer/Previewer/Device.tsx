@@ -5,9 +5,6 @@ interface Props {
   width: number;
   height: number;
 }
-
-console.log('window', window);
-
 const Device = ({ url, height, width }: Props) => {
   const ref = useRef<Electron.WebviewTag>(null);
 
@@ -21,12 +18,6 @@ const Device = ({ url, height, width }: Props) => {
     webview.addEventListener('dom-ready', function () {
       console.log('dom-ready');
       webview.openDevTools();
-      webview.executeJavaScript(`
-      var bsScript= document.createElement('script');
-          bsScript.src = 'https://localhost:12719/browser-sync/browser-sync-client.js?v=2.27.10';
-          bsScript.async = true;
-          document.body.appendChild(bsScript);
-      `);
     });
     webview.addEventListener('certificate-error', function (e) {
       console.log('certificate-error', e);
@@ -41,7 +32,7 @@ const Device = ({ url, height, width }: Props) => {
         src={url}
         style={{ height, width, display: 'inline-flex' }}
         ref={ref}
-        webpreferences="contextIsolation=false;nodeIntegration=true"
+        preload={`file://${window.responsively.webviewPreloadPath}`}
       />
     </div>
   );

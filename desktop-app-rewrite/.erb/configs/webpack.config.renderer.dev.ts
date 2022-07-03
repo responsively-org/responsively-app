@@ -172,16 +172,28 @@ const configuration: webpack.Configuration = {
         .on('close', (code: number) => process.exit(code!))
         .on('error', (spawnError) => console.error(spawnError));
 
-      console.log('Starting Main Process...');
-      spawn('npm', ['run', 'start:main'], {
-        shell: true,
-        stdio: 'inherit',
-      })
-        .on('close', (code: number) => {
-          preloadProcess.kill();
-          process.exit(code!);
+        const preloadWebviewProcess = spawn(
+          'npm',
+          ['run', 'start:preloadWebview'],
+          {
+            shell: true,
+            stdio: 'inherit',
+          }
+        )
+          .on('close', (code: number) => process.exit(code!))
+          .on('error', (spawnError) => console.error(spawnError));
+
+        console.log('Starting Main Process...');
+        spawn('npm', ['run', 'start:main'], {
+          shell: true,
+          stdio: 'inherit',
         })
-        .on('error', (spawnError) => console.error(spawnError));
+          .on('close', (code: number) => {
+            preloadProcess.kill();
+            preloadWebviewProcess.kill();
+            process.exit(code!);
+          })
+          .on('error', (spawnError) => console.error(spawnError));
       return middlewares;
     },
   },

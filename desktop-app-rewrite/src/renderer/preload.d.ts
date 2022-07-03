@@ -12,6 +12,8 @@ declare global {
         once(channel: string, func: (...args: unknown[]) => void): void;
         invoke(channel: string, ...args: unknown[]): Promise<unknown>;
       };
+    };
+    responsively: {
       webviewPreloadPath: string;
     };
   }
