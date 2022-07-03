@@ -138,11 +138,11 @@ app.on('window-all-closed', () => {
 app.on(
   'certificate-error',
   (event, webContents, url, error, certificate, callback) => {
-    console.log('certificate-error event', url, BROWSER_SYNC_HOST);
     if (url.indexOf(BROWSER_SYNC_HOST) !== -1) {
       event.preventDefault();
       return callback(true);
     }
+    console.log('certificate-error event', url, BROWSER_SYNC_HOST);
     callback(false);
   }
 );
