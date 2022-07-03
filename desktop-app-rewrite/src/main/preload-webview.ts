@@ -9,11 +9,11 @@ const documentBodyInit = () => {
   window.document.body.appendChild(bsScript);
 };
 
-let documentBodyWaitHandle = setInterval(() => {
+const documentBodyWaitHandle = setInterval(() => {
   if (window?.document?.body) {
     clearInterval(documentBodyWaitHandle);
     documentBodyInit();
     return;
   }
-  console.log('docuemnt.body not ready');
-}, 1000);
+  console.log('document.body not ready');
+}, 300);
