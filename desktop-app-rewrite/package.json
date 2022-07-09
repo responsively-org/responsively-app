@@ -109,6 +109,7 @@
     }
   },
   "dependencies": {
+    "@fontsource/lato": "^4.5.8",
     "@material-ui/core": "^4.3.2",
     "@material-ui/icons": "^4.2.1",
     "@material-ui/lab": "^4.0.0-alpha.26",
