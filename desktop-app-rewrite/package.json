@@ -119,6 +119,7 @@
     "classnames": "^2.3.1",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.7",
+    "electron-store": "^8.0.2",
     "electron-updater": "^5.0.1",
     "os": "^0.1.2",
     "postcss": "^8.4.14",

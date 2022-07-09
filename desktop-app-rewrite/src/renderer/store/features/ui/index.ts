@@ -6,7 +6,7 @@ export interface UIState {
 }
 
 const initialState: UIState = {
-  darkMode: true,
+  darkMode: window.electron.store.get('ui.darkMode'),
 };
 
 export const uiSlice = createSlice({
@@ -14,8 +14,8 @@ export const uiSlice = createSlice({
   initialState,
   reducers: {
     setDarkMode: (state, action: PayloadAction<boolean>) => {
-      console.log('setDarkMode reducer', action.payload);
       state.darkMode = action.payload;
+      window.electron.store.set('ui.darkMode', action.payload);
     },
   },
 });

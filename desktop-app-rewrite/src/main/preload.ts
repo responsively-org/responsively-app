@@ -23,13 +23,18 @@ contextBridge.exposeInMainWorld('electron', {
       return ipcRenderer.invoke(channel, ...args);
     },
   },
-  /*webviewPreloadPath: app.isPackaged
-    ? path.join(__dirname, 'preload-webview.js')
-    : path.join(__dirname, '../../.erb/dll/preload-webview.js'),*/
+  store: {
+    get(val: any) {
+      return ipcRenderer.sendSync('electron-store-get', val);
+    },
+    set(property: string, val: any) {
+      ipcRenderer.send('electron-store-set', property, val);
+    },
+    // Other method you want to add like has(), reset(), etc.
+  },
 });
 
 window.onerror = function (errorMsg, url, lineNumber) {
-  console.log('Unhandled error: ' + errorMsg);
+  console.log(`Unhandled error: ${errorMsg}`);
   // Code to run when an error has occurred on the page
 };
-

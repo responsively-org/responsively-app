@@ -15,6 +15,7 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
+import store from '../store';
 
 export default class AppUpdater {
   constructor() {
@@ -38,6 +39,13 @@ ipcMain.handle('app-meta', async () => {
       ? path.join(__dirname, 'preload-webview.js')
       : path.join(__dirname, '../../.erb/dll/preload-webview.js'),
   };
+});
+
+ipcMain.on('electron-store-get', async (event, val) => {
+  event.returnValue = store.get(val);
+});
+ipcMain.on('electron-store-set', async (event, key, val) => {
+  store.set(key, val);
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -143,7 +151,7 @@ app.on(
       return callback(true);
     }
     console.log('certificate-error event', url, BROWSER_SYNC_HOST);
-    callback(false);
+    return callback(false);
   }
 );
 
