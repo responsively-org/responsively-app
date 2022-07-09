@@ -115,6 +115,7 @@
     "@reduxjs/toolkit": "^1.8.3",
     "autoprefixer": "^10.4.7",
     "browser-sync": "^2.27.10",
+    "classnames": "^2.3.1",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.7",
     "electron-updater": "^5.0.1",
@@ -129,6 +130,7 @@
     "tailwindcss": "^3.1.4"
   },
   "devDependencies": {
+    "@iconify/react": "^3.2.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.6",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.16.4",
@@ -179,6 +181,7 @@
     "mini-css-extract-plugin": "^2.6.0",
     "postcss-loader": "^7.0.0",
     "prettier": "^2.6.2",
+    "prettier-plugin-tailwindcss": "^0.1.12",
     "react-refresh": "^0.13.0",
     "react-test-renderer": "^18.1.0",
     "rimraf": "^3.0.2",

@@ -5,16 +5,19 @@ import Previewer from './components/Previewer';
 import { store } from './store';
 
 import './App.css';
+import ThemeProvider from './context/ThemeProvider';
 
 const AppContent = () => {
   return (
     <Provider store={store}>
-      <div className="bg-gray-400">
-        <div className="p-8">
-          <AddressBar />
+      <ThemeProvider>
+        <div className="">
+          <div className="p-8">
+            <AddressBar />
+          </div>
+          <Previewer />
         </div>
-        <Previewer />
-      </div>
+      </ThemeProvider>
     </Provider>
   );
 };

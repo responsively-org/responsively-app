@@ -27,3 +27,9 @@ contextBridge.exposeInMainWorld('electron', {
     ? path.join(__dirname, 'preload-webview.js')
     : path.join(__dirname, '../../.erb/dll/preload-webview.js'),*/
 });
+
+window.onerror = function (errorMsg, url, lineNumber) {
+  console.log('Unhandled error: ' + errorMsg);
+  // Code to run when an error has occurred on the page
+};
+

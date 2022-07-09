@@ -12,7 +12,12 @@ const documentBodyInit = () => {
 const documentBodyWaitHandle = setInterval(() => {
   if (window?.document?.body) {
     clearInterval(documentBodyWaitHandle);
-    documentBodyInit();
+    try {
+      documentBodyInit();
+    } catch (err) {
+      console.log('Error in documentBodyInit:', err);
+    }
+    
     return;
   }
   console.log('document.body not ready');

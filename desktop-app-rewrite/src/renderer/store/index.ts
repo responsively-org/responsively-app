@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import rendererReducer from './features/renderer';
+import uiReducer from './features/ui';
 
 export const store = configureStore({
   reducer: {
     renderer: rendererReducer,
+    ui: uiReducer,
   },
 });
 
