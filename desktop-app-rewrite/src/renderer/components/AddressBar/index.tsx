@@ -29,10 +29,10 @@ const AddressBar = () => {
   };
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between gap-4">
       <input
         type="text"
-        className="w-[60%] rounded-full px-2 py-1 dark:bg-slate-900"
+        className="flex-grow rounded-full px-2 py-1 dark:bg-slate-900"
         value={typedAddress}
         onChange={(e) => setTypedAddress(e.target.value)}
         onKeyDown={handleKeyDown}

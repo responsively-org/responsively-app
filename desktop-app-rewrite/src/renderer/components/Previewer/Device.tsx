@@ -23,14 +23,21 @@ const Device = ({ height, width }: Props) => {
       console.log('dom-ready');
       webview.openDevTools();
     });
-    webview.addEventListener('certificate-error', function (e) {
-      console.log('certificate-error', e);
-      // e.preventDefault();
-    });
     webview.addEventListener('did-navigate', (e) => {
       console.log('did-navigate', e.url);
       dispatch(setAddress(e.url));
     });
+
+    webview.addEventListener('ipc-message', (e) => {
+      console.log('ipc-message', e);
+      if (
+        e.channel === 'context-menu-command' &&
+        e.args[0] === 'open-console'
+      ) {
+        webview.openDevTools();
+      }
+    });
+
     console.log('Added listerner');
   }, [ref, dispatch]);
 
