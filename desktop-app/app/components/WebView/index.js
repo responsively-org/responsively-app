@@ -60,7 +60,7 @@ const MESSAGE_TYPES = {
   click: 'click',
   openDevToolsInspector: 'openDevToolsInspector',
   openConsole: 'openConsole',
-  tiltDevice: 'tiltDevice',
+  rotateDevice: 'rotateDevice',
   takeScreenshot: 'takeScreenshot',
   toggleEventMirroring: 'toggleEventMirroring',
 };
@@ -72,7 +72,7 @@ class WebView extends Component {
     this.devToolsWebviewRef = createRef();
     this.state = {
       screenshotInProgress: false,
-      isTilted: false,
+      isRotated: false,
       isUnplugged: false,
       errorCode: null,
       errorDesc: null,
@@ -625,7 +625,7 @@ class WebView extends Component {
       case MESSAGE_TYPES.openConsole:
         this._toggleDevTools();
         return;
-      case MESSAGE_TYPES.tiltDevice:
+      case MESSAGE_TYPES.rotateDevice:
         this._flipOrientation();
         return;
       case MESSAGE_TYPES.takeScreenshot:
@@ -743,14 +743,14 @@ class WebView extends Component {
     if (!this.isMobile) return;
 
     if (this.props.sendFlipStatus) {
-      this.props.sendFlipStatus(!this.state.isTilted);
+      this.props.sendFlipStatus(!this.state.isRotated);
     }
     const flippedDeviceDims = {
       width: this.state.deviceDimensions.height,
       height: this.state.deviceDimensions.width,
     };
     this.setState({
-      isTilted: !this.state.isTilted,
+      isRotated: !this.state.isRotated,
       deviceDimensions: flippedDeviceDims,
     });
   };
@@ -887,7 +887,7 @@ class WebView extends Component {
       classes,
       device: {id, useragent, capabilities},
     } = this.props;
-    const {deviceDimensions, address, isTilted} = this.state;
+    const {deviceDimensions, address, isRotated} = this.state;
     const outlinePx = this.props.browser.userPreferences.deviceOutlineStyle
       ? 3
       : 0;

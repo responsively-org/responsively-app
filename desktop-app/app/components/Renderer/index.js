@@ -81,7 +81,7 @@ function Renderer(props) {
               ])
             }
           >
-            Tilt Device
+            Rotate Device
           </KebabMenu.Item>
           <KebabMenu.Item
             onClick={props.device.isMuted ? _unmuteDevice : _muteDevice}

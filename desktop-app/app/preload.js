@@ -18,9 +18,9 @@ menu.append(
 );
 menu.append(
   new MenuItem({
-    label: 'Tilt Device',
+    label: 'Rotate Device',
     click(menuItem, browserWindow, event) {
-      window.responsivelyApp.sendMessageToHost('tiltDevice');
+      window.responsivelyApp.sendMessageToHost('rotateDevice');
     },
   })
 );

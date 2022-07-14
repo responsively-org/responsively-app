@@ -163,7 +163,7 @@ const ScrollControls = ({
           </Tooltip>
         </Grid>
         <Grid item className={commonClasses.icon}>
-          <Tooltip title="Tilt Devices">
+          <Tooltip title="Rotate Devices">
             <div onClick={flipOrientationAllDevices}>
               <DeviceRotateIcon {...iconProps} />
             </div>

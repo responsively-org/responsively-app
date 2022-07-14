@@ -161,8 +161,8 @@ export default class Root extends Component {
 
     registerShortcut(
       {
-        id: 'TiltDevices',
-        title: 'Tilt Devices',
+        id: 'RotateDevices',
+        title: 'Rotate Devices',
         accelerators: ['mod+tab'],
         index: 13,
       },
