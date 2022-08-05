@@ -14,16 +14,15 @@ const documentBodyInit = () => {
   window.document.body.appendChild(bsScript);
 
   // Context Menu
-  console.log('Registering context menu');
   window.addEventListener('contextmenu', (e) => {
-    console.log('context menu');
     e.preventDefault();
-    ipcRenderer.send('show-context-menu');
+    ipcRenderer.send('show-context-menu', {
+      contextMenuMeta: { x: e.x, y: e.y },
+    });
   });
 };
 
 ipcRenderer.on('context-menu-command', (e, command) => {
-  console.log('context-menu-command', e, command);
   ipcRenderer.sendToHost('context-menu-command', command);
 });
 

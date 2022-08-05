@@ -16,7 +16,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
 import store from '../store';
-import { initWebviewContextMenu } from './webview-context-menu';
+import { initWebviewContextMenu } from './webview-context-menu/register';
 
 export default class AppUpdater {
   constructor() {
