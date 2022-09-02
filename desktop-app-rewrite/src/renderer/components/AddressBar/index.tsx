@@ -4,6 +4,7 @@ import { RootState } from 'renderer/store';
 import { setAddress } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
 import { setDarkMode } from 'renderer/store/features/ui';
+import NavigationControls from './NavigationControls';
 
 const AddressBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +30,8 @@ const AddressBar = () => {
   };
 
   return (
-    <div className="flex justify-between gap-4">
+    <div className="flex items-center justify-between gap-2">
+      <NavigationControls />
       <input
         type="text"
         className="flex-grow rounded-full px-2 py-1 dark:bg-slate-900"

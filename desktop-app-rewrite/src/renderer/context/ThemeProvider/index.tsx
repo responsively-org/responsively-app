@@ -7,7 +7,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const darkMode = useSelector((state: RootState) => state.ui.darkMode);
   return (
     <div className={cx({ dark: darkMode })}>
-      <div className="bg-slate-200 text-gray-700 dark:bg-slate-800 dark:text-gray-300">
+      <div className="h-screen w-screen bg-slate-200 text-light-normal dark:bg-slate-800 dark:text-dark-normal">
         {children}
       </div>
     </div>

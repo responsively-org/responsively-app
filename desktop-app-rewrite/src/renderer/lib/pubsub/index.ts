@@ -46,4 +46,6 @@ class PubSub {
   };
 }
 
+export const webViewPubSub = new PubSub();
+
 export default PubSub;

@@ -1,17 +1,41 @@
 import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { webViewPubSub } from 'renderer/lib/pubsub';
 import { RootState } from 'renderer/store';
 import { setAddress } from 'renderer/store/features/renderer';
+import { NAVIGATION_EVENTS } from '../AddressBar/NavigationControls';
 
 interface Props {
   width: number;
   height: number;
+  isPrimary: boolean;
 }
-const Device = ({ height, width }: Props) => {
+const Device = ({ height, width, isPrimary }: Props) => {
   const address = useSelector((state: RootState) => state.renderer?.address);
   const dispatch = useDispatch();
   const ref = useRef<Electron.WebviewTag>(null);
+
+  const registerNavigationHandlers = useCallback(() => {
+    webViewPubSub.subscribe(NAVIGATION_EVENTS.RELOAD, () => {
+      if (ref.current) {
+        ref.current.reload();
+      }
+    });
+    if (isPrimary) {
+      webViewPubSub.subscribe(NAVIGATION_EVENTS.BACK, () => {
+        if (ref.current) {
+          ref.current.goBack();
+        }
+      });
+
+      webViewPubSub.subscribe(NAVIGATION_EVENTS.FORWARD, () => {
+        if (ref.current) {
+          ref.current.goForward();
+        }
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (!ref.current) {
@@ -19,7 +43,7 @@ const Device = ({ height, width }: Props) => {
     }
     const webview = ref.current as Electron.WebviewTag;
     webview.addEventListener('dom-ready', () => {
-      webview.openDevTools();
+      //webview.openDevTools();
     });
     webview.addEventListener('did-navigate', (e) => {
       dispatch(setAddress(e.url));
@@ -31,9 +55,11 @@ const Device = ({ height, width }: Props) => {
         handleContextMenuEvent(webview, command, arg);
       }
     });
-  }, [ref, dispatch]);
 
-  const scaleFactor = 0.5;
+    registerNavigationHandlers();
+  }, [ref, dispatch, registerNavigationHandlers]);
+
+  const scaleFactor = 0.75;
 
   const scaledHeight = height * scaleFactor;
   const scaledWidth = width * scaleFactor;
@@ -54,6 +80,7 @@ const Device = ({ height, width }: Props) => {
         ref={ref}
         className="origin-top-left"
         preload={`file://${window.responsively.webviewPreloadPath}`}
+        data-scale-factor={scaleFactor}
       />
     </div>
   );

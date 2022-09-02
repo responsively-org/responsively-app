@@ -15,7 +15,9 @@ export const rendererSlice = createSlice({
   reducers: {
     setAddress: (state, action: PayloadAction<string>) => {
       console.log('setAddress reducer', action.payload);
-      state.address = action.payload;
+      if (action.payload !== state.address) {
+        state.address = action.payload;
+      }
     },
   },
 });

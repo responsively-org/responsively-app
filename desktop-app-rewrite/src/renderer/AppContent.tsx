@@ -11,10 +11,8 @@ const AppContent = () => {
   return (
     <Provider store={store}>
       <ThemeProvider>
-        <div className="">
-          <div className="p-8">
-            <AddressBar />
-          </div>
+        <div className="gap-2 p-2">
+          <AddressBar />
           <Previewer />
         </div>
       </ThemeProvider>
