@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import { RootState } from 'renderer/store';
-import { setAddress } from 'renderer/store/features/renderer';
+import { selectZoomFactor, setAddress } from 'renderer/store/features/renderer';
 import { NAVIGATION_EVENTS } from '../AddressBar/NavigationControls';
 
 interface Props {
@@ -18,6 +18,7 @@ const Device = ({ height, width, isPrimary, name }: Props) => {
   const address = useSelector((state: RootState) => state.renderer?.address);
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const zoomfactor = useSelector(selectZoomFactor);
   const ref = useRef<Electron.WebviewTag>(null);
 
   const registerNavigationHandlers = useCallback(() => {
@@ -74,10 +75,8 @@ const Device = ({ height, width, isPrimary, name }: Props) => {
     registerNavigationHandlers();
   }, [ref, dispatch, registerNavigationHandlers]);
 
-  const scaleFactor = 0.75;
-
-  const scaledHeight = height * scaleFactor;
-  const scaledWidth = width * scaleFactor;
+  const scaledHeight = height * zoomfactor;
+  const scaledWidth = width * zoomfactor;
 
   return (
     <div>
@@ -104,12 +103,12 @@ const Device = ({ height, width, isPrimary, name }: Props) => {
             height,
             width,
             display: 'inline-flex',
-            transform: `scale(${scaleFactor})`,
+            transform: `scale(${zoomfactor})`,
           }}
           ref={ref}
           className="origin-top-left"
           preload={`file://${window.responsively.webviewPreloadPath}`}
-          data-scale-factor={scaleFactor}
+          data-scale-factor={zoomfactor}
         />
       </div>
     </div>

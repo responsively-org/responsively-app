@@ -5,6 +5,7 @@ import { setAddress } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
 import { setDarkMode } from 'renderer/store/features/ui';
 import NavigationControls from './NavigationControls';
+import Menu from './Menu';
 
 const AddressBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -60,6 +61,7 @@ const AddressBar = () => {
       >
         {darkMode ? <Icon icon="carbon:moon" /> : <Icon icon="carbon:sun" />}
       </button>
+      <Menu />
     </div>
   );
 };
