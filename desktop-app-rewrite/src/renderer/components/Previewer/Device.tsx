@@ -3,8 +3,11 @@ import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { webViewPubSub } from 'renderer/lib/pubsub';
-import { RootState } from 'renderer/store';
-import { selectZoomFactor, setAddress } from 'renderer/store/features/renderer';
+import {
+  selectAddress,
+  selectZoomFactor,
+  setAddress,
+} from 'renderer/store/features/renderer';
 import { NAVIGATION_EVENTS } from '../AddressBar/NavigationControls';
 
 interface Props {
@@ -15,7 +18,7 @@ interface Props {
 }
 
 const Device = ({ height, width, isPrimary, name }: Props) => {
-  const address = useSelector((state: RootState) => state.renderer?.address);
+  const address = useSelector(selectAddress);
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const zoomfactor = useSelector(selectZoomFactor);

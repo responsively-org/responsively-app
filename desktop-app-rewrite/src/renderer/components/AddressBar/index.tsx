@@ -1,17 +1,16 @@
 import { KeyboardEventHandler, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'renderer/store';
-import { setAddress } from 'renderer/store/features/renderer';
+import { selectAddress, setAddress } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
-import { setDarkMode } from 'renderer/store/features/ui';
+import { selectDarkMode, setDarkMode } from 'renderer/store/features/ui';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
 
 const AddressBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [typedAddress, setTypedAddress] = useState<string>('');
-  const address = useSelector((state: RootState) => state.renderer.address);
-  const darkMode = useSelector((state: RootState) => state.ui.darkMode);
+  const address = useSelector(selectAddress);
+  const darkMode = useSelector(selectDarkMode);
   const dispatch = useDispatch();
   useEffect(() => {
     if (address === typedAddress) {

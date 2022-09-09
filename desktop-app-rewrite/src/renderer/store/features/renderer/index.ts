@@ -45,5 +45,6 @@ export const rendererSlice = createSlice({
 export const { setAddress, zoomIn, zoomOut } = rendererSlice.actions;
 
 export const selectZoomFactor = (state: RootState) => state.renderer.zoomFactor;
+export const selectAddress = (state: RootState) => state.renderer.address;
 
 export default rendererSlice.reducer;

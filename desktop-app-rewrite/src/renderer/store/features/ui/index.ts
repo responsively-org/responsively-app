@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from '../..';
 
 export interface UIState {
   darkMode: boolean;
@@ -22,5 +23,7 @@ export const uiSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const { setDarkMode } = uiSlice.actions;
+
+export const selectDarkMode = (state: RootState) => state.ui.darkMode;
 
 export default uiSlice.reducer;
