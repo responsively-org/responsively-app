@@ -17,10 +17,23 @@ const AddressBar = () => {
       return;
     }
     setTypedAddress(address);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
 
   const dispatchAddress = () => {
-    dispatch(setAddress(typedAddress));
+    let newAddress = typedAddress;
+    if (newAddress.indexOf('://') === -1) {
+      let protocol = 'https://';
+      if (
+        typedAddress.indexOf('localhost') !== -1 ||
+        typedAddress.indexOf('127.0.0.1') !== -1
+      ) {
+        protocol = 'http://';
+      }
+      newAddress = protocol + typedAddress;
+    }
+
+    dispatch(setAddress(newAddress));
   };
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key === 'Enter') {

@@ -1,5 +1,6 @@
+import { Icon } from '@iconify/react';
 import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import { RootState } from 'renderer/store';
@@ -10,9 +11,12 @@ interface Props {
   width: number;
   height: number;
   isPrimary: boolean;
+  name: string;
 }
-const Device = ({ height, width, isPrimary }: Props) => {
+
+const Device = ({ height, width, isPrimary, name }: Props) => {
   const address = useSelector((state: RootState) => state.renderer?.address);
+  const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const ref = useRef<Electron.WebviewTag>(null);
 
@@ -35,7 +39,7 @@ const Device = ({ height, width, isPrimary }: Props) => {
         }
       });
     }
-  }, []);
+  }, [isPrimary]);
 
   useEffect(() => {
     if (!ref.current) {
@@ -43,7 +47,7 @@ const Device = ({ height, width, isPrimary }: Props) => {
     }
     const webview = ref.current as Electron.WebviewTag;
     webview.addEventListener('dom-ready', () => {
-      //webview.openDevTools();
+      // webview.openDevTools();
     });
     webview.addEventListener('did-navigate', (e) => {
       dispatch(setAddress(e.url));
@@ -56,6 +60,17 @@ const Device = ({ height, width, isPrimary }: Props) => {
       }
     });
 
+    webview.addEventListener('did-start-loading', () => {
+      setLoading(true);
+    });
+    webview.addEventListener('did-stop-loading', () => {
+      setLoading(false);
+    });
+
+    webview.addEventListener('crashed', () => {
+      console.log('crashed');
+    });
+
     registerNavigationHandlers();
   }, [ref, dispatch, registerNavigationHandlers]);
 
@@ -65,23 +80,38 @@ const Device = ({ height, width, isPrimary }: Props) => {
   const scaledWidth = width * scaleFactor;
 
   return (
-    <div
-      style={{ height: scaledHeight, width: scaledWidth }}
-      className="origin-top-left"
-    >
-      <webview
-        src={address}
-        style={{
-          height,
-          width,
-          display: 'inline-flex',
-          transform: `scale(${scaleFactor})`,
-        }}
-        ref={ref}
-        className="origin-top-left"
-        preload={`file://${window.responsively.webviewPreloadPath}`}
-        data-scale-factor={scaleFactor}
-      />
+    <div>
+      <div className="flex justify-between">
+        <span>
+          {name}{' '}
+          <span className="text-xs opacity-60">
+            {width}x{height}
+          </span>
+        </span>
+        {loading ? (
+          <span className="animate-spin">
+            <Icon icon="ei:spinner-3" height={24} />
+          </span>
+        ) : null}
+      </div>
+      <div
+        style={{ height: scaledHeight, width: scaledWidth }}
+        className="origin-top-left bg-white"
+      >
+        <webview
+          src={address}
+          style={{
+            height,
+            width,
+            display: 'inline-flex',
+            transform: `scale(${scaleFactor})`,
+          }}
+          ref={ref}
+          className="origin-top-left"
+          preload={`file://${window.responsively.webviewPreloadPath}`}
+          data-scale-factor={scaleFactor}
+        />
+      </div>
     </div>
   );
 };
