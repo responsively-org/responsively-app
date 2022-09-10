@@ -1,14 +1,15 @@
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
+import Button from 'renderer/components/Button';
 import MenuFlyout from './Flyout';
 
 const Menu = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <div className="relative flex items-center">
-      <button onClick={() => setIsOpen(!isOpen)} type="button">
+      <Button onClick={() => setIsOpen(!isOpen)} isActive={isOpen}>
         <Icon icon="carbon:overflow-menu-vertical" />
-      </button>
+      </Button>
       {isOpen ? <MenuFlyout /> : null}
     </div>
   );

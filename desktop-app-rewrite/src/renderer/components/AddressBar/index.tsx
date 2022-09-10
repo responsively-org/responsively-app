@@ -12,6 +12,7 @@ const AddressBar = () => {
   const address = useSelector(selectAddress);
   const darkMode = useSelector(selectDarkMode);
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (address === typedAddress) {
       return;
@@ -35,6 +36,7 @@ const AddressBar = () => {
 
     dispatch(setAddress(newAddress));
   };
+
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key === 'Enter') {
       inputRef.current?.blur();

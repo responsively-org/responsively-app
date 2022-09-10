@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { webViewPubSub } from 'renderer/lib/pubsub';
+import Button from '../Button';
 
 export const NAVIGATION_EVENTS = {
   BACK: 'back',
@@ -15,14 +16,9 @@ interface NavigationItemProps {
 
 const NavigationButton = ({ label, icon, action }: NavigationItemProps) => {
   return (
-    <button
-      type="button"
-      className="flex items-center justify-center rounded-full px-2 py-1"
-      onClick={action}
-      title={label}
-    >
+    <Button className="!rounded-full px-2 py-1" onClick={action} title={label}>
       <Icon icon={icon} />
-    </button>
+    </Button>
   );
 };
 
