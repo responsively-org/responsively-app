@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import {
   selectAddress,
+  selectRotate,
   selectZoomFactor,
   setAddress,
 } from 'renderer/store/features/renderer';
@@ -17,7 +18,20 @@ interface Props {
   name: string;
 }
 
-const Device = ({ height, width, isPrimary, name }: Props) => {
+const Device = ({
+  height: heightProp,
+  width: widthProp,
+  isPrimary,
+  name,
+}: Props) => {
+  const rotateDevice = useSelector(selectRotate);
+  let height = heightProp;
+  let width = widthProp;
+  if (rotateDevice) {
+    const temp = width;
+    width = height;
+    height = temp;
+  }
   const address = useSelector(selectAddress);
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();

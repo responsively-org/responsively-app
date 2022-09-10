@@ -5,6 +5,7 @@ import type { RootState } from '../..';
 export interface RendererState {
   address: string;
   zoomFactor: number;
+  rotate: boolean;
 }
 
 const zoomSteps = [
@@ -14,6 +15,7 @@ const zoomSteps = [
 const initialState: RendererState = {
   address: 'https://google.com',
   zoomFactor: zoomSteps[4],
+  rotate: false,
 };
 
 export const rendererSlice = createSlice({
@@ -38,13 +40,17 @@ export const rendererSlice = createSlice({
         state.zoomFactor = zoomSteps[index - 1];
       }
     },
+    setRotate: (state, action: PayloadAction<boolean>) => {
+      state.rotate = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setAddress, zoomIn, zoomOut } = rendererSlice.actions;
+export const { setAddress, zoomIn, zoomOut, setRotate } = rendererSlice.actions;
 
 export const selectZoomFactor = (state: RootState) => state.renderer.zoomFactor;
 export const selectAddress = (state: RootState) => state.renderer.address;
+export const selectRotate = (state: RootState) => state.renderer.rotate;
 
 export default rendererSlice.reducer;

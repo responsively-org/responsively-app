@@ -1,16 +1,23 @@
 import { KeyboardEventHandler, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAddress, setAddress } from 'renderer/store/features/renderer';
+import {
+  selectAddress,
+  selectRotate,
+  setAddress,
+  setRotate,
+} from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
 import { selectDarkMode, setDarkMode } from 'renderer/store/features/ui';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
+import Button from '../Button';
 
 const AddressBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [typedAddress, setTypedAddress] = useState<string>('');
   const address = useSelector(selectAddress);
   const darkMode = useSelector(selectDarkMode);
+  const rotateDevice = useSelector(selectRotate);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -54,6 +61,18 @@ const AddressBar = () => {
         onChange={(e) => setTypedAddress(e.target.value)}
         onKeyDown={handleKeyDown}
       />
+      <Button
+        onClick={() => dispatch(setRotate(!rotateDevice))}
+        isActive={rotateDevice}
+      >
+        <Icon
+          icon={
+            rotateDevice
+              ? 'mdi:phone-rotate-portrait'
+              : 'mdi:phone-rotate-landscape'
+          }
+        />
+      </Button>
       <button
         onClick={() => {
           dispatch(setDarkMode(!darkMode));

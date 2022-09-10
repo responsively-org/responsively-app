@@ -21,12 +21,13 @@ const Button = ({
       className={cx(
         'flex items-center justify-center rounded-sm p-1 hover:bg-slate-400 dark:hover:bg-slate-600',
         {
-          'bg-slate-400': isActive,
-          'dark:bg-slate-600': isActive,
+          'bg-slate-400/60': isActive,
+          'dark:bg-slate-600/60': isActive,
           [className]: className?.length,
         }
       )}
       type="button"
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     >
       {children}
