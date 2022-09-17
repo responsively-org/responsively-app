@@ -1,4 +1,3 @@
-import { Icon } from '@iconify/react';
 import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

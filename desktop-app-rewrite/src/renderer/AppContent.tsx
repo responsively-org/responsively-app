@@ -1,4 +1,4 @@
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 
 import AddressBar from './components/AddressBar';
 import Previewer from './components/Previewer';
@@ -6,15 +6,40 @@ import { store } from './store';
 
 import './App.css';
 import ThemeProvider from './context/ThemeProvider';
+import { APP_VIEWS, selectAppView } from './store/features/ui';
+import type { AppView } from './store/features/ui';
+
+const Browser = () => {
+  return (
+    <div className="gap-2 p-2">
+      <AddressBar />
+      <Previewer />
+    </div>
+  );
+};
+
+const getView = (appView: AppView) => {
+  switch (appView) {
+    case APP_VIEWS.BROWSER:
+      return <Browser />;
+    case APP_VIEWS.DEVICE_MANAGER:
+      return <div>Device Manager</div>;
+    default:
+      return <Browser />;
+  }
+};
+
+const ViewComponent = () => {
+  const appView = useSelector(selectAppView);
+
+  return <>{getView(appView)}</>;
+};
 
 const AppContent = () => {
   return (
     <Provider store={store}>
       <ThemeProvider>
-        <div className="gap-2 p-2">
-          <AddressBar />
-          <Previewer />
-        </div>
+        <ViewComponent />
       </ThemeProvider>
     </Provider>
   );

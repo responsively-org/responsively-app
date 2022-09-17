@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import cx from 'classnames';
 import { Icon } from '@iconify/react';
 
@@ -20,14 +20,16 @@ const Button = ({
     HTMLButtonElement
   >) => {
   const [isLoadingDone, setIsLoadingDone] = useState<boolean>(false);
+  const prevLoadingState = useRef(false);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && prevLoadingState.current === true) {
       setIsLoadingDone(true);
       setTimeout(() => {
         setIsLoadingDone(false);
       }, 800);
     }
+    prevLoadingState.current = isLoading;
   }, [isLoading]);
 
   return (
