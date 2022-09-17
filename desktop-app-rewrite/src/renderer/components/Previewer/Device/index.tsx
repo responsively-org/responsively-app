@@ -9,7 +9,8 @@ import {
   selectZoomFactor,
   setAddress,
 } from 'renderer/store/features/renderer';
-import { NAVIGATION_EVENTS } from '../AddressBar/NavigationControls';
+import { NAVIGATION_EVENTS } from '../../AddressBar/NavigationControls';
+import Toolbar from './Toolbar';
 
 interface Props {
   width: number;
@@ -110,6 +111,7 @@ const Device = ({
           </span>
         ) : null}
       </div>
+      <Toolbar webview={ref.current} />
       <div
         style={{ height: scaledHeight, width: scaledWidth }}
         className="origin-top-left bg-white"
