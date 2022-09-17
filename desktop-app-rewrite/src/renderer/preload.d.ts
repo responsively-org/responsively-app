@@ -10,7 +10,7 @@ declare global {
           func: (...args: unknown[]) => void
         ): (() => void) | undefined;
         once(channel: string, func: (...args: unknown[]) => void): void;
-        invoke(channel: string, ...args: unknown[]): Promise<unknown>;
+        invoke<T, P>(channel: string, ...args: T[]): Promise<P>;
       };
       store: {
         /* eslint-disable @typescript-eslint/no-explicit-any */

@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react';
 import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Spinner from 'renderer/components/Spinner';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import {
   selectAddress,
@@ -105,11 +106,7 @@ const Device = ({
             {width}x{height}
           </span>
         </span>
-        {loading ? (
-          <span className="animate-spin">
-            <Icon icon="ei:spinner-3" height={24} />
-          </span>
-        ) : null}
+        {loading ? <Spinner spinnerHeight={24} /> : null}
       </div>
       <Toolbar webview={ref.current} />
       <div

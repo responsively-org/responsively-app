@@ -17,6 +17,7 @@ import { resolveHtmlPath } from './util';
 import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
 import store from '../store';
 import { initWebviewContextMenu } from './webview-context-menu/register';
+import { initScreenshotHandlers } from './screenshot';
 
 export default class AppUpdater {
   constructor() {
@@ -50,6 +51,7 @@ ipcMain.on('electron-store-set', async (event, key, val) => {
 });
 
 initWebviewContextMenu();
+initScreenshotHandlers();
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
