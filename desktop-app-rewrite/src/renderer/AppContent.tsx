@@ -8,6 +8,7 @@ import './App.css';
 import ThemeProvider from './context/ThemeProvider';
 import { APP_VIEWS, selectAppView } from './store/features/ui';
 import type { AppView } from './store/features/ui';
+import DeviceManager from './components/DeviceManager';
 
 const Browser = () => {
   return (
@@ -23,7 +24,7 @@ const getView = (appView: AppView) => {
     case APP_VIEWS.BROWSER:
       return <Browser />;
     case APP_VIEWS.DEVICE_MANAGER:
-      return <div>Device Manager</div>;
+      return <DeviceManager />;
     default:
       return <Browser />;
   }

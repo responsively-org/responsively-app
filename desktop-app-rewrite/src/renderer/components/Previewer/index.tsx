@@ -1,19 +1,10 @@
+import { useSelector } from 'react-redux';
+import { selectDevices } from 'renderer/store/features/device-manager';
 import Device from './Device';
 
-const devices = [
-  {
-    height: 400,
-    width: 250,
-    name: 'iPhone 11',
-  },
-  {
-    height: 600,
-    width: 400,
-    name: 'iPad Pro',
-  },
-];
-
 const Previewer = () => {
+  const devices = useSelector(selectDevices);
+
   return (
     <div className="flex gap-4 p-4">
       {devices.map(({ height, width, name }, idx) => {
