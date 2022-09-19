@@ -1,19 +1,68 @@
+import { Icon } from '@iconify/react';
 import { Device } from 'common/deviceList';
+import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectDevices,
   setDevices,
 } from 'renderer/store/features/device-manager';
 
+export const DND_TYPE = 'Device';
+
 interface Props {
   device: Device;
+  enableDnd?: boolean;
+  moveDevice?: (device: Device, atIndex: number) => void;
 }
 
-const DeviceLabel = ({ device }: Props) => {
+const DeviceLabel = ({
+  device,
+  moveDevice = () => {},
+  enableDnd = false,
+}: Props) => {
   const dispatch = useDispatch();
   const devices = useSelector(selectDevices);
+
+  const originalIndex = devices.indexOf(device);
+
+  const [{ isDragging }, drag] = useDrag(
+    () => ({
+      type: DND_TYPE,
+      item: device,
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+      end: (draggedDevice, monitor) => {
+        const didDrop = monitor.didDrop();
+        if (!didDrop) {
+          moveDevice(draggedDevice, originalIndex);
+        }
+      },
+    }),
+    [device.name, originalIndex, moveDevice]
+  );
+
+  const [, drop] = useDrop(
+    () => ({
+      accept: DND_TYPE,
+      hover(draggedDevice: Device) {
+        if (draggedDevice.name !== device.name) {
+          moveDevice(draggedDevice, devices.indexOf(device));
+        }
+      },
+    }),
+    [moveDevice]
+  );
+
+  const opacity = isDragging ? 0 : 1;
+
   return (
-    <div className="flex">
+    <div
+      className="flex w-fit items-center gap-2 rounded bg-slate-300 px-2 dark:bg-slate-600"
+      ref={enableDnd ? (node) => drag(drop(node)) : null}
+      style={{ opacity }}
+    >
+      {enableDnd ? <Icon icon="ic:baseline-drag-indicator" /> : null}
       <input
         type="checkbox"
         checked={devices.find((d) => d.name === device.name) != null}

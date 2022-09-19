@@ -1,15 +1,28 @@
 import { Icon } from '@iconify/react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectDevices } from 'renderer/store/features/device-manager';
+import { DndProvider, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import {
+  selectDevices,
+  setDevices,
+} from 'renderer/store/features/device-manager';
 import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
-import defaultDevices from 'common/deviceList';
+import defaultDevices, { Device } from 'common/deviceList';
 
 import Button from '../Button';
-import DeviceLabel from './DeviceLabel';
+import DeviceLabel, { DND_TYPE } from './DeviceLabel';
 
 const DeviceManager = () => {
   const dispatch = useDispatch();
   const devices = useSelector(selectDevices);
+
+  const moveDevice = (device: Device, atIndex: number) => {
+    const newDevices = devices.filter((d) => d.name !== device.name);
+    newDevices.splice(atIndex, 0, device);
+    dispatch(setDevices(newDevices));
+  };
+
+  const [, drop] = useDrop(() => ({ accept: DND_TYPE }));
 
   return (
     <div className="mx-16 rounded-lg p-8">
@@ -21,28 +34,23 @@ const DeviceManager = () => {
       </div>
       <div>
         <div className="mb-4 text-lg">Devices In Preview</div>
-        <div className="ml-4 flex flex-col gap-4">
+
+        <div className="ml-4 flex flex-col gap-4" ref={drop}>
           {devices.map((device) => {
             return (
-              <div
+              <DeviceLabel
                 key={device.name}
-                className="flex w-fit items-center gap-2 rounded bg-slate-300 px-2 dark:bg-slate-600"
-              >
-                <Icon icon="ic:baseline-drag-indicator" />
-                <DeviceLabel device={device} />
-              </div>
+                device={device}
+                moveDevice={moveDevice}
+                enableDnd
+              />
             );
           })}
         </div>
         <div className="mt-8 mb-4 text-lg ">Available Devices</div>
         <div className="ml-4 flex flex-row flex-wrap gap-4">
           {defaultDevices.map((device) => (
-            <div
-              className="flex w-fit items-center gap-2 rounded bg-slate-300 px-2 dark:bg-slate-600"
-              key={device.name}
-            >
-              <DeviceLabel device={device} />
-            </div>
+            <DeviceLabel device={device} key={device.name} />
           ))}
         </div>
       </div>
@@ -50,4 +58,8 @@ const DeviceManager = () => {
   );
 };
 
-export default DeviceManager;
+export default () => (
+  <DndProvider backend={HTML5Backend}>
+    <DeviceManager />
+  </DndProvider>
+);
