@@ -7,15 +7,9 @@ const Previewer = () => {
 
   return (
     <div className="flex gap-4 p-4">
-      {devices.map(({ height, width, name }, idx) => {
+      {devices.map((device, idx) => {
         return (
-          <Device
-            key={`${height}-${width}`}
-            height={height}
-            width={width}
-            isPrimary={idx === 0}
-            name={name}
-          />
+          <Device key={device.name} device={device} isPrimary={idx === 0} />
         );
       })}
     </div>

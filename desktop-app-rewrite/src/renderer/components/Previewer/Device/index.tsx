@@ -1,3 +1,4 @@
+import { Device as IDevice } from 'common/deviceList';
 import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,21 +14,13 @@ import { NAVIGATION_EVENTS } from '../../AddressBar/NavigationControls';
 import Toolbar from './Toolbar';
 
 interface Props {
-  width: number;
-  height: number;
+  device: IDevice;
   isPrimary: boolean;
-  name: string;
 }
 
-const Device = ({
-  height: heightProp,
-  width: widthProp,
-  isPrimary,
-  name,
-}: Props) => {
+const Device = ({ isPrimary, device }: Props) => {
   const rotateDevice = useSelector(selectRotate);
-  let height = heightProp;
-  let width = widthProp;
+  let { height, width } = device;
   if (rotateDevice) {
     const temp = width;
     width = height;
@@ -35,6 +28,8 @@ const Device = ({
   }
   const address = useSelector(selectAddress);
   const [loading, setLoading] = useState<boolean>(false);
+  const [screenshotInProgress, setScreenshotInProgess] =
+    useState<boolean>(false);
   const dispatch = useDispatch();
   const zoomfactor = useSelector(selectZoomFactor);
   const ref = useRef<Electron.WebviewTag>(null);
@@ -87,7 +82,7 @@ const Device = ({
     });
 
     webview.addEventListener('crashed', () => {
-      console.log('crashed');
+      console.error('Web view crashed');
     });
 
     registerNavigationHandlers();
@@ -100,19 +95,24 @@ const Device = ({
     <div>
       <div className="flex justify-between">
         <span>
-          {name}{' '}
+          {device.name}
           <span className="text-xs opacity-60">
             {width}x{height}
           </span>
         </span>
         {loading ? <Spinner spinnerHeight={24} /> : null}
       </div>
-      <Toolbar webview={ref.current} />
+      <Toolbar
+        webview={ref.current}
+        device={device}
+        setScreenshotInProgress={setScreenshotInProgess}
+      />
       <div
         style={{ height: scaledHeight, width: scaledWidth }}
-        className="origin-top-left bg-white"
+        className="relative origin-top-left bg-white"
       >
         <webview
+          id={device.name}
           src={address}
           style={{
             height,
@@ -125,6 +125,14 @@ const Device = ({
           preload={`file://${window.responsively.webviewPreloadPath}`}
           data-scale-factor={zoomfactor}
         />
+        {screenshotInProgress ? (
+          <div
+            className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
+            style={{ height: scaledHeight, width: scaledWidth }}
+          >
+            <Spinner spinnerHeight={30} />
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ const Zoom = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className="flex flex-row items-center justify-between p-1">
+    <div className="flex flex-row items-center justify-between px-4">
       <span>Zoom</span>
       <div className="flex items-center gap-2 border-l pl-1 dark:border-slate-400">
         <ZoomButton onClick={() => dispatch(zoomOut())}>-</ZoomButton>

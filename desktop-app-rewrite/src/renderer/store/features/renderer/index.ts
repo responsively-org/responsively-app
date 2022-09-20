@@ -13,7 +13,7 @@ const zoomSteps = [
 ];
 
 const initialState: RendererState = {
-  address: 'https://google.com',
+  address: 'https://www.google.com/',
   zoomFactor: zoomSteps[4],
   rotate: false,
 };
@@ -23,7 +23,6 @@ export const rendererSlice = createSlice({
   initialState,
   reducers: {
     setAddress: (state, action: PayloadAction<string>) => {
-      console.log('setAddress reducer', action.payload);
       if (action.payload !== state.address) {
         state.address = action.payload;
       }

@@ -13,7 +13,7 @@ const MenuFlyout = () => {
         onClick={() => {
           dispatch(setAppView(APP_VIEWS.DEVICE_MANAGER));
         }}
-        className="w-full !justify-start"
+        className="w-full !justify-start px-4"
         subtle
       >
         Device Manager
