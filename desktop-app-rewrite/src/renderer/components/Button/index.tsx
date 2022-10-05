@@ -6,6 +6,7 @@ interface CustomProps {
   className?: string;
   isActive?: boolean;
   isLoading?: boolean;
+  disableHoverEffects?: boolean;
   subtle?: boolean;
 }
 
@@ -14,6 +15,7 @@ const Button = ({
   isActive = false,
   isLoading = false,
   subtle = false,
+  disableHoverEffects = false,
   children,
   ...props
 }: CustomProps &
@@ -42,7 +44,9 @@ const Button = ({
   return (
     <button
       className={cx(
-        `flex items-center justify-center rounded-sm p-1 ${hoverBg} ${hoverBgDark} focus:outline-none`,
+        `flex items-center justify-center rounded-sm p-1 ${
+          disableHoverEffects === false ? `${hoverBg} ${hoverBgDark}` : ''
+        } focus:outline-none`,
         {
           'bg-slate-400/60': isActive,
           'dark:bg-slate-600/60': isActive,

@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import deviceManagerReducer from './features/device-manager';
+import devtoolsReducer from './features/devtools';
 import rendererReducer from './features/renderer';
 import uiReducer from './features/ui';
 
@@ -9,6 +10,7 @@ export const store = configureStore({
     renderer: rendererReducer,
     ui: uiReducer,
     deviceManager: deviceManagerReducer,
+    devtools: devtoolsReducer,
   },
 });
 

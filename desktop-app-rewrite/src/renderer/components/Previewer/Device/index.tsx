@@ -60,9 +60,6 @@ const Device = ({ isPrimary, device }: Props) => {
       return;
     }
     const webview = ref.current as Electron.WebviewTag;
-    webview.addEventListener('dom-ready', () => {
-      // webview.openDevTools();
-    });
     webview.addEventListener('did-navigate', (e) => {
       dispatch(setAddress(e.url));
     });
@@ -92,7 +89,10 @@ const Device = ({ isPrimary, device }: Props) => {
   const scaledWidth = width * zoomfactor;
 
   return (
-    <div>
+    <div
+      className="h-fit overflow-hidden"
+      style={{ height: scaledHeight, width: scaledWidth }}
+    >
       <div className="flex justify-between">
         <span>
           {device.name}

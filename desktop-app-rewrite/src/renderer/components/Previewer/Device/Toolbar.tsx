@@ -7,6 +7,8 @@ import { Device } from 'common/deviceList';
 import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
+import { setIsOpen } from 'renderer/store/features/devtools';
+import { useDispatch } from 'react-redux';
 
 interface Props {
   webview: Electron.WebviewTag | null;
@@ -15,6 +17,7 @@ interface Props {
 }
 
 const Toolbar = ({ webview, device, setScreenshotInProgress }: Props) => {
+  const dispatch = useDispatch();
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
@@ -40,6 +43,16 @@ const Toolbar = ({ webview, device, setScreenshotInProgress }: Props) => {
     } catch (error) {
       console.error('Error while toggleing event mirroring', error);
     }
+  };
+
+  const openDevTools = async () => {
+    if (webview == null) {
+      return;
+    }
+    await window.electron.ipcRenderer.invoke('open-devtools', {
+      webviewId: webview.getWebContentsId(),
+    });
+    dispatch(setIsOpen(true));
   };
 
   const quickScreenshot = async () => {
@@ -133,6 +146,9 @@ const Toolbar = ({ webview, device, setScreenshotInProgress }: Props) => {
         title="Full Page Screenshot"
       >
         <Icon icon="ic:outline-photo-camera" />
+      </Button>
+      <Button onClick={openDevTools} title="Open Devtools">
+        <Icon icon="ic:round-code" />
       </Button>
     </div>
   );

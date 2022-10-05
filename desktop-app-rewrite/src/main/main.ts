@@ -18,6 +18,7 @@ import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
 import store from '../store';
 import { initWebviewContextMenu } from './webview-context-menu/register';
 import { initScreenshotHandlers } from './screenshot';
+import { initDevtoolsHandlers } from './devtools';
 
 export default class AppUpdater {
   constructor() {
@@ -105,6 +106,7 @@ const createWindow = async () => {
       webviewTag: true,
     },
   });
+  initDevtoolsHandlers(mainWindow);
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
