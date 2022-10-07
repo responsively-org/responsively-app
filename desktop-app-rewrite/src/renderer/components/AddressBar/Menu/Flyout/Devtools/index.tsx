@@ -1,6 +1,6 @@
+import { DOCK_POSITION } from 'common/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  DOCK_POSITION,
   selectDockPosition,
   setDockPosition,
 } from 'renderer/store/features/devtools';

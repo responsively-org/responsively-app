@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { selectDevices } from 'renderer/store/features/device-manager';
+import { DOCK_POSITION } from 'common/constants';
 import {
-  DOCK_POSITION,
   selectDockPosition,
   selectIsDevtoolsOpen,
 } from 'renderer/store/features/devtools';

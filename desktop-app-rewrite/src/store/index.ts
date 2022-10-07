@@ -1,3 +1,5 @@
+import { DOCK_POSITION } from '../common/constants';
+
 const Store = require('electron-store');
 
 const schema = {
@@ -7,6 +9,16 @@ const schema = {
       darkMode: {
         type: 'boolean',
         default: true,
+      },
+    },
+  },
+  devtools: {
+    type: 'object',
+    properties: {
+      dockPosition: {
+        type: 'string',
+        enum: Object.keys(DOCK_POSITION),
+        default: DOCK_POSITION.BOTTOM,
       },
     },
   },

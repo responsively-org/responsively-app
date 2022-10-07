@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import { DOCK_POSITION } from 'common/constants';
 import { OpenDevtoolsArgs, OpenDevtoolsResult } from 'main/devtools';
 import { Resizable, Size } from 're-resizable';
 import { useEffect, useRef, useState } from 'react';
@@ -6,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
 import {
   DockPosition,
-  DOCK_POSITION,
   selectDevtoolsWebviewId,
   selectDockPosition,
   setDockPosition,

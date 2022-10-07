@@ -1,8 +1,6 @@
 import { BrowserView, BrowserWindow, ipcMain, webContents } from 'electron';
-import {
-  DockPosition,
-  DOCK_POSITION,
-} from '../../renderer/store/features/devtools';
+import { DOCK_POSITION } from '../../common/constants';
+import { DockPosition } from '../../renderer/store/features/devtools';
 
 let devtoolsView: BrowserView | undefined;
 let webViewContents: Electron.WebContents;
