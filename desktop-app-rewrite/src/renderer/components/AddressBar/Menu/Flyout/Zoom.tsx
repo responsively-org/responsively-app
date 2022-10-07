@@ -13,7 +13,7 @@ interface ZoomButtonProps {
 
 const ZoomButton = ({ children, onClick }: ZoomButtonProps) => {
   return (
-    <Button className="px-2" onClick={onClick} subtle>
+    <Button className="p-0 px-2" onClick={onClick} subtle>
       {children}
     </Button>
   );
@@ -24,9 +24,9 @@ const Zoom = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className="flex flex-row items-center justify-between px-4">
-      <span>Zoom</span>
-      <div className="flex items-center gap-2 border-l pl-1 dark:border-slate-400">
+    <div className="flex flex-row items-center justify-start p-1 px-4">
+      <span className="w-1/2">Zoom</span>
+      <div className="flex w-fit items-center gap-2 border-l pl-1 dark:border-slate-400">
         <ZoomButton onClick={() => dispatch(zoomOut())}>-</ZoomButton>
         <span className="w-10 text-center">{Math.ceil(zoomfactor * 100)}%</span>
         <ZoomButton onClick={() => dispatch(zoomIn())}>+</ZoomButton>

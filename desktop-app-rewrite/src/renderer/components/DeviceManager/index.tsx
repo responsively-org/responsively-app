@@ -42,7 +42,7 @@ const DeviceManager = () => {
       <div className="flex w-full text-3xl">
         <span className="w-full text-center">Device Manager</span>
         <Button onClick={() => dispatch(setAppView(APP_VIEWS.BROWSER))}>
-          <Icon icon="ri:close-circle-line" />
+          <Icon icon="ic:round-close" />
         </Button>
       </div>
       <div className="mx-auto w-4/5">

@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import { OpenDevtoolsArgs, OpenDevtoolsResult } from 'main/devtools';
 import { Resizable, Size } from 're-resizable';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,9 +7,10 @@ import Button from 'renderer/components/Button';
 import {
   DockPosition,
   DOCK_POSITION,
+  selectDevtoolsWebviewId,
   selectDockPosition,
   setDockPosition,
-  setIsOpen,
+  setDevtoolsClose,
 } from 'renderer/store/features/devtools';
 
 type SizeValue = number | string;
@@ -46,6 +48,7 @@ const RightDockConfig: DockConfig = {
 const DevtoolsResizer = () => {
   const dispatch = useDispatch();
   const dockPosition = useSelector(selectDockPosition);
+  const webviewId = useSelector(selectDevtoolsWebviewId);
   let config = BottomDockConfig;
   if (dockPosition === DOCK_POSITION.RIGHT) {
     config = RightDockConfig;
@@ -87,7 +90,7 @@ const DevtoolsResizer = () => {
   useEffect(() => {
     setTimeout(() => {
       resizeEffect();
-    }, 200);
+    });
   }, []);
 
   return (
@@ -106,14 +109,17 @@ const DevtoolsResizer = () => {
       >
         <div className="flex h-full w-full flex-col">
           <div className="flex justify-between border-b-[1px]">
-            <Button
-              onClick={() => {
-                // console.log('Inspect element');
-              }}
-              disableHoverEffects
-            >
-              <Icon icon="lucide:inspect" />
-            </Button>
+            <div>
+              <Button
+                onClick={() => {
+                  // console.log('Inspect element');
+                }}
+                disableHoverEffects
+                className="hidden"
+              >
+                <Icon icon="lucide:inspect" />
+              </Button>
+            </div>
             <div className="flex">
               <Button
                 onClick={() => {
@@ -126,7 +132,26 @@ const DevtoolsResizer = () => {
               <Button
                 onClick={() => {
                   window.electron.ipcRenderer.invoke('close-devtools');
-                  dispatch(setIsOpen(false));
+                  dispatch(setDockPosition(DOCK_POSITION.UNDOCKED));
+                  dispatch(setDevtoolsClose());
+                  setTimeout(() => {
+                    window.electron.ipcRenderer.invoke<
+                      OpenDevtoolsArgs,
+                      OpenDevtoolsResult
+                    >('open-devtools', {
+                      webviewId,
+                      dockPosition: DOCK_POSITION.UNDOCKED,
+                    });
+                  });
+                }}
+                disableHoverEffects
+              >
+                <Icon icon="mdi:dock-window" />
+              </Button>
+              <Button
+                onClick={() => {
+                  window.electron.ipcRenderer.invoke('close-devtools');
+                  dispatch(setDevtoolsClose());
                 }}
                 disableHoverEffects
               >

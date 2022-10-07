@@ -20,12 +20,14 @@ export interface DevtoolsState {
   };
   isOpen: boolean;
   dockPosition: DockPosition;
+  webViewId: number;
 }
 
 const initialState: DevtoolsState = {
   bounds: defaultBounds,
   isOpen: false,
-  dockPosition: DOCK_POSITION.RIGHT,
+  dockPosition: DOCK_POSITION.UNDOCKED,
+  webViewId: -1,
 };
 
 export const devtoolsSlice = createSlice({
@@ -35,8 +37,16 @@ export const devtoolsSlice = createSlice({
     setBounds: (state, action: PayloadAction<DevtoolsState['bounds']>) => {
       state.bounds = action.payload;
     },
-    setIsOpen: (state, action: PayloadAction<boolean>) => {
-      state.isOpen = action.payload;
+    setDevtoolsOpen: (state, action: PayloadAction<number>) => {
+      if (state.dockPosition === DOCK_POSITION.UNDOCKED) {
+        return;
+      }
+      state.isOpen = true;
+      state.webViewId = action.payload;
+    },
+    setDevtoolsClose: (state) => {
+      state.isOpen = false;
+      state.webViewId = -1;
     },
     setDockPosition: (state, action: PayloadAction<DockPosition>) => {
       state.dockPosition = action.payload;
@@ -45,9 +55,13 @@ export const devtoolsSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setBounds, setIsOpen, setDockPosition } = devtoolsSlice.actions;
+export const { setBounds, setDevtoolsOpen, setDevtoolsClose, setDockPosition } =
+  devtoolsSlice.actions;
 
 export const selectIsDevtoolsOpen = (state: RootState) => state.devtools.isOpen;
+
+export const selectDevtoolsWebviewId = (state: RootState) =>
+  state.devtools.webViewId;
 
 export const selectDockPosition = (state: RootState) =>
   state.devtools.dockPosition;

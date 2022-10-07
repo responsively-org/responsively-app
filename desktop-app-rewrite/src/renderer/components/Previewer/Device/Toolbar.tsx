@@ -7,8 +7,12 @@ import { Device } from 'common/deviceList';
 import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
-import { setIsOpen } from 'renderer/store/features/devtools';
-import { useDispatch } from 'react-redux';
+import {
+  selectDockPosition,
+  setDevtoolsOpen,
+} from 'renderer/store/features/devtools';
+import { useDispatch, useSelector } from 'react-redux';
+import { OpenDevtoolsArgs, OpenDevtoolsResult } from 'main/devtools';
 
 interface Props {
   webview: Electron.WebviewTag | null;
@@ -18,6 +22,7 @@ interface Props {
 
 const Toolbar = ({ webview, device, setScreenshotInProgress }: Props) => {
   const dispatch = useDispatch();
+  const dockPosition = useSelector(selectDockPosition);
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
@@ -49,10 +54,14 @@ const Toolbar = ({ webview, device, setScreenshotInProgress }: Props) => {
     if (webview == null) {
       return;
     }
-    await window.electron.ipcRenderer.invoke('open-devtools', {
+    await window.electron.ipcRenderer.invoke<
+      OpenDevtoolsArgs,
+      OpenDevtoolsResult
+    >('open-devtools', {
       webviewId: webview.getWebContentsId(),
+      dockPosition,
     });
-    dispatch(setIsOpen(true));
+    dispatch(setDevtoolsOpen(webview.getWebContentsId()));
   };
 
   const quickScreenshot = async () => {

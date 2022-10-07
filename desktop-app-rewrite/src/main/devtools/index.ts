@@ -1,28 +1,50 @@
 import { BrowserView, BrowserWindow, ipcMain, webContents } from 'electron';
+import {
+  DockPosition,
+  DOCK_POSITION,
+} from '../../renderer/store/features/devtools';
 
 let devtoolsView: BrowserView | undefined;
 let webViewContents: Electron.WebContents;
 
-export const initDevtoolsHandlers = (window: BrowserWindow | null) => {
-  ipcMain.handle('open-devtools', async (event, arg) => {
-    const { webviewId } = arg;
-    if (window == null) {
-      return;
-    }
-    const windowBounds = window.getBounds();
-    webViewContents = webContents.fromId(webviewId);
-    devtoolsView = new BrowserView();
-    window.setBrowserView(devtoolsView);
-    const height = 400;
-    devtoolsView.setBounds({
-      x: 0,
-      y: windowBounds.height - height,
-      width: windowBounds.width,
-      height,
-    });
-    webViewContents.setDevToolsWebContents(devtoolsView.webContents);
-    webViewContents.openDevTools();
-    devtoolsView.webContents
+export interface OpenDevtoolsArgs {
+  webviewId: number;
+  dockPosition: DockPosition;
+  bounds?: Electron.Rectangle;
+}
+
+export interface OpenDevtoolsResult {
+  status: boolean;
+}
+
+export const initDevtoolsHandlers = (mainWindow: BrowserWindow | null) => {
+  ipcMain.handle(
+    'open-devtools',
+    async (event, arg: OpenDevtoolsArgs): Promise<OpenDevtoolsResult> => {
+      console.log('open-devtools', arg);
+      const { webviewId, dockPosition } = arg;
+      if (mainWindow == null) {
+        return { status: false };
+      }
+      webViewContents = webContents.fromId(webviewId);
+      if (dockPosition === DOCK_POSITION.UNDOCKED) {
+        console.log('Opening undocked devtools');
+        webViewContents.openDevTools({ mode: 'detach' });
+        return { status: true };
+      }
+      devtoolsView = new BrowserView();
+      mainWindow.setBrowserView(devtoolsView);
+      devtoolsView.setBounds({
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      });
+      webViewContents.setDevToolsWebContents(devtoolsView.webContents);
+      webViewContents.openDevTools();
+
+      /*
+      devtoolsView.webContents
       .executeJavaScript(
         `
           (async function () {
@@ -44,9 +66,11 @@ export const initDevtoolsHandlers = (window: BrowserWindow | null) => {
       .catch((err) => {
         console.log('error', err);
       });
+      */
 
-    return { test: true };
-  });
+      return { status: true };
+    }
+  );
 
   ipcMain.handle('resize-devtools', async (event, arg) => {
     if (devtoolsView == null) {
@@ -73,7 +97,8 @@ export const initDevtoolsHandlers = (window: BrowserWindow | null) => {
     if (devtoolsView == null) {
       return;
     }
-    window?.removeBrowserView(devtoolsView);
+    mainWindow?.removeBrowserView(devtoolsView);
+    (devtoolsView.webContents as any).destroy();
     devtoolsView = undefined;
   });
 };

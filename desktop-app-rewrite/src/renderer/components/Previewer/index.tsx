@@ -28,7 +28,9 @@ const Previewer = () => {
           );
         })}
       </div>
-      {isDevtoolsOpen ? <DevtoolsResizer /> : null}
+      {isDevtoolsOpen && dockPosition !== DOCK_POSITION.UNDOCKED ? (
+        <DevtoolsResizer />
+      ) : null}
     </div>
   );
 };
