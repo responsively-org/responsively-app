@@ -1,37 +1,27 @@
 {
-  "description": "A foundation for scalable desktop apps",
+  "name": "Responsively-App",
+  "productName": "ResponsivelyApp",
+  "version": "1.0.0-beta.0",
+  "description": "A developer-friendly browser for developing responsive web apps",
   "keywords": [
-    "electron",
-    "boilerplate",
-    "react",
-    "typescript",
-    "ts",
-    "sass",
-    "webpack",
-    "hot",
-    "reload"
+    "developer-tools",
+    "devtools",
+    "browser",
+    "web-dev"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
+  "homepage": "https://responsively.app",
   "bugs": {
-    "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
+    "url": "https://github.com/responsively-org/responsively-app/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
+    "url": "https://github.com/responsively-org/responsively-app.git"
+  },
+  "author": {
+    "name": "Responsively",
+    "email": "p.manoj.vivek@gmail.com"
   },
   "license": "MIT",
-  "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
-  },
-  "contributors": [
-    {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    }
-  ],
   "main": "./src/main/main.ts",
   "scripts": {
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
@@ -211,8 +201,8 @@
     "webpack-merge": "^5.8.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "ResponsivelyApp",
+    "appId": "app.responsively",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -269,13 +259,11 @@
       "./assets/**"
     ],
     "publish": {
-      "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "provider": "github"
     }
   },
   "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
+    "url": "https://opencollective.com/responsively"
   },
   "devEngines": {
     "node": ">=14.x",

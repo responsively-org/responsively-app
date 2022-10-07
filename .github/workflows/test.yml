@@ -1,0 +1,38 @@
+name: Test
+
+on: [push, pull_request]
+
+defaults:
+  run:
+    working-directory: ./desktop-app-rewrite
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Install Node.js and NPM
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: ${{ !env.ACT && 'npm' || '' }} # Disable cache for nektos/act
+
+      - name: yarn install
+        run: |
+          yarn
+
+      - name: yarn test
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          yarn run package
+          yarn run lint
+          yarn exec tsc
+          yarn test
