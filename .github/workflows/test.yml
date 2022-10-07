@@ -22,6 +22,7 @@ jobs:
         with:
           node-version: 16
           cache: ${{ !env.ACT && 'npm' || '' }} # Disable cache for nektos/act
+          cache-dependency-path: ./desktop-app-rewrite/yarn.lock
 
       - name: yarn install
         run: |
