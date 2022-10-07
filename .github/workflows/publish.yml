@@ -5,14 +5,12 @@ on:
     branches:
       - main
 
-defaults:
-  run:
-    working-directory: ./desktop-app-rewrite
-
 jobs:
   publish:
-
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ./desktop-app-rewrite
 
     strategy:
       matrix:

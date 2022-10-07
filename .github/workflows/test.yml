@@ -2,13 +2,12 @@ name: Test
 
 on: [push, pull_request]
 
-defaults:
-  run:
-    working-directory: ./desktop-app-rewrite
-
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ./desktop-app-rewrite
 
     strategy:
       matrix:
