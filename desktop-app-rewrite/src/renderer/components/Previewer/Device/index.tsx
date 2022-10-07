@@ -79,6 +79,7 @@ const Device = ({ isPrimary, device }: Props) => {
     });
 
     webview.addEventListener('crashed', () => {
+      // eslint-disable-next-line no-console
       console.error('Web view crashed');
     });
 
@@ -90,7 +91,7 @@ const Device = ({ isPrimary, device }: Props) => {
 
   return (
     <div
-      className="h-fit overflow-hidden"
+      className="h-fit flex-shrink-0 overflow-hidden"
       style={{ height: scaledHeight, width: scaledWidth }}
     >
       <div className="flex justify-between">

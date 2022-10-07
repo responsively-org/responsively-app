@@ -42,6 +42,7 @@
     "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
     "prepare": "cd .. && husky install desktop-app-rewrite/.husky && chmod a+x desktop-app-rewrite/.husky/pre-commit",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
+    "dev": "yarn start",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
     "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only .",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
