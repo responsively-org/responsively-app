@@ -11,7 +11,7 @@ const Devtools = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className="flex flex-row items-center justify-start p-1 px-4">
+    <div className="flex flex-row items-center justify-start px-4">
       <span className="w-1/2">Dock Devtools</span>
       <div className="flex items-center gap-2 border-l px-4 dark:border-slate-400">
         <Toggle
