@@ -1,8 +1,8 @@
 import BrowserSync, { BrowserSyncInstance } from 'browser-sync';
 
-export const BROWSER_SYNC_PORT: number = 12719;
-export const BROWSER_SYNC_HOST: string = `localhost:${BROWSER_SYNC_PORT}`;
-export const BROWSER_SYNC_URL: string = `https://${BROWSER_SYNC_HOST}/browser-sync/browser-sync-client.js?v=2.27.10`;
+export const BROWSER_SYNC_PORT = 12719;
+export const BROWSER_SYNC_HOST = `localhost:${BROWSER_SYNC_PORT}`;
+export const BROWSER_SYNC_URL = `https://${BROWSER_SYNC_HOST}/browser-sync/browser-sync-client.js?v=2.27.10`;
 
 const browserSyncEmbed: BrowserSyncInstance = BrowserSync.create('embed');
 
@@ -27,7 +27,7 @@ export async function initInstance(): Promise<BrowserSyncInstance> {
         if (err) {
           return reject(err);
         }
-        resolve(bs);
+        return resolve(bs);
       }
     );
   });

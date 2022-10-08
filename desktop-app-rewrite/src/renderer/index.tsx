@@ -10,7 +10,13 @@ window.electron.ipcRenderer.once('ipc-example', (arg) => {
   console.log(arg);
 });
 window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);
-window.electron.ipcRenderer.invoke('app-meta', []).then((arg: any) => {
-  window.responsively = { webviewPreloadPath: arg.webviewPreloadPath };
-  root.render(<App />);
-});
+window.electron.ipcRenderer
+  .invoke('app-meta', [])
+  .then((arg: any) => {
+    window.responsively = { webviewPreloadPath: arg.webviewPreloadPath };
+    return root.render(<App />);
+  })
+  .catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error(err);
+  });
