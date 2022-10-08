@@ -1,71 +1,53 @@
 import Bluebird from 'bluebird';
 import PubSub from '.';
 
-async function testBasicPubSub() {
-  const pubsub = new PubSub();
-  let invokedTest = false;
-  pubsub.subscribe('test', () => {
-    invokedTest = true;
-  });
-  await pubsub.publish('test');
-
-  console.assert(invokedTest, 'PubSub should invoke subscribed callback');
-}
-
-const testAsyncReturnValue = async () => {
-  const pubsub = new PubSub();
-  pubsub.subscribe('test', async () => {
-    await Bluebird.delay(1000);
-    return 'handler1';
-  });
-  pubsub.subscribe('test', async () => {
-    await Bluebird.delay(2000);
-    return 'handler2';
+describe('PubSub', () => {
+  it('should invoke subscribed callback', async () => {
+    const pubsub = new PubSub();
+    let invokedTest = false;
+    pubsub.subscribe('test', () => {
+      invokedTest = true;
+    });
+    await pubsub.publish('test');
+    expect(invokedTest).toBe(true);
   });
 
-  const results = await pubsub.publish('test');
-  console.assert(results.length === 2, 'PubSub should return array of results');
-  console.assert(
-    results[0].result === 'handler1',
-    'PubSub should return result of first handler'
-  );
-  console.assert(
-    results[1].result === 'handler2',
-    'PubSub should return result of second handler'
-  );
-};
+  it('should handler async handlers', async () => {
+    const pubsub = new PubSub();
+    pubsub.subscribe('test', async () => {
+      await Bluebird.delay(1000);
+      return 'handler1';
+    });
+    pubsub.subscribe('test', async () => {
+      await Bluebird.delay(2000);
+      return 'handler2';
+    });
 
-async function testArgsToHandler() {
-  const pubsub = new PubSub();
-  pubsub.subscribe('test', (arg: number) => {
-    return `test${arg}`;
+    const results = await pubsub.publish('test');
+    expect(results).toEqual([
+      { result: 'handler1', error: null },
+      { result: 'handler2', error: null },
+    ]);
   });
-  const results = await pubsub.publish('test', 10);
-  console.assert(results.length === 1, 'PubSub should return array of results');
-  console.assert(
-    results[0].result === 'test10',
-    'PubSub should return result of first handler'
-  );
-}
 
-async function testHandlerWithErr() {
-  const pubsub = new PubSub();
-  pubsub.subscribe('test', () => {
-    throw new Error('test');
+  it('should sends args to the handler', async () => {
+    const pubsub = new PubSub();
+    pubsub.subscribe('test', (arg: number) => {
+      return `test${arg}`;
+    });
+    const results = await pubsub.publish('test', 10);
+    expect(results).toHaveLength(1);
+    expect(results[0].result).toBe('test10');
   });
-  const results = await pubsub.publish('test');
-  console.assert(results.length === 1, 'PubSub should return array of results');
-  console.assert(results[0].result == null, 'PubSub should return null result');
-  console.assert(results[0].error != null, 'PubSub should return an error');
-}
 
-const test = async () => {
-  await testBasicPubSub();
-  await testAsyncReturnValue();
-  await testArgsToHandler();
-  await testHandlerWithErr();
-};
-
-test()
-  .then(() => console.log('Test successful'))
-  .catch((err) => console.log('Test failure: ', err));
+  it('should return error from the handler', async () => {
+    const pubsub = new PubSub();
+    pubsub.subscribe('test', () => {
+      throw new Error('test');
+    });
+    const results = await pubsub.publish('test');
+    expect(results).toHaveLength(1);
+    expect(results[0].result).toBeNull();
+    expect(results[0].error).not.toBeNull();
+  });
+});
