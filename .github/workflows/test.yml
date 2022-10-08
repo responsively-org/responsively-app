@@ -26,7 +26,7 @@ jobs:
 
       - name: yarn install
         run: |
-          yarn
+          yarn install --network-timeout 120000
 
       - name: yarn test
         env:
