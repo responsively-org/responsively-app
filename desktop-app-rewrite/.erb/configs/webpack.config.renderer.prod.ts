@@ -34,6 +34,8 @@ const configuration: webpack.Configuration = {
 
   entry: [path.join(webpackPaths.srcRendererPath, 'index.tsx')],
 
+  externals: ['fsevents'],
+
   output: {
     path: webpackPaths.distRendererPath,
     publicPath: './',

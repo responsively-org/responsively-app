@@ -34,6 +34,8 @@ const configuration: webpack.Configuration = {
     preload: path.join(webpackPaths.srcMainPath, 'preload.ts'),
   },
 
+  externals: ['fsevents'],
+
   output: {
     path: webpackPaths.distMainPath,
     filename: '[name].js',
