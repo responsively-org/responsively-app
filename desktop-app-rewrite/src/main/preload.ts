@@ -35,6 +35,6 @@ contextBridge.exposeInMainWorld('electron', {
 });
 
 window.onerror = function (errorMsg, url, lineNumber) {
-  console.log(`Unhandled error: ${errorMsg}`);
+  console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
   // Code to run when an error has occurred on the page
 };

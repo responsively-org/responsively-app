@@ -47,7 +47,7 @@ ipcMain.handle('app-meta', async () => {
 ipcMain.on('electron-store-get', async (event, val) => {
   event.returnValue = store.get(val);
 });
-ipcMain.on('electron-store-set', async (event, key, val) => {
+ipcMain.on('electron-store-set', async (_, key, val) => {
   store.set(key, val);
 });
 
@@ -152,17 +152,14 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on(
-  'certificate-error',
-  (event, webContents, url, error, certificate, callback) => {
-    if (url.indexOf(BROWSER_SYNC_HOST) !== -1) {
-      event.preventDefault();
-      return callback(true);
-    }
-    console.log('certificate-error event', url, BROWSER_SYNC_HOST);
-    return callback(false);
+app.on('certificate-error', (event, _, url, __, ___, callback) => {
+  if (url.indexOf(BROWSER_SYNC_HOST) !== -1) {
+    event.preventDefault();
+    return callback(true);
   }
-);
+  console.log('certificate-error event', url, BROWSER_SYNC_HOST);
+  return callback(false);
+});
 
 app
   .whenReady()

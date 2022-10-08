@@ -22,13 +22,13 @@ const documentBodyInit = () => {
   });
 };
 
-ipcRenderer.on('context-menu-command', (e, command) => {
+ipcRenderer.on('context-menu-command', (_, command) => {
   ipcRenderer.sendToHost('context-menu-command', command);
 });
 
 const documentBodyWaitHandle = setInterval(() => {
   window.onerror = function (errorMsg, url, lineNumber) {
-    console.log(`Unhandled error: ${errorMsg}`);
+    console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
     // Code to run when an error has occurred on the page
   };
 

@@ -18,7 +18,7 @@ export interface OpenDevtoolsResult {
 export const initDevtoolsHandlers = (mainWindow: BrowserWindow | null) => {
   ipcMain.handle(
     'open-devtools',
-    async (event, arg: OpenDevtoolsArgs): Promise<OpenDevtoolsResult> => {
+    async (_, arg: OpenDevtoolsArgs): Promise<OpenDevtoolsResult> => {
       console.log('open-devtools', arg);
       const { webviewId, dockPosition } = arg;
       if (mainWindow == null) {
@@ -70,7 +70,7 @@ export const initDevtoolsHandlers = (mainWindow: BrowserWindow | null) => {
     }
   );
 
-  ipcMain.handle('resize-devtools', async (event, arg) => {
+  ipcMain.handle('resize-devtools', async (_, arg) => {
     if (devtoolsView == null) {
       return;
     }
@@ -87,7 +87,7 @@ export const initDevtoolsHandlers = (mainWindow: BrowserWindow | null) => {
     });
   });
 
-  ipcMain.handle('close-devtools', async (event, arg) => {
+  ipcMain.handle('close-devtools', async () => {
     if (webViewContents == null) {
       return;
     }
