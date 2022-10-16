@@ -1,12 +1,11 @@
 {
-  "name": "electron-react-boilerplate",
-  "version": "4.6.0",
-  "description": "A foundation for scalable desktop apps",
+  "name": "ResponsivelyApp",
+  "version": "1.0.0-alpha",
+  "description": "A developer-friendly browser for developing responsive web apps",
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "Responsively",
+    "email": "p.manoj.vivek@gmail.com"
   },
   "main": "./dist/main/main.js",
   "scripts": {
