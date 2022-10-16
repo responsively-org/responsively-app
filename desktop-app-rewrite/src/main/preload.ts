@@ -2,8 +2,6 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
 export type Channels = 'ipc-example' | 'app-meta';
 
-console.log('Preload main');
-
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
     sendMessage(channel: Channels, args: unknown[]) {
@@ -22,6 +20,12 @@ contextBridge.exposeInMainWorld('electron', {
     invoke(channel: Channels, ...args: unknown[]) {
       return ipcRenderer.invoke(channel, ...args);
     },
+    removeListener(channel: Channels, listener: (...args: unknown[]) => void) {
+      ipcRenderer.removeListener(channel, listener);
+    },
+    removeAllListeners(channel: Channels) {
+      ipcRenderer.removeAllListeners(channel);
+    },
   },
   store: {
     get(val: any) {
@@ -35,6 +39,7 @@ contextBridge.exposeInMainWorld('electron', {
 });
 
 window.onerror = function (errorMsg, url, lineNumber) {
+  // eslint-disable-next-line no-console
   console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
   // Code to run when an error has occurred on the page
 };

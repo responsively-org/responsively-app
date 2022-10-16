@@ -1,14 +1,30 @@
 import { Device as IDevice } from 'common/deviceList';
+import {
+  InspectElementArgs,
+  OpenDevtoolsArgs,
+  OpenDevtoolsResult,
+  ToggleInspectorArgs,
+  ToggleInspectorResult,
+} from 'main/devtools';
 import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Spinner from 'renderer/components/Spinner';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import {
+  selectDevtoolsWebviewId,
+  selectDockPosition,
+  selectIsDevtoolsOpen,
+  setDevtoolsClose,
+  setDevtoolsOpen,
+} from 'renderer/store/features/devtools';
+import {
   selectAddress,
+  selectIsInspecting,
   selectRotate,
   selectZoomFactor,
   setAddress,
+  setIsInspecting,
 } from 'renderer/store/features/renderer';
 import { NAVIGATION_EVENTS } from '../../AddressBar/NavigationControls';
 import Toolbar from './Toolbar';
@@ -32,6 +48,11 @@ const Device = ({ isPrimary, device }: Props) => {
     useState<boolean>(false);
   const dispatch = useDispatch();
   const zoomfactor = useSelector(selectZoomFactor);
+  const isInspecting = useSelector(selectIsInspecting);
+  const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
+  const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
+
+  const dockPosition = useSelector(selectDockPosition);
   const ref = useRef<Electron.WebviewTag>(null);
 
   const registerNavigationHandlers = useCallback(() => {
@@ -54,6 +75,25 @@ const Device = ({ isPrimary, device }: Props) => {
       });
     }
   }, [isPrimary]);
+
+  const openDevTools = useCallback(async () => {
+    if (!ref.current) {
+      return;
+    }
+    const webview = ref.current as Electron.WebviewTag;
+
+    if (webview == null) {
+      return;
+    }
+    await window.electron.ipcRenderer.invoke<
+      OpenDevtoolsArgs,
+      OpenDevtoolsResult
+    >('open-devtools', {
+      webviewId: webview.getWebContentsId(),
+      dockPosition,
+    });
+    dispatch(setDevtoolsOpen(webview.getWebContentsId()));
+  }, [dispatch, dockPosition]);
 
   useEffect(() => {
     if (!ref.current) {
@@ -86,6 +126,71 @@ const Device = ({ isPrimary, device }: Props) => {
     registerNavigationHandlers();
   }, [ref, dispatch, registerNavigationHandlers]);
 
+  useEffect(() => {
+    if (!ref.current) {
+      return undefined;
+    }
+    const webview = ref.current as Electron.WebviewTag;
+    const inspectElementHandler = async (_args: unknown) => {
+      const args: InspectElementArgs = _args as InspectElementArgs;
+      if (webview.getWebContentsId() !== args.webviewId) {
+        return;
+      }
+      dispatch(setIsInspecting(false));
+      const { x: webViewX, y: webViewY } = webview.getBoundingClientRect();
+      const {
+        coords: { x: deviceX, y: deviceY },
+      } = args;
+      if (devtoolsOpenForWebviewId !== webview.getWebContentsId()) {
+        if (isDevtoolsOpen) {
+          dispatch(setDevtoolsClose());
+          await window.electron.ipcRenderer.invoke('close-devtools');
+        }
+        await openDevTools();
+      }
+      webview.inspectElement(
+        Math.round(webViewX + deviceX * zoomfactor),
+        Math.round(webViewY + deviceY * zoomfactor)
+      );
+    };
+
+    window.electron.ipcRenderer.on('inspect-element', inspectElementHandler);
+
+    return () => {
+      try {
+        window.electron.ipcRenderer.removeAllListeners('inspect-element');
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Error while removing ipc listener', e);
+      }
+    };
+  }, [
+    ref,
+    dispatch,
+    isDevtoolsOpen,
+    devtoolsOpenForWebviewId,
+    openDevTools,
+    zoomfactor,
+  ]);
+
+  useEffect(() => {
+    if (!ref.current || isInspecting === undefined) {
+      return;
+    }
+    const webview = ref.current as Electron.WebviewTag;
+    (async () => {
+      await window.electron.ipcRenderer.invoke<
+        ToggleInspectorArgs,
+        ToggleInspectorResult
+      >(
+        isInspecting ? 'enable-inspector-overlay' : 'disable-inspector-overlay',
+        {
+          webviewId: webview.getWebContentsId(),
+        }
+      );
+    })();
+  }, [isInspecting]);
+
   const scaledHeight = height * zoomfactor;
   const scaledWidth = width * zoomfactor;
 
@@ -107,6 +212,7 @@ const Device = ({ isPrimary, device }: Props) => {
         webview={ref.current}
         device={device}
         setScreenshotInProgress={setScreenshotInProgess}
+        openDevTools={openDevTools}
       />
       <div
         style={{ height: scaledHeight, width: scaledWidth }}

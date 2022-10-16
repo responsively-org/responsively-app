@@ -12,6 +12,10 @@ import {
   setDockPosition,
   setDevtoolsClose,
 } from 'renderer/store/features/devtools';
+import {
+  selectIsInspecting,
+  setIsInspecting,
+} from 'renderer/store/features/renderer';
 
 type SizeValue = number | string;
 
@@ -49,6 +53,8 @@ const DevtoolsResizer = () => {
   const dispatch = useDispatch();
   const dockPosition = useSelector(selectDockPosition);
   const webviewId = useSelector(selectDevtoolsWebviewId);
+  const isInspecting = useSelector(selectIsInspecting);
+
   let config = BottomDockConfig;
   if (dockPosition === DOCK_POSITION.RIGHT) {
     config = RightDockConfig;
@@ -111,11 +117,9 @@ const DevtoolsResizer = () => {
           <div className="flex justify-between border-b-[1px]">
             <div>
               <Button
-                onClick={() => {
-                  // console.log('Inspect element');
-                }}
+                onClick={() => dispatch(setIsInspecting(!isInspecting))}
+                isActive={isInspecting}
                 disableHoverEffects
-                className="hidden"
               >
                 <Icon icon="lucide:inspect" />
               </Button>

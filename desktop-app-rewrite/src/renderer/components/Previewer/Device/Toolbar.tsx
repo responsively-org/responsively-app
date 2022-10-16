@@ -7,22 +7,20 @@ import { Device } from 'common/deviceList';
 import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
-import {
-  selectDockPosition,
-  setDevtoolsOpen,
-} from 'renderer/store/features/devtools';
-import { useDispatch, useSelector } from 'react-redux';
-import { OpenDevtoolsArgs, OpenDevtoolsResult } from 'main/devtools';
 
 interface Props {
   webview: Electron.WebviewTag | null;
   device: Device;
   setScreenshotInProgress: (value: boolean) => void;
+  openDevTools: () => void;
 }
 
-const Toolbar = ({ webview, device, setScreenshotInProgress }: Props) => {
-  const dispatch = useDispatch();
-  const dockPosition = useSelector(selectDockPosition);
+const Toolbar = ({
+  webview,
+  device,
+  setScreenshotInProgress,
+  openDevTools,
+}: Props) => {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
@@ -46,22 +44,9 @@ const Toolbar = ({ webview, device, setScreenshotInProgress }: Props) => {
       );
       setEventMirroringOff(!eventMirroringOff);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error while toggleing event mirroring', error);
     }
-  };
-
-  const openDevTools = async () => {
-    if (webview == null) {
-      return;
-    }
-    await window.electron.ipcRenderer.invoke<
-      OpenDevtoolsArgs,
-      OpenDevtoolsResult
-    >('open-devtools', {
-      webviewId: webview.getWebContentsId(),
-      dockPosition,
-    });
-    dispatch(setDevtoolsOpen(webview.getWebContentsId()));
   };
 
   const quickScreenshot = async () => {
@@ -79,6 +64,7 @@ const Toolbar = ({ webview, device, setScreenshotInProgress }: Props) => {
       });
       playScreenshotDone();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error while taking quick screenshot', error);
     }
     setScreenshotLoading(false);
@@ -118,6 +104,7 @@ const Toolbar = ({ webview, device, setScreenshotInProgress }: Props) => {
       setScreenshotInProgress(false);
       playScreenshotDone();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error while taking full screenshot', error);
     }
     setFullScreenshotLoading(false);

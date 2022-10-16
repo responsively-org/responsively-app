@@ -2,8 +2,10 @@ import { KeyboardEventHandler, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectAddress,
+  selectIsInspecting,
   selectRotate,
   setAddress,
+  setIsInspecting,
   setRotate,
 } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
@@ -17,6 +19,7 @@ const AddressBar = () => {
   const address = useSelector(selectAddress);
 
   const rotateDevice = useSelector(selectRotate);
+  const isInspecting = useSelector(selectIsInspecting);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -71,6 +74,12 @@ const AddressBar = () => {
               : 'mdi:phone-rotate-landscape'
           }
         />
+      </Button>
+      <Button
+        onClick={() => dispatch(setIsInspecting(!isInspecting))}
+        isActive={isInspecting}
+      >
+        <Icon icon="lucide:inspect" />
       </Button>
       <Menu />
     </div>

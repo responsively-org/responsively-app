@@ -12,7 +12,7 @@ import DeviceManager from './components/DeviceManager';
 
 const Browser = () => {
   return (
-    <div className="h-full gap-2 pt-2">
+    <div className="h-full gap-2 overflow-hidden pt-2">
       <AddressBar />
       <Previewer />
     </div>
