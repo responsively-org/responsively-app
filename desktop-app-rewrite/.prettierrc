@@ -1,0 +1,16 @@
+{
+  "overrides": [
+    {
+      "files": [".prettierrc", ".babelrc", ".eslintrc", ".stylelintrc"],
+      "options": {
+        "parser": "json"
+      }
+    }
+  ],
+  "arrowParens": "avoid",
+  "singleQuote": true,
+  "bracketSpacing": false,
+  "printWidth": 100,
+  "tailwindConfig": "./tailwind.config.js",
+  "trailingComma": "es5"
+}
