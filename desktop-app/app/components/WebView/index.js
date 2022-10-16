@@ -358,7 +358,7 @@ class WebView extends Component {
       .executeJavaScript(
         `{
           var elements = document.querySelectorAll('${selector}');
-          var len = elements.length; 
+          var len = elements.length;
           if (len !== 0) {
             var idx = ((${index} % len) + len) % len;
             var el = elements[idx];

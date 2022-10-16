@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const replaceInFiles = require('replace-in-file');
 const {spawn} = require('child_process');
 const {ncp} = require('ncp');
+const https = require('https');
 
 ncp.limit = 16;
 
@@ -75,6 +76,36 @@ const execChocoPack = () =>
     });
   });
 
+const ensureInstallerFile = async () => {
+  console.log('\nEnsure installer file');
+  return new Promise((resolve, reject) => {
+    const installerPath = path.resolve(releasePath, checksumFileName);
+    if (fs.existsSync(installerPath)) {
+      console.log('Removing existing installer file');
+      fs.rmdirSync(installerPath, {recursive: true});
+    }
+
+    const url = `https://github.com/responsively-org/responsively-app/releases/download/v${version}/ResponsivelyApp-Setup-${version}.exe`;
+    console.log(`Downloading '${checksumFileName}' file from github`);
+    const file = fs.createWriteStream(installerPath);
+    https
+      .get(url, response => {
+        response.pipe(file);
+        file.on('finish', () => {
+          file.close(() => {
+            console.log('Download finished');
+            resolve();
+          });
+        });
+      })
+      .on('error', err => {
+        fs.unlink(dest);
+        console.log('Download error!');
+        reject(err.message);
+      });
+  });
+};
+
 const generateChocoPkg = async () => {
   console.log(
     `\nGenerating Chocolatey package folder for responsively v${version}`
@@ -98,6 +129,7 @@ const generateChocoPkg = async () => {
     }
     console.log('done!');
     try {
+      await ensureInstallerFile();
       const checksum = await getSha512();
       await replaceTokensInTemplates(checksum);
       await execChocoPack();
