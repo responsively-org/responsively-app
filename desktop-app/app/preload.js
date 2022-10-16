@@ -3,6 +3,8 @@ const {ipcRenderer, remote} = require('electron');
 const {Menu} = remote;
 const {MenuItem} = remote;
 
+window._bot = true;
+
 const menu = new Menu();
 let rightClickPosition = null;
 
