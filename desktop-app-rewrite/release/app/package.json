@@ -10,8 +10,10 @@
   "main": "./dist/main/main.js",
   "scripts": {
     "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
-    "postinstall": "npm run electron-rebuild && npm run link-modules",
+    "postinstall": "yarn run electron-rebuild && yarn run link-modules",
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
-  "dependencies": {}
+  "dependencies": {
+    "browser-sync": "^2.27.10"
+  }
 }

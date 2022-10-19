@@ -19,18 +19,20 @@ jobs:
 
     steps:
       - name: Checkout git repo
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Install Node and NPM
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: ${{ !env.ACT && 'npm' || '' }} # Disable cache for nektos/act
           cache-dependency-path: ./desktop-app-rewrite/yarn.lock
 
-      - name: Install dependencies
+      - name: Install and build
         run: |
-          yarn
+          npm install
+          npm run postinstall
+          npm run build
 
       - name: Publish releases
         env:
@@ -42,6 +44,4 @@ jobs:
           # This is used for uploading release assets to github
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          yarn run postinstall
-          yarn run build
           yarn exec electron-builder -- --publish always --win --mac --linux
