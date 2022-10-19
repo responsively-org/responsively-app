@@ -229,6 +229,7 @@ const Device = ({ isPrimary, device }: Props) => {
           }}
           ref={ref}
           className="origin-top-left"
+          /* eslint-disable-next-line react/no-unknown-property */
           preload={`file://${window.responsively.webviewPreloadPath}`}
           data-scale-factor={zoomfactor}
         />
