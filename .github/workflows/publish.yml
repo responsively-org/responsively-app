@@ -30,9 +30,9 @@ jobs:
 
       - name: Install and build
         run: |
-          npm install
-          npm run postinstall
-          npm run build
+          yarn install
+          yarn run postinstall
+          yarn run build
 
       - name: Publish releases
         env:

@@ -103,9 +103,6 @@
   "dependencies": {
     "@fontsource/lato": "^4.5.8",
     "@iconify/react": "^3.2.2",
-    "@material-ui/core": "^4.3.2",
-    "@material-ui/icons": "^4.2.1",
-    "@material-ui/lab": "^4.0.0-alpha.26",
     "@reduxjs/toolkit": "^1.8.3",
     "autoprefixer": "^10.4.7",
     "bluebird": "^3.7.2",
