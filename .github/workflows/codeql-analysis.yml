@@ -28,6 +28,9 @@ jobs:
       actions: read
       contents: read
       security-events: write
+    defaults:
+      run:
+        working-directory: ./desktop-app-rewrite
 
     strategy:
       fail-fast: false
