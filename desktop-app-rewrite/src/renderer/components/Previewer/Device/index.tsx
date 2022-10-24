@@ -195,10 +195,7 @@ const Device = ({ isPrimary, device }: Props) => {
   const scaledWidth = width * zoomfactor;
 
   return (
-    <div
-      className="h-fit flex-shrink-0 overflow-hidden"
-      style={{ height: scaledHeight, width: scaledWidth }}
-    >
+    <div className="h-fit flex-shrink-0 overflow-hidden">
       <div className="flex justify-between">
         <span>
           {device.name}
