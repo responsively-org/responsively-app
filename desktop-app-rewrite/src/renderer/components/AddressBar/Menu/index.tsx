@@ -10,7 +10,7 @@ const Menu = () => {
       <Button onClick={() => setIsOpen(!isOpen)} isActive={isOpen}>
         <Icon icon="carbon:overflow-menu-vertical" />
       </Button>
-      {isOpen ? <MenuFlyout /> : null}
+      {isOpen ? <MenuFlyout onClose={() => setIsOpen(false)} /> : null}
     </div>
   );
 };
