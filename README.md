@@ -47,13 +47,13 @@
 </p>
 <br>
 
-## Responsively App
+## What is Responsively App?
 >A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development. 
 <br>
 
 ![Quick Demo](https://responsively.app/assets/img/responsively-app.gif)
 
-## Features
+## Features Of the App:
 1. Mirrored User-interactions across all devices.
 2. Customizable preview layout to suit all your needs.
 3. One handy elements inspector for all devices in preview.
@@ -64,7 +64,7 @@
 Please visit the website to know more about the application - https://responsively.app
 
 
-## Download
+## How to Download Our App
 The application is available for Mac, Windows and Linux platforms. Please download it from [the releases page](https://github.com/responsively-org/responsively-app/releases)
 
 Alternatively, MacOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) <a href="https://formulae.brew.sh/cask/responsively" target="_blank"> <img src="https://badgen.net/homebrew/cask/dy/responsively" alt="Homebrew installs"></a>
