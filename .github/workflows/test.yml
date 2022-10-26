@@ -34,4 +34,5 @@ jobs:
         run: |
           yarn run package
           yarn run lint
+          yarn exec tsc
           yarn test
