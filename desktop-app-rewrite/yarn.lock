@@ -5532,7 +5532,7 @@ electron-to-chromium@^1.4.251:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.284.tgz#61046d1e4cab3a25238f6bf7413795270f125592"
   integrity sha512-M8WEXFuKXMYMVr45fo8mq0wUrrJHheiKZf6BArTKk9ZBYCKJEOU5H8cdWgDT+qCVZf7Na4lVUaZsA+h6uA9+PA==
 
-electron-updater@^5.2.1:
+electron-updater@^5.2.3:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/electron-updater/-/electron-updater-5.3.0.tgz#3ba0d20407911a2edc5a68bee45c5aa2023e9ff8"
   integrity sha512-iKEr7yQBcvnQUPnSDYGSWC9t0eF2YbZWeYYYZzYxdl+HiRejXFENjYMnYjoOm2zxyD6Cr2JTHZhp9pqxiXuCOw==
@@ -5547,10 +5547,10 @@ electron-updater@^5.2.1:
     semver "^7.3.5"
     typed-emitter "^2.1.0"
 
-electron@^21.0.1:
-  version "21.1.1"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-21.1.1.tgz#3ee427e31cccafbce45bebd32f2a8eba9e3399ca"
-  integrity sha512-EM2hvRJtiS3n54yx25Z0Qv54t3LGG+WjUHf1AOl+PKjQj+fmXnjIgVeIF9pM21kP1BTcyjrgvN6Sff0A45OB6A==
+electron@^20.0.2:
+  version "20.3.3"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-20.3.3.tgz#19dd8a02b333ad5d7bf3fa37cfd9382c28f8d5b5"
+  integrity sha512-6Cp3vMZGFEEtaIZrQ49iLqO2qogLWThlIYgH4a6dEl7xfaNQ6CjfXNBxFJRJTg7XRBFpeNtzuXkeGfNv9Kwfcg==
   dependencies:
     "@electron/get" "^1.14.1"
     "@types/node" "^16.11.26"

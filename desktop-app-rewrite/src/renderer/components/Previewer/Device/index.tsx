@@ -26,7 +26,7 @@ import {
   setAddress,
   setIsInspecting,
 } from 'renderer/store/features/renderer';
-import { NAVIGATION_EVENTS } from '../../AddressBar/NavigationControls';
+import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
 
 interface Props {

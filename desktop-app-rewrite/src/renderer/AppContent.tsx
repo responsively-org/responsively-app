@@ -1,6 +1,6 @@
 import { Provider, useSelector } from 'react-redux';
 
-import AddressBar from './components/AddressBar';
+import ToolBar from './components/ToolBar';
 import Previewer from './components/Previewer';
 import { store } from './store';
 
@@ -13,7 +13,7 @@ import DeviceManager from './components/DeviceManager';
 const Browser = () => {
   return (
     <div className="h-full gap-2 overflow-hidden pt-2">
-      <AddressBar />
+      <ToolBar />
       <Previewer />
     </div>
   );
