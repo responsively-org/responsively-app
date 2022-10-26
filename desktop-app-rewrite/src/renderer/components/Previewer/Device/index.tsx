@@ -7,9 +7,14 @@ import {
   ToggleInspectorResult,
 } from 'main/devtools';
 import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
+import {
+  DeleteStorageArgs,
+  DeleteStorageResult,
+} from 'main/webview-storage-manager';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Spinner from 'renderer/components/Spinner';
+import { ADDRESS_BAR_EVENTS } from 'renderer/components/ToolBar/AddressBar';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import {
   selectDevtoolsWebviewId,
@@ -72,6 +77,45 @@ const Device = ({ isPrimary, device }: Props) => {
         if (ref.current) {
           ref.current.goForward();
         }
+      });
+
+      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_STORAGE, async () => {
+        if (!ref.current) {
+          return;
+        }
+        const webview = ref.current as Electron.WebviewTag;
+        await window.electron.ipcRenderer.invoke<
+          DeleteStorageArgs,
+          DeleteStorageResult
+        >('delete-storage', { webContentsId: webview.getWebContentsId() });
+      });
+
+      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_COOKIES, async () => {
+        if (!ref.current) {
+          return;
+        }
+        const webview = ref.current as Electron.WebviewTag;
+        await window.electron.ipcRenderer.invoke<
+          DeleteStorageArgs,
+          DeleteStorageResult
+        >('delete-storage', {
+          webContentsId: webview.getWebContentsId(),
+          storages: ['cookies'],
+        });
+      });
+
+      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_CACHE, async () => {
+        if (!ref.current) {
+          return;
+        }
+        const webview = ref.current as Electron.WebviewTag;
+        await window.electron.ipcRenderer.invoke<
+          DeleteStorageArgs,
+          DeleteStorageResult
+        >('delete-storage', {
+          webContentsId: webview.getWebContentsId(),
+          storages: ['network-cache'],
+        });
       });
     }
   }, [isPrimary]);
@@ -199,7 +243,7 @@ const Device = ({ isPrimary, device }: Props) => {
       <div className="flex justify-between">
         <span>
           {device.name}
-          <span className="text-xs opacity-60">
+          <span className="ml-[2px] text-xs opacity-60">
             {width}x{height}
           </span>
         </span>

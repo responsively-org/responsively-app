@@ -1,10 +1,24 @@
+import { Icon } from '@iconify/react';
 import { KeyboardEventHandler, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Button from 'renderer/components/Button';
+import PubSub, { webViewPubSub } from 'renderer/lib/pubsub';
 import { selectAddress, setAddress } from 'renderer/store/features/renderer';
+
+export const ADDRESS_BAR_EVENTS = {
+  DELETE_COOKIES: 'DELETE_COOKIES',
+  DELETE_STORAGE: 'DELETE_STORAGE',
+  DELETE_CACHE: 'DELETE_CACHE',
+};
 
 const AddressBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [typedAddress, setTypedAddress] = useState<string>('');
+  const [deleteStorageLoading, setDeleteStorageLoading] =
+    useState<boolean>(false);
+  const [deleteCookiesLoading, setDeleteCookiesLoading] =
+    useState<boolean>(false);
+  const [deleteCacheLoading, setDeleteCacheLoading] = useState<boolean>(false);
   const address = useSelector(selectAddress);
   const dispatch = useDispatch();
 
@@ -31,20 +45,68 @@ const AddressBar = () => {
 
     dispatch(setAddress(newAddress));
   };
+
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key === 'Enter') {
       inputRef.current?.blur();
       dispatchAddress();
     }
   };
+
+  const deleteCookies = async () => {
+    setDeleteCookiesLoading(true);
+    await webViewPubSub.publish(ADDRESS_BAR_EVENTS.DELETE_COOKIES);
+    setDeleteCookiesLoading(false);
+  };
+
+  const deleteStorage = async () => {
+    setDeleteStorageLoading(true);
+    await webViewPubSub.publish(ADDRESS_BAR_EVENTS.DELETE_STORAGE);
+    setDeleteStorageLoading(false);
+  };
+
+  const deleteCache = async () => {
+    setDeleteCacheLoading(true);
+    await webViewPubSub.publish(ADDRESS_BAR_EVENTS.DELETE_CACHE);
+    setDeleteCacheLoading(false);
+  };
+
   return (
-    <input
-      type="text"
-      className="flex-grow rounded-full px-2 py-1 dark:bg-slate-900"
-      value={typedAddress}
-      onChange={(e) => setTypedAddress(e.target.value)}
-      onKeyDown={handleKeyDown}
-    />
+    <div className="relative w-full flex-grow">
+      <input
+        type="text"
+        className="w-full rounded-full px-2 py-1 dark:bg-slate-900"
+        value={typedAddress}
+        onChange={(e) => setTypedAddress(e.target.value)}
+        onKeyDown={handleKeyDown}
+      />
+      <div className="absolute inset-y-0 right-0 mr-2 flex items-center">
+        <Button
+          className="rounded-full"
+          onClick={deleteStorage}
+          isLoading={deleteStorageLoading}
+          title="Delete Storage"
+        >
+          <Icon icon="mdi:database-remove-outline" />
+        </Button>
+        <Button
+          className="rounded-full"
+          onClick={deleteCookies}
+          isLoading={deleteCookiesLoading}
+          title="Delete Cookies"
+        >
+          <Icon icon="mdi:cookie-remove-outline" />
+        </Button>
+        <Button
+          className="rounded-full"
+          onClick={deleteCache}
+          isLoading={deleteCacheLoading}
+          title="Clear Cache"
+        >
+          <Icon icon="mdi:wifi-remove" />
+        </Button>
+      </div>
+    </div>
   );
 };
 
