@@ -33,6 +33,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           yarn run package
-          pwd
-          ls -la
+          yarn run lint
+          yarn exec tsc
           yarn test
