@@ -32,9 +32,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-#          yarn run package
-#          yarn run lint
-#          yarn exec tsc
           pwd
           ls -la
           yarn test
