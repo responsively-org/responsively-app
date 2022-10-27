@@ -13,6 +13,7 @@ window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);
 window.electron.ipcRenderer
   .invoke('app-meta', [])
   .then((arg: any) => {
+    console.log('arg.webviewPreloadPath', arg.webviewPreloadPath);
     window.responsively = { webviewPreloadPath: arg.webviewPreloadPath };
     return root.render(<App />);
   })
