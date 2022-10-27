@@ -73,9 +73,12 @@ const AddressBar = () => {
 
   return (
     <div className="relative w-full flex-grow">
+      <div className="absolute inset-y-0 left-2 mr-2 flex items-center">
+        <Icon icon="mdi:web" className="text-gray-500" />
+      </div>
       <input
         type="text"
-        className="w-full rounded-full px-2 py-1 dark:bg-slate-900"
+        className="w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-20 dark:bg-slate-900"
         value={typedAddress}
         onChange={(e) => setTypedAddress(e.target.value)}
         onKeyDown={handleKeyDown}
