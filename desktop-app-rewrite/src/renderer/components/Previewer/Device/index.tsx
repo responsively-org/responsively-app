@@ -291,7 +291,7 @@ const Device = ({ isPrimary, device }: Props) => {
           preload={`file://${window.responsively.webviewPreloadPath}`}
           data-scale-factor={zoomfactor}
           /* eslint-disable-next-line react/no-unknown-property */
-          allowpopups={isPrimary ? true : undefined}
+          allowpopups={isPrimary ? ('true' as any) : undefined}
         />
         {screenshotInProgress ? (
           <div

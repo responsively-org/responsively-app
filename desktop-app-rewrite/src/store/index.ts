@@ -22,6 +22,19 @@ const schema = {
       },
     },
   },
+  deviceManager: {
+    type: 'object',
+    properties: {
+      activeDevices: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+        default: ['iPhone SE', 'iPhone XR', 'iPhone 12 Pro'],
+      },
+    },
+    default: {},
+  },
 };
 
 const store = new Store({ schema, watch: true });
