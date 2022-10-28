@@ -21,7 +21,7 @@ const Previewer = () => {
         'flex-row': dockPosition === DOCK_POSITION.RIGHT,
       })}
     >
-      <div className="flex gap-4 overflow-scroll p-4">
+      <div className="flex gap-4 overflow-auto p-4">
         {devices.map((device, idx) => {
           return (
             <Device key={device.name} device={device} isPrimary={idx === 0} />
