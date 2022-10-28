@@ -6,6 +6,10 @@ import {
   ToggleInspectorArgs,
   ToggleInspectorResult,
 } from 'main/devtools';
+import {
+  DisableDefaultWindowOpenHandlerArgs,
+  DisableDefaultWindowOpenHandlerResult,
+} from 'main/native-functions';
 import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
 import {
   DeleteStorageArgs,
@@ -167,8 +171,21 @@ const Device = ({ isPrimary, device }: Props) => {
       console.error('Web view crashed');
     });
 
+    if (!isPrimary) {
+      setTimeout(() => {
+        window.electron.ipcRenderer.invoke<
+          DisableDefaultWindowOpenHandlerArgs,
+          DisableDefaultWindowOpenHandlerResult
+        >('disable-default-window-open-handler', {
+          webContentsId: webview.getWebContentsId(),
+        });
+      }, 2000);
+
+      return;
+    }
+
     registerNavigationHandlers();
-  }, [ref, dispatch, registerNavigationHandlers]);
+  }, [ref, dispatch, registerNavigationHandlers, isPrimary]);
 
   useEffect(() => {
     if (!ref.current) {
@@ -273,6 +290,8 @@ const Device = ({ isPrimary, device }: Props) => {
           /* eslint-disable-next-line react/no-unknown-property */
           preload={`file://${window.responsively.webviewPreloadPath}`}
           data-scale-factor={zoomfactor}
+          /* eslint-disable-next-line react/no-unknown-property */
+          allowpopups={isPrimary ? true : undefined}
         />
         {screenshotInProgress ? (
           <div
