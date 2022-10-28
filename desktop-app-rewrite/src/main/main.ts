@@ -19,6 +19,8 @@ import store from '../store';
 import { initWebviewContextMenu } from './webview-context-menu/register';
 import { initScreenshotHandlers } from './screenshot';
 import { initDevtoolsHandlers } from './devtools';
+import { initWebviewStorageManagerHandlers } from './webview-storage-manager';
+import { initNativeFunctionHandlers } from './native-functions';
 
 export default class AppUpdater {
   constructor() {
@@ -53,6 +55,8 @@ ipcMain.on('electron-store-set', async (_, key, val) => {
 
 initWebviewContextMenu();
 initScreenshotHandlers();
+initWebviewStorageManagerHandlers();
+initNativeFunctionHandlers();
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -120,6 +124,11 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+  });
+
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    console.log('window open handler', url);
+    return { action: 'deny' };
   });
 
   mainWindow.on('closed', () => {

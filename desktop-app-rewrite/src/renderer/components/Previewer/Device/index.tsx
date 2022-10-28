@@ -6,10 +6,19 @@ import {
   ToggleInspectorArgs,
   ToggleInspectorResult,
 } from 'main/devtools';
+import {
+  DisableDefaultWindowOpenHandlerArgs,
+  DisableDefaultWindowOpenHandlerResult,
+} from 'main/native-functions';
 import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
+import {
+  DeleteStorageArgs,
+  DeleteStorageResult,
+} from 'main/webview-storage-manager';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Spinner from 'renderer/components/Spinner';
+import { ADDRESS_BAR_EVENTS } from 'renderer/components/ToolBar/AddressBar';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import {
   selectDevtoolsWebviewId,
@@ -26,7 +35,7 @@ import {
   setAddress,
   setIsInspecting,
 } from 'renderer/store/features/renderer';
-import { NAVIGATION_EVENTS } from '../../AddressBar/NavigationControls';
+import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
 
 interface Props {
@@ -72,6 +81,45 @@ const Device = ({ isPrimary, device }: Props) => {
         if (ref.current) {
           ref.current.goForward();
         }
+      });
+
+      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_STORAGE, async () => {
+        if (!ref.current) {
+          return;
+        }
+        const webview = ref.current as Electron.WebviewTag;
+        await window.electron.ipcRenderer.invoke<
+          DeleteStorageArgs,
+          DeleteStorageResult
+        >('delete-storage', { webContentsId: webview.getWebContentsId() });
+      });
+
+      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_COOKIES, async () => {
+        if (!ref.current) {
+          return;
+        }
+        const webview = ref.current as Electron.WebviewTag;
+        await window.electron.ipcRenderer.invoke<
+          DeleteStorageArgs,
+          DeleteStorageResult
+        >('delete-storage', {
+          webContentsId: webview.getWebContentsId(),
+          storages: ['cookies'],
+        });
+      });
+
+      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_CACHE, async () => {
+        if (!ref.current) {
+          return;
+        }
+        const webview = ref.current as Electron.WebviewTag;
+        await window.electron.ipcRenderer.invoke<
+          DeleteStorageArgs,
+          DeleteStorageResult
+        >('delete-storage', {
+          webContentsId: webview.getWebContentsId(),
+          storages: ['network-cache'],
+        });
       });
     }
   }, [isPrimary]);
@@ -123,8 +171,21 @@ const Device = ({ isPrimary, device }: Props) => {
       console.error('Web view crashed');
     });
 
+    if (!isPrimary) {
+      setTimeout(() => {
+        window.electron.ipcRenderer.invoke<
+          DisableDefaultWindowOpenHandlerArgs,
+          DisableDefaultWindowOpenHandlerResult
+        >('disable-default-window-open-handler', {
+          webContentsId: webview.getWebContentsId(),
+        });
+      }, 2000);
+
+      return;
+    }
+
     registerNavigationHandlers();
-  }, [ref, dispatch, registerNavigationHandlers]);
+  }, [ref, dispatch, registerNavigationHandlers, isPrimary]);
 
   useEffect(() => {
     if (!ref.current) {
@@ -199,7 +260,7 @@ const Device = ({ isPrimary, device }: Props) => {
       <div className="flex justify-between">
         <span>
           {device.name}
-          <span className="text-xs opacity-60">
+          <span className="ml-[2px] text-xs opacity-60">
             {width}x{height}
           </span>
         </span>
@@ -229,6 +290,8 @@ const Device = ({ isPrimary, device }: Props) => {
           /* eslint-disable-next-line react/no-unknown-property */
           preload={`file://${window.responsively.webviewPreloadPath}`}
           data-scale-factor={zoomfactor}
+          /* eslint-disable-next-line react/no-unknown-property */
+          allowpopups={isPrimary ? ('true' as any) : undefined}
         />
         {screenshotInProgress ? (
           <div
