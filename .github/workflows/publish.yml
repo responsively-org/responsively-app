@@ -35,6 +35,7 @@ jobs:
         run: |
           cd release/app
           yarn version --preid alpha --prerelease
+          git push
 
       - name: Publish releases
         env:
