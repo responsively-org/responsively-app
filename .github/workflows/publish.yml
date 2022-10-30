@@ -1,9 +1,6 @@
 name: Publish
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -33,6 +30,12 @@ jobs:
           yarn install
           yarn run postinstall
           yarn run build
+
+      - name: Bump version
+        run: |
+          cd release/app
+          yarn version --preid alpha --prerelease
+          git push
 
       - name: Publish releases
         env:
