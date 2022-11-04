@@ -23,6 +23,7 @@ const ToolBar = () => {
       <Button
         onClick={() => dispatch(setRotate(!rotateDevice))}
         isActive={rotateDevice}
+        title="Rotate Devices"
       >
         <Icon
           icon={
@@ -35,6 +36,7 @@ const ToolBar = () => {
       <Button
         onClick={() => dispatch(setIsInspecting(!isInspecting))}
         isActive={isInspecting}
+        title="Inspect Elements"
       >
         <Icon icon="lucide:inspect" />
       </Button>

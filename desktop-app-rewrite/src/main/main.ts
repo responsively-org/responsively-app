@@ -112,6 +112,8 @@ const createWindow = async () => {
   });
   initDevtoolsHandlers(mainWindow);
 
+  console.log(resolveHtmlPath('index.html'));
+
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', async () => {

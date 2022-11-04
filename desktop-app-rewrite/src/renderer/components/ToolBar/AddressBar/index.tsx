@@ -78,7 +78,7 @@ const AddressBar = () => {
       </div>
       <input
         type="text"
-        className="w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-20 dark:bg-slate-900"
+        className="address-input w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-20 dark:bg-slate-900"
         value={typedAddress}
         onChange={(e) => setTypedAddress(e.target.value)}
         onKeyDown={handleKeyDown}

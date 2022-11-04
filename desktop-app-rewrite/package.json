@@ -29,7 +29,7 @@
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
     "postinstall": "yarn rimraf node_modules/browser-sync/dist/**/*.map && yarn replace '\"network-throttle\".*' '' node_modules/browser-sync-ui/lib/UI.js && ts-node .erb/scripts/check-native-dep.js && replace-in-file '/// <reference types=\"howler\" />' \"import { Howl } from 'howler';\" node_modules/use-sound/dist/types.d.ts  && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
-    "package": "ts-node ./.erb/scripts/clean.js dist && yarn run build && electron-builder build --publish never",
+    "package": "ts-node ./.erb/scripts/clean.js dist && DEBUG_PROD=true yarn run build && electron-builder build --publish never",
     "prepare": "cd .. && husky install desktop-app-rewrite/.husky && chmod a+x desktop-app-rewrite/.husky/pre-commit",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "dev": "yarn start",
@@ -38,7 +38,11 @@
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:preloadWebview": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload-webview.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "test": "jest"
+    "test": "jest",
+    "e2e-test": "wdio run wdio.conf.ts",
+    "build-test": "concurrently \"yarn run build:main\" \"yarn run build:renderer\" && cp -R ./.erb/* release/app/.erb/",
+    "pw-test": "playwright test ./test",
+    "pw-test-debug": "PWDEBUG=console playwright test ./test --debug"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -114,6 +118,7 @@
     "electron-updater": "^5.2.3",
     "emitter": "^0.0.5",
     "os": "^0.1.2",
+    "path": "^0.12.7",
     "postcss": "^8.4.14",
     "re-resizable": "^6.9.9",
     "react": "^18.2.0",
@@ -130,6 +135,7 @@
     "use-sound": "^4.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.27.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@svgr/webpack": "^6.3.1",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
@@ -148,6 +154,10 @@
     "@types/webpack-bundle-analyzer": "^4.4.2",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
+    "@wdio/cli": "^7.25.2",
+    "@wdio/local-runner": "^7.25.2",
+    "@wdio/mocha-framework": "^7.25.2",
+    "@wdio/spec-reporter": "^7.25.1",
     "browserslist-config-erb": "^0.0.3",
     "chalk": "^4.1.2",
     "concurrently": "^7.3.0",
@@ -158,6 +168,7 @@
     "detect-port": "^1.3.0",
     "electron": "^21.0.1",
     "electron-builder": "^23.3.3",
+    "electron-chromedriver": "21",
     "electron-devtools-installer": "^3.2.0",
     "electron-notarize": "^1.2.1",
     "electron-rebuild": "^3.2.9",
@@ -182,6 +193,7 @@
     "jest-environment-jsdom": "^28.1.3",
     "lint-staged": "^13.0.3",
     "mini-css-extract-plugin": "^2.6.1",
+    "playwright": "^1.27.1",
     "postcss-loader": "^7.0.0",
     "prettier": "^2.7.1",
     "prettier-plugin-tailwindcss": "^0.1.12",
@@ -198,6 +210,8 @@
     "ts-node": "^10.9.1",
     "typescript": "^4.7.4",
     "url-loader": "^4.1.1",
+    "wdio-electron-service": "^3.5.0",
+    "wdio-wait-for": "^3.0.0",
     "webpack": "^5.74.0",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.10.0",
