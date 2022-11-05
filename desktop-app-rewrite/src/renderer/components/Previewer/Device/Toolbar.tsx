@@ -130,18 +130,18 @@ const Toolbar = ({
         </div>
       </Button>
       <Button
-        onClick={toggleEventMirroring}
-        isActive={eventMirroringOff}
-        title="Disable Event Mirroring"
-      >
-        <Icon icon="fluent:plug-disconnected-24-regular" />
-      </Button>
-      <Button
         onClick={fullScreenshot}
         isLoading={fullScreenshotLoading}
         title="Full Page Screenshot"
       >
         <Icon icon="ic:outline-photo-camera" />
+      </Button>
+      <Button
+        onClick={toggleEventMirroring}
+        isActive={eventMirroringOff}
+        title="Disable Event Mirroring"
+      >
+        <Icon icon="fluent:plug-disconnected-24-regular" />
       </Button>
       <Button onClick={openDevTools} title="Open Devtools">
         <Icon icon="ic:round-code" />

@@ -43,6 +43,11 @@ interface Props {
   isPrimary: boolean;
 }
 
+interface ErrorState {
+  code: number;
+  description: string;
+}
+
 const Device = ({ isPrimary, device }: Props) => {
   const rotateDevice = useSelector(selectRotate);
   let { height, width } = device;
@@ -53,6 +58,7 @@ const Device = ({ isPrimary, device }: Props) => {
   }
   const address = useSelector(selectAddress);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<ErrorState | null>(null);
   const [screenshotInProgress, setScreenshotInProgess] =
     useState<boolean>(false);
   const dispatch = useDispatch();
@@ -161,10 +167,25 @@ const Device = ({ isPrimary, device }: Props) => {
 
     webview.addEventListener('did-start-loading', () => {
       setLoading(true);
+      setError(null);
     });
     webview.addEventListener('did-stop-loading', () => {
       setLoading(false);
     });
+
+    webview.addEventListener(
+      'did-fail-load',
+      ({ errorCode, errorDescription }) => {
+        if (errorCode === -3) {
+          // Aborted error, can be ignored
+          return;
+        }
+        setError({
+          code: errorCode,
+          description: errorDescription,
+        });
+      }
+    );
 
     webview.addEventListener('crashed', () => {
       // eslint-disable-next-line no-console
@@ -299,6 +320,17 @@ const Device = ({ isPrimary, device }: Props) => {
             style={{ height: scaledHeight, width: scaledWidth }}
           >
             <Spinner spinnerHeight={30} />
+          </div>
+        ) : null}
+        {error != null ? (
+          <div
+            className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
+            style={{ height: scaledHeight, width: scaledWidth }}
+          >
+            <div className="text-center text-sm text-white">
+              <div className="text-base font-bold">ERROR: {error.code}</div>
+              <div className="text-sm">{error.description}</div>
+            </div>
           </div>
         ) : null}
       </div>
