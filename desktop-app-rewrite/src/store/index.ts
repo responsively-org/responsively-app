@@ -35,6 +35,15 @@ const schema = {
     },
     default: {},
   },
+  userPreferences: {
+    type: 'object',
+    properties: {
+      allowInsecureSSLConnections: {
+        type: 'boolean',
+        default: false,
+      },
+    },
+  },
 };
 
 const store = new Store({ schema, watch: true });

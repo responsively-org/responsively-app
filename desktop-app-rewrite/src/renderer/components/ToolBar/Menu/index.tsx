@@ -7,7 +7,10 @@ const Menu = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <div className="relative flex items-center">
-      <Button onClick={() => setIsOpen(!isOpen)} isActive={isOpen}>
+      <Button
+        onClick={() => (!isOpen ? setIsOpen(true) : null)}
+        isActive={isOpen}
+      >
         <Icon icon="carbon:overflow-menu-vertical" />
       </Button>
       {isOpen ? <MenuFlyout onClose={() => setIsOpen(false)} /> : null}
