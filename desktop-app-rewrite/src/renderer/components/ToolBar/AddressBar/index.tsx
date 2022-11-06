@@ -1,8 +1,9 @@
 import { Icon } from '@iconify/react';
+import { PermissionRequestArg } from 'main/web-permissions/PermissionsManager';
 import { KeyboardEventHandler, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
-import PubSub, { webViewPubSub } from 'renderer/lib/pubsub';
+import { webViewPubSub } from 'renderer/lib/pubsub';
 import { selectAddress, setAddress } from 'renderer/store/features/renderer';
 
 export const ADDRESS_BAR_EVENTS = {
@@ -19,6 +20,8 @@ const AddressBar = () => {
   const [deleteCookiesLoading, setDeleteCookiesLoading] =
     useState<boolean>(false);
   const [deleteCacheLoading, setDeleteCacheLoading] = useState<boolean>(false);
+  const [permissionRequest, setPermissionRequest] =
+    useState<PermissionRequestArg | null>(null);
   const address = useSelector(selectAddress);
   const dispatch = useDispatch();
 
@@ -29,6 +32,29 @@ const AddressBar = () => {
     setTypedAddress(address);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on<PermissionRequestArg>(
+      'permission-request',
+      (args) => {
+        setPermissionRequest(args);
+      }
+    );
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners('permission-request');
+    };
+  }, []);
+
+  const permissionReqClickHandler = (allow: boolean) => {
+    if (!permissionRequest) {
+      return;
+    }
+    window.electron.ipcRenderer.invoke('permission-response', {
+      permissionRequest,
+      allow,
+    });
+    setPermissionRequest(null);
+  };
 
   const dispatchAddress = () => {
     let newAddress = typedAddress;
@@ -73,10 +99,42 @@ const AddressBar = () => {
 
   return (
     <div className="relative w-full flex-grow">
-      <div className="absolute inset-y-0 left-2 mr-2 flex items-center">
+      <div className="absolute top-2 left-2 mr-2 flex flex-col items-start">
         <Icon icon="mdi:web" className="text-gray-500" />
+        {permissionRequest != null ? (
+          <div className="z-40 mt-4 flex w-96 flex-col gap-8 rounded bg-white p-6 shadow-lg ring-1 ring-slate-500 !ring-opacity-40 focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
+            <span>
+              {permissionRequest.requestingOrigin} requests permission for:{' '}
+              <br />
+              <span className="flex justify-center font-bold capitalize">
+                {permissionRequest.permission}
+              </span>
+            </span>
+            <div className="flex justify-end">
+              <div className="flex w-1/2 justify-around">
+                <Button
+                  onClick={() => {
+                    permissionReqClickHandler(false);
+                  }}
+                  isActionButton
+                >
+                  Block
+                </Button>
+                <Button
+                  onClick={() => {
+                    permissionReqClickHandler(true);
+                  }}
+                  isActionButton
+                >
+                  Allow
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
       <input
+        ref={inputRef}
         type="text"
         className="w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-20 dark:bg-slate-900"
         value={typedAddress}

@@ -44,6 +44,33 @@ const schema = {
       },
     },
   },
+  webPermissions: {
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        origin: {
+          type: 'string',
+        },
+        permissions: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              type: {
+                type: 'string',
+              },
+              status: {
+                type: 'string',
+                enum: ['GRANTED', 'DENIED'],
+              },
+            },
+          },
+        },
+      },
+    },
+    default: [],
+  },
 };
 
 const store = new Store({ schema, watch: true });
