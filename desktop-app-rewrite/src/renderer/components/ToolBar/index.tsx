@@ -10,6 +10,7 @@ import NavigationControls from './NavigationControls';
 import Menu from './Menu';
 import Button from '../Button';
 import AddressBar from './AddressBar';
+import ColorSchemeToggle from './ColorSchemeToggle';
 
 const ToolBar = () => {
   const rotateDevice = useSelector(selectRotate);
@@ -23,6 +24,7 @@ const ToolBar = () => {
       <Button
         onClick={() => dispatch(setRotate(!rotateDevice))}
         isActive={rotateDevice}
+        title="Rotate Devices"
       >
         <Icon
           icon={
@@ -35,9 +37,11 @@ const ToolBar = () => {
       <Button
         onClick={() => dispatch(setIsInspecting(!isInspecting))}
         isActive={isInspecting}
+        title="Inspect Elements"
       >
         <Icon icon="lucide:inspect" />
       </Button>
+      <ColorSchemeToggle />
       <Menu />
     </div>
   );

@@ -4,7 +4,7 @@ import {
   selectDockPosition,
   setDockPosition,
 } from 'renderer/store/features/devtools';
-import Toggle from './Toggle';
+import Toggle from 'renderer/components/Toggle';
 
 const Devtools = () => {
   const dockPosition = useSelector(selectDockPosition);

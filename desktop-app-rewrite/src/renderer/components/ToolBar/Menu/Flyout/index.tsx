@@ -7,6 +7,7 @@ import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
 import Devtools from './Devtools';
 import UITheme from './UITheme';
 import Zoom from './Zoom';
+import AllowInSecureSSL from './AllowInSecureSSL';
 
 interface Props {
   onClose: () => void;
@@ -30,8 +31,9 @@ const MenuFlyout = ({ onClose }: Props) => {
       ref={ref}
     >
       <Zoom />
-      <Devtools />
       <UITheme />
+      <Devtools />
+      <AllowInSecureSSL />
       <Button
         onClick={() => {
           dispatch(setAppView(APP_VIEWS.DEVICE_MANAGER));
