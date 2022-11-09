@@ -14,7 +14,7 @@ const zoomSteps = [
 ];
 
 const initialState: RendererState = {
-  address: 'https://responsively.app/',
+  address: 'https://permission.site/',
   zoomFactor: zoomSteps[4],
   rotate: false,
   isInspecting: undefined,

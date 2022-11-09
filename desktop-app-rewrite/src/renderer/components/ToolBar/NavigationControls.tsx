@@ -27,7 +27,6 @@ const ITEMS: NavigationItemProps[] = [
     label: 'Back',
     icon: 'ic:round-arrow-back',
     action: () => {
-      console.log('back');
       webViewPubSub.publish(NAVIGATION_EVENTS.BACK);
     },
   },

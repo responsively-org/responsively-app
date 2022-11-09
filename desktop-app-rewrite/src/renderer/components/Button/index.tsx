@@ -7,6 +7,7 @@ interface CustomProps {
   isActive?: boolean;
   isLoading?: boolean;
   disableHoverEffects?: boolean;
+  isActionButton?: boolean;
   subtle?: boolean;
 }
 
@@ -14,6 +15,7 @@ const Button = ({
   className = '',
   isActive = false,
   isLoading = false,
+  isActionButton = false,
   subtle = false,
   disableHoverEffects = false,
   children,
@@ -50,6 +52,9 @@ const Button = ({
         {
           'bg-slate-400/60': isActive,
           'dark:bg-slate-600/60': isActive,
+          'bg-slate-200': isActionButton,
+          'dark:bg-slate-700': isActionButton,
+          'px-2': isActionButton,
           [className]: className?.length,
         }
       )}
