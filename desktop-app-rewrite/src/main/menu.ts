@@ -173,27 +173,29 @@ export default class MenuBuilder {
         {
           label: 'Learn More',
           click() {
-            shell.openExternal('https://electronjs.org');
+            shell.openExternal('https://responsively.app');
           },
         },
         {
-          label: 'Documentation',
+          label: 'Open Source',
           click() {
             shell.openExternal(
-              'https://github.com/electron/electron/tree/main/docs#readme'
+              'https://github.com/responsively-org/responsively-app'
             );
           },
         },
         {
-          label: 'Community Discussions',
+          label: 'Join Discord',
           click() {
-            shell.openExternal('https://www.electronjs.org/community');
+            shell.openExternal('https://responsively.app/join-discord/');
           },
         },
         {
           label: 'Search Issues',
           click() {
-            shell.openExternal('https://github.com/electron/electron/issues');
+            shell.openExternal(
+              'https://github.com/responsively-org/responsively-app/issues'
+            );
           },
         },
       ],
