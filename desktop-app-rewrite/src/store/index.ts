@@ -71,6 +71,10 @@ const schema = {
     },
     default: [],
   },
+  homepage: {
+    type: 'string',
+    default: 'https://www.google.com/',
+  },
 };
 
 const store = new Store({ schema, watch: true });

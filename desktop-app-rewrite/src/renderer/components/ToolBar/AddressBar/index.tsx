@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import cx from 'classnames';
 import { PermissionRequestArg } from 'main/web-permissions/PermissionsManager';
 import { KeyboardEventHandler, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,6 +16,9 @@ export const ADDRESS_BAR_EVENTS = {
 const AddressBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [typedAddress, setTypedAddress] = useState<string>('');
+  const [homepage, setHomepage] = useState<string>(
+    window.electron.store.get('homepage')
+  );
   const [deleteStorageLoading, setDeleteStorageLoading] =
     useState<boolean>(false);
   const [deleteCookiesLoading, setDeleteCookiesLoading] =
@@ -44,6 +48,12 @@ const AddressBar = () => {
       window.electron.ipcRenderer.removeAllListeners('permission-request');
     };
   }, []);
+
+  useEffect(() => {
+    if (homepage !== window.electron.store.get('homepage')) {
+      window.electron.store.set('homepage', homepage);
+    }
+  }, [homepage]);
 
   const permissionReqClickHandler = (allow: boolean) => {
     if (!permissionRequest) {
@@ -96,6 +106,10 @@ const AddressBar = () => {
     await webViewPubSub.publish(ADDRESS_BAR_EVENTS.DELETE_CACHE);
     setDeleteCacheLoading(false);
   };
+
+  console.log('homepage', homepage);
+
+  const isHomepage = address === homepage;
 
   return (
     <div className="relative w-full flex-grow">
@@ -165,6 +179,13 @@ const AddressBar = () => {
           title="Clear Cache"
         >
           <Icon icon="mdi:wifi-remove" />
+        </Button>
+        <Button
+          className={cx('rounded-full', { 'text-amber-500': isHomepage })}
+          onClick={() => setHomepage(address)}
+          title="Homepage"
+        >
+          <Icon icon={isHomepage ? 'mdi:home' : 'mdi:home-outline'} />
         </Button>
       </div>
     </div>

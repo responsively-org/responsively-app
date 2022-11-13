@@ -14,7 +14,7 @@ const zoomSteps = [
 ];
 
 const initialState: RendererState = {
-  address: 'https://www.google.com/',
+  address: window.electron.store.get('homepage'),
   zoomFactor: zoomSteps[4],
   rotate: false,
   isInspecting: undefined,
