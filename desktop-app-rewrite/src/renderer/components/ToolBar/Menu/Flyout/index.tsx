@@ -6,6 +6,7 @@ import Devtools from './Devtools';
 import UITheme from './UITheme';
 import Zoom from './Zoom';
 import AllowInSecureSSL from './AllowInSecureSSL';
+import ClearHistory from './ClearHistory';
 
 const MenuFlyout = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,7 @@ const MenuFlyout = () => {
       <UITheme />
       <Devtools />
       <AllowInSecureSSL />
+      <ClearHistory />
       <Button
         onClick={() => {
           dispatch(setAppView(APP_VIEWS.DEVICE_MANAGER));

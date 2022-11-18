@@ -71,6 +71,28 @@ const schema = {
     },
     default: [],
   },
+  history: {
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        url: {
+          type: 'string',
+        },
+        title: {
+          type: 'string',
+        },
+        lastVisited: {
+          type: 'number',
+        },
+      },
+    },
+    default: [],
+  },
+  homepage: {
+    type: 'string',
+    default: 'https://www.google.com/',
+  },
 };
 
 const store = new Store({ schema, watch: true });

@@ -21,7 +21,7 @@ import { initScreenshotHandlers } from './screenshot';
 import { initDevtoolsHandlers } from './devtools';
 import { initWebviewStorageManagerHandlers } from './webview-storage-manager';
 import { initNativeFunctionHandlers } from './native-functions';
-import { initWebPermissionHandlers } from './web-permissions';
+import { WebPermissionHandlers } from './web-permissions';
 
 export default class AppUpdater {
   constructor() {
@@ -112,6 +112,7 @@ const createWindow = async () => {
     },
   });
   initDevtoolsHandlers(mainWindow);
+  const webPermissionHandlers = WebPermissionHandlers(mainWindow);
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -120,7 +121,7 @@ const createWindow = async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
-    await initWebPermissionHandlers(mainWindow);
+    webPermissionHandlers.init();
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {

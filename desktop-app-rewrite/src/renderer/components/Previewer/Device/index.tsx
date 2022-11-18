@@ -38,6 +38,7 @@ import {
 } from 'renderer/store/features/renderer';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
+import { appendHistory } from './utils';
 
 interface Props {
   device: IDevice;
@@ -157,6 +158,9 @@ const Device = ({ isPrimary, device }: Props) => {
     const webview = ref.current as Electron.WebviewTag;
     webview.addEventListener('did-navigate', (e) => {
       dispatch(setAddress(e.url));
+      if (isPrimary) {
+        appendHistory(webview.getURL(), webview.getTitle());
+      }
     });
 
     webview.addEventListener('ipc-message', (e) => {

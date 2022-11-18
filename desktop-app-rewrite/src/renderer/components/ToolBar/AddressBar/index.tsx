@@ -1,10 +1,12 @@
 import { Icon } from '@iconify/react';
+import cx from 'classnames';
 import { PermissionRequestArg } from 'main/web-permissions/PermissionsManager';
 import { KeyboardEventHandler, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import { selectAddress, setAddress } from 'renderer/store/features/renderer';
+import SuggestionList from './SuggestionList';
 
 export const ADDRESS_BAR_EVENTS = {
   DELETE_COOKIES: 'DELETE_COOKIES',
@@ -15,6 +17,10 @@ export const ADDRESS_BAR_EVENTS = {
 const AddressBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [typedAddress, setTypedAddress] = useState<string>('');
+  const [isSuggesting, setIsSuggesting] = useState<boolean>(false);
+  const [homepage, setHomepage] = useState<string>(
+    window.electron.store.get('homepage')
+  );
   const [deleteStorageLoading, setDeleteStorageLoading] =
     useState<boolean>(false);
   const [deleteCookiesLoading, setDeleteCookiesLoading] =
@@ -45,6 +51,12 @@ const AddressBar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (homepage !== window.electron.store.get('homepage')) {
+      window.electron.store.set('homepage', homepage);
+    }
+  }, [homepage]);
+
   const permissionReqClickHandler = (allow: boolean) => {
     if (!permissionRequest) {
       return;
@@ -56,8 +68,8 @@ const AddressBar = () => {
     setPermissionRequest(null);
   };
 
-  const dispatchAddress = () => {
-    let newAddress = typedAddress;
+  const dispatchAddress = (url?: string) => {
+    let newAddress = url ?? typedAddress;
     if (newAddress.indexOf('://') === -1) {
       let protocol = 'https://';
       if (
@@ -72,11 +84,15 @@ const AddressBar = () => {
     dispatch(setAddress(newAddress));
   };
 
-  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
-    if (e.key === 'Enter') {
-      inputRef.current?.blur();
-      dispatchAddress();
+  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = () => {
+    if (!isSuggesting) {
+      setIsSuggesting(true);
     }
+  };
+
+  const onEnter = (url?: string) => {
+    dispatchAddress(url);
+    inputRef.current?.blur();
   };
 
   const deleteCookies = async () => {
@@ -97,8 +113,10 @@ const AddressBar = () => {
     setDeleteCacheLoading(false);
   };
 
+  const isHomepage = address === homepage;
+
   return (
-    <div className="relative w-full flex-grow">
+    <div className="relative z-10 w-full flex-grow">
       <div className="absolute top-2 left-2 mr-2 flex flex-col items-start">
         <Icon icon="mdi:web" className="text-gray-500" />
         {permissionRequest != null ? (
@@ -136,10 +154,21 @@ const AddressBar = () => {
       <input
         ref={inputRef}
         type="text"
-        className="w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-20 dark:bg-slate-900"
+        className={cx(
+          'w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-20 dark:bg-slate-900',
+          {
+            'rounded-tl-lg rounded-tr-lg rounded-bl-none rounded-br-none outline-none':
+              isSuggesting,
+          }
+        )}
         value={typedAddress}
         onChange={(e) => setTypedAddress(e.target.value)}
         onKeyDown={handleKeyDown}
+        onBlur={() => {
+          setTimeout(() => {
+            setIsSuggesting(false);
+          }, 100);
+        }}
       />
       <div className="absolute inset-y-0 right-0 mr-2 flex items-center">
         <Button
@@ -166,7 +195,19 @@ const AddressBar = () => {
         >
           <Icon icon="mdi:wifi-remove" />
         </Button>
+        <Button
+          className={cx('rounded-full', {
+            'text-blue-500': isHomepage,
+          })}
+          onClick={() => setHomepage(address)}
+          title="Homepage"
+        >
+          <Icon icon={isHomepage ? 'mdi:home' : 'mdi:home-outline'} />
+        </Button>
       </div>
+      {isSuggesting ? (
+        <SuggestionList match={typedAddress} onEnter={onEnter} />
+      ) : null}
     </div>
   );
 };
