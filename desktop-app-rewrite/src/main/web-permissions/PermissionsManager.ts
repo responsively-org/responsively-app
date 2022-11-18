@@ -85,24 +85,24 @@ class PermissionsManager {
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
     this.permissions = loadPermissions();
-    ipcMain.removeAllListeners('permission-response');
-    ipcMain.handle(
-      'permission-response',
-      (_event, arg: PermissionResponseArg) => {
-        this.setPermissionState(
-          arg.permissionRequest.requestingOrigin,
-          arg.permissionRequest.permission,
-          arg.allow ? PERMISSION_STATE.GRANTED : PERMISSION_STATE.DENIED
-        );
-        const key = `${arg.permissionRequest.requestingOrigin}-${arg.permissionRequest.permission}`;
-        const callbacks = this.callbacks[key];
+    const handler = (_event, arg: PermissionResponseArg) => {
+      this.setPermissionState(
+        arg.permissionRequest.requestingOrigin,
+        arg.permissionRequest.permission,
+        arg.allow ? PERMISSION_STATE.GRANTED : PERMISSION_STATE.DENIED
+      );
+      const key = `${arg.permissionRequest.requestingOrigin}-${arg.permissionRequest.permission}`;
+      const callbacks = this.callbacks[key];
 
-        if (callbacks) {
-          callbacks.forEach((callback) => callback(arg.allow));
-          this.callbacks[key] = [];
-        }
+      if (callbacks) {
+        callbacks.forEach((callback) => callback(arg.allow));
+        this.callbacks[key] = [];
       }
-    );
+    };
+    const PERMISSION_RESPONSE_CHANNEL = 'permission-response';
+    if (ipcMain.listeners(PERMISSION_RESPONSE_CHANNEL).length === 0) {
+      ipcMain.handle(PERMISSION_RESPONSE_CHANNEL, handler);
+    }
   }
 
   getPermissionState(origin: string, type: string): PermissionState {

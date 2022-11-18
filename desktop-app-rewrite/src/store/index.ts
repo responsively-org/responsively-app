@@ -82,9 +82,6 @@ const schema = {
         title: {
           type: 'string',
         },
-        favicon: {
-          type: 'string',
-        },
         lastVisited: {
           type: 'number',
         },

@@ -90,7 +90,7 @@ const AddressBar = () => {
     }
   };
 
-  const onEnter = (url: string) => {
+  const onEnter = (url?: string) => {
     dispatchAddress(url);
     inputRef.current?.blur();
   };

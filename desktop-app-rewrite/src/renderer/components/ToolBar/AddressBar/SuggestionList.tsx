@@ -3,45 +3,22 @@ import { useDispatch } from 'react-redux';
 import cx from 'classnames';
 import { setAddress } from 'renderer/store/features/renderer';
 
-interface HistoryItem {
+export interface HistoryItem {
   title: string;
   url: string;
-  favicon: string;
   lastVisited: number;
 }
 
 interface Props {
   match: string;
-  onEnter: (url: string) => void;
+  onEnter: (url?: string) => void;
 }
 
 const SuggestionList = ({ match, onEnter }: Props) => {
   const dispatch = useDispatch();
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [history] = useState<HistoryItem[]>(
-    window.electron.store.get('history').length === 0
-      ? [
-          {
-            url: 'https://google.com',
-            title: 'Google',
-            favicon: 'https://www.google.com/favicon.ico',
-            lastVisited: Date.now(),
-          },
-          {
-            url: 'https://expo.dev',
-            title: 'Expo',
-            favicon: 'https://static.expo.dev/static/brand/square-228x228.png',
-            lastVisited: Date.now(),
-          },
-          {
-            url: 'https://responsively.app',
-            title: 'Responsively App',
-            favicon:
-              'https://responsively.app/assets/img/favicons/apple-icon-60x60.png',
-            lastVisited: Date.now(),
-          },
-        ]
-      : window.electron.store.get('history.items')
+    window.electron.store.get('history')
   );
 
   const suggestions = useMemo(() => {
@@ -57,7 +34,11 @@ const SuggestionList = ({ match, onEnter }: Props) => {
   const keyDownHandler = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        onEnter(suggestions[activeIndex].url);
+        onEnter(
+          suggestions[activeIndex] != null
+            ? suggestions[activeIndex].url
+            : undefined
+        );
         return;
       }
       if (e.key === 'ArrowUp') {
@@ -85,7 +66,7 @@ const SuggestionList = ({ match, onEnter }: Props) => {
 
   return (
     <div className="absolute z-10 flex w-full flex-col items-start rounded-b-lg bg-white pb-2  shadow-lg dark:bg-slate-900">
-      {suggestions.map(({ title, url, favicon }, idx) => (
+      {suggestions.map(({ title, url }, idx) => (
         <div
           onClick={() => dispatch(setAddress(url))}
           className={cx(
@@ -95,7 +76,11 @@ const SuggestionList = ({ match, onEnter }: Props) => {
           key={url}
         >
           <span>
-            <img src={favicon} className="w-4 rounded-md" alt="favicon" />
+            <img
+              src={`https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=64`}
+              className="w-4 rounded-md"
+              alt="favicon"
+            />
           </span>
           {title} - <span className="text-blue-500">{url}</span>
         </div>
