@@ -85,7 +85,10 @@ class PermissionsManager {
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
     this.permissions = loadPermissions();
-    const handler = (_event, arg: PermissionResponseArg) => {
+    const handler = (
+      _event: Electron.IpcMainInvokeEvent,
+      arg: PermissionResponseArg
+    ) => {
       this.setPermissionState(
         arg.permissionRequest.requestingOrigin,
         arg.permissionRequest.permission,
