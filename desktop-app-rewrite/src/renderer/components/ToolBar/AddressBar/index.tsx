@@ -116,7 +116,7 @@ const AddressBar = () => {
   const isHomepage = address === homepage;
 
   return (
-    <div className="relative w-full flex-grow">
+    <div className="relative z-10 w-full flex-grow">
       <div className="absolute top-2 left-2 mr-2 flex flex-col items-start">
         <Icon icon="mdi:web" className="text-gray-500" />
         {permissionRequest != null ? (
@@ -165,7 +165,9 @@ const AddressBar = () => {
         onChange={(e) => setTypedAddress(e.target.value)}
         onKeyDown={handleKeyDown}
         onBlur={() => {
-          setIsSuggesting(false);
+          setTimeout(() => {
+            setIsSuggesting(false);
+          }, 100);
         }}
       />
       <div className="absolute inset-y-0 right-0 mr-2 flex items-center">

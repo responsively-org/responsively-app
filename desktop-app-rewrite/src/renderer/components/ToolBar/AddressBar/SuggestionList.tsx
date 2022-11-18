@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import cx from 'classnames';
-import { setAddress } from 'renderer/store/features/renderer';
 
 export interface HistoryItem {
   title: string;
@@ -15,7 +13,6 @@ interface Props {
 }
 
 const SuggestionList = ({ match, onEnter }: Props) => {
-  const dispatch = useDispatch();
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [history] = useState<HistoryItem[]>(
     window.electron.store.get('history')
@@ -65,14 +62,17 @@ const SuggestionList = ({ match, onEnter }: Props) => {
   }, [keyDownHandler]);
 
   return (
-    <div className="absolute z-10 flex w-full flex-col items-start rounded-b-lg bg-white pb-2  shadow-lg dark:bg-slate-900">
+    <div className="absolute z-20 flex w-full flex-col items-start rounded-b-lg bg-white pb-2  shadow-lg dark:bg-slate-900">
       {suggestions.map(({ title, url }, idx) => (
-        <div
-          onClick={() => dispatch(setAddress(url))}
+        <button
+          onClickCapture={() => {
+            onEnter(url);
+          }}
           className={cx(
-            'flex w-full items-center gap-2 py-1 pl-2 pr-8 hover:bg-slate-200 dark:hover:bg-slate-700',
+            'pointer-events-auto flex w-full items-center gap-2 py-1 pl-2 pr-8 hover:bg-slate-200 dark:hover:bg-slate-700',
             { 'bg-slate-200 dark:bg-slate-700': activeIndex === idx }
           )}
+          type="button"
           key={url}
         >
           <span>
@@ -82,8 +82,13 @@ const SuggestionList = ({ match, onEnter }: Props) => {
               alt="favicon"
             />
           </span>
-          {title} - <span className="text-blue-500">{url}</span>
-        </div>
+          <span className="flex flex-row gap-1 overflow-hidden">
+            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+              {title}
+            </span>
+            -<span className="text-blue-500">{url}</span>
+          </span>
+        </button>
       ))}
     </div>
   );
