@@ -14,7 +14,7 @@ const zoomSteps = [
 ];
 
 const initialState: RendererState = {
-  address: 'https://permission.site/',
+  address: 'https://www.google.com/',
   zoomFactor: zoomSteps[4],
   rotate: false,
   isInspecting: undefined,

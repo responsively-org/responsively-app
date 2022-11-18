@@ -4,17 +4,14 @@ declare global {
   interface Window {
     electron: {
       ipcRenderer: {
-        sendMessage(channel: Channels, args: unknown[]): void;
+        sendMessage<T>(channel: Channels, args: T[]): void;
         on<T>(
           channel: string,
           func: (...args: T[]) => void
         ): (() => void) | undefined;
-        once(channel: string, func: (...args: unknown[]) => void): void;
+        once<T>(channel: string, func: (...args: T[]) => void): void;
         invoke<T, P>(channel: string, ...args: T[]): Promise<P>;
-        removeListener(
-          channel: string,
-          func: (...args: unknown[]) => void
-        ): void;
+        removeListener<T>(channel: string, func: (...args: T[]) => void): void;
         removeAllListeners(channel: string): void;
       };
       store: {

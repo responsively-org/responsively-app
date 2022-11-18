@@ -4,23 +4,23 @@ export type Channels = 'ipc-example' | 'app-meta';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
-    sendMessage(channel: Channels, args: unknown[]) {
+    sendMessage<T>(channel: Channels, args: T[]) {
       ipcRenderer.send(channel, args);
     },
-    on(channel: Channels, func: (...args: unknown[]) => void) {
-      const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
+    on<T>(channel: Channels, func: (...args: T[]) => void) {
+      const subscription = (_event: IpcRendererEvent, ...args: T[]) =>
         func(...args);
       ipcRenderer.on(channel, subscription);
 
       return () => ipcRenderer.removeListener(channel, subscription);
     },
-    once(channel: Channels, func: (...args: unknown[]) => void) {
+    once<T>(channel: Channels, func: (...args: T[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
-    invoke(channel: Channels, ...args: unknown[]) {
+    invoke<T, P>(channel: Channels, ...args: T[]): Promise<P> {
       return ipcRenderer.invoke(channel, ...args);
     },
-    removeListener(channel: Channels, listener: (...args: unknown[]) => void) {
+    removeListener<T>(channel: Channels, listener: (...args: T[]) => void) {
       ipcRenderer.removeListener(channel, listener);
     },
     removeAllListeners(channel: Channels) {

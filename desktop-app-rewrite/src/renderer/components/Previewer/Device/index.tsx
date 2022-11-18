@@ -6,6 +6,7 @@ import {
   ToggleInspectorArgs,
   ToggleInspectorResult,
 } from 'main/devtools';
+import { ReloadArgs } from 'main/menu';
 import {
   DisableDefaultWindowOpenHandlerArgs,
   DisableDefaultWindowOpenHandlerResult,
@@ -207,6 +208,31 @@ const Device = ({ isPrimary, device }: Props) => {
 
     registerNavigationHandlers();
   }, [ref, dispatch, registerNavigationHandlers, isPrimary]);
+
+  useEffect(() => {
+    // Reload keyboard shortcuts effect
+    if (!ref.current) {
+      return undefined;
+    }
+    const webview = ref.current as Electron.WebviewTag;
+
+    const reloadHandler = (args: ReloadArgs) => {
+      const { ignoreCache } = args;
+      if (ignoreCache === true) {
+        console.log('Reloading reloadIgnoringCache');
+        webview.reloadIgnoringCache();
+      } else {
+        console.log('Reloading');
+        webview.reload();
+      }
+    };
+
+    window.electron.ipcRenderer.on<ReloadArgs>('reload', reloadHandler);
+
+    return () => {
+      window.electron.ipcRenderer.removeListener('reload', reloadHandler);
+    };
+  }, [ref]);
 
   useEffect(() => {
     if (!ref.current) {

@@ -9,6 +9,7 @@ import ThemeProvider from './context/ThemeProvider';
 import { APP_VIEWS, selectAppView } from './store/features/ui';
 import type { AppView } from './store/features/ui';
 import DeviceManager from './components/DeviceManager';
+import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
 
 const Browser = () => {
   return (
@@ -40,6 +41,7 @@ const AppContent = () => {
   return (
     <Provider store={store}>
       <ThemeProvider>
+        <KeyboardShortcutsManager />
         <ViewComponent />
       </ThemeProvider>
     </Provider>

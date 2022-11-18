@@ -85,6 +85,7 @@ class PermissionsManager {
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
     this.permissions = loadPermissions();
+    ipcMain.removeAllListeners('permission-response');
     ipcMain.handle(
       'permission-response',
       (_event, arg: PermissionResponseArg) => {

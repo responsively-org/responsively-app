@@ -11,6 +11,10 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   submenu?: DarwinMenuItemConstructorOptions[] | Menu;
 }
 
+export interface ReloadArgs {
+  ignoreCache?: boolean;
+}
+
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
 
@@ -54,17 +58,15 @@ export default class MenuBuilder {
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
-      label: 'Electron',
+      label: 'ResponsivelyApp',
       submenu: [
         {
-          label: 'About ElectronReact',
+          label: 'About ResponsivelyApp',
           selector: 'orderFrontStandardAboutPanel:',
         },
         { type: 'separator' },
-        { label: 'Services', submenu: [] },
-        { type: 'separator' },
         {
-          label: 'Hide ElectronReact',
+          label: 'Hide ResponsivelyApp',
           accelerator: 'Command+H',
           selector: 'hide:',
         },
@@ -105,7 +107,7 @@ export default class MenuBuilder {
       submenu: [
         {
           label: 'Reload',
-          accelerator: 'Command+R',
+          accelerator: 'CommandOrControl+R',
           click: () => {
             this.mainWindow.webContents.reload();
           },
@@ -119,7 +121,7 @@ export default class MenuBuilder {
         },
         {
           label: 'Toggle Developer Tools',
-          accelerator: 'Alt+Command+I',
+          accelerator: 'Alt+CommandOrControl+I',
           click: () => {
             this.mainWindow.webContents.toggleDevTools();
           },
@@ -130,8 +132,22 @@ export default class MenuBuilder {
       label: 'View',
       submenu: [
         {
+          label: 'Reload',
+          accelerator: 'CommandOrControl+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload', {});
+          },
+        },
+        {
+          label: 'Reload Ignoring Cache',
+          accelerator: 'CommandOrControl+Shift+R',
+          click: () => {
+            this.mainWindow.webContents.send('reload', { ignoreCache: true });
+          },
+        },
+        {
           label: 'Toggle Full Screen',
-          accelerator: 'Ctrl+Command+F',
+          accelerator: 'Ctrl+CommandOrControl+F',
           click: () => {
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
           },
