@@ -7,7 +7,10 @@
       }
     }
   ],
+  "arrowParens": "avoid",
   "singleQuote": true,
   "bracketSpacing": false,
+  "printWidth": 100,
+  "tailwindConfig": "./tailwind.config.js",
   "trailingComma": "es5"
 }
