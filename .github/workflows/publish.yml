@@ -34,7 +34,7 @@ jobs:
       - name: Bump version
         run: |
           cd release/app
-          yarn version --preid alpha --prerelease
+          yarn version --preid beta --prerelease
           git push
 
       - name: Publish releases
