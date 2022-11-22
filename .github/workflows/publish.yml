@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
-        working-directory: ./desktop-app-rewrite
+        working-directory: ./desktop-app
 
     strategy:
       matrix:
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 16
           cache: ${{ !env.ACT && 'npm' || '' }} # Disable cache for nektos/act
-          cache-dependency-path: ./desktop-app-rewrite/yarn.lock
+          cache-dependency-path: ./desktop-app/yarn.lock
 
       - name: Install and build
         run: |
