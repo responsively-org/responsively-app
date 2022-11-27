@@ -102,6 +102,7 @@
   },
   "dependencies": {
     "@fontsource/lato": "^4.5.8",
+    "@headlessui/react": "^1.7.4",
     "@iconify/react": "^3.2.2",
     "@reduxjs/toolkit": "^1.8.3",
     "autoprefixer": "^10.4.7",
@@ -277,7 +278,8 @@
   "electronmon": {
     "patterns": [
       "!**/**",
-      "src/main/**/*"
+      "src/main/**/*",
+      "src/store/**/*"
     ],
     "logLevel": "quiet"
   }

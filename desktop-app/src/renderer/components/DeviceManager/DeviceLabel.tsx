@@ -6,6 +6,7 @@ import {
   selectDevices,
   setDevices,
 } from 'renderer/store/features/device-manager';
+import Button from '../Button';
 
 export const DND_TYPE = 'Device';
 
@@ -13,12 +14,14 @@ interface Props {
   device: Device;
   enableDnd?: boolean;
   moveDevice?: (device: Device, atIndex: number) => void;
+  onShowDeviceDetails: (device: Device) => void;
 }
 
 const DeviceLabel = ({
   device,
   moveDevice = () => {},
   enableDnd = false,
+  onShowDeviceDetails,
 }: Props) => {
   const dispatch = useDispatch();
   const devices = useSelector(selectDevices);
@@ -81,6 +84,11 @@ const DeviceLabel = ({
           {device.width}x{device.height}
         </span>
       </div>
+      <Button onClick={() => onShowDeviceDetails(device)}>
+        <Icon
+          icon={device.isCustom ? 'ic:baseline-edit' : 'ic:baseline-info'}
+        />
+      </Button>
     </div>
   );
 };
