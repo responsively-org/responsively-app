@@ -46,6 +46,7 @@ const Button = ({
   return (
     <button
       className={cx(
+        { [className]: className?.length },
         `flex items-center justify-center rounded-sm p-1 ${
           disableHoverEffects === false ? `${hoverBg} ${hoverBgDark}` : ''
         } focus:outline-none`,
@@ -55,7 +56,6 @@ const Button = ({
           'bg-slate-200': isActionButton,
           'dark:bg-slate-700': isActionButton,
           'px-2': isActionButton,
-          [className]: className?.length,
         }
       )}
       type="button"

@@ -8,6 +8,7 @@ export interface Device {
   isTouchCapable: boolean;
   isMobileCapable: boolean;
   capabilities: string[];
+  isCustom?: boolean;
 }
 
 const devices: Device[] = [
@@ -645,13 +646,16 @@ const devices: Device[] = [
     isMobileCapable: true,
   },
 ];
+
+const customDevices: Device[] = window.electron.store.get(
+  'deviceManager.customDevices'
+);
 type DeviceMap = { [key: string]: Device };
-export const defaultDevicesMap: DeviceMap = devices.reduce(
-  (map: DeviceMap, device) => {
+export const getDevicesMap = (): DeviceMap => {
+  return [...devices, ...customDevices].reduce((map: DeviceMap, device) => {
     map[device.name] = device;
     return map;
-  },
-  {}
-);
+  }, {});
+};
 
 export default devices;

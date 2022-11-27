@@ -32,6 +32,50 @@ const schema = {
         },
         default: ['iPhone SE', 'iPhone XR', 'iPhone 12 Pro'],
       },
+      customDevices: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+            },
+            width: {
+              type: 'number',
+            },
+            height: {
+              type: 'number',
+            },
+            userAgent: {
+              type: 'string',
+            },
+            type: {
+              type: 'string',
+            },
+            dpi: {
+              type: 'number',
+            },
+            isTouchCapable: {
+              type: 'boolean',
+            },
+            isMobileCapable: {
+              type: 'boolean',
+            },
+            capabilities: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              default: [],
+            },
+            isCustom: {
+              type: 'boolean',
+              default: true,
+            },
+          },
+        },
+        default: [],
+      },
     },
     default: {},
   },

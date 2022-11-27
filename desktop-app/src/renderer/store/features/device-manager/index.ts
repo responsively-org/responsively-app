@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { defaultDevicesMap, Device } from 'common/deviceList';
+import { getDevicesMap, Device } from 'common/deviceList';
 import type { RootState } from '../..';
 
-const defaultDeviceNames: string[] = window.electron.store.get(
+const activeDeviceNames: string[] = window.electron.store.get(
   'deviceManager.activeDevices'
 );
 
-const DEFAULT_DEVICES: Device[] = defaultDeviceNames.map(
-  (name) => defaultDevicesMap[name]
+const DEFAULT_DEVICES: Device[] = activeDeviceNames.map(
+  (name) => getDevicesMap()[name]
 );
 
 export interface DeviceManagerState {

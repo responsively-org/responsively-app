@@ -12,22 +12,36 @@ import defaultDevices, { Device } from 'common/deviceList';
 
 import Button from '../Button';
 import DeviceLabel, { DND_TYPE } from './DeviceLabel';
+import DeviceDetailsModal from './DeviceDetailsModal';
+
+const filterDevices = (devices: Device[], filter: string) => {
+  return devices.filter((device: Device) =>
+    `${device.name.toLowerCase()}${device.width}x${device.height}`.includes(
+      filter
+    )
+  );
+};
 
 const DeviceManager = () => {
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState<boolean>(false);
+  const [selectedDevice, setSelectedDevice] = useState<Device | undefined>(
+    undefined
+  );
   const dispatch = useDispatch();
   const devices = useSelector(selectDevices);
   const [searchText, setSearchText] = useState<string>('');
-  const [filteredDevices, setFilteredDevices] = useState<Device[]>(devices);
+  const [filteredDevices, setFilteredDevices] =
+    useState<Device[]>(defaultDevices);
+  const [customDevices, setCustomDevices] = useState<Device[]>(
+    window.electron.store.get('deviceManager.customDevices')
+  );
+  const [filteredCustomDevices, setFilteredCustomDevices] =
+    useState<Device[]>(customDevices);
 
   useEffect(() => {
-    setFilteredDevices(
-      defaultDevices.filter((device) =>
-        `${device.name.toLowerCase()}${device.width}x${device.height}`.includes(
-          searchText
-        )
-      )
-    );
-  }, [devices, searchText]);
+    setFilteredDevices(filterDevices(defaultDevices, searchText));
+    setFilteredCustomDevices(filterDevices(customDevices, searchText));
+  }, [customDevices, searchText]);
 
   const moveDevice = (device: Device, atIndex: number) => {
     const newDevices = devices.filter((d) => d.name !== device.name);
@@ -36,6 +50,35 @@ const DeviceManager = () => {
   };
 
   const [, drop] = useDrop(() => ({ accept: DND_TYPE }));
+
+  const saveCustomDevices = (newCustomDevices: Device[]) => {
+    setCustomDevices(newCustomDevices);
+    window.electron.store.set('deviceManager.customDevices', newCustomDevices);
+    setFilteredCustomDevices(filterDevices(newCustomDevices, searchText));
+  };
+
+  const onAddDevice = async (device: Device, isNew: boolean) => {
+    const newCustomDevices = isNew
+      ? [...customDevices, device]
+      : customDevices.map((d) => (d.name === device.name ? device : d));
+    saveCustomDevices(newCustomDevices);
+    dispatch(
+      setDevices(devices.map((d) => (d.name === device.name ? device : d)))
+    );
+  };
+
+  const onRemoveDevice = (device: Device) => {
+    const newCustomDevices = customDevices.filter(
+      (d) => d.name !== device.name
+    );
+    saveCustomDevices(newCustomDevices);
+    dispatch(setDevices(devices.filter((d) => d.name !== device.name)));
+  };
+
+  const onShowDeviceDetails = (device: Device) => {
+    setSelectedDevice(device);
+    setIsDetailsModalOpen(true);
+  };
 
   return (
     <div className="mx-16 rounded-lg p-8">
@@ -55,13 +98,13 @@ const DeviceManager = () => {
                 device={device}
                 moveDevice={moveDevice}
                 enableDnd
+                onShowDeviceDetails={onShowDeviceDetails}
               />
             );
           })}
         </div>
-        <div className="mt-8 mb-6 flex justify-between">
-          <div className="text-lg ">Available Devices</div>
-          <div className="flex w-fit items-center rounded bg-white px-1 dark:bg-slate-900">
+        <div className="my-4 flex items-center justify-end  ">
+          <div className="flex w-fit items-center bg-white px-1 dark:bg-slate-900">
             <Icon icon="ic:outline-search" height={24} />
             <input
               className="w-60 rounded bg-inherit px-2 py-1 focus:outline-none"
@@ -73,9 +116,16 @@ const DeviceManager = () => {
             />
           </div>
         </div>
+        <div className="mt-8 mb-6 flex justify-between">
+          <div className="text-lg ">Predefined Devices</div>
+        </div>
         <div className="ml-4 flex flex-row flex-wrap gap-4">
           {filteredDevices.map((device) => (
-            <DeviceLabel device={device} key={device.name} />
+            <DeviceLabel
+              device={device}
+              key={device.name}
+              onShowDeviceDetails={onShowDeviceDetails}
+            />
           ))}
           {filteredDevices.length === 0 ? (
             <div className="m-10 flex w-full items-center justify-center">
@@ -84,7 +134,46 @@ const DeviceManager = () => {
             </div>
           ) : null}
         </div>
+        <div className="mt-8 mb-6 flex justify-between">
+          <div className="text-lg ">Custom Devices</div>
+          <Button onClick={() => setIsDetailsModalOpen(true)} isActive>
+            <Icon icon="ic:baseline-add" />
+            Add Custom Device
+          </Button>
+        </div>
+        <div className="ml-4 flex flex-row flex-wrap gap-4">
+          {filteredCustomDevices.map((device) => (
+            <DeviceLabel
+              device={device}
+              key={device.name}
+              onShowDeviceDetails={onShowDeviceDetails}
+            />
+          ))}
+          {customDevices.length === 0 ? (
+            <div className="m-10 flex w-full items-center justify-center">
+              No custom devices added yet!
+            </div>
+          ) : null}
+          {customDevices.length > 0 && filteredCustomDevices.length === 0 ? (
+            <div className="m-10 flex w-full items-center justify-center">
+              Sorry, no matching devices found.
+              <Icon icon="mdi:emoticon-sad-outline" className="ml-1" />
+            </div>
+          ) : null}
+        </div>
       </div>
+      <DeviceDetailsModal
+        onAddDevice={onAddDevice}
+        existingDevices={[...defaultDevices, ...customDevices]}
+        isCustom
+        isOpen={isDetailsModalOpen}
+        onClose={() => {
+          setSelectedDevice(undefined);
+          setIsDetailsModalOpen(false);
+        }}
+        device={selectedDevice}
+        onRemoveDevice={onRemoveDevice}
+      />
     </div>
   );
 };
