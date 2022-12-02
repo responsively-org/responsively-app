@@ -1,4 +1,5 @@
 import { BrowserWindow, ipcMain } from 'electron';
+import { IPC_MAIN_CHANNELS } from '../../common/constants';
 import store from '../../store';
 
 export interface PermissionRequestArg {
@@ -102,7 +103,7 @@ class PermissionsManager {
         this.callbacks[key] = [];
       }
     };
-    const PERMISSION_RESPONSE_CHANNEL = 'permission-response';
+    const PERMISSION_RESPONSE_CHANNEL = IPC_MAIN_CHANNELS.PERMISSION_RESPONSE;
     if (ipcMain.listeners(PERMISSION_RESPONSE_CHANNEL).length === 0) {
       ipcMain.handle(PERMISSION_RESPONSE_CHANNEL, handler);
     }
@@ -153,7 +154,7 @@ class PermissionsManager {
     if (previousState === PERMISSION_STATE.PROMPT) {
       return;
     }
-    this.mainWindow.webContents.send('permission-request', {
+    this.mainWindow.webContents.send(IPC_MAIN_CHANNELS.PERMISSION_REQUEST, {
       permission: type,
       requestingOrigin: origin,
     });
