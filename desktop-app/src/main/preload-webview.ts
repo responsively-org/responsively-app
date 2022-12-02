@@ -1,7 +1,5 @@
 import { ipcRenderer } from 'electron';
 
-export type Channels = 'ipc-example' | 'app-meta';
-
 console.log('Preload main');
 
 const documentBodyInit = () => {

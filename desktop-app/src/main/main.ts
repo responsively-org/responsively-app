@@ -12,6 +12,7 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { IPC_MAIN_CHANNELS } from 'common/constants';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
@@ -22,6 +23,7 @@ import { initDevtoolsHandlers } from './devtools';
 import { initWebviewStorageManagerHandlers } from './webview-storage-manager';
 import { initNativeFunctionHandlers } from './native-functions';
 import { WebPermissionHandlers } from './web-permissions';
+import { initHttpBasicAuthHandlers } from './http-basic-auth';
 
 export default class AppUpdater {
   constructor() {
@@ -33,13 +35,7 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
-
-ipcMain.handle('app-meta', async () => {
+ipcMain.handle(IPC_MAIN_CHANNELS.APP_META, async () => {
   return {
     webviewPreloadPath: app.isPackaged
       ? path.join(__dirname, 'preload-webview.js')
@@ -112,6 +108,7 @@ const createWindow = async () => {
     },
   });
   initDevtoolsHandlers(mainWindow);
+  initHttpBasicAuthHandlers(mainWindow);
   const webPermissionHandlers = WebPermissionHandlers(mainWindow);
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
