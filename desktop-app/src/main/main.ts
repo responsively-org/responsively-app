@@ -12,7 +12,7 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { IPC_MAIN_CHANNELS } from 'common/constants';
+import { IPC_MAIN_CHANNELS } from '../common/constants';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
