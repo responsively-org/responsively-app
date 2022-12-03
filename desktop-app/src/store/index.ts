@@ -1,4 +1,4 @@
-import { DOCK_POSITION } from '../common/constants';
+import { DOCK_POSITION, PREVIEW_LAYOUTS } from '../common/constants';
 
 const Store = require('electron-store');
 
@@ -9,6 +9,10 @@ const schema = {
       darkMode: {
         type: 'boolean',
         default: true,
+      },
+      previewlayout: {
+        enum: Object.values(PREVIEW_LAYOUTS),
+        default: PREVIEW_LAYOUTS.FLEX,
       },
     },
   },
@@ -30,7 +34,7 @@ const schema = {
         items: {
           type: 'string',
         },
-        default: ['iPhone SE', 'iPhone XR', 'iPhone 12 Pro'],
+        default: ['iPhone 12 Pro', 'iPad', 'Macbook Pro'],
       },
       customDevices: {
         type: 'array',

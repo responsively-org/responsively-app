@@ -1,11 +1,12 @@
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { selectDevices } from 'renderer/store/features/device-manager';
-import { DOCK_POSITION } from 'common/constants';
+import { DOCK_POSITION, PREVIEW_LAYOUTS } from 'common/constants';
 import {
   selectDockPosition,
   selectIsDevtoolsOpen,
 } from 'renderer/store/features/devtools';
+import { selectLayout } from 'renderer/store/features/renderer';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
 
@@ -13,6 +14,7 @@ const Previewer = () => {
   const devices = useSelector(selectDevices);
   const dockPosition = useSelector(selectDockPosition);
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
+  const layout = useSelector(selectLayout);
 
   return (
     <div
@@ -21,7 +23,11 @@ const Previewer = () => {
         'flex-row': dockPosition === DOCK_POSITION.RIGHT,
       })}
     >
-      <div className="flex gap-4 overflow-auto p-4">
+      <div
+        className={cx('flex h-full gap-4 overflow-auto p-4', {
+          'flex-wrap': layout === PREVIEW_LAYOUTS.FLEX,
+        })}
+      >
         {devices.map((device, idx) => {
           return (
             <Device key={device.name} device={device} isPrimary={idx === 0} />

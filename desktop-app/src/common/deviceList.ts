@@ -606,7 +606,8 @@ const devices: Device[] = [
     height: 1280,
     dpi: 1,
     capabilities: ['touch'],
-    userAgent: '',
+    userAgent:
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
     type: 'notebook',
     isTouchCapable: true,
     isMobileCapable: false,
@@ -617,7 +618,8 @@ const devices: Device[] = [
     height: 1440,
     dpi: 2,
     capabilities: [],
-    userAgent: '',
+    userAgent:
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
     type: 'notebook',
     isTouchCapable: false,
     isMobileCapable: false,
@@ -628,7 +630,20 @@ const devices: Device[] = [
     height: 1280,
     dpi: 1,
     capabilities: [],
-    userAgent: '',
+    userAgent:
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
+    type: 'notebook',
+    isTouchCapable: false,
+    isMobileCapable: false,
+  },
+  {
+    name: 'Macbook Pro',
+    width: 1440,
+    height: 900,
+    dpi: 2,
+    capabilities: [],
+    userAgent:
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
     type: 'notebook',
     isTouchCapable: false,
     isMobileCapable: false,

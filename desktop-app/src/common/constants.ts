@@ -6,6 +6,14 @@ export const DOCK_POSITION = {
   UNDOCKED: 'UNDOCKED',
 } as const;
 
+export const PREVIEW_LAYOUTS = {
+  COLUMN: 'COLUMN',
+  FLEX: 'FLEX',
+} as const;
+
+export type PreviewLayout =
+  typeof PREVIEW_LAYOUTS[keyof typeof PREVIEW_LAYOUTS];
+
 export const IPC_MAIN_CHANNELS = {
   APP_META: 'app-meta',
   PERMISSION_REQUEST: 'permission-request',
