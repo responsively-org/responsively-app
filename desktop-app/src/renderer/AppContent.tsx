@@ -10,6 +10,7 @@ import { APP_VIEWS, selectAppView } from './store/features/ui';
 import type { AppView } from './store/features/ui';
 import DeviceManager from './components/DeviceManager';
 import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
+import ReleaseNotes from './components/ReleaseNotes';
 
 const Browser = () => {
   return (
@@ -43,6 +44,7 @@ const AppContent = () => {
       <ThemeProvider>
         <KeyboardShortcutsManager />
         <ViewComponent />
+        <ReleaseNotes />
       </ThemeProvider>
     </Provider>
   );
