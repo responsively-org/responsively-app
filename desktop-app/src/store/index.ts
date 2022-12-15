@@ -141,6 +141,13 @@ const schema = {
     type: 'string',
     default: 'https://www.google.com/',
   },
+  seenReleaseNotes: {
+    type: 'array',
+    items: {
+      type: 'string',
+    },
+    default: [],
+  },
 };
 
 const store = new Store({ schema, watch: true });

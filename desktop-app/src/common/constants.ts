@@ -20,6 +20,7 @@ export const IPC_MAIN_CHANNELS = {
   PERMISSION_RESPONSE: 'permission-response',
   AUTH_REQUEST: 'auth-request',
   AUTH_RESPONSE: 'auth-response',
+  OPEN_EXTERNAL: 'open-external',
 } as const;
 
 export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];

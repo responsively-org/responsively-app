@@ -12,7 +12,7 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { IPC_MAIN_CHANNELS } from 'common/constants';
+import { IPC_MAIN_CHANNELS } from '../common/constants';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
@@ -24,6 +24,7 @@ import { initWebviewStorageManagerHandlers } from './webview-storage-manager';
 import { initNativeFunctionHandlers } from './native-functions';
 import { WebPermissionHandlers } from './web-permissions';
 import { initHttpBasicAuthHandlers } from './http-basic-auth';
+import { initAppMetaHandlers } from './app-meta';
 
 export default class AppUpdater {
   constructor() {
@@ -35,21 +36,7 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.handle(IPC_MAIN_CHANNELS.APP_META, async () => {
-  return {
-    webviewPreloadPath: app.isPackaged
-      ? path.join(__dirname, 'preload-webview.js')
-      : path.join(__dirname, '../../.erb/dll/preload-webview.js'),
-  };
-});
-
-ipcMain.on('electron-store-get', async (event, val) => {
-  event.returnValue = store.get(val);
-});
-ipcMain.on('electron-store-set', async (_, key, val) => {
-  store.set(key, val);
-});
-
+initAppMetaHandlers();
 initWebviewContextMenu();
 initScreenshotHandlers();
 initWebviewStorageManagerHandlers();
