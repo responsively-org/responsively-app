@@ -89,7 +89,7 @@ sudo rpm -i https://github.com/responsively-org/responsively-app/releases/downlo
 
 otherwise download an AppImage from [the releases page](https://github.com/responsively-org/responsively-app/releases)
 
-Follow on Twitter for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
+Follow us on Twitter for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
 
 ## Browser Extension
 
