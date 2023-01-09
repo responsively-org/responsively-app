@@ -133,6 +133,8 @@
     "use-sound": "^4.0.1"
   },
   "devDependencies": {
+    "@electron/notarize": "^1.2.3",
+    "@electron/rebuild": "^3.2.10",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@svgr/webpack": "^6.3.1",
     "@tailwindcss/typography": "^0.5.8",
@@ -163,8 +165,6 @@
     "electron": "^21.0.1",
     "electron-builder": "^23.3.3",
     "electron-devtools-installer": "^3.2.0",
-    "electron-notarize": "^1.2.1",
-    "electron-rebuild": "^3.2.9",
     "electronmon": "^2.0.2",
     "eslint": "^8.22.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -200,6 +200,7 @@
     "ts-jest": "^28.0.8",
     "ts-loader": "^9.3.1",
     "ts-node": "^10.9.1",
+    "tsconfig-paths-webpack-plugin": "^4.0.0",
     "typescript": "^4.7.4",
     "url-loader": "^4.1.1",
     "webpack": "^5.74.0",
