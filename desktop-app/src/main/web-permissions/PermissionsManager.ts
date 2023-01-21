@@ -105,7 +105,15 @@ class PermissionsManager {
     };
     const PERMISSION_RESPONSE_CHANNEL = IPC_MAIN_CHANNELS.PERMISSION_RESPONSE;
     if (ipcMain.listeners(PERMISSION_RESPONSE_CHANNEL).length === 0) {
-      ipcMain.handle(PERMISSION_RESPONSE_CHANNEL, handler);
+      try {
+        ipcMain.handle(PERMISSION_RESPONSE_CHANNEL, handler);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(
+          'Error adding listener for permission response channel',
+          e
+        );
+      }
     }
   }
 

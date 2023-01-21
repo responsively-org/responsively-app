@@ -122,91 +122,104 @@ const disableInspector = async (
   return { status: true };
 };
 
+const openDevtools = async (
+  _: any,
+  arg: OpenDevtoolsArgs
+): Promise<OpenDevtoolsResult> => {
+  const { webviewId, dockPosition } = arg;
+  if (mainWindow == null) {
+    return { status: false };
+  }
+  devtoolsWebview = webContents.fromId(webviewId);
+  if (dockPosition === DOCK_POSITION.UNDOCKED) {
+    devtoolsWebview.openDevTools({ mode: 'detach' });
+    return { status: true };
+  }
+  devtoolsBrowserView = new BrowserView();
+  mainWindow.setBrowserView(devtoolsBrowserView);
+  devtoolsBrowserView.setBounds({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+  devtoolsWebview.setDevToolsWebContents(devtoolsBrowserView.webContents);
+  devtoolsWebview.openDevTools();
+
+  devtoolsBrowserView.webContents
+    .executeJavaScript(
+      `
+      (async function () {
+        const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+        var retryCount = 0;
+        var done = false;
+        while(retryCount < 10 && !done) {
+          try {
+            retryCount++;
+            document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
+            done = true
+          } catch(err){
+            await sleep(100);
+          }
+        }
+      })()
+    `
+    )
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Error removing the native inspect button', err);
+    });
+
+  return { status: true };
+};
+
+const resizeDevtools = async (_: any, arg: OpenDevtoolsArgs) => {
+  if (devtoolsBrowserView == null) {
+    return;
+  }
+  const { bounds } = arg;
+  if (bounds == null) {
+    return;
+  }
+  const { x, y, width, height } = bounds;
+  devtoolsBrowserView.setBounds({
+    x,
+    y,
+    width,
+    height,
+  });
+};
+
+const closeDevTools = async () => {
+  if (devtoolsWebview == null) {
+    return;
+  }
+  devtoolsWebview.closeDevTools();
+  if (devtoolsBrowserView == null) {
+    return;
+  }
+  mainWindow?.removeBrowserView(devtoolsBrowserView);
+  (devtoolsBrowserView.webContents as any).destroy();
+  devtoolsBrowserView = undefined;
+};
+
 export const initDevtoolsHandlers = (
   _mainWindow: BrowserWindow | undefined
 ) => {
   mainWindow = _mainWindow;
-  ipcMain.handle(
-    'open-devtools',
-    async (_, arg: OpenDevtoolsArgs): Promise<OpenDevtoolsResult> => {
-      const { webviewId, dockPosition } = arg;
-      if (mainWindow == null) {
-        return { status: false };
-      }
-      devtoolsWebview = webContents.fromId(webviewId);
-      if (dockPosition === DOCK_POSITION.UNDOCKED) {
-        devtoolsWebview.openDevTools({ mode: 'detach' });
-        return { status: true };
-      }
-      devtoolsBrowserView = new BrowserView();
-      mainWindow.setBrowserView(devtoolsBrowserView);
-      devtoolsBrowserView.setBounds({
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
-      });
-      devtoolsWebview.setDevToolsWebContents(devtoolsBrowserView.webContents);
-      devtoolsWebview.openDevTools();
 
-      devtoolsBrowserView.webContents
-        .executeJavaScript(
-          `
-          (async function () {
-            const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
-            var retryCount = 0;
-            var done = false;
-            while(retryCount < 10 && !done) {
-              try {
-                retryCount++;
-                document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
-                done = true
-              } catch(err){
-                await sleep(100);
-              }
-            }
-          })()
-        `
-        )
-        .catch((err) => {
-          // eslint-disable-next-line no-console
-          console.error('Error removing the native inspect button', err);
-        });
+  ipcMain.removeHandler('open-devtools');
+  ipcMain.handle('open-devtools', openDevtools);
 
-      return { status: true };
-    }
-  );
+  ipcMain.removeHandler('resize-devtools');
+  ipcMain.handle('resize-devtools', resizeDevtools);
 
-  ipcMain.handle('resize-devtools', async (_, arg) => {
-    if (devtoolsBrowserView == null) {
-      return;
-    }
-    const { bounds } = arg;
-    if (bounds == null) {
-      return;
-    }
-    const { x, y, width, height } = bounds;
-    devtoolsBrowserView.setBounds({
-      x,
-      y,
-      width,
-      height,
-    });
-  });
+  ipcMain.removeHandler('close-devtools');
+  ipcMain.handle('close-devtools', closeDevTools);
 
-  ipcMain.handle('close-devtools', async () => {
-    if (devtoolsWebview == null) {
-      return;
-    }
-    devtoolsWebview.closeDevTools();
-    if (devtoolsBrowserView == null) {
-      return;
-    }
-    mainWindow?.removeBrowserView(devtoolsBrowserView);
-    (devtoolsBrowserView.webContents as any).destroy();
-    devtoolsBrowserView = undefined;
-  });
-
+  ipcMain.removeHandler('enable-inspector-overlay');
   ipcMain.handle('enable-inspector-overlay', enableInspector);
+
+  ipcMain.removeHandler('disable-inspector-overlay');
   ipcMain.handle('disable-inspector-overlay', disableInspector);
 };
