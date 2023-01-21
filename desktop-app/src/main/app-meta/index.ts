@@ -15,7 +15,7 @@ export const initAppMetaHandlers = () => {
       return {
         webviewPreloadPath: app.isPackaged
           ? path.join(__dirname, 'preload-webview.js')
-          : path.join(__dirname, '../../.erb/dll/preload-webview.js'),
+          : path.join(__dirname, '../../../.erb/dll/preload-webview.js'),
         appVersion: app.getVersion(),
       };
     }
