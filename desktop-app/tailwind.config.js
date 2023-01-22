@@ -17,12 +17,21 @@ module.exports = {
           normal: colors.gray['700'],
         },
       },
-      maxWidth: (theme) => ({
-        ...theme('spacing'),
-      }),
       fontFamily: {
         sans: ['Lato', ...defaultTheme.fontFamily.sans],
       },
+      maxHeight: (theme) => ({
+        ...theme('spacing'),
+      }),
+      maxWidth: (theme) => ({
+        ...theme('spacing'),
+      }),
+      minHeight: (theme) => ({
+        ...theme('spacing'),
+      }),
+      minWidth: (theme) => ({
+        ...theme('spacing'),
+      }),
     },
   },
   plugins: [typography],

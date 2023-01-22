@@ -14,7 +14,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   }, [darkMode]);
 
   return (
-    <div className="h-screen w-screen bg-slate-200 text-light-normal dark:bg-slate-800 dark:text-dark-normal">
+    <div className="min-w-screen min-h-screen bg-slate-200 text-light-normal dark:bg-slate-800 dark:text-dark-normal">
       {children}
     </div>
   );
