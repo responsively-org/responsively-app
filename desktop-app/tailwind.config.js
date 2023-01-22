@@ -17,6 +17,9 @@ module.exports = {
           normal: colors.gray['700'],
         },
       },
+      maxWidth: (theme) => ({
+        ...theme('spacing'),
+      }),
       fontFamily: {
         sans: ['Lato', ...defaultTheme.fontFamily.sans],
       },
