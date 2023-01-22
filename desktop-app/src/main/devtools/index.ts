@@ -174,7 +174,6 @@ const openDevtools = async (
 };
 
 const resizeDevtools = async (_: any, arg: OpenDevtoolsArgs) => {
-  console.log('resizeDevtools arg', arg);
   try {
     if (devtoolsBrowserView == null) {
       return;
