@@ -174,20 +174,26 @@ const openDevtools = async (
 };
 
 const resizeDevtools = async (_: any, arg: OpenDevtoolsArgs) => {
-  if (devtoolsBrowserView == null) {
-    return;
+  console.log('resizeDevtools arg', arg);
+  try {
+    if (devtoolsBrowserView == null) {
+      return;
+    }
+    const { bounds } = arg;
+    if (bounds == null) {
+      return;
+    }
+    const { x, y, width, height } = bounds;
+    devtoolsBrowserView.setBounds({
+      x: Math.round(x),
+      y: Math.round(y),
+      width: Math.round(width),
+      height: Math.round(height),
+    });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error resizing devtools', err);
   }
-  const { bounds } = arg;
-  if (bounds == null) {
-    return;
-  }
-  const { x, y, width, height } = bounds;
-  devtoolsBrowserView.setBounds({
-    x,
-    y,
-    width,
-    height,
-  });
 };
 
 const closeDevTools = async () => {
@@ -200,6 +206,7 @@ const closeDevTools = async () => {
   }
   mainWindow?.removeBrowserView(devtoolsBrowserView);
   (devtoolsBrowserView.webContents as any).destroy();
+  devtoolsBrowserView.webContents.close();
   devtoolsBrowserView = undefined;
 };
 
