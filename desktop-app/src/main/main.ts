@@ -12,9 +12,10 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import cli from './cli';
 import { IPC_MAIN_CHANNELS } from '../common/constants';
 import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
+import { isValidCliArgURL, resolveHtmlPath } from './util';
 import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
 import store from '../store';
 import { initWebviewContextMenu } from './webview-context-menu/register';
@@ -102,6 +103,12 @@ const createWindow = async () => {
 
   mainWindow.on('ready-to-show', async () => {
     await initInstance();
+    if (isValidCliArgURL(cli.input[0])) {
+      mainWindow?.webContents.send(IPC_MAIN_CHANNELS.OPEN_URL, {
+        url: cli.input[0],
+      });
+    }
+
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }

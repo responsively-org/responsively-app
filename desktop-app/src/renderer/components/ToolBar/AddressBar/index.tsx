@@ -1,9 +1,15 @@
 import { Icon } from '@iconify/react';
 import cx from 'classnames';
-import { IPC_MAIN_CHANNELS } from 'common/constants';
+import { IPC_MAIN_CHANNELS, OpenUrlArgs } from 'common/constants';
 import { AuthRequestArgs } from 'main/http-basic-auth';
 import { PermissionRequestArg } from 'main/web-permissions/PermissionsManager';
-import { KeyboardEventHandler, useEffect, useRef, useState } from 'react';
+import {
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
 import { webViewPubSub } from 'renderer/lib/pubsub';
@@ -43,6 +49,25 @@ const AddressBar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
 
+  const dispatchAddress = useCallback(
+    (url?: string) => {
+      let newAddress = url ?? typedAddress;
+      if (newAddress.indexOf('://') === -1) {
+        let protocol = 'https://';
+        if (
+          typedAddress.indexOf('localhost') !== -1 ||
+          typedAddress.indexOf('127.0.0.1') !== -1
+        ) {
+          protocol = 'http://';
+        }
+        newAddress = protocol + typedAddress;
+      }
+
+      dispatch(setAddress(newAddress));
+    },
+    [dispatch, typedAddress]
+  );
+
   useEffect(() => {
     window.electron.ipcRenderer.on<PermissionRequestArg>(
       IPC_MAIN_CHANNELS.PERMISSION_REQUEST,
@@ -57,12 +82,25 @@ const AddressBar = () => {
         setAuthRequest(args);
       }
     );
+    window.electron.ipcRenderer.on<OpenUrlArgs>(
+      IPC_MAIN_CHANNELS.OPEN_URL,
+      (args) => {
+        dispatchAddress(args.url);
+      }
+    );
+
     return () => {
       window.electron.ipcRenderer.removeAllListeners(
         IPC_MAIN_CHANNELS.PERMISSION_REQUEST
       );
+      window.electron.ipcRenderer.removeAllListeners(
+        IPC_MAIN_CHANNELS.AUTH_REQUEST
+      );
+      window.electron.ipcRenderer.removeAllListeners(
+        IPC_MAIN_CHANNELS.OPEN_URL
+      );
     };
-  }, []);
+  }, [dispatchAddress]);
 
   useEffect(() => {
     if (homepage !== window.electron.store.get('homepage')) {
@@ -79,22 +117,6 @@ const AddressBar = () => {
       allow,
     });
     setPermissionRequest(null);
-  };
-
-  const dispatchAddress = (url?: string) => {
-    let newAddress = url ?? typedAddress;
-    if (newAddress.indexOf('://') === -1) {
-      let protocol = 'https://';
-      if (
-        typedAddress.indexOf('localhost') !== -1 ||
-        typedAddress.indexOf('127.0.0.1') !== -1
-      ) {
-        protocol = 'http://';
-      }
-      newAddress = protocol + typedAddress;
-    }
-
-    dispatch(setAddress(newAddress));
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = () => {
