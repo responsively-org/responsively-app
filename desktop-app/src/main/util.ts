@@ -12,8 +12,14 @@ export function resolveHtmlPath(htmlFileName: string) {
   return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
 }
 
+let isCliArgResult: boolean | undefined;
+
 export function isValidCliArgURL(arg?: string): boolean {
+  if (isCliArgResult !== undefined) {
+    return isCliArgResult;
+  }
   if (arg == null || arg === '') {
+    isCliArgResult = false;
     return false;
   }
   try {
@@ -23,6 +29,7 @@ export function isValidCliArgURL(arg?: string): boolean {
       url.protocol === 'https:' ||
       url.protocol === 'file:'
     ) {
+      isCliArgResult = true;
       return true;
     }
     // eslint-disable-next-line no-console
@@ -31,5 +38,6 @@ export function isValidCliArgURL(arg?: string): boolean {
     // eslint-disable-next-line no-console
     console.warn('Not a valid URL', arg, e);
   }
+  isCliArgResult = false;
   return false;
 }
