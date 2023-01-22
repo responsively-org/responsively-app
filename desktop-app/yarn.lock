@@ -3868,10 +3868,23 @@ camelcase-css@^2.0.1:
   resolved "https://registry.yarnpkg.com/camelcase-css/-/camelcase-css-2.0.1.tgz#ee978f6947914cc30c6b44741b6ed1df7f043fd5"
   integrity sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==
 
+camelcase-keys@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/camelcase-keys/-/camelcase-keys-3.0.0.tgz#fc0c6c360363f7377e3793b9a16bccf1070c1ca4"
+  integrity sha512-U4E6A6aFyYnNW+tDt5/yIUKQURKXe3WMFPfX4FxrQFcwZ/R08AUk1xWcUtlr7oq6CV07Ji+aa69V2g7BSpblnQ==
+  dependencies:
+    camelcase "^3.0.0"
+    map-obj "^1.0.0"
+
 camelcase@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-1.2.1.tgz#9bb5304d2e0b56698b2c758b08a3eaa9daa58a39"
   integrity sha512-wzLkDa4K/mzI1OSITC+DUyjgIl/ETNHE9QvYgy6J6Jvqyyz4C0Xfd+lQhb19sX2jMpZV4IssUn0VDVmglV+s4g==
+
+camelcase@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-3.0.0.tgz#32fc4b9fcdaf845fcdf7e73bb97cac2261f0ab0a"
+  integrity sha512-4nhGqUkc4BqbBBB4Q6zLuD7lzzrHYrjKGeYaEji/3tFR5VdJu9v+LilhGIVe8wxEJPPOeWo7eg8dwY13TZ1BNg==
 
 camelcase@^5.0.0, camelcase@^5.3.1:
   version "5.3.1"
@@ -4686,7 +4699,15 @@ debug@^3.2.7:
   dependencies:
     ms "^2.1.1"
 
-decamelize@^1.0.0, decamelize@^1.2.0:
+decamelize-keys@^1.1.0:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/decamelize-keys/-/decamelize-keys-1.1.1.tgz#04a2d523b2f18d80d0158a43b895d56dff8d19d8"
+  integrity sha512-WiPxgEirIV0/eIOMcnFBA3/IJZAZqKnwAwWyvvdi4lsr1WCN22nhdf/3db3DoZcUjTV2SqfzIwNyp6y2xs3nmg==
+  dependencies:
+    decamelize "^1.1.0"
+    map-obj "^1.0.0"
+
+decamelize@^1.0.0, decamelize@^1.1.0, decamelize@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
   integrity sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==
@@ -5174,6 +5195,17 @@ ejs@^3.1.7:
   dependencies:
     jake "^10.8.5"
 
+electron-args@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/electron-args/-/electron-args-0.1.0.tgz#90da262798f0a825aa00a2ebe943f2ba3c118f3b"
+  integrity sha512-CUehTgU4W8QAe+P5YWDORku1+GRMlj5XcUdzvmtmRU3scV84W/+8iJrEVOn/ARhBWlhKvS7i7T3SazLwfSlXAQ==
+  dependencies:
+    camelcase-keys "^3.0.0"
+    decamelize-keys "^1.1.0"
+    electron-is-dev "^0.1.2"
+    minimist "^1.2.0"
+    redent "^2.0.0"
+
 electron-builder@^23.3.3:
   version "23.6.0"
   resolved "https://registry.yarnpkg.com/electron-builder/-/electron-builder-23.6.0.tgz#c79050cbdce90ed96c5feb67c34e9e0a21b5331b"
@@ -5214,6 +5246,11 @@ electron-is-accelerator@^0.1.0:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/electron-is-accelerator/-/electron-is-accelerator-0.1.2.tgz#509e510c26a56b55e17f863a4b04e111846ab27b"
   integrity sha512-fLGSAjXZtdn1sbtZxx52+krefmtNuVwnJCV2gNiVt735/ARUboMl8jnNC9fZEqQdlAv2ZrETfmBUsoQci5evJA==
+
+electron-is-dev@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/electron-is-dev/-/electron-is-dev-0.1.2.tgz#8a1043e32b3a1da1c3f553dce28ce764246167e3"
+  integrity sha512-T5WJFw6Go4UuTlnmy/4gcDW1jJKQRqGeIzff02K0jbKUwAOuQX1Kt9VWLTE4reVDlXgM5Qp6Mu7CegX/0jhnHw==
 
 electron-is-dev@^1.1.0:
   version "1.2.0"
@@ -7335,6 +7372,11 @@ imurmurhash@^0.1.4:
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
   integrity sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==
 
+indent-string@^3.0.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/indent-string/-/indent-string-3.2.0.tgz#4a5fd6d27cc332f37e5419a504dbb837105c9289"
+  integrity sha512-BYqTHXTGUIvg7t1r4sJNKcbDZkL92nkXA8YtRpbjFHRHGDL/NtUeiBJMeE60kIFN/Mg8ESaWQvftaYMGJzQZCQ==
+
 indent-string@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/indent-string/-/indent-string-4.0.0.tgz#624f8f4497d619b2d9768531d58f4122854d7251"
@@ -9060,6 +9102,11 @@ map-cache@^0.2.0, map-cache@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/map-cache/-/map-cache-0.2.2.tgz#c32abd0bd6525d9b051645bb4f26ac5dc98a0dbf"
   integrity sha512-8y/eV9QQZCiyn1SprXSrCmqJN0yNRATe+PO8ztwqrvrbdRLA3eYJF0yaR0YayLWkMbsQSKWS9N2gPcGEc4UsZg==
+
+map-obj@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-1.0.1.tgz#d933ceb9205d82bdcf4886f6742bdc2b4dea146d"
+  integrity sha512-7N/q3lyZ+LVCp7PzuxrJr4KMbBE2hW7BT7YNia330OFxIf4d3r5zVpicP2650l7CPN6RM9zOJRl3NGpqSiw3Eg==
 
 map-visit@^1.0.0:
   version "1.0.0"
@@ -11104,6 +11151,14 @@ rechoir@^0.7.0:
   dependencies:
     resolve "^1.9.0"
 
+redent@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/redent/-/redent-2.0.0.tgz#c1b2007b42d57eb1389079b3c8333639d5e1ccaa"
+  integrity sha512-XNwrTx77JQCEMXTeb8movBKuK75MgH0RZkujNuDKCezemx/voapl9i2gCSi8WWm8+ox5ycJi1gxF22fR7c0Ciw==
+  dependencies:
+    indent-string "^3.0.0"
+    strip-indent "^2.0.0"
+
 redent@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/redent/-/redent-3.0.0.tgz#e557b7998316bb53c9f1f56fa626352c6963059f"
@@ -12343,6 +12398,11 @@ strip-final-newline@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/strip-final-newline/-/strip-final-newline-3.0.0.tgz#52894c313fbff318835280aed60ff71ebf12b8fd"
   integrity sha512-dOESqjYr96iWYylGObzd39EuNTa5VJxyvVAEm5Jnh7KGo75V43Hk1odPQkNDyXNmUR6k+gEiDVXnjB8HJ3crXw==
+
+strip-indent@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/strip-indent/-/strip-indent-2.0.0.tgz#5ef8db295d01e6ed6cbf7aab96998d7822527b68"
+  integrity sha512-RsSNPLpq6YUL7QYy44RnPVTn/lcVZtb48Uof3X5JLbF4zD/Gs7ZFDv2HWol+leoQN2mT86LAzSshGfkTlSOpsA==
 
 strip-indent@^3.0.0:
   version "3.0.0"

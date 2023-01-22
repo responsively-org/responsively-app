@@ -11,3 +11,25 @@ export function resolveHtmlPath(htmlFileName: string) {
   }
   return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
 }
+
+export function isValidCliArgURL(arg?: string): boolean {
+  if (arg == null || arg === '') {
+    return false;
+  }
+  try {
+    const url = new URL(arg);
+    if (
+      url.protocol === 'http:' ||
+      url.protocol === 'https:' ||
+      url.protocol === 'file:'
+    ) {
+      return true;
+    }
+    // eslint-disable-next-line no-console
+    console.warn('Protocol not supported', url.protocol);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('Not a valid URL', arg, e);
+  }
+  return false;
+}

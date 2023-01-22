@@ -14,6 +14,10 @@ export const PREVIEW_LAYOUTS = {
 export type PreviewLayout =
   typeof PREVIEW_LAYOUTS[keyof typeof PREVIEW_LAYOUTS];
 
+export interface OpenUrlArgs {
+  url: string;
+}
+
 export const IPC_MAIN_CHANNELS = {
   APP_META: 'app-meta',
   PERMISSION_REQUEST: 'permission-request',
@@ -21,6 +25,7 @@ export const IPC_MAIN_CHANNELS = {
   AUTH_REQUEST: 'auth-request',
   AUTH_RESPONSE: 'auth-response',
   OPEN_EXTERNAL: 'open-external',
+  OPEN_URL: 'open-url',
 } as const;
 
 export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];
