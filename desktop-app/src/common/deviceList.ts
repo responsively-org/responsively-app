@@ -660,6 +660,18 @@ const devices: Device[] = [
     isTouchCapable: true,
     isMobileCapable: true,
   },
+  {
+    name: 'Samsung S21 FE',
+    width: 1080,
+    height: 2340,
+    dpi: 420,
+    capabilities: ['touch', 'mobile'],
+    userAgent:
+      'Mozilla/5.0 (Linux; Android 13; SAMSUNG SM-G990B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/20.0 Chrome/106.0.5249.126 Mobile Safari/537.36',
+    type: 'phone',
+    isTouchCapable: true,
+    isMobileCapable: true,
+  },
 ];
 
 const customDevices: Device[] = window.electron.store.get(
