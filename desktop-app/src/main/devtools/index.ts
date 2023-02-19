@@ -109,11 +109,12 @@ const disableInspector = async (
   const { webviewId } = args;
   const webViewContents = webContents.fromId(webviewId);
   const dbg = webViewContents.debugger;
-  await dbg.sendCommand('Overlay.setInspectMode', {
-    mode: 'none',
-    highlightConfig: {},
-  });
   try {
+    await dbg.sendCommand('Overlay.setInspectMode', {
+      mode: 'none',
+      highlightConfig: {},
+    });
+
     dbg.removeAllListeners().detach();
   } catch (err) {
     // eslint-disable-next-line no-console

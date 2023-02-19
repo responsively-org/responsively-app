@@ -11,7 +11,7 @@ import {
   DisableDefaultWindowOpenHandlerArgs,
   DisableDefaultWindowOpenHandlerResult,
 } from 'main/native-functions';
-import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
+import { CONTEXT_MENUS } from 'main/webview-context-menu/common';
 import {
   DeleteStorageArgs,
   DeleteStorageResult,
@@ -151,50 +151,114 @@ const Device = ({ isPrimary, device }: Props) => {
     dispatch(setDevtoolsOpen(webview.getWebContentsId()));
   }, [dispatch, dockPosition]);
 
+  const inspectElement = useCallback(
+    async (deviceX: number, deviceY: number) => {
+      if (!ref.current) {
+        return;
+      }
+      const webview = ref.current as Electron.WebviewTag;
+      if (webview == null) {
+        return;
+      }
+
+      if (devtoolsOpenForWebviewId !== webview.getWebContentsId()) {
+        if (isDevtoolsOpen) {
+          dispatch(setDevtoolsClose());
+          await window.electron.ipcRenderer.invoke('close-devtools');
+        }
+        await openDevTools();
+      }
+      const { x: webViewX, y: webViewY } = webview.getBoundingClientRect();
+      webview.inspectElement(
+        Math.round(webViewX + deviceX * zoomfactor),
+        Math.round(webViewY + deviceY * zoomfactor)
+      );
+    },
+    [
+      dispatch,
+      devtoolsOpenForWebviewId,
+      isDevtoolsOpen,
+      openDevTools,
+      zoomfactor,
+    ]
+  );
+
   useEffect(() => {
     if (!ref.current) {
       return;
     }
     const webview = ref.current as Electron.WebviewTag;
-    webview.addEventListener('did-navigate', (e) => {
+    const handlerRemovers: (() => void)[] = [];
+
+    const didNavigateHandler = (e: Electron.DidNavigateEvent) => {
       dispatch(setAddress(e.url));
       if (isPrimary) {
         appendHistory(webview.getURL(), webview.getTitle());
       }
+    };
+    webview.addEventListener('did-navigate', didNavigateHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('did-navigate', didNavigateHandler);
     });
 
-    webview.addEventListener('ipc-message', (e) => {
+    const ipc̨MessageHandler = (e: Electron.IpcMessageEvent) => {
       if (e.channel === 'context-menu-command') {
         const { command, arg } = e.args[0];
-        handleContextMenuEvent(webview, command, arg);
+        switch (command) {
+          case CONTEXT_MENUS.OPEN_CONSOLE.id:
+            openDevTools();
+            break;
+          case CONTEXT_MENUS.INSPECT_ELEMENT.id: {
+            const {
+              contextMenuMeta: { x, y },
+            } = arg;
+            inspectElement(x, y);
+            break;
+          }
+          default:
+            console.log('Unhandled context menu command', command);
+        }
       }
+    };
+    webview.addEventListener('ipc-message', ipc̨MessageHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('ipc-message', ipc̨MessageHandler);
     });
 
-    webview.addEventListener('did-start-loading', () => {
+    const didStartLoadingHandler = () => {
       setLoading(true);
       setError(null);
+    };
+    webview.addEventListener('did-start-loading', didStartLoadingHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('did-start-loading', didStartLoadingHandler);
     });
-    webview.addEventListener('did-stop-loading', () => {
+
+    const didStopLoadingHandler = () => {
       setLoading(false);
+    };
+
+    webview.addEventListener('did-stop-loading', didStopLoadingHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('did-stop-loading', didStopLoadingHandler);
     });
 
-    webview.addEventListener(
-      'did-fail-load',
-      ({ errorCode, errorDescription }) => {
-        if (errorCode === -3) {
-          // Aborted error, can be ignored
-          return;
-        }
-        setError({
-          code: errorCode,
-          description: errorDescription,
-        });
+    const didFailLoadHandler = ({
+      errorCode,
+      errorDescription,
+    }: Electron.DidFailLoadEvent) => {
+      if (errorCode === -3) {
+        // Aborted error, can be ignored
+        return;
       }
-    );
-
-    webview.addEventListener('crashed', () => {
-      // eslint-disable-next-line no-console
-      console.error('Web view crashed');
+      setError({
+        code: errorCode,
+        description: errorDescription,
+      });
+    };
+    webview.addEventListener('did-fail-load', didFailLoadHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('did-fail-load', didFailLoadHandler);
     });
 
     if (!isPrimary) {
@@ -206,12 +270,26 @@ const Device = ({ isPrimary, device }: Props) => {
           webContentsId: webview.getWebContentsId(),
         });
       }, 2000);
-
-      return;
     }
 
-    registerNavigationHandlers();
-  }, [ref, dispatch, registerNavigationHandlers, isPrimary]);
+    if (isPrimary) {
+      registerNavigationHandlers();
+    }
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      handlerRemovers.forEach((handlerRemover) => {
+        handlerRemover();
+      });
+    };
+  }, [
+    ref,
+    dispatch,
+    registerNavigationHandlers,
+    isPrimary,
+    inspectElement,
+    openDevTools,
+  ]);
 
   useEffect(() => {
     // Reload keyboard shortcuts effect
@@ -223,10 +301,8 @@ const Device = ({ isPrimary, device }: Props) => {
     const reloadHandler = (args: ReloadArgs) => {
       const { ignoreCache } = args;
       if (ignoreCache === true) {
-        console.log('Reloading reloadIgnoringCache');
         webview.reloadIgnoringCache();
       } else {
-        console.log('Reloading');
         webview.reload();
       }
     };
@@ -249,21 +325,10 @@ const Device = ({ isPrimary, device }: Props) => {
         return;
       }
       dispatch(setIsInspecting(false));
-      const { x: webViewX, y: webViewY } = webview.getBoundingClientRect();
       const {
         coords: { x: deviceX, y: deviceY },
       } = args;
-      if (devtoolsOpenForWebviewId !== webview.getWebContentsId()) {
-        if (isDevtoolsOpen) {
-          dispatch(setDevtoolsClose());
-          await window.electron.ipcRenderer.invoke('close-devtools');
-        }
-        await openDevTools();
-      }
-      webview.inspectElement(
-        Math.round(webViewX + deviceX * zoomfactor),
-        Math.round(webViewY + deviceY * zoomfactor)
-      );
+      inspectElement(deviceX, deviceY);
     };
 
     window.electron.ipcRenderer.on('inspect-element', inspectElementHandler);
@@ -283,6 +348,7 @@ const Device = ({ isPrimary, device }: Props) => {
     devtoolsOpenForWebviewId,
     openDevTools,
     zoomfactor,
+    inspectElement,
   ]);
 
   useEffect(() => {
