@@ -1,10 +1,7 @@
 import { ipcRenderer } from 'electron';
 
-console.log('Preload main');
-
 const documentBodyInit = () => {
   // Browser Sync
-  console.log('Registering browserSync');
   const bsScript = window.document.createElement('script');
   bsScript.src =
     'https://localhost:12719/browser-sync/browser-sync-client.js?v=2.27.10';
