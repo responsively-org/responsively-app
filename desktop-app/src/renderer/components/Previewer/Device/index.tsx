@@ -11,7 +11,10 @@ import {
   DisableDefaultWindowOpenHandlerArgs,
   DisableDefaultWindowOpenHandlerResult,
 } from 'main/native-functions';
-import { handleContextMenuEvent } from 'main/webview-context-menu/handler';
+import {
+  CONTEXT_MENUS,
+  handleContextMenuEvent,
+} from 'main/webview-context-menu/common';
 import {
   DeleteStorageArgs,
   DeleteStorageResult,
@@ -151,6 +154,38 @@ const Device = ({ isPrimary, device }: Props) => {
     dispatch(setDevtoolsOpen(webview.getWebContentsId()));
   }, [dispatch, dockPosition]);
 
+  const inspectElement = useCallback(
+    async (deviceX: number, deviceY: number) => {
+      if (!ref.current) {
+        return;
+      }
+      const webview = ref.current as Electron.WebviewTag;
+      if (webview == null) {
+        return;
+      }
+
+      if (devtoolsOpenForWebviewId !== webview.getWebContentsId()) {
+        if (isDevtoolsOpen) {
+          dispatch(setDevtoolsClose());
+          await window.electron.ipcRenderer.invoke('close-devtools');
+        }
+        await openDevTools();
+      }
+      const { x: webViewX, y: webViewY } = webview.getBoundingClientRect();
+      webview.inspectElement(
+        Math.round(webViewX + deviceX * zoomfactor),
+        Math.round(webViewY + deviceY * zoomfactor)
+      );
+    },
+    [
+      dispatch,
+      devtoolsOpenForWebviewId,
+      isDevtoolsOpen,
+      openDevTools,
+      zoomfactor,
+    ]
+  );
+
   useEffect(() => {
     if (!ref.current) {
       return;
@@ -166,7 +201,20 @@ const Device = ({ isPrimary, device }: Props) => {
     webview.addEventListener('ipc-message', (e) => {
       if (e.channel === 'context-menu-command') {
         const { command, arg } = e.args[0];
-        handleContextMenuEvent(webview, command, arg);
+        switch (command) {
+          case CONTEXT_MENUS.OPEN_CONSOLE.id:
+            openDevTools();
+            break;
+          case CONTEXT_MENUS.INSPECT_ELEMENT.id: {
+            const {
+              contextMenuMeta: { x, y },
+            } = arg;
+            inspectElement(x, y);
+            break;
+          }
+          default:
+            console.log('Unhandled context menu command', command);
+        }
       }
     });
 
@@ -211,7 +259,14 @@ const Device = ({ isPrimary, device }: Props) => {
     }
 
     registerNavigationHandlers();
-  }, [ref, dispatch, registerNavigationHandlers, isPrimary]);
+  }, [
+    ref,
+    dispatch,
+    registerNavigationHandlers,
+    isPrimary,
+    inspectElement,
+    openDevTools,
+  ]);
 
   useEffect(() => {
     // Reload keyboard shortcuts effect
@@ -249,21 +304,10 @@ const Device = ({ isPrimary, device }: Props) => {
         return;
       }
       dispatch(setIsInspecting(false));
-      const { x: webViewX, y: webViewY } = webview.getBoundingClientRect();
       const {
         coords: { x: deviceX, y: deviceY },
       } = args;
-      if (devtoolsOpenForWebviewId !== webview.getWebContentsId()) {
-        if (isDevtoolsOpen) {
-          dispatch(setDevtoolsClose());
-          await window.electron.ipcRenderer.invoke('close-devtools');
-        }
-        await openDevTools();
-      }
-      webview.inspectElement(
-        Math.round(webViewX + deviceX * zoomfactor),
-        Math.round(webViewY + deviceY * zoomfactor)
-      );
+      inspectElement(deviceX, deviceY);
     };
 
     window.electron.ipcRenderer.on('inspect-element', inspectElementHandler);
@@ -283,6 +327,7 @@ const Device = ({ isPrimary, device }: Props) => {
     devtoolsOpenForWebviewId,
     openDevTools,
     zoomfactor,
+    inspectElement,
   ]);
 
   useEffect(() => {
