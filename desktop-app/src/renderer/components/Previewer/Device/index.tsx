@@ -11,10 +11,7 @@ import {
   DisableDefaultWindowOpenHandlerArgs,
   DisableDefaultWindowOpenHandlerResult,
 } from 'main/native-functions';
-import {
-  CONTEXT_MENUS,
-  handleContextMenuEvent,
-} from 'main/webview-context-menu/common';
+import { CONTEXT_MENUS } from 'main/webview-context-menu/common';
 import {
   DeleteStorageArgs,
   DeleteStorageResult,
@@ -191,14 +188,20 @@ const Device = ({ isPrimary, device }: Props) => {
       return;
     }
     const webview = ref.current as Electron.WebviewTag;
-    webview.addEventListener('did-navigate', (e) => {
+    const handlerRemovers: (() => void)[] = [];
+
+    const didNavigateHandler = (e: Electron.DidNavigateEvent) => {
       dispatch(setAddress(e.url));
       if (isPrimary) {
         appendHistory(webview.getURL(), webview.getTitle());
       }
+    };
+    webview.addEventListener('did-navigate', didNavigateHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('did-navigate', didNavigateHandler);
     });
 
-    webview.addEventListener('ipc-message', (e) => {
+    const ipc̨MessageHandler = (e: Electron.IpcMessageEvent) => {
       if (e.channel === 'context-menu-command') {
         const { command, arg } = e.args[0];
         switch (command) {
@@ -216,33 +219,46 @@ const Device = ({ isPrimary, device }: Props) => {
             console.log('Unhandled context menu command', command);
         }
       }
+    };
+    webview.addEventListener('ipc-message', ipc̨MessageHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('ipc-message', ipc̨MessageHandler);
     });
 
-    webview.addEventListener('did-start-loading', () => {
+    const didStartLoadingHandler = () => {
       setLoading(true);
       setError(null);
+    };
+    webview.addEventListener('did-start-loading', didStartLoadingHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('did-start-loading', didStartLoadingHandler);
     });
-    webview.addEventListener('did-stop-loading', () => {
+
+    const didStopLoadingHandler = () => {
       setLoading(false);
+    };
+
+    webview.addEventListener('did-stop-loading', didStopLoadingHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('did-stop-loading', didStopLoadingHandler);
     });
 
-    webview.addEventListener(
-      'did-fail-load',
-      ({ errorCode, errorDescription }) => {
-        if (errorCode === -3) {
-          // Aborted error, can be ignored
-          return;
-        }
-        setError({
-          code: errorCode,
-          description: errorDescription,
-        });
+    const didFailLoadHandler = ({
+      errorCode,
+      errorDescription,
+    }: Electron.DidFailLoadEvent) => {
+      if (errorCode === -3) {
+        // Aborted error, can be ignored
+        return;
       }
-    );
-
-    webview.addEventListener('crashed', () => {
-      // eslint-disable-next-line no-console
-      console.error('Web view crashed');
+      setError({
+        code: errorCode,
+        description: errorDescription,
+      });
+    };
+    webview.addEventListener('did-fail-load', didFailLoadHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('did-fail-load', didFailLoadHandler);
     });
 
     if (!isPrimary) {
@@ -254,11 +270,18 @@ const Device = ({ isPrimary, device }: Props) => {
           webContentsId: webview.getWebContentsId(),
         });
       }, 2000);
-
-      return;
     }
 
-    registerNavigationHandlers();
+    if (isPrimary) {
+      registerNavigationHandlers();
+    }
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      handlerRemovers.forEach((handlerRemover) => {
+        handlerRemover();
+      });
+    };
   }, [
     ref,
     dispatch,
@@ -278,10 +301,8 @@ const Device = ({ isPrimary, device }: Props) => {
     const reloadHandler = (args: ReloadArgs) => {
       const { ignoreCache } = args;
       if (ignoreCache === true) {
-        console.log('Reloading reloadIgnoringCache');
         webview.reloadIgnoringCache();
       } else {
-        console.log('Reloading');
         webview.reload();
       }
     };
