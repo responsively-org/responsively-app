@@ -186,7 +186,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^28.1.3",
     "jest-environment-jsdom": "^28.1.3",
-    "lint-staged": "^13.0.3",
+    "lint-staged": "^13.1.2",
     "mini-css-extract-plugin": "^2.6.1",
     "postcss-loader": "^7.0.0",
     "prettier": "^2.7.1",
