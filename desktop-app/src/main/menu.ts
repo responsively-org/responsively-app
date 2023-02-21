@@ -60,6 +60,52 @@ export default class MenuBuilder {
     });
   }
 
+  aboutClick = () => {
+    const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
+    const title = 'Responsively';
+    const { description } = getPackageJson();
+    const {
+      appVersion,
+      electronVersion,
+      chromeVersion,
+      nodeVersion,
+      v8Version,
+      osInfo,
+    } = getEnvironmentInfo();
+
+    const usefulInfo = `Version: ${appVersion}\nElectron: ${electronVersion}\nChrome: ${chromeVersion}\nNode.js: ${nodeVersion}\nV8: ${v8Version}\nOS: ${osInfo}`;
+    const detail = description ? `${description}\n\n${usefulInfo}` : usefulInfo;
+    let buttons = ['OK', 'Copy'];
+    let cancelId = 0;
+    let defaultId = 1;
+    if (process.platform === 'linux') {
+      buttons = ['Copy', 'OK'];
+      cancelId = 1;
+      defaultId = 0;
+    }
+    dialog
+      .showMessageBox(BrowserWindow.getAllWindows()[0], {
+        type: 'none',
+        buttons,
+        title,
+        message: title,
+        detail,
+        noLink: true,
+        icon: iconPath,
+        cancelId,
+        defaultId,
+      })
+      .then(({ response }) => {
+        if (response === defaultId) {
+          clipboard.writeText(usefulInfo, 'clipboard');
+        }
+        return null;
+      })
+      .catch((err) => {
+        console.error('Error opening about', err);
+      });
+  };
+
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
       label: 'ResponsivelyApp',
@@ -171,53 +217,6 @@ export default class MenuBuilder {
         { label: 'Bring All to Front', selector: 'arrangeInFront:' },
       ],
     };
-    const aboutClick = () => {
-      const iconPath = path.join(__dirname, '../resources/icons/64x64.png');
-      const title = 'Responsively';
-      const { description } = getPackageJson();
-      const {
-        appVersion,
-        electronVersion,
-        chromeVersion,
-        nodeVersion,
-        v8Version,
-        osInfo,
-      } = getEnvironmentInfo();
-
-      const usefulInfo = `Version: ${appVersion}\nElectron: ${electronVersion}\nChrome: ${chromeVersion}\nNode.js: ${nodeVersion}\nV8: ${v8Version}\nOS: ${osInfo}`;
-      const detail = description
-        ? `${description}\n\n${usefulInfo}`
-        : usefulInfo;
-      let buttons = ['OK', 'Copy'];
-      let cancelId = 0;
-      let defaultId = 1;
-      if (process.platform === 'linux') {
-        buttons = ['Copy', 'OK'];
-        cancelId = 1;
-        defaultId = 0;
-      }
-      dialog
-        .showMessageBox(BrowserWindow.getAllWindows()[0], {
-          type: 'none',
-          buttons,
-          title,
-          message: title,
-          detail,
-          noLink: true,
-          icon: iconPath,
-          cancelId,
-          defaultId,
-        })
-        .then(({ response }) => {
-          if (response === defaultId) {
-            clipboard.writeText(usefulInfo, 'clipboard');
-          }
-          return null;
-        })
-        .catch((err) => {
-          console.error('Error opening about', err);
-        });
-    };
 
     const subMenuHelp: MenuItemConstructorOptions = {
       label: 'Help',
@@ -256,7 +255,7 @@ export default class MenuBuilder {
         {
           label: 'About',
           accelerator: 'F1',
-          click: aboutClick,
+          click: this.aboutClick,
         },
       ],
     };
@@ -358,6 +357,14 @@ export default class MenuBuilder {
             click() {
               shell.openExternal('https://github.com/electron/electron/issues');
             },
+          },
+          {
+            type: 'separator',
+          },
+          {
+            label: 'About',
+            accelerator: 'F1',
+            click: this.aboutClick,
           },
         ],
       },
