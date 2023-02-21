@@ -269,8 +269,8 @@ export default class MenuBuilder {
     return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
   }
 
-  buildDefaultTemplate() {
-    const templateDefault = [
+  buildDefaultTemplate(): MenuItemConstructorOptions[] {
+    return [
       {
         label: '&File',
         submenu: [
@@ -369,7 +369,5 @@ export default class MenuBuilder {
         ],
       },
     ];
-
-    return templateDefault;
   }
 }
