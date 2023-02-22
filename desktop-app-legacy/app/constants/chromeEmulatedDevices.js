@@ -1791,6 +1791,41 @@ export default {
         ],
       },
     },
+    {
+      id: '48',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': false,
+        title: 'iPhone 14',
+        screen: {
+          horizontal: {
+            width: 844,
+            height: 390,
+          },
+          'device-pixel-ratio': 3,
+          vertical: {
+            width: 390,
+            height: 844,
+          },
+        },
+        capabilities: ['touch', 'mobile'],
+        'user-agent':
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/537.51.2 (KHTML, like Gecko) Version/7.0 Mobile/11D257 Safari/9537.53',
+        type: 'phone',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'vertical',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
   ],
   dependencies: ['emulation'],
   scripts: [],
