@@ -17,7 +17,7 @@ const zoomSteps = [
 
 const initialState: RendererState = {
   address: window.electron.store.get('homepage'),
-  zoomFactor: zoomSteps[3],
+  zoomFactor: zoomSteps[window.electron.store.get('renderer.zoomStepIndex')],
   rotate: false,
   isInspecting: undefined,
   layout: window.electron.store.get('ui.previewLayout'),
@@ -35,13 +35,17 @@ export const rendererSlice = createSlice({
     zoomIn: (state) => {
       const index = zoomSteps.indexOf(state.zoomFactor);
       if (index < zoomSteps.length - 1) {
-        state.zoomFactor = zoomSteps[index + 1];
+        const newIndex = index + 1;
+        state.zoomFactor = zoomSteps[newIndex];
+        window.electron.store.set('renderer.zoomStepIndex', newIndex);
       }
     },
     zoomOut: (state) => {
       const index = zoomSteps.indexOf(state.zoomFactor);
       if (index > 0) {
-        state.zoomFactor = zoomSteps[index - 1];
+        const newIndex = index - 1;
+        state.zoomFactor = zoomSteps[newIndex];
+        window.electron.store.set('renderer.zoomStepIndex', newIndex);
       }
     },
     setRotate: (state, action: PayloadAction<boolean>) => {
