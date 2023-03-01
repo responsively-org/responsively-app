@@ -16,6 +16,16 @@ const schema = {
       },
     },
   },
+  renderer: {
+    type: 'object',
+    properties: {
+      zoomStepIndex: {
+        type: 'number',
+        default: 3,
+      },
+    },
+    default: {},
+  },
   devtools: {
     type: 'object',
     properties: {
