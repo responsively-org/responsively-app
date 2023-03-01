@@ -195,7 +195,7 @@
     "react-refresh": "^0.14.0",
     "react-test-renderer": "^18.2.0",
     "replace-in-file": "^6.3.5",
-    "rimraf": "^3.0.2",
+    "rimraf": "^4.1.2",
     "sass": "^1.54.4",
     "sass-loader": "^13.0.2",
     "style-loader": "^3.3.1",
