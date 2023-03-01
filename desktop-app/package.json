@@ -191,7 +191,7 @@
     "mini-css-extract-plugin": "^2.6.1",
     "postcss-loader": "^7.0.0",
     "prettier": "^2.7.1",
-    "prettier-plugin-tailwindcss": "^0.1.12",
+    "prettier-plugin-tailwindcss": "^0.2.3",
     "react-refresh": "^0.14.0",
     "react-test-renderer": "^18.2.0",
     "replace-in-file": "^6.3.5",
