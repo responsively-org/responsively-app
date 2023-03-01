@@ -272,9 +272,7 @@ const Device = ({ isPrimary, device }: Props) => {
       }, 2000);
     }
 
-    if (isPrimary) {
-      registerNavigationHandlers();
-    }
+    registerNavigationHandlers();
 
     // eslint-disable-next-line consistent-return
     return () => {
