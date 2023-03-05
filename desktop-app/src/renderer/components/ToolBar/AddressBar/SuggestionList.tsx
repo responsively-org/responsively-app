@@ -86,7 +86,10 @@ const SuggestionList = ({ match, onEnter }: Props) => {
             <span className="overflow-hidden text-ellipsis whitespace-nowrap">
               {title}
             </span>
-            -<span className="text-blue-500">{url}</span>
+            -
+            <span className="max-w-2/5 overflow-hidden text-ellipsis whitespace-nowrap text-blue-500">
+              {url}
+            </span>
           </span>
         </button>
       ))}

@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0",
   "description": "A developer-friendly browser for developing responsive web apps",
   "keywords": [
     "developer-tools",
@@ -38,7 +38,8 @@
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:preloadWebview": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload-webview.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -94,7 +95,8 @@
       "url": "http://localhost/"
     },
     "testPathIgnorePatterns": [
-      "release/app/dist"
+      "release/app/dist",
+      ".erb/dll"
     ],
     "transform": {
       "\\.(ts|tsx|js|jsx)$": "ts-jest"
@@ -109,6 +111,7 @@
     "bluebird": "^3.7.2",
     "browser-sync": "^2.27.10",
     "classnames": "^2.3.1",
+    "electron-args": "^0.1.0",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-store": "^8.0.2",
@@ -133,7 +136,9 @@
     "use-sound": "^4.0.1"
   },
   "devDependencies": {
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
+    "@electron/notarize": "^1.2.3",
+    "@electron/rebuild": "^3.2.10",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@svgr/webpack": "^6.3.1",
     "@tailwindcss/typography": "^0.5.8",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
@@ -145,7 +150,7 @@
     "@types/jest": "^28.1.7",
     "@types/mousetrap": "^1.6.10",
     "@types/node": "18.7.6",
-    "@types/react": "18.0.23",
+    "@types/react": "18.0.28",
     "@types/react-dom": "18.0.6",
     "@types/react-test-renderer": "^18.0.0",
     "@types/terser-webpack-plugin": "^5.0.4",
@@ -160,13 +165,11 @@
     "css-loader": "^6.7.1",
     "css-minimizer-webpack-plugin": "^4.0.0",
     "detect-port": "^1.3.0",
-    "electron": "^21.0.1",
+    "electron": "^23.1.0",
     "electron-builder": "^23.3.3",
     "electron-devtools-installer": "^3.2.0",
-    "electron-notarize": "^1.2.1",
-    "electron-rebuild": "^3.2.9",
     "electronmon": "^2.0.2",
-    "eslint": "^8.22.0",
+    "eslint": "^8.34.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-erb": "^4.0.3",
     "eslint-import-resolver-typescript": "^3.4.1",
@@ -184,22 +187,23 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^28.1.3",
     "jest-environment-jsdom": "^28.1.3",
-    "lint-staged": "^13.0.3",
+    "lint-staged": "^13.1.2",
     "mini-css-extract-plugin": "^2.6.1",
     "postcss-loader": "^7.0.0",
     "prettier": "^2.7.1",
-    "prettier-plugin-tailwindcss": "^0.1.12",
+    "prettier-plugin-tailwindcss": "^0.2.3",
     "react-refresh": "^0.14.0",
     "react-test-renderer": "^18.2.0",
     "replace-in-file": "^6.3.5",
-    "rimraf": "^3.0.2",
+    "rimraf": "^4.1.2",
     "sass": "^1.54.4",
     "sass-loader": "^13.0.2",
     "style-loader": "^3.3.1",
     "terser-webpack-plugin": "^5.3.5",
     "ts-jest": "^28.0.8",
-    "ts-loader": "^9.3.1",
+    "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
+    "tsconfig-paths-webpack-plugin": "^4.0.0",
     "typescript": "^4.7.4",
     "url-loader": "^4.1.1",
     "webpack": "^5.74.0",

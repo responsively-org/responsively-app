@@ -1,7 +1,8 @@
 import { BrowserWindow, ipcMain, Menu } from 'electron';
-import { CONTEXT_MENUS } from './handler';
+import { CONTEXT_MENUS } from './common';
 
 export const initWebviewContextMenu = () => {
+  ipcMain.removeAllListeners('show-context-menu');
   ipcMain.on('show-context-menu', (event, ...args) => {
     const template: Electron.MenuItemConstructorOptions[] = Object.values(
       CONTEXT_MENUS

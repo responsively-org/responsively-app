@@ -26,15 +26,20 @@ const ReleaseNotes = () => {
       const release = await fetch(
         `https://api.github.com/repos/responsively-org/responsively-app/releases/tags/v${appMeta.appVersion}`
       ).then((res) => res.json());
-      setContent(
-        release.body
-          .replace(`What's Changed`, ``)
-          .replaceAll(/(https[^\n ]*)/g, `[$1]($1)`)
-          .replaceAll(/\*\*Full.*/g, ``)
-          .replaceAll(/@(\w+)/g, '[@$1](https://github.com/$1)')
-          .trim()
-      );
-      setIsOpen(true);
+      try {
+        setContent(
+          release.body
+            .replace(`What's Changed`, ``)
+            .replaceAll(/(https[^\n ]*)/g, `[$1]($1)`)
+            .replaceAll(/\*\*Full.*/g, ``)
+            .replaceAll(/@(\w+)/g, '[@$1](https://github.com/$1)')
+            .trim()
+        );
+        setIsOpen(true);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error while fetching release notes', error);
+      }
     })();
   }, []);
 

@@ -109,11 +109,12 @@ const disableInspector = async (
   const { webviewId } = args;
   const webViewContents = webContents.fromId(webviewId);
   const dbg = webViewContents.debugger;
-  await dbg.sendCommand('Overlay.setInspectMode', {
-    mode: 'none',
-    highlightConfig: {},
-  });
   try {
+    await dbg.sendCommand('Overlay.setInspectMode', {
+      mode: 'none',
+      highlightConfig: {},
+    });
+
     dbg.removeAllListeners().detach();
   } catch (err) {
     // eslint-disable-next-line no-console
@@ -122,62 +123,59 @@ const disableInspector = async (
   return { status: true };
 };
 
-export const initDevtoolsHandlers = (
-  _mainWindow: BrowserWindow | undefined
-) => {
-  mainWindow = _mainWindow;
-  ipcMain.handle(
-    'open-devtools',
-    async (_, arg: OpenDevtoolsArgs): Promise<OpenDevtoolsResult> => {
-      const { webviewId, dockPosition } = arg;
-      if (mainWindow == null) {
-        return { status: false };
-      }
-      devtoolsWebview = webContents.fromId(webviewId);
-      if (dockPosition === DOCK_POSITION.UNDOCKED) {
-        devtoolsWebview.openDevTools({ mode: 'detach' });
-        return { status: true };
-      }
-      devtoolsBrowserView = new BrowserView();
-      mainWindow.setBrowserView(devtoolsBrowserView);
-      devtoolsBrowserView.setBounds({
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
-      });
-      devtoolsWebview.setDevToolsWebContents(devtoolsBrowserView.webContents);
-      devtoolsWebview.openDevTools();
+const openDevtools = async (
+  _: any,
+  arg: OpenDevtoolsArgs
+): Promise<OpenDevtoolsResult> => {
+  const { webviewId, dockPosition } = arg;
+  if (mainWindow == null) {
+    return { status: false };
+  }
+  devtoolsWebview = webContents.fromId(webviewId);
+  if (dockPosition === DOCK_POSITION.UNDOCKED) {
+    devtoolsWebview.openDevTools({ mode: 'detach' });
+    return { status: true };
+  }
+  devtoolsBrowserView = new BrowserView();
+  mainWindow.setBrowserView(devtoolsBrowserView);
+  devtoolsBrowserView.setBounds({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+  devtoolsWebview.setDevToolsWebContents(devtoolsBrowserView.webContents);
+  devtoolsWebview.openDevTools();
 
-      devtoolsBrowserView.webContents
-        .executeJavaScript(
-          `
-          (async function () {
-            const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
-            var retryCount = 0;
-            var done = false;
-            while(retryCount < 10 && !done) {
-              try {
-                retryCount++;
-                document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
-                done = true
-              } catch(err){
-                await sleep(100);
-              }
-            }
-          })()
-        `
-        )
-        .catch((err) => {
-          // eslint-disable-next-line no-console
-          console.error('Error removing the native inspect button', err);
-        });
+  devtoolsBrowserView.webContents
+    .executeJavaScript(
+      `
+      (async function () {
+        const sleep = ms => (new Promise(resolve => setTimeout(resolve, ms)));
+        var retryCount = 0;
+        var done = false;
+        while(retryCount < 10 && !done) {
+          try {
+            retryCount++;
+            document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
+            done = true
+          } catch(err){
+            await sleep(100);
+          }
+        }
+      })()
+    `
+    )
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Error removing the native inspect button', err);
+    });
 
-      return { status: true };
-    }
-  );
+  return { status: true };
+};
 
-  ipcMain.handle('resize-devtools', async (_, arg) => {
+const resizeDevtools = async (_: any, arg: OpenDevtoolsArgs) => {
+  try {
     if (devtoolsBrowserView == null) {
       return;
     }
@@ -187,26 +185,48 @@ export const initDevtoolsHandlers = (
     }
     const { x, y, width, height } = bounds;
     devtoolsBrowserView.setBounds({
-      x,
-      y,
-      width,
-      height,
+      x: Math.round(x),
+      y: Math.round(y),
+      width: Math.round(width),
+      height: Math.round(height),
     });
-  });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error resizing devtools', err);
+  }
+};
 
-  ipcMain.handle('close-devtools', async () => {
-    if (devtoolsWebview == null) {
-      return;
-    }
-    devtoolsWebview.closeDevTools();
-    if (devtoolsBrowserView == null) {
-      return;
-    }
-    mainWindow?.removeBrowserView(devtoolsBrowserView);
-    (devtoolsBrowserView.webContents as any).destroy();
-    devtoolsBrowserView = undefined;
-  });
+const closeDevTools = async () => {
+  if (devtoolsWebview == null) {
+    return;
+  }
+  devtoolsWebview.closeDevTools();
+  if (devtoolsBrowserView == null) {
+    return;
+  }
+  mainWindow?.removeBrowserView(devtoolsBrowserView);
+  (devtoolsBrowserView.webContents as any).destroy();
+  devtoolsBrowserView.webContents.close();
+  devtoolsBrowserView = undefined;
+};
 
+export const initDevtoolsHandlers = (
+  _mainWindow: BrowserWindow | undefined
+) => {
+  mainWindow = _mainWindow;
+
+  ipcMain.removeHandler('open-devtools');
+  ipcMain.handle('open-devtools', openDevtools);
+
+  ipcMain.removeHandler('resize-devtools');
+  ipcMain.handle('resize-devtools', resizeDevtools);
+
+  ipcMain.removeHandler('close-devtools');
+  ipcMain.handle('close-devtools', closeDevTools);
+
+  ipcMain.removeHandler('enable-inspector-overlay');
   ipcMain.handle('enable-inspector-overlay', enableInspector);
+
+  ipcMain.removeHandler('disable-inspector-overlay');
   ipcMain.handle('disable-inspector-overlay', disableInspector);
 };

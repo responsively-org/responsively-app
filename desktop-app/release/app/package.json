@@ -1,6 +1,6 @@
 {
   "name": "ResponsivelyApp",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.3",
   "description": "A developer-friendly browser for developing responsive web apps",
   "license": "MIT",
   "author": {
@@ -14,6 +14,6 @@
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
   "dependencies": {
-    "browser-sync": "^2.27.10"
+    "browser-sync": "^2.27.12"
   }
 }
