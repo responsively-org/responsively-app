@@ -126,7 +126,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
-    "react-markdown": "^8.0.4",
+    "react-markdown": "^8.0.5",
     "react-redux": "^8.0.2",
     "react-router-dom": "^6.3.0",
     "redux": "^4.0.4",
