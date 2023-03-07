@@ -1791,6 +1791,217 @@ export default {
         ],
       },
     },
+    {
+      id: '48',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': false,
+        title: 'Samsung S20',
+        screen: {
+          horizontal: {
+            width: 800,
+            height: 360,
+          },
+          'device-pixel-ratio': 3,
+          vertical: {
+            width: 360,
+            height: 800,
+          },
+        },
+        capabilities: ['touch', 'mobile'],
+        'user-agent':
+        'Mozilla/5.0 (Linux; Android 10; SM-G981) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.153 Mobile Safari/537.36',
+        type: 'phone',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'vertical',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
+    {
+      id: '49',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': false,
+        title: 'Samsung S20 Plus',
+        screen: {
+          horizontal: {
+            width: 854,
+            height: 384,
+          },
+          'device-pixel-ratio': 2.8125,
+          vertical: {
+            width: 384,
+            height: 854,
+          },
+        },
+        capabilities: ['touch', 'mobile'],
+        'user-agent':
+        'Mozilla/5.0 (Linux; Android 10; SM-G986) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.153 Mobile Safari/537.36',
+        type: 'phone',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'vertical',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
+    {
+      id: '50',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': false,
+        title: 'Samsung S20 Ultra',
+        screen: {
+          horizontal: {
+            width: 915,
+            height: 412,
+          },
+          'device-pixel-ratio': 2.625,
+          vertical: {
+            width: 412,
+            height: 915,
+          },
+        },
+        capabilities: ['touch', 'mobile'],
+        'user-agent':
+        'Mozilla/5.0 (Linux; Android 10; SM-G988) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.153 Mobile Safari/537.36',
+        type: 'phone',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'vertical',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
+    {
+      id: '51',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': false,
+        title: 'Samsung S21',
+        screen: {
+          horizontal: {
+            width: 800,
+            height: 360,
+          },
+          'device-pixel-ratio': 3,
+          vertical: {
+            width: 360,
+            height: 800,
+          },
+        },
+        capabilities: ['touch', 'mobile'],
+        'user-agent':
+        'Mozilla/5.0 (Linux; Android 10; SM-G991) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.153 Mobile Safari/537.36',
+        type: 'phone',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'vertical',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
+    {
+      id: '52',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': false,
+        title: 'Samsung S21 Plus',
+        screen: {
+          horizontal: {
+            width: 854,
+            height: 384,
+          },
+          'device-pixel-ratio': 2.8125,
+          vertical: {
+            width: 384,
+            height: 854,
+          },
+        },
+        capabilities: ['touch', 'mobile'],
+        'user-agent':
+        'Mozilla/5.0 (Linux; Android 10; SM-G996) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.153 Mobile Safari/537.36',
+        type: 'phone',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'vertical',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
+    {
+      id: '53',
+      type: 'emulated-device',
+      device: {
+        'show-by-default': false,
+        title: 'Samsung S21 Ultra',
+        screen: {
+          horizontal: {
+            width: 915,
+            height: 412,
+          },
+          'device-pixel-ratio': 2.625,
+          vertical: {
+            width: 412,
+            height: 915,
+          },
+        },
+        capabilities: ['touch', 'mobile'],
+        'user-agent':
+        'Mozilla/5.0 (Linux; Android 10; SM-G998) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.153 Mobile Safari/537.36',
+        type: 'phone',
+        modes: [
+          {
+            title: 'default',
+            orientation: 'vertical',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+          {
+            title: 'default',
+            orientation: 'horizontal',
+            insets: {left: 0, top: 0, right: 0, bottom: 0},
+          },
+        ],
+      },
+    },
+    
   ],
   dependencies: ['emulation'],
   scripts: [],
