@@ -210,6 +210,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="http://www.d19.ca"><img src="https://avatars.githubusercontent.com/u/8153796?v=4?s=100" width="100px;" alt="Dustin Dauncey"/><br /><sub><b>Dustin Dauncey</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=d19dotca" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/heagan01"><img src="https://avatars.githubusercontent.com/u/54394590?v=4?s=100" width="100px;" alt="heagan01"/><br /><sub><b>heagan01</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=heagan01" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/Th0masCat"><img src="https://avatars.githubusercontent.com/u/74812563?v=4?s=100" width="100px;" alt="Sahil Jangra"/><br /><sub><b>Sahil Jangra</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Th0masCat" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/nopdotcom"><img src="https://avatars.githubusercontent.com/u/1357866?v=4?s=100" width="100px;" alt="Jay Carlson"/><br /><sub><b>Jay Carlson</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=nopdotcom" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
