@@ -478,6 +478,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Th0masCat",
+      "name": "Sahil Jangra",
+      "avatar_url": "https://avatars.githubusercontent.com/u/74812563?v=4",
+      "profile": "https://github.com/Th0masCat",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "nopdotcom",
+      "name": "Jay Carlson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1357866?v=4",
+      "profile": "https://github.com/nopdotcom",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
