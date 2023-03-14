@@ -61,6 +61,8 @@
 5. One-click screenshot all your devices.
 6. Hot reloading supported for developers.
 
+The software provides users with a synchronized experience across all their devices by mirroring user interactions. Additionally, it offers a customizable preview layout that can be tailored to meet individual preferences. A single elements inspector is available for all devices in the preview, making it convenient for users to make changes and updates. The software also comes with more than 30 built-in device profiles, which can be supplemented with custom devices if needed. Users can quickly take screenshots of all their devices with just one click. Finally, developers can take advantage of the hot reloading feature, which enables them to make changes to the code and see the results in real-time without having to manually reload the page.
+
 Please visit the website to know more about the application - https://responsively.app
 
 
