@@ -169,7 +169,7 @@
     "electron-builder": "^23.3.3",
     "electron-devtools-installer": "^3.2.0",
     "electronmon": "^2.0.2",
-    "eslint": "^8.34.0",
+    "eslint": "^8.36.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-erb": "^4.0.3",
     "eslint-import-resolver-typescript": "^3.4.1",
