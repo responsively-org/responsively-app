@@ -143,7 +143,7 @@
     "@tailwindcss/typography": "^0.5.8",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.3.0",
+    "@testing-library/react": "^14.0.0",
     "@types/bluebird": "^3.5.36",
     "@types/browser-sync": "^2.26.3",
     "@types/howler": "^2.2.7",
