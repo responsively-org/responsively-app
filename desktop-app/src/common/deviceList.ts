@@ -49,6 +49,30 @@ const devices: Device[] = [
     isMobileCapable: true,
   },
   {
+    name: 'iPhone 13 Pro Max',
+    width: 428,
+    height: 926,
+    dpi: 3,
+    capabilities: ['touch', 'mobile'],
+    userAgent:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
+    type: 'phone',
+    isTouchCapable: true,
+    isMobileCapable: true,
+  },
+  {
+    name: 'iPhone 14 Pro Max',
+    width: 430,
+    height: 932,
+    dpi: 3,
+    capabilities: ['touch', 'mobile'],
+    userAgent:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
+    type: 'phone',
+    isTouchCapable: true,
+    isMobileCapable: true,
+  },
+  {
     name: 'Pixel 3 XL',
     width: 393,
     height: 786,
