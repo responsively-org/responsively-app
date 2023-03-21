@@ -496,6 +496,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Mikadifo",
+      "name": "Michael Padilla",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51935560?v=4",
+      "profile": "http://mikadifo.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
