@@ -213,6 +213,9 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="https://github.com/nopdotcom"><img src="https://avatars.githubusercontent.com/u/1357866?v=4?s=100" width="100px;" alt="Jay Carlson"/><br /><sub><b>Jay Carlson</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=nopdotcom" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="http://mikadifo.com"><img src="https://avatars.githubusercontent.com/u/51935560?v=4?s=100" width="100px;" alt="Michael Padilla"/><br /><sub><b>Michael Padilla</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Mikadifo" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://narrowcode.xyz"><img src="https://avatars.githubusercontent.com/u/6213380?v=4?s=100" width="100px;" alt="Andreas Steinkellner"/><br /><sub><b>Andreas Steinkellner</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=NarrowCode" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
