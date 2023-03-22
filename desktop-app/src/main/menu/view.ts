@@ -18,7 +18,7 @@ const getToggleDevTools = (
   mainWindow: BrowserWindow
 ): MenuItemConstructorOptions => ({
   label: 'Toggle &Developer Tools',
-  accelerator: isMac ? 'Alt+CommandOrControl+I' : 'F12',
+  accelerator: isMac ? 'F12OrAlt+CommandOrControl+I' : 'F12',
   click: () => {
     mainWindow.webContents.toggleDevTools();
   },
