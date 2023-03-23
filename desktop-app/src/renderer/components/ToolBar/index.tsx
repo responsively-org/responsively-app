@@ -6,16 +6,38 @@ import {
   setRotate,
 } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
+import { useEffect, useRef } from 'react';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
 import Button from '../Button';
 import AddressBar from './AddressBar';
 import ColorSchemeToggle from './ColorSchemeToggle';
 
+function useKey(key, cb) {
+  const callbackRef = useRef(cb);
+  useEffect(() => {
+    callbackRef.current = cb;
+  });
+
+  useEffect(() => {
+    function handle(event) {
+      if (event.code === key) {
+        callbackRef.current(event);
+      }
+    }
+    document.addEventListener('keypress', handle);
+    return () => document.removeEventListener('keypress', handle);
+  }, [key]);
+}
 const ToolBar = () => {
   const rotateDevice = useSelector(selectRotate);
   const isInspecting = useSelector(selectIsInspecting);
   const dispatch = useDispatch();
+
+  function handleInspectShortcut() {
+    dispatch(setIsInspecting(!isInspecting));
+  }
+  useKey('KeyS', handleInspectShortcut);
 
   return (
     <div className="flex items-center justify-between gap-2">
