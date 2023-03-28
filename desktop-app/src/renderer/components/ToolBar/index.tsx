@@ -13,14 +13,15 @@ import Button from '../Button';
 import AddressBar from './AddressBar';
 import ColorSchemeToggle from './ColorSchemeToggle';
 
-function useKey(key, cb) {
+function useKey(key: any, cb: any) {
   const callbackRef = useRef(cb);
-  useEffect(() => {
-    callbackRef.current = cb;
-  });
 
   useEffect(() => {
-    function handle(event) {
+    callbackRef.current = cb;
+  }, [cb]);
+
+  useEffect(() => {
+    function handle(event: { code: any }) {
       if (event.code === key) {
         callbackRef.current(event);
       }
@@ -37,7 +38,7 @@ const ToolBar = () => {
   function handleInspectShortcut() {
     dispatch(setIsInspecting(!isInspecting));
   }
-  useKey('KeyS', handleInspectShortcut);
+  useKey('KeyI', handleInspectShortcut);
 
   return (
     <div className="flex items-center justify-between gap-2">
