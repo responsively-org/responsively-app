@@ -1,4 +1,5 @@
 import { Device } from 'common/deviceList';
+import { randomUUID } from 'crypto';
 import { useEffect, useState } from 'react';
 import Button from '../Button';
 import Input from '../Input';
@@ -93,6 +94,7 @@ const DeviceDetailsModal = ({
     }
     await onAddDevice(
       {
+        id: randomUUID(),
         name,
         width,
         height,
