@@ -285,7 +285,8 @@
     "patterns": [
       "!**/**",
       "src/main/**/*",
-      "src/store/**/*"
+      "src/store/**/*",
+      "src/common/**/*"
     ],
     "logLevel": "quiet"
   }

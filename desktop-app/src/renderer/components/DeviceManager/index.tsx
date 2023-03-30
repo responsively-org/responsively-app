@@ -8,7 +8,7 @@ import {
   setDevices,
 } from 'renderer/store/features/device-manager';
 import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
-import defaultDevices, { Device } from 'common/deviceList';
+import { defaultDevices, Device } from 'common/deviceList';
 
 import Button from '../Button';
 import DeviceLabel, { DND_TYPE } from './DeviceLabel';
