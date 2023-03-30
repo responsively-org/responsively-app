@@ -1,4 +1,5 @@
 import { Device } from 'common/deviceList';
+import { v4 as uuidv4 } from 'uuid';
 import { useEffect, useState } from 'react';
 import Button from '../Button';
 import Input from '../Input';
@@ -93,6 +94,7 @@ const DeviceDetailsModal = ({
     }
     await onAddDevice(
       {
+        id: uuidv4(),
         name,
         width,
         height,

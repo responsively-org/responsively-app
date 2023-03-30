@@ -1,4 +1,5 @@
 import { DOCK_POSITION, PREVIEW_LAYOUTS } from '../common/constants';
+import { migrations } from './migrations';
 
 const Store = require('electron-store');
 
@@ -44,13 +45,16 @@ const schema = {
         items: {
           type: 'string',
         },
-        default: ['iPhone 12 Pro', 'iPad', 'Macbook Pro'],
+        default: ['10008', '10013', '10015'],
       },
       customDevices: {
         type: 'array',
         items: {
           type: 'object',
           properties: {
+            id: {
+              type: 'string',
+            },
             name: {
               type: 'string',
             },
@@ -158,8 +162,8 @@ const schema = {
     },
     default: [],
   },
-};
+} as const;
 
-const store = new Store({ schema, watch: true });
+const store = new Store({ schema, watch: true, migrations });
 
 export default store;
