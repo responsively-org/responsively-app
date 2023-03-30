@@ -505,6 +505,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "NarrowCode",
+      "name": "Andreas Steinkellner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6213380?v=4",
+      "profile": "https://narrowcode.xyz",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,

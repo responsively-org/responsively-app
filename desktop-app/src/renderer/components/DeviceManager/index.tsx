@@ -15,9 +15,11 @@ import DeviceLabel, { DND_TYPE } from './DeviceLabel';
 import DeviceDetailsModal from './DeviceDetailsModal';
 
 const filterDevices = (devices: Device[], filter: string) => {
+  const sanitizedFilter = filter.trim().toLowerCase();
+
   return devices.filter((device: Device) =>
     `${device.name.toLowerCase()}${device.width}x${device.height}`.includes(
-      filter
+      sanitizedFilter
     )
   );
 };
@@ -108,11 +110,9 @@ const DeviceManager = () => {
             <Icon icon="ic:outline-search" height={24} />
             <input
               className="w-60 rounded bg-inherit px-2 py-1 focus:outline-none"
-              placeholder="Search.."
+              placeholder="Search ..."
               value={searchText}
-              onChange={(e) =>
-                setSearchText(e.target.value.trim().toLowerCase())
-              }
+              onChange={(e) => setSearchText(e.target.value)}
             />
           </div>
         </div>
