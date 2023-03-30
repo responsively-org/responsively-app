@@ -133,7 +133,8 @@
     "redux-thunk": "^2.3.0",
     "replace": "^1.2.1",
     "tailwindcss": "^3.1.4",
-    "use-sound": "^4.0.1"
+    "use-sound": "^4.0.1",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@electron/notarize": "^1.2.3",
@@ -154,6 +155,7 @@
     "@types/react-dom": "18.0.6",
     "@types/react-test-renderer": "^18.0.0",
     "@types/terser-webpack-plugin": "^5.0.4",
+    "@types/uuid": "^9.0.1",
     "@types/webpack-bundle-analyzer": "^4.4.2",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
