@@ -838,6 +838,7 @@ const customDevices: Device[] =
     ? window.electron.store.get('deviceManager.customDevices')
     : [];
 type DeviceMap = { [key: string]: Device };
+
 export const getDevicesMap = (): DeviceMap => {
   return [...defaultDevices, ...customDevices].reduce(
     (map: DeviceMap, device) => {

@@ -1,9 +1,11 @@
 import { Icon } from '@iconify/react';
-import { Device } from 'common/deviceList';
+import cx from 'classnames';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { Device, getDevicesMap } from 'common/deviceList';
 import {
-  selectDevices,
+  selectActiveSuite,
   setDevices,
 } from 'renderer/store/features/device-manager';
 import Button from '../Button';
@@ -15,6 +17,7 @@ interface Props {
   enableDnd?: boolean;
   moveDevice?: (device: Device, atIndex: number) => void;
   onShowDeviceDetails: (device: Device) => void;
+  disableSelectionControls?: boolean;
 }
 
 const DeviceLabel = ({
@@ -22,10 +25,11 @@ const DeviceLabel = ({
   moveDevice = () => {},
   enableDnd = false,
   onShowDeviceDetails,
+  disableSelectionControls = false,
 }: Props) => {
   const dispatch = useDispatch();
-  const devices = useSelector(selectDevices);
-
+  const activeSuite = useSelector(selectActiveSuite);
+  const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
   const originalIndex = devices.indexOf(device);
 
   const [{ isDragging }, drag] = useDrag(
@@ -67,6 +71,9 @@ const DeviceLabel = ({
     >
       {enableDnd ? <Icon icon="ic:baseline-drag-indicator" /> : null}
       <input
+        className={cx({
+          'pointer-events-none opacity-0': disableSelectionControls,
+        })}
         type="checkbox"
         checked={devices.find((d) => d.name === device.name) != null}
         onChange={(e) => {

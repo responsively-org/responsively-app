@@ -1,17 +1,19 @@
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
-import { selectDevices } from 'renderer/store/features/device-manager';
+import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import { DOCK_POSITION, PREVIEW_LAYOUTS } from 'common/constants';
 import {
   selectDockPosition,
   selectIsDevtoolsOpen,
 } from 'renderer/store/features/devtools';
 import { selectLayout } from 'renderer/store/features/renderer';
+import { getDevicesMap } from 'common/deviceList';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
 
 const Previewer = () => {
-  const devices = useSelector(selectDevices);
+  const activeSuite = useSelector(selectActiveSuite);
+  const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
   const dockPosition = useSelector(selectDockPosition);
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const layout = useSelector(selectLayout);
