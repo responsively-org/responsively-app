@@ -11,6 +11,9 @@ import Menu from './Menu';
 import Button from '../Button';
 import AddressBar from './AddressBar';
 import ColorSchemeToggle from './ColorSchemeToggle';
+import { PreviewSuiteSelector } from './PreviewSuiteSelector';
+
+const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
 const ToolBar = () => {
   const rotateDevice = useSelector(selectRotate);
@@ -42,6 +45,8 @@ const ToolBar = () => {
         <Icon icon="lucide:inspect" />
       </Button>
       <ColorSchemeToggle />
+      <Divider />
+      <PreviewSuiteSelector />
       <Menu />
     </div>
   );

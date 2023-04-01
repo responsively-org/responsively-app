@@ -19,26 +19,28 @@ const Previewer = () => {
   const layout = useSelector(selectLayout);
 
   return (
-    <div
-      className={cx('flex h-full justify-between', {
-        'flex-col': dockPosition === DOCK_POSITION.BOTTOM,
-        'flex-row': dockPosition === DOCK_POSITION.RIGHT,
-      })}
-    >
+    <div className="h-full">
       <div
-        className={cx('flex h-full gap-4 overflow-auto p-4', {
-          'flex-wrap': layout === PREVIEW_LAYOUTS.FLEX,
+        className={cx('flex h-full justify-between', {
+          'flex-col': dockPosition === DOCK_POSITION.BOTTOM,
+          'flex-row': dockPosition === DOCK_POSITION.RIGHT,
         })}
       >
-        {devices.map((device, idx) => {
-          return (
-            <Device key={device.name} device={device} isPrimary={idx === 0} />
-          );
-        })}
+        <div
+          className={cx('flex h-full gap-4 overflow-auto p-4', {
+            'flex-wrap': layout === PREVIEW_LAYOUTS.FLEX,
+          })}
+        >
+          {devices.map((device, idx) => {
+            return (
+              <Device key={device.name} device={device} isPrimary={idx === 0} />
+            );
+          })}
+        </div>
+        {isDevtoolsOpen && dockPosition !== DOCK_POSITION.UNDOCKED ? (
+          <DevtoolsResizer />
+        ) : null}
       </div>
-      {isDevtoolsOpen && dockPosition !== DOCK_POSITION.UNDOCKED ? (
-        <DevtoolsResizer />
-      ) : null}
     </div>
   );
 };

@@ -27,17 +27,20 @@ export const Suite = ({ suite: { id, name, devices }, isActive }: Props) => {
   };
   return (
     <div
-      className={cx('relative rounded bg-white  dark:bg-slate-900', {
-        'border-2 border-blue-500 ': isActive,
-      })}
+      className={cx(
+        'relative flex-shrink-0 rounded  bg-white dark:bg-slate-900',
+        {
+          'border-2 border-slate-500 ': isActive,
+        }
+      )}
     >
       {!isActive ? (
         <div className="absolute flex h-full w-full items-center justify-center bg-gray-100 !bg-opacity-70 dark:bg-slate-800">
           <Button
-            className="aspect-square w-24 rounded-full hover:!bg-slate-900"
+            className="aspect-square w-16 rounded-full hover:!bg-slate-500"
             onClick={() => dispatch(setActiveSuite(id))}
           >
-            <Icon icon="ic:twotone-edit" fontSize={28} />
+            <Icon icon="mdi:eye-settings-outline" fontSize={20} />
           </Button>
         </div>
       ) : null}

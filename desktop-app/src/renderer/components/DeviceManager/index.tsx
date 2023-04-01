@@ -77,14 +77,14 @@ const DeviceManager = () => {
   };
 
   return (
-    <div className="mx-16 rounded-lg p-8">
+    <div className="mx-auto flex w-4/5 flex-col gap-4 rounded-lg p-8">
       <div className="flex w-full text-3xl">
-        <span className="w-full text-center">Device Manager</span>
+        <span className="w-full text-left">Device Manager</span>
         <Button onClick={() => dispatch(setAppView(APP_VIEWS.BROWSER))}>
           <Icon icon="ic:round-close" />
         </Button>
       </div>
-      <div className="mx-auto w-4/5">
+      <div className="">
         <PreviewSuites />
         <div className="my-4 flex items-center justify-end  ">
           <div className="flex w-fit items-center bg-white px-1 dark:bg-slate-900">

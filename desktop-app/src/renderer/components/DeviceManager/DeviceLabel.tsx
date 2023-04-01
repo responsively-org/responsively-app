@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Device, getDevicesMap } from 'common/deviceList';
 import {
   selectActiveSuite,
-  setDevices,
+  setSuiteDevices,
 } from 'renderer/store/features/device-manager';
 import Button from '../Button';
 
@@ -78,9 +78,19 @@ const DeviceLabel = ({
         checked={devices.find((d) => d.name === device.name) != null}
         onChange={(e) => {
           if (e.target.checked) {
-            dispatch(setDevices([...devices, device]));
+            dispatch(
+              setSuiteDevices({
+                suite: activeSuite.id,
+                devices: [...activeSuite.devices, device.id],
+              })
+            );
           } else {
-            dispatch(setDevices(devices.filter((d) => d.name !== device.name)));
+            dispatch(
+              setSuiteDevices({
+                suite: activeSuite.id,
+                devices: activeSuite.devices.filter((d) => d !== device.id),
+              })
+            );
           }
         }}
       />
