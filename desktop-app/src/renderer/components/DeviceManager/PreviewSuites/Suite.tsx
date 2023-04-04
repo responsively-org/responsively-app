@@ -28,7 +28,7 @@ export const Suite = ({ suite: { id, name, devices }, isActive }: Props) => {
   return (
     <div
       className={cx(
-        'relative flex-shrink-0 rounded  bg-white dark:bg-slate-900',
+        'relative min-w-56 flex-shrink-0  rounded bg-white dark:bg-slate-900',
         {
           'border-2 border-slate-500 ': isActive,
         }
@@ -51,7 +51,8 @@ export const Suite = ({ suite: { id, name, devices }, isActive }: Props) => {
             <DeviceLabel
               device={getDevicesMap()[deviceId]}
               onShowDeviceDetails={() => {}}
-              disableSelectionControls={!isActive}
+              hideSelectionControls={!isActive}
+              disableSelectionControls={devices.length === 1}
               enableDnd={isActive}
               key={deviceId}
               moveDevice={moveDevice}

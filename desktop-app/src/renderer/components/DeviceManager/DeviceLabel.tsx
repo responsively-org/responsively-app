@@ -17,6 +17,7 @@ interface Props {
   enableDnd?: boolean;
   moveDevice?: (device: Device, atIndex: number) => void;
   onShowDeviceDetails: (device: Device) => void;
+  hideSelectionControls?: boolean;
   disableSelectionControls?: boolean;
 }
 
@@ -25,6 +26,7 @@ const DeviceLabel = ({
   moveDevice = () => {},
   enableDnd = false,
   onShowDeviceDetails,
+  hideSelectionControls = false,
   disableSelectionControls = false,
 }: Props) => {
   const dispatch = useDispatch();
@@ -72,9 +74,10 @@ const DeviceLabel = ({
       {enableDnd ? <Icon icon="ic:baseline-drag-indicator" /> : null}
       <input
         className={cx({
-          'pointer-events-none opacity-0': disableSelectionControls,
+          'pointer-events-none opacity-0': hideSelectionControls,
         })}
         type="checkbox"
+        disabled={disableSelectionControls}
         checked={devices.find((d) => d.name === device.name) != null}
         onChange={(e) => {
           if (e.target.checked) {

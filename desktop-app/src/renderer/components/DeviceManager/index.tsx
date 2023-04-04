@@ -106,6 +106,10 @@ const DeviceManager = () => {
               device={device}
               key={device.name}
               onShowDeviceDetails={onShowDeviceDetails}
+              disableSelectionControls={
+                devices.find((d) => d.id === device.id) != null &&
+                devices.length === 1
+              }
             />
           ))}
           {filteredDevices.length === 0 ? (

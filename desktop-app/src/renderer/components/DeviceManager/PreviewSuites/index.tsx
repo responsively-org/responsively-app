@@ -5,6 +5,7 @@ import {
   selectActiveSuite,
   selectSuites,
 } from 'renderer/store/features/device-manager';
+import { CreateSuiteButton } from './CreateSuiteButton';
 import { Suite } from './Suite';
 
 export const PreviewSuites = () => {
@@ -14,20 +15,17 @@ export const PreviewSuites = () => {
   return (
     <div className="flex flex-col">
       <p className="mb-6 text-lg">Preview Suites</p>
-      <div className="flex w-full gap-4 overflow-x-auto">
-        {suites.map((suite) => (
-          <Suite
-            suite={suite}
-            isActive={suite.id === activeSuite.id}
-            key={suite.name}
-          />
-        ))}
-        <div className="flex aspect-square h-full min-h-52 flex-shrink-0 flex-col items-center justify-center gap-4 rounded bg-white dark:bg-slate-900">
-          Add Suite
-          <Button className="aspect-square w-16 rounded-full">
-            <Icon icon="mdi:plus" fontSize={30} />
-          </Button>
+      <div className="flex w-full items-center gap-4 overflow-x-auto">
+        <div className="flex gap-4">
+          {suites.map((suite) => (
+            <Suite
+              suite={suite}
+              isActive={suite.id === activeSuite.id}
+              key={suite.name}
+            />
+          ))}
         </div>
+        <CreateSuiteButton />
       </div>
     </div>
   );

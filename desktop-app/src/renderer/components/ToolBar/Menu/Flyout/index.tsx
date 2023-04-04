@@ -20,15 +20,6 @@ const MenuFlyout = () => {
       <Devtools />
       <AllowInSecureSSL />
       <ClearHistory />
-      <Button
-        onClick={() => {
-          dispatch(setAppView(APP_VIEWS.DEVICE_MANAGER));
-        }}
-        className="w-full !justify-start p-[1px] px-4 "
-        subtle
-      >
-        Device Manager
-      </Button>
     </div>
   );
 };

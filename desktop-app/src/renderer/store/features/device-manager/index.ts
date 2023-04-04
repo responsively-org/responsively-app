@@ -60,11 +60,18 @@ export const deviceManagerSlice = createSlice({
     setActiveSuite(state, action: PayloadAction<string>) {
       state.activeSuite = action.payload;
     },
+    addSuite(state, action: PayloadAction<PreviewSuite>) {
+      const suites = window.electron.store.get('deviceManager.previewSuites');
+      suites.push(action.payload);
+      state.suites = suites;
+      state.activeSuite = action.payload.id;
+      window.electron.store.set('deviceManager.previewSuites', suites);
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setDevices, setSuiteDevices, setActiveSuite } =
+export const { setDevices, setSuiteDevices, setActiveSuite, addSuite } =
   deviceManagerSlice.actions;
 
 export const selectSuites = (state: RootState) => state.deviceManager.suites;
