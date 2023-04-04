@@ -1,1 +1,0 @@
-declare module '*.mp3';

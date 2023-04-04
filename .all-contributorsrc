@@ -469,6 +469,51 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "heagan01",
+      "name": "heagan01",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54394590?v=4",
+      "profile": "https://github.com/heagan01",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Th0masCat",
+      "name": "Sahil Jangra",
+      "avatar_url": "https://avatars.githubusercontent.com/u/74812563?v=4",
+      "profile": "https://github.com/Th0masCat",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "nopdotcom",
+      "name": "Jay Carlson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1357866?v=4",
+      "profile": "https://github.com/nopdotcom",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Mikadifo",
+      "name": "Michael Padilla",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51935560?v=4",
+      "profile": "http://mikadifo.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "NarrowCode",
+      "name": "Andreas Steinkellner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6213380?v=4",
+      "profile": "https://narrowcode.xyz",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,

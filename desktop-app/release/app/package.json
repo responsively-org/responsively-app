@@ -1,0 +1,19 @@
+{
+  "name": "ResponsivelyApp",
+  "version": "1.1.0",
+  "description": "A developer-friendly browser for developing responsive web apps",
+  "license": "MIT",
+  "author": {
+    "name": "Responsively",
+    "email": "p.manoj.vivek@gmail.com"
+  },
+  "main": "./dist/main/main.js",
+  "scripts": {
+    "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
+    "postinstall": "yarn run electron-rebuild && yarn run link-modules",
+    "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
+  },
+  "dependencies": {
+    "browser-sync": "^2.27.12"
+  }
+}

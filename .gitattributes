@@ -1,4 +1,1 @@
-*.css linguist-detectable=false
-*.html linguist-detectable=false
-*.htm linguist-detectable=false
-*.js linguist-detectable=true
+/desktop-app-legacy/* export-ignore

@@ -30,7 +30,7 @@ jobs:
       security-events: write
     defaults:
       run:
-        working-directory: ./desktop-app-rewrite
+        working-directory: ./desktop-app
 
     strategy:
       fail-fast: false
