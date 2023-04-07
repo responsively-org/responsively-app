@@ -514,6 +514,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "aniknia",
+      "name": "aniknia",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40159649?v=4",
+      "profile": "http://niknia.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
