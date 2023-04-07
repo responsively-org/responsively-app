@@ -215,6 +215,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     </tr>
     <tr>
       <td align="center" valign="top" width="20%"><a href="https://narrowcode.xyz"><img src="https://avatars.githubusercontent.com/u/6213380?v=4?s=100" width="100px;" alt="Andreas Steinkellner"/><br /><sub><b>Andreas Steinkellner</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=NarrowCode" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="http://niknia.dev"><img src="https://avatars.githubusercontent.com/u/40159649?v=4?s=100" width="100px;" alt="aniknia"/><br /><sub><b>aniknia</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=aniknia" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
