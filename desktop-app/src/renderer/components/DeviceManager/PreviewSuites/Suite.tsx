@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import Button from 'renderer/components/Button';
 import {
   PreviewSuite,
+  deleteSuite,
   setActiveSuite,
   setSuiteDevices,
 } from 'renderer/store/features/device-manager';
@@ -45,7 +46,14 @@ export const Suite = ({ suite: { id, name, devices }, isActive }: Props) => {
         </div>
       ) : null}
       <div className="flex flex-col gap-8 p-4 pb-8">
-        <p className="text-left text-lg">{name}</p>
+        <div className="flex justify-between">
+          <p className="text-lg">{name}</p>
+          {id !== 'default' ? (
+            <Button onClick={() => dispatch(deleteSuite(id))}>
+              <Icon icon="ic:twotone-delete" />
+            </Button>
+          ) : null}
+        </div>
         <div className="flex flex-col gap-2" ref={drop}>
           {devices.map((deviceId) => (
             <DeviceLabel
