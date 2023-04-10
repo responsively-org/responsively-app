@@ -64,6 +64,7 @@ const DeviceLabel = ({
   );
 
   const opacity = isDragging ? 0 : 1;
+  const isChecked = devices.find((d) => d.name === device.name) != null;
 
   return (
     <div
@@ -78,7 +79,15 @@ const DeviceLabel = ({
         })}
         type="checkbox"
         disabled={disableSelectionControls}
-        checked={devices.find((d) => d.name === device.name) != null}
+        title={
+          // eslint-disable-next-line no-nested-ternary
+          disableSelectionControls
+            ? 'Cannot make the suite empty add another device to remove this one'
+            : isChecked
+            ? 'Click to remove the device'
+            : 'Click to add the device'
+        }
+        checked={isChecked}
         onChange={(e) => {
           if (e.target.checked) {
             dispatch(
