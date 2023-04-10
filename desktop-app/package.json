@@ -160,7 +160,7 @@
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
     "browserslist-config-erb": "^0.0.3",
-    "chalk": "^4.1.2",
+    "chalk": "^5.2.0",
     "concurrently": "^7.6.0",
     "core-js": "^3.29.0",
     "cross-env": "^7.0.3",
