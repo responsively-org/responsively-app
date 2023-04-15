@@ -9,7 +9,7 @@ import {
 } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
 import { ScreenshotAllArgs } from 'main/screenshot';
-import { selectDevices } from 'renderer/store/features/device-manager';
+import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import WebPage from 'main/screenshot/webpage';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
@@ -17,12 +17,15 @@ import Button from '../Button';
 import AddressBar from './AddressBar';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import ModalLoader from '../ModalLoader';
+import { PreviewSuiteSelector } from './PreviewSuiteSelector';
+
+const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
 const ToolBar = () => {
   const rotateDevice = useSelector(selectRotate);
   const isInspecting = useSelector(selectIsInspecting);
   const isCapturingScreenshot = useSelector(selectIsCapturingScreenshot);
-  const devices = useSelector(selectDevices);
+  const devices = useSelector(selectActiveSuite);
   const dispatch = useDispatch();
 
   const screenshotCaptureHandler = async () => {
@@ -102,6 +105,8 @@ const ToolBar = () => {
         <Icon icon="lucide:camera" />
       </Button>
       <ColorSchemeToggle />
+      <Divider />
+      <PreviewSuiteSelector />
       <Menu />
       <ModalLoader
         isOpen={isCapturingScreenshot}
