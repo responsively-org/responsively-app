@@ -16,7 +16,7 @@ export interface UIState {
 
 const initialState: UIState = {
   darkMode: window.electron.store.get('ui.darkMode'),
-  appView: APP_VIEWS.DEVICE_MANAGER,
+  appView: APP_VIEWS.BROWSER,
 };
 
 export const uiSlice = createSlice({
