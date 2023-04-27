@@ -118,6 +118,7 @@ const createWindow = async () => {
     await initInstance();
     if (urlToOpen !== undefined && isValidCliArgURL(urlToOpen)) {
       openUrl(urlToOpen, mainWindow);
+      urlToOpen = undefined;
     }
 
     if (!mainWindow) {
