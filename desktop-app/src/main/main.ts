@@ -155,13 +155,14 @@ const createWindow = async () => {
 };
 
 app.on('open-url', async (event, url) => {
+  const actualURL = url.replace(`${PROTOCOL}://`, '');
   if (mainWindow == null) {
     // Will be handled by 'ready-to-show' event
-    urlToOpen = url.replace(`${PROTOCOL}://`, '');
+    urlToOpen = actualURL;
     await createWindow();
     return;
   }
-  openUrl(url, mainWindow);
+  openUrl(actualURL, mainWindow);
 });
 
 /**
