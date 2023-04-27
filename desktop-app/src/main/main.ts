@@ -9,11 +9,11 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, screen } from 'electron';
+import { app, BrowserWindow, shell, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import cli from './cli';
-import { IPC_MAIN_CHANNELS } from '../common/constants';
+import { PROTOCOL } from '../common/constants';
 import MenuBuilder from './menu';
 import { isValidCliArgURL, resolveHtmlPath } from './util';
 import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
@@ -26,6 +26,19 @@ import { initNativeFunctionHandlers } from './native-functions';
 import { WebPermissionHandlers } from './web-permissions';
 import { initHttpBasicAuthHandlers } from './http-basic-auth';
 import { initAppMetaHandlers } from './app-meta';
+import { openUrl } from './protocol-handler';
+
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [
+      path.resolve(process.argv[1]),
+    ]);
+  }
+} else {
+  app.setAsDefaultProtocolClient(PROTOCOL);
+}
+
+let urlToOpen: string | undefined = cli.input[0];
 
 export default class AppUpdater {
   constructor() {
@@ -103,10 +116,8 @@ const createWindow = async () => {
 
   mainWindow.on('ready-to-show', async () => {
     await initInstance();
-    if (isValidCliArgURL(cli.input[0])) {
-      mainWindow?.webContents.send(IPC_MAIN_CHANNELS.OPEN_URL, {
-        url: cli.input[0],
-      });
+    if (urlToOpen !== undefined && isValidCliArgURL(urlToOpen)) {
+      openUrl(urlToOpen, mainWindow);
     }
 
     if (!mainWindow) {
@@ -142,6 +153,16 @@ const createWindow = async () => {
   // eslint-disable-next-line
   new AppUpdater();
 };
+
+app.on('open-url', async (event, url) => {
+  if (mainWindow == null) {
+    // Will be handled by 'ready-to-show' event
+    urlToOpen = url.replace(`${PROTOCOL}://`, '');
+    await createWindow();
+    return;
+  }
+  openUrl(url, mainWindow);
+});
 
 /**
  * Add event listeners...

@@ -29,3 +29,5 @@ export const IPC_MAIN_CHANNELS = {
 } as const;
 
 export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];
+
+export const PROTOCOL = 'responsively';
