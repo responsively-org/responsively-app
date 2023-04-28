@@ -15,8 +15,17 @@ const zoomSteps = [
   0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2,
 ];
 
+const urlFromQueryParam = () => {
+  const params = new URLSearchParams(window.location.search);
+  const url = params.get('urlToOpen');
+  if (url !== 'undefined') {
+    return url;
+  }
+  return undefined;
+};
+
 const initialState: RendererState = {
-  address: window.electron.store.get('homepage'),
+  address: urlFromQueryParam() ?? window.electron.store.get('homepage'),
   zoomFactor: zoomSteps[window.electron.store.get('renderer.zoomStepIndex')],
   rotate: false,
   isInspecting: undefined,

@@ -38,7 +38,9 @@ if (process.defaultApp) {
   app.setAsDefaultProtocolClient(PROTOCOL);
 }
 
-let urlToOpen: string | undefined = cli.input[0];
+let urlToOpen: string | undefined = cli.input[0]?.includes('electronmon')
+  ? undefined
+  : cli.input[0];
 
 export default class AppUpdater {
   constructor() {
@@ -112,15 +114,14 @@ const createWindow = async () => {
   initHttpBasicAuthHandlers(mainWindow);
   const webPermissionHandlers = WebPermissionHandlers(mainWindow);
 
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
+  mainWindow.loadURL(
+    `${resolveHtmlPath('index.html')}?urlToOpen=${encodeURI(
+      urlToOpen ?? 'undefined'
+    )}`
+  );
 
   mainWindow.on('ready-to-show', async () => {
     await initInstance();
-    if (urlToOpen !== undefined && isValidCliArgURL(urlToOpen)) {
-      openUrl(urlToOpen, mainWindow);
-      urlToOpen = undefined;
-    }
-
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -158,7 +159,7 @@ const createWindow = async () => {
 app.on('open-url', async (event, url) => {
   const actualURL = url.replace(`${PROTOCOL}://`, '');
   if (mainWindow == null) {
-    // Will be handled by 'ready-to-show' event
+    // Will be handled by opened window
     urlToOpen = actualURL;
     await createWindow();
     return;
