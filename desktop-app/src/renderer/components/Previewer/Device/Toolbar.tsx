@@ -7,9 +7,12 @@ import { Device } from 'common/deviceList';
 import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
+import { selectRotate, setRotate } from 'renderer/store/features/renderer';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface Props {
   webview: Electron.WebviewTag | null;
+  deviceID: string;
   device: Device;
   setScreenshotInProgress: (value: boolean) => void;
   openDevTools: () => void;
@@ -17,15 +20,19 @@ interface Props {
 
 const Toolbar = ({
   webview,
+  deviceID,
   device,
   setScreenshotInProgress,
   openDevTools,
+  
 }: Props) => {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
+  const rotatedDevices = useSelector(selectRotate);
+  const dispatch = useDispatch();
 
   const toggleEventMirroring = async () => {
     if (webview == null) {
@@ -110,6 +117,24 @@ const Toolbar = ({
     setFullScreenshotLoading(false);
   };
 
+  const rotate = async () => {
+    try {
+      if (rotatedDevices[deviceID]) {
+        const obj = {...rotatedDevices};
+      
+        obj[deviceID] = {
+          inSingle: !(obj[deviceID].inSingle),
+          rotate: !(obj[deviceID].rotate)
+        };
+
+        dispatch(setRotate({...obj}));
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error while rotate single screen', error);
+    }
+  };
+
   return (
     <div className="my-1 flex items-center gap-1">
       <Button
@@ -145,6 +170,19 @@ const Toolbar = ({
       </Button>
       <Button onClick={openDevTools} title="Open Devtools">
         <Icon icon="ic:round-code" />
+      </Button>
+      <Button 
+        onClick={rotate}
+        isActive={rotatedDevices[deviceID]?.inSingle}
+        title="Rotate This Device"
+      >
+        <Icon
+          icon={
+            rotatedDevices[deviceID]?.inSingle
+              ? 'mdi:phone-rotate-portrait'
+              : 'mdi:phone-rotate-landscape'
+            }
+        />
       </Button>
     </div>
   );

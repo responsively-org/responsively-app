@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import { DOCK_POSITION, PREVIEW_LAYOUTS } from 'common/constants';
@@ -6,10 +6,11 @@ import {
   selectDockPosition,
   selectIsDevtoolsOpen,
 } from 'renderer/store/features/devtools';
-import { selectLayout } from 'renderer/store/features/renderer';
+import { selectLayout, setRotate } from 'renderer/store/features/renderer';
 import { getDevicesMap } from 'common/deviceList';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
+import { useEffect } from 'react';
 
 const Previewer = () => {
   const activeSuite = useSelector(selectActiveSuite);
@@ -17,6 +18,11 @@ const Previewer = () => {
   const dockPosition = useSelector(selectDockPosition);
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const layout = useSelector(selectLayout);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setRotate(devices.reduce((acc, device) => ({ ...acc, [device.name]: { inSingle: false, rotate: false } }), {})));
+  }, []);
 
   return (
     <div className="h-full">
@@ -33,7 +39,12 @@ const Previewer = () => {
         >
           {devices.map((device, idx) => {
             return (
-              <Device key={device.name} device={device} isPrimary={idx === 0} />
+              <Device
+                id={device.name}
+                key={device.name}
+                device={device}
+                isPrimary={idx === 0}
+              />
             );
           })}
         </div>

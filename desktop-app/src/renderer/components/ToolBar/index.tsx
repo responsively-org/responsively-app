@@ -12,11 +12,13 @@ import Button from '../Button';
 import AddressBar from './AddressBar';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import { PreviewSuiteSelector } from './PreviewSuiteSelector';
+import { useState } from 'react';
 
 const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
 const ToolBar = () => {
-  const rotateDevice = useSelector(selectRotate);
+  const rotatedDevices = useSelector(selectRotate);
+  const [ allDevicesRotated, setAllDevicesRotated ] = useState<boolean>(false);
   const isInspecting = useSelector(selectIsInspecting);
   const dispatch = useDispatch();
 
@@ -25,13 +27,27 @@ const ToolBar = () => {
       <NavigationControls />
       <AddressBar />
       <Button
-        onClick={() => dispatch(setRotate(!rotateDevice))}
-        isActive={rotateDevice}
+        onClick={async () => {
+          const obj = {...rotatedDevices};
+          
+          for (const deviceID of Object.keys(obj)) {
+            if (!(obj[deviceID].inSingle)) {
+              obj[deviceID] = {
+                ...obj[deviceID],
+                rotate: allDevicesRotated
+              };
+            }
+          }
+
+          dispatch(setRotate({...obj}));
+          setAllDevicesRotated(!allDevicesRotated);
+        }}
+        isActive={allDevicesRotated}
         title="Rotate Devices"
       >
         <Icon
           icon={
-            rotateDevice
+            allDevicesRotated
               ? 'mdi:phone-rotate-portrait'
               : 'mdi:phone-rotate-landscape'
           }

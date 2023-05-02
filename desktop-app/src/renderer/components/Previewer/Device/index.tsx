@@ -41,6 +41,7 @@ import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
 
 interface Props {
+  id: string;
   device: IDevice;
   isPrimary: boolean;
 }
@@ -50,10 +51,10 @@ interface ErrorState {
   description: string;
 }
 
-const Device = ({ isPrimary, device }: Props) => {
-  const rotateDevice = useSelector(selectRotate);
+const Device = ({ isPrimary, device, id }: Props) => {
+  const rotatedDevices = useSelector(selectRotate);
   let { height, width } = device;
-  if (rotateDevice) {
+  if (rotatedDevices[id]?.rotate) {
     const temp = width;
     width = height;
     height = temp;
@@ -382,6 +383,7 @@ const Device = ({ isPrimary, device }: Props) => {
         {loading ? <Spinner spinnerHeight={24} /> : null}
       </div>
       <Toolbar
+        deviceID={id}
         webview={ref.current}
         device={device}
         setScreenshotInProgress={setScreenshotInProgess}
