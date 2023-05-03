@@ -26,7 +26,7 @@ const ToolBar = () => {
   const rotateDevice = useSelector(selectRotate);
   const isInspecting = useSelector(selectIsInspecting);
   const isCapturingScreenshot = useSelector(selectIsCapturingScreenshot);
-  const activeSuit = useSelector(selectActiveSuite);
+  const activeSuite = useSelector(selectActiveSuite);
   const dispatch = useDispatch();
 
   const screenshotCaptureHandler = async () => {
@@ -34,7 +34,7 @@ const ToolBar = () => {
     const webViews: NodeListOf<Electron.WebviewTag> =
       document.querySelectorAll('webView');
     const screens: Array<ScreenshotAllArgs> = [];
-    const devices = activeSuit.devices.map((d) => getDevicesMap()[d]);
+    const devices = activeSuite.devices.map((d) => getDevicesMap()[d]);
     webViews.forEach(async (webview) => {
       const device = devices.find((d) => d.name === webview.id);
       const webPage = new WebPage(webview as unknown as Electron.WebContents);
@@ -113,7 +113,7 @@ const ToolBar = () => {
       <ModalLoader
         isOpen={isCapturingScreenshot}
         onClose={handleClose}
-        title="loading..."
+        title="Screenshot"
       />
     </div>
   );
