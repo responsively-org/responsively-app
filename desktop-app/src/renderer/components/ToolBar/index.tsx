@@ -12,6 +12,7 @@ import { ScreenshotAllArgs } from 'main/screenshot';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import WebPage from 'main/screenshot/webpage';
 import { getDevicesMap } from 'common/deviceList';
+import { updateWebViewHeightAndScale } from 'common/webViewUtils';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
 import Button from '../Button';
@@ -41,8 +42,7 @@ const ToolBar = () => {
       const pageHeight = await webPage.getPageHeight();
       const previousHeight = webview.style.height;
       const previousTransform = webview.style.transform;
-      webview.style.height = `${pageHeight}px`;
-      webview.style.transform = `scale(0.1)`;
+      updateWebViewHeightAndScale(webview, pageHeight);
       if (device != null) {
         screens.push({
           webContentsId: webview.getWebContentsId(),
