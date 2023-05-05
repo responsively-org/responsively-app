@@ -3,12 +3,15 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { PreviewLayout } from 'common/constants';
 import type { RootState } from '../..';
 
-type IRotatedDevices = { [key: string]: { inSingle: boolean, rotate: boolean } };
+type IRotatedDevices = {
+  [key: string]: { inSingle: boolean; rotate: boolean };
+};
+type IDevicesOrientation = { allRotated: boolean; devices: IRotatedDevices };
 
 export interface RendererState {
   address: string;
   zoomFactor: number;
-  rotatedDevices: IRotatedDevices;
+  rotatedDevices: IDevicesOrientation;
   isInspecting: boolean | undefined;
   layout: PreviewLayout;
 }
@@ -29,7 +32,7 @@ const urlFromQueryParam = () => {
 const initialState: RendererState = {
   address: urlFromQueryParam() ?? window.electron.store.get('homepage'),
   zoomFactor: zoomSteps[window.electron.store.get('renderer.zoomStepIndex')],
-  rotatedDevices: {},
+  rotatedDevices: { allRotated: false, devices: {} },
   isInspecting: undefined,
   layout: window.electron.store.get('ui.previewLayout'),
 };
@@ -59,7 +62,7 @@ export const rendererSlice = createSlice({
         window.electron.store.set('renderer.zoomStepIndex', newIndex);
       }
     },
-    setRotate: (state, action: PayloadAction<IRotatedDevices>) => {
+    setRotate: (state, action: PayloadAction<IDevicesOrientation>) => {
       state.rotatedDevices = action.payload;
     },
     setIsInspecting: (state, action: PayloadAction<boolean>) => {
