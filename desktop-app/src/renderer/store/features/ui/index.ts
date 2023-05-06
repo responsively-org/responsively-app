@@ -9,13 +9,15 @@ export const APP_VIEWS = {
 
 export type AppView = typeof APP_VIEWS[keyof typeof APP_VIEWS];
 
+export type Theme = 'light' | 'dark' | 'violet';
+
 export interface UIState {
-  darkMode: boolean;
   appView: AppView;
+  theme: Theme;
 }
 
 const initialState: UIState = {
-  darkMode: window.electron.store.get('ui.darkMode'),
+  theme: window.electron.store.get('theme') || 'light',
   appView: APP_VIEWS.BROWSER,
 };
 
@@ -23,9 +25,9 @@ export const uiSlice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    setDarkMode: (state, action: PayloadAction<boolean>) => {
-      state.darkMode = action.payload;
-      window.electron.store.set('ui.darkMode', action.payload);
+    setTheme: (state, action: PayloadAction<Theme>) => {
+      state.theme = action.payload;
+      window.electron.store.set('ui.theme', action.payload);
     },
     setAppView: (state, action: PayloadAction<AppView>) => {
       state.appView = action.payload;
@@ -34,9 +36,9 @@ export const uiSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setDarkMode, setAppView } = uiSlice.actions;
+export const { setTheme, setAppView } = uiSlice.actions;
 
-export const selectDarkMode = (state: RootState) => state.ui.darkMode;
+export const selectTheme = (state: RootState) => state.ui.theme;
 export const selectAppView = (state: RootState) => state.ui.appView;
 
 export default uiSlice.reducer;

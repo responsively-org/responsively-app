@@ -1,10 +1,10 @@
 import { Icon } from '@iconify/react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
-import { selectDarkMode, setDarkMode } from 'renderer/store/features/ui';
+import { selectTheme, setTheme } from 'renderer/store/features/ui';
 
 const UITheme = () => {
-  const darkMode = useSelector(selectDarkMode);
+  const theme = useSelector(selectTheme);
   const dispatch = useDispatch();
 
   return (
@@ -13,11 +13,30 @@ const UITheme = () => {
       <div className="flex items-center gap-2 border-l px-4 dark:border-slate-400">
         <Button
           onClick={() => {
-            dispatch(setDarkMode(!darkMode));
+            dispatch(setTheme('light'));
           }}
+          isActive={theme === 'light'}
           subtle
         >
-          <Icon icon={darkMode ? 'carbon:moon' : 'carbon:sun'} />
+          <Icon icon="carbon:sun" />
+        </Button>
+        <Button
+          onClick={() => {
+            dispatch(setTheme('dark'));
+          }}
+          isActive={theme === 'dark'}
+          subtle
+        >
+          <Icon icon="carbon:moon" />
+        </Button>
+        <Button
+          onClick={() => {
+            dispatch(setTheme('violet'));
+          }}
+          isActive={theme === 'violet'}
+          subtle
+        >
+          <Icon icon="carbon:lightning" />
         </Button>
       </div>
     </div>

@@ -7,9 +7,9 @@ const schema = {
   ui: {
     type: 'object',
     properties: {
-      darkMode: {
-        type: 'boolean',
-        default: true,
+      theme: {
+        type: 'string',
+        default: 'light',
       },
       previewlayout: {
         enum: Object.values(PREVIEW_LAYOUTS),

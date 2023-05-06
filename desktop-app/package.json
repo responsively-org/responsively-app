@@ -133,6 +133,7 @@
     "redux-thunk": "^2.3.0",
     "replace": "^1.2.1",
     "tailwindcss": "^3.1.4",
+    "tw-colors": "^1.2.6",
     "use-sound": "^4.0.1",
     "uuid": "^9.0.0"
   },

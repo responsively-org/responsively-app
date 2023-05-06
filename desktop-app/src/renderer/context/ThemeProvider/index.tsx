@@ -1,20 +1,16 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { selectDarkMode } from 'renderer/store/features/ui';
+import { selectTheme } from 'renderer/store/features/ui';
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const darkMode = useSelector(selectDarkMode);
+  const theme = useSelector(selectTheme);
 
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   return (
-    <div className="min-w-screen min-h-screen bg-slate-200 text-light-normal dark:bg-slate-800 dark:text-dark-normal">
+    <div className="min-w-screen min-h-screen bg-slate-200 text-normal">
       {children}
     </div>
   );
