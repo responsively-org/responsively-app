@@ -52,32 +52,26 @@ interface ErrorState {
 }
 
 const Device = ({ isPrimary, device, id }: Props) => {
-  const { devices, allRotated } = useSelector(selectRotate);
+  const rotatedDevices = useSelector(selectRotate);
   let { height, width } = device;
-
-  if (devices[id]) {
-    const shouldRotate =
-      allRotated || (devices[id].inSingle && devices[id].rotate);
-
-    if (shouldRotate) {
-      const temp = width;
-      width = height;
-      height = temp;
-    }
+  if (rotatedDevices[id]?.rotate) {
+    const temp = width;
+    width = height;
+    height = temp;
   }
-
   const address = useSelector(selectAddress);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorState | null>(null);
   const [screenshotInProgress, setScreenshotInProgess] =
     useState<boolean>(false);
+  const dispatch = useDispatch();
   const zoomfactor = useSelector(selectZoomFactor);
   const isInspecting = useSelector(selectIsInspecting);
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
+
   const dockPosition = useSelector(selectDockPosition);
   const ref = useRef<Electron.WebviewTag>(null);
-  const dispatch = useDispatch();
 
   const registerNavigationHandlers = useCallback(() => {
     webViewPubSub.subscribe(NAVIGATION_EVENTS.RELOAD, () => {

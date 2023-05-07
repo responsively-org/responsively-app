@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
@@ -7,14 +6,11 @@ import {
   selectDockPosition,
   selectIsDevtoolsOpen,
 } from 'renderer/store/features/devtools';
-import {
-  selectLayout,
-  selectRotate,
-  setRotate,
-} from 'renderer/store/features/renderer';
+import { selectLayout, setRotate } from 'renderer/store/features/renderer';
 import { getDevicesMap } from 'common/deviceList';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
+import { useEffect } from 'react';
 
 const Previewer = () => {
   const activeSuite = useSelector(selectActiveSuite);
@@ -23,26 +19,10 @@ const Previewer = () => {
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
-  const rotatedDevices = useSelector(selectRotate);
 
   useEffect(() => {
-    const defaultDevicesRotation = {
-      ...rotatedDevices,
-      devices: devices.reduce(
-        (acc, device) => ({
-          ...acc,
-          [device.name]: {
-            inSingle: false,
-            rotate: false,
-          },
-        }),
-        {}
-      ),
-    };
-
-    dispatch(setRotate(defaultDevicesRotation));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSuite]);
+    dispatch(setRotate(devices.reduce((acc, device) => ({ ...acc, [device.name]: { inSingle: false, rotate: false } }), {})));
+  }, []);
 
   return (
     <div className="h-full">

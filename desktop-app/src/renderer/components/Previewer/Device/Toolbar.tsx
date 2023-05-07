@@ -24,13 +24,14 @@ const Toolbar = ({
   device,
   setScreenshotInProgress,
   openDevTools,
+  
 }: Props) => {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
-  const { devices, ...rotatedDevices } = useSelector(selectRotate);
+  const rotatedDevices = useSelector(selectRotate);
   const dispatch = useDispatch();
 
   const toggleEventMirroring = async () => {
@@ -116,20 +117,18 @@ const Toolbar = ({
     setFullScreenshotLoading(false);
   };
 
-  const rotate = () => {
+  const rotate = async () => {
     try {
-      if (!devices[deviceID]) {
-        return;
+      if (rotatedDevices[deviceID]) {
+        const obj = {...rotatedDevices};
+      
+        obj[deviceID] = {
+          inSingle: !(obj[deviceID].inSingle),
+          rotate: !(obj[deviceID].rotate)
+        };
+
+        dispatch(setRotate({...obj}));
       }
-
-      const devicesCloneObj = { ...devices };
-
-      devicesCloneObj[deviceID] = {
-        inSingle: !devicesCloneObj[deviceID].inSingle,
-        rotate: !devicesCloneObj[deviceID].rotate,
-      };
-
-      dispatch(setRotate({ ...rotatedDevices, devices: devicesCloneObj }));
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error while rotate single screen', error);
@@ -172,17 +171,17 @@ const Toolbar = ({
       <Button onClick={openDevTools} title="Open Devtools">
         <Icon icon="ic:round-code" />
       </Button>
-      <Button
+      <Button 
         onClick={rotate}
-        isActive={devices[deviceID]?.rotate}
+        isActive={rotatedDevices[deviceID]?.inSingle}
         title="Rotate This Device"
       >
         <Icon
           icon={
-            devices[deviceID]?.rotate
+            rotatedDevices[deviceID]?.inSingle
               ? 'mdi:phone-rotate-portrait'
               : 'mdi:phone-rotate-landscape'
-          }
+            }
         />
       </Button>
     </div>
