@@ -3,12 +3,10 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { PreviewLayout } from 'common/constants';
 import type { RootState } from '../..';
 
-type IRotatedDevices = { [key: string]: { inSingle: boolean, rotate: boolean } };
-
 export interface RendererState {
   address: string;
   zoomFactor: number;
-  rotatedDevices: IRotatedDevices;
+  rotate: boolean;
   isInspecting: boolean | undefined;
   layout: PreviewLayout;
 }
@@ -29,7 +27,7 @@ const urlFromQueryParam = () => {
 const initialState: RendererState = {
   address: urlFromQueryParam() ?? window.electron.store.get('homepage'),
   zoomFactor: zoomSteps[window.electron.store.get('renderer.zoomStepIndex')],
-  rotatedDevices: {},
+  rotate: false,
   isInspecting: undefined,
   layout: window.electron.store.get('ui.previewLayout'),
 };
@@ -59,8 +57,8 @@ export const rendererSlice = createSlice({
         window.electron.store.set('renderer.zoomStepIndex', newIndex);
       }
     },
-    setRotate: (state, action: PayloadAction<IRotatedDevices>) => {
-      state.rotatedDevices = action.payload;
+    setRotate: (state, action: PayloadAction<boolean>) => {
+      state.rotate = action.payload;
     },
     setIsInspecting: (state, action: PayloadAction<boolean>) => {
       state.isInspecting = action.payload;
@@ -84,7 +82,7 @@ export const {
 
 export const selectZoomFactor = (state: RootState) => state.renderer.zoomFactor;
 export const selectAddress = (state: RootState) => state.renderer.address;
-export const selectRotate = (state: RootState) => state.renderer.rotatedDevices;
+export const selectRotate = (state: RootState) => state.renderer.rotate;
 export const selectIsInspecting = (state: RootState) =>
   state.renderer.isInspecting;
 export const selectLayout = (state: RootState) => state.renderer.layout;

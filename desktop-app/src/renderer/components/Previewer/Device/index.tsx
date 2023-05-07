@@ -41,7 +41,6 @@ import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
 
 interface Props {
-  id: string;
   device: IDevice;
   isPrimary: boolean;
 }
@@ -51,27 +50,30 @@ interface ErrorState {
   description: string;
 }
 
-const Device = ({ isPrimary, device, id }: Props) => {
-  const rotatedDevices = useSelector(selectRotate);
-  let { height, width } = device;
-  if (rotatedDevices[id]?.rotate) {
-    const temp = width;
-    width = height;
-    height = temp;
-  }
-  const address = useSelector(selectAddress);
+const Device = ({ isPrimary, device }: Props) => {
+  const [singleRotated, setSingleRotated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorState | null>(null);
   const [screenshotInProgress, setScreenshotInProgess] =
     useState<boolean>(false);
-  const dispatch = useDispatch();
+  const address = useSelector(selectAddress);
   const zoomfactor = useSelector(selectZoomFactor);
   const isInspecting = useSelector(selectIsInspecting);
+  const rotateDevices = useSelector(selectRotate);
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
+  const dispatch = useDispatch();
 
   const dockPosition = useSelector(selectDockPosition);
   const ref = useRef<Electron.WebviewTag>(null);
+
+  let { height, width } = device;
+
+  if (rotateDevices || singleRotated) {
+    const temp = width;
+    width = height;
+    height = temp;
+  }
 
   const registerNavigationHandlers = useCallback(() => {
     webViewPubSub.subscribe(NAVIGATION_EVENTS.RELOAD, () => {
@@ -183,6 +185,8 @@ const Device = ({ isPrimary, device, id }: Props) => {
       zoomfactor,
     ]
   );
+
+  const onRotateHandler = (state: boolean) => setSingleRotated(state);
 
   useEffect(() => {
     if (!ref.current) {
@@ -383,11 +387,11 @@ const Device = ({ isPrimary, device, id }: Props) => {
         {loading ? <Spinner spinnerHeight={24} /> : null}
       </div>
       <Toolbar
-        deviceID={id}
         webview={ref.current}
         device={device}
         setScreenshotInProgress={setScreenshotInProgess}
         openDevTools={openDevTools}
+        onRotate={onRotateHandler}
       />
       <div
         style={{ height: scaledHeight, width: scaledWidth }}
