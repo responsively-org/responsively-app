@@ -89,8 +89,7 @@ const Toolbar = ({
 
       const previousHeight = webviewTag.style.height;
       const previousTransform = webviewTag.style.transform;
-      webviewTag.style.height = `${pageHeight}px`;
-      webviewTag.style.transform = `scale(0.1)`;
+      updateWebViewHeightAndScale(webviewTag, pageHeight);
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
