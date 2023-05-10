@@ -74,7 +74,7 @@ const ToolBar = () => {
   const handleClose = () => {
     // Do nothing. Prevent Dialog from closing.
   };
-  
+
   return (
     <div className="flex items-center justify-between gap-2">
       <NavigationControls />
