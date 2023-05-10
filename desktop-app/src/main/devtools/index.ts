@@ -79,6 +79,10 @@ const enableInspector = async (
 ): Promise<ToggleInspectorResult> => {
   const { webviewId } = args;
   const webViewContents = webContents.fromId(webviewId);
+  if (webViewContents === undefined) {
+    return { status: false };
+  }
+
   const dbg = webViewContents.debugger;
   if (!dbg.isAttached()) {
     dbg.attach();
@@ -108,6 +112,9 @@ const disableInspector = async (
 ): Promise<ToggleInspectorResult> => {
   const { webviewId } = args;
   const webViewContents = webContents.fromId(webviewId);
+  if (webViewContents === undefined) {
+    return { status: false };
+  }
   const dbg = webViewContents.debugger;
   try {
     await dbg.sendCommand('Overlay.setInspectMode', {
@@ -128,10 +135,11 @@ const openDevtools = async (
   arg: OpenDevtoolsArgs
 ): Promise<OpenDevtoolsResult> => {
   const { webviewId, dockPosition } = arg;
-  if (mainWindow == null) {
+  const optionalWebview = webContents.fromId(webviewId);
+  if (mainWindow == null || optionalWebview === undefined) {
     return { status: false };
   }
-  devtoolsWebview = webContents.fromId(webviewId);
+  devtoolsWebview = optionalWebview;
   if (dockPosition === DOCK_POSITION.UNDOCKED) {
     devtoolsWebview.openDevTools({ mode: 'detach' });
     return { status: true };
