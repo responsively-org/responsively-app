@@ -24,6 +24,19 @@ export interface DeviceManagerState {
   suites: PreviewSuites;
 }
 
+const existingSuites: PreviewSuites = window.electron.store.get(
+  'deviceManager.previewSuites'
+);
+if (existingSuites == null || existingSuites.length === 0) {
+  window.electron.store.set('deviceManager.previewSuites', [
+    {
+      id: 'default',
+      name: 'Default',
+      devices: ['10008', '10013', '10015'],
+    },
+  ]);
+}
+
 const initialState: DeviceManagerState = {
   devices: DEFAULT_DEVICES,
   activeSuite: 'default',
