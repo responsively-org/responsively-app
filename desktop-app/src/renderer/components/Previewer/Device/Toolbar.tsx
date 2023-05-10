@@ -7,6 +7,7 @@ import { Device } from 'common/deviceList';
 import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
+import { updateWebViewHeightAndScale } from 'common/webViewUtils';
 
 interface Props {
   webview: Electron.WebviewTag | null;

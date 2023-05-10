@@ -23,7 +23,7 @@ export const initNativeFunctionHandlers = () => {
       _,
       arg: DisableDefaultWindowOpenHandlerArgs
     ): Promise<DisableDefaultWindowOpenHandlerResult> => {
-      webContents.fromId(arg.webContentsId).setWindowOpenHandler(() => {
+      webContents.fromId(arg.webContentsId)?.setWindowOpenHandler(() => {
         return { action: 'deny' };
       });
       return { done: true };
