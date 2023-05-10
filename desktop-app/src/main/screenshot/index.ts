@@ -25,8 +25,8 @@ export interface ScreenshotResult {
 
 const captureImage = async (
   webContentsId: number
-): Promise<Electron.NativeImage> => {
-  const Image = await webContents.fromId(webContentsId).capturePage();
+): Promise<Electron.NativeImage | undefined> => {
+  const Image = await webContents.fromId(webContentsId)?.capturePage();
   return Image;
 };
 
@@ -38,6 +38,9 @@ const quickScreenshot = async (
     device: { name },
   } = arg;
   const image = await captureImage(webContentsId);
+  if (image === undefined) {
+    return { done: false };
+  }
   const dir = path.join(homedir(), `Desktop/Responsively-Screenshots`);
   const filePath = path.join(dir, `/${name}-${Date.now()}.jpeg`);
   await ensureDir(dir);
