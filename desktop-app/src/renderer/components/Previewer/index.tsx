@@ -31,11 +31,9 @@ const Previewer = () => {
             'flex-wrap': layout === PREVIEW_LAYOUTS.FLEX,
           })}
         >
-          {devices.map((device, idx) => {
-            return (
-              <Device key={device.name} device={device} isPrimary={idx === 0} />
-            );
-          })}
+          {devices.map((device, idx) => (
+            <Device key={device.id} device={device} isPrimary={idx === 0} />
+          ))}
         </div>
         {isDevtoolsOpen && dockPosition !== DOCK_POSITION.UNDOCKED ? (
           <DevtoolsResizer />
