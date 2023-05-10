@@ -227,7 +227,8 @@ export const defaultDevices: Device[] = [
     width: 390,
     height: 844,
     capabilities: ['touch', 'mobile'],
-    userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/537.51.2 (KHTML, like Gecko) Version/7.0 Mobile/11D257 Safari/9537.53',
+    userAgent:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/537.51.2 (KHTML, like Gecko) Version/7.0 Mobile/11D257 Safari/9537.53',
     type: 'phone',
     isTouchCapable: true,
     isMobileCapable: true,
@@ -239,7 +240,8 @@ export const defaultDevices: Device[] = [
     height: 926,
     dpi: 3,
     capabilities: ['touch', 'mobile'],
-    userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/537.51.2 (KHTML, like Gecko) Version/7.0 Mobile/11D257 Safari/9537.53',
+    userAgent:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/537.51.2 (KHTML, like Gecko) Version/7.0 Mobile/11D257 Safari/9537.53',
     type: 'phone',
     isTouchCapable: true,
     isMobileCapable: true,
@@ -249,9 +251,10 @@ export const defaultDevices: Device[] = [
     name: 'iPhone 14 Pro',
     width: 393,
     height: 852,
-    dpi:3,
+    dpi: 3,
     capabilities: ['touch', 'mobile'],
-    userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/537.51.2 (KHTML, like Gecko) Version/7.0 Mobile/11D257 Safari/9537.53',
+    userAgent:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/537.51.2 (KHTML, like Gecko) Version/7.0 Mobile/11D257 Safari/9537.53',
     type: 'phone',
     isTouchCapable: true,
     isMobileCapable: true,
@@ -874,6 +877,7 @@ const customDevices: Device[] =
     ? window.electron.store.get('deviceManager.customDevices')
     : [];
 type DeviceMap = { [key: string]: Device };
+
 export const getDevicesMap = (): DeviceMap => {
   return [...defaultDevices, ...customDevices].reduce(
     (map: DeviceMap, device) => {

@@ -40,12 +40,40 @@ const schema = {
   deviceManager: {
     type: 'object',
     properties: {
+      // TODO: remove this in a future version of v1.2.0
       activeDevices: {
         type: 'array',
         items: {
           type: 'string',
         },
         default: ['10008', '10013', '10015'],
+      },
+      previewSuites: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+            },
+            name: {
+              type: 'string',
+            },
+            devices: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        default: [
+          {
+            id: 'default',
+            name: 'Default',
+            devices: ['10008', '10013', '10015'],
+          },
+        ],
       },
       customDevices: {
         type: 'array',

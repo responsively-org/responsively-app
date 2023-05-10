@@ -7,6 +7,7 @@ import { Device } from 'common/deviceList';
 import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
+import { updateWebViewHeightAndScale } from 'common/webViewUtils';
 
 interface Props {
   webview: Electron.WebviewTag | null;
@@ -86,8 +87,7 @@ const Toolbar = ({
 
       const previousHeight = webviewTag.style.height;
       const previousTransform = webviewTag.style.transform;
-      webviewTag.style.height = `${pageHeight}px`;
-      webviewTag.style.transform = `scale(0.1)`;
+      updateWebViewHeightAndScale(webviewTag, pageHeight);
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
