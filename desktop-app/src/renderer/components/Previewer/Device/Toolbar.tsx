@@ -7,13 +7,13 @@ import { Device } from 'common/deviceList';
 import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
-import { updateWebViewHeightAndScale } from 'common/webViewUtils';
 
 interface Props {
   webview: Electron.WebviewTag | null;
   device: Device;
   setScreenshotInProgress: (value: boolean) => void;
   openDevTools: () => void;
+  onRotate: (state: boolean) => void;
 }
 
 const Toolbar = ({
@@ -21,12 +21,14 @@ const Toolbar = ({
   device,
   setScreenshotInProgress,
   openDevTools,
+  onRotate,
 }: Props) => {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
+  const [rotated, setRotated] = useState<boolean>(false);
 
   const toggleEventMirroring = async () => {
     if (webview == null) {
@@ -110,6 +112,11 @@ const Toolbar = ({
     setFullScreenshotLoading(false);
   };
 
+  const rotate = async () => {
+    setRotated(!rotated);
+    onRotate(!rotated);
+  };
+
   return (
     <div className="my-1 flex items-center gap-1">
       <Button
@@ -145,6 +152,13 @@ const Toolbar = ({
       </Button>
       <Button onClick={openDevTools} title="Open Devtools">
         <Icon icon="ic:round-code" />
+      </Button>
+      <Button onClick={rotate} isActive={rotated} title="Rotate This Device">
+        <Icon
+          icon={
+            rotated ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'
+          }
+        />
       </Button>
     </div>
   );
