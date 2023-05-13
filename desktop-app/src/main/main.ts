@@ -117,7 +117,7 @@ const createWindow = async () => {
   // Add BROWSER_SYNC_HOST to the allowed Content-Security-Policy origins
   mainWindow.webContents.session.webRequest.onHeadersReceived(
     async (details, callback) => {
-      if (details.responseHeaders['content-security-policy']) {
+      if (details.responseHeaders?.['content-security-policy']) {
         let cspHeader = details.responseHeaders['content-security-policy'][0];
 
         cspHeader = cspHeader.replace(
