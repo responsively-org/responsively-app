@@ -57,10 +57,10 @@ const CaptureAllScreens = ({ isOpen, onClose, title, formData }: Props) => {
               <div className="pt-5 pr-5 pb-5">
                 <Input
                   type="checkbox"
-                  label="Save each image seperatly"
+                  label="Save each image seperately"
                   id="save-separatly"
-                  name="Save each Image seperatly"
-                  value="save_seperatly"
+                  name="Save each Image seperately"
+                  value="save_seperately"
                   onChange={(e) => setCaptureEachImage(e.target.checked)}
                 />
               </div>
