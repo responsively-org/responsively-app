@@ -20,8 +20,8 @@ export interface ScreenshotAllArgs {
 }
 
 export interface ScreenshotResult {
-  done: true;
-  image: Image;
+  done: boolean;
+  image: Image | undefined;
 }
 
 export interface Image {
@@ -39,8 +39,8 @@ export type EventData = FormData & { screens: Array<ScreenshotAllArgs> };
 
 const captureImage = async (
   webContentsId: number
-): Promise<Electron.NativeImage> => {
-  const Image = await webContents.fromId(webContentsId).capturePage();
+): Promise<Electron.NativeImage | undefined> => {
+  const Image = await webContents.fromId(webContentsId)?.capturePage();
   return Image;
 };
 
@@ -67,6 +67,9 @@ const quickScreenshot = async (
     device: { name, height, width },
   } = arg;
   const image = await captureImage(webContentsId);
+  if (image === undefined) {
+    return { done: false, image: undefined };
+  }
   const JPEGImage = image.toJPEG(100);
   if (isSaveImage) await saveImage(JPEGImage, name);
 
@@ -84,7 +87,9 @@ const captureAllDecies = async (
 
   const results = await Promise.all(screenShots);
   if (args.mergeImages) {
-    const buffers = results.map((result) => result.image.data);
+    const buffers = results
+      .filter((result) => result.image !== undefined)
+      .map((result) => result.image!.data);
     const mergeImages = new MergeImages(buffers);
     const bitmap = mergeImages.merge();
     const filePath = await getPath(args.prefix);

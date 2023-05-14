@@ -1,6 +1,8 @@
 import Store from 'electron-store';
 import { randomUUID } from 'crypto';
 
+import { PreviewSuites } from '../renderer/store/features/device-manager';
+
 import { defaultDevices, Device } from '../common/deviceList';
 
 const defaultActiveDevices = ['10008', '10013', '10015'];
@@ -50,15 +52,40 @@ export const migrations = {
         {
           id: 'default',
           name: 'Default',
-          devices: newActiveDevices,
+          devices:
+            newActiveDevices.length > 0
+              ? newActiveDevices
+              : defaultActiveDevices,
         },
       ]);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log('Migration failed', e);
+      store.set('deviceManager.previewSuites', [
+        {
+          id: 'default',
+          name: 'Default',
+          devices: defaultActiveDevices,
+        },
+      ]);
       return;
     }
     // eslint-disable-next-line no-console
     console.log('Migration successful', store.get('deviceManager'));
+  },
+  '1.2.1': (store: Store) => {
+    const suites = store.get('deviceManager.previewSuites') as
+      | PreviewSuites
+      | undefined;
+    if (suites == null || suites.length > 0) {
+      return;
+    }
+    store.set('deviceManager.previewSuites', [
+      {
+        id: 'default',
+        name: 'Default',
+        devices: defaultActiveDevices,
+      },
+    ]);
   },
 };

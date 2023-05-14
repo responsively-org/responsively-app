@@ -9,11 +9,11 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, screen } from 'electron';
+import { app, BrowserWindow, shell, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import cli from './cli';
-import { IPC_MAIN_CHANNELS } from '../common/constants';
+import { PROTOCOL } from '../common/constants';
 import MenuBuilder from './menu';
 import { isValidCliArgURL, resolveHtmlPath } from './util';
 import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
@@ -26,6 +26,21 @@ import { initNativeFunctionHandlers } from './native-functions';
 import { WebPermissionHandlers } from './web-permissions';
 import { initHttpBasicAuthHandlers } from './http-basic-auth';
 import { initAppMetaHandlers } from './app-meta';
+import { openUrl } from './protocol-handler';
+
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [
+      path.resolve(process.argv[1]),
+    ]);
+  }
+} else {
+  app.setAsDefaultProtocolClient(PROTOCOL);
+}
+
+let urlToOpen: string | undefined = cli.input[0]?.includes('electronmon')
+  ? undefined
+  : cli.input[0];
 
 export default class AppUpdater {
   constructor() {
@@ -99,16 +114,51 @@ const createWindow = async () => {
   initHttpBasicAuthHandlers(mainWindow);
   const webPermissionHandlers = WebPermissionHandlers(mainWindow);
 
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
+  // Add BROWSER_SYNC_HOST to the allowed Content-Security-Policy origins
+  mainWindow.webContents.session.webRequest.onHeadersReceived(
+    async (details, callback) => {
+      if (details.responseHeaders?.['content-security-policy']) {
+        let cspHeader = details.responseHeaders['content-security-policy'][0];
+
+        cspHeader = cspHeader.replace(
+          'default-src',
+          `default-src ${BROWSER_SYNC_HOST}`
+        );
+        cspHeader = cspHeader.replace(
+          'script-src',
+          `script-src ${BROWSER_SYNC_HOST}`
+        );
+        cspHeader = cspHeader.replace(
+          'script-src-elem',
+          `script-src-elem ${BROWSER_SYNC_HOST}`
+        );
+        cspHeader = cspHeader.replace(
+          'connect-src',
+          `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST}`
+        );
+        cspHeader = cspHeader.replace(
+          'child-src',
+          `child-src ${BROWSER_SYNC_HOST}`
+        );
+        cspHeader = cspHeader.replace(
+          'worker-src',
+          `worker-src ${BROWSER_SYNC_HOST}`
+        ); // Required when/if the browser-sync script is eventually relocated to a web worker
+
+        details.responseHeaders['content-security-policy'][0] = cspHeader;
+      }
+      callback({ responseHeaders: details.responseHeaders });
+    }
+  );
+
+  mainWindow.loadURL(
+    `${resolveHtmlPath('index.html')}?urlToOpen=${encodeURI(
+      urlToOpen ?? 'undefined'
+    )}`
+  );
 
   mainWindow.on('ready-to-show', async () => {
     await initInstance();
-    if (isValidCliArgURL(cli.input[0])) {
-      mainWindow?.webContents.send(IPC_MAIN_CHANNELS.OPEN_URL, {
-        url: cli.input[0],
-      });
-    }
-
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -142,6 +192,17 @@ const createWindow = async () => {
   // eslint-disable-next-line
   new AppUpdater();
 };
+
+app.on('open-url', async (event, url) => {
+  const actualURL = url.replace(`${PROTOCOL}://`, '');
+  if (mainWindow == null) {
+    // Will be handled by opened window
+    urlToOpen = actualURL;
+    await createWindow();
+    return;
+  }
+  openUrl(actualURL, mainWindow);
+});
 
 /**
  * Add event listeners...

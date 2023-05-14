@@ -26,7 +26,7 @@ import CaptureAllScreens from '../ModalLoader/captureAllScreens';
 const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
 const ToolBar = () => {
-  const rotateDevice = useSelector(selectRotate);
+  const rotateDevices = useSelector(selectRotate);
   const isInspecting = useSelector(selectIsInspecting);
   const isCapturingScreenshot = useSelector(selectIsCapturingScreenshot);
   const activeSuite = useSelector(selectActiveSuite);
@@ -106,13 +106,13 @@ const ToolBar = () => {
       <NavigationControls />
       <AddressBar />
       <Button
-        onClick={() => dispatch(setRotate(!rotateDevice))}
-        isActive={rotateDevice}
+        onClick={() => dispatch(setRotate(!rotateDevices))}
+        isActive={rotateDevices}
         title="Rotate Devices"
       >
         <Icon
           icon={
-            rotateDevice
+            rotateDevices
               ? 'mdi:phone-rotate-portrait'
               : 'mdi:phone-rotate-landscape'
           }
