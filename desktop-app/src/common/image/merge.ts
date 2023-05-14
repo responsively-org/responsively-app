@@ -24,7 +24,9 @@ export class MergeImages {
         offsets.push(offsets[index - 1] + decodedImages[index - 1].width * 4);
       }
     });
-    const sharedImageBuffer = new ArrayBuffer(finalHeight * finalWidth * 4);
+    const sharedImageBuffer = new SharedArrayBuffer(
+      finalHeight * finalWidth * 4
+    );
     const mergedBitmap = new Bitmap({
       data: sharedImageBuffer,
       width: finalWidth,
