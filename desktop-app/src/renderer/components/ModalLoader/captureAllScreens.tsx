@@ -61,7 +61,6 @@ const CaptureAllScreens = ({ isOpen, onClose, title, formData }: Props) => {
                   id="save-separatly"
                   name="Save each Image seperatly"
                   value="save_seperatly"
-                  checked={captureEachImage}
                   onChange={(e) => setCaptureEachImage(e.target.checked)}
                 />
               </div>
@@ -71,7 +70,6 @@ const CaptureAllScreens = ({ isOpen, onClose, title, formData }: Props) => {
                   type="checkbox"
                   id="merge-images"
                   name="Merge Images"
-                  checked={mergeImages}
                   onChange={(e) => setMergeImage(e.target.checked)}
                 />
               </div>
@@ -82,7 +80,6 @@ const CaptureAllScreens = ({ isOpen, onClose, title, formData }: Props) => {
                 type="text"
                 disabled={!mergeImages}
                 placeholder="Enter prefix..."
-                value={prefix}
                 onChange={(e) => setPrefix(e.target.value)}
               />
               <p className="text-sm">Prefix needed for merging images</p>
