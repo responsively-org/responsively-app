@@ -117,6 +117,7 @@
     "electron-store": "^8.0.2",
     "electron-updater": "^5.2.3",
     "emitter": "^0.0.5",
+    "jpeg-js": "^0.4.4",
     "mousetrap": "^1.6.5",
     "os": "^0.1.2",
     "postcss": "^8.4.14",

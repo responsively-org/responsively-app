@@ -1,9 +1,9 @@
-/* eslint-disable promise/always-return */
-import { Device } from 'common/deviceList';
 import { ipcMain, shell, webContents } from 'electron';
 import { writeFile, ensureDir } from 'fs-extra';
 import path from 'path';
 import { homedir } from 'os';
+import { MergeImages } from '../../common/image/merge';
+import { Device } from '../../common/deviceList';
 
 export interface ScreenshotArgs {
   webContentsId: number;
@@ -20,8 +20,22 @@ export interface ScreenshotAllArgs {
 }
 
 export interface ScreenshotResult {
-  done: boolean;
+  done: true;
+  image: Image;
 }
+
+export interface Image {
+  width: number;
+  height: number;
+  data: Buffer;
+}
+export interface FormData {
+  captureEachImage: boolean;
+  mergeImages: boolean;
+  prefix: string;
+}
+
+export type EventData = FormData & { screens: Array<ScreenshotAllArgs> };
 
 const captureImage = async (
   webContentsId: number
@@ -30,33 +44,53 @@ const captureImage = async (
   return Image;
 };
 
-const quickScreenshot = async (
-  arg: ScreenshotArgs
-): Promise<ScreenshotResult> => {
-  const {
-    webContentsId,
-    device: { name },
-  } = arg;
-  const image = await captureImage(webContentsId);
+const getPath = async (name: string) => {
   const dir = path.join(homedir(), `Desktop/Responsively-Screenshots`);
   const filePath = path.join(dir, `/${name}-${Date.now()}.jpeg`);
   await ensureDir(dir);
-  await writeFile(filePath, image.toJPEG(100));
-  setTimeout(() => shell.showItemInFolder(filePath), 100);
+  return filePath;
+};
 
+const saveImage = async (image: Buffer, name: string) => {
+  const filePath = await getPath(name);
+  await writeFile(filePath, image);
+  setTimeout(() => shell.showItemInFolder(filePath), 100);
   return { done: true };
 };
 
-const captureAllDecies = async (
-  args: Array<ScreenshotAllArgs>
+const quickScreenshot = async (
+  arg: ScreenshotArgs,
+  isSaveImage = true
 ): Promise<ScreenshotResult> => {
-  const screenShots = args.map((arg) => {
+  const {
+    webContentsId,
+    device: { name, height, width },
+  } = arg;
+  const image = await captureImage(webContentsId);
+  const JPEGImage = image.toJPEG(100);
+  if (isSaveImage) await saveImage(JPEGImage, name);
+
+  return { done: true, image: { data: JPEGImage, height, width } };
+};
+
+const captureAllDecies = async (
+  args: EventData
+): Promise<{ done: boolean }> => {
+  const screenShots = args.screens.map((arg) => {
     const { device, webContentsId } = arg;
     const screenShotArg: ScreenshotArgs = { device, webContentsId };
-    return quickScreenshot(screenShotArg);
+    return quickScreenshot(screenShotArg, args.captureEachImage);
   });
 
-  await Promise.all(screenShots);
+  const results = await Promise.all(screenShots);
+  if (args.mergeImages) {
+    const buffers = results.map((result) => result.image.data);
+    const mergeImages = new MergeImages(buffers);
+    const bitmap = mergeImages.merge();
+    const filePath = await getPath(args.prefix);
+    await bitmap.writeFile(filePath, 90);
+    setTimeout(() => shell.showItemInFolder(filePath), 100);
+  }
   return { done: true };
 };
 
@@ -68,10 +102,7 @@ export const initScreenshotHandlers = () => {
     }
   );
 
-  ipcMain.handle(
-    'screenshot:All',
-    async (event, args: Array<ScreenshotAllArgs>) => {
-      return captureAllDecies(args);
-    }
-  );
+  ipcMain.handle('screenshot:All', async (event, args: EventData) => {
+    return captureAllDecies(args);
+  });
 };
