@@ -28,6 +28,8 @@ import { initHttpBasicAuthHandlers } from './http-basic-auth';
 import { initAppMetaHandlers } from './app-meta';
 import { openUrl } from './protocol-handler';
 
+let windowShownOnOpen = false;
+
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
     app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [
@@ -84,6 +86,7 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
+  windowShownOnOpen = false;
   if (isDebug) {
     await installExtensions();
   }
@@ -166,7 +169,13 @@ const createWindow = async () => {
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
-      mainWindow.show();
+      mainWindow.showInactive();
+      if (!windowShownOnOpen) {
+        windowShownOnOpen = true;
+        mainWindow.show();
+      } else {
+        mainWindow.showInactive();
+      }
     }
   });
 
@@ -201,6 +210,7 @@ app.on('open-url', async (event, url) => {
     await createWindow();
     return;
   }
+  windowShownOnOpen = false;
   openUrl(actualURL, mainWindow);
 });
 
