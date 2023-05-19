@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getDevicesMap, Device } from 'common/deviceList';
 import type { RootState } from '../..';
+import { sanitizeSuites } from './utils';
 
 const activeDeviceIds: string[] = window.electron.store.get(
   'deviceManager.activeDevices'
@@ -24,18 +25,7 @@ export interface DeviceManagerState {
   suites: PreviewSuites;
 }
 
-const existingSuites: PreviewSuites = window.electron.store.get(
-  'deviceManager.previewSuites'
-);
-if (existingSuites == null || existingSuites.length === 0) {
-  window.electron.store.set('deviceManager.previewSuites', [
-    {
-      id: 'default',
-      name: 'Default',
-      devices: ['10008', '10013', '10015'],
-    },
-  ]);
-}
+sanitizeSuites();
 
 const initialState: DeviceManagerState = {
   devices: DEFAULT_DEVICES,
