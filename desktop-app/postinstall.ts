@@ -1,5 +1,4 @@
 import { replaceInFile } from 'replace-in-file';
-import { execSync } from 'child_process';
 
 async function performReplacements() {
   const replaceOptions = {
@@ -25,38 +24,8 @@ async function performReplacements() {
   }
 }
 
-function runCheckNativeDepScript() {
-  try {
-    execSync('ts-node .erb/scripts/check-native-dep.js', { stdio: 'inherit' });
-  } catch (error) {
-    console.error('Error occurred during check-native-dep script:', error);
-  }
-}
-
-function installAppDeps() {
-  try {
-    execSync('electron-builder install-app-deps', { stdio: 'inherit' });
-  } catch (error) {
-    console.error('Error occurred during install-app-deps:', error);
-  }
-}
-
-function runWebpack() {
-  try {
-    execSync(
-      'cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts',
-      { stdio: 'inherit' }
-    );
-  } catch (error) {
-    console.error('Error occurred during webpack:', error);
-  }
-}
-
 async function performPostInstall() {
   await performReplacements();
-  runCheckNativeDepScript();
-  installAppDeps();
-  runWebpack();
 }
 
 performPostInstall();
