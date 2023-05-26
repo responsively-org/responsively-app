@@ -7,7 +7,8 @@ import {
   selectIsDevtoolsOpen,
 } from 'renderer/store/features/devtools';
 import { selectLayout } from 'renderer/store/features/renderer';
-import { getDevicesMap } from 'common/deviceList';
+import { getDevicesMap, Device as IDevice } from 'common/deviceList';
+import { useState } from 'react';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
 
@@ -17,23 +18,51 @@ const Previewer = () => {
   const dockPosition = useSelector(selectDockPosition);
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const layout = useSelector(selectLayout);
+  const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
+
+  const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
   return (
     <div className="h-full">
       <div
-        className={cx('flex h-full justify-between', {
-          'flex-col': dockPosition === DOCK_POSITION.BOTTOM,
-          'flex-row': dockPosition === DOCK_POSITION.RIGHT,
-        })}
+        className={cx(
+          'flex h-full',
+          {
+            'flex-col': dockPosition === DOCK_POSITION.BOTTOM,
+            'flex-row': dockPosition === DOCK_POSITION.RIGHT,
+          },
+          {
+            'justify-between': !isIndividualLayout,
+            'justify-center': isIndividualLayout,
+          }
+        )}
       >
         <div
           className={cx('flex h-full gap-4 overflow-auto p-4', {
             'flex-wrap': layout === PREVIEW_LAYOUTS.FLEX,
           })}
         >
-          {devices.map((device, idx) => (
-            <Device key={device.id} device={device} isPrimary={idx === 0} />
-          ))}
+          {isIndividualLayout ? (
+            <>
+              <Device
+                key={individualDevice.id}
+                device={individualDevice}
+                isPrimary
+                setIndividualDevice={setIndividualDevice}
+              />
+            </>
+          ) : (
+            <>
+              {devices.map((device, idx) => (
+                <Device
+                  key={device.id}
+                  device={device}
+                  isPrimary={idx === 0}
+                  setIndividualDevice={setIndividualDevice}
+                />
+              ))}
+            </>
+          )}
         </div>
         {isDevtoolsOpen && dockPosition !== DOCK_POSITION.UNDOCKED ? (
           <DevtoolsResizer />

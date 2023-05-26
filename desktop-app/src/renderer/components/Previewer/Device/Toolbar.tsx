@@ -15,6 +15,8 @@ interface Props {
   setScreenshotInProgress: (value: boolean) => void;
   openDevTools: () => void;
   onRotate: (state: boolean) => void;
+  onIndividualLayoutHandler: (device: Device) => void;
+  isIndividualLayout: boolean;
 }
 
 const Toolbar = ({
@@ -23,6 +25,8 @@ const Toolbar = ({
   setScreenshotInProgress,
   openDevTools,
   onRotate,
+  onIndividualLayoutHandler,
+  isIndividualLayout,
 }: Props) => {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
@@ -158,6 +162,18 @@ const Toolbar = ({
         <Icon
           icon={
             rotated ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'
+          }
+        />
+      </Button>
+      <Button
+        onClick={() => onIndividualLayoutHandler(device)}
+        title={`${isIndividualLayout ? 'Disable' : 'Enable'} Individual Layout`}
+      >
+        <Icon
+          icon={
+            isIndividualLayout
+              ? 'ic:twotone-zoom-in-map'
+              : 'ic:twotone-zoom-out-map'
           }
         />
       </Button>
