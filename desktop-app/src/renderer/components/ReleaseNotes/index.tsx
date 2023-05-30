@@ -120,6 +120,20 @@ const ReleaseNotes = () => {
           >
             Full Release Notes
           </Button>
+          <Button
+            onClick={() => {
+              window.electron.ipcRenderer.sendMessage(
+                IPC_MAIN_CHANNELS.OPEN_EXTERNAL,
+                {
+                  url: 'https://responsively.app/sponsor/',
+                }
+              );
+            }}
+            isActionButton
+            isActive
+          >
+            Sponsor
+          </Button>
         </div>
       </>
     </Modal>
