@@ -541,6 +541,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "themohammadsa",
+      "name": "Mohammad S",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59393936?v=4",
+      "profile": "https://linktr.ee/themohammadsa",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
@@ -549,5 +558,6 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true,
-  "commitConvention": "none"
+  "commitConvention": "none",
+  "commitType": "docs"
 }
