@@ -31,11 +31,14 @@ import {
 import {
   selectAddress,
   selectIsInspecting,
+  selectLayout,
   selectRotate,
   selectZoomFactor,
   setAddress,
   setIsInspecting,
+  setLayout,
 } from 'renderer/store/features/renderer';
+import { PREVIEW_LAYOUTS } from 'common/constants';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
@@ -43,6 +46,7 @@ import { appendHistory } from './utils';
 interface Props {
   device: IDevice;
   isPrimary: boolean;
+  setIndividualDevice: (device: IDevice) => void;
 }
 
 interface ErrorState {
@@ -50,7 +54,7 @@ interface ErrorState {
   description: string;
 }
 
-const Device = ({ isPrimary, device }: Props) => {
+const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const [singleRotated, setSingleRotated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorState | null>(null);
@@ -62,10 +66,13 @@ const Device = ({ isPrimary, device }: Props) => {
   const rotateDevices = useSelector(selectRotate);
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
+  const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
 
   const dockPosition = useSelector(selectDockPosition);
   const ref = useRef<Electron.WebviewTag>(null);
+
+  const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
   let { height, width } = device;
 
@@ -188,6 +195,15 @@ const Device = ({ isPrimary, device }: Props) => {
 
   const onRotateHandler = (state: boolean) => setSingleRotated(state);
 
+  const onIndividualLayoutHandler = (selectedDevice: IDevice) => {
+    if (!isIndividualLayout) {
+      dispatch(setLayout(PREVIEW_LAYOUTS.INDIVIDUAL));
+      setIndividualDevice(selectedDevice);
+    } else {
+      dispatch(setLayout(PREVIEW_LAYOUTS.COLUMN));
+    }
+  };
+
   useEffect(() => {
     if (!ref.current) {
       return;
@@ -268,11 +284,13 @@ const Device = ({ isPrimary, device }: Props) => {
 
     if (!isPrimary) {
       setTimeout(() => {
-        window.electron.ipcRenderer.invoke<
-          DisableDefaultWindowOpenHandlerArgs,
-          DisableDefaultWindowOpenHandlerResult
-        >('disable-default-window-open-handler', {
-          webContentsId: webview.getWebContentsId(),
+        webview.addEventListener('dom-ready', () => {
+          window.electron.ipcRenderer.invoke<
+            DisableDefaultWindowOpenHandlerArgs,
+            DisableDefaultWindowOpenHandlerResult
+          >('disable-default-window-open-handler', {
+            webContentsId: webview.getWebContentsId(),
+          });
         });
       }, 2000);
     }
@@ -392,6 +410,8 @@ const Device = ({ isPrimary, device }: Props) => {
         setScreenshotInProgress={setScreenshotInProgess}
         openDevTools={openDevTools}
         onRotate={onRotateHandler}
+        onIndividualLayoutHandler={onIndividualLayoutHandler}
+        isIndividualLayout={isIndividualLayout}
       />
       <div
         style={{ height: scaledHeight, width: scaledWidth }}

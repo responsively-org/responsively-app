@@ -129,6 +129,7 @@
     "react-markdown": "^8.0.7",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.3.0",
+    "react-tabs": "^6.0.1",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "replace": "^1.2.1",
