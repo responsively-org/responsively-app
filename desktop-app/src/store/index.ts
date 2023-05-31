@@ -190,6 +190,13 @@ const schema = {
     },
     default: [],
   },
+  bookmarks: {
+    type: 'array',
+    items: {
+      type: 'object',
+    },
+    default: [],
+  },
 } as const;
 
 const store = new Store({ schema, watch: true, migrations });
