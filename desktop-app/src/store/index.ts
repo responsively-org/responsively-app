@@ -1,4 +1,5 @@
 import { DOCK_POSITION, PREVIEW_LAYOUTS } from '../common/constants';
+import { migrations } from './migrations';
 
 const Store = require('electron-store');
 
@@ -39,18 +40,49 @@ const schema = {
   deviceManager: {
     type: 'object',
     properties: {
+      // TODO: remove this in a future version of v1.2.0
       activeDevices: {
         type: 'array',
         items: {
           type: 'string',
         },
-        default: ['iPhone 12 Pro', 'iPad', 'Macbook Pro'],
+        default: ['10008', '10013', '10015'],
+      },
+      previewSuites: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+            },
+            name: {
+              type: 'string',
+            },
+            devices: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        default: [
+          {
+            id: 'default',
+            name: 'Default',
+            devices: ['10008', '10013', '10015'],
+          },
+        ],
       },
       customDevices: {
         type: 'array',
         items: {
           type: 'object',
           properties: {
+            id: {
+              type: 'string',
+            },
             name: {
               type: 'string',
             },
@@ -158,8 +190,8 @@ const schema = {
     },
     default: [],
   },
-};
+} as const;
 
-const store = new Store({ schema, watch: true });
+const store = new Store({ schema, watch: true, migrations });
 
 export default store;

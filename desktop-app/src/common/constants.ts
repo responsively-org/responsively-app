@@ -9,6 +9,7 @@ export const DOCK_POSITION = {
 export const PREVIEW_LAYOUTS = {
   COLUMN: 'COLUMN',
   FLEX: 'FLEX',
+  INDIVIDUAL: 'INDIVIDUAL',
 } as const;
 
 export type PreviewLayout =
@@ -29,3 +30,5 @@ export const IPC_MAIN_CHANNELS = {
 } as const;
 
 export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];
+
+export const PROTOCOL = 'responsively';
