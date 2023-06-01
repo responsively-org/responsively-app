@@ -221,6 +221,10 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="http://niknia.dev"><img src="https://avatars.githubusercontent.com/u/40159649?v=4?s=100" width="100px;" alt="aniknia"/><br /><sub><b>aniknia</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=aniknia" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/WayneRocha"><img src="https://avatars.githubusercontent.com/u/62760711?v=4?s=100" width="100px;" alt="Wayne Rocha"/><br /><sub><b>Wayne Rocha</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=WayneRocha" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/crbon"><img src="https://avatars.githubusercontent.com/u/2604330?v=4?s=100" width="100px;" alt="crbon"/><br /><sub><b>crbon</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=crbon" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://linktr.ee/themohammadsa"><img src="https://avatars.githubusercontent.com/u/59393936?v=4?s=100" width="100px;" alt="Mohammad S"/><br /><sub><b>Mohammad S</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=themohammadsa" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/ReshadSadik"><img src="https://avatars.githubusercontent.com/u/66641469?v=4?s=100" width="100px;" alt="Reshad Sadik"/><br /><sub><b>Reshad Sadik</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=ReshadSadik" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
