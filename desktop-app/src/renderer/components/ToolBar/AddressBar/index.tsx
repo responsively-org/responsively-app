@@ -17,7 +17,7 @@ import { selectAddress, setAddress } from 'renderer/store/features/renderer';
 import { IBookmarks, selectBookmarks } from 'renderer/store/features/bookmarks';
 import AuthModal from './AuthModal';
 import SuggestionList from './SuggestionList';
-import EditBookmarkFlyout from './EditBookmarkFlyout';
+import Bookmark from './Bookmark';
 
 export const ADDRESS_BAR_EVENTS = {
   DELETE_COOKIES: 'DELETE_COOKIES',
@@ -39,15 +39,8 @@ const AddressBar = () => {
   const [deleteCacheLoading, setDeleteCacheLoading] = useState<boolean>(false);
   const [permissionRequest, setPermissionRequest] =
     useState<PermissionRequestArg | null>(null);
-  const [currentBookmark, setCurrentBookmark] = useState<IBookmarks>({
-    name: '',
-    address: '',
-  });
-  const [openEditBookmarkFlyout, setOpenEditBookmarkFlyout] =
-    useState<boolean>(false);
   const [authRequest, setAuthRequest] = useState<AuthRequestArgs | null>(null);
   const address = useSelector(selectAddress);
-  const bookmarks = useSelector(selectBookmarks);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -117,16 +110,6 @@ const AddressBar = () => {
     }
   }, [homepage]);
 
-  useEffect(() => {
-    const bookmarkFound = bookmarks.find(
-      (bookmark: IBookmarks) => bookmark.address === address
-    );
-    setCurrentBookmark({
-      name: bookmarkFound?.name || '',
-      address: bookmarkFound?.address || '',
-    });
-  }, [bookmarks, address]);
-
   const permissionReqClickHandler = (allow: boolean) => {
     if (!permissionRequest) {
       return;
@@ -168,9 +151,6 @@ const AddressBar = () => {
   };
 
   const isHomepage = address === homepage;
-  const isPageBookmarked = Boolean(
-    currentBookmark.name && currentBookmark.address
-  );
 
   return (
     <>
@@ -262,28 +242,11 @@ const AddressBar = () => {
           >
             <Icon icon={isHomepage ? 'mdi:home' : 'mdi:home-outline'} />
           </Button>
-          <Button
-            className={cx('rounded-full', {
-              'text-blue-500': isPageBookmarked,
-            })}
-            onClick={() => setOpenEditBookmarkFlyout(!openEditBookmarkFlyout)}
-            title={`${!isPageBookmarked ? 'Add' : 'Remove'} bookmark`}
-          >
-            <Icon
-              icon={`ic:baseline-star${!isPageBookmarked ? '-border' : ''}`}
-            />
-          </Button>
+          <Bookmark currentAddress={address} />
         </div>
         {isSuggesting ? (
           <SuggestionList match={typedAddress} onEnter={onEnter} />
         ) : null}
-        {openEditBookmarkFlyout && (
-          <EditBookmarkFlyout
-            currentBookmark={currentBookmark}
-            setOpenEditBookmarkFlyout={setOpenEditBookmarkFlyout}
-            address={address}
-          />
-        )}
       </div>
       <AuthModal
         isOpen={authRequest != null}

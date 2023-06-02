@@ -22,7 +22,7 @@ const ViewAllBookmarks = ({ bookmarks, handleBookmarkFlyout }: Props) => {
     <div className="absolute top-[179px] right-[322px] z-50 flex flex-col rounded bg-white text-sm shadow-lg ring-1 ring-slate-500 !ring-opacity-40 focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
       {bookmarks.map((bookmark) => {
         return (
-          <div className="w-60 overflow-hidden">
+          <div className="w-60 overflow-hidden" key={bookmark.id}>
             <Button
               className="w-full cursor-pointer justify-between truncate py-2 px-4"
               onClick={() => handleBookmarkClick(bookmark.address)}
