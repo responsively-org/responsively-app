@@ -1,8 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { v4 as uuidv4 } from 'uuid';
 import type { RootState } from '../..';
 
 export interface IBookmarks {
+  id?: string;
   name: string;
   address: string;
 }
@@ -19,16 +21,26 @@ export const bookmarksSlice = createSlice({
   initialState,
   reducers: {
     addBookmark: (state, action: PayloadAction<IBookmarks>) => {
-      state.bookmarks = [...state.bookmarks, action.payload];
-      window.electron.store.set('bookmarks', action.payload);
-    },
-    removeBookmark: (state, action: PayloadAction<IBookmarks>) => {
       const bookmarks: IBookmarks[] = window.electron.store.get('bookmarks');
-      const filteredBookmark = bookmarks.filter(
-        (bookmark) => bookmark.address !== action.payload.address
+      const updatedPayload = {
+        id: uuidv4(),
+        ...action.payload,
+      };
+      bookmarks.push(updatedPayload);
+      state.bookmarks = bookmarks;
+      window.electron.store.set('bookmarks', bookmarks);
+    },
+    removeBookmark: (state, action) => {
+      const bookmarks = window.electron.store.get('bookmarks');
+      const bookmarkIndex = state.bookmarks.findIndex(
+        (bookmark) => bookmark.address === action.payload.address
       );
-      state.bookmarks = filteredBookmark;
-      window.electron.store.set('bookmarks', filteredBookmark);
+      if (bookmarkIndex === -1) {
+        return;
+      }
+      bookmarks.splice(bookmarkIndex, 1);
+      state.bookmarks = bookmarks;
+      window.electron.store.set('bookmarks', bookmarks);
     },
   },
 });
