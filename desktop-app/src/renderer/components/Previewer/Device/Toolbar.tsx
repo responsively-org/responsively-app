@@ -1,13 +1,15 @@
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
-import Button from 'renderer/components/Button';
 import useSound from 'use-sound';
-import { ScreenshotArgs, ScreenshotResult } from 'main/screenshot';
-import { Device } from 'common/deviceList';
-import WebPage from 'main/screenshot/webpage';
-
-import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
-import { updateWebViewHeightAndScale } from 'common/webViewUtils';
+import { Device } from '../../../../common/deviceList';
+import WebPage from '../../../../main/screenshot/webpage';
+import screenshotSfx from '../../../assets/sfx/screenshot.mp3';
+import { updateWebViewHeightAndScale } from '../../../../common/webViewUtils';
+import {
+  ScreenshotArgs,
+  ScreenshotResult,
+} from '../../../../common/image/types';
+import Button from '../../Button';
 
 interface Props {
   webview: Electron.WebviewTag | null;

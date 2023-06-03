@@ -8,7 +8,6 @@ import {
   setRotate,
 } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
-import { ScreenshotAllArgs, FormData, EventData } from 'main/screenshot';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import WebPage from 'main/screenshot/webpage';
 import { getDevicesMap } from 'common/deviceList';
@@ -22,6 +21,11 @@ import ColorSchemeToggle from './ColorSchemeToggle';
 import ModalLoader from '../ModalLoader';
 import { PreviewSuiteSelector } from './PreviewSuiteSelector';
 import CaptureAllScreens from '../ModalLoader/captureAllScreens';
+import {
+  ScreenshotAllArgs,
+  EventData,
+  FormData,
+} from '../../../common/image/types';
 
 const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
