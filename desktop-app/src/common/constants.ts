@@ -9,6 +9,7 @@ export const DOCK_POSITION = {
 export const PREVIEW_LAYOUTS = {
   COLUMN: 'COLUMN',
   FLEX: 'FLEX',
+  INDIVIDUAL: 'INDIVIDUAL',
 } as const;
 
 export type PreviewLayout =

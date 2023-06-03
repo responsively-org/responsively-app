@@ -6,6 +6,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
   selectActiveSuite,
   setDevices,
+  setSuiteDevices,
 } from 'renderer/store/features/device-manager';
 import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
 import { defaultDevices, Device, getDevicesMap } from 'common/deviceList';
@@ -56,19 +57,25 @@ const DeviceManager = () => {
   const onAddDevice = async (device: Device, isNew: boolean) => {
     const newCustomDevices = isNew
       ? [...customDevices, device]
-      : customDevices.map((d) => (d.name === device.name ? device : d));
+      : customDevices.map((d) => (d.id === device.id ? device : d));
     saveCustomDevices(newCustomDevices);
     dispatch(
-      setDevices(devices.map((d) => (d.name === device.name ? device : d)))
+      setSuiteDevices({
+        suite: activeSuite.id,
+        devices: [...activeSuite.devices, device.id],
+      })
     );
   };
 
   const onRemoveDevice = (device: Device) => {
-    const newCustomDevices = customDevices.filter(
-      (d) => d.name !== device.name
-    );
+    const newCustomDevices = customDevices.filter((d) => d.id !== device.id);
     saveCustomDevices(newCustomDevices);
-    dispatch(setDevices(devices.filter((d) => d.name !== device.name)));
+    dispatch(
+      setSuiteDevices({
+        suite: activeSuite.id,
+        devices: activeSuite.devices.filter((d) => d !== device.id),
+      })
+    );
   };
 
   const onShowDeviceDetails = (device: Device) => {
@@ -104,7 +111,7 @@ const DeviceManager = () => {
           {filteredDevices.map((device) => (
             <DeviceLabel
               device={device}
-              key={device.name}
+              key={device.id}
               onShowDeviceDetails={onShowDeviceDetails}
               disableSelectionControls={
                 devices.find((d) => d.id === device.id) != null &&
@@ -130,7 +137,7 @@ const DeviceManager = () => {
           {filteredCustomDevices.map((device) => (
             <DeviceLabel
               device={device}
-              key={device.name}
+              key={device.id}
               onShowDeviceDetails={onShowDeviceDetails}
             />
           ))}

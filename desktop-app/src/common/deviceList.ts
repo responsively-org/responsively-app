@@ -872,14 +872,16 @@ export const defaultDevices: Device[] = [
   },
 ];
 
-const customDevices: Device[] =
-  typeof window !== 'undefined'
+const customDevices: () => Device[] = () => {
+  return typeof window !== 'undefined'
     ? window.electron.store.get('deviceManager.customDevices')
     : [];
+};
+
 type DeviceMap = { [key: string]: Device };
 
 export const getDevicesMap = (): DeviceMap => {
-  return [...defaultDevices, ...customDevices].reduce(
+  return [...defaultDevices, ...customDevices()].reduce(
     (map: DeviceMap, device) => {
       map[device.id] = device;
       return map;
