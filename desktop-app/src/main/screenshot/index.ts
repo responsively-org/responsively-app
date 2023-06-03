@@ -1,41 +1,16 @@
 import { ipcMain, shell, webContents } from 'electron';
-import { writeFile, ensureDir } from 'fs-extra';
-import path from 'path';
-import { homedir } from 'os';
 import { MergeImages } from '../../common/image/merge';
-import { Device } from '../../common/deviceList';
-
-export interface ScreenshotArgs {
-  webContentsId: number;
-  fullPage?: boolean;
-  device: Device;
-}
-
-export interface ScreenshotAllArgs {
-  webContentsId: number;
-  device: Device;
-  previousHeight: string;
-  previousTransform: string;
-  pageHeight: number;
-}
-
-export interface ScreenshotResult {
-  done: boolean;
-  image: Image | undefined;
-}
-
-export interface Image {
-  width: number;
-  height: number;
-  data: Buffer;
-}
-export interface FormData {
-  captureEachImage: boolean;
-  mergeImages: boolean;
-  prefix: string;
-}
-
-export type EventData = FormData & { screens: Array<ScreenshotAllArgs> };
+import {
+  ScreenshotArgs,
+  ScreenshotResult,
+  EventData,
+  ImageBufferData,
+} from '../../common/image/types';
+import {
+  getResponsivelyScreenshotFilePath,
+  openFinder,
+} from '../../common/fileUtils';
+import { Bitmap } from '../../common/image/bitmap';
 
 const captureImage = async (
   webContentsId: number
@@ -44,17 +19,16 @@ const captureImage = async (
   return Image;
 };
 
-const getPath = async (name: string) => {
-  const dir = path.join(homedir(), `Desktop/Responsively-Screenshots`);
-  const filePath = path.join(dir, `/${name}-${Date.now()}.jpeg`);
-  await ensureDir(dir);
-  return filePath;
-};
-
-const saveImage = async (image: Buffer, name: string) => {
-  const filePath = await getPath(name);
-  await writeFile(filePath, image);
-  setTimeout(() => shell.showItemInFolder(filePath), 100);
+const saveImage = async (
+  image: Buffer,
+  height: number,
+  width: number,
+  name: string
+) => {
+  const filePath = await getResponsivelyScreenshotFilePath(name);
+  const bitmap = new Bitmap({ data: image, height, width });
+  await bitmap.writeFile(filePath);
+  openFinder(filePath);
   return { done: true };
 };
 
@@ -64,16 +38,20 @@ const quickScreenshot = async (
 ): Promise<ScreenshotResult> => {
   const {
     webContentsId,
-    device: { name, height, width },
+    device: { name },
   } = arg;
   const image = await captureImage(webContentsId);
   if (image === undefined) {
     return { done: false, image: undefined };
   }
-  const JPEGImage = image.toJPEG(100);
-  if (isSaveImage) await saveImage(JPEGImage, name);
+  const imageData = image.toBitmap();
+  const sizes = image.getSize();
+  if (isSaveImage) await saveImage(imageData, sizes.height, sizes.width, name);
 
-  return { done: true, image: { data: JPEGImage, height, width } };
+  return {
+    done: true,
+    image: { data: imageData, height: sizes.height, width: sizes.width },
+  };
 };
 
 const captureAllDecies = async (
@@ -89,11 +67,11 @@ const captureAllDecies = async (
   if (args.mergeImages) {
     const buffers = results
       .filter((result) => result.image !== undefined)
-      .map((result) => result.image!.data);
-    const mergeImages = new MergeImages(buffers);
+      .map((result) => result.image);
+    const mergeImages = new MergeImages(buffers as ImageBufferData[]);
     const bitmap = mergeImages.merge();
-    const filePath = await getPath(args.prefix);
-    await bitmap.writeFile(filePath, 90);
+    const filePath = await getResponsivelyScreenshotFilePath(args.prefix);
+    await bitmap.writeFile(filePath);
     setTimeout(() => shell.showItemInFolder(filePath), 100);
   }
   return { done: true };

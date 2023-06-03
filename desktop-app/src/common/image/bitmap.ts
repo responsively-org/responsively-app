@@ -1,40 +1,9 @@
 /**
  * Bitmap class to create image bitmaps
  */
-import { WriteStream, createWriteStream } from 'fs';
-import jpeg from 'jpeg-js';
-
-interface RGBA {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-}
-
-interface FileOptions {
-  quality: number;
-  type: ImageType;
-}
-
-export type COLOR = RGBA;
-
-export interface BitmapData {
-  width?: number;
-  height?: number;
-  data?: ArrayBuffer;
-  color?: COLOR;
-}
-
-export enum FileType {
-  PNG = 'png',
-  JPEG = 'jpeg',
-  JPG = 'jpg',
-}
-
-export enum ImageType {
-  PNG = 1,
-  JPEG = 2,
-}
+import { nativeImage } from 'electron';
+import { writeBufferToFile } from '../fileUtils';
+import { BitmapData, COLOR } from './types';
 
 export const TRANSPARENT_BLACK = { r: 0, g: 0, b: 0, a: 0 };
 
@@ -57,18 +26,6 @@ export class Bitmap {
     return this.width;
   }
 
-  /**
-   * JPEG data buffer
-   *
-   * @param data JPEG data
-   */
-  public decodeBuffer(data: Buffer) {
-    const { width, height, data: bufferData } = jpeg.decode(data);
-    this.width = width;
-    this.height = height;
-    this.data = bufferData;
-  }
-
   public drawImage(
     imageBuffer: Buffer,
     startPosition: number,
@@ -87,82 +44,12 @@ export class Bitmap {
     }
   }
 
-  public jpecEncode(quality: number): jpeg.BufferRet {
-    return jpeg.encode(
-      { data: this.data, width: this.width, height: this.height },
-      quality
-    );
-  }
-
-  public write(stream: WriteStream, options: FileOptions): Promise<string> {
-    return new Promise((resolve, reject) => {
-      try {
-        stream.on('finish', () => {
-          resolve('done');
-        });
-        stream.on('error', (error) => {
-          reject(error);
-        });
-        switch (options.type) {
-          case ImageType.JPEG:
-            stream.write(
-              jpeg.encode(
-                { data: this.data, width: this.width, height: this.height },
-                options.quality || 90
-              ).data
-            );
-            stream.end();
-            break;
-          case ImageType.PNG:
-            break;
-          default:
-            break;
-        }
-      } catch (error) {
-        reject(error);
-      }
+  public async writeFile(filePath: string) {
+    const electronImage = nativeImage.createFromBuffer(this.data, {
+      width: this.width,
+      height: this.height,
     });
-  }
-
-  public async writeFile(filePath: string, quality: number) {
-    const options = this.parseFileOptions(filePath, quality);
-    const stream = createWriteStream(filePath);
-    await this.write(stream, options);
-  }
-
-  private parseFileOptions(fileName: string, quality: number): FileOptions {
-    const fileType = this.deduceFileType(fileName);
-    const fileOptions: FileOptions = {
-      quality: quality || 100,
-      type: fileType,
-    };
-    return fileOptions;
-  }
-
-  /**
-   * @param fileName {string} name of the file
-   * @returns deduces file type from the file name
-   */
-  // eslint-disable-next-line class-methods-use-this
-  private deduceFileType(fileName: string): ImageType {
-    // check if valid fileName
-    if (!fileName) {
-      throw new Error('Invalid file name');
-    }
-
-    const fileExtension = fileName.split('.').pop();
-    switch (fileExtension) {
-      case FileType.JPEG:
-        return ImageType.JPEG;
-      case FileType.JPG:
-        return ImageType.JPEG;
-      case FileType.PNG:
-        return ImageType.PNG;
-      default:
-        break;
-    }
-    // if non of extensions mathces
-    throw new Error('Invalid file type');
+    await writeBufferToFile(filePath, electronImage.toJPEG(90));
   }
 
   /**
@@ -177,13 +64,15 @@ export class Bitmap {
       this.width = width;
       this.height = height;
       this.data = data ? Buffer.from(data) : Buffer.alloc(width * height * 4);
-      this.fillData(
-        bitmapOptions.color || TRANSPARENT_BLACK,
-        0,
-        0,
-        width,
-        height
-      );
+      if (!data) {
+        this.fillData(
+          bitmapOptions.color || TRANSPARENT_BLACK,
+          0,
+          0,
+          width,
+          height
+        );
+      }
     }
   }
 
@@ -244,7 +133,7 @@ export class Bitmap {
       currentPosition += 4;
     }
 
-    // copy that line into other places
+    // copy first line into other places
     const positionFromBufferEnds = currentPosition;
     let positionFromCopyShouldstart = positionFromBufferEnds;
     for (let i = topPosition + 1; i < bottomPosition; i += 1) {

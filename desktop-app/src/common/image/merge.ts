@@ -1,52 +1,40 @@
-import { JpegData, JpegUtils } from './jpeg';
 import { Bitmap } from './bitmap';
+import { ImageBufferData } from './types';
 
 export class MergeImages {
-  images: Buffer[];
+  images: ImageBufferData[];
 
-  constructor(images: Buffer[]) {
+  constructor(images: ImageBufferData[]) {
     this.images = images;
   }
 
   public merge(): Bitmap {
-    const decodedImages = this.decodeImages();
-    const finalHeight = decodedImages.reduce((prevVal, currVal) => {
+    // const decodedImages = this.decodeImages();
+    const finalHeight = this.images.reduce((prevVal, currVal) => {
       return Math.max(prevVal, currVal.height);
     }, 0);
-    const finalWidth = decodedImages.reduce((prevVal, currVal) => {
+    const finalWidth = this.images.reduce((prevVal, currVal) => {
       return prevVal + currVal.width + 20;
     }, 20);
     const offsets: number[] = [];
-    decodedImages.forEach((image, index) => {
+    this.images.forEach((_, index) => {
       if (index === 0) {
         offsets.push(0);
       } else {
-        offsets.push(offsets[index - 1] + decodedImages[index - 1].width * 4);
+        offsets.push(offsets[index - 1] + this.images[index - 1].width * 4);
       }
     });
-    const sharedImageBuffer = new SharedArrayBuffer(
-      finalHeight * finalWidth * 4
-    );
     const mergedBitmap = new Bitmap({
-      data: sharedImageBuffer,
       width: finalWidth,
       height: finalHeight,
     });
-    for (let i = 0; i < decodedImages.length; i += 1) {
-      const decodedImage = decodedImages[i];
+    for (let i = 0; i < this.images.length; i += 1) {
+      const decodedImage = this.images[i];
       const { data, width } = decodedImage;
 
       mergedBitmap.drawImage(data, offsets[i] + i * 20 * 4, width * 4);
     }
 
     return mergedBitmap;
-  }
-
-  private decodeImages(): JpegData[] {
-    const decodedImages = this.images.map((image) => {
-      return JpegUtils.decode(image);
-    });
-
-    return decodedImages;
   }
 }
