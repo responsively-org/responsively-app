@@ -1,10 +1,12 @@
 import { Icon } from '@iconify/react';
-import { Device } from 'common/deviceList';
+import cx from 'classnames';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { Device, getDevicesMap } from 'common/deviceList';
 import {
-  selectDevices,
-  setDevices,
+  selectActiveSuite,
+  setSuiteDevices,
 } from 'renderer/store/features/device-manager';
 import Button from '../Button';
 
@@ -15,6 +17,8 @@ interface Props {
   enableDnd?: boolean;
   moveDevice?: (device: Device, atIndex: number) => void;
   onShowDeviceDetails: (device: Device) => void;
+  hideSelectionControls?: boolean;
+  disableSelectionControls?: boolean;
 }
 
 const DeviceLabel = ({
@@ -22,10 +26,12 @@ const DeviceLabel = ({
   moveDevice = () => {},
   enableDnd = false,
   onShowDeviceDetails,
+  hideSelectionControls = false,
+  disableSelectionControls = false,
 }: Props) => {
   const dispatch = useDispatch();
-  const devices = useSelector(selectDevices);
-
+  const activeSuite = useSelector(selectActiveSuite);
+  const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
   const originalIndex = devices.indexOf(device);
 
   const [{ isDragging }, drag] = useDrag(
@@ -58,6 +64,7 @@ const DeviceLabel = ({
   );
 
   const opacity = isDragging ? 0 : 1;
+  const isChecked = devices.find((d) => d.name === device.name) != null;
 
   return (
     <div
@@ -67,13 +74,35 @@ const DeviceLabel = ({
     >
       {enableDnd ? <Icon icon="ic:baseline-drag-indicator" /> : null}
       <input
+        className={cx({
+          'pointer-events-none opacity-0': hideSelectionControls,
+        })}
         type="checkbox"
-        checked={devices.find((d) => d.name === device.name) != null}
+        disabled={disableSelectionControls}
+        title={
+          // eslint-disable-next-line no-nested-ternary
+          disableSelectionControls
+            ? 'Cannot make the suite empty add another device to remove this one'
+            : isChecked
+            ? 'Click to remove the device'
+            : 'Click to add the device'
+        }
+        checked={isChecked}
         onChange={(e) => {
           if (e.target.checked) {
-            dispatch(setDevices([...devices, device]));
+            dispatch(
+              setSuiteDevices({
+                suite: activeSuite.id,
+                devices: [...activeSuite.devices, device.id],
+              })
+            );
           } else {
-            dispatch(setDevices(devices.filter((d) => d.name !== device.name)));
+            dispatch(
+              setSuiteDevices({
+                suite: activeSuite.id,
+                devices: activeSuite.devices.filter((d) => d !== device.id),
+              })
+            );
           }
         }}
       />

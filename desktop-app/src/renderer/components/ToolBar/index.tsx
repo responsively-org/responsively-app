@@ -1,11 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  selectIsCapturingScreenshot,
   selectIsInspecting,
   selectRotate,
+  setIsCapturingScreenshot,
   setIsInspecting,
   setRotate,
 } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
+import { ScreenshotAllArgs } from 'main/screenshot';
+import { selectActiveSuite } from 'renderer/store/features/device-manager';
+import WebPage from 'main/screenshot/webpage';
+import { getDevicesMap } from 'common/deviceList';
+import { updateWebViewHeightAndScale } from 'common/webViewUtils';
 import { useEffect, useRef } from 'react';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
@@ -13,27 +20,57 @@ import Button from '../Button';
 import AddressBar from './AddressBar';
 import ColorSchemeToggle from './ColorSchemeToggle';
 
-function useKey(key: any, cb: any) {
-  const callbackRef = useRef(cb);
-
-  useEffect(() => {
-    callbackRef.current = cb;
-  }, [cb]);
-
-  useEffect(() => {
-    function handle(event: { code: any }) {
-      if (event.code === key) {
-        callbackRef.current(event);
-      }
-    }
-    document.addEventListener('keypress', handle);
-    return () => document.removeEventListener('keypress', handle);
-  }, [key]);
-}
 const ToolBar = () => {
-  const rotateDevice = useSelector(selectRotate);
+  const rotateDevices = useSelector(selectRotate);
   const isInspecting = useSelector(selectIsInspecting);
+  const isCapturingScreenshot = useSelector(selectIsCapturingScreenshot);
+  const activeSuite = useSelector(selectActiveSuite);
   const dispatch = useDispatch();
+
+  const screenshotCaptureHandler = async () => {
+    dispatch(setIsCapturingScreenshot(true));
+    const webViews: NodeListOf<Electron.WebviewTag> =
+      document.querySelectorAll('webView');
+    const screens: Array<ScreenshotAllArgs> = [];
+    const devices = activeSuite.devices.map((d) => getDevicesMap()[d]);
+    webViews.forEach(async (webview) => {
+      const device = devices.find((d) => d.name === webview.id);
+      const webPage = new WebPage(webview as unknown as Electron.WebContents);
+      const pageHeight = await webPage.getPageHeight();
+      const previousHeight = webview.style.height;
+      const previousTransform = webview.style.transform;
+      updateWebViewHeightAndScale(webview, pageHeight);
+      if (device != null) {
+        screens.push({
+          webContentsId: webview.getWebContentsId(),
+          device,
+          previousHeight,
+          previousTransform,
+          pageHeight,
+        });
+      }
+    });
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await window.electron.ipcRenderer.invoke<Array<ScreenshotAllArgs>, any>(
+      'screenshot:All',
+      screens
+    );
+
+    // reset webviews to original size
+    webViews.forEach((webview) => {
+      const screent = screens.find((s) => s.device.name === webview.id);
+      if (screent != null) {
+        webview.style.height = screent.previousHeight;
+        webview.style.transform = screent.previousTransform;
+      }
+    });
+
+    dispatch(setIsCapturingScreenshot(false));
+  };
+
+  const handleClose = () => {
+    // Do nothing. Prevent Dialog from closing.
+  };
 
   function handleInspectShortcut() {
     dispatch(setIsInspecting(!isInspecting));
@@ -45,13 +82,13 @@ const ToolBar = () => {
       <NavigationControls />
       <AddressBar />
       <Button
-        onClick={() => dispatch(setRotate(!rotateDevice))}
-        isActive={rotateDevice}
+        onClick={() => dispatch(setRotate(!rotateDevices))}
+        isActive={rotateDevices}
         title="Rotate Devices"
       >
         <Icon
           icon={
-            rotateDevice
+            rotateDevices
               ? 'mdi:phone-rotate-portrait'
               : 'mdi:phone-rotate-landscape'
           }
@@ -64,8 +101,22 @@ const ToolBar = () => {
       >
         <Icon icon="lucide:inspect" />
       </Button>
+      <Button
+        onClick={screenshotCaptureHandler}
+        isActive={isCapturingScreenshot}
+        title="Screenshot All WebViews"
+      >
+        <Icon icon="lucide:camera" />
+      </Button>
       <ColorSchemeToggle />
+      <Divider />
+      <PreviewSuiteSelector />
       <Menu />
+      <ModalLoader
+        isOpen={isCapturingScreenshot}
+        onClose={handleClose}
+        title="Screenshot"
+      />
     </div>
   );
 };

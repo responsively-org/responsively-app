@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
 import { useDispatch, useSelector } from 'react-redux';
-import { DndProvider, useDrop } from 'react-dnd';
+import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
-  selectDevices,
+  selectActiveSuite,
   setDevices,
+  setSuiteDevices,
 } from 'renderer/store/features/device-manager';
 import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
-import defaultDevices, { Device } from 'common/deviceList';
+import { defaultDevices, Device, getDevicesMap } from 'common/deviceList';
 
 import Button from '../Button';
-import DeviceLabel, { DND_TYPE } from './DeviceLabel';
+import DeviceLabel from './DeviceLabel';
 import DeviceDetailsModal from './DeviceDetailsModal';
+import { PreviewSuites } from './PreviewSuites';
 
 const filterDevices = (devices: Device[], filter: string) => {
   const sanitizedFilter = filter.trim().toLowerCase();
@@ -30,7 +32,8 @@ const DeviceManager = () => {
     undefined
   );
   const dispatch = useDispatch();
-  const devices = useSelector(selectDevices);
+  const activeSuite = useSelector(selectActiveSuite);
+  const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
   const [searchText, setSearchText] = useState<string>('');
   const [filteredDevices, setFilteredDevices] =
     useState<Device[]>(defaultDevices);
@@ -45,14 +48,6 @@ const DeviceManager = () => {
     setFilteredCustomDevices(filterDevices(customDevices, searchText));
   }, [customDevices, searchText]);
 
-  const moveDevice = (device: Device, atIndex: number) => {
-    const newDevices = devices.filter((d) => d.name !== device.name);
-    newDevices.splice(atIndex, 0, device);
-    dispatch(setDevices(newDevices));
-  };
-
-  const [, drop] = useDrop(() => ({ accept: DND_TYPE }));
-
   const saveCustomDevices = (newCustomDevices: Device[]) => {
     setCustomDevices(newCustomDevices);
     window.electron.store.set('deviceManager.customDevices', newCustomDevices);
@@ -62,19 +57,25 @@ const DeviceManager = () => {
   const onAddDevice = async (device: Device, isNew: boolean) => {
     const newCustomDevices = isNew
       ? [...customDevices, device]
-      : customDevices.map((d) => (d.name === device.name ? device : d));
+      : customDevices.map((d) => (d.id === device.id ? device : d));
     saveCustomDevices(newCustomDevices);
     dispatch(
-      setDevices(devices.map((d) => (d.name === device.name ? device : d)))
+      setSuiteDevices({
+        suite: activeSuite.id,
+        devices: [...activeSuite.devices, device.id],
+      })
     );
   };
 
   const onRemoveDevice = (device: Device) => {
-    const newCustomDevices = customDevices.filter(
-      (d) => d.name !== device.name
-    );
+    const newCustomDevices = customDevices.filter((d) => d.id !== device.id);
     saveCustomDevices(newCustomDevices);
-    dispatch(setDevices(devices.filter((d) => d.name !== device.name)));
+    dispatch(
+      setSuiteDevices({
+        suite: activeSuite.id,
+        devices: activeSuite.devices.filter((d) => d !== device.id),
+      })
+    );
   };
 
   const onShowDeviceDetails = (device: Device) => {
@@ -83,28 +84,15 @@ const DeviceManager = () => {
   };
 
   return (
-    <div className="mx-16 rounded-lg p-8">
+    <div className="mx-auto flex w-4/5 flex-col gap-4 rounded-lg p-8">
       <div className="flex w-full text-3xl">
-        <span className="w-full text-center">Device Manager</span>
+        <span className="w-full text-left">Device Manager</span>
         <Button onClick={() => dispatch(setAppView(APP_VIEWS.BROWSER))}>
           <Icon icon="ic:round-close" />
         </Button>
       </div>
-      <div className="mx-auto w-4/5">
-        <div className="mb-6 text-lg">Devices In Preview</div>
-        <div className="ml-4 flex flex-col gap-4" ref={drop}>
-          {devices.map((device) => {
-            return (
-              <DeviceLabel
-                key={device.name}
-                device={device}
-                moveDevice={moveDevice}
-                enableDnd
-                onShowDeviceDetails={onShowDeviceDetails}
-              />
-            );
-          })}
-        </div>
+      <div className="">
+        <PreviewSuites />
         <div className="my-4 flex items-center justify-end  ">
           <div className="flex w-fit items-center bg-white px-1 dark:bg-slate-900">
             <Icon icon="ic:outline-search" height={24} />
@@ -123,8 +111,12 @@ const DeviceManager = () => {
           {filteredDevices.map((device) => (
             <DeviceLabel
               device={device}
-              key={device.name}
+              key={device.id}
               onShowDeviceDetails={onShowDeviceDetails}
+              disableSelectionControls={
+                devices.find((d) => d.id === device.id) != null &&
+                devices.length === 1
+              }
             />
           ))}
           {filteredDevices.length === 0 ? (
@@ -145,7 +137,7 @@ const DeviceManager = () => {
           {filteredCustomDevices.map((device) => (
             <DeviceLabel
               device={device}
-              key={device.name}
+              key={device.id}
               onShowDeviceDetails={onShowDeviceDetails}
             />
           ))}

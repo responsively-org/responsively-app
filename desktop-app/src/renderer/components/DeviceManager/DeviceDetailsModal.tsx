@@ -1,4 +1,5 @@
 import { Device } from 'common/deviceList';
+import { v4 as uuidv4 } from 'uuid';
 import { useEffect, useState } from 'react';
 import Button from '../Button';
 import Input from '../Input';
@@ -59,16 +60,22 @@ const DeviceDetailsModal = ({
   }, [device]);
 
   useEffect(() => {
-    if (type === 'phone' || type === 'tablet') {
-      setUserAgent(
-        'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1'
-      );
+    const desktopUA =
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36';
+    const phoneUA =
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1';
+    if (
+      (type === 'phone' || type === 'tablet') &&
+      (userAgent === desktopUA || userAgent === '')
+    ) {
+      setUserAgent(phoneUA);
       setIsMobileCapable(true);
       setIsTouchCapable(true);
-    } else {
-      setUserAgent(
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
-      );
+    } else if (
+      type === 'notebook' &&
+      (userAgent === phoneUA || userAgent === '')
+    ) {
+      setUserAgent(desktopUA);
       setIsMobileCapable(false);
       setIsTouchCapable(false);
     }
@@ -93,6 +100,7 @@ const DeviceDetailsModal = ({
     }
     await onAddDevice(
       {
+        id: uuidv4(),
         name,
         width,
         height,
