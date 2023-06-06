@@ -14,11 +14,11 @@ const deleteStorage = async (
 ): Promise<DeleteStorageResult> => {
   const { webContentsId, storages } = arg;
   if (storages?.length === 1 && storages[0] === 'network-cache') {
-    await webContents.fromId(webContentsId).session.clearCache();
+    await webContents.fromId(webContentsId)?.session.clearCache();
   } else {
     await webContents
       .fromId(webContentsId)
-      .session.clearStorageData({ storages });
+      ?.session.clearStorageData({ storages });
   }
   return { done: true };
 };
