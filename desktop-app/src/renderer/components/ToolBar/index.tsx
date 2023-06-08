@@ -8,12 +8,12 @@ import {
   setRotate,
 } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
+import { useEffect, useRef } from 'react';
 import { ScreenshotAllArgs } from 'main/screenshot';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import WebPage from 'main/screenshot/webpage';
 import { getDevicesMap } from 'common/deviceList';
 import { updateWebViewHeightAndScale } from 'common/webViewUtils';
-import { useEffect, useRef } from 'react';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
 import Button from '../Button';
@@ -30,6 +30,10 @@ const ToolBar = () => {
   const isCapturingScreenshot = useSelector(selectIsCapturingScreenshot);
   const activeSuite = useSelector(selectActiveSuite);
   const dispatch = useDispatch();
+
+  function handleInspectShortcut() {
+    dispatch(setIsInspecting(!isInspecting));
+  }
 
   const screenshotCaptureHandler = async () => {
     dispatch(setIsCapturingScreenshot(true));
@@ -94,12 +98,8 @@ const ToolBar = () => {
       return () => document.removeEventListener('keypress', handle);
     }, [key]);
   }
-  function handleInspectShortcut() {
-    dispatch(setIsInspecting(!isInspecting));
-  }
   // setting shortcut I for inspect element
   useKey('KeyI', handleInspectShortcut);
-
   return (
     <div className="flex items-center justify-between gap-2">
       <NavigationControls />
