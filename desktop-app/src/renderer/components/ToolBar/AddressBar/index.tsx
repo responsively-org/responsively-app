@@ -14,10 +14,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import { selectAddress, setAddress } from 'renderer/store/features/renderer';
-import { IBookmarks, selectBookmarks } from 'renderer/store/features/bookmarks';
 import AuthModal from './AuthModal';
 import SuggestionList from './SuggestionList';
-import Bookmark from './Bookmark';
+import Bookmark from './BookmarkButton';
 
 export const ADDRESS_BAR_EVENTS = {
   DELETE_COOKIES: 'DELETE_COOKIES',
