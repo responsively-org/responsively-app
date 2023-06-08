@@ -19,6 +19,10 @@ import Menu from './Menu';
 import Button from '../Button';
 import AddressBar from './AddressBar';
 import ColorSchemeToggle from './ColorSchemeToggle';
+import ModalLoader from '../ModalLoader';
+import { PreviewSuiteSelector } from './PreviewSuiteSelector';
+
+const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
 const ToolBar = () => {
   const rotateDevices = useSelector(selectRotate);
@@ -72,15 +76,36 @@ const ToolBar = () => {
     // Do nothing. Prevent Dialog from closing.
   };
 
+  function useKey(key: string, cb: () => void) {
+    const callbackRef = useRef(cb);
+
+    useEffect(() => {
+      callbackRef.current = cb;
+    }, [cb]);
+
+    useEffect(() => {
+      function handle(event: { code: string }) {
+        if (event.code === key) {
+          callbackRef.current();
+        }
+      }
+      // current(event)
+      document.addEventListener('keypress', handle);
+      return () => document.removeEventListener('keypress', handle);
+    }, [key]);
+  }
   function handleInspectShortcut() {
     dispatch(setIsInspecting(!isInspecting));
   }
+  // setting shortcut I for inspect element
   useKey('KeyI', handleInspectShortcut);
 
   return (
     <div className="flex items-center justify-between gap-2">
       <NavigationControls />
+
       <AddressBar />
+
       <Button
         onClick={() => dispatch(setRotate(!rotateDevices))}
         isActive={rotateDevices}
