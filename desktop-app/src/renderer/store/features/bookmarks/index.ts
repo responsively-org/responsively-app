@@ -22,18 +22,25 @@ export const bookmarksSlice = createSlice({
   reducers: {
     addBookmark: (state, action: PayloadAction<IBookmarks>) => {
       const bookmarks: IBookmarks[] = window.electron.store.get('bookmarks');
-      const updatedPayload = {
-        id: uuidv4(),
-        ...action.payload,
-      };
-      bookmarks.push(updatedPayload);
+      if (action.payload.id) {
+        const index = bookmarks.findIndex(
+          (bookmark) => bookmark.id === action.payload.id
+        );
+        bookmarks[index] = action.payload;
+      } else {
+        const updatedPayload = {
+          ...action.payload,
+          id: uuidv4(),
+        };
+        bookmarks.push(updatedPayload);
+      }
       state.bookmarks = bookmarks;
       window.electron.store.set('bookmarks', bookmarks);
     },
     removeBookmark: (state, action) => {
       const bookmarks = window.electron.store.get('bookmarks');
       const bookmarkIndex = state.bookmarks.findIndex(
-        (bookmark) => bookmark.address === action.payload.address
+        (bookmark) => bookmark.id === action.payload.id
       );
       if (bookmarkIndex === -1) {
         return;
