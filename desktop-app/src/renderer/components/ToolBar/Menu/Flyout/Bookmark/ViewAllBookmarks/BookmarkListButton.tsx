@@ -21,31 +21,31 @@ const BookmarkListButton = ({
 
   return (
     <div
-      className="flex w-60"
+      className="flex h-[40px] w-60 justify-between hover:bg-slate-400 dark:hover:bg-slate-600 "
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       key={bookmark.id}
     >
-      <Button
-        className="w-50 align-center flex h-[40px] h-full w-full cursor-pointer justify-between truncate p-0 pl-3 pr-1 text-left"
-        style={{ display: 'block' }}
+      <button
+        type="button"
+        className="cursor-default truncate pl-3"
         onClick={() => handleBookmarkClick(bookmark.address)}
       >
         {bookmark.name}
-      </Button>
-      <Button
-        className={cx('flex cursor-pointer items-center px-2', {
+      </button>
+      <button
+        type="button"
+        className={cx('ml-1 flex shrink-0 items-center justify-center px-2', {
           invisible: !isHovered,
           visible: isHovered,
         })}
-        style={{ display: 'block' }}
         onClick={() => {
           setCurrentBookmark(bookmark);
           setOpenFlyout(true);
         }}
       >
         <Icon icon="ic:sharp-edit" />
-      </Button>
+      </button>
     </div>
   );
 };

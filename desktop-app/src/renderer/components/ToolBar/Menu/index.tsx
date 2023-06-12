@@ -1,5 +1,4 @@
 import { Icon } from '@iconify/react';
-import { useEffect, useState } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import Button from 'renderer/components/Button';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,35 +6,28 @@ import { closeMenuFlyout, selectMenuFlyout } from 'renderer/store/features/ui';
 import MenuFlyout from './Flyout';
 
 const Menu = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const menuFlyout = useSelector(selectMenuFlyout);
+  const isMenuFlyoutOpen = useSelector(selectMenuFlyout);
 
   const ref = useDetectClickOutside({
     onTriggered: () => {
-      if (!isOpen) {
+      if (!isMenuFlyoutOpen) {
         return;
       }
-      setIsOpen(false);
       dispatch(closeMenuFlyout(false));
     },
   });
 
   const handleFlyout = () => {
-    setIsOpen(!isOpen);
-    dispatch(closeMenuFlyout(!isOpen));
+    dispatch(closeMenuFlyout(!isMenuFlyoutOpen));
   };
-
-  useEffect(() => {
-    setIsOpen(menuFlyout);
-  }, [menuFlyout]);
 
   return (
     <div className="relative flex items-center" ref={ref}>
-      <Button onClick={handleFlyout} isActive={isOpen}>
+      <Button onClick={handleFlyout} isActive={isMenuFlyoutOpen}>
         <Icon icon="carbon:overflow-menu-vertical" />
       </Button>
-      <div style={{ visibility: isOpen ? 'visible' : 'hidden' }}>
+      <div style={{ visibility: isMenuFlyoutOpen ? 'visible' : 'hidden' }}>
         <MenuFlyout />
       </div>
     </div>
