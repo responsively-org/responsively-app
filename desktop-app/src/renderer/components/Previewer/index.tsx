@@ -37,6 +37,7 @@ const Previewer = () => {
           'flex-col': dockPosition === DOCK_POSITION.BOTTOM,
           'flex-row': dockPosition === DOCK_POSITION.RIGHT,
           'justify-between': !isIndividualLayout,
+          'justify-center': isIndividualLayout,
         })}
       >
         <div
