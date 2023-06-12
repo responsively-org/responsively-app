@@ -282,6 +282,15 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       webview.removeEventListener('did-fail-load', didFailLoadHandler);
     });
 
+    if (device.isMobileCapable) {
+      webview.addEventListener('dom-ready', () => {
+        webview.insertCSS(`
+               ::-webkit-scrollbar {
+              display: none;
+              } `);
+      });
+    }
+
     if (!isPrimary) {
       setTimeout(() => {
         webview.addEventListener('dom-ready', () => {
@@ -310,6 +319,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     isPrimary,
     inspectElement,
     openDevTools,
+    device.isMobileCapable,
   ]);
 
   useEffect(() => {
