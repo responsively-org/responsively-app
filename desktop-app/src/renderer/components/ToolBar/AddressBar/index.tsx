@@ -16,6 +16,7 @@ import { webViewPubSub } from 'renderer/lib/pubsub';
 import { selectAddress, setAddress } from 'renderer/store/features/renderer';
 import AuthModal from './AuthModal';
 import SuggestionList from './SuggestionList';
+import Bookmark from './BookmarkButton';
 
 export const ADDRESS_BAR_EVENTS = {
   DELETE_COOKIES: 'DELETE_COOKIES',
@@ -240,6 +241,7 @@ const AddressBar = () => {
           >
             <Icon icon={isHomepage ? 'mdi:home' : 'mdi:home-outline'} />
           </Button>
+          <Bookmark currentAddress={address} />
         </div>
         {isSuggesting ? (
           <SuggestionList match={typedAddress} onEnter={onEnter} />
