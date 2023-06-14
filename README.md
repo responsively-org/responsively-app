@@ -225,6 +225,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     </tr>
     <tr>
       <td align="center" valign="top" width="20%"><a href="https://github.com/ReshadSadik"><img src="https://avatars.githubusercontent.com/u/66641469?v=4?s=100" width="100px;" alt="Reshad Sadik"/><br /><sub><b>Reshad Sadik</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=ReshadSadik" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/PeterKwesiAnsah"><img src="https://avatars.githubusercontent.com/u/31078314?v=4?s=100" width="100px;" alt="Kwesi Ansah"/><br /><sub><b>Kwesi Ansah</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=PeterKwesiAnsah" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
