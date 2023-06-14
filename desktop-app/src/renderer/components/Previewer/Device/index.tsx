@@ -390,6 +390,25 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     })();
   }, [isInspecting]);
 
+  useEffect(() => {
+    if (!ref.current || !device.isMobileCapable) {
+      return;
+    }
+
+    const webview = ref.current;
+    webview.addEventListener('dom-ready', () => {
+      webview.insertCSS(`
+               ::-webkit-scrollbar {
+              display: none;
+              } `);
+    });
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      webview.removeEventListener('dom-ready', () => {});
+    };
+  }, [device.isMobileCapable]);
+
   const scaledHeight = height * zoomfactor;
   const scaledWidth = width * zoomfactor;
 
