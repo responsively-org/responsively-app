@@ -8,15 +8,17 @@ import BookmarkFlyout from '../Menu/Flyout/Bookmark/ViewAllBookmarks/BookmarkFly
 
 interface Props {
   currentAddress: string;
+  pageTitle: string;
 }
 
-const BookmarkButton = ({ currentAddress }: Props) => {
+const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
   const [openFlyout, setOpenFlyout] = useState<boolean>(false);
   const [bookmark, setBookmark] = useState<IBookmarks>({
     id: '',
-    name: '',
+    name: pageTitle,
     address: currentAddress,
   });
+
   const bookmarks = useSelector(selectBookmarks);
 
   const handleFlyout = () => setOpenFlyout(!openFlyout);
@@ -28,11 +30,11 @@ const BookmarkButton = ({ currentAddress }: Props) => {
     setBookmark(
       bookmarkFound || {
         id: '',
-        name: '',
+        name: pageTitle,
         address: currentAddress,
       }
     );
-  }, [bookmarks, currentAddress]);
+  }, [bookmarks, currentAddress, pageTitle]);
 
   const isPageBookmarked = Boolean(bookmark.name);
 
