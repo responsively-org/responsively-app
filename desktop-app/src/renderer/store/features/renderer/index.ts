@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { PreviewLayout } from 'common/constants';
+import { PREVIEW_LAYOUTS, PreviewLayout } from 'common/constants';
 import type { RootState } from '../..';
 
 export interface RendererState {
   address: string;
-  columnsZoomFactor: number;
+  individualZoomFactor: number;
   zoomFactor: number;
   rotate: boolean;
   isInspecting: boolean | undefined;
@@ -28,7 +28,8 @@ const urlFromQueryParam = () => {
 
 const initialState: RendererState = {
   address: urlFromQueryParam() ?? window.electron.store.get('homepage'),
-  columnsZoomFactor: window.electron.store.get('renderer.columnsZoomFactor'),
+  individualZoomFactor:
+    zoomSteps[window.electron.store.get('renderer.individualZoomStepIndex')],
   zoomFactor: zoomSteps[window.electron.store.get('renderer.zoomStepIndex')],
   rotate: false,
   isInspecting: undefined,
@@ -46,30 +47,45 @@ export const rendererSlice = createSlice({
       }
     },
     zoomIn: (state) => {
-      const index = zoomSteps.indexOf(state.zoomFactor);
+      const index =
+        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL
+          ? zoomSteps.indexOf(state.individualZoomFactor)
+          : zoomSteps.indexOf(state.zoomFactor);
+
       if (index < zoomSteps.length - 1) {
-        const newIndex = index + 1;
-        state.zoomFactor = zoomSteps[newIndex];
-        window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
+          const newIndex = index + 1;
+          state.individualZoomFactor = zoomSteps[newIndex];
+          window.electron.store.set(
+            'renderer.individualZoomStepIndex',
+            newIndex
+          );
+        } else {
+          const newIndex = index + 1;
+          state.zoomFactor = zoomSteps[newIndex];
+          window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        }
       }
     },
     zoomOut: (state) => {
-      const index = zoomSteps.indexOf(state.zoomFactor);
+      const index =
+        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL
+          ? zoomSteps.indexOf(state.individualZoomFactor)
+          : zoomSteps.indexOf(state.zoomFactor);
       if (index > 0) {
-        const newIndex = index - 1;
-        state.zoomFactor = zoomSteps[newIndex];
-        window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
+          const newIndex = index - 1;
+          state.individualZoomFactor = zoomSteps[newIndex];
+          window.electron.store.set(
+            'renderer.individualZoomStepIndex',
+            newIndex
+          );
+        } else {
+          const newIndex = index - 1;
+          state.zoomFactor = zoomSteps[newIndex];
+          window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        }
       }
-    },
-    setZoom100: (state) => {
-      window.electron.store.set('renderer.columnsZoomFactor', state.zoomFactor);
-      state.zoomFactor = 1;
-    },
-    restoreZoom: (state) => {
-      const zoomFactor = window.electron.store.get(
-        'renderer.columnsZoomFactor'
-      );
-      state.zoomFactor = zoomFactor ?? 1;
     },
     setRotate: (state, action: PayloadAction<boolean>) => {
       state.rotate = action.payload;
@@ -92,15 +108,19 @@ export const {
   setAddress,
   zoomIn,
   zoomOut,
-  setZoom100,
-  restoreZoom,
   setRotate,
   setIsInspecting,
   setLayout,
   setIsCapturingScreenshot,
 } = rendererSlice.actions;
 
-export const selectZoomFactor = (state: RootState) => state.renderer.zoomFactor;
+export const selectZoomFactor = (state: RootState) => {
+  // depending on the layout, we want to use a different zoom factor
+  if (state.renderer.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
+    return state.renderer.individualZoomFactor;
+  }
+  return state.renderer.zoomFactor;
+};
 export const selectAddress = (state: RootState) => state.renderer.address;
 export const selectRotate = (state: RootState) => state.renderer.rotate;
 export const selectIsInspecting = (state: RootState) =>
