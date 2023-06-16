@@ -114,8 +114,8 @@ export const {
   setIsCapturingScreenshot,
 } = rendererSlice.actions;
 
+// Use different zoom factor based on state's current layout
 export const selectZoomFactor = (state: RootState) => {
-  // depending on the layout, we want to use a different zoom factor
   if (state.renderer.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
     return state.renderer.individualZoomFactor;
   }
