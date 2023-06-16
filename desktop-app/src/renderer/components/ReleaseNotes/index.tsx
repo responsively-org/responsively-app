@@ -101,7 +101,7 @@ const ReleaseNotes = () => {
           </ReactMarkdown>
         </div>
         <div className="mt-10 flex justify-between gap-12">
-          <div className="flex">
+          <div className="flex gap-1">
             <Button
               onClick={() => {
                 window.electron.ipcRenderer.sendMessage(
@@ -112,13 +112,13 @@ const ReleaseNotes = () => {
                 );
                 closeAndMarkAsRead();
               }}
-              isActionButton
-              isActive
               tabIndex={0}
+              isActionButton
+              isTextButton
             >
               Release Notes
             </Button>
-            <Button onClick={closeAndMarkAsRead} isActionButton>
+            <Button onClick={closeAndMarkAsRead} isActionButton isTextButton>
               Close
             </Button>
           </div>
@@ -132,8 +132,8 @@ const ReleaseNotes = () => {
                 }
               );
             }}
-            isActionButton
-            isActive
+            isPrimary
+            isTextButton
           >
             Support Responsively App
           </Button>

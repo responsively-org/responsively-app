@@ -6,6 +6,8 @@ interface CustomProps {
   className?: string;
   isActive?: boolean;
   isLoading?: boolean;
+  isPrimary?: boolean;
+  isTextButton?: boolean;
   disableHoverEffects?: boolean;
   isActionButton?: boolean;
   subtle?: boolean;
@@ -15,6 +17,8 @@ const Button = ({
   className = '',
   isActive = false,
   isLoading = false,
+  isPrimary = false,
+  isTextButton = false,
   isActionButton = false,
   subtle = false,
   disableHoverEffects = false,
@@ -38,10 +42,15 @@ const Button = ({
     prevLoadingState.current = isLoading;
   }, [isLoading]);
 
-  const hoverBg = subtle ? 'hover:bg-slate-200' : 'hover:bg-slate-400';
-  const hoverBgDark = subtle
-    ? 'dark:hover:bg-slate-700'
-    : 'dark:hover:bg-slate-600';
+  let hoverBg = 'hover:bg-slate-400';
+  let hoverBgDark = 'dark:hover:bg-slate-600';
+  if (subtle) {
+    hoverBg = 'hover:bg-slate-200';
+    hoverBgDark = 'dark:hover:bg-slate-700';
+  } else if (isPrimary) {
+    hoverBg = 'hover:bg-slate-800';
+    hoverBgDark = 'dark:hover:bg-slate-100';
+  }
 
   return (
     <button
@@ -51,11 +60,13 @@ const Button = ({
           disableHoverEffects === false ? `${hoverBg} ${hoverBgDark}` : ''
         } focus:outline-none`,
         {
-          'bg-slate-400/60': isActive,
-          'dark:bg-slate-600/60': isActive,
+          'bg-slate-400/60': isActive && !isPrimary,
+          'dark:bg-slate-600/60': isActive && !isPrimary,
+          'bg-slate-600 text-white': isPrimary,
+          'dark:bg-slate-300 dark:text-gray-900': isPrimary,
           'bg-slate-200': isActionButton,
           'dark:bg-slate-700': isActionButton,
-          'px-2': isActionButton,
+          'px-2': isActionButton || isTextButton,
         }
       )}
       type="button"
