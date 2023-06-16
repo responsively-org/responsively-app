@@ -32,6 +32,8 @@ import {
   selectAddress,
   selectIsInspecting,
   selectLayout,
+  setZoom100,
+  restoreZoom,
   selectRotate,
   selectZoomFactor,
   setAddress,
@@ -199,8 +201,10 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     if (!isIndividualLayout) {
       dispatch(setLayout(PREVIEW_LAYOUTS.INDIVIDUAL));
       setIndividualDevice(selectedDevice);
+      dispatch(setZoom100());
     } else {
       dispatch(setLayout(PREVIEW_LAYOUTS.COLUMN));
+      dispatch(restoreZoom());
     }
   };
 
