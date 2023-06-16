@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "1.0.0",
+  "version": "1.4.0",
   "description": "A developer-friendly browser for developing responsive web apps",
   "keywords": [
     "developer-tools",
@@ -27,7 +27,7 @@
     "build": "concurrently \"yarn run build:main\" \"yarn run build:renderer\"",
     "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
-    "postinstall": "yarn rimraf --glob node_modules/browser-sync/dist/**/*.map && yarn replace '\"network-throttle\".*' '' node_modules/browser-sync-ui/lib/UI.js && ts-node .erb/scripts/check-native-dep.js && replace-in-file '/// <reference types=\"howler\" />' \"import { Howl } from 'howler';\" node_modules/use-sound/dist/types.d.ts  && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
+    "postinstall": "yarn rimraf --glob node_modules/browser-sync/dist/**/*.map && ts-node .erb/scripts/check-native-dep.js && ts-node postinstall.ts && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "package": "ts-node ./.erb/scripts/clean.js dist && yarn run build && electron-builder build --publish never",
     "prepare": "cd .. && husky install desktop-app/.husky && chmod a+x desktop-app/.husky/pre-commit",
@@ -212,7 +212,7 @@
     "webpack": "^5.76.0",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.10.0",
+    "webpack-dev-server": "^4.15.1",
     "webpack-merge": "^5.8.0"
   },
   "build": {

@@ -8,6 +8,7 @@ import {
   setRotate,
 } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
+import { useEffect, useRef } from 'react';
 import { ScreenshotAllArgs } from 'main/screenshot';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import WebPage from 'main/screenshot/webpage';
@@ -29,6 +30,10 @@ const ToolBar = () => {
   const isCapturingScreenshot = useSelector(selectIsCapturingScreenshot);
   const activeSuite = useSelector(selectActiveSuite);
   const dispatch = useDispatch();
+
+  function handleInspectShortcut() {
+    dispatch(setIsInspecting(!isInspecting));
+  }
 
   const screenshotCaptureHandler = async () => {
     dispatch(setIsCapturingScreenshot(true));
@@ -75,10 +80,32 @@ const ToolBar = () => {
     // Do nothing. Prevent Dialog from closing.
   };
 
+  function useKey(key: string, cb: () => void) {
+    const callbackRef = useRef(cb);
+
+    useEffect(() => {
+      callbackRef.current = cb;
+    }, [cb]);
+
+    useEffect(() => {
+      function handle(event: { code: string }) {
+        if (event.code === key) {
+          callbackRef.current();
+        }
+      }
+      // current(event)
+      document.addEventListener('keypress', handle);
+      return () => document.removeEventListener('keypress', handle);
+    }, [key]);
+  }
+  // setting shortcut I for inspect element
+  useKey('KeyI', handleInspectShortcut);
   return (
     <div className="flex items-center justify-between gap-2">
       <NavigationControls />
+
       <AddressBar />
+
       <Button
         onClick={() => dispatch(setRotate(!rotateDevices))}
         isActive={rotateDevices}

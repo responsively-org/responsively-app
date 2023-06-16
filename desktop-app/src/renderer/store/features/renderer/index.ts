@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { PREVIEW_LAYOUTS, PreviewLayout } from 'common/constants';
+import { IPC_MAIN_CHANNELS, PREVIEW_LAYOUTS, PreviewLayout } from 'common/constants';
 import type { RootState } from '../..';
 
 export interface RendererState {
@@ -37,12 +37,27 @@ const initialState: RendererState = {
   isCapturingScreenshot: false,
 };
 
+export const updateFileWatcher = (newURL: string) => {
+  if (
+    newURL.startsWith('file://') &&
+    (newURL.endsWith('.html') || newURL.endsWith('.htm'))
+  )
+    window.electron.ipcRenderer.sendMessage(
+      IPC_MAIN_CHANNELS.START_WATCHING_FILE,
+      {
+        path: newURL,
+      }
+    );
+  else window.electron.ipcRenderer.sendMessage(IPC_MAIN_CHANNELS.STOP_WATCHER);
+};
+
 export const rendererSlice = createSlice({
   name: 'renderer',
   initialState,
   reducers: {
     setAddress: (state, action: PayloadAction<string>) => {
       if (action.payload !== state.address) {
+        updateFileWatcher(action.payload);
         state.address = action.payload;
       }
     },

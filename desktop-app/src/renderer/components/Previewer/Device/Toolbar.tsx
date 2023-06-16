@@ -123,48 +123,52 @@ const Toolbar = ({
   };
 
   return (
-    <div className="my-1 flex items-center gap-1">
-      <Button
-        onClick={quickScreenshot}
-        isLoading={screenshotLoading}
-        title="Quick Screenshot"
-      >
-        <div className="relative h-4 w-4">
+    <div className="flex items-center justify-between gap-1">
+      <div className="my-1 flex items-center gap-1">
+        <Button
+          onClick={quickScreenshot}
+          isLoading={screenshotLoading}
+          title="Quick Screenshot"
+        >
+          <div className="relative h-4 w-4">
+            <Icon
+              icon="ic:outline-photo-camera"
+              className="absolute top-0 left-0"
+            />
+            <Icon
+              icon="clarity:lightning-solid"
+              className="absolute top-[-1px] right-[-2px]"
+              height={8}
+            />
+          </div>
+        </Button>
+        <Button
+          onClick={fullScreenshot}
+          isLoading={fullScreenshotLoading}
+          title="Full Page Screenshot"
+        >
+          <Icon icon="ic:outline-photo-camera" />
+        </Button>
+        <Button
+          onClick={toggleEventMirroring}
+          isActive={eventMirroringOff}
+          title="Disable Event Mirroring"
+        >
+          <Icon icon="fluent:plug-disconnected-24-regular" />
+        </Button>
+        <Button onClick={openDevTools} title="Open Devtools">
+          <Icon icon="ic:round-code" />
+        </Button>
+        <Button onClick={rotate} isActive={rotated} title="Rotate This Device">
           <Icon
-            icon="ic:outline-photo-camera"
-            className="absolute top-0 left-0"
+            icon={
+              rotated
+                ? 'mdi:phone-rotate-portrait'
+                : 'mdi:phone-rotate-landscape'
+            }
           />
-          <Icon
-            icon="clarity:lightning-solid"
-            className="absolute top-[-1px] right-[-2px]"
-            height={8}
-          />
-        </div>
-      </Button>
-      <Button
-        onClick={fullScreenshot}
-        isLoading={fullScreenshotLoading}
-        title="Full Page Screenshot"
-      >
-        <Icon icon="ic:outline-photo-camera" />
-      </Button>
-      <Button
-        onClick={toggleEventMirroring}
-        isActive={eventMirroringOff}
-        title="Disable Event Mirroring"
-      >
-        <Icon icon="fluent:plug-disconnected-24-regular" />
-      </Button>
-      <Button onClick={openDevTools} title="Open Devtools">
-        <Icon icon="ic:round-code" />
-      </Button>
-      <Button onClick={rotate} isActive={rotated} title="Rotate This Device">
-        <Icon
-          icon={
-            rotated ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'
-          }
-        />
-      </Button>
+        </Button>
+      </div>
       <Button
         onClick={() => onIndividualLayoutHandler(device)}
         title={`${isIndividualLayout ? 'Disable' : 'Enable'} Individual Layout`}
