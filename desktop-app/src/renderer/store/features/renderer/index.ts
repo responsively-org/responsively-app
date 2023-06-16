@@ -5,6 +5,7 @@ import type { RootState } from '../..';
 
 export interface RendererState {
   address: string;
+  columnsZoomFactor: number;
   zoomFactor: number;
   rotate: boolean;
   isInspecting: boolean | undefined;
@@ -27,6 +28,7 @@ const urlFromQueryParam = () => {
 
 const initialState: RendererState = {
   address: urlFromQueryParam() ?? window.electron.store.get('homepage'),
+  columnsZoomFactor: window.electron.store.get('renderer.columnsZoomFactor'),
   zoomFactor: zoomSteps[window.electron.store.get('renderer.zoomStepIndex')],
   rotate: false,
   isInspecting: undefined,
@@ -59,6 +61,16 @@ export const rendererSlice = createSlice({
         window.electron.store.set('renderer.zoomStepIndex', newIndex);
       }
     },
+    setZoom100: (state) => {
+      window.electron.store.set('renderer.columnsZoomFactor', state.zoomFactor);
+      state.zoomFactor = 1;
+    },
+    restoreZoom: (state) => {
+      const zoomFactor = window.electron.store.get(
+        'renderer.columnsZoomFactor'
+      );
+      state.zoomFactor = zoomFactor ?? 1;
+    },
     setRotate: (state, action: PayloadAction<boolean>) => {
       state.rotate = action.payload;
     },
@@ -80,6 +92,8 @@ export const {
   setAddress,
   zoomIn,
   zoomOut,
+  setZoom100,
+  restoreZoom,
   setRotate,
   setIsInspecting,
   setLayout,
