@@ -27,6 +27,8 @@ export const IPC_MAIN_CHANNELS = {
   AUTH_RESPONSE: 'auth-response',
   OPEN_EXTERNAL: 'open-external',
   OPEN_URL: 'open-url',
+  START_WATCHING_FILE: 'start-watching-file',
+  STOP_WATCHER: 'stop-watcher',
 } as const;
 
 export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];
