@@ -1,6 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { IPC_MAIN_CHANNELS, PREVIEW_LAYOUTS, PreviewLayout } from 'common/constants';
+import {
+  IPC_MAIN_CHANNELS,
+  PREVIEW_LAYOUTS,
+  PreviewLayout,
+} from 'common/constants';
 import type { RootState } from '../..';
 
 export interface RendererState {
