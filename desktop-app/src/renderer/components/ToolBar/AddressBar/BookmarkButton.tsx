@@ -33,13 +33,13 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
 
   const isPageBookmarked = !!bookmarkFound;
 
-  const handleFlyout = () => {
+  const handleAddRemoveBookmarkOnClick = () => {
     if (isPageBookmarked) {
       // remove
       dispatch(removeBookmark(bookmarkFound));
       return;
     }
-    // open flyout
+    // open flyout to add Bookmark
     setOpenFlyout(!openFlyout);
   };
 
@@ -50,7 +50,7 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
           className={cx('rounded-full', {
             'text-blue-500': isPageBookmarked,
           })}
-          onClick={handleFlyout}
+          onClick={handleAddRemoveBookmarkOnClick}
           title={`${!isPageBookmarked ? 'Add' : 'Remove'} bookmark`}
         >
           <Icon
