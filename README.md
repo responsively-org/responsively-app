@@ -228,6 +228,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="https://github.com/PeterKwesiAnsah"><img src="https://avatars.githubusercontent.com/u/31078314?v=4?s=100" width="100px;" alt="Kwesi Ansah"/><br /><sub><b>Kwesi Ansah</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=PeterKwesiAnsah" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/monalisamsteccentric"><img src="https://avatars.githubusercontent.com/u/65477771?v=4?s=100" width="100px;" alt="Monalisa Sahoo"/><br /><sub><b>Monalisa Sahoo</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=monalisamsteccentric" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/codewithmitesh"><img src="https://avatars.githubusercontent.com/u/85953650?v=4?s=100" width="100px;" alt="Mitesh Tank"/><br /><sub><b>Mitesh Tank</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=codewithmitesh" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/Ryan0204"><img src="https://avatars.githubusercontent.com/u/82715592?v=4?s=100" width="100px;" alt="Ryan"/><br /><sub><b>Ryan</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Ryan0204" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
