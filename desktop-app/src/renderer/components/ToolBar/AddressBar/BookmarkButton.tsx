@@ -1,9 +1,13 @@
 import { Icon } from '@iconify/react';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useState, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
 import Button from 'renderer/components/Button';
-import { IBookmarks, selectBookmarks } from 'renderer/store/features/bookmarks';
+import {
+  IBookmarks,
+  removeBookmark,
+  selectBookmarks,
+} from 'renderer/store/features/bookmarks';
 import BookmarkFlyout from '../Menu/Flyout/Bookmark/ViewAllBookmarks/BookmarkFlyout';
 
 interface Props {
@@ -13,30 +17,31 @@ interface Props {
 
 const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
   const [openFlyout, setOpenFlyout] = useState<boolean>(false);
-  const [bookmark, setBookmark] = useState<IBookmarks>({
+  const initbookmark = {
     id: '',
     name: pageTitle,
     address: currentAddress,
-  });
+  };
+
+  const dispatch = useDispatch();
 
   const bookmarks = useSelector(selectBookmarks);
+  const bookmarkFound = useMemo(
+    () => bookmarks.find((bm: IBookmarks) => bm.address === currentAddress),
+    [currentAddress, bookmarks]
+  );
 
-  const handleFlyout = () => setOpenFlyout(!openFlyout);
+  const isPageBookmarked = !!bookmarkFound;
 
-  useEffect(() => {
-    const bookmarkFound = bookmarks.find(
-      (bm: IBookmarks) => bm.address === currentAddress
-    );
-    setBookmark(
-      bookmarkFound || {
-        id: '',
-        name: pageTitle,
-        address: currentAddress,
-      }
-    );
-  }, [bookmarks, currentAddress, pageTitle]);
-
-  const isPageBookmarked = Boolean(bookmark.name);
+  const handleFlyout = () => {
+    if (isPageBookmarked) {
+      // remove
+      dispatch(removeBookmark(bookmarkFound));
+      return;
+    }
+    // open flyout
+    setOpenFlyout(!openFlyout);
+  };
 
   return (
     <>
@@ -56,7 +61,10 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
 
       <div className="absolute top-[40px] right-[0px]">
         {openFlyout && (
-          <BookmarkFlyout bookmark={bookmark} setOpenFlyout={setOpenFlyout} />
+          <BookmarkFlyout
+            bookmark={initbookmark}
+            setOpenFlyout={setOpenFlyout}
+          />
         )}
       </div>
     </>
