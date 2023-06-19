@@ -1,13 +1,9 @@
 import { Icon } from '@iconify/react';
-import { useEffect, useState, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import Button from 'renderer/components/Button';
-import {
-  IBookmarks,
-  removeBookmark,
-  selectBookmarks,
-} from 'renderer/store/features/bookmarks';
+import { IBookmarks, selectBookmarks } from 'renderer/store/features/bookmarks';
 import BookmarkFlyout from '../Menu/Flyout/Bookmark/ViewAllBookmarks/BookmarkFlyout';
 
 interface Props {
@@ -23,8 +19,6 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
     address: currentAddress,
   };
 
-  const dispatch = useDispatch();
-
   const bookmarks = useSelector(selectBookmarks);
   const bookmarkFound = useMemo(
     () => bookmarks.find((bm: IBookmarks) => bm.address === currentAddress),
@@ -33,13 +27,7 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
 
   const isPageBookmarked = !!bookmarkFound;
 
-  const handleAddRemoveBookmarkOnClick = () => {
-    if (isPageBookmarked) {
-      // remove
-      dispatch(removeBookmark(bookmarkFound));
-      return;
-    }
-    // open flyout to add Bookmark
+  const handleFlyout = () => {
     setOpenFlyout(!openFlyout);
   };
 
@@ -50,7 +38,7 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
           className={cx('rounded-full', {
             'text-blue-500': isPageBookmarked,
           })}
-          onClick={handleAddRemoveBookmarkOnClick}
+          onClick={handleFlyout}
           title={`${!isPageBookmarked ? 'Add' : 'Remove'} bookmark`}
         >
           <Icon
@@ -62,7 +50,7 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
       <div className="absolute top-[40px] right-[0px]">
         {openFlyout && (
           <BookmarkFlyout
-            bookmark={initbookmark}
+            bookmark={bookmarkFound || initbookmark}
             setOpenFlyout={setOpenFlyout}
           />
         )}
