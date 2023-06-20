@@ -22,7 +22,7 @@ const schema = {
     properties: {
       individualZoomStepIndex: {
         type: 'number',
-        default: 3,
+        default: 8,
       },
       zoomStepIndex: {
         type: 'number',
