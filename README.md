@@ -230,6 +230,9 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="https://github.com/codewithmitesh"><img src="https://avatars.githubusercontent.com/u/85953650?v=4?s=100" width="100px;" alt="Mitesh Tank"/><br /><sub><b>Mitesh Tank</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=codewithmitesh" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/Ryan0204"><img src="https://avatars.githubusercontent.com/u/82715592?v=4?s=100" width="100px;" alt="Ryan"/><br /><sub><b>Ryan</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Ryan0204" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://www.jibran.me"><img src="https://avatars.githubusercontent.com/u/70596906?v=4?s=100" width="100px;" alt="jayway"/><br /><sub><b>jayway</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=jibranabsarulislam" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
