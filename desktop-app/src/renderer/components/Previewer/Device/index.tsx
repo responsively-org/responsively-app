@@ -452,6 +452,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           data-scale-factor={zoomfactor}
           /* eslint-disable-next-line react/no-unknown-property */
           allowpopups={isPrimary ? ('true' as any) : undefined}
+          /* eslint-disable-next-line react/no-unknown-property */
+          useragent={device.userAgent}
         />
         {screenshotInProgress ? (
           <div
