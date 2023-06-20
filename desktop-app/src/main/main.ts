@@ -9,14 +9,19 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, screen } from 'electron';
+import { app, BrowserWindow, shell, screen, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import cli from './cli';
 import { PROTOCOL } from '../common/constants';
 import MenuBuilder from './menu';
-import { isValidCliArgURL, resolveHtmlPath } from './util';
-import { BROWSER_SYNC_HOST, initInstance } from './browser-sync';
+import { resolveHtmlPath } from './util';
+import {
+  BROWSER_SYNC_HOST,
+  initInstance,
+  stopWatchFiles,
+  watchFiles,
+} from './browser-sync';
 import store from '../store';
 import { initWebviewContextMenu } from './webview-context-menu/register';
 import { initScreenshotHandlers } from './screenshot';
@@ -197,6 +202,19 @@ const createWindow = async () => {
     return { action: 'deny' };
   });
 
+  ipcMain.on('start-watching-file', async (event, fileInfo) => {
+    let filePath = fileInfo.path.replace('file://', '');
+    if (process.platform === 'win32') {
+      filePath = filePath.replace(/^\//, '');
+    }
+    app.addRecentDocument(filePath);
+    await stopWatchFiles();
+    watchFiles(filePath);
+  });
+
+  ipcMain.on('stop-watcher', async () => {
+    await stopWatchFiles();
+  });
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();

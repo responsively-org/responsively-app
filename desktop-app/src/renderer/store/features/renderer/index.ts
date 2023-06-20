@@ -1,11 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { PreviewLayout } from 'common/constants';
+import {
+  IPC_MAIN_CHANNELS,
+  PREVIEW_LAYOUTS,
+  PreviewLayout,
+} from 'common/constants';
 import type { RootState } from '../..';
 
 export interface RendererState {
   address: string;
   pageTitle: string;
+  individualZoomFactor: number;
   zoomFactor: number;
   rotate: boolean;
   isInspecting: boolean | undefined;
@@ -29,11 +34,27 @@ const urlFromQueryParam = () => {
 const initialState: RendererState = {
   address: urlFromQueryParam() ?? window.electron.store.get('homepage'),
   pageTitle: '',
+  individualZoomFactor:
+    zoomSteps[window.electron.store.get('renderer.individualZoomStepIndex')],
   zoomFactor: zoomSteps[window.electron.store.get('renderer.zoomStepIndex')],
   rotate: false,
   isInspecting: undefined,
   layout: window.electron.store.get('ui.previewLayout'),
   isCapturingScreenshot: false,
+};
+
+export const updateFileWatcher = (newURL: string) => {
+  if (
+    newURL.startsWith('file://') &&
+    (newURL.endsWith('.html') || newURL.endsWith('.htm'))
+  )
+    window.electron.ipcRenderer.sendMessage(
+      IPC_MAIN_CHANNELS.START_WATCHING_FILE,
+      {
+        path: newURL,
+      }
+    );
+  else window.electron.ipcRenderer.sendMessage(IPC_MAIN_CHANNELS.STOP_WATCHER);
 };
 
 export const rendererSlice = createSlice({
@@ -42,6 +63,7 @@ export const rendererSlice = createSlice({
   reducers: {
     setAddress: (state, action: PayloadAction<string>) => {
       if (action.payload !== state.address) {
+        updateFileWatcher(action.payload);
         state.address = action.payload;
       }
     },
@@ -51,19 +73,44 @@ export const rendererSlice = createSlice({
       }
     },
     zoomIn: (state) => {
-      const index = zoomSteps.indexOf(state.zoomFactor);
+      const index =
+        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL
+          ? zoomSteps.indexOf(state.individualZoomFactor)
+          : zoomSteps.indexOf(state.zoomFactor);
+
       if (index < zoomSteps.length - 1) {
-        const newIndex = index + 1;
-        state.zoomFactor = zoomSteps[newIndex];
-        window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
+          const newIndex = index + 1;
+          state.individualZoomFactor = zoomSteps[newIndex];
+          window.electron.store.set(
+            'renderer.individualZoomStepIndex',
+            newIndex
+          );
+        } else {
+          const newIndex = index + 1;
+          state.zoomFactor = zoomSteps[newIndex];
+          window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        }
       }
     },
     zoomOut: (state) => {
-      const index = zoomSteps.indexOf(state.zoomFactor);
+      const index =
+        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL
+          ? zoomSteps.indexOf(state.individualZoomFactor)
+          : zoomSteps.indexOf(state.zoomFactor);
       if (index > 0) {
-        const newIndex = index - 1;
-        state.zoomFactor = zoomSteps[newIndex];
-        window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
+          const newIndex = index - 1;
+          state.individualZoomFactor = zoomSteps[newIndex];
+          window.electron.store.set(
+            'renderer.individualZoomStepIndex',
+            newIndex
+          );
+        } else {
+          const newIndex = index - 1;
+          state.zoomFactor = zoomSteps[newIndex];
+          window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        }
       }
     },
     setRotate: (state, action: PayloadAction<boolean>) => {
@@ -94,7 +141,13 @@ export const {
   setPageTitle,
 } = rendererSlice.actions;
 
-export const selectZoomFactor = (state: RootState) => state.renderer.zoomFactor;
+// Use different zoom factor based on state's current layout
+export const selectZoomFactor = (state: RootState) => {
+  if (state.renderer.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
+    return state.renderer.individualZoomFactor;
+  }
+  return state.renderer.zoomFactor;
+};
 export const selectAddress = (state: RootState) => state.renderer.address;
 export const selectPageTitle = (state: RootState) => state.renderer.pageTitle;
 export const selectRotate = (state: RootState) => state.renderer.rotate;
