@@ -246,9 +246,7 @@ const AddressBar = () => {
           >
             <Icon icon={isHomepage ? 'mdi:home' : 'mdi:home-outline'} />
           </Button>
-          {pageTitle && (
-            <Bookmark pageTitle={pageTitle} currentAddress={address} />
-          )}
+          <Bookmark pageTitle={pageTitle} currentAddress={address} />
         </div>
         {isSuggesting ? (
           <SuggestionList match={typedAddress} onEnter={onEnter} />
