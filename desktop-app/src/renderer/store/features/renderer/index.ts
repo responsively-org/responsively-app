@@ -1,10 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { IPC_MAIN_CHANNELS, PreviewLayout } from 'common/constants';
+import {
+  IPC_MAIN_CHANNELS,
+  PREVIEW_LAYOUTS,
+  PreviewLayout,
+} from 'common/constants';
 import type { RootState } from '../..';
 
 export interface RendererState {
   address: string;
+  individualZoomFactor: number;
   zoomFactor: number;
   rotate: boolean;
   isInspecting: boolean | undefined;
@@ -27,6 +32,8 @@ const urlFromQueryParam = () => {
 
 const initialState: RendererState = {
   address: urlFromQueryParam() ?? window.electron.store.get('homepage'),
+  individualZoomFactor:
+    zoomSteps[window.electron.store.get('renderer.individualZoomStepIndex')],
   zoomFactor: zoomSteps[window.electron.store.get('renderer.zoomStepIndex')],
   rotate: false,
   isInspecting: undefined,
@@ -59,19 +66,44 @@ export const rendererSlice = createSlice({
       }
     },
     zoomIn: (state) => {
-      const index = zoomSteps.indexOf(state.zoomFactor);
+      const index =
+        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL
+          ? zoomSteps.indexOf(state.individualZoomFactor)
+          : zoomSteps.indexOf(state.zoomFactor);
+
       if (index < zoomSteps.length - 1) {
-        const newIndex = index + 1;
-        state.zoomFactor = zoomSteps[newIndex];
-        window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
+          const newIndex = index + 1;
+          state.individualZoomFactor = zoomSteps[newIndex];
+          window.electron.store.set(
+            'renderer.individualZoomStepIndex',
+            newIndex
+          );
+        } else {
+          const newIndex = index + 1;
+          state.zoomFactor = zoomSteps[newIndex];
+          window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        }
       }
     },
     zoomOut: (state) => {
-      const index = zoomSteps.indexOf(state.zoomFactor);
+      const index =
+        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL
+          ? zoomSteps.indexOf(state.individualZoomFactor)
+          : zoomSteps.indexOf(state.zoomFactor);
       if (index > 0) {
-        const newIndex = index - 1;
-        state.zoomFactor = zoomSteps[newIndex];
-        window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
+          const newIndex = index - 1;
+          state.individualZoomFactor = zoomSteps[newIndex];
+          window.electron.store.set(
+            'renderer.individualZoomStepIndex',
+            newIndex
+          );
+        } else {
+          const newIndex = index - 1;
+          state.zoomFactor = zoomSteps[newIndex];
+          window.electron.store.set('renderer.zoomStepIndex', newIndex);
+        }
       }
     },
     setRotate: (state, action: PayloadAction<boolean>) => {
@@ -101,7 +133,13 @@ export const {
   setIsCapturingScreenshot,
 } = rendererSlice.actions;
 
-export const selectZoomFactor = (state: RootState) => state.renderer.zoomFactor;
+// Use different zoom factor based on state's current layout
+export const selectZoomFactor = (state: RootState) => {
+  if (state.renderer.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
+    return state.renderer.individualZoomFactor;
+  }
+  return state.renderer.zoomFactor;
+};
 export const selectAddress = (state: RootState) => state.renderer.address;
 export const selectRotate = (state: RootState) => state.renderer.rotate;
 export const selectIsInspecting = (state: RootState) =>

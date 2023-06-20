@@ -20,6 +20,10 @@ const schema = {
   renderer: {
     type: 'object',
     properties: {
+      individualZoomStepIndex: {
+        type: 'number',
+        default: 8,
+      },
       zoomStepIndex: {
         type: 'number',
         default: 3,
