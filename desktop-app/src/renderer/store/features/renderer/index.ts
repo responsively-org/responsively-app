@@ -9,6 +9,7 @@ import type { RootState } from '../..';
 
 export interface RendererState {
   address: string;
+  pageTitle: string;
   individualZoomFactor: number;
   zoomFactor: number;
   rotate: boolean;
@@ -32,6 +33,7 @@ const urlFromQueryParam = () => {
 
 const initialState: RendererState = {
   address: urlFromQueryParam() ?? window.electron.store.get('homepage'),
+  pageTitle: '',
   individualZoomFactor:
     zoomSteps[window.electron.store.get('renderer.individualZoomStepIndex')],
   zoomFactor: zoomSteps[window.electron.store.get('renderer.zoomStepIndex')],
@@ -63,6 +65,11 @@ export const rendererSlice = createSlice({
       if (action.payload !== state.address) {
         updateFileWatcher(action.payload);
         state.address = action.payload;
+      }
+    },
+    setPageTitle: (state, action: PayloadAction<string>) => {
+      if (action.payload !== state.pageTitle) {
+        state.pageTitle = action.payload;
       }
     },
     zoomIn: (state) => {
@@ -131,6 +138,7 @@ export const {
   setIsInspecting,
   setLayout,
   setIsCapturingScreenshot,
+  setPageTitle,
 } = rendererSlice.actions;
 
 // Use different zoom factor based on state's current layout
@@ -141,6 +149,7 @@ export const selectZoomFactor = (state: RootState) => {
   return state.renderer.zoomFactor;
 };
 export const selectAddress = (state: RootState) => state.renderer.address;
+export const selectPageTitle = (state: RootState) => state.renderer.pageTitle;
 export const selectRotate = (state: RootState) => state.renderer.rotate;
 export const selectIsInspecting = (state: RootState) =>
   state.renderer.isInspecting;
