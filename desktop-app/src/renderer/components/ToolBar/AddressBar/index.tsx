@@ -18,6 +18,8 @@ import {
   selectPageTitle,
   setAddress,
 } from 'renderer/store/features/renderer';
+import useKeyboardShortcut from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
+import { SHORTCUT_CHANNEL } from 'renderer/components/KeyboardShortcutsManager/constants';
 import AuthModal from './AuthModal';
 import SuggestionList from './SuggestionList';
 import Bookmark from './BookmarkButton';
@@ -154,7 +156,26 @@ const AddressBar = () => {
     setDeleteCacheLoading(false);
   };
 
+  const deleteAll = () => {
+    deleteCache();
+    deleteStorage();
+    deleteCookies();
+  };
+
+  const handleEditUrl = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  };
+
   const isHomepage = address === homepage;
+
+  useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_CACHE, deleteCache);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_STORAGE, deleteStorage);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_COOKIES, deleteCookies);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_ALL, deleteAll);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.EDIT_URL, handleEditUrl);
 
   return (
     <>

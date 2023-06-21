@@ -1,6 +1,11 @@
 import { Icon } from '@iconify/react';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import Button from '../Button';
+import useKeyboardShortcut from '../KeyboardShortcutsManager/useKeyboardShortcut';
+import {
+  SHORTCUT_CHANNEL,
+  ShortcutChannel,
+} from '../KeyboardShortcutsManager/constants';
 
 export const NAVIGATION_EVENTS = {
   BACK: 'back',
@@ -15,6 +20,8 @@ interface NavigationItemProps {
 }
 
 const NavigationButton = ({ label, icon, action }: NavigationItemProps) => {
+  const shortcutName: ShortcutChannel = label.toUpperCase() as ShortcutChannel;
+  useKeyboardShortcut(SHORTCUT_CHANNEL[shortcutName], action);
   return (
     <Button className="!rounded-full px-2 py-1" onClick={action} title={label}>
       <Icon icon={icon} />

@@ -1,12 +1,22 @@
 import { Icon } from '@iconify/react';
 import { PREVIEW_LAYOUTS } from 'common/constants';
 import { useDispatch, useSelector } from 'react-redux';
+import { SHORTCUT_CHANNEL } from 'renderer/components/KeyboardShortcutsManager/constants';
+import useKeyboardShortcut from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
 import Toggle from 'renderer/components/Toggle';
 import { selectLayout, setLayout } from 'renderer/store/features/renderer';
 
 const PreviewLayout = () => {
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
+
+  const handleLayout = () => {
+    if (layout === PREVIEW_LAYOUTS.FLEX)
+      dispatch(setLayout(PREVIEW_LAYOUTS.COLUMN));
+    else dispatch(setLayout(PREVIEW_LAYOUTS.FLEX));
+  };
+
+  useKeyboardShortcut(SHORTCUT_CHANNEL.PREVIEW_LAYOUT, handleLayout);
 
   return (
     <div className="flex flex-row items-center justify-start px-4">

@@ -1,9 +1,15 @@
 import { Icon } from '@iconify/react';
 import { useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
 import Button from 'renderer/components/Button';
-import { IBookmarks, selectBookmarks } from 'renderer/store/features/bookmarks';
+import {
+  IBookmarks,
+  addBookmark,
+  selectBookmarks,
+} from 'renderer/store/features/bookmarks';
+import useKeyboardShortcut from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
+import { SHORTCUT_CHANNEL } from 'renderer/components/KeyboardShortcutsManager/constants';
 import BookmarkFlyout from '../Menu/Flyout/Bookmark/ViewAllBookmarks/BookmarkFlyout';
 
 interface Props {
@@ -13,6 +19,8 @@ interface Props {
 
 const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
   const [openFlyout, setOpenFlyout] = useState<boolean>(false);
+  const dispatch = useDispatch();
+
   const initbookmark = {
     id: '',
     name: pageTitle,
@@ -30,6 +38,13 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
   const handleFlyout = () => {
     setOpenFlyout(!openFlyout);
   };
+
+  const handleKeyboardShortcut = () => {
+    handleFlyout();
+    dispatch(addBookmark(bookmarkFound || initbookmark));
+  };
+
+  useKeyboardShortcut(SHORTCUT_CHANNEL.BOOKMARK, handleKeyboardShortcut);
 
   return (
     <>

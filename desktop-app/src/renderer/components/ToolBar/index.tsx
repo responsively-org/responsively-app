@@ -8,7 +8,6 @@ import {
   setRotate,
 } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
-import { useEffect, useRef } from 'react';
 import { ScreenshotAllArgs } from 'main/screenshot';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import WebPage from 'main/screenshot/webpage';
@@ -21,6 +20,8 @@ import AddressBar from './AddressBar';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import ModalLoader from '../ModalLoader';
 import { PreviewSuiteSelector } from './PreviewSuiteSelector';
+import useKeyboardShortcut from '../KeyboardShortcutsManager/useKeyboardShortcut';
+import { SHORTCUT_CHANNEL } from '../KeyboardShortcutsManager/constants';
 
 const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
@@ -80,26 +81,17 @@ const ToolBar = () => {
     // Do nothing. Prevent Dialog from closing.
   };
 
-  function useKey(key: string, cb: () => void) {
-    const callbackRef = useRef(cb);
+  const handleRotate = () => {
+    dispatch(setRotate(!rotateDevices));
+  };
 
-    useEffect(() => {
-      callbackRef.current = cb;
-    }, [cb]);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.ROTATE_ALL, handleRotate);
+  useKeyboardShortcut(
+    SHORTCUT_CHANNEL.SCREENSHOT_ALL,
+    screenshotCaptureHandler
+  );
+  useKeyboardShortcut(SHORTCUT_CHANNEL.INSPECT_ELEMENTS, handleInspectShortcut);
 
-    useEffect(() => {
-      function handle(event: { code: string }) {
-        if (event.code === key) {
-          callbackRef.current();
-        }
-      }
-      // current(event)
-      document.addEventListener('keypress', handle);
-      return () => document.removeEventListener('keypress', handle);
-    }, [key]);
-  }
-  // setting shortcut I for inspect element
-  useKey('KeyI', handleInspectShortcut);
   return (
     <div className="flex items-center justify-between gap-2">
       <NavigationControls />
@@ -107,7 +99,7 @@ const ToolBar = () => {
       <AddressBar />
 
       <Button
-        onClick={() => dispatch(setRotate(!rotateDevices))}
+        onClick={handleRotate}
         isActive={rotateDevices}
         title="Rotate Devices"
       >
