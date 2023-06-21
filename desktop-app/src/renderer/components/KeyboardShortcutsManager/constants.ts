@@ -1,7 +1,40 @@
 export const SHORTCUT_CHANNEL = {
   ZOOM_IN: 'ZOOM_IN',
   ZOOM_OUT: 'ZOOM_OUT',
+  ROTATE_ALL: 'ROTATE_ALL',
+  SCREENSHOT_ALL: 'SCREENSHOT_ALL',
+  INSPECT_ELEMENTS: 'INSPECT_ELEMENTS',
+  PREVIEW_LAYOUT: 'PREVIEW_LAYOUT',
+  THEME: 'THEME',
+  BACK: 'BACK',
+  FORWARD: 'FORWARD',
+  RELOAD: 'RELOAD',
+  BOOKMARK: 'BOOKMARK',
+  DELETE_CACHE: 'DELETE_CACHE',
+  DELETE_STORAGE: 'DELETE_STORAGE',
+  DELETE_COOKIES: 'DELETE_COOKIES',
+  DELETE_ALL: 'DELETE_ALL',
+  EDIT_URL: 'EDIT_URL',
 } as const;
 
 export type ShortcutChannel =
   typeof SHORTCUT_CHANNEL[keyof typeof SHORTCUT_CHANNEL];
+
+export const SHORTCUT_KEYS: { [key in ShortcutChannel]: string[] } = {
+  [SHORTCUT_CHANNEL.ZOOM_IN]: ['mod+=', 'mod++', 'mod+shift+='],
+  [SHORTCUT_CHANNEL.ZOOM_OUT]: ['mod+-'],
+  [SHORTCUT_CHANNEL.ROTATE_ALL]: ['mod+alt+r'],
+  [SHORTCUT_CHANNEL.SCREENSHOT_ALL]: ['mod+s'],
+  [SHORTCUT_CHANNEL.INSPECT_ELEMENTS]: ['mod+i'],
+  [SHORTCUT_CHANNEL.PREVIEW_LAYOUT]: ['mod+shift+l'],
+  [SHORTCUT_CHANNEL.THEME]: ['mod+t'],
+  [SHORTCUT_CHANNEL.BACK]: ['alt+left'],
+  [SHORTCUT_CHANNEL.FORWARD]: ['alt+right'],
+  [SHORTCUT_CHANNEL.RELOAD]: ['mod+r'],
+  [SHORTCUT_CHANNEL.BOOKMARK]: ['mod+d'],
+  [SHORTCUT_CHANNEL.DELETE_CACHE]: ['mod+alt+z'],
+  [SHORTCUT_CHANNEL.DELETE_STORAGE]: ['mod+alt+q'],
+  [SHORTCUT_CHANNEL.DELETE_COOKIES]: ['mod+alt+a'],
+  [SHORTCUT_CHANNEL.DELETE_ALL]: ['mod+alt+del', 'mod+alt+backspace'],
+  [SHORTCUT_CHANNEL.EDIT_URL]: ['mod+l'],
+};
