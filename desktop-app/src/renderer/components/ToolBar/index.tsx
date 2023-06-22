@@ -22,6 +22,7 @@ import ModalLoader from '../ModalLoader';
 import { PreviewSuiteSelector } from './PreviewSuiteSelector';
 import useKeyboardShortcut from '../KeyboardShortcutsManager/useKeyboardShortcut';
 import { SHORTCUT_CHANNEL } from '../KeyboardShortcutsManager/constants';
+import Shortcuts from './Shortcuts';
 
 const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
@@ -126,6 +127,7 @@ const ToolBar = () => {
         <Icon icon="lucide:camera" />
       </Button>
       <ColorSchemeToggle />
+      <Shortcuts />
       <Divider />
       <PreviewSuiteSelector />
       <Menu />
