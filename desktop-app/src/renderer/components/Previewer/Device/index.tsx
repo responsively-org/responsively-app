@@ -37,6 +37,7 @@ import {
   setAddress,
   setIsInspecting,
   setLayout,
+  setPageTitle,
 } from 'renderer/store/features/renderer';
 import { PREVIEW_LAYOUTS } from 'common/constants';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
@@ -409,6 +410,22 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     };
   }, [device.isMobileCapable]);
 
+  useEffect(() => {
+    const webview = ref.current;
+
+    if (isPrimary && webview) {
+      webview.addEventListener('dom-ready', () => {
+        const pageTitle = webview.getTitle();
+        dispatch(setPageTitle(pageTitle));
+      });
+    }
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      webview?.removeEventListener('dom-ready', () => {});
+    };
+  }, [dispatch, isPrimary]);
+
   const scaledHeight = height * zoomfactor;
   const scaledWidth = width * zoomfactor;
 
@@ -452,6 +469,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           data-scale-factor={zoomfactor}
           /* eslint-disable-next-line react/no-unknown-property */
           allowpopups={isPrimary ? ('true' as any) : undefined}
+          /* eslint-disable-next-line react/no-unknown-property */
+          useragent={device.userAgent}
         />
         {screenshotInProgress ? (
           <div
