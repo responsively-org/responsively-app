@@ -102,9 +102,7 @@ const installExtensions = async () => {
 
 const createWindow = async () => {
   windowShownOnOpen = false;
-  if (isDebug) {
-    await installExtensions();
-  }
+  await installExtensions();
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
