@@ -78,9 +78,19 @@ if (isDebug) {
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
+  const installer = require('electron-devtools-assembler');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
+  const extensions = [
+    'REACT_DEVELOPER_TOOLS',
+    'REDUX_DEVTOOLS',
+    'EMBER_INSPECTOR',
+    'BACKBONE_DEBUGGER',
+    'JQUERY_DEBUGGER',
+    'ANGULAR_DEVTOOLS',
+    'VUEJS_DEVTOOLS',
+    'MOBX_DEVTOOLS',
+    'APOLLO_DEVELOPER_TOOLS',
+  ];
 
   return installer
     .default(
@@ -92,9 +102,7 @@ const installExtensions = async () => {
 
 const createWindow = async () => {
   windowShownOnOpen = false;
-  if (isDebug) {
-    await installExtensions();
-  }
+  await installExtensions();
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')

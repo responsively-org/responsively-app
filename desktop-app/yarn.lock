@@ -5507,10 +5507,10 @@ electron-debug@^3.2.0:
     electron-is-dev "^1.1.0"
     electron-localshortcut "^3.1.0"
 
-electron-devtools-installer@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/electron-devtools-installer/-/electron-devtools-installer-3.2.0.tgz#acc48d24eb7033fe5af284a19667e73b78d406d0"
-  integrity sha512-t3UczsYugm4OAbqvdImMCImIMVdFzJAHgbwHpkl5jmfu1izVgUcP/mnrPqJIpEeCK1uZGpt+yHgWEN+9EwoYhQ==
+electron-devtools-assembler@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/electron-devtools-assembler/-/electron-devtools-assembler-1.2.0.tgz#d342af3dd6fcf54a298d40f23266c45c4456767f"
+  integrity sha512-5G45lxG1xrpNtLAaVnV9fj9R05lXir3IMaXu3mRteiM2vTWBk3hFaZ48fRX89DI+W7EgBQYT2bIecnPj8lRseg==
   dependencies:
     rimraf "^3.0.2"
     semver "^7.2.1"
