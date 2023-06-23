@@ -13,7 +13,11 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
 import { webViewPubSub } from 'renderer/lib/pubsub';
-import { selectAddress, setAddress } from 'renderer/store/features/renderer';
+import {
+  selectAddress,
+  selectPageTitle,
+  setAddress,
+} from 'renderer/store/features/renderer';
 import AuthModal from './AuthModal';
 import SuggestionList from './SuggestionList';
 import Bookmark from './BookmarkButton';
@@ -40,6 +44,7 @@ const AddressBar = () => {
     useState<PermissionRequestArg | null>(null);
   const [authRequest, setAuthRequest] = useState<AuthRequestArgs | null>(null);
   const address = useSelector(selectAddress);
+  const pageTitle = useSelector(selectPageTitle);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -241,7 +246,7 @@ const AddressBar = () => {
           >
             <Icon icon={isHomepage ? 'mdi:home' : 'mdi:home-outline'} />
           </Button>
-          <Bookmark currentAddress={address} />
+          <Bookmark pageTitle={pageTitle} currentAddress={address} />
         </div>
         {isSuggesting ? (
           <SuggestionList match={typedAddress} onEnter={onEnter} />

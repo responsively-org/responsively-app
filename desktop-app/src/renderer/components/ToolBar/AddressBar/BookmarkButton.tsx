@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useEffect, useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import Button from 'renderer/components/Button';
@@ -8,33 +8,28 @@ import BookmarkFlyout from '../Menu/Flyout/Bookmark/ViewAllBookmarks/BookmarkFly
 
 interface Props {
   currentAddress: string;
+  pageTitle: string;
 }
 
-const BookmarkButton = ({ currentAddress }: Props) => {
+const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
   const [openFlyout, setOpenFlyout] = useState<boolean>(false);
-  const [bookmark, setBookmark] = useState<IBookmarks>({
+  const initbookmark = {
     id: '',
-    name: '',
+    name: pageTitle,
     address: currentAddress,
-  });
+  };
+
   const bookmarks = useSelector(selectBookmarks);
+  const bookmarkFound = useMemo(
+    () => bookmarks.find((bm: IBookmarks) => bm.address === currentAddress),
+    [currentAddress, bookmarks]
+  );
 
-  const handleFlyout = () => setOpenFlyout(!openFlyout);
+  const isPageBookmarked = !!bookmarkFound;
 
-  useEffect(() => {
-    const bookmarkFound = bookmarks.find(
-      (bm: IBookmarks) => bm.address === currentAddress
-    );
-    setBookmark(
-      bookmarkFound || {
-        id: '',
-        name: '',
-        address: currentAddress,
-      }
-    );
-  }, [bookmarks, currentAddress]);
-
-  const isPageBookmarked = Boolean(bookmark.name);
+  const handleFlyout = () => {
+    setOpenFlyout(!openFlyout);
+  };
 
   return (
     <>
@@ -54,7 +49,10 @@ const BookmarkButton = ({ currentAddress }: Props) => {
 
       <div className="absolute top-[40px] right-[0px]">
         {openFlyout && (
-          <BookmarkFlyout bookmark={bookmark} setOpenFlyout={setOpenFlyout} />
+          <BookmarkFlyout
+            bookmark={bookmarkFound || initbookmark}
+            setOpenFlyout={setOpenFlyout}
+          />
         )}
       </div>
     </>
