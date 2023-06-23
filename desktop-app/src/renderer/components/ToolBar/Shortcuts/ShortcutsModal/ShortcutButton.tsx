@@ -13,12 +13,12 @@ const ShortcutButton = ({ text }: Props) => {
   return (
     <div>
       {btnText.map((value, i) => (
-        <>
+        <span key={value}>
           <span className="rounded border border-gray-200 bg-gray-100 px-[6px] py-[2px] text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
             {formatText(value)}
           </span>
           {i < btnTextLength && <span className="px-1">+</span>}
-        </>
+        </span>
       ))}
     </div>
   );
