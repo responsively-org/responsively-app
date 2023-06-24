@@ -212,6 +212,15 @@ const schema = {
     },
     default: [],
   },
+  sponsorship: {
+    type: 'object',
+    properties: {
+      lastShown: {
+        type: 'number',
+      },
+    },
+    default: {},
+  },
 } as const;
 
 const store = new Store({ schema, watch: true, migrations });
