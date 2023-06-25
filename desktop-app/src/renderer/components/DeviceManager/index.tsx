@@ -54,17 +54,19 @@ const DeviceManager = () => {
     setFilteredCustomDevices(filterDevices(newCustomDevices, searchText));
   };
 
-  const onAddDevice = async (device: Device, isNew: boolean) => {
+  const onSaveDevice = async (device: Device, isNew: boolean) => {
     const newCustomDevices = isNew
       ? [...customDevices, device]
       : customDevices.map((d) => (d.id === device.id ? device : d));
     saveCustomDevices(newCustomDevices);
-    dispatch(
-      setSuiteDevices({
-        suite: activeSuite.id,
-        devices: [...activeSuite.devices, device.id],
-      })
-    );
+    if (isNew) {
+      dispatch(
+        setSuiteDevices({
+          suite: activeSuite.id,
+          devices: [...activeSuite.devices, device.id],
+        })
+      );
+    }
   };
 
   const onRemoveDevice = (device: Device) => {
@@ -155,7 +157,7 @@ const DeviceManager = () => {
         </div>
       </div>
       <DeviceDetailsModal
-        onAddDevice={onAddDevice}
+        onSaveDevice={onSaveDevice}
         existingDevices={[...defaultDevices, ...customDevices]}
         isCustom
         isOpen={isDetailsModalOpen}

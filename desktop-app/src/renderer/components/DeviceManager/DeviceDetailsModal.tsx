@@ -8,7 +8,7 @@ import Select from '../Select';
 
 interface Props {
   device?: Device;
-  onAddDevice: (device: Device, isNew: boolean) => Promise<void>;
+  onSaveDevice: (device: Device, isNew: boolean) => Promise<void>;
   onRemoveDevice: (device: Device) => void;
   existingDevices: Device[];
   isCustom: boolean;
@@ -17,7 +17,7 @@ interface Props {
 }
 
 const DeviceDetailsModal = ({
-  onAddDevice,
+  onSaveDevice,
   onRemoveDevice,
   existingDevices,
   device,
@@ -98,9 +98,9 @@ const DeviceDetailsModal = ({
     if (isMobileCapable) {
       capabilities.push('mobile');
     }
-    await onAddDevice(
+    await onSaveDevice(
       {
-        id: uuidv4(),
+        id: device?.id ?? uuidv4(),
         name,
         width,
         height,
@@ -112,7 +112,7 @@ const DeviceDetailsModal = ({
         capabilities,
         isCustom,
       },
-      device == null
+      isNew
     );
 
     return onClose();
