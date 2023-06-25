@@ -48,8 +48,8 @@ const Button = ({
     hoverBg = 'hover:bg-slate-200';
     hoverBgDark = 'dark:hover:bg-slate-700';
   } else if (isPrimary) {
-    hoverBg = 'hover:bg-slate-800';
-    hoverBgDark = 'dark:hover:bg-slate-100';
+    hoverBg = 'hover:bg-emerald-600';
+    hoverBgDark = 'dark:hover:bg-emerald-600';
   }
 
   return (
@@ -62,8 +62,7 @@ const Button = ({
         {
           'bg-slate-400/60': isActive && !isPrimary,
           'dark:bg-slate-600/60': isActive && !isPrimary,
-          'bg-slate-600 text-white': isPrimary,
-          'dark:bg-slate-300 dark:text-gray-900': isPrimary,
+          'bg-emerald-500 text-white': isPrimary,
           'bg-slate-200': isActionButton,
           'dark:bg-slate-700': isActionButton,
           'px-2': isActionButton || isTextButton,
