@@ -32,9 +32,9 @@ const getReloadMenu = (
   click: () => {
     if (isDev) {
       mainWindow.webContents.reload();
-      // return;
+      return;
     }
-    // mainWindow.webContents.send('reload', {});
+    mainWindow.webContents.send('reload', {});
   },
 });
 
