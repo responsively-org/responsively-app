@@ -1,8 +1,9 @@
 import { Icon } from '@iconify/react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
-import { SHORTCUT_CHANNEL } from 'renderer/components/KeyboardShortcutsManager/constants';
-import useKeyboardShortcut from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
+import useKeyboardShortcut, {
+  SHORTCUT_CHANNEL,
+} from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
 import { selectDarkMode, setDarkMode } from 'renderer/store/features/ui';
 
 const UITheme = () => {

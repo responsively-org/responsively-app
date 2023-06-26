@@ -1,11 +1,10 @@
 import { Icon } from '@iconify/react';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import Button from '../Button';
-import useKeyboardShortcut from '../KeyboardShortcutsManager/useKeyboardShortcut';
-import {
+import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
   ShortcutChannel,
-} from '../KeyboardShortcutsManager/constants';
+} from '../KeyboardShortcutsManager/useKeyboardShortcut';
 
 export const NAVIGATION_EVENTS = {
   BACK: 'back',

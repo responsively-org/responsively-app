@@ -8,8 +8,9 @@ import {
   addBookmark,
   selectBookmarks,
 } from 'renderer/store/features/bookmarks';
-import useKeyboardShortcut from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
-import { SHORTCUT_CHANNEL } from 'renderer/components/KeyboardShortcutsManager/constants';
+import useKeyboardShortcut, {
+  SHORTCUT_CHANNEL,
+} from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
 import BookmarkFlyout from '../Menu/Flyout/Bookmark/ViewAllBookmarks/BookmarkFlyout';
 
 interface Props {

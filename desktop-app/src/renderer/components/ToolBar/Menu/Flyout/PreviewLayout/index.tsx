@@ -1,8 +1,9 @@
 import { Icon } from '@iconify/react';
 import { PREVIEW_LAYOUTS } from 'common/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { SHORTCUT_CHANNEL } from 'renderer/components/KeyboardShortcutsManager/constants';
-import useKeyboardShortcut from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
+import useKeyboardShortcut, {
+  SHORTCUT_CHANNEL,
+} from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
 import Toggle from 'renderer/components/Toggle';
 import { selectLayout, setLayout } from 'renderer/store/features/renderer';
 

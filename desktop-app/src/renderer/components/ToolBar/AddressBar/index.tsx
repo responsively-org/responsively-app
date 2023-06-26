@@ -18,8 +18,9 @@ import {
   selectPageTitle,
   setAddress,
 } from 'renderer/store/features/renderer';
-import useKeyboardShortcut from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
-import { SHORTCUT_CHANNEL } from 'renderer/components/KeyboardShortcutsManager/constants';
+import useKeyboardShortcut, {
+  SHORTCUT_CHANNEL,
+} from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
 import AuthModal from './AuthModal';
 import SuggestionList from './SuggestionList';
 import Bookmark from './BookmarkButton';
