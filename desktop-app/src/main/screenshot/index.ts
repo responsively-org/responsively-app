@@ -38,7 +38,7 @@ const captureImage = async (
       const bgColor = window.getComputedStyle(document.body).backgroundColor;
       if (bgColor === 'rgba(0, 0, 0, 0)') {
         document.body.style.backgroundColor = 'white';
-      } 
+      }
       window.isExecuted = true;
     `);
   }
@@ -58,8 +58,9 @@ const quickScreenshot = async (
   if (image === undefined) {
     return { done: false };
   }
+  const fileName = name.replace('/', '-').replace(':', '-');
   const dir = path.join(homedir(), `Desktop/Responsively-Screenshots`);
-  const filePath = path.join(dir, `/${name}-${Date.now()}.jpeg`);
+  const filePath = path.join(dir, `/${fileName}-${Date.now()}.jpeg`);
   await ensureDir(dir);
   await writeFile(filePath, image.toJPEG(100));
   setTimeout(() => shell.showItemInFolder(filePath), 100);
