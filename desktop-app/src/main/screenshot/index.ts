@@ -58,7 +58,7 @@ const quickScreenshot = async (
   if (image === undefined) {
     return { done: false };
   }
-  const fileName = name.replace('/', '-').replace(':', '-');
+  const fileName = name.replaceAll('/', '-').replaceAll(':', '-');
   const dir = path.join(homedir(), `Desktop/Responsively-Screenshots`);
   const filePath = path.join(dir, `/${fileName}-${Date.now()}.jpeg`);
   await ensureDir(dir);
