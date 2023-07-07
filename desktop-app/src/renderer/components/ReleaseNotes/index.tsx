@@ -128,7 +128,7 @@ const ReleaseNotes = () => {
               window.electron.ipcRenderer.sendMessage(
                 IPC_MAIN_CHANNELS.OPEN_EXTERNAL,
                 {
-                  url: 'https://responsively.app/sponsor?ref=app-release-notes',
+                  url: 'https://responsively.app/sponsor?utm_source=app&utm_medium=release_notes&utm_campaign=sponsor',
                 }
               );
             }}
