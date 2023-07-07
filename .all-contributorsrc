@@ -604,6 +604,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "afermon",
+      "name": "Alex Fernandez",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3981106?v=4",
+      "profile": "https://www.xicre.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
