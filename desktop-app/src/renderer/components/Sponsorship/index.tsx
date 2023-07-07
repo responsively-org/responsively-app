@@ -51,7 +51,7 @@ export const Sponsorship = () => {
               window.electron.ipcRenderer.sendMessage(
                 IPC_MAIN_CHANNELS.OPEN_EXTERNAL,
                 {
-                  url: 'https://responsively.app/sponsor?ref=app-sponsor-banner',
+                  url: 'https://responsively.app/sponsor?utm_source=app&utm_medium=app-banner&utm_campaign=sponsor',
                 }
               );
               onClose();
