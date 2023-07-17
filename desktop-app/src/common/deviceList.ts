@@ -665,8 +665,8 @@ export const defaultDevices: Device[] = [
   {
     id: '30017',
     name: 'Samsung S21 FE',
-    width: 1080,
-    height: 2340,
+    width: 360,
+    height: 800,
     dpi: 420,
     capabilities: ['touch', 'mobile'],
     userAgent:
