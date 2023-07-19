@@ -622,6 +622,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "amenk",
+      "name": "Alexander Menk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1087128?v=4",
+      "profile": "http://www.twitter.com/s3lf",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 5,
