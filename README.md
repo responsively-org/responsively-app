@@ -41,7 +41,7 @@
 </p>
 
 <p align="center">
-  Download Now (free!): <a href="https://responsively.app" target="_blank">
+  Download Now (free!): <a href="https://responsively.app/download" target="_blank">
     responsively.app
   </a>
 </p>
@@ -65,7 +65,7 @@ Please visit the website to know more about the application - https://responsive
 
 
 ## Download
-The application is available for Mac, Windows and Linux platforms. Please download it from [the releases page](https://github.com/responsively-org/responsively-app/releases)
+The application is available for Mac, Windows and Linux platforms. Please <a href="https://responsively.app/download" target="_blank">download it from responsively.app</a>
 
 Alternatively, MacOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) <a href="https://formulae.brew.sh/cask/responsively" target="_blank"> <img src="https://badgen.net/homebrew/cask/dy/responsively" alt="Homebrew installs"></a>
 ```bash
