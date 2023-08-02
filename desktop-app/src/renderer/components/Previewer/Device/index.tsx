@@ -428,7 +428,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
 
   const scaledHeight = device.isMobileCapable
     ? height * zoomfactor
-    : (height + device.dpi * 17) * zoomfactor;
+    : (height + 30) * zoomfactor;
   const scaledWidth = width * zoomfactor;
 
   return (
