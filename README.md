@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://responsively.app/assets/img/responsively-logo.png" alt="Responsively Logo" width="150">
+  <img src="https://responsively.app/assets/img/logo.png" alt="Responsively Logo" width="150">
   <h1>Responsively App <a href="https://github.com/responsively-org/responsively-app/releases/latest" target="_blank"><img alt="GitHub release" src="https://img.shields.io/github/v/release/responsively-org/responsively-app"></a></h1>
   <strong>A must-have devtool for web developers for quicker responsive web development. 🚀</strong>
   <h6>Save time by becoming 5x faster!</h6>
@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/github/all-contributors/responsively-org/responsively-app?style=flat" alt="contributors">
   </a>
   
-  
+
 
   <a href="https://responsively.app/join-slack" target="_blank">
     <img src="https://img.shields.io/badge/Join%20on-Slack-brightgreen?logo=slack" alt="Slack">
@@ -48,12 +48,14 @@
 <br>
 
 ## Responsively App
->A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development. 
-<br>
+
+> A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development.
+> <br>
 
 ![Quick Demo](https://responsively.app/assets/img/responsively-app.gif)
 
 ## Features
+
 1. Mirrored User-interactions across all devices.
 2. Customizable preview layout to suit all your needs.
 3. One handy elements inspector for all devices in preview.
@@ -63,26 +65,30 @@
 
 Please visit the website to know more about the application - https://responsively.app
 
-
 ## Download
+
 The application is available for Mac, Windows and Linux platforms. Please <a href="https://responsively.app/download" target="_blank">download it from responsively.app</a>
 
 Alternatively, MacOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) <a href="https://formulae.brew.sh/cask/responsively" target="_blank"> <img src="https://badgen.net/homebrew/cask/dy/responsively" alt="Homebrew installs"></a>
+
 ```bash
 brew install --cask responsively
 ```
 
-Also, Windows users can use [`chocolatey`](https://chocolatey.org/packages/responsively/) <a href="https://chocolatey.org/packages/responsively/" target="_blank"> <img src="https://img.shields.io/chocolatey/dt/responsively" alt="Chocolatey installs"></a> 
+Also, Windows users can use [`chocolatey`](https://chocolatey.org/packages/responsively/) <a href="https://chocolatey.org/packages/responsively/" target="_blank"> <img src="https://img.shields.io/chocolatey/dt/responsively" alt="Chocolatey installs"></a>
+
 ```bash
 choco install responsively
 ```
 
 or [`winget`](https://github.com/microsoft/winget-cli):
+
 ```bash
 winget install ResponsivelyApp
 ```
 
 Linux users using an RPM Package Manager can use `rpm`
+
 ```bash
 sudo rpm -i https://github.com/responsively-org/responsively-app/releases/download/v[VERSION]/Responsively-App-[VERSION].x86_64.rpm
 ```
@@ -94,14 +100,17 @@ Follow us on Twitter for future updates - [![Twitter Follow](https://img.shields
 ## Browser Extension
 
 Install the handy browser extension to easily send links from your browser to the app and preview instantly.
+
 - [Download for Chrome](https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj) <a href="https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj" target="_blank"><img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/users/jhphiidjkooiaollfiknkokgodbaddcj"></a>
 - [Download for Firefox](https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/) <a href="https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/" target="_blank"><img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/responsively-helper"></a>
 - [Download for Edge](https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn)
 
 ## Issues
+
 If you face any problems while using the application, please open an issue here - https://github.com/responsively-org/responsively-app/issues
 
 ## Roadmap
+
 Here is the roadmap of the desktop app - https://github.com/responsively-org/responsively-app/projects/12?fullscreen=true.
 
 ## Gold sponsors 🥇
@@ -117,10 +126,10 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
   </a>
 </p>
 
-
 [Become a sponsor and have your company logo here](https://opencollective.com/responsively)
 
 ## Contribute
+
 1. Ensure you have installed `node` and `yarn`
 2. Go to `desktop-app` folder
 3. Run `yarn` to install dependencies
