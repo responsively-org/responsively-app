@@ -244,6 +244,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="https://www.xicre.com"><img src="https://avatars.githubusercontent.com/u/3981106?v=4?s=100" width="100px;" alt="Alex Fernandez"/><br /><sub><b>Alex Fernandez</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=afermon" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/Danial-Gharib"><img src="https://avatars.githubusercontent.com/u/90343552?v=4?s=100" width="100px;" alt="Danial Gharib"/><br /><sub><b>Danial Gharib</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Danial-Gharib" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="http://www.twitter.com/s3lf"><img src="https://avatars.githubusercontent.com/u/1087128?v=4?s=100" width="100px;" alt="Alexander Menk"/><br /><sub><b>Alexander Menk</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=amenk" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="20%"><a href="http://tunahangediz.com"><img src="https://avatars.githubusercontent.com/u/75015671?v=4?s=100" width="100px;" alt="Tunahan Gediz"/><br /><sub><b>Tunahan Gediz</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=tunahangediz" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

@@ -631,6 +631,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "tunahangediz",
+      "name": "Tunahan Gediz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/75015671?v=4",
+      "profile": "http://tunahangediz.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 5,
