@@ -22,12 +22,14 @@ const Bookmark = () => {
   }, [menuFlyout]);
 
   return (
-    <div>
+    <div
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
       <div className="">
         <div className="relative right-2 w-80 dark:border-slate-400">
           <Button
-            className="flex w-full items-center justify-between pl-6 pb-2 pt-1.5"
-            onClick={() => setIsOpen(!isOpen)}
+            className="flex w-full items-center justify-between pl-6"
             isActive={isOpen}
           >
             <span>Bookmarks</span>
