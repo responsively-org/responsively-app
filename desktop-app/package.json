@@ -202,7 +202,7 @@
     "sass": "^1.54.4",
     "sass-loader": "^13.0.2",
     "style-loader": "^3.3.1",
-    "terser-webpack-plugin": "^5.3.5",
+    "terser-webpack-plugin": "^5.3.9",
     "ts-jest": "^28.0.8",
     "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
