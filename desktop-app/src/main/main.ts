@@ -192,8 +192,11 @@ const createWindow = async () => {
     .executeJavaScript('localStorage.getItem("windowPosition");', true)
     .then(result => {
       memWindowInfo = result;
+    })
+    .catch(error => {
+      console.error('refresh error occurred:', error);
     });
-  
+    
     if (memWindowInfo != null) {
       mainWindow.setPosition(memWindowInfo.x, memWindowInfo.y);
       mainWindow.setSize(memWindowInfo.width, memWindowInfo.height);
