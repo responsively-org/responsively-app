@@ -48,6 +48,14 @@ const ITEMS: NavigationItemProps[] = [
     icon: 'ic:round-refresh',
     action: () => {
       webViewPubSub.publish(NAVIGATION_EVENTS.RELOAD);
+      const windowPosition = {
+        x: window.screenX,
+        y: window.screenY,
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+      
+      localStorage.setItem('windowPosition', JSON.stringify(windowPosition));
     },
   },
 ];
