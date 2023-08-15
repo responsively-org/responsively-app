@@ -173,11 +173,32 @@ const createWindow = async () => {
     )}`
   );
 
+  interface WindowBounds {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }
+
+  let memWindowInfo: WindowBounds | null = null;
+
   mainWindow.on('ready-to-show', async () => {
     await initInstance();
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+
+    mainWindow.webContents
+    .executeJavaScript('localStorage.getItem("windowPosition");', true)
+    .then(result => {
+      memWindowInfo = result;
+    });
+  
+    if (memWindowInfo != null) {
+      mainWindow.setPosition(memWindowInfo.x, memWindowInfo.y);
+      mainWindow.setSize(memWindowInfo.width, memWindowInfo.height);
+    }
+
     webPermissionHandlers.init();
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
