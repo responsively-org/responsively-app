@@ -196,7 +196,7 @@ const createWindow = async () => {
       .catch((error) => {
         console.error('refresh error occurred:', error);
       });
-    
+
     if (memWindowInfo != null) {
       mainWindow.setPosition(memWindowInfo.x, memWindowInfo.y);
       mainWindow.setSize(memWindowInfo.width, memWindowInfo.height);
