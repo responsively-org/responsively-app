@@ -189,13 +189,13 @@ const createWindow = async () => {
     }
 
     mainWindow.webContents
-    .executeJavaScript('localStorage.getItem("windowPosition");', true)
-    .then(result => {
-      memWindowInfo = result;
-    })
-    .catch(error => {
-      console.error('refresh error occurred:', error);
-    });
+      .executeJavaScript('localStorage.getItem("windowPosition");', true)
+      .then((result) => {
+        memWindowInfo = result;
+      })
+      .catch((error) => {
+        console.error('refresh error occurred:', error);
+      });
     
     if (memWindowInfo != null) {
       mainWindow.setPosition(memWindowInfo.x, memWindowInfo.y);
