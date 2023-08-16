@@ -54,7 +54,6 @@ const ITEMS: NavigationItemProps[] = [
         width: window.innerWidth,
         height: window.innerHeight,
       };
-      
       localStorage.setItem('windowPosition', JSON.stringify(windowPosition));
     },
   },
