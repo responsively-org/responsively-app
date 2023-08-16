@@ -9,8 +9,17 @@ import AllowInSecureSSL from './AllowInSecureSSL';
 import ClearHistory from './ClearHistory';
 import PreviewLayout from './PreviewLayout';
 import Bookmark from './Bookmark';
+import { Settings } from './Settings';
 
-const MenuFlyout = () => {
+const Divider = () => (
+  <div className="h-[1px] bg-slate-200 dark:bg-slate-700" />
+);
+
+interface Props {
+  closeFlyout: () => void;
+}
+
+const MenuFlyout = ({ closeFlyout }: Props) => {
   const dispatch = useDispatch();
 
   return (
@@ -21,7 +30,11 @@ const MenuFlyout = () => {
       <Devtools />
       <AllowInSecureSSL />
       <ClearHistory />
-      <Bookmark />
+      <Divider />
+      <div>
+        <Bookmark />
+        <Settings closeFlyout={closeFlyout} />
+      </div>
     </div>
   );
 };
