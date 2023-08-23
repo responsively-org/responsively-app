@@ -144,7 +144,7 @@
     "@svgr/webpack": "^7.0.0",
     "@tailwindcss/typography": "^0.5.9",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^6.1.1",
     "@testing-library/react": "^14.0.0",
     "@types/bluebird": "^3.5.36",
     "@types/browser-sync": "^2.26.3",
