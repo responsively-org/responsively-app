@@ -258,7 +258,7 @@ app.on('certificate-error', (event, _, url, __, ___, callback) => {
     return callback(true);
   }
   console.log('certificate-error event', url, BROWSER_SYNC_HOST);
-  return callback(store.get('userPreferences.allowInsecureSSLConnections'));
+  return callback(store.get('allowInsecureSSLConnections'));
 });
 
 app

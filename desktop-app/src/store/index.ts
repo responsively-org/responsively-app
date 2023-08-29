@@ -131,24 +131,19 @@ const schema = {
     },
     default: {},
   },
-  userPreferences: {
+  screenshot: {
     type: 'object',
     properties: {
-      allowInsecureSSLConnections: {
-        type: 'boolean',
-        default: false,
-      },
-      screenshot: {
-        type: 'object',
-        properties: {
-          saveLocation: {
-            type: 'string',
-            default: path.join(homedir(), `Desktop/Responsively-Screenshots`),
-          },
-        },
-        default: {},
+      saveLocation: {
+        type: 'string',
+        default: path.join(homedir(), `Desktop/Responsively-Screenshots`),
       },
     },
+    default: {},
+  },
+  allowInsecureSSLConnections: {
+    type: 'boolean',
+    default: false,
   },
   webPermissions: {
     type: 'array',
@@ -235,6 +230,6 @@ const schema = {
   },
 } as const;
 
-const store = new Store({ schema, watch: true, migrations });
+const store = new Store({ schema, migrations });
 
 export default store;

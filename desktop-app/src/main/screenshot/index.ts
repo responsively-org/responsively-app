@@ -59,7 +59,7 @@ const quickScreenshot = async (
     return { done: false };
   }
   const fileName = name.replaceAll('/', '-').replaceAll(':', '-');
-  const dir = store.get('userPreferences.screenshot.saveLocation');
+  const dir = store.get('screenshot.saveLocation');
   const filePath = path.join(dir, `/${fileName}-${Date.now()}.jpeg`);
   await ensureDir(dir);
   await writeFile(filePath, image.toJPEG(100));

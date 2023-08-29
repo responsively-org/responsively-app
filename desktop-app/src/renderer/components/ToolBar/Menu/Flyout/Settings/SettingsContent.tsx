@@ -9,7 +9,7 @@ interface Props {
 export const SettingsContent = ({ onClose }: Props) => {
   const id = useId();
   const [screenshotSaveLocation, setScreenshotSaveLocation] = useState<string>(
-    window.electron.store.get('userPreferences.screenshot.saveLocation')
+    window.electron.store.get('screenshot.saveLocation')
   );
 
   const onSave = () => {
@@ -20,7 +20,7 @@ export const SettingsContent = ({ onClose }: Props) => {
     }
 
     window.electron.store.set(
-      'userPreferences.screenshot.saveLocation',
+      'screenshot.saveLocation',
       screenshotSaveLocation
     );
     onClose();

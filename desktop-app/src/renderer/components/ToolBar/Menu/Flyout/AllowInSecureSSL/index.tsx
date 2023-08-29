@@ -3,7 +3,7 @@ import Toggle from 'renderer/components/Toggle';
 
 const AllowInSecureSSL = () => {
   const [allowed, setAllowed] = useState<boolean>(
-    window.electron.store.get('userPreferences.allowInsecureSSLConnections')
+    window.electron.store.get('allowInsecureSSLConnections')
   );
 
   return (
@@ -15,7 +15,7 @@ const AllowInSecureSSL = () => {
           onChange={(value) => {
             setAllowed(value.target.checked);
             window.electron.store.set(
-              'userPreferences.allowInsecureSSLConnections',
+              'allowInsecureSSLConnections',
               value.target.checked
             );
           }}
