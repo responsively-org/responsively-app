@@ -230,6 +230,6 @@ const schema = {
   },
 } as const;
 
-const store = new Store({ schema, migrations });
+const store = new Store({ schema, watch: true, migrations });
 
 export default store;
