@@ -7,9 +7,12 @@ interface Props {
 }
 
 export const SettingsContent = ({ onClose }: Props) => {
-  const id = useId();
+  const [screenshotSaveLocationId, onlyVisiblePartsId] = [useId(), useId()];
   const [screenshotSaveLocation, setScreenshotSaveLocation] = useState<string>(
     window.electron.store.get('userPreferences.screenshot.saveLocation')
+  );
+  const [onlyVisibleParts, setOnlyVisibleParts] = useState<boolean>(
+    window.electron.store.get('userPreferences.screenshot.onlyVisibleParts')
   );
 
   const onSave = () => {
@@ -23,6 +26,10 @@ export const SettingsContent = ({ onClose }: Props) => {
       'userPreferences.screenshot.saveLocation',
       screenshotSaveLocation
     );
+    window.electron.store.set(
+      'userPreferences.screenshot.onlyVisibleParts',
+      onlyVisibleParts
+    );
     onClose();
   };
 
@@ -31,11 +38,11 @@ export const SettingsContent = ({ onClose }: Props) => {
       <h2>Screenshots</h2>
       <div className="my-4 flex flex-col space-y-4 text-sm">
         <div className="flex flex-col space-y-2">
-          <label htmlFor={id} className="flex flex-col">
+          <label htmlFor={screenshotSaveLocationId} className="flex flex-col">
             Location
             <input
               type="text"
-              id={id}
+              id={screenshotSaveLocationId}
               className="rounded-md border border-gray-300 p-2"
               value={screenshotSaveLocation}
               onChange={(e) => setScreenshotSaveLocation(e.target.value)}
@@ -43,6 +50,25 @@ export const SettingsContent = ({ onClose }: Props) => {
           </label>
           <p className="text-sm text-gray-500">
             The location where screenshots will be saved.
+          </p>
+        </div>
+      </div>
+
+      <div className="my-4 flex flex-col space-y-4 text-sm">
+        <div className="flex flex-col space-y-2">
+          <label htmlFor={onlyVisiblePartsId} className="flex space-x-2">
+            <input
+              type="checkbox"
+              id={onlyVisiblePartsId}
+              className="rounded-md border border-gray-300 p-2"
+              checked={onlyVisibleParts}
+              onChange={(e) => setOnlyVisibleParts(e.target.checked)}
+            />
+            <span>Only Visible Parts</span>
+          </label>
+          <p className="text-sm text-gray-500">
+            When disabled, the screenshot will have a minimum height of the
+            device height
           </p>
         </div>
       </div>

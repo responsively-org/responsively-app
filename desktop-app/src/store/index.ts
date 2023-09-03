@@ -148,6 +148,10 @@ const schema = {
         },
         default: {},
       },
+      onlyVisibleParts: {
+        type: 'boolean',
+        default: false,
+      },
     },
   },
   webPermissions: {
