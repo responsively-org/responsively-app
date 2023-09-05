@@ -106,7 +106,7 @@
     "@fontsource/lato": "^4.5.8",
     "@headlessui/react": "^1.7.4",
     "@iconify/react": "^3.2.2",
-    "@reduxjs/toolkit": "^1.8.3",
+    "@reduxjs/toolkit": "^1.9.5",
     "autoprefixer": "^10.4.14",
     "bluebird": "^3.7.2",
     "browser-sync": "^2.27.10",
