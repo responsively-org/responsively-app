@@ -143,7 +143,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@svgr/webpack": "^7.0.0",
     "@tailwindcss/typography": "^0.5.9",
-    "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
+    "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
     "@testing-library/jest-dom": "^6.1.2",
     "@testing-library/react": "^14.0.0",
     "@types/bluebird": "^3.5.36",
