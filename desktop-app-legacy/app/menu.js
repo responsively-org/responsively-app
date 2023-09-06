@@ -378,6 +378,13 @@ export default class MenuBuilder {
       label: 'View',
       submenu: [
         {
+          label: '&Find',
+          accelerator: 'CommandOrControl+F',
+          click: () => {
+            this.mainWindow.webContents.send('find-text');
+          },
+        },
+        {
           label: 'Reload',
           accelerator: 'CommandOrControl+R',
           skipRegistration: true,
@@ -429,6 +436,13 @@ export default class MenuBuilder {
     const subMenuViewProd = {
       label: 'View',
       submenu: [
+        {
+          label: '&Find',
+          accelerator: 'CommandOrControl+F',
+          click: () => {
+            this.mainWindow.webContents.send('find-text');
+          },
+        },
         {
           label: 'Reload',
           accelerator: 'CommandOrControl+R',
@@ -511,6 +525,13 @@ export default class MenuBuilder {
           process.env.NODE_ENV === 'development'
             ? [
                 {
+                  label: '&Find',
+                  accelerator: 'CommandOrControl+F',
+                  click: () => {
+                    this.mainWindow.webContents.send('find-text');
+                  },
+                },
+                {
                   label: '&Reload',
                   accelerator: 'CommandOrControl+R',
                   skipRegistration: true,
@@ -557,6 +578,13 @@ export default class MenuBuilder {
                 },
               ]
             : [
+                {
+                  label: '&Find',
+                  accelerator: 'CommandOrControl+F',
+                  click: () => {
+                    this.mainWindow.webContents.send('find-text');
+                  },
+                },
                 {
                   label: '&Reload',
                   accelerator: 'CommandOrControl+R',
