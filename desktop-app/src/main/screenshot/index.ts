@@ -3,7 +3,7 @@ import { Device } from 'common/deviceList';
 import { ipcMain, shell, webContents } from 'electron';
 import { writeFile, ensureDir } from 'fs-extra';
 import path from 'path';
-import { homedir } from 'os';
+import store from '../../store';
 
 export interface ScreenshotArgs {
   webContentsId: number;
@@ -59,7 +59,7 @@ const quickScreenshot = async (
     return { done: false };
   }
   const fileName = name.replaceAll('/', '-').replaceAll(':', '-');
-  const dir = path.join(homedir(), `Desktop/Responsively-Screenshots`);
+  const dir = store.get('userPreferences.screenshot.saveLocation');
   const filePath = path.join(dir, `/${fileName}-${Date.now()}.jpeg`);
   await ensureDir(dir);
   await writeFile(filePath, image.toJPEG(100));

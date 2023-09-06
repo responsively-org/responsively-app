@@ -22,13 +22,17 @@ const Menu = () => {
     dispatch(closeMenuFlyout(!isMenuFlyoutOpen));
   };
 
+  const onClose = () => {
+    dispatch(closeMenuFlyout(false));
+  };
+
   return (
     <div className="relative flex items-center" ref={ref}>
       <Button onClick={handleFlyout} isActive={isMenuFlyoutOpen}>
         <Icon icon="carbon:overflow-menu-vertical" />
       </Button>
       <div style={{ visibility: isMenuFlyoutOpen ? 'visible' : 'hidden' }}>
-        <MenuFlyout />
+        <MenuFlyout closeFlyout={onClose} />
       </div>
     </div>
   );

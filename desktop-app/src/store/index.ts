@@ -1,3 +1,5 @@
+import path from 'path';
+import { homedir } from 'os';
 import { DOCK_POSITION, PREVIEW_LAYOUTS } from '../common/constants';
 import { migrations } from './migrations';
 
@@ -136,7 +138,18 @@ const schema = {
         type: 'boolean',
         default: false,
       },
+      screenshot: {
+        type: 'object',
+        properties: {
+          saveLocation: {
+            type: 'string',
+            default: path.join(homedir(), `Desktop/Responsively-Screenshots`),
+          },
+        },
+        default: {},
+      },
     },
+    default: {},
   },
   webPermissions: {
     type: 'array',
