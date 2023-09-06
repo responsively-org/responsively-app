@@ -1,0 +1,39 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ./desktop-app
+
+    strategy:
+      matrix:
+        os: [macos-latest]
+      fail-fast: false
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js and NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: ${{ !env.ACT && 'npm' || '' }} # Disable cache for nektos/act
+          cache-dependency-path: ./desktop-app/yarn.lock
+
+      - name: yarn install
+        run: |
+          yarn install --network-timeout 120000
+
+      - name: yarn test
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          yarn run package
+          yarn run lint
+          yarn exec tsc
+          yarn test
