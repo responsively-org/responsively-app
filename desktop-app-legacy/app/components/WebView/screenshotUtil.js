@@ -443,7 +443,7 @@ const getWebsiteName = (address: string) => {
     domain = domain.replace('www.', '');
     const dotIndex = domain.indexOf('.');
     if (dotIndex > -1) {
-      domain = domain.substr(0, domain.indexOf('.'));
+      domain = domain.slice(0, dotIndex);
     }
   }
   return domain.charAt(0).toUpperCase() + domain.slice(1);
