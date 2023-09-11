@@ -640,6 +640,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jeffbowen",
+      "name": "Jeff Bowen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/272795?v=4",
+      "profile": "https://refer.codes/jeff",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
