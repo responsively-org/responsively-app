@@ -246,6 +246,9 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="http://www.twitter.com/s3lf"><img src="https://avatars.githubusercontent.com/u/1087128?v=4?s=100" width="100px;" alt="Alexander Menk"/><br /><sub><b>Alexander Menk</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=amenk" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="20%"><a href="http://tunahangediz.com"><img src="https://avatars.githubusercontent.com/u/75015671?v=4?s=100" width="100px;" alt="Tunahan Gediz"/><br /><sub><b>Tunahan Gediz</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=tunahangediz" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://refer.codes/jeff"><img src="https://avatars.githubusercontent.com/u/272795?v=4?s=100" width="100px;" alt="Jeff Bowen"/><br /><sub><b>Jeff Bowen</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=jeffbowen" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
