@@ -209,7 +209,7 @@ export const defaultDevices: Device[] = [
   },
   {
     id: '10015',
-    name: 'Macbook Pro',
+    name: 'MacBook Pro',
     width: 1440,
     height: 900,
     dpi: 2,

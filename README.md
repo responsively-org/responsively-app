@@ -119,7 +119,7 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 
 <p align="center">
   <a href="https://www.bairesdev.com/?ref=Responsively" target="_blank">
-    <img src="https://responsively.app/assets/img/logos/bairesdev-logo-blue-new.svg" height="80px" alt="Baires Dev">
+    <img src="https://responsively.app/_next/static/media/bairesdev.2b0bfd41.svg" width="250px" height="120px" alt="Baires Dev">
   </a>
   <a href="https://opencollective.com/responsively" target="_blank">
     <img src="https://user-images.githubusercontent.com/1283424/142834528-4cd5b8eb-eeae-4437-b749-d09c96dde160.png" height="120px" alt="Sponsor to add your company logo here">
@@ -245,6 +245,9 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="https://github.com/Danial-Gharib"><img src="https://avatars.githubusercontent.com/u/90343552?v=4?s=100" width="100px;" alt="Danial Gharib"/><br /><sub><b>Danial Gharib</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Danial-Gharib" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="http://www.twitter.com/s3lf"><img src="https://avatars.githubusercontent.com/u/1087128?v=4?s=100" width="100px;" alt="Alexander Menk"/><br /><sub><b>Alexander Menk</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=amenk" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="20%"><a href="http://tunahangediz.com"><img src="https://avatars.githubusercontent.com/u/75015671?v=4?s=100" width="100px;" alt="Tunahan Gediz"/><br /><sub><b>Tunahan Gediz</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=tunahangediz" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://refer.codes/jeff"><img src="https://avatars.githubusercontent.com/u/272795?v=4?s=100" width="100px;" alt="Jeff Bowen"/><br /><sub><b>Jeff Bowen</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=jeffbowen" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
