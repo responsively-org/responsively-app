@@ -1,6 +1,6 @@
 /* eslint-disable promise/always-return */
 import { Device } from 'common/deviceList';
-import { ipcMain, shell, webContents } from 'electron';
+import { BrowserWindow, ipcMain, shell, webContents } from 'electron';
 import { writeFile, ensureDir } from 'fs-extra';
 import path from 'path';
 import store from '../../store';
@@ -43,7 +43,50 @@ const captureImage = async (
     `);
   }
 
-  const Image = await WebContents?.capturePage();
+  let rect: Electron.Rectangle | undefined;
+  let screenShotDelegate:
+    | Electron.WebContents
+    | Electron.BrowserWindow
+    | undefined;
+
+  if (!store.get('userPreferences.screenshot.onlyVisibleParts')) {
+    rect = await WebContents?.executeJavaScript(`
+      (() => {
+        const clientRect = document.documentElement.getBoundingClientRect()
+        return {
+          x: Math.floor(clientRect.x),
+          y: Math.floor(clientRect.y),
+          width: Math.ceil(clientRect.width),
+          height: Math.ceil(clientRect.height),
+        }
+      })()
+    `);
+
+    screenShotDelegate = new BrowserWindow({
+      enableLargerThanScreen: true,
+      show: false,
+      webPreferences: {
+        offscreen: true,
+        nodeIntegration: false,
+        contextIsolation: true,
+      },
+    });
+
+    try {
+      if (rect != null) {
+        console.log(rect);
+        screenShotDelegate.setContentSize(rect.width, rect.height);
+      }
+    } catch (ex) {
+      //
+    }
+
+    await screenShotDelegate.loadURL(WebContents?.getURL() ?? '');
+  } else {
+    screenShotDelegate = WebContents;
+  }
+
+  const Image = screenShotDelegate?.capturePage(rect);
   return Image;
 };
 
