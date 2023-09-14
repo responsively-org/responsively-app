@@ -35,6 +35,12 @@ const Toolbar = ({
     useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
 
+  const refreshView = () => {
+    if(webview){
+      webview.reload()
+    }
+  }
+
   const toggleEventMirroring = async () => {
     if (webview == null) {
       return;
@@ -125,6 +131,9 @@ const Toolbar = ({
   return (
     <div className="flex items-center justify-between gap-1">
       <div className="my-1 flex items-center gap-1">
+        <Button onClick={refreshView} title="Refresh This View">
+          <Icon icon="ic:round-refresh" />
+        </Button>
         <Button
           onClick={quickScreenshot}
           isLoading={screenshotLoading}
