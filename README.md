@@ -249,6 +249,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     <tr>
       <td align="center" valign="top" width="20%"><a href="https://refer.codes/jeff"><img src="https://avatars.githubusercontent.com/u/272795?v=4?s=100" width="100px;" alt="Jeff Bowen"/><br /><sub><b>Jeff Bowen</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=jeffbowen" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/ParamBirje"><img src="https://avatars.githubusercontent.com/u/87022870?v=4?s=100" width="100px;" alt="Param Birje"/><br /><sub><b>Param Birje</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=ParamBirje" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/prajjwalyd"><img src="https://avatars.githubusercontent.com/u/111794524?v=4?s=100" width="100px;" alt="Prajjwal Yadav"/><br /><sub><b>Prajjwal Yadav</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=prajjwalyd" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
