@@ -85,7 +85,11 @@ const DeviceDetailsModal = ({
   const isCustom = device != null ? device.isCustom ?? false : true;
 
   const handleAddDevice = async (): Promise<void> => {
-    if (device == null && existingDevices.find((d) => d.name === name)) {
+    const existingDevice = existingDevices.find((d) => d.name === name);
+    const doesDeviceExist =
+      existingDevice != null && (isNew || existingDevice.id !== device.id);
+
+    if (doesDeviceExist) {
       // eslint-disable-next-line no-alert
       return alert(
         'Device With the name already exists, try with a different name'
