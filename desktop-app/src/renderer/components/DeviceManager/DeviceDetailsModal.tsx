@@ -133,11 +133,8 @@ const DeviceDetailsModal = ({
               placeholder="My Mobile Device"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              disabled={!isCustom || !isNew}
+              disabled={!isCustom}
             />
-            {!isNew && isCustom ? (
-              <p>Note: Device name cannot be modified once created!</p>
-            ) : null}
             <Input
               label="Device Width"
               type="number"
