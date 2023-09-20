@@ -4,6 +4,7 @@ import { IPC_MAIN_CHANNELS, OpenUrlArgs } from 'common/constants';
 import { AuthRequestArgs } from 'main/http-basic-auth';
 import { PermissionRequestArg } from 'main/web-permissions/PermissionsManager';
 import {
+  DragEvent,
   KeyboardEventHandler,
   useCallback,
   useEffect,
@@ -35,6 +36,7 @@ const AddressBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [typedAddress, setTypedAddress] = useState<string>('');
   const [isSuggesting, setIsSuggesting] = useState<boolean>(false);
+  const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [homepage, setHomepage] = useState<string>(
     window.electron.store.get('homepage')
   );
@@ -139,6 +141,34 @@ const AddressBar = () => {
     inputRef.current?.blur();
   };
 
+  const handleDragEnter = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragExit = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    const draggedText = e.dataTransfer.getData('text/plain');
+
+    try {
+      const draggedUrl = new URL(draggedText);
+      if (draggedUrl.protocol === 'http:' || draggedUrl.protocol === 'https:') {
+        dispatchAddress(draggedUrl.href);
+      } else {
+        throw new Error('Invalid URL');
+      }
+    } catch (e) {
+      console.log('Invalid URL');
+    }
+  };
+
   const deleteCookies = async () => {
     setDeleteCookiesLoading(true);
     await webViewPubSub.publish(ADDRESS_BAR_EVENTS.DELETE_COOKIES);
@@ -180,7 +210,12 @@ const AddressBar = () => {
 
   return (
     <>
-      <div className="relative z-10 w-full flex-grow">
+      <div
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragExit}
+        onDrop={handleDrop}
+        className="relative z-10 w-full flex-grow"
+      >
         <div className="absolute top-2 left-2 mr-2 flex flex-col items-start">
           <Icon icon="mdi:web" className="text-gray-500" />
           {permissionRequest != null ? (
@@ -234,6 +269,14 @@ const AddressBar = () => {
             }, 100);
           }}
         />
+        <div
+          className={`${
+            isDragOver ? 'opacity-100' : 'opacity-0'
+          } pointer-events-none absolute left-0 top-0 z-10 h-full w-full border-spacing-1 flex items-center justify-center gap-2 rounded-full border-2 border-dashed border-[#37b598] bg-[#92e2ce] dark:bg-[#86e0ca] duration-100 dark:text-slate-900`}
+        >
+          <Icon icon="mdi:plus" />
+          <p className="text-sm font-semibold">Drop URL Here</p>
+        </div>
         <div className="absolute inset-y-0 right-0 mr-2 flex items-center">
           <Button
             className="rounded-full"
