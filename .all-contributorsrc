@@ -667,6 +667,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "lyncasterc",
+      "name": "Steven Cabrera",
+      "avatar_url": "https://avatars.githubusercontent.com/u/49458912?v=4",
+      "profile": "https://github.com/lyncasterc",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
