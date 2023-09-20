@@ -162,7 +162,7 @@ const AddressBar = () => {
       } else {
         throw new Error('Invalid URL');
       }
-    } catch (e) {
+    } catch (err) {
       console.log('Invalid URL');
     }
   };
@@ -270,7 +270,7 @@ const AddressBar = () => {
         <div
           className={`${
             isDragOver ? 'opacity-100' : 'opacity-0'
-          } pointer-events-none absolute left-0 top-0 z-10 h-full w-full border-spacing-1 flex items-center justify-center gap-2 rounded-full border-2 border-dashed border-[#37b598] bg-[#92e2ce] dark:bg-[#86e0ca] duration-100 dark:text-slate-900`}
+          } pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full border-spacing-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-[#37b598] bg-[#92e2ce] duration-100 dark:bg-[#86e0ca] dark:text-slate-900`}
         >
           <Icon icon="mdi:plus" />
           <p className="text-sm font-semibold">Drop URL Here</p>
