@@ -154,9 +154,7 @@ const AddressBar = () => {
   const handleDrop = (e: DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-
     const draggedText = e.dataTransfer.getData('text/plain');
-
     try {
       const draggedUrl = new URL(draggedText);
       if (draggedUrl.protocol === 'http:' || draggedUrl.protocol === 'https:') {
