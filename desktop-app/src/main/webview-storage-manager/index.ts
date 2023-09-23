@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, webContents } from 'electron';
+import { ClearStorageDataOptions, ipcMain, webContents } from 'electron';
 
 export interface DeleteStorageArgs {
   webContentsId: number;
@@ -18,7 +18,7 @@ const deleteStorage = async (
   } else {
     await webContents
       .fromId(webContentsId)
-      ?.session.clearStorageData({ storages });
+      ?.session.clearStorageData({ storages } as ClearStorageDataOptions);
   }
   return { done: true };
 };
