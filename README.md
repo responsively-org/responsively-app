@@ -251,6 +251,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="https://github.com/ParamBirje"><img src="https://avatars.githubusercontent.com/u/87022870?v=4?s=100" width="100px;" alt="Param Birje"/><br /><sub><b>Param Birje</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=ParamBirje" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/prajjwalyd"><img src="https://avatars.githubusercontent.com/u/111794524?v=4?s=100" width="100px;" alt="Prajjwal Yadav"/><br /><sub><b>Prajjwal Yadav</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=prajjwalyd" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/lyncasterc"><img src="https://avatars.githubusercontent.com/u/49458912?v=4?s=100" width="100px;" alt="Steven Cabrera"/><br /><sub><b>Steven Cabrera</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=lyncasterc" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/negar-75"><img src="https://avatars.githubusercontent.com/u/113235504?v=4?s=100" width="100px;" alt="negar nasiri"/><br /><sub><b>negar nasiri</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=negar-75" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
