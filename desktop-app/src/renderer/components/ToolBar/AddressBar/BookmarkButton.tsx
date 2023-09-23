@@ -1,8 +1,10 @@
 import { Icon } from '@iconify/react';
 import { useState, useMemo } from 'react';
+import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
 import Button from 'renderer/components/Button';
+
 import {
   IBookmarks,
   addBookmark,
@@ -21,6 +23,12 @@ interface Props {
 const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
   const [openFlyout, setOpenFlyout] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const ref = useDetectClickOutside({
+    onTriggered: () => {
+      if (!openFlyout) return;
+      if (openFlyout) setOpenFlyout(false);
+    },
+  });
 
   const initbookmark = {
     id: '',
@@ -48,7 +56,7 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
   useKeyboardShortcut(SHORTCUT_CHANNEL.BOOKMARK, handleKeyboardShortcut);
 
   return (
-    <>
+    <div ref={ref}>
       <div>
         <Button
           className={cx('rounded-full', {
@@ -71,7 +79,7 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
           />
         )}
       </div>
-    </>
+    </div>
   );
 };
 
