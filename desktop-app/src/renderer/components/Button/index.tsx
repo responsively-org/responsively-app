@@ -48,8 +48,8 @@ const Button = ({
     hoverBg = 'hover:bg-slate-200';
     hoverBgDark = 'dark:hover:bg-slate-700';
   } else if (isPrimary) {
-    hoverBg = 'hover:bg-emerald-600';
-    hoverBgDark = 'dark:hover:bg-emerald-600';
+    hoverBg = 'hover:bg-slate-200';
+    hoverBgDark = 'dark:hover:bg-slate-700';
   }
 
   return (
