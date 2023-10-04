@@ -14,7 +14,10 @@ Ensure you have the following dependencies installed:
 
 After having above installed, proceed through the following steps to setup the codebase locally.
 
-- Fork the project & clone it locally.
+- Fork the project & [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) it locally.
+
+![fork-project](https://github.com/responsively-org/responsively-app/assets/87022870/2cae8b2a-850c-4f80-8ede-32eba622a854)
+
 - Create a new separate branch.
 
 ```bash
