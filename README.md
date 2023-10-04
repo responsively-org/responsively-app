@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://responsively.app/assets/img/responsively-logo.png" alt="Responsively Logo" width="150">
+  <img src="https://responsively.app/assets/img/logo.png" alt="Responsively Logo" width="150">
   <h1>Responsively App <a href="https://github.com/responsively-org/responsively-app/releases/latest" target="_blank"><img alt="GitHub release" src="https://img.shields.io/github/v/release/responsively-org/responsively-app"></a></h1>
   <strong>A must-have devtool for web developers for quicker responsive web development. 🚀</strong>
   <h6>Save time by becoming 5x faster!</h6>
@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/github/all-contributors/responsively-org/responsively-app?style=flat" alt="contributors">
   </a>
   
-  
+
 
   <a href="https://responsively.app/join-slack" target="_blank">
     <img src="https://img.shields.io/badge/Join%20on-Slack-brightgreen?logo=slack" alt="Slack">
@@ -41,19 +41,21 @@
 </p>
 
 <p align="center">
-  Download Now (free!): <a href="https://responsively.app" target="_blank">
+  Download Now (free!): <a href="https://responsively.app/download" target="_blank">
     responsively.app
   </a>
 </p>
 <br>
 
 ## Responsively App
->A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development. 
-<br>
+
+> A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development.
+> <br>
 
 ![Quick Demo](https://responsively.app/assets/img/responsively-app.gif)
 
 ## Features
+
 1. Mirrored User-interactions across all devices.
 2. Customizable preview layout to suit all your needs.
 3. One handy elements inspector for all devices in preview.
@@ -63,26 +65,30 @@
 
 Please visit the website to know more about the application - https://responsively.app
 
-
 ## Download
-The application is available for Mac, Windows and Linux platforms. Please download it from [the releases page](https://github.com/responsively-org/responsively-app/releases)
+
+The application is available for Mac, Windows and Linux platforms. Please <a href="https://responsively.app/download" target="_blank">download it from responsively.app</a>
 
 Alternatively, MacOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) <a href="https://formulae.brew.sh/cask/responsively" target="_blank"> <img src="https://badgen.net/homebrew/cask/dy/responsively" alt="Homebrew installs"></a>
+
 ```bash
 brew install --cask responsively
 ```
 
-Also, Windows users can use [`chocolatey`](https://chocolatey.org/packages/responsively/) <a href="https://chocolatey.org/packages/responsively/" target="_blank"> <img src="https://img.shields.io/chocolatey/dt/responsively" alt="Chocolatey installs"></a> 
+Also, Windows users can use [`chocolatey`](https://chocolatey.org/packages/responsively/) <a href="https://chocolatey.org/packages/responsively/" target="_blank"> <img src="https://img.shields.io/chocolatey/dt/responsively" alt="Chocolatey installs"></a>
+
 ```bash
 choco install responsively
 ```
 
 or [`winget`](https://github.com/microsoft/winget-cli):
+
 ```bash
 winget install ResponsivelyApp
 ```
 
 Linux users using an RPM Package Manager can use `rpm`
+
 ```bash
 sudo rpm -i https://github.com/responsively-org/responsively-app/releases/download/v[VERSION]/Responsively-App-[VERSION].x86_64.rpm
 ```
@@ -94,14 +100,17 @@ Follow us on Twitter for future updates - [![Twitter Follow](https://img.shields
 ## Browser Extension
 
 Install the handy browser extension to easily send links from your browser to the app and preview instantly.
+
 - [Download for Chrome](https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj) <a href="https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj" target="_blank"><img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/users/jhphiidjkooiaollfiknkokgodbaddcj"></a>
 - [Download for Firefox](https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/) <a href="https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/" target="_blank"><img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/responsively-helper"></a>
-- [Download for Edge](https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn)
+- [Download for Edge](https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn) <a href="https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn" target="_blank"><img alt="Edge Add-on" src="https://img.shields.io/badge/dynamic/json?label=users&query=%24.activeInstallCount&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fooiejjgflcgkbbehheengalibfehaojn"></a>
 
 ## Issues
+
 If you face any problems while using the application, please open an issue here - https://github.com/responsively-org/responsively-app/issues
 
 ## Roadmap
+
 Here is the roadmap of the desktop app - https://github.com/responsively-org/responsively-app/projects/12?fullscreen=true.
 
 ## Gold sponsors 🥇
@@ -109,15 +118,18 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 <p>&nbsp;</p>
 
 <p align="center">
+  <a href="https://www.bairesdev.com/?ref=Responsively" target="_blank">
+    <img src="https://responsively.app/_next/static/media/bairesdev.2b0bfd41.svg" width="250px" height="120px" alt="Baires Dev">
+  </a>
   <a href="https://opencollective.com/responsively" target="_blank">
     <img src="https://user-images.githubusercontent.com/1283424/142834528-4cd5b8eb-eeae-4437-b749-d09c96dde160.png" height="120px" alt="Sponsor to add your company logo here">
   </a>
 </p>
 
-
 [Become a sponsor and have your company logo here](https://opencollective.com/responsively)
 
 ## Contribute
+
 1. Ensure you have installed `node` and `yarn`
 2. Go to `desktop-app` folder
 3. Run `yarn` to install dependencies
@@ -211,6 +223,38 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="https://github.com/heagan01"><img src="https://avatars.githubusercontent.com/u/54394590?v=4?s=100" width="100px;" alt="heagan01"/><br /><sub><b>heagan01</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=heagan01" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/Th0masCat"><img src="https://avatars.githubusercontent.com/u/74812563?v=4?s=100" width="100px;" alt="Sahil Jangra"/><br /><sub><b>Sahil Jangra</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Th0masCat" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/nopdotcom"><img src="https://avatars.githubusercontent.com/u/1357866?v=4?s=100" width="100px;" alt="Jay Carlson"/><br /><sub><b>Jay Carlson</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=nopdotcom" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="http://mikadifo.com"><img src="https://avatars.githubusercontent.com/u/51935560?v=4?s=100" width="100px;" alt="Michael Padilla"/><br /><sub><b>Michael Padilla</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Mikadifo" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://narrowcode.xyz"><img src="https://avatars.githubusercontent.com/u/6213380?v=4?s=100" width="100px;" alt="Andreas Steinkellner"/><br /><sub><b>Andreas Steinkellner</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=NarrowCode" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="http://niknia.dev"><img src="https://avatars.githubusercontent.com/u/40159649?v=4?s=100" width="100px;" alt="aniknia"/><br /><sub><b>aniknia</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=aniknia" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/WayneRocha"><img src="https://avatars.githubusercontent.com/u/62760711?v=4?s=100" width="100px;" alt="Wayne Rocha"/><br /><sub><b>Wayne Rocha</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=WayneRocha" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/crbon"><img src="https://avatars.githubusercontent.com/u/2604330?v=4?s=100" width="100px;" alt="crbon"/><br /><sub><b>crbon</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=crbon" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://linktr.ee/themohammadsa"><img src="https://avatars.githubusercontent.com/u/59393936?v=4?s=100" width="100px;" alt="Mohammad S"/><br /><sub><b>Mohammad S</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=themohammadsa" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/ReshadSadik"><img src="https://avatars.githubusercontent.com/u/66641469?v=4?s=100" width="100px;" alt="Reshad Sadik"/><br /><sub><b>Reshad Sadik</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=ReshadSadik" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/PeterKwesiAnsah"><img src="https://avatars.githubusercontent.com/u/31078314?v=4?s=100" width="100px;" alt="Kwesi Ansah"/><br /><sub><b>Kwesi Ansah</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=PeterKwesiAnsah" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/monalisamsteccentric"><img src="https://avatars.githubusercontent.com/u/65477771?v=4?s=100" width="100px;" alt="Monalisa Sahoo"/><br /><sub><b>Monalisa Sahoo</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=monalisamsteccentric" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/codewithmitesh"><img src="https://avatars.githubusercontent.com/u/85953650?v=4?s=100" width="100px;" alt="Mitesh Tank"/><br /><sub><b>Mitesh Tank</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=codewithmitesh" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/Ryan0204"><img src="https://avatars.githubusercontent.com/u/82715592?v=4?s=100" width="100px;" alt="Ryan"/><br /><sub><b>Ryan</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Ryan0204" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://www.jibran.me"><img src="https://avatars.githubusercontent.com/u/70596906?v=4?s=100" width="100px;" alt="jayway"/><br /><sub><b>jayway</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=jibranabsarulislam" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://www.xicre.com"><img src="https://avatars.githubusercontent.com/u/3981106?v=4?s=100" width="100px;" alt="Alex Fernandez"/><br /><sub><b>Alex Fernandez</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=afermon" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/Danial-Gharib"><img src="https://avatars.githubusercontent.com/u/90343552?v=4?s=100" width="100px;" alt="Danial Gharib"/><br /><sub><b>Danial Gharib</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Danial-Gharib" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="http://www.twitter.com/s3lf"><img src="https://avatars.githubusercontent.com/u/1087128?v=4?s=100" width="100px;" alt="Alexander Menk"/><br /><sub><b>Alexander Menk</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=amenk" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="20%"><a href="http://tunahangediz.com"><img src="https://avatars.githubusercontent.com/u/75015671?v=4?s=100" width="100px;" alt="Tunahan Gediz"/><br /><sub><b>Tunahan Gediz</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=tunahangediz" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://refer.codes/jeff"><img src="https://avatars.githubusercontent.com/u/272795?v=4?s=100" width="100px;" alt="Jeff Bowen"/><br /><sub><b>Jeff Bowen</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=jeffbowen" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/ParamBirje"><img src="https://avatars.githubusercontent.com/u/87022870?v=4?s=100" width="100px;" alt="Param Birje"/><br /><sub><b>Param Birje</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=ParamBirje" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/prajjwalyd"><img src="https://avatars.githubusercontent.com/u/111794524?v=4?s=100" width="100px;" alt="Prajjwal Yadav"/><br /><sub><b>Prajjwal Yadav</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=prajjwalyd" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/lyncasterc"><img src="https://avatars.githubusercontent.com/u/49458912?v=4?s=100" width="100px;" alt="Steven Cabrera"/><br /><sub><b>Steven Cabrera</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=lyncasterc" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/negar-75"><img src="https://avatars.githubusercontent.com/u/113235504?v=4?s=100" width="100px;" alt="negar nasiri"/><br /><sub><b>negar nasiri</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=negar-75" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/gauravsingh94"><img src="https://avatars.githubusercontent.com/u/99260988?v=4?s=100" width="100px;" alt="Gaurav Singh"/><br /><sub><b>Gaurav Singh</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=gauravsingh94" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

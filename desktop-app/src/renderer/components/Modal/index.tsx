@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  title: JSX.Element | string;
+  title?: JSX.Element | string;
   description?: JSX.Element | string;
   children?: JSX.Element | string;
 }
@@ -35,7 +35,11 @@ const Modal = ({ isOpen, onClose, title, description, children }: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="flex w-fit min-w-[320px] flex-col gap-4 rounded bg-slate-200 p-8 text-light-normal dark:bg-slate-800 dark:text-dark-normal">
+              <Dialog.Panel
+                className={`flex w-fit min-w-[320px] flex-col gap-4 rounded bg-slate-200 text-light-normal dark:bg-slate-800 dark:text-dark-normal ${
+                  title ? 'p-8' : 'py-4 px-8'
+                }`}
+              >
                 <div>
                   <Dialog.Title className="text-xl font-medium leading-6">
                     {title}

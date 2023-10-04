@@ -1,8 +1,9 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
-import { SHORTCUT_CHANNEL } from 'renderer/components/KeyboardShortcutsManager/constants';
-import { keyboardShortcutsPubsub } from 'renderer/components/KeyboardShortcutsManager/useMousetrapEmitter';
+import useKeyboardShortcut, {
+  SHORTCUT_CHANNEL,
+} from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
 import {
   selectZoomFactor,
   zoomIn,
@@ -34,15 +35,8 @@ const Zoom = () => {
     dispatch(zoomOut());
   }, [dispatch]);
 
-  useEffect(() => {
-    keyboardShortcutsPubsub.subscribe(SHORTCUT_CHANNEL.ZOOM_IN, onZoomIn);
-    keyboardShortcutsPubsub.subscribe(SHORTCUT_CHANNEL.ZOOM_OUT, onZoomOut);
-
-    return () => {
-      keyboardShortcutsPubsub.unsubscribe(SHORTCUT_CHANNEL.ZOOM_IN, onZoomIn);
-      keyboardShortcutsPubsub.unsubscribe(SHORTCUT_CHANNEL.ZOOM_OUT, onZoomOut);
-    };
-  }, [onZoomIn, onZoomOut]);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.ZOOM_IN, onZoomIn);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.ZOOM_OUT, onZoomOut);
 
   return (
     <div className="flex flex-row items-center justify-start px-4">

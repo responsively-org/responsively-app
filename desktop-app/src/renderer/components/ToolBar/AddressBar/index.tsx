@@ -4,6 +4,7 @@ import { IPC_MAIN_CHANNELS, OpenUrlArgs } from 'common/constants';
 import { AuthRequestArgs } from 'main/http-basic-auth';
 import { PermissionRequestArg } from 'main/web-permissions/PermissionsManager';
 import {
+  DragEvent,
   KeyboardEventHandler,
   useCallback,
   useEffect,
@@ -13,9 +14,17 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
 import { webViewPubSub } from 'renderer/lib/pubsub';
-import { selectAddress, setAddress } from 'renderer/store/features/renderer';
+import {
+  selectAddress,
+  selectPageTitle,
+  setAddress,
+} from 'renderer/store/features/renderer';
+import useKeyboardShortcut, {
+  SHORTCUT_CHANNEL,
+} from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
 import AuthModal from './AuthModal';
 import SuggestionList from './SuggestionList';
+import Bookmark from './BookmarkButton';
 
 export const ADDRESS_BAR_EVENTS = {
   DELETE_COOKIES: 'DELETE_COOKIES',
@@ -27,6 +36,7 @@ const AddressBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [typedAddress, setTypedAddress] = useState<string>('');
   const [isSuggesting, setIsSuggesting] = useState<boolean>(false);
+  const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [homepage, setHomepage] = useState<string>(
     window.electron.store.get('homepage')
   );
@@ -39,6 +49,7 @@ const AddressBar = () => {
     useState<PermissionRequestArg | null>(null);
   const [authRequest, setAuthRequest] = useState<AuthRequestArgs | null>(null);
   const address = useSelector(selectAddress);
+  const pageTitle = useSelector(selectPageTitle);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -130,6 +141,32 @@ const AddressBar = () => {
     inputRef.current?.blur();
   };
 
+  const handleDragEnter = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragExit = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const draggedText = e.dataTransfer.getData('text/plain');
+    try {
+      const draggedUrl = new URL(draggedText);
+      if (draggedUrl.protocol === 'http:' || draggedUrl.protocol === 'https:') {
+        dispatchAddress(draggedUrl.href);
+      } else {
+        throw new Error('Invalid URL');
+      }
+    } catch (err) {
+      console.log('Invalid URL');
+    }
+  };
+
   const deleteCookies = async () => {
     setDeleteCookiesLoading(true);
     await webViewPubSub.publish(ADDRESS_BAR_EVENTS.DELETE_COOKIES);
@@ -148,11 +185,35 @@ const AddressBar = () => {
     setDeleteCacheLoading(false);
   };
 
+  const deleteAll = () => {
+    deleteCache();
+    deleteStorage();
+    deleteCookies();
+  };
+
+  const handleEditUrl = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  };
+
   const isHomepage = address === homepage;
+
+  useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_CACHE, deleteCache);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_STORAGE, deleteStorage);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_COOKIES, deleteCookies);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_ALL, deleteAll);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.EDIT_URL, handleEditUrl);
 
   return (
     <>
-      <div className="relative z-10 w-full flex-grow">
+      <div
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragExit}
+        onDrop={handleDrop}
+        className="relative z-10 w-full flex-grow"
+      >
         <div className="absolute top-2 left-2 mr-2 flex flex-col items-start">
           <Icon icon="mdi:web" className="text-gray-500" />
           {permissionRequest != null ? (
@@ -191,7 +252,7 @@ const AddressBar = () => {
           ref={inputRef}
           type="text"
           className={cx(
-            'w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-20 dark:bg-slate-900',
+            'w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-40 dark:bg-slate-900',
             {
               'rounded-tl-lg rounded-tr-lg rounded-bl-none rounded-br-none outline-none':
                 isSuggesting,
@@ -206,6 +267,14 @@ const AddressBar = () => {
             }, 100);
           }}
         />
+        <div
+          className={`${
+            isDragOver ? 'opacity-100' : 'opacity-0'
+          } pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full border-spacing-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-[#37b598] bg-[#92e2ce] duration-100 dark:bg-[#86e0ca] dark:text-slate-900`}
+        >
+          <Icon icon="mdi:plus" />
+          <p className="text-sm font-semibold">Drop URL Here</p>
+        </div>
         <div className="absolute inset-y-0 right-0 mr-2 flex items-center">
           <Button
             className="rounded-full"
@@ -240,6 +309,7 @@ const AddressBar = () => {
           >
             <Icon icon={isHomepage ? 'mdi:home' : 'mdi:home-outline'} />
           </Button>
+          <Bookmark pageTitle={pageTitle} currentAddress={address} />
         </div>
         {isSuggesting ? (
           <SuggestionList match={typedAddress} onEnter={onEnter} />

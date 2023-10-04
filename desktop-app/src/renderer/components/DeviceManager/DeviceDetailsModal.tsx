@@ -1,4 +1,5 @@
 import { Device } from 'common/deviceList';
+import { v4 as uuidv4 } from 'uuid';
 import { useEffect, useState } from 'react';
 import Button from '../Button';
 import Input from '../Input';
@@ -7,7 +8,7 @@ import Select from '../Select';
 
 interface Props {
   device?: Device;
-  onAddDevice: (device: Device, isNew: boolean) => Promise<void>;
+  onSaveDevice: (device: Device, isNew: boolean) => Promise<void>;
   onRemoveDevice: (device: Device) => void;
   existingDevices: Device[];
   isCustom: boolean;
@@ -16,7 +17,7 @@ interface Props {
 }
 
 const DeviceDetailsModal = ({
-  onAddDevice,
+  onSaveDevice,
   onRemoveDevice,
   existingDevices,
   device,
@@ -59,16 +60,22 @@ const DeviceDetailsModal = ({
   }, [device]);
 
   useEffect(() => {
-    if (type === 'phone' || type === 'tablet') {
-      setUserAgent(
-        'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1'
-      );
+    const desktopUA =
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36';
+    const phoneUA =
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1';
+    if (
+      (type === 'phone' || type === 'tablet') &&
+      (userAgent === desktopUA || userAgent === '')
+    ) {
+      setUserAgent(phoneUA);
       setIsMobileCapable(true);
       setIsTouchCapable(true);
-    } else {
-      setUserAgent(
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
-      );
+    } else if (
+      type === 'notebook' &&
+      (userAgent === phoneUA || userAgent === '')
+    ) {
+      setUserAgent(desktopUA);
       setIsMobileCapable(false);
       setIsTouchCapable(false);
     }
@@ -78,7 +85,11 @@ const DeviceDetailsModal = ({
   const isCustom = device != null ? device.isCustom ?? false : true;
 
   const handleAddDevice = async (): Promise<void> => {
-    if (device == null && existingDevices.find((d) => d.name === name)) {
+    const existingDevice = existingDevices.find((d) => d.name === name);
+    const doesDeviceExist =
+      existingDevice != null && (isNew || existingDevice.id !== device.id);
+
+    if (doesDeviceExist) {
       // eslint-disable-next-line no-alert
       return alert(
         'Device With the name already exists, try with a different name'
@@ -91,8 +102,9 @@ const DeviceDetailsModal = ({
     if (isMobileCapable) {
       capabilities.push('mobile');
     }
-    await onAddDevice(
+    await onSaveDevice(
       {
+        id: device?.id ?? uuidv4(),
         name,
         width,
         height,
@@ -104,7 +116,7 @@ const DeviceDetailsModal = ({
         capabilities,
         isCustom,
       },
-      device == null
+      isNew
     );
 
     return onClose();
@@ -125,11 +137,8 @@ const DeviceDetailsModal = ({
               placeholder="My Mobile Device"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              disabled={!isCustom || !isNew}
+              disabled={!isCustom}
             />
-            {!isNew && isCustom ? (
-              <p>Note: Device name cannot be modified once created!</p>
-            ) : null}
             <Input
               label="Device Width"
               type="number"

@@ -87,6 +87,14 @@ export const subMenuHelp: MenuItemConstructorOptions = {
       },
     },
     {
+      label: 'Sponsor Responsively',
+      click() {
+        shell.openExternal(
+          'https://responsively.app/sponsor?utm_source=app&utm_medium=menu&utm_campaign=sponsor'
+        );
+      },
+    },
+    {
       type: 'separator',
     },
     {

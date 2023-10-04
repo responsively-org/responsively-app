@@ -60,7 +60,7 @@ const ReleaseNotes = () => {
       isOpen={isOpen}
       onClose={closeAndMarkAsRead}
       title={
-        <span>
+        <span className="pl-2">
           What&apos;s New in <span className="font-bold">v{version}</span>{' '}
           &nbsp;&nbsp;🎉
         </span>
@@ -100,25 +100,42 @@ const ReleaseNotes = () => {
             {content}
           </ReactMarkdown>
         </div>
-        <div className="mt-10 flex justify-between gap-2 px-8">
-          <Button onClick={closeAndMarkAsRead} isActionButton>
-            Close
-          </Button>
+        <div className="mt-10 flex justify-between gap-12">
+          <div className="flex gap-1">
+            <Button
+              onClick={() => {
+                window.electron.ipcRenderer.sendMessage(
+                  IPC_MAIN_CHANNELS.OPEN_EXTERNAL,
+                  {
+                    url: `https://github.com/responsively-org/responsively-app/releases/tag/v${version}`,
+                  }
+                );
+                closeAndMarkAsRead();
+              }}
+              tabIndex={0}
+              isActionButton
+              isTextButton
+            >
+              Release Notes
+            </Button>
+            <Button onClick={closeAndMarkAsRead} isActionButton isTextButton>
+              Close
+            </Button>
+          </div>
+
           <Button
             onClick={() => {
               window.electron.ipcRenderer.sendMessage(
                 IPC_MAIN_CHANNELS.OPEN_EXTERNAL,
                 {
-                  url: `https://github.com/responsively-org/responsively-app/releases/tag/v${version}`,
+                  url: 'https://responsively.app/sponsor?utm_source=app&utm_medium=release_notes&utm_campaign=sponsor',
                 }
               );
-              closeAndMarkAsRead();
             }}
-            isActionButton
-            isActive
-            tabIndex={0}
+            isPrimary
+            isTextButton
           >
-            Full Release Notes
+            Support Responsively App
           </Button>
         </div>
       </>
