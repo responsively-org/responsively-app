@@ -158,7 +158,7 @@
     "@types/terser-webpack-plugin": "^5.0.4",
     "@types/uuid": "^9.0.2",
     "@types/webpack-bundle-analyzer": "^4.4.2",
-    "@typescript-eslint/eslint-plugin": "^5.33.1",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.60.1",
     "browserslist-config-erb": "^0.0.3",
     "chalk": "^4.1.2",
