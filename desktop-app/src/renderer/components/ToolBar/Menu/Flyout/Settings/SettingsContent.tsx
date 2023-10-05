@@ -1,6 +1,8 @@
 import { useId, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import Button from 'renderer/components/Button';
+import { selectDarkMode } from 'renderer/store/features/ui';
 
 interface Props {
   onClose: () => void;
@@ -11,6 +13,7 @@ export const SettingsContent = ({ onClose }: Props) => {
   const [screenshotSaveLocation, setScreenshotSaveLocation] = useState<string>(
     window.electron.store.get('userPreferences.screenshot.saveLocation')
   );
+  const darkMode = useSelector(selectDarkMode);
 
   const onSave = () => {
     if (screenshotSaveLocation === '' || screenshotSaveLocation == null) {
@@ -36,7 +39,9 @@ export const SettingsContent = ({ onClose }: Props) => {
             <input
               type="text"
               id={id}
-              className="rounded-md border border-gray-300 p-2"
+              className={`rounded-md border border-gray-300 p-2 ${
+                darkMode ? 'bg-slate-700' : 'bg-white'
+              }`}
               value={screenshotSaveLocation}
               onChange={(e) => setScreenshotSaveLocation(e.target.value)}
             />
