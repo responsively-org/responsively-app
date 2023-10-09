@@ -130,10 +130,7 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 
 ## Contribute
 
-1. Ensure you have installed `node` and `yarn`
-2. Go to `desktop-app` folder
-3. Run `yarn` to install dependencies
-4. Run `yarn dev`. This will start the app for local development with live reloading.
+To get started with contributing your awesome ideas to Responsively, follow the [comprehensive guide here](https://github.com/responsively-org/responsively-app/blob/main/CONTRIBUTING.md)!
 
 ## Get in touch
 
