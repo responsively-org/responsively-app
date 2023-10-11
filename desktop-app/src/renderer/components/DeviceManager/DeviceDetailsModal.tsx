@@ -85,7 +85,11 @@ const DeviceDetailsModal = ({
   const isCustom = device != null ? device.isCustom ?? false : true;
 
   const handleAddDevice = async (): Promise<void> => {
-    if (device == null && existingDevices.find((d) => d.name === name)) {
+    const existingDevice = existingDevices.find((d) => d.name === name);
+    const doesDeviceExist =
+      existingDevice != null && (isNew || existingDevice.id !== device.id);
+
+    if (doesDeviceExist) {
       // eslint-disable-next-line no-alert
       return alert(
         'Device With the name already exists, try with a different name'
@@ -133,11 +137,8 @@ const DeviceDetailsModal = ({
               placeholder="My Mobile Device"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              disabled={!isCustom || !isNew}
+              disabled={!isCustom}
             />
-            {!isNew && isCustom ? (
-              <p>Note: Device name cannot be modified once created!</p>
-            ) : null}
             <Input
               label="Device Width"
               type="number"
