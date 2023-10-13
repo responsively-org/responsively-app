@@ -17,8 +17,8 @@
   
 
 
-  <a href="https://responsively.app/join-slack" target="_blank">
-    <img src="https://img.shields.io/badge/Join%20on-Slack-brightgreen?logo=slack" alt="Slack">
+  <a href="https://responsively.app/join-discord" target="_blank">
+    <img src="https://img.shields.io/badge/Join%20-Discord-blue?logo=discord&logoColor=white" alt="Discord">
   </a>
 
   <a href="https://xscode.com/manojvivek/responsively-app" target="_blank">
