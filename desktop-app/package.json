@@ -119,7 +119,7 @@
     "emitter": "^0.0.5",
     "mousetrap": "^1.6.5",
     "os": "^0.1.2",
-    "postcss": "^8.4.14",
+    "postcss": "^8.4.31",
     "re-resizable": "^6.9.9",
     "react": "^18.2.0",
     "react-detect-click-outside": "^1.1.7",
