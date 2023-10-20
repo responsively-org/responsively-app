@@ -17,8 +17,8 @@
   
 
 
-  <a href="https://responsively.app/join-slack" target="_blank">
-    <img src="https://img.shields.io/badge/Join%20on-Slack-brightgreen?logo=slack" alt="Slack">
+  <a href="https://responsively.app/join-discord" target="_blank">
+    <img src="https://img.shields.io/badge/Join%20-Discord-blue?logo=discord&logoColor=white" alt="Discord">
   </a>
 
   <a href="https://xscode.com/manojvivek/responsively-app" target="_blank">
@@ -101,7 +101,7 @@ Follow us on Twitter for future updates - [![Twitter Follow](https://img.shields
 
 Install the handy browser extension to easily send links from your browser to the app and preview instantly.
 
-- [Download for Chrome](https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj) <a href="https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj" target="_blank"><img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/users/jhphiidjkooiaollfiknkokgodbaddcj"></a>
+- [Download for Chrome](https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj) <a href="https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj" target="_blank"><img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/users/jhphiidjkooiaollfiknkokgodbaddcj?color=blue"></a>
 - [Download for Firefox](https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/) <a href="https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/" target="_blank"><img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/responsively-helper"></a>
 - [Download for Edge](https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn) <a href="https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn" target="_blank"><img alt="Edge Add-on" src="https://img.shields.io/badge/dynamic/json?label=users&query=%24.activeInstallCount&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fooiejjgflcgkbbehheengalibfehaojn"></a>
 
@@ -253,6 +253,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     <tr>
       <td align="center" valign="top" width="20%"><a href="https://github.com/gauravsingh94"><img src="https://avatars.githubusercontent.com/u/99260988?v=4?s=100" width="100px;" alt="Gaurav Singh"/><br /><sub><b>Gaurav Singh</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=gauravsingh94" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/NishidhJain"><img src="https://avatars.githubusercontent.com/u/61869195?v=4?s=100" width="100px;" alt="Nishidh Jain"/><br /><sub><b>Nishidh Jain</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=NishidhJain" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/mishrasamiksha"><img src="https://avatars.githubusercontent.com/u/38784342?v=4?s=100" width="100px;" alt="Samiksha Mishra"/><br /><sub><b>Samiksha Mishra</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=mishrasamiksha" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
