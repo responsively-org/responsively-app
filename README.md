@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://twitter.com/ResponsivelyApp" target="_blank">
-    <img src="https://img.shields.io/twitter/follow/responsivelyApp?color=26A0ED&label=Follow&logo=twitter&logoColor=white&style=flat" alt="Twitter">
+    <img src="https://img.shields.io/badge/Follow-1DA1F2?logo=x&logoColor=white&color=grey" alt="Twitter">
   </a>
   
   <a href="#contributors-" target="_blank">
