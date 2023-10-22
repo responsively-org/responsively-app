@@ -12,6 +12,10 @@ import path from 'path';
 import { app, BrowserWindow, shell, screen, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import {
+  setupTitlebar,
+  attachTitlebarToWindow,
+} from 'custom-electron-titlebar/main';
 import cli from './cli';
 import { PROTOCOL } from '../common/constants';
 import MenuBuilder from './menu';
@@ -100,6 +104,8 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+setupTitlebar();
+
 const createWindow = async () => {
   windowShownOnOpen = false;
   await installExtensions();
@@ -119,7 +125,9 @@ const createWindow = async () => {
     width,
     height,
     icon: getAssetPath('icon.png'),
+    titleBarStyle: 'hidden',
     webPreferences: {
+      sandbox: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
