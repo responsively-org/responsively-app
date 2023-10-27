@@ -149,6 +149,7 @@ const schema = {
         default: {},
       },
     },
+    default: {},
   },
   webPermissions: {
     type: 'array',

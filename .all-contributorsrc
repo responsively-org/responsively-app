@@ -640,6 +640,78 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jeffbowen",
+      "name": "Jeff Bowen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/272795?v=4",
+      "profile": "https://refer.codes/jeff",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ParamBirje",
+      "name": "Param Birje",
+      "avatar_url": "https://avatars.githubusercontent.com/u/87022870?v=4",
+      "profile": "https://github.com/ParamBirje",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "prajjwalyd",
+      "name": "Prajjwal Yadav",
+      "avatar_url": "https://avatars.githubusercontent.com/u/111794524?v=4",
+      "profile": "https://github.com/prajjwalyd",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "lyncasterc",
+      "name": "Steven Cabrera",
+      "avatar_url": "https://avatars.githubusercontent.com/u/49458912?v=4",
+      "profile": "https://github.com/lyncasterc",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "negar-75",
+      "name": "negar nasiri",
+      "avatar_url": "https://avatars.githubusercontent.com/u/113235504?v=4",
+      "profile": "https://github.com/negar-75",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "gauravsingh94",
+      "name": "Gaurav Singh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/99260988?v=4",
+      "profile": "https://github.com/gauravsingh94",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "NishidhJain",
+      "name": "Nishidh Jain",
+      "avatar_url": "https://avatars.githubusercontent.com/u/61869195?v=4",
+      "profile": "https://github.com/NishidhJain",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mishrasamiksha",
+      "name": "Samiksha Mishra",
+      "avatar_url": "https://avatars.githubusercontent.com/u/38784342?v=4",
+      "profile": "https://github.com/mishrasamiksha",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 5,
