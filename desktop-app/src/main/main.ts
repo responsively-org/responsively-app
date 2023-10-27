@@ -104,7 +104,13 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-setupTitlebar();
+// Custom titlebar config
+const customTitlebarStatus = store.get(
+  'userPreferences.customTitlebar'
+) as boolean;
+if (customTitlebarStatus) {
+  setupTitlebar();
+}
 
 const createWindow = async () => {
   windowShownOnOpen = false;
@@ -125,9 +131,9 @@ const createWindow = async () => {
     width,
     height,
     icon: getAssetPath('icon.png'),
-    titleBarStyle: 'hidden',
+    titleBarStyle: customTitlebarStatus ? 'hidden' : 'default',
     webPreferences: {
-      sandbox: false,
+      sandbox: !customTitlebarStatus,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),

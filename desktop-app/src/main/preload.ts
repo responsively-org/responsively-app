@@ -45,8 +45,16 @@ window.onerror = function (errorMsg, url, lineNumber) {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-  // eslint-disable-next-line no-new
-  new Titlebar({
-    backgroundColor: TitlebarColor.fromHex('#37b598'),
-  });
+  const customTitlebarStatus = ipcRenderer.sendSync(
+    'electron-store-get',
+    'userPreferences.customTitlebar'
+  ) as boolean;
+
+  if (customTitlebarStatus) {
+    // eslint-disable-next-line no-new
+    new Titlebar({
+      backgroundColor: TitlebarColor.fromHex('#0f172a'), // slate-900
+      itemBackgroundColor: TitlebarColor.fromHex('#1e293b'), // slate-800
+    });
+  }
 });
