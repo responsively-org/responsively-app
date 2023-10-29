@@ -15,12 +15,3 @@
 html {
   user-select: none;
 }
-
-/* CET - Custom Electron Titlebar styles */
-.cet-title {
-  color: white;
-}
-
-.cet-menubar {
-  color: white;
-}

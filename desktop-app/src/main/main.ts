@@ -104,11 +104,11 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-// Custom titlebar config
+// Custom titlebar config for windows
 const customTitlebarStatus = store.get(
   'userPreferences.customTitlebar'
 ) as boolean;
-if (customTitlebarStatus) {
+if (customTitlebarStatus && process.platform === 'win32') {
   setupTitlebar();
 }
 
@@ -131,9 +131,11 @@ const createWindow = async () => {
     width,
     height,
     icon: getAssetPath('icon.png'),
-    titleBarStyle: customTitlebarStatus ? 'hidden' : 'default',
+    titleBarStyle:
+      customTitlebarStatus && process.platform === 'win32'
+        ? 'hidden'
+        : 'default',
     webPreferences: {
-      sandbox: !customTitlebarStatus,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
