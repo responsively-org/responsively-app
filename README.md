@@ -1,3 +1,4 @@
+<div id="top" ></div>
 <div align="center">
   <img src="https://responsively.app/assets/img/logo.png" alt="Responsively Logo" width="150">
   <h1>Responsively App <a href="https://github.com/responsively-org/responsively-app/releases/latest" target="_blank"><img alt="GitHub release" src="https://img.shields.io/github/v/release/responsively-org/responsively-app"></a></h1>
@@ -264,3 +265,6 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+
+<p align="right"><a href="#top">🔼 Back to top</a></p>
