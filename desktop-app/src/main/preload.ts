@@ -50,7 +50,7 @@ window.addEventListener('DOMContentLoaded', () => {
     'userPreferences.customTitlebar'
   ) as boolean;
 
-  if (customTitlebarStatus) {
+  if (customTitlebarStatus && process.platform === 'win32') {
     // eslint-disable-next-line no-new
     new Titlebar({
       backgroundColor: TitlebarColor.fromHex('#0f172a'), // slate-900

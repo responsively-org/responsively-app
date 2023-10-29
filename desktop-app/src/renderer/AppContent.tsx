@@ -13,6 +13,10 @@ import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
 import ReleaseNotes from './components/ReleaseNotes';
 import { Sponsorship } from './components/Sponsorship';
 
+if ((navigator as any).userAgentData.platform === 'Windows') {
+  import('./titlebar-styles.css');
+}
+
 const Browser = () => {
   return (
     <div className="h-screen gap-2 overflow-hidden pt-2">
