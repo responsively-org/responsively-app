@@ -4988,6 +4988,11 @@ csstype@^3.0.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.1.tgz#841b532c45c758ee546a11d5bd7b7b473c8c30b9"
   integrity sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==
 
+custom-electron-titlebar@^4.2.7:
+  version "4.2.7"
+  resolved "https://registry.yarnpkg.com/custom-electron-titlebar/-/custom-electron-titlebar-4.2.7.tgz#a5efa3ce85e2316809e4d32c7042855fbdade151"
+  integrity sha512-5sROnS5jH8jaFsjMwID7aPwnohBJ4HU0dSx81qSGAaznnblc3067D8pyl/zOwj/WosoOPHV2837jbT3j4whvHw==
+
 damerau-levenshtein@^1.0.6, damerau-levenshtein@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/damerau-levenshtein/-/damerau-levenshtein-1.0.8.tgz#b43d286ccbd36bc5b2f7ed41caf2d0aba1f8a6e7"

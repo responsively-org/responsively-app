@@ -1,6 +1,7 @@
 import { useId, useState } from 'react';
 
 import Button from 'renderer/components/Button';
+import Toggle from 'renderer/components/Toggle';
 
 interface Props {
   onClose: () => void;
@@ -10,6 +11,9 @@ export const SettingsContent = ({ onClose }: Props) => {
   const id = useId();
   const [screenshotSaveLocation, setScreenshotSaveLocation] = useState<string>(
     window.electron.store.get('userPreferences.screenshot.saveLocation')
+  );
+  const [enableCustomTitlebar, setEnableCustomTitlebar] = useState<boolean>(
+    window.electron.store.get('userPreferences.customTitlebar')
   );
 
   const onSave = () => {
@@ -23,6 +27,11 @@ export const SettingsContent = ({ onClose }: Props) => {
       'userPreferences.screenshot.saveLocation',
       screenshotSaveLocation
     );
+    window.electron.store.set(
+      'userPreferences.customTitlebar',
+      enableCustomTitlebar
+    );
+
     onClose();
   };
 
@@ -46,6 +55,31 @@ export const SettingsContent = ({ onClose }: Props) => {
           </p>
         </div>
       </div>
+
+      {(navigator as any).userAgentData.platform === 'Windows' && (
+        <>
+          <h2>Preferences</h2>
+          <div className="my-4 flex flex-col space-y-4 text-sm">
+            <div className="flex w-1/2 items-center gap-5 space-y-2">
+              <div>
+                <p className="text-sm">Menus in Titlebar</p>
+                <p className="text-[10px] italic leading-snug tracking-wide text-blue-400">
+                  Restart Required
+                </p>
+              </div>
+              <Toggle
+                isOn={enableCustomTitlebar}
+                onChange={(value) => {
+                  setEnableCustomTitlebar(value.target.checked);
+                }}
+              />
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Makes the titlebar compact by including the Menu inside it.
+            </p>
+          </div>
+        </>
+      )}
 
       <Button
         className="mt-6 px-5 py-1"
