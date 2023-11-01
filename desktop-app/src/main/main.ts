@@ -12,10 +12,7 @@ import path from 'path';
 import { app, BrowserWindow, shell, screen, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import {
-  setupTitlebar,
-  attachTitlebarToWindow,
-} from 'custom-electron-titlebar/main';
+import { setupTitlebar } from 'custom-electron-titlebar/main';
 import cli from './cli';
 import { PROTOCOL } from '../common/constants';
 import MenuBuilder from './menu';
@@ -146,12 +143,6 @@ const createWindow = async () => {
   initHttpBasicAuthHandlers(mainWindow);
   const webPermissionHandlers = WebPermissionHandlers(mainWindow);
 
-  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
-    (details, callback) => {
-      callback({ requestHeaders: { Origin: '*', ...details.requestHeaders } });
-    }
-  );
-
   // Add BROWSER_SYNC_HOST to the allowed Content-Security-Policy origins
   mainWindow.webContents.session.webRequest.onHeadersReceived(
     async (details, callback) => {
@@ -160,38 +151,32 @@ const createWindow = async () => {
 
         cspHeader = cspHeader.replace(
           'default-src',
-          `default-src ${BROWSER_SYNC_HOST} raw.githubusercontent.com`
+          `default-src ${BROWSER_SYNC_HOST}`
         );
         cspHeader = cspHeader.replace(
           'script-src',
-          `script-src ${BROWSER_SYNC_HOST} raw.githubusercontent.com`
+          `script-src ${BROWSER_SYNC_HOST}`
         );
         cspHeader = cspHeader.replace(
           'script-src-elem',
-          `script-src-elem ${BROWSER_SYNC_HOST} raw.githubusercontent.com`
+          `script-src-elem ${BROWSER_SYNC_HOST}`
         );
         cspHeader = cspHeader.replace(
           'connect-src',
-          `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST} raw.githubusercontent.com`
+          `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST}`
         );
         cspHeader = cspHeader.replace(
           'child-src',
-          `child-src ${BROWSER_SYNC_HOST} raw.githubusercontent.com`
+          `child-src ${BROWSER_SYNC_HOST}`
         );
         cspHeader = cspHeader.replace(
           'worker-src',
-          `worker-src ${BROWSER_SYNC_HOST} raw.githubusercontent.com`
+          `worker-src ${BROWSER_SYNC_HOST}`
         ); // Required when/if the browser-sync script is eventually relocated to a web worker
 
         details.responseHeaders['content-security-policy'][0] = cspHeader;
       }
-
-      callback({
-        responseHeaders: {
-          'Access-Control-Allow-Origin': '*',
-          ...details.responseHeaders,
-        },
-      });
+      callback({ responseHeaders: details.responseHeaders });
     }
   );
 
@@ -253,7 +238,7 @@ const createWindow = async () => {
   });
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+    new AppUpdater();
 };
 
 app.on('open-url', async (event, url) => {
