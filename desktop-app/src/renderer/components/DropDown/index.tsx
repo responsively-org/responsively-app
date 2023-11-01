@@ -18,7 +18,7 @@ type OptionOrSeparator = Option | Separator;
 interface Props {
   label: JSX.Element | string;
   options: OptionOrSeparator[];
-  className: string | null;
+  className?: string | null;
 }
 
 export function DropDown({ label, options, className }: Props) {
