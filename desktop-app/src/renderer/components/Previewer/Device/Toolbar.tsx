@@ -420,17 +420,12 @@ function handleMouseMove(){
                 label: (
                   <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
                     <span
-                      className={`${
+                      className={`ml-2 ${
                         cssSelector?.name === x.toLowerCase()
-                          ? 'ml-2 font-semibold text-black'
-                          : 'ml-2'
+                          ? 'font-semibold text-black'
+                          : ''
                       }`}
                     >
-                      {cssSelector?.name === x.toLowerCase() ? (
-                        <Icon icon="codicon:chevron-right" fontSize={14} />
-                      ) : (
-                        <></>
-                      )}{' '}
                       {x}
                     </span>
                   </div>
