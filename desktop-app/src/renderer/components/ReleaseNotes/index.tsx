@@ -6,22 +6,38 @@ import ReactMarkdown from 'react-markdown';
 import Button from '../Button';
 import Modal from '../Modal';
 
-const ReleaseNotes = () => {
+export const isReleaseNotesUnseen = async () => {
+  const appMeta = await window.electron.ipcRenderer.invoke<
+    object,
+    AppMetaResponse
+  >(IPC_MAIN_CHANNELS.APP_META, {});
+  const seenVersions = window.electron.store.get('seenReleaseNotes');
+  if (seenVersions && seenVersions.includes(appMeta.appVersion)) {
+    return false;
+  }
+  if (!seenVersions || seenVersions.length === 0) {
+    // First time user, so we don't show release notes
+    window.electron.store.set('seenReleaseNotes', [appMeta.appVersion]);
+    return false;
+  }
+  return true;
+};
+
+export const ReleaseNotes = () => {
   const [version, setVersion] = useState<string>('');
   const [content, setContent] = useState<string | undefined>();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
+      if (!isReleaseNotesUnseen()) {
+        return;
+      }
       await new Promise((resolve) => setTimeout(resolve, 1000));
       const appMeta = await window.electron.ipcRenderer.invoke<
         object,
         AppMetaResponse
       >(IPC_MAIN_CHANNELS.APP_META, {});
-      const seenVersions = window.electron.store.get('seenReleaseNotes');
-      if (seenVersions && seenVersions.includes(appMeta.appVersion)) {
-        return;
-      }
       setVersion(appMeta.appVersion);
       const release = await fetch(
         `https://api.github.com/repos/responsively-org/responsively-app/releases/tags/v${appMeta.appVersion}`
@@ -142,5 +158,3 @@ const ReleaseNotes = () => {
     </Modal>
   );
 };
-
-export default ReleaseNotes;
