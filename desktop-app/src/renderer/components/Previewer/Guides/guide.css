@@ -1,0 +1,26 @@
+.box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  background: #444;
+  box-sizing: border-box;
+  z-index: 21;
+}
+.box:before,
+.box:after {
+  position: absolute;
+  content: '';
+  background: #777;
+}
+.box:before {
+  width: 1px;
+  height: 100%;
+  left: 100%;
+}
+.box:after {
+  height: 1px;
+  width: 100%;
+  top: 100%;
+}

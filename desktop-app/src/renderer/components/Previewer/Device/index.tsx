@@ -43,6 +43,8 @@ import { PREVIEW_LAYOUTS } from 'common/constants';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
+import { Coordinates } from '../../../store/features/ruler';
+import GuideGrid from '../Guides';
 
 interface Props {
   device: IDevice;
@@ -82,6 +84,13 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     width = height;
     height = temp;
   }
+
+  const [coordinates, setCoordinates] = useState<Coordinates>({
+    deltaX: 0,
+    deltaY: 0,
+    innerWidth: width * 2,
+    innerHeight: height * 2,
+  });
 
   const registerNavigationHandlers = useCallback(() => {
     webViewPubSub.subscribe(NAVIGATION_EVENTS.RELOAD, () => {
@@ -223,7 +232,16 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       webview.removeEventListener('did-navigate', didNavigateHandler);
     });
 
-    const ipc̨MessageHandler = (e: Electron.IpcMessageEvent) => {
+    const ipcMessageHandler = (e: Electron.IpcMessageEvent) => {
+      if (e.channel === 'pass-scroll-data') {
+        console.log('ipcMessageHandler', e.args[0].innerHeight);
+        setCoordinates({
+          deltaX: e.args[0].coordinates.x,
+          deltaY: e.args[0].coordinates.y,
+          innerHeight: e.args[0].innerHeight,
+          innerWidth: e.args[0].innerWidth,
+        });
+      }
       if (e.channel === 'context-menu-command') {
         const { command, arg } = e.args[0];
         switch (command) {
@@ -242,9 +260,9 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         }
       }
     };
-    webview.addEventListener('ipc-message', ipc̨MessageHandler);
+    webview.addEventListener('ipc-message', ipcMessageHandler);
     handlerRemovers.push(() => {
-      webview.removeEventListener('ipc-message', ipc̨MessageHandler);
+      webview.removeEventListener('ipc-message', ipcMessageHandler);
     });
 
     const didStartLoadingHandler = () => {
@@ -453,25 +471,31 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         style={{ height: scaledHeight, width: scaledWidth }}
         className="relative origin-top-left bg-white"
       >
-        <webview
-          id={device.name}
-          src={address}
-          style={{
-            height,
-            width,
-            display: 'inline-flex',
-            transform: `scale(${zoomfactor})`,
-          }}
-          ref={ref}
-          className="origin-top-left"
-          /* eslint-disable-next-line react/no-unknown-property */
-          preload={`file://${window.responsively.webviewPreloadPath}`}
-          data-scale-factor={zoomfactor}
-          /* eslint-disable-next-line react/no-unknown-property */
-          allowpopups={isPrimary ? ('true' as any) : undefined}
-          /* eslint-disable-next-line react/no-unknown-property */
-          useragent={device.userAgent}
-        />
+        <GuideGrid
+          height={scaledHeight}
+          width={scaledWidth}
+          coordinates={coordinates}
+        >
+          <webview
+            id={device.name}
+            src={address}
+            style={{
+              height,
+              width,
+              display: 'inline-flex',
+              transform: `scale(${zoomfactor})`,
+            }}
+            ref={ref}
+            className="origin-top-left"
+            /* eslint-disable-next-line react/no-unknown-property */
+            preload={`file://${window.responsively.webviewPreloadPath}`}
+            data-scale-factor={zoomfactor}
+            /* eslint-disable-next-line react/no-unknown-property */
+            allowpopups={isPrimary ? ('true' as any) : undefined}
+            /* eslint-disable-next-line react/no-unknown-property */
+            useragent={device.userAgent}
+          />
+        </GuideGrid>
         {screenshotInProgress ? (
           <div
             className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"

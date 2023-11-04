@@ -15,6 +15,7 @@ import {
   selectCss,
   setCss,
 } from '../../../store/features/renderer';
+import { a11ycss, guides, layout } from './assets';
 
 interface Props {
   webview: Electron.WebviewTag | null;
@@ -44,6 +45,13 @@ const Toolbar = ({
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
+
+  const debuggers = ['Layout', 'A11yCss'];
+
+  const debugStylesheet: { [key: string]: string } = {
+    layout,
+    a11ycss,
+  };
 
   const redgreen = [
     'Deuteranopia',
@@ -300,6 +308,63 @@ function handleMouseMove(){
     setFullScreenshotLoading(false);
   };
 
+  const layoutDebug = async (cssPath: string) => {
+    if (webview === null) {
+      return;
+    }
+
+    const css = debugStylesheet[cssPath];
+
+    if (cssSelector !== undefined) {
+      if (cssSelector.css === css) {
+        await webview.removeInsertedCSS(cssSelector.key);
+        dispatch(setCss(undefined));
+        return;
+      }
+      await webview.removeInsertedCSS(cssSelector.key);
+      dispatch(setCss(undefined));
+    }
+
+    try {
+      const key = await webview.insertCSS(css);
+      dispatch(setCss({ key, css, name: cssPath }));
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error inserting css', error);
+      dispatch(setCss(undefined));
+    }
+  };
+
+  const showRulers = async () => {
+    if (webview === null) {
+      return;
+    }
+
+    const css = guides;
+
+    if (cssSelector !== undefined) {
+      if (cssSelector.css === css) {
+        webview.reload();
+        dispatch(setCss(undefined));
+        return;
+      }
+      webview.reload();
+      dispatch(setCss(undefined));
+    }
+
+    try {
+      const key = await webview.executeJavaScript(guides);
+      // await webview.executeJavaScript(
+      //   `const guides=new Guides(document.body,{type:"horizontal"}).on("changeGuides",e=>{console.log(e.guides)});let scrollX=0,scrollY=0;window.addEventListener("resize",()=>{guides.resize()}),window.addEventListener("wheel",e=>{scrollX+=e.deltaX,scrollY+=e.deltaY,guides.scrollGuides(scrollY),guides.scroll(scrollX)});`
+      // );
+      dispatch(setCss({ key, css, name: 'guides' }));
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error inserting js', error);
+      dispatch(setCss(undefined));
+    }
+  };
+
   const rotate = async () => {
     setRotated(!rotated);
     onRotate(!rotated);
@@ -354,7 +419,9 @@ function handleMouseMove(){
             }
           />
         </Button>
-
+        <Button onClick={showRulers} title="Show rulers">
+          <Icon icon="tdesign:measurement-1" />
+        </Button>
         <DropDown
           className="text-xs"
           label={<Icon icon="codicon:debug-line-by-line" fontSize={18} />}
@@ -362,7 +429,35 @@ function handleMouseMove(){
             {
               label: (
                 <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
-                  <span className="font-bold">A11y Tools</span>
+                  <span className="font-bold">Debug</span>
+                </div>
+              ),
+              onClick: null,
+            },
+            ...debuggers.map((x: string) => {
+              return {
+                label: (
+                  <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+                    <span
+                      className={`ml-2 ${
+                        cssSelector?.name === x.toLowerCase()
+                          ? 'font-semibold text-black'
+                          : ''
+                      }`}
+                    >
+                      {x}
+                    </span>
+                  </div>
+                ),
+                onClick: () => {
+                  layoutDebug(x.toLowerCase());
+                },
+              };
+            }),
+            {
+              label: (
+                <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+                  <span className="font-bold">Accessibility Tools</span>
                 </div>
               ),
               onClick: null,

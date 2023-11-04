@@ -198,7 +198,7 @@ const schema = {
   },
   homepage: {
     type: 'string',
-    default: 'https://www.google.com/',
+    default: 'https://www.example.org/',
   },
   seenReleaseNotes: {
     type: 'array',
