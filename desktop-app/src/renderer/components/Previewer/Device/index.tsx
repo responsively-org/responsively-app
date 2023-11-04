@@ -234,7 +234,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
 
     const ipcMessageHandler = (e: Electron.IpcMessageEvent) => {
       if (e.channel === 'pass-scroll-data') {
-        console.log('ipcMessageHandler', e.args[0].innerHeight);
+        // console.log('ipcMessageHandler', e.args[0].innerHeight);
         setCoordinates({
           deltaX: e.args[0].coordinates.x,
           deltaY: e.args[0].coordinates.y,
@@ -256,6 +256,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             break;
           }
           default:
+            // eslint-disable-next-line no-console
             console.log('Unhandled context menu command', command);
         }
       }
