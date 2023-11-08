@@ -377,7 +377,7 @@ function handleMouseMove(){
             },
             {
               label: (
-                <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+                <div className="flex w-full flex-shrink-0 items-center justify-start gap-12 whitespace-nowrap">
                   <span className="ml-1 font-semibold">
                     Red-green deficiency
                   </span>
@@ -388,7 +388,12 @@ function handleMouseMove(){
             ...redgreen.map((x: string) => {
               return {
                 label: (
-                  <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+                  <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
+                    {cssSelector?.name === x.toLowerCase() ? (
+                      <Icon icon="ic:round-check" />
+                    ) : (
+                      <></>
+                    )}
                     <span
                       className={`ml-2 ${
                         cssSelector?.name === x.toLowerCase()
@@ -418,7 +423,12 @@ function handleMouseMove(){
             ...blueyellow.map((x: string) => {
               return {
                 label: (
-                  <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+                  <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
+                    {cssSelector?.name === x.toLowerCase() ? (
+                      <Icon icon="ic:round-check" />
+                    ) : (
+                      <></>
+                    )}
                     <span
                       className={`ml-2 ${
                         cssSelector?.name === x.toLowerCase()
@@ -437,7 +447,7 @@ function handleMouseMove(){
             }),
             {
               label: (
-                <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+                <div className="flex w-full flex-shrink-0 items-center justify-between gap-1 whitespace-nowrap">
                   <span className="ml-1 font-semibold">
                     Full color deficiency
                   </span>
@@ -448,7 +458,12 @@ function handleMouseMove(){
             ...full.map((x: string) => {
               return {
                 label: (
-                  <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+                  <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
+                    {cssSelector?.name === x.toLowerCase() ? (
+                      <Icon icon="ic:round-check" />
+                    ) : (
+                      <></>
+                    )}
                     <span
                       className={`ml-2 ${
                         cssSelector?.name === x.toLowerCase()
@@ -467,7 +482,7 @@ function handleMouseMove(){
             }),
             {
               label: (
-                <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+                <div className="flex w-full flex-shrink-0 items-center justify-between gap-1 whitespace-nowrap">
                   <span className="ml-1 font-semibold">Visual impairment</span>
                 </div>
               ),
@@ -476,7 +491,12 @@ function handleMouseMove(){
             ...visualimpairments.map((x: string) => {
               return {
                 label: (
-                  <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+                  <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
+                    {cssSelector?.name === x.toLowerCase() ? (
+                      <Icon icon="ic:round-check" />
+                    ) : (
+                      <></>
+                    )}
                     <span
                       className={`ml-2 ${
                         cssSelector?.name === x.toLowerCase()
@@ -495,8 +515,10 @@ function handleMouseMove(){
             }),
             {
               label: (
-                <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
-                  <span className="ml-1 font-semibold">Visual impairment</span>
+                <div className="flex w-full flex-shrink-0 items-center justify-between gap-1 whitespace-nowrap">
+                  <span className="ml-1 font-semibold">
+                    Temporary impairment
+                  </span>
                 </div>
               ),
               onClick: null,
@@ -504,7 +526,12 @@ function handleMouseMove(){
             ...sunlight.map((x: string) => {
               return {
                 label: (
-                  <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+                  <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
+                    {cssSelector?.name === x.toLowerCase() ? (
+                      <Icon icon="ic:round-check" />
+                    ) : (
+                      <></>
+                    )}
                     <span
                       className={`ml-2 ${
                         cssSelector?.name === x.toLowerCase()
