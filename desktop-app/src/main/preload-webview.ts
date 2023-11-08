@@ -25,9 +25,20 @@ const documentBodyInit = () => {
   });
 
   window.addEventListener('dom-ready', () => {
+    const { body } = document;
+    const html = document.documentElement;
+
+    const height = Math.max(
+      body.scrollHeight,
+      body.offsetHeight,
+      html.clientHeight,
+      html.scrollHeight,
+      html.offsetHeight
+    );
+
     ipcRenderer.sendToHost('pass-scroll-data', {
       coordinates: { x: 0, y: 0 },
-      innerHeight: document.body.scrollHeight,
+      innerHeight: height,
       innerWidth: window.innerWidth,
     });
   });

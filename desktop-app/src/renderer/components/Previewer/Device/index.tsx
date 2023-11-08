@@ -43,8 +43,15 @@ import { PREVIEW_LAYOUTS } from 'common/constants';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
-import { Coordinates } from '../../../store/features/ruler';
+import {
+  Coordinates,
+  selectRulerEnabled,
+  selectRulerWebviewId,
+  setRulersDisabled,
+  setRulersEnabled,
+} from '../../../store/features/ruler';
 import GuideGrid from '../Guides';
+import { selectDarkMode } from '../../../store/features/ui';
 
 interface Props {
   device: IDevice;
@@ -70,11 +77,16 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
   const layout = useSelector(selectLayout);
+  const rulerWebviewId: number = useSelector(selectRulerWebviewId);
+  const rulerEnabled = useSelector(selectRulerEnabled);
+
   const dispatch = useDispatch();
-
   const dockPosition = useSelector(selectDockPosition);
+  const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
-
+  const [rulerPadding, setRulerPadding] = useState<number>(
+    rulerEnabled(ref?.current?.getWebContentsId()) ? 0 : 30
+  );
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
   let { height, width } = device;
@@ -151,6 +163,22 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       });
     }
   }, [isPrimary]);
+
+  const toggleRuler = useCallback(() => {
+    if (!ref.current) {
+      return;
+    }
+    const webview = ref.current as Electron.WebviewTag;
+    if (webview == null) {
+      return;
+    }
+    console.log(rulerWebviewId, webview.getWebContentsId());
+    if (rulerWebviewId === webview.getWebContentsId()) {
+      dispatch(setRulersDisabled());
+    } else {
+      dispatch(setRulersEnabled(webview.getWebContentsId()));
+    }
+  }, [dispatch, rulerWebviewId]);
 
   const openDevTools = useCallback(async () => {
     if (!ref.current) {
@@ -450,32 +478,50 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
 
   return (
     <div className="h-fit flex-shrink-0 overflow-hidden">
-      <div className="flex justify-between">
-        <span>
-          {device.name}
-          <span className="ml-[2px] text-xs opacity-60">
-            {width}x{height}
+      <div style={{ paddingLeft: '30px' }}>
+        <div className="flex justify-between">
+          <span>
+            {device.name}
+            <span className="ml-[2px] text-xs opacity-60">
+              {width}x{height}
+            </span>
           </span>
-        </span>
-        {loading ? <Spinner spinnerHeight={24} /> : null}
+          {loading ? <Spinner spinnerHeight={24} /> : null}
+        </div>
+
+        <Toolbar
+          webview={ref.current}
+          device={device}
+          setScreenshotInProgress={setScreenshotInProgess}
+          openDevTools={openDevTools}
+          toggleRuler={toggleRuler}
+          onRotate={onRotateHandler}
+          onIndividualLayoutHandler={onIndividualLayoutHandler}
+          isIndividualLayout={isIndividualLayout}
+        />
       </div>
-      <Toolbar
-        webview={ref.current}
-        device={device}
-        setScreenshotInProgress={setScreenshotInProgess}
-        openDevTools={openDevTools}
-        onRotate={onRotateHandler}
-        onIndividualLayoutHandler={onIndividualLayoutHandler}
-        isIndividualLayout={isIndividualLayout}
-      />
       <div
-        style={{ height: scaledHeight, width: scaledWidth }}
+        style={{
+          height: scaledHeight + rulerPadding,
+          width: scaledWidth + rulerPadding,
+        }}
         className="relative origin-top-left bg-white"
       >
         <GuideGrid
-          height={scaledHeight}
-          width={scaledWidth}
+          scaledHeight={scaledHeight}
+          scaledWidth={scaledWidth}
+          height={height}
           coordinates={coordinates}
+          zoomFactor={zoomfactor}
+          night={darkMode}
+          enabled={rulerEnabled(ref?.current?.getWebContentsId())}
+        />
+        <div
+          style={{
+            paddingLeft: '30px',
+            paddingTop: '30px',
+          }}
+          className="bg-slate-200 dark:bg-slate-800"
         >
           <webview
             id={device.name}
@@ -496,7 +542,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             /* eslint-disable-next-line react/no-unknown-property */
             useragent={device.userAgent}
           />
-        </GuideGrid>
+        </div>
+
         {screenshotInProgress ? (
           <div
             className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"

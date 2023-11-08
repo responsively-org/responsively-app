@@ -15,13 +15,15 @@ import {
   selectCss,
   setCss,
 } from '../../../store/features/renderer';
-import { a11ycss, guides, layout } from './assets';
+import { a11ycss, grid as _grid, layout } from './assets';
+import { setRulersEnabled } from '../../../store/features/ruler';
 
 interface Props {
   webview: Electron.WebviewTag | null;
   device: Device;
   setScreenshotInProgress: (value: boolean) => void;
   openDevTools: () => void;
+  toggleRuler: () => void;
   onRotate: (state: boolean) => void;
   onIndividualLayoutHandler: (device: Device) => void;
   isIndividualLayout: boolean;
@@ -32,6 +34,7 @@ const Toolbar = ({
   device,
   setScreenshotInProgress,
   openDevTools,
+  toggleRuler,
   onRotate,
   onIndividualLayoutHandler,
   isIndividualLayout,
@@ -46,13 +49,14 @@ const Toolbar = ({
     useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
 
-  const debuggers = ['Layout', 'A11yCss'];
+  const debuggers = ['Layout', 'A11yCss', 'Grid'];
 
+  const grid: string = _grid(0.5);
   const debugStylesheet: { [key: string]: string } = {
     layout,
     a11ycss,
+    grid,
   };
-
   const redgreen = [
     'Deuteranopia',
     'Deuteranomaly',
@@ -64,8 +68,13 @@ const Toolbar = ({
   const visualimpairments = ['Cataract', 'Farsightedness', 'Glaucome'];
   const sunlight = ['Solarize'];
 
-  const refreshView = () => {
+  const refreshView = async () => {
     if (webview) {
+      if (cssSelector) {
+        await webview.removeInsertedCSS(cssSelector.key);
+      }
+      dispatch(setCss(undefined));
+
       webview.reload();
     }
   };
@@ -335,34 +344,11 @@ function handleMouseMove(){
     }
   };
 
-  const showRulers = async () => {
+  const toggleRulers = async () => {
     if (webview === null) {
       return;
     }
-
-    const css = guides;
-
-    if (cssSelector !== undefined) {
-      if (cssSelector.css === css) {
-        webview.reload();
-        dispatch(setCss(undefined));
-        return;
-      }
-      webview.reload();
-      dispatch(setCss(undefined));
-    }
-
-    try {
-      const key = await webview.executeJavaScript(guides);
-      // await webview.executeJavaScript(
-      //   `const guides=new Guides(document.body,{type:"horizontal"}).on("changeGuides",e=>{console.log(e.guides)});let scrollX=0,scrollY=0;window.addEventListener("resize",()=>{guides.resize()}),window.addEventListener("wheel",e=>{scrollX+=e.deltaX,scrollY+=e.deltaY,guides.scrollGuides(scrollY),guides.scroll(scrollX)});`
-      // );
-      dispatch(setCss({ key, css, name: 'guides' }));
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error inserting js', error);
-      dispatch(setCss(undefined));
-    }
+    toggleRuler();
   };
 
   const rotate = async () => {
@@ -372,7 +358,7 @@ function handleMouseMove(){
 
   return (
     <div className="flex items-center justify-between gap-1">
-      <div className="my-1 flex items-center gap-1">
+      <div className="flex items-center gap-1">
         <Button onClick={refreshView} title="Refresh This View">
           <Icon icon="ic:round-refresh" />
         </Button>
@@ -419,7 +405,7 @@ function handleMouseMove(){
             }
           />
         </Button>
-        <Button onClick={showRulers} title="Show rulers">
+        <Button onClick={toggleRulers} title="Show rulers">
           <Icon icon="tdesign:measurement-1" />
         </Button>
         <DropDown

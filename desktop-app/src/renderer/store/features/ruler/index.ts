@@ -8,11 +8,11 @@ export interface Coordinates {
   innerWidth: number;
 }
 
-export interface RulersState {
+export type RulersState = {
   isRulerEnabled: boolean;
   rulerCoordinates: Coordinates;
   webViewId: number;
-}
+};
 
 const initialState: RulersState = {
   isRulerEnabled: false,
@@ -24,16 +24,16 @@ export const rulerSlice = createSlice({
   name: 'rulers',
   initialState,
   reducers: {
-    setRulersEnabled: (state, action: PayloadAction<RulersState>) => {
+    setRulersEnabled: (state, action: PayloadAction<number>) => {
       state.isRulerEnabled = true;
-      state.webViewId = action.payload.webViewId;
+      state.webViewId = action.payload;
     },
     setRulerCoordinates: (state, action: PayloadAction<Coordinates>) => {
       state.rulerCoordinates = action.payload;
     },
-    setRulersDisabled: (state, action: PayloadAction<RulersState>) => {
+    setRulersDisabled: (state) => {
       state.isRulerEnabled = false;
-      state.webViewId = action.payload.webViewId;
+      state.webViewId = -1;
     },
   },
 });
@@ -47,5 +47,15 @@ export const selectRulerCoordinates = (state: RootState) =>
 
 export const selectRulerWebviewId = (state: RootState) =>
   state.rulers.webViewId;
+
+export const selectRulerEnabled =
+  (state: RootState) => (webViewId: number | undefined) => {
+    if (webViewId) {
+      return webViewId === state.rulers.webViewId
+        ? state.rulers.isRulerEnabled
+        : false;
+    }
+    return false;
+  };
 
 export default rulerSlice.reducer;
