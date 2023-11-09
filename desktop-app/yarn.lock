@@ -5696,10 +5696,10 @@ electron-updater@^6.1.1:
     semver "^7.3.8"
     typed-emitter "^2.1.0"
 
-electron@^26.2.2:
-  version "26.2.2"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-26.2.2.tgz#d465b7b5ead240448c131208631d172a45ae4953"
-  integrity sha512-Ihb3Zt4XYnHF52DYSq17ySkgFqJV4OT0VnfhUYZASAql7Vembz3VsAq7mB3OALBHXltAW34P8BxTIwTqZaMS3g==
+electron@^27.0.4:
+  version "27.0.4"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-27.0.4.tgz#2666c61d0e14f470edb4d8ba7eb6c9171588e53a"
+  integrity sha512-ob29rN1mtiyAXzF8HsHd5jh8bYKd9OQDakfdOExi0F7epU97gXPHaj6JPjbBJ/vpki5d32SyKVePW4vxeNZk1A==
   dependencies:
     "@electron/get" "^2.0.0"
     "@types/node" "^18.11.18"
