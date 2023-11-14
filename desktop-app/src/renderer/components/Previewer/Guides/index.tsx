@@ -4,35 +4,56 @@ import { LegacyRef, useEffect, useRef, useMemo } from 'react';
 import { Coordinates } from '../../../store/features/ruler';
 import './guide.css';
 
+export type DefaultGuide = {
+  resolution: string;
+  positions: number[];
+  is_vertical: boolean;
+};
+
 interface Props {
   scaledHeight: number;
   height: number;
+  width: number;
   scaledWidth: number;
   coordinates: Coordinates;
   zoomFactor: number;
   night: boolean;
   enabled: boolean;
+  defaultGuides: DefaultGuide[];
 }
 
 const GuideGrid = ({
   scaledHeight,
   scaledWidth,
   height,
+  width,
   coordinates,
   zoomFactor,
   night,
   enabled,
+  defaultGuides,
 }: Props) => {
-  const horizonalGuidesRef = useRef<Guides>();
+  const horizontalGuidesRef = useRef<Guides>();
   const verticalGuidesRef = useRef<Guides>();
-  const defaultGuides = useMemo(() => [0, 100, 200], []);
+  const defaultsHor = useMemo(() => {
+    return defaultGuides
+      .filter((x: DefaultGuide) => !x.is_vertical)
+      .flatMap((x: DefaultGuide) => x.positions);
+  }, [defaultGuides]);
+  const defaultsVer = useMemo(
+    () =>
+      defaultGuides
+        .filter((x: DefaultGuide) => x.is_vertical)
+        .flatMap((x) => x.positions),
+    [defaultGuides]
+  );
 
   useEffect(() => {
     const addjustedInnerHeight = coordinates.innerHeight;
     const scrollX =
-      horizonalGuidesRef &&
-      horizonalGuidesRef?.current &&
-      horizonalGuidesRef?.current?.getRulerScrollPos() + coordinates.deltaX;
+      horizontalGuidesRef &&
+      horizontalGuidesRef?.current &&
+      horizontalGuidesRef?.current?.getRulerScrollPos() + coordinates.deltaX;
 
     const scrollY =
       verticalGuidesRef &&
@@ -63,9 +84,9 @@ const GuideGrid = ({
       coordinates.innerHeight - height > scrollPosY
     ) {
       verticalGuidesRef.current?.scroll(scrollPosY);
-      horizonalGuidesRef.current?.scroll(scrollPosX);
+      horizontalGuidesRef.current?.scroll(scrollPosX);
       verticalGuidesRef.current?.scrollGuides(scrollPosX);
-      horizonalGuidesRef.current?.scrollGuides(scrollPosY);
+      horizontalGuidesRef.current?.scrollGuides(scrollPosY);
     }
   });
 
@@ -87,7 +108,7 @@ const GuideGrid = ({
           >
             <div className="box bg-slate-200 dark:bg-slate-800" />
             <Guides
-              ref={horizonalGuidesRef as LegacyRef<Guides>}
+              ref={horizontalGuidesRef as LegacyRef<Guides>}
               type="horizontal"
               backgroundColor="transparent"
               textColor={night ? 'rgb(209, 213, 219)' : 'rgb(55, 65, 81)'}
@@ -105,7 +126,24 @@ const GuideGrid = ({
               displayDragPos
               displayGuidePos
               useResizeObserver
-              defaultGuides={defaultGuides}
+              defaultGuides={defaultsHor.length > 0 ? defaultsHor : undefined}
+              onChangeGuides={({ guides }) => {
+                window.electron.store.set('userPreferences.guides', [
+                  ...window.electron.store
+                    .get('userPreferences.guides')
+                    .filter((x: DefaultGuide) => {
+                      if (x.resolution !== `${width}x${height}`) {
+                        return true;
+                      }
+                      return x.is_vertical;
+                    }),
+                  {
+                    resolution: `${width}x${height}`,
+                    is_vertical: false,
+                    positions: guides.filter((x) => x > 0),
+                  },
+                ]);
+              }}
             />
             <Guides
               ref={verticalGuidesRef as LegacyRef<Guides>}
@@ -125,7 +163,24 @@ const GuideGrid = ({
               displayDragPos
               displayGuidePos
               useResizeObserver
-              defaultGuides={defaultGuides}
+              defaultGuides={defaultsVer.length > 0 ? defaultsVer : undefined}
+              onChangeGuides={({ guides }) => {
+                window.electron.store.set('userPreferences.guides', [
+                  ...window.electron.store
+                    .get('userPreferences.guides')
+                    .filter((x) => {
+                      if (x.resolution !== `${width}x${height}`) {
+                        return true;
+                      }
+                      return !x.is_vertical;
+                    }),
+                  {
+                    resolution: `${width}x${height}`,
+                    is_vertical: true,
+                    positions: guides.filter((x) => x > 0),
+                  },
+                ]);
+              }}
             />
           </div>
         </>

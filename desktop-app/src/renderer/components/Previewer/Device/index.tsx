@@ -45,13 +45,16 @@ import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
 import {
   Coordinates,
+  RulersState,
+  selectRuler,
   selectRulerEnabled,
-  selectRulerWebviewId,
-  setRulersDisabled,
-  setRulersEnabled,
+  setRuler,
 } from '../../../store/features/ruler';
-import GuideGrid from '../Guides';
+import GuideGrid, { DefaultGuide } from '../Guides';
 import { selectDarkMode } from '../../../store/features/ui';
+import useKeyboardShortcut, {
+  SHORTCUT_CHANNEL,
+} from '../../KeyboardShortcutsManager/useKeyboardShortcut';
 
 interface Props {
   device: IDevice;
@@ -77,16 +80,12 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
   const layout = useSelector(selectLayout);
-  const rulerWebviewId: number = useSelector(selectRulerWebviewId);
   const rulerEnabled = useSelector(selectRulerEnabled);
-
+  const getRuler = useSelector(selectRuler);
   const dispatch = useDispatch();
   const dockPosition = useSelector(selectDockPosition);
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
-  const [rulerPadding, setRulerPadding] = useState<number>(
-    rulerEnabled(ref?.current?.getWebContentsId()) ? 0 : 30
-  );
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
   let { height, width } = device;
@@ -172,13 +171,32 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     if (webview == null) {
       return;
     }
-    console.log(rulerWebviewId, webview.getWebContentsId());
-    if (rulerWebviewId === webview.getWebContentsId()) {
-      dispatch(setRulersDisabled());
+    const resolution = `${width}x${height}`;
+    const ruler: RulersState | undefined = getRuler(resolution);
+    if (ruler) {
+      dispatch(
+        setRuler({
+          resolution,
+          rulerState: {
+            isRulerEnabled: !ruler.isRulerEnabled,
+            rulerCoordinates: ruler.rulerCoordinates,
+          },
+        })
+      );
     } else {
-      dispatch(setRulersEnabled(webview.getWebContentsId()));
+      dispatch(
+        setRuler({
+          resolution,
+          rulerState: {
+            isRulerEnabled: true,
+            rulerCoordinates: coordinates,
+          },
+        })
+      );
     }
-  }, [dispatch, rulerWebviewId]);
+  }, [dispatch, getRuler, height, width, coordinates]);
+
+  useKeyboardShortcut(SHORTCUT_CHANNEL.TOGGLE_RULERS, toggleRuler);
 
   const openDevTools = useCallback(async () => {
     if (!ref.current) {
@@ -262,7 +280,6 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
 
     const ipcMessageHandler = (e: Electron.IpcMessageEvent) => {
       if (e.channel === 'pass-scroll-data') {
-        // console.log('ipcMessageHandler', e.args[0].innerHeight);
         setCoordinates({
           deltaX: e.args[0].coordinates.x,
           deltaY: e.args[0].coordinates.y,
@@ -502,8 +519,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       </div>
       <div
         style={{
-          height: scaledHeight + rulerPadding,
-          width: scaledWidth + rulerPadding,
+          height: scaledHeight,
+          width: scaledWidth,
         }}
         className="relative origin-top-left bg-white"
       >
@@ -511,10 +528,17 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           scaledHeight={scaledHeight}
           scaledWidth={scaledWidth}
           height={height}
+          width={width}
           coordinates={coordinates}
           zoomFactor={zoomfactor}
           night={darkMode}
-          enabled={rulerEnabled(ref?.current?.getWebContentsId())}
+          enabled={rulerEnabled(`${width}x${height}`)}
+          defaultGuides={window.electron.store
+            .get('userPreferences.guides')
+            .flatMap((x: any) => x)
+            .filter((x: DefaultGuide) => {
+              return x.resolution === `${width}x${height}`;
+            })}
         />
         <div
           style={{

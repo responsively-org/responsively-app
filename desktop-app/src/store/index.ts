@@ -138,6 +138,27 @@ const schema = {
         type: 'boolean',
         default: false,
       },
+      guides: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            positions: {
+              type: 'array',
+              items: {
+                type: 'number',
+              },
+            },
+            is_vertical: {
+              type: 'boolean',
+            },
+            resolution: {
+              type: 'string',
+            },
+          },
+          default: {},
+        },
+      },
       screenshot: {
         type: 'object',
         properties: {
@@ -236,6 +257,10 @@ const schema = {
   },
 } as const;
 
-const store = new Store({ schema, watch: true, migrations });
+const store = new Store({
+  schema,
+  watch: true,
+  migrations,
+});
 
 export default store;

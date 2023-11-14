@@ -11,49 +11,44 @@ export interface Coordinates {
 export type RulersState = {
   isRulerEnabled: boolean;
   rulerCoordinates: Coordinates;
-  webViewId: number;
 };
 
-const initialState: RulersState = {
-  isRulerEnabled: false,
-  rulerCoordinates: { deltaX: 0, deltaY: 0, innerHeight: 0, innerWidth: 0 },
-  webViewId: -1,
-};
+export type ViewResolution = string;
+
+const initialState: { [key: ViewResolution]: RulersState } = {};
 
 export const rulerSlice = createSlice({
   name: 'rulers',
   initialState,
   reducers: {
-    setRulersEnabled: (state, action: PayloadAction<number>) => {
-      state.isRulerEnabled = true;
-      state.webViewId = action.payload;
-    },
-    setRulerCoordinates: (state, action: PayloadAction<Coordinates>) => {
-      state.rulerCoordinates = action.payload;
-    },
-    setRulersDisabled: (state) => {
-      state.isRulerEnabled = false;
-      state.webViewId = -1;
+    setRuler: (
+      state,
+      action: PayloadAction<{
+        rulerState: RulersState;
+        resolution: ViewResolution;
+      }>
+    ) => {
+      state[action.payload.resolution] = action.payload.rulerState;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setRulersEnabled, setRulersDisabled, setRulerCoordinates } =
-  rulerSlice.actions;
+export const { setRuler } = rulerSlice.actions;
 
-export const selectRulerCoordinates = (state: RootState) =>
-  state.rulers.rulerCoordinates;
-
-export const selectRulerWebviewId = (state: RootState) =>
-  state.rulers.webViewId;
+export const selectRuler =
+  (state: RootState) =>
+  (resolution: ViewResolution | undefined): RulersState | undefined => {
+    if (resolution && state.rulers[resolution]) {
+      return state.rulers[resolution];
+    }
+    return undefined;
+  };
 
 export const selectRulerEnabled =
-  (state: RootState) => (webViewId: number | undefined) => {
-    if (webViewId) {
-      return webViewId === state.rulers.webViewId
-        ? state.rulers.isRulerEnabled
-        : false;
+  (state: RootState) => (resolution: ViewResolution | undefined) => {
+    if (resolution && state.rulers[resolution]) {
+      return state.rulers[resolution].isRulerEnabled;
     }
     return false;
   };

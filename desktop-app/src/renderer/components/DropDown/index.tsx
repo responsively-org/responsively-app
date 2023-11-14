@@ -26,7 +26,7 @@ export function DropDown({ label, options, className }: Props) {
     <div className="text-right">
       <Menu as="div" className={`relative inline-block text-left ${className}`}>
         <div>
-          <Menu.Button className="inline-flex w-full justify-center gap-1 rounded-md bg-opacity-20 px-4 py-2 text-sm font-medium hover:bg-slate-300 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 dark:hover:bg-slate-700">
+          <Menu.Button className="inline-flex w-full justify-center gap-1 rounded-md bg-opacity-20 p-2 text-sm font-medium hover:bg-slate-300 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 dark:hover:bg-slate-700">
             {label}
             <Icon icon="mdi:chevron-down" />
           </Menu.Button>

@@ -7,12 +7,6 @@ import {
 } from 'common/constants';
 import type { RootState } from '../..';
 
-export interface InjectedCss {
-  key: string;
-  css: string;
-  name: string;
-}
-
 export interface RendererState {
   address: string;
   pageTitle: string;
@@ -22,7 +16,6 @@ export interface RendererState {
   isInspecting: boolean | undefined;
   layout: PreviewLayout;
   isCapturingScreenshot: boolean;
-  injectedCss: InjectedCss | undefined;
 }
 
 const zoomSteps = [
@@ -48,7 +41,6 @@ const initialState: RendererState = {
   isInspecting: undefined,
   layout: window.electron.store.get('ui.previewLayout'),
   isCapturingScreenshot: false,
-  injectedCss: undefined,
 };
 
 export const updateFileWatcher = (newURL: string) => {
@@ -124,13 +116,6 @@ export const rendererSlice = createSlice({
     setRotate: (state, action: PayloadAction<boolean>) => {
       state.rotate = action.payload;
     },
-    setCss: (state, action: PayloadAction<InjectedCss | undefined>) => {
-      if (action.payload !== state.injectedCss) {
-        state.injectedCss = action.payload;
-      } else {
-        state.injectedCss = undefined;
-      }
-    },
     setIsInspecting: (state, action: PayloadAction<boolean>) => {
       state.isInspecting = action.payload;
     },
@@ -154,7 +139,6 @@ export const {
   setLayout,
   setIsCapturingScreenshot,
   setPageTitle,
-  setCss,
 } = rendererSlice.actions;
 
 // Use different zoom factor based on state's current layout
@@ -165,7 +149,6 @@ export const selectZoomFactor = (state: RootState) => {
   return state.renderer.zoomFactor;
 };
 
-export const selectCss = (state: RootState) => state.renderer.injectedCss;
 export const selectAddress = (state: RootState) => state.renderer.address;
 export const selectPageTitle = (state: RootState) => state.renderer.pageTitle;
 export const selectRotate = (state: RootState) => state.renderer.rotate;
