@@ -59,7 +59,7 @@ export function DropDown({ label, options, className }: Props) {
                       option.onClick !== null ? (
                         <button
                           className={cx(
-                            'group flex w-full items-center rounded-md px-2 py-2',
+                            'group flex w-full items-center rounded-md px-2 py-2 text-sm',
                             { 'bg-slate-200 dark:bg-slate-800': active }
                           )}
                           type="button"
@@ -70,8 +70,7 @@ export function DropDown({ label, options, className }: Props) {
                       ) : (
                         <div
                           className={cx(
-                            'group mt-2 flex w-full items-center rounded-md px-2',
-                            { 'bg-slate-200 dark:bg-slate-800': active }
+                            'group mt-2 flex w-full items-center rounded-md px-2'
                           )}
                         >
                           {option.label}

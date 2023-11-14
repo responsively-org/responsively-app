@@ -24,6 +24,7 @@ import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from '../KeyboardShortcutsManager/useKeyboardShortcut';
 import Shortcuts from './Shortcuts';
+import { ColorBlindnessControls } from './ColorBlindnessControls';
 
 const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
@@ -129,6 +130,7 @@ const ToolBar = () => {
       </Button>
       <ColorSchemeToggle />
       <Shortcuts />
+      <ColorBlindnessControls />
       <Divider />
       <PreviewSuiteSelector />
       <Menu />
