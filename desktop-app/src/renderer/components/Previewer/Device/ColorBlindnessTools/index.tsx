@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react';
 import cx from 'classnames';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DropDown } from 'renderer/components/DropDown';
 
 const redgreen = ['Deuteranopia', 'Deuteranomaly', 'Protanopia', 'Protanomaly'];
@@ -12,6 +12,7 @@ const sunlight = ['Solarize'];
 interface InjectedCss {
   key: string;
   css: string;
+  js: string | null;
   name: string;
 }
 
@@ -61,6 +62,21 @@ const MenuItemHeader = ({ label }: { label: string }) => {
 export const ColorBlindnessTools = ({ webview }: Props) => {
   const [injectCss, setInjectCss] = useState<InjectedCss>();
 
+  const reApplyCss = useCallback(async () => {
+    if (webview === null) {
+      return;
+    }
+    if (injectCss === undefined) {
+      return;
+    }
+    const key = await webview.insertCSS(injectCss.css);
+    if (injectCss.js != null) {
+      await webview.executeJavaScript(injectCss.js);
+    }
+
+    setInjectCss({ ...injectCss, key });
+  }, [webview, injectCss, setInjectCss]);
+
   const applyCss = async (
     debugType: string,
     css: string,
@@ -88,10 +104,10 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
 
     try {
       const key = await webview.insertCSS(css);
-      setInjectCss({ key, css, name: debugType });
       if (js !== null) {
         await webview.executeJavaScript(js);
       }
+      setInjectCss({ key, css, name: debugType, js });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error inserting css', error);
@@ -110,6 +126,21 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
     await webview.removeInsertedCSS(injectCss.key);
     setInjectCss(undefined);
   };
+
+  useEffect(() => {
+    if (webview === null) {
+      return () => {};
+    }
+    const handler = async () => {
+      reApplyCss();
+    };
+
+    webview.addEventListener('did-navigate', handler);
+
+    return () => {
+      webview.removeEventListener('did-navigate', handler);
+    };
+  }, [webview, reApplyCss]);
 
   const applyColorDeficiency = async (colorDeficiency: string) => {
     const xsltPath =
