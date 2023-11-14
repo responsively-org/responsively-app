@@ -8,7 +8,7 @@ import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
 import { updateWebViewHeightAndScale } from 'common/webViewUtils';
-import { AccessibilityTools } from './AccessibilityTools';
+import { ColorBlindnessTools } from './ColorBlindnessTools';
 
 interface Props {
   webview: Electron.WebviewTag | null;
@@ -178,7 +178,7 @@ const Toolbar = ({
             }
           />
         </Button>
-        <AccessibilityTools webview={webview} />
+        <ColorBlindnessTools webview={webview} />
       </div>
       <Button
         onClick={() => onIndividualLayoutHandler(device)}

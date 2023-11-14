@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import cx from 'classnames';
 import { useState } from 'react';
 import { DropDown } from 'renderer/components/DropDown';
 
@@ -18,7 +19,46 @@ interface Props {
   webview: Electron.WebviewTag | null;
 }
 
-export const AccessibilityTools = ({ webview }: Props) => {
+const MenuItemLabel = ({
+  label,
+  isActive,
+}: {
+  label: string;
+  isActive: boolean;
+}) => {
+  return (
+    <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
+      <Icon
+        icon="ic:round-check"
+        className={cx('opacity-0', {
+          'opacity-100': isActive,
+        })}
+      />
+      <span
+        className={cx({
+          'font-semibold text-black dark:text-white': isActive,
+        })}
+      >
+        {label}
+      </span>
+    </div>
+  );
+};
+
+const MenuItemHeader = ({ label }: { label: string }) => {
+  return (
+    <div className="relative flex w-full min-w-44 items-center justify-between gap-1 whitespace-nowrap">
+      <div className="absolute inset-0 flex items-center" aria-hidden="true">
+        <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+      </div>
+      <span className="mxl-1 z-10 flex-shrink-0 bg-slate-100 pr-2 dark:bg-slate-900">
+        {label}
+      </span>
+    </div>
+  );
+};
+
+export const ColorBlindnessTools = ({ webview }: Props) => {
   const [injectCss, setInjectCss] = useState<InjectedCss>();
 
   const applyCss = async (
@@ -58,6 +98,17 @@ export const AccessibilityTools = ({ webview }: Props) => {
       // dispatch(setCss(undefined));
       setInjectCss(undefined);
     }
+  };
+
+  const clearSimulation = async () => {
+    if (webview === null) {
+      return;
+    }
+    if (injectCss === undefined) {
+      return;
+    }
+    await webview.removeInsertedCSS(injectCss.key);
+    setInjectCss(undefined);
   };
 
   const applyColorDeficiency = async (colorDeficiency: string) => {
@@ -137,52 +188,37 @@ export const AccessibilityTools = ({ webview }: Props) => {
 
   return (
     <DropDown
-      className="text-xs"
-      label={<Icon icon="codicon:debug-line-by-line" fontSize={18} />}
+      className={cx('rounded-lg text-xs', {
+        'bg-slate-400/60': injectCss?.name != null,
+      })}
+      label={<Icon icon="bx:low-vision" fontSize={18} />}
       options={[
         {
-          label: (
-            <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
-              <span className="font-bold">A11y Tools</span>
-            </div>
-          ),
+          label: <MenuItemHeader label="No deficiency" />,
           onClick: null,
         },
         {
           label: (
-            <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
-              <span>Visual deficiency</span>
-            </div>
+            <MenuItemLabel
+              label="Normal Vision"
+              isActive={injectCss?.name == null}
+            />
           ),
-          onClick: null,
+          onClick: () => {
+            clearSimulation();
+          },
         },
         {
-          label: (
-            <div className="flex w-full flex-shrink-0 items-center justify-start gap-12 whitespace-nowrap">
-              <span className="ml-1 font-semibold">Red-green deficiency</span>
-            </div>
-          ),
+          label: <MenuItemHeader label="Red-green deficiency" />,
           onClick: null,
         },
         ...redgreen.map((x: string) => {
           return {
             label: (
-              <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
-                {injectCss?.name === x.toLowerCase() ? (
-                  <Icon icon="ic:round-check" />
-                ) : (
-                  <></>
-                )}
-                <span
-                  className={`ml-2 ${
-                    injectCss?.name === x.toLowerCase()
-                      ? 'font-semibold text-black'
-                      : ''
-                  }`}
-                >
-                  {x}
-                </span>
-              </div>
+              <MenuItemLabel
+                label={x}
+                isActive={injectCss?.name === x.toLowerCase()}
+              />
             ),
             onClick: () => {
               applyColorDeficiency(x.toLowerCase());
@@ -190,32 +226,16 @@ export const AccessibilityTools = ({ webview }: Props) => {
           };
         }),
         {
-          label: (
-            <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
-              <span className="ml-1 font-semibold">Blue-yellow deficiency</span>
-            </div>
-          ),
+          label: <MenuItemHeader label="Blue-yellow deficiency" />,
           onClick: null,
         },
         ...blueyellow.map((x: string) => {
           return {
             label: (
-              <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
-                {injectCss?.name === x.toLowerCase() ? (
-                  <Icon icon="ic:round-check" />
-                ) : (
-                  <></>
-                )}
-                <span
-                  className={`ml-2 ${
-                    injectCss?.name === x.toLowerCase()
-                      ? 'font-semibold text-black'
-                      : ''
-                  }`}
-                >
-                  {x}
-                </span>
-              </div>
+              <MenuItemLabel
+                label={x}
+                isActive={injectCss?.name === x.toLowerCase()}
+              />
             ),
             onClick: () => {
               applyColorDeficiency(x.toLowerCase());
@@ -223,32 +243,16 @@ export const AccessibilityTools = ({ webview }: Props) => {
           };
         }),
         {
-          label: (
-            <div className="flex w-full flex-shrink-0 items-center justify-between gap-1 whitespace-nowrap">
-              <span className="ml-1 font-semibold">Full color deficiency</span>
-            </div>
-          ),
+          label: <MenuItemHeader label="Full color deficiency" />,
           onClick: null,
         },
         ...full.map((x: string) => {
           return {
             label: (
-              <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
-                {injectCss?.name === x.toLowerCase() ? (
-                  <Icon icon="ic:round-check" />
-                ) : (
-                  <></>
-                )}
-                <span
-                  className={`ml-2 ${
-                    injectCss?.name === x.toLowerCase()
-                      ? 'font-semibold text-black'
-                      : ''
-                  }`}
-                >
-                  {x}
-                </span>
-              </div>
+              <MenuItemLabel
+                label={x}
+                isActive={injectCss?.name === x.toLowerCase()}
+              />
             ),
             onClick: () => {
               applyColorDeficiency(x.toLowerCase());
@@ -256,32 +260,16 @@ export const AccessibilityTools = ({ webview }: Props) => {
           };
         }),
         {
-          label: (
-            <div className="flex w-full flex-shrink-0 items-center justify-between gap-1 whitespace-nowrap">
-              <span className="ml-1 font-semibold">Visual impairment</span>
-            </div>
-          ),
+          label: <MenuItemHeader label="Visual impairment" />,
           onClick: null,
         },
         ...visualimpairments.map((x: string) => {
           return {
             label: (
-              <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
-                {injectCss?.name === x.toLowerCase() ? (
-                  <Icon icon="ic:round-check" />
-                ) : (
-                  <></>
-                )}
-                <span
-                  className={`ml-2 ${
-                    injectCss?.name === x.toLowerCase()
-                      ? 'font-semibold text-black'
-                      : ''
-                  }`}
-                >
-                  {x}
-                </span>
-              </div>
+              <MenuItemLabel
+                label={x}
+                isActive={injectCss?.name === x.toLowerCase()}
+              />
             ),
             onClick: () => {
               applyVisualImpairment(x.toLowerCase());
@@ -289,32 +277,16 @@ export const AccessibilityTools = ({ webview }: Props) => {
           };
         }),
         {
-          label: (
-            <div className="flex w-full flex-shrink-0 items-center justify-between gap-1 whitespace-nowrap">
-              <span className="ml-1 font-semibold">Temporary impairment</span>
-            </div>
-          ),
+          label: <MenuItemHeader label="Temporary impairment" />,
           onClick: null,
         },
         ...sunlight.map((x: string) => {
           return {
             label: (
-              <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
-                {injectCss?.name === x.toLowerCase() ? (
-                  <Icon icon="ic:round-check" />
-                ) : (
-                  <></>
-                )}
-                <span
-                  className={`ml-2 ${
-                    injectCss?.name === x.toLowerCase()
-                      ? 'font-semibold text-black'
-                      : ''
-                  }`}
-                >
-                  {x}
-                </span>
-              </div>
+              <MenuItemLabel
+                label={x}
+                isActive={injectCss?.name === x.toLowerCase()}
+              />
             ),
             onClick: () => {
               applySunlight(x.toLowerCase());
