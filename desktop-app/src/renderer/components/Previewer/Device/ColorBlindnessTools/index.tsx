@@ -1,15 +1,12 @@
-import { Icon } from '@iconify/react';
-import cx from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
-import { DropDown } from 'renderer/components/DropDown';
 import { COLOR_BLINDNESS_CHANNEL } from 'renderer/components/ToolBar/ColorBlindnessControls';
 import {
   BLUE_YELLOW,
   FULL,
   RED_GREEN,
   SUNLIGHT,
-  VISUAL_IMPAIRMENTS,
   VisionSimulationDropDown,
+  VISUAL_IMPAIRMENTS,
 } from 'renderer/components/VisionSimulationDropDown';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 
@@ -137,7 +134,7 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
        -webkit-filter: url('${blur}#gaussian_blur');
         filter: url('${blur}#gaussian_blur');
       }`,
-        glaucome: `#bigoverlay {
+        glaucoma: `#bigoverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -161,7 +158,7 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
       };
       const css = impairments[visualImpairment.toLowerCase()];
       let js = null;
-      if (visualImpairment.toLowerCase() === 'glaucome') {
+      if (visualImpairment.toLowerCase() === 'glaucoma') {
         js = String(`var div = document.createElement('div');
   div.innerHTML ='<div class="bigoverlay" id="bigoverlay"><div class="spotlight" id="spotlight"></div></div>';
   var body = document.body;
