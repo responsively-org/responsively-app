@@ -60,22 +60,22 @@ const GuideGrid = ({
       verticalGuidesRef?.current &&
       verticalGuidesRef?.current?.getRulerScrollPos() + coordinates.deltaY;
 
-    let scrollPosY: any;
+    let scrollPosY: number;
     if (Number(scrollY) > 0) {
       scrollPosY =
         addjustedInnerHeight - Number(scrollY) <= 0
           ? addjustedInnerHeight
-          : scrollY;
+          : scrollY || addjustedInnerHeight;
     } else {
       scrollPosY = 0;
     }
 
-    let scrollPosX: any;
+    let scrollPosX: number;
     if (Number(scrollX) > 0) {
       scrollPosX =
         Number(scrollX) > coordinates.innerWidth - Number(scrollX)
           ? coordinates.innerWidth
-          : scrollX;
+          : scrollX || coordinates.innerWidth;
     } else {
       scrollPosX = 0;
     }
@@ -168,7 +168,7 @@ const GuideGrid = ({
                 window.electron.store.set('userPreferences.guides', [
                   ...window.electron.store
                     .get('userPreferences.guides')
-                    .filter((x) => {
+                    .filter((x: DefaultGuide) => {
                       if (x.resolution !== `${width}x${height}`) {
                         return true;
                       }
