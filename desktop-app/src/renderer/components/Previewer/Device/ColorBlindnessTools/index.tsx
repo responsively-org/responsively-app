@@ -2,12 +2,14 @@ import { Icon } from '@iconify/react';
 import cx from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { DropDown } from 'renderer/components/DropDown';
-
-const redgreen = ['Deuteranopia', 'Deuteranomaly', 'Protanopia', 'Protanomaly'];
-const blueyellow = ['Tritanopia', 'Tritanomaly'];
-const full = ['Achromatomaly', 'Achromatopsia'];
-const visualimpairments = ['Cataract', 'Farsightedness', 'Glaucome'];
-const sunlight = ['Solarize'];
+import {
+  BLUE_YELLOW,
+  FULL,
+  RED_GREEN,
+  SUNLIGHT,
+  VISUAL_IMPAIRMENTS,
+  VisionSimulationDropDown,
+} from 'renderer/components/VisionSimulationDropDown';
 
 interface InjectedCss {
   key: string;
@@ -19,45 +21,6 @@ interface InjectedCss {
 interface Props {
   webview: Electron.WebviewTag | null;
 }
-
-const MenuItemLabel = ({
-  label,
-  isActive,
-}: {
-  label: string;
-  isActive: boolean;
-}) => {
-  return (
-    <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
-      <Icon
-        icon="ic:round-check"
-        className={cx('opacity-0', {
-          'opacity-100': isActive,
-        })}
-      />
-      <span
-        className={cx({
-          'font-semibold text-black dark:text-white': isActive,
-        })}
-      >
-        {label}
-      </span>
-    </div>
-  );
-};
-
-const MenuItemHeader = ({ label }: { label: string }) => {
-  return (
-    <div className="relative flex w-full min-w-44 items-center justify-between gap-1 whitespace-nowrap">
-      <div className="absolute inset-0 flex items-center" aria-hidden="true">
-        <div className="w-full border-t border-gray-300 dark:border-gray-600" />
-      </div>
-      <span className="mxl-1 z-10 flex-shrink-0 bg-slate-100 pr-2 dark:bg-slate-900">
-        {label}
-      </span>
-    </div>
-  );
-};
 
 export const ColorBlindnessTools = ({ webview }: Props) => {
   const [injectCss, setInjectCss] = useState<InjectedCss>();
@@ -217,114 +180,30 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
     return applyCss(visualImpairment, css, js);
   };
 
+  const applySimulation = async (simulation = '') => {
+    if (
+      RED_GREEN.indexOf(simulation) !== -1 ||
+      BLUE_YELLOW.indexOf(simulation) !== -1 ||
+      FULL.indexOf(simulation) !== -1
+    ) {
+      return applyColorDeficiency(simulation);
+    }
+
+    if (VISUAL_IMPAIRMENTS.indexOf(simulation) !== -1) {
+      return applyVisualImpairment(simulation);
+    }
+
+    if (SUNLIGHT.indexOf(simulation) !== -1) {
+      return applySunlight(simulation);
+    }
+
+    return clearSimulation();
+  };
+
   return (
-    <DropDown
-      className={cx('rounded-lg text-xs', {
-        'bg-slate-400/60': injectCss?.name != null,
-      })}
-      label={<Icon icon="bx:low-vision" fontSize={18} />}
-      options={[
-        {
-          label: <MenuItemHeader label="No deficiency" />,
-          onClick: null,
-        },
-        {
-          label: (
-            <MenuItemLabel
-              label="Normal Vision"
-              isActive={injectCss?.name == null}
-            />
-          ),
-          onClick: () => {
-            clearSimulation();
-          },
-        },
-        {
-          label: <MenuItemHeader label="Red-green deficiency" />,
-          onClick: null,
-        },
-        ...redgreen.map((x: string) => {
-          return {
-            label: (
-              <MenuItemLabel
-                label={x}
-                isActive={injectCss?.name === x.toLowerCase()}
-              />
-            ),
-            onClick: () => {
-              applyColorDeficiency(x.toLowerCase());
-            },
-          };
-        }),
-        {
-          label: <MenuItemHeader label="Blue-yellow deficiency" />,
-          onClick: null,
-        },
-        ...blueyellow.map((x: string) => {
-          return {
-            label: (
-              <MenuItemLabel
-                label={x}
-                isActive={injectCss?.name === x.toLowerCase()}
-              />
-            ),
-            onClick: () => {
-              applyColorDeficiency(x.toLowerCase());
-            },
-          };
-        }),
-        {
-          label: <MenuItemHeader label="Full color deficiency" />,
-          onClick: null,
-        },
-        ...full.map((x: string) => {
-          return {
-            label: (
-              <MenuItemLabel
-                label={x}
-                isActive={injectCss?.name === x.toLowerCase()}
-              />
-            ),
-            onClick: () => {
-              applyColorDeficiency(x.toLowerCase());
-            },
-          };
-        }),
-        {
-          label: <MenuItemHeader label="Visual impairment" />,
-          onClick: null,
-        },
-        ...visualimpairments.map((x: string) => {
-          return {
-            label: (
-              <MenuItemLabel
-                label={x}
-                isActive={injectCss?.name === x.toLowerCase()}
-              />
-            ),
-            onClick: () => {
-              applyVisualImpairment(x.toLowerCase());
-            },
-          };
-        }),
-        {
-          label: <MenuItemHeader label="Temporary impairment" />,
-          onClick: null,
-        },
-        ...sunlight.map((x: string) => {
-          return {
-            label: (
-              <MenuItemLabel
-                label={x}
-                isActive={injectCss?.name === x.toLowerCase()}
-              />
-            ),
-            onClick: () => {
-              applySunlight(x.toLowerCase());
-            },
-          };
-        }),
-      ]}
+    <VisionSimulationDropDown
+      simulationName={injectCss?.name}
+      onChange={applySimulation}
     />
   );
 };
