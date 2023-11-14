@@ -7,6 +7,7 @@ import {
   BLUE_YELLOW,
   FULL,
   RED_GREEN,
+  SIMULATIONS,
   SUNLIGHT,
   VISUAL_IMPAIRMENTS,
   VisionSimulationDropDown,
@@ -52,14 +53,14 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
       }
 
       if (injectCss !== undefined) {
-        if (js !== null) {
+        if (injectCss.name === debugType) {
+          return;
+        }
+        if (injectCss.js !== null) {
           webview.reload();
         }
         await webview.removeInsertedCSS(injectCss.key);
         setInjectCss(undefined);
-        if (injectCss.css === css) {
-          return;
-        }
       }
 
       try {
@@ -133,11 +134,11 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
         'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8ZGVmcz4KICAgICAgICA8ZmlsdGVyIGlkPSJnYXVzc2lhbl9ibHVyIj4KICAgICAgICAgICAgPGZlR2F1c3NpYW5CbHVyIGluPSJTb3VyY2VHcmFwaGljIiBzdGREZXZpYXRpb249IjEwIiAvPgogICAgICAgIDwvZmlsdGVyPgogICAgPC9kZWZzPgo8L3N2Zz4=';
 
       const impairments: { [key: string]: string } = {
-        cataract: `body {
+        [SIMULATIONS.CATARACT]: `body {
        -webkit-filter: url('${blur}#gaussian_blur');
         filter: url('${blur}#gaussian_blur');
       }`,
-        glaucome: `#bigoverlay {
+        [SIMULATIONS.GLAUCOME]: `#bigoverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -157,11 +158,11 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
   left: -75vmax;
   top: -75vmax;
 }`,
-        farsightedness: `body { filter: blur(2px); }`,
+        [SIMULATIONS.FAR]: `body { filter: blur(2px); }`,
       };
       const css = impairments[visualImpairment.toLowerCase()];
       let js = null;
-      if (visualImpairment.toLowerCase() === 'glaucome') {
+      if (visualImpairment.toLowerCase() === SIMULATIONS.GLAUCOME) {
         js = String(`var div = document.createElement('div');
   div.innerHTML ='<div class="bigoverlay" id="bigoverlay"><div class="spotlight" id="spotlight"></div></div>';
   var body = document.body;
