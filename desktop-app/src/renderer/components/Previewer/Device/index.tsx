@@ -1,4 +1,5 @@
 import { Device as IDevice } from 'common/deviceList';
+import cx from 'classnames';
 import {
   InspectElementArgs,
   OpenDevtoolsArgs,
@@ -86,6 +87,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const dockPosition = useSelector(selectDockPosition);
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
+
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
   let { height, width } = device;
@@ -494,7 +496,11 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const scaledWidth = width * zoomfactor;
 
   return (
-    <div className="h-fit flex-shrink-0 overflow-hidden">
+    <div
+      className={cx('h-fit flex-shrink-0 overflow-hidden', {
+        'w-52': device.width < 400 && zoomfactor < 0.6,
+      })}
+    >
       <div style={{ paddingLeft: '30px' }}>
         <div className="flex justify-between">
           <span>
@@ -518,75 +524,100 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         />
       </div>
       <div
-        style={{
-          height: scaledHeight,
-          width: scaledWidth,
-        }}
-        className="relative origin-top-left bg-white"
+        className={cx('h-fit flex-shrink-0 overflow-hidden', {
+          'w-52': device.width < 400 && zoomfactor < 0.6,
+        })}
       >
-        <GuideGrid
-          scaledHeight={scaledHeight}
-          scaledWidth={scaledWidth}
-          height={height}
-          width={width}
-          coordinates={coordinates}
-          zoomFactor={zoomfactor}
-          night={darkMode}
-          enabled={rulerEnabled(`${width}x${height}`)}
-          defaultGuides={window.electron.store
-            .get('userPreferences.guides')
-            .flatMap((x: any) => x)
-            .filter((x: DefaultGuide) => {
-              return x.resolution === `${width}x${height}`;
-            })}
+        <div className="flex justify-between">
+          <span>
+            {device.name}
+            <span className="ml-[2px] text-xs opacity-60">
+              {width}x{height}
+            </span>
+          </span>
+          {loading ? <Spinner spinnerHeight={24} /> : null}
+        </div>
+        <Toolbar
+          webview={ref.current}
+          device={device}
+          setScreenshotInProgress={setScreenshotInProgess}
+          openDevTools={openDevTools}
+          toggleRuler={toggleRuler}
+          onRotate={onRotateHandler}
+          onIndividualLayoutHandler={onIndividualLayoutHandler}
+          isIndividualLayout={isIndividualLayout}
         />
         <div
           style={{
-            paddingLeft: '30px',
-            paddingTop: '30px',
+            height: scaledHeight,
+            width: scaledWidth,
           }}
-          className="bg-slate-200 dark:bg-slate-800"
+          className="relative origin-top-left bg-white"
         >
-          <webview
-            id={device.name}
-            src={address}
-            style={{
-              height,
-              width,
-              display: 'inline-flex',
-              transform: `scale(${zoomfactor})`,
-            }}
-            ref={ref}
-            className="origin-top-left"
-            /* eslint-disable-next-line react/no-unknown-property */
-            preload={`file://${window.responsively.webviewPreloadPath}`}
-            data-scale-factor={zoomfactor}
-            /* eslint-disable-next-line react/no-unknown-property */
-            allowpopups={isPrimary ? ('true' as any) : undefined}
-            /* eslint-disable-next-line react/no-unknown-property */
-            useragent={device.userAgent}
+          <GuideGrid
+            scaledHeight={scaledHeight}
+            scaledWidth={scaledWidth}
+            height={height}
+            width={width}
+            coordinates={coordinates}
+            zoomFactor={zoomfactor}
+            night={darkMode}
+            enabled={rulerEnabled(`${width}x${height}`)}
+            defaultGuides={window.electron.store
+              .get('userPreferences.guides')
+              .flatMap((x: any) => x)
+              .filter((x: DefaultGuide) => {
+                return x.resolution === `${width}x${height}`;
+              })}
           />
-        </div>
+          <div
+            style={{
+              paddingLeft: '30px',
+              paddingTop: '30px',
+            }}
+            className="bg-slate-200 dark:bg-slate-800"
+          >
+            <webview
+              id={device.name}
+              src={address}
+              style={{
+                height,
+                width,
+                display: 'inline-flex',
+                transform: `scale(${zoomfactor})`,
+              }}
+              ref={ref}
+              className="origin-top-left"
+              /* eslint-disable-next-line react/no-unknown-property */
+              preload={`file://${window.responsively.webviewPreloadPath}`}
+              data-scale-factor={zoomfactor}
+              /* eslint-disable-next-line react/no-unknown-property */
+              allowpopups={isPrimary ? ('true' as any) : undefined}
+              /* eslint-disable-next-line react/no-unknown-property */
+              useragent={device.userAgent}
+            />
+          </div>
 
-        {screenshotInProgress ? (
-          <div
-            className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
-            style={{ height: scaledHeight, width: scaledWidth }}
-          >
-            <Spinner spinnerHeight={30} />
-          </div>
-        ) : null}
-        {error != null ? (
-          <div
-            className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
-            style={{ height: scaledHeight, width: scaledWidth }}
-          >
-            <div className="text-center text-sm text-white">
-              <div className="text-base font-bold">ERROR: {error.code}</div>
-              <div className="text-sm">{error.description}</div>
+          {screenshotInProgress ? (
+            <div
+              className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
+              style={{ height: scaledHeight, width: scaledWidth }}
+            >
+              <Spinner spinnerHeight={30} />
             </div>
-          </div>
-        ) : null}
+          ) : null}
+          {error != null ? (
+            <div
+              className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
+              style={{ height: scaledHeight, width: scaledWidth }}
+            >
+              <div className="text-center text-sm text-white">
+                <div className="text-base font-bold">ERROR: {error.code}</div>
+                <div className="text-sm">{error.description}</div>
+              </div>
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   );
