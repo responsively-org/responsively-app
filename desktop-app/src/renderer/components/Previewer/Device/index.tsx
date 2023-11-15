@@ -500,9 +500,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       className={cx('h-fit flex-shrink-0', {
         'w-52': device.width < 400 && zoomfactor < 0.6,
       })}
-      style={{ paddingLeft: '30px' }}
     >
-      <div className="flex justify-between">
+      <div className="flex justify-between" style={{ paddingLeft: '30px' }}>
         <span>
           {device.name}
           <span className="ml-[2px] text-xs opacity-60">
@@ -524,7 +523,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       <div
         style={{
           height: scaledHeight,
-          width: scaledWidth,
+          width: scaledWidth + 30,
         }}
         className="relative origin-top-left bg-white"
       >
@@ -544,13 +543,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
               return x.resolution === `${width}x${height}`;
             })}
         />
-        <div
-          style={{
-            paddingLeft: '30px',
-            paddingTop: '30px',
-          }}
-          className="bg-slate-200 dark:bg-slate-800"
-        >
+        <div style={{}} className="bg-slate-200 dark:bg-slate-800">
           <webview
             id={device.name}
             src={address}
@@ -559,6 +552,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
               width,
               display: 'inline-flex',
               transform: `scale(${zoomfactor})`,
+              marginLeft: '30px',
+              marginTop: '30px',
             }}
             ref={ref}
             className="origin-top-left"

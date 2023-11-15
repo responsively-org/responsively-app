@@ -139,7 +139,10 @@ const Toolbar = ({
   };
 
   return (
-    <div className="flex items-center justify-between gap-1">
+    <div
+      className="flex items-center justify-between gap-1"
+      style={{ paddingLeft: '30px' }}
+    >
       <div className="my-1 inline-flex max-w-[75%] items-center gap-1">
         <Button onClick={refreshView} title="Refresh This View">
           <Icon icon="ic:round-refresh" />
