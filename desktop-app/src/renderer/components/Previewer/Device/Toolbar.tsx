@@ -131,7 +131,7 @@ const Toolbar = ({
 
   return (
     <div className="flex items-center justify-between gap-1">
-      <div className="my-1 flex items-center gap-1">
+      <div className="my-1 inline-flex max-w-[75%] items-center gap-1 overflow-x-auto">
         <Button onClick={refreshView} title="Refresh This View">
           <Icon icon="ic:round-refresh" />
         </Button>
