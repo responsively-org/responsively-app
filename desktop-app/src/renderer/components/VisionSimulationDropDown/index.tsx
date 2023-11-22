@@ -18,7 +18,7 @@ const MenuItemLabel = ({
         })}
       />
       <span
-        className={cx({
+        className={cx('capitalize', {
           'font-semibold text-black dark:text-white': isActive,
         })}
       >
@@ -94,7 +94,7 @@ export const VisionSimulationDropDown = ({
         {
           label: (
             <MenuItemLabel
-              label="Normal Vision"
+              label="normal vision"
               isActive={simulationName === undefined}
             />
           ),
