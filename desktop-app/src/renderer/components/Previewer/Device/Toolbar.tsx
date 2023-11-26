@@ -8,6 +8,7 @@ import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
 import { updateWebViewHeightAndScale } from 'common/webViewUtils';
+import { ColorBlindnessTools } from './ColorBlindnessTools';
 
 interface Props {
   webview: Electron.WebviewTag | null;
@@ -42,7 +43,7 @@ const Toolbar = ({
   };
 
   const toggleEventMirroring = async () => {
-    if (webview == null) {
+    if (webview === null) {
       return;
     }
     try {
@@ -64,7 +65,7 @@ const Toolbar = ({
   };
 
   const quickScreenshot = async () => {
-    if (webview == null) {
+    if (webview === null) {
       return;
     }
     setScreenshotLoading(true);
@@ -85,13 +86,13 @@ const Toolbar = ({
   };
 
   const fullScreenshot = async () => {
-    if (webview == null) {
+    if (webview === null) {
       return;
     }
     setFullScreenshotLoading(true);
     try {
       const webviewTag = window.document.getElementById(device.name);
-      if (webviewTag == null) {
+      if (webviewTag === null) {
         return;
       }
       setScreenshotInProgress(true);
@@ -130,7 +131,7 @@ const Toolbar = ({
 
   return (
     <div className="flex items-center justify-between gap-1">
-      <div className="my-1 flex items-center gap-1">
+      <div className="my-1 inline-flex max-w-[75%] items-center gap-1 overflow-x-auto">
         <Button onClick={refreshView} title="Refresh This View">
           <Icon icon="ic:round-refresh" />
         </Button>
@@ -168,7 +169,7 @@ const Toolbar = ({
         <Button onClick={openDevTools} title="Open Devtools">
           <Icon icon="ic:round-code" />
         </Button>
-        <Button onClick={rotate} isActive={rotated} title="Rotate This Device">
+        <Button onClick={rotate} title="Rotate This Device">
           <Icon
             icon={
               rotated
@@ -177,6 +178,7 @@ const Toolbar = ({
             }
           />
         </Button>
+        <ColorBlindnessTools webview={webview} />
       </div>
       <Button
         onClick={() => onIndividualLayoutHandler(device)}

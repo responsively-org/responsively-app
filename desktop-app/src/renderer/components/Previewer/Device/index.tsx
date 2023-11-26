@@ -1,4 +1,5 @@
 import { Device as IDevice } from 'common/deviceList';
+import cx from 'classnames';
 import {
   InspectElementArgs,
   OpenDevtoolsArgs,
@@ -430,7 +431,11 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const scaledWidth = width * zoomfactor;
 
   return (
-    <div className="h-fit flex-shrink-0 overflow-hidden">
+    <div
+      className={cx('h-fit flex-shrink-0 overflow-hidden', {
+        'w-52': device.width < 400 && zoomfactor < 0.6,
+      })}
+    >
       <div className="flex justify-between">
         <span>
           {device.name}

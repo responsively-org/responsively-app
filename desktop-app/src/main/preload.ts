@@ -1,5 +1,6 @@
 import { Channels } from 'common/constants';
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { Titlebar, TitlebarColor } from 'custom-electron-titlebar';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -42,3 +43,18 @@ window.onerror = function (errorMsg, url, lineNumber) {
   console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
   // Code to run when an error has occurred on the page
 };
+
+window.addEventListener('DOMContentLoaded', () => {
+  const customTitlebarStatus = ipcRenderer.sendSync(
+    'electron-store-get',
+    'userPreferences.customTitlebar'
+  ) as boolean;
+
+  if (customTitlebarStatus && process.platform === 'win32') {
+    // eslint-disable-next-line no-new
+    new Titlebar({
+      backgroundColor: TitlebarColor.fromHex('#0f172a'), // slate-900
+      itemBackgroundColor: TitlebarColor.fromHex('#1e293b'), // slate-800
+    });
+  }
+});

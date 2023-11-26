@@ -118,9 +118,12 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 <p>&nbsp;</p>
 
 <p align="center">
-  <a href="https://www.bairesdev.com/?ref=Responsively" target="_blank">
+  <a href="https://www.bairesdev.com/?ref=Responsively" target="_blank" >
     <img src="https://responsively.app/_next/static/media/bairesdev.2b0bfd41.svg" width="250px" height="120px" alt="Baires Dev">
-  </a>
+  </a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://www.browserstack.com/?utm_medium=partnered&utm_source=responsively" target="_blank" style="margin-left: 10px;">
+    <img src="https://responsively.app/_next/static/media/browserStack.b67d4227.svg" width="250px" height="120px" alt="BrowserStack">
+  </a>&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://opencollective.com/responsively" target="_blank">
     <img src="https://user-images.githubusercontent.com/1283424/142834528-4cd5b8eb-eeae-4437-b749-d09c96dde160.png" height="120px" alt="Sponsor to add your company logo here">
   </a>
@@ -254,6 +257,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="https://github.com/gauravsingh94"><img src="https://avatars.githubusercontent.com/u/99260988?v=4?s=100" width="100px;" alt="Gaurav Singh"/><br /><sub><b>Gaurav Singh</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=gauravsingh94" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/NishidhJain"><img src="https://avatars.githubusercontent.com/u/61869195?v=4?s=100" width="100px;" alt="Nishidh Jain"/><br /><sub><b>Nishidh Jain</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=NishidhJain" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/mishrasamiksha"><img src="https://avatars.githubusercontent.com/u/38784342?v=4?s=100" width="100px;" alt="Samiksha Mishra"/><br /><sub><b>Samiksha Mishra</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=mishrasamiksha" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="20%"><a href="http://www.astuanax.com"><img src="https://avatars.githubusercontent.com/u/1730624?v=4?s=100" width="100px;" alt="Len Dierickx"/><br /><sub><b>Len Dierickx</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=astuanax" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

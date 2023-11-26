@@ -10,8 +10,11 @@ import { APP_VIEWS, selectAppView } from './store/features/ui';
 import type { AppView } from './store/features/ui';
 import DeviceManager from './components/DeviceManager';
 import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
-import ReleaseNotes from './components/ReleaseNotes';
-import { Sponsorship } from './components/Sponsorship';
+import { InfoPopups } from './components/InfoPopups';
+
+if ((navigator as any).userAgentData.platform === 'Windows') {
+  import('./titlebar-styles.css');
+}
 
 const Browser = () => {
   return (
@@ -45,8 +48,7 @@ const AppContent = () => {
       <ThemeProvider>
         <KeyboardShortcutsManager />
         <ViewComponent />
-        <ReleaseNotes />
-        <Sponsorship />
+        <InfoPopups />
       </ThemeProvider>
     </Provider>
   );

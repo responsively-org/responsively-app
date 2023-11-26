@@ -148,6 +148,7 @@ export const selectZoomFactor = (state: RootState) => {
   }
   return state.renderer.zoomFactor;
 };
+
 export const selectAddress = (state: RootState) => state.renderer.address;
 export const selectPageTitle = (state: RootState) => state.renderer.pageTitle;
 export const selectRotate = (state: RootState) => state.renderer.rotate;
