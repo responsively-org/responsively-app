@@ -37,8 +37,6 @@ export const migrations = {
         })
         .filter(Boolean) as string[];
 
-      console.log('newActiveDevices', newActiveDevices);
-
       if (
         newActiveDevices.length === 3 &&
         newActiveDevices.every((id) => defaultActiveDevices.includes(id))
