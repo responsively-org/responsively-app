@@ -158,6 +158,7 @@ const schema = {
           },
           default: {},
         },
+        default: [],
       },
       screenshot: {
         type: 'object',

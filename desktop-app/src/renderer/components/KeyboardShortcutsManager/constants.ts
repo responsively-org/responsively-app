@@ -36,7 +36,7 @@ export const SHORTCUT_KEYS: { [key in ShortcutChannel]: string[] } = {
   [SHORTCUT_CHANNEL.ROTATE_ALL]: ['mod+alt+r'],
   [SHORTCUT_CHANNEL.SCREENSHOT_ALL]: ['mod+s'],
   [SHORTCUT_CHANNEL.THEME]: ['mod+t'],
-  [SHORTCUT_CHANNEL.TOGGLE_RULERS]: ['mod+alt+del', 'alt+r'],
+  [SHORTCUT_CHANNEL.TOGGLE_RULERS]: ['alt+r'],
   [SHORTCUT_CHANNEL.ZOOM_IN]: ['mod+=', 'mod++', 'mod+shift+='],
   [SHORTCUT_CHANNEL.ZOOM_OUT]: ['mod+-'],
 };

@@ -501,7 +501,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         'w-52': device.width < 400 && zoomfactor < 0.6,
       })}
     >
-      <div className="flex justify-between" style={{ paddingLeft: '30px' }}>
+      <div className="flex justify-between">
         <span>
           {device.name}
           <span className="ml-[2px] text-xs opacity-60">
@@ -522,8 +522,12 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       />
       <div
         style={{
-          height: scaledHeight,
-          width: scaledWidth + 30,
+          height: rulerEnabled(`${width}x${height}`)
+            ? scaledHeight + 30
+            : scaledHeight,
+          width: rulerEnabled(`${width}x${height}`)
+            ? scaledWidth + 30
+            : scaledWidth,
         }}
         className="relative origin-top-left bg-white"
       >
@@ -543,7 +547,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
               return x.resolution === `${width}x${height}`;
             })}
         />
-        <div style={{}} className="bg-slate-200 dark:bg-slate-800">
+        <div className="bg-white">
           <webview
             id={device.name}
             src={address}
@@ -552,8 +556,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
               width,
               display: 'inline-flex',
               transform: `scale(${zoomfactor})`,
-              marginLeft: '30px',
-              marginTop: '30px',
+              marginLeft: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
+              marginTop: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
             }}
             ref={ref}
             className="origin-top-left"
