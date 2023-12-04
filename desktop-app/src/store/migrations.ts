@@ -4,7 +4,6 @@ import { randomUUID } from 'crypto';
 import { PreviewSuites } from '../renderer/store/features/device-manager';
 
 import { defaultDevices, Device } from '../common/deviceList';
-import { DefaultGuide } from '../renderer/components/Previewer/Guides';
 
 const defaultActiveDevices = ['10008', '10013', '10015'];
 
@@ -88,8 +87,5 @@ export const migrations = {
         devices: defaultActiveDevices,
       },
     ]);
-  },
-  '1.2.2': (store: Store) => {
-    // Do we need a new migration???
   },
 };
