@@ -220,7 +220,7 @@ const schema = {
   },
   homepage: {
     type: 'string',
-    default: 'https://www.example.org/',
+    default: 'https://www.google.com/',
   },
   seenReleaseNotes: {
     type: 'array',
