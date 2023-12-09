@@ -94,7 +94,7 @@ export const VisionSimulationDropDown = ({
         {
           label: (
             <MenuItemLabel
-              label="normal vision"
+              label="Disable tool"
               isActive={simulationName === undefined}
             />
           ),

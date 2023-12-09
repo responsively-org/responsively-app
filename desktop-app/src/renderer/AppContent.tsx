@@ -6,11 +6,12 @@ import { store } from './store';
 
 import './App.css';
 import ThemeProvider from './context/ThemeProvider';
-import { APP_VIEWS, selectAppView } from './store/features/ui';
 import type { AppView } from './store/features/ui';
+import { APP_VIEWS, selectAppView } from './store/features/ui';
 import DeviceManager from './components/DeviceManager';
 import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
-import { InfoPopups } from './components/InfoPopups';
+import { ReleaseNotes } from './components/ReleaseNotes';
+import { Sponsorship } from './components/Sponsorship';
 
 if ((navigator as any).userAgentData.platform === 'Windows') {
   import('./titlebar-styles.css');
@@ -48,7 +49,8 @@ const AppContent = () => {
       <ThemeProvider>
         <KeyboardShortcutsManager />
         <ViewComponent />
-        <InfoPopups />
+        <ReleaseNotes />
+        <Sponsorship />
       </ThemeProvider>
     </Provider>
   );

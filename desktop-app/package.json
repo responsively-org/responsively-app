@@ -108,6 +108,7 @@
     "@headlessui/react": "^1.7.4",
     "@iconify/react": "^3.2.2",
     "@reduxjs/toolkit": "^1.9.5",
+    "@scena/react-guides": "^0.28.2",
     "autoprefixer": "^10.4.14",
     "bluebird": "^3.7.2",
     "browser-sync": "^2.29.3",

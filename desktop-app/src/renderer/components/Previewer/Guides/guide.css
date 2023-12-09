@@ -1,0 +1,33 @@
+.box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  box-sizing: border-box;
+  background: transparent;
+  z-index: 21;
+}
+
+.box:before,
+.box:after {
+  position: absolute;
+  content: '';
+  /*background: rgb(55, 65, 81);*/
+}
+
+.box:before {
+  width: 1px;
+  height: 100%;
+  left: 100%;
+}
+
+.box:after {
+  height: 1px;
+  width: 100%;
+  top: 100%;
+}
+
+.scena-guides-horizontal .scena-guides-guide-pos {
+  left: 48% !important;
+}

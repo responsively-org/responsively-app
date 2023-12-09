@@ -44,6 +44,18 @@ import { PREVIEW_LAYOUTS } from 'common/constants';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
+import {
+  Coordinates,
+  RulersState,
+  selectRuler,
+  selectRulerEnabled,
+  setRuler,
+} from '../../../store/features/ruler';
+import GuideGrid, { DefaultGuide } from '../Guides';
+import { selectDarkMode } from '../../../store/features/ui';
+import useKeyboardShortcut, {
+  SHORTCUT_CHANNEL,
+} from '../../KeyboardShortcutsManager/useKeyboardShortcut';
 
 interface Props {
   device: IDevice;
@@ -69,9 +81,11 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
   const layout = useSelector(selectLayout);
+  const rulerEnabled = useSelector(selectRulerEnabled);
+  const getRuler = useSelector(selectRuler);
   const dispatch = useDispatch();
-
   const dockPosition = useSelector(selectDockPosition);
+  const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
@@ -83,6 +97,13 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     width = height;
     height = temp;
   }
+
+  const [coordinates, setCoordinates] = useState<Coordinates>({
+    deltaX: 0,
+    deltaY: 0,
+    innerWidth: width * 2,
+    innerHeight: height * 2,
+  });
 
   const registerNavigationHandlers = useCallback(() => {
     webViewPubSub.subscribe(NAVIGATION_EVENTS.RELOAD, () => {
@@ -143,6 +164,41 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       });
     }
   }, [isPrimary]);
+
+  const toggleRuler = useCallback(() => {
+    if (!ref.current) {
+      return;
+    }
+    const webview = ref.current as Electron.WebviewTag;
+    if (webview == null) {
+      return;
+    }
+    const resolution = `${width}x${height}`;
+    const ruler: RulersState | undefined = getRuler(resolution);
+    if (ruler) {
+      dispatch(
+        setRuler({
+          resolution,
+          rulerState: {
+            isRulerEnabled: !ruler.isRulerEnabled,
+            rulerCoordinates: ruler.rulerCoordinates,
+          },
+        })
+      );
+    } else {
+      dispatch(
+        setRuler({
+          resolution,
+          rulerState: {
+            isRulerEnabled: true,
+            rulerCoordinates: coordinates,
+          },
+        })
+      );
+    }
+  }, [dispatch, getRuler, height, width, coordinates]);
+
+  useKeyboardShortcut(SHORTCUT_CHANNEL.TOGGLE_RULERS, toggleRuler);
 
   const openDevTools = useCallback(async () => {
     if (!ref.current) {
@@ -224,7 +280,15 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       webview.removeEventListener('did-navigate', didNavigateHandler);
     });
 
-    const ipc̨MessageHandler = (e: Electron.IpcMessageEvent) => {
+    const ipcMessageHandler = (e: Electron.IpcMessageEvent) => {
+      if (e.channel === 'pass-scroll-data') {
+        setCoordinates({
+          deltaX: e.args[0].coordinates.x,
+          deltaY: e.args[0].coordinates.y,
+          innerHeight: e.args[0].innerHeight,
+          innerWidth: e.args[0].innerWidth,
+        });
+      }
       if (e.channel === 'context-menu-command') {
         const { command, arg } = e.args[0];
         switch (command) {
@@ -239,13 +303,14 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             break;
           }
           default:
+            // eslint-disable-next-line no-console
             console.log('Unhandled context menu command', command);
         }
       }
     };
-    webview.addEventListener('ipc-message', ipc̨MessageHandler);
+    webview.addEventListener('ipc-message', ipcMessageHandler);
     handlerRemovers.push(() => {
-      webview.removeEventListener('ipc-message', ipc̨MessageHandler);
+      webview.removeEventListener('ipc-message', ipcMessageHandler);
     });
 
     const didStartLoadingHandler = () => {
@@ -432,7 +497,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
 
   return (
     <div
-      className={cx('h-fit flex-shrink-0 overflow-hidden', {
+      className={cx('h-fit flex-shrink-0', {
         'w-52': device.width < 400 && zoomfactor < 0.6,
       })}
     >
@@ -450,33 +515,62 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         device={device}
         setScreenshotInProgress={setScreenshotInProgess}
         openDevTools={openDevTools}
+        toggleRuler={toggleRuler}
         onRotate={onRotateHandler}
         onIndividualLayoutHandler={onIndividualLayoutHandler}
         isIndividualLayout={isIndividualLayout}
       />
       <div
-        style={{ height: scaledHeight, width: scaledWidth }}
+        style={{
+          height: rulerEnabled(`${width}x${height}`)
+            ? scaledHeight + 30
+            : scaledHeight,
+          width: rulerEnabled(`${width}x${height}`)
+            ? scaledWidth + 30
+            : scaledWidth,
+        }}
         className="relative origin-top-left bg-white"
       >
-        <webview
-          id={device.name}
-          src={address}
-          style={{
-            height,
-            width,
-            display: 'inline-flex',
-            transform: `scale(${zoomfactor})`,
-          }}
-          ref={ref}
-          className="origin-top-left"
-          /* eslint-disable-next-line react/no-unknown-property */
-          preload={`file://${window.responsively.webviewPreloadPath}`}
-          data-scale-factor={zoomfactor}
-          /* eslint-disable-next-line react/no-unknown-property */
-          allowpopups={isPrimary ? ('true' as any) : undefined}
-          /* eslint-disable-next-line react/no-unknown-property */
-          useragent={device.userAgent}
+        <GuideGrid
+          scaledHeight={scaledHeight}
+          scaledWidth={scaledWidth}
+          height={height}
+          width={width}
+          coordinates={coordinates}
+          zoomFactor={zoomfactor}
+          night={darkMode}
+          enabled={rulerEnabled(`${width}x${height}`)}
+          defaultGuides={window.electron.store
+            .get('userPreferences.guides')
+            .flatMap((x: any) => x)
+            .filter((x: DefaultGuide) => {
+              return x.resolution === `${width}x${height}`;
+            })}
         />
+        <div className="bg-white">
+          <webview
+            id={device.name}
+            src={address}
+            style={{
+              height,
+              width,
+              display: 'inline-flex',
+              transform: `scale(${zoomfactor})`,
+              marginLeft: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
+              marginTop: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
+            }}
+            ref={ref}
+            className="origin-top-left"
+            /* eslint-disable-next-line react/no-unknown-property */
+            preload={`file://${window.responsively.webviewPreloadPath}`}
+            data-scale-factor={zoomfactor}
+            /* eslint-disable-next-line react/no-unknown-property */
+            allowpopups={isPrimary ? ('true' as any) : undefined}
+            /* eslint-disable-next-line react/no-unknown-property */
+            useragent={device.userAgent}
+          />
+        </div>
+
         {screenshotInProgress ? (
           <div
             className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
