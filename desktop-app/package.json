@@ -109,7 +109,7 @@
     "@iconify/react": "^3.2.2",
     "@reduxjs/toolkit": "^1.9.5",
     "@scena/react-guides": "^0.28.2",
-    "autoprefixer": "^10.4.14",
+    "autoprefixer": "^10.4.16",
     "bluebird": "^3.7.2",
     "browser-sync": "^2.29.3",
     "classnames": "^2.3.1",
