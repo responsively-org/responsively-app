@@ -203,7 +203,7 @@
     "replace-in-file": "^7.0.1",
     "rimraf": "^4.2.0",
     "sass": "^1.54.4",
-    "sass-loader": "^13.0.2",
+    "sass-loader": "^13.3.2",
     "style-loader": "^3.3.1",
     "terser-webpack-plugin": "^5.3.9",
     "ts-jest": "^28.0.8",
