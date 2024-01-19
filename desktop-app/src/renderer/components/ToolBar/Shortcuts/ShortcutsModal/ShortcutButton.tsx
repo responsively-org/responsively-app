@@ -5,11 +5,10 @@ interface Props {
 const ShortcutButton = ({ text }: Props) => {
   const btnText = text[0].split('+');
   const btnTextLength = btnText.length - 1;
-  const { platform = '' } = navigator?.userAgentData || {};
 
   const formatText = (value: string) => {
     if (value === 'mod') {
-      if (platform.includes('Windows')) {
+      if (navigator?.userAgent?.includes('Windows')) {
         return `Ctrl`;
       }
       return `⌘`;
