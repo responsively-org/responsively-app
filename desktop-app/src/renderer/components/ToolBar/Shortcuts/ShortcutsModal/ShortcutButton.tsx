@@ -5,8 +5,16 @@ interface Props {
 const ShortcutButton = ({ text }: Props) => {
   const btnText = text[0].split('+');
   const btnTextLength = btnText.length - 1;
+  const { platform = '' } = navigator?.userAgentData || {};
+
   const formatText = (value: string) => {
-    if (value === 'mod') return `⌘`;
+    if (value === 'mod') {
+      if (platform.includes('Windows')) {
+        return `Ctrl`;
+      }
+      return `⌘`;
+    }
+
     if (value.length === 1) return value.toUpperCase();
     return value;
   };
