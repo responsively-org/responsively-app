@@ -40,6 +40,10 @@ const ToolBar = () => {
   }
 
   const screenshotCaptureHandler = async () => {
+    if (isCapturingScreenshot) {
+      return;
+    }
+
     dispatch(setIsCapturingScreenshot(true));
     const webViews: NodeListOf<Electron.WebviewTag> =
       document.querySelectorAll('webView');
