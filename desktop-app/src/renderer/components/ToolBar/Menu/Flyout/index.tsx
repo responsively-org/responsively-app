@@ -10,6 +10,7 @@ import ClearHistory from './ClearHistory';
 import PreviewLayout from './PreviewLayout';
 import Bookmark from './Bookmark';
 import { Settings } from './Settings';
+import HideScrollBarForMobile from './HideScrollbarForMobile';
 
 const Divider = () => (
   <div className="h-[1px] bg-slate-200 dark:bg-slate-700" />
@@ -29,6 +30,7 @@ const MenuFlyout = ({ closeFlyout }: Props) => {
       <UITheme />
       <Devtools />
       <AllowInSecureSSL />
+      <HideScrollBarForMobile />
       <ClearHistory />
       <Divider />
       <div>
