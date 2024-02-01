@@ -22,6 +22,12 @@ const documentBodyInit = () => {
       innerHeight: document.body.scrollHeight,
       innerWidth: window.innerWidth,
     });
+
+    // detecting a pinch-to-zoom from a trackpad
+    if (e.ctrlKey) {
+      const scale = Math.exp(-e.deltaY / 100);
+      ipcRenderer.send('pass-zoom-data', scale);
+    }
   });
 
   window.addEventListener('dom-ready', () => {

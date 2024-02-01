@@ -22,13 +22,13 @@ const schema = {
   renderer: {
     type: 'object',
     properties: {
-      individualZoomStepIndex: {
+      individualZoomFactor: {
         type: 'number',
-        default: 8,
+        default: 1,
       },
-      zoomStepIndex: {
+      zoomFactor: {
         type: 'number',
-        default: 3,
+        default: 0.55,
       },
     },
     default: {},

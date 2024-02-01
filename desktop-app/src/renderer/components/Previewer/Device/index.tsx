@@ -39,6 +39,7 @@ import {
   setIsInspecting,
   setLayout,
   setPageTitle,
+  setZoomFactor,
 } from 'renderer/store/features/renderer';
 import { PREVIEW_LAYOUTS } from 'common/constants';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
@@ -401,6 +402,20 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       window.electron.ipcRenderer.removeListener('reload', reloadHandler);
     };
   }, [ref]);
+
+  useEffect(() => {
+    // zoom in or out when user pinches to zoom on a trackpad
+
+    const onUpdateZoomFactor = (scale: number) => {
+      dispatch(setZoomFactor(zoomfactor * scale));
+    };
+
+    window.electron.ipcRenderer.on('update-zoom-factor', onUpdateZoomFactor);
+
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners('update-zoom-factor');
+    };
+  }, [zoomfactor, dispatch]);
 
   useEffect(() => {
     if (!ref.current) {

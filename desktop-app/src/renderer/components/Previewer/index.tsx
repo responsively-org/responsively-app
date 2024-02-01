@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import cx from 'classnames';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import { DOCK_POSITION, PREVIEW_LAYOUTS } from 'common/constants';
@@ -8,7 +8,11 @@ import {
 } from 'renderer/store/features/devtools';
 import { getDevicesMap, Device as IDevice } from 'common/deviceList';
 import { useState } from 'react';
-import { selectLayout } from 'renderer/store/features/renderer';
+import {
+  selectLayout,
+  setZoomFactor,
+  selectZoomFactor,
+} from 'renderer/store/features/renderer';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
 import IndividualLayoutToolbar from './IndividualLayoutToolBar';
@@ -20,11 +24,20 @@ const Previewer = () => {
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const layout = useSelector(selectLayout);
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
+  const zoomfactor = useSelector(selectZoomFactor);
+  const dispatch = useDispatch();
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
+  const onPinchToZoom = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (e.ctrlKey) {
+      const scale = Math.exp(-e.deltaY / 100);
+      dispatch(setZoomFactor(zoomfactor * scale));
+    }
+  };
+
   return (
-    <div className="h-full">
+    <div className="h-full" onWheel={onPinchToZoom}>
       {isIndividualLayout && (
         <IndividualLayoutToolbar
           individualDevice={individualDevice}

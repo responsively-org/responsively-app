@@ -239,6 +239,11 @@ const createWindow = async () => {
   ipcMain.on('stop-watcher', async () => {
     await stopWatchFiles();
   });
+
+  // detecting a pinch-to-zoom from a trackpad
+  ipcMain.on('pass-zoom-data', (_, scale) => {
+    mainWindow?.webContents.send('update-zoom-factor', scale);
+  });
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
