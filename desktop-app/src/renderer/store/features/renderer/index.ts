@@ -22,6 +22,36 @@ const zoomSteps = [
   0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2,
 ];
 
+const findNextZoomStep = (
+  currentZoomFactor: number,
+  direction: 'up' | 'down'
+) => {
+  if (direction !== 'up' && direction !== 'down') {
+    // eslint-disable-next-line no-console
+    console.error('Invalid direction specified');
+    return currentZoomFactor;
+  }
+
+  const index = zoomSteps.findIndex((step) => step >= currentZoomFactor);
+
+  if (direction === 'up') {
+    // If the currentZoomFactor is exactly a predefined zoom step, move to the next zoom step.
+    // If it's at or above the max zoom step, stay at the last step.
+
+    if (index === -1 || currentZoomFactor === zoomSteps[zoomSteps.length - 1]) {
+      return zoomSteps[zoomSteps.length - 1];
+    }
+
+    return currentZoomFactor === zoomSteps[index]
+      ? zoomSteps[index + 1]
+      : zoomSteps[index];
+  }
+
+  // direction === 'down'
+  // if currentZoomFactor is at max, move two steps down, otherwise move one step down.
+  return index === -1 ? zoomSteps[zoomSteps.length - 2] : zoomSteps[index - 1];
+};
+
 const urlFromQueryParam = () => {
   const params = new URLSearchParams(window.location.search);
   const url = params.get('urlToOpen');
@@ -34,9 +64,10 @@ const urlFromQueryParam = () => {
 const initialState: RendererState = {
   address: urlFromQueryParam() ?? window.electron.store.get('homepage'),
   pageTitle: '',
-  individualZoomFactor:
-    zoomSteps[window.electron.store.get('renderer.individualZoomStepIndex')],
-  zoomFactor: zoomSteps[window.electron.store.get('renderer.zoomStepIndex')],
+  individualZoomFactor: window.electron.store.get(
+    'renderer.individualZoomFactor'
+  ),
+  zoomFactor: window.electron.store.get('renderer.zoomFactor'),
   rotate: false,
   isInspecting: undefined,
   layout: window.electron.store.get('ui.previewLayout'),
@@ -73,45 +104,62 @@ export const rendererSlice = createSlice({
       }
     },
     zoomIn: (state) => {
-      const index =
-        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL
-          ? zoomSteps.indexOf(state.individualZoomFactor)
-          : zoomSteps.indexOf(state.zoomFactor);
+      const isIndividualLayout = state.layout === PREVIEW_LAYOUTS.INDIVIDUAL;
+      const currentZoomFactorKey = isIndividualLayout
+        ? 'individualZoomFactor'
+        : 'zoomFactor';
+      const currentZoomFactor = parseFloat(
+        state[currentZoomFactorKey].toFixed(2)
+      );
+      const maxZoomFactor = zoomSteps[zoomSteps.length - 1];
 
-      if (index < zoomSteps.length - 1) {
-        if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
-          const newIndex = index + 1;
-          state.individualZoomFactor = zoomSteps[newIndex];
-          window.electron.store.set(
-            'renderer.individualZoomStepIndex',
-            newIndex
-          );
-        } else {
-          const newIndex = index + 1;
-          state.zoomFactor = zoomSteps[newIndex];
-          window.electron.store.set('renderer.zoomStepIndex', newIndex);
-        }
+      if (currentZoomFactor < maxZoomFactor) {
+        const newZoomFactor = findNextZoomStep(currentZoomFactor, 'up');
+
+        state[currentZoomFactorKey] = newZoomFactor;
+        window.electron.store.set(
+          `renderer.${currentZoomFactorKey}`,
+          newZoomFactor
+        );
       }
     },
     zoomOut: (state) => {
-      const index =
-        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL
-          ? zoomSteps.indexOf(state.individualZoomFactor)
-          : zoomSteps.indexOf(state.zoomFactor);
-      if (index > 0) {
-        if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
-          const newIndex = index - 1;
-          state.individualZoomFactor = zoomSteps[newIndex];
-          window.electron.store.set(
-            'renderer.individualZoomStepIndex',
-            newIndex
-          );
-        } else {
-          const newIndex = index - 1;
-          state.zoomFactor = zoomSteps[newIndex];
-          window.electron.store.set('renderer.zoomStepIndex', newIndex);
-        }
+      const isIndividualLayout = state.layout === PREVIEW_LAYOUTS.INDIVIDUAL;
+      const currentZoomFactorKey = isIndividualLayout
+        ? 'individualZoomFactor'
+        : 'zoomFactor';
+      const currentZoomFactor = parseFloat(
+        state[currentZoomFactorKey].toFixed(2)
+      );
+      const minZoomFactor = zoomSteps[0];
+
+      if (currentZoomFactor > minZoomFactor) {
+        const newZoomFactor = findNextZoomStep(currentZoomFactor, 'down');
+
+        state[currentZoomFactorKey] = newZoomFactor;
+        window.electron.store.set(
+          `renderer.${currentZoomFactorKey}`,
+          newZoomFactor
+        );
       }
+    },
+    setZoomFactor: (state, action: PayloadAction<number>) => {
+      const isIndividualLayout = state.layout === PREVIEW_LAYOUTS.INDIVIDUAL;
+      const currentZoomFactorKey = isIndividualLayout
+        ? 'individualZoomFactor'
+        : 'zoomFactor';
+      const maxZoomFactor = zoomSteps[zoomSteps.length - 1];
+      const minZoomFactor = zoomSteps[0];
+      const newZoomFactor = Math.min(
+        Math.max(action.payload, minZoomFactor),
+        maxZoomFactor
+      );
+
+      state[currentZoomFactorKey] = newZoomFactor;
+      window.electron.store.set(
+        `renderer.${currentZoomFactorKey}`,
+        newZoomFactor
+      );
     },
     setRotate: (state, action: PayloadAction<boolean>) => {
       state.rotate = action.payload;
@@ -139,6 +187,7 @@ export const {
   setLayout,
   setIsCapturingScreenshot,
   setPageTitle,
+  setZoomFactor,
 } = rendererSlice.actions;
 
 // Use different zoom factor based on state's current layout
