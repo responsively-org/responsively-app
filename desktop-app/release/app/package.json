@@ -14,6 +14,6 @@
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
   "dependencies": {
-    "browser-sync": "^2.27.12"
+    "browser-sync": "^3.0.2"
   }
 }
