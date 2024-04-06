@@ -205,9 +205,14 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       return;
     }
     const webview = ref.current as Electron.WebviewTag;
-
-    if (webview == null) {
+    const isOpenedCurrentDevTool =
+      devtoolsOpenForWebviewId === webview.getWebContentsId();
+    if (webview == null || isOpenedCurrentDevTool) {
       return;
+    }
+    if (!isOpenedCurrentDevTool && devtoolsOpenForWebviewId !== -1) {
+      await window.electron.ipcRenderer.invoke('close-devtools');
+      dispatch(setDevtoolsClose());
     }
     await window.electron.ipcRenderer.invoke<
       OpenDevtoolsArgs,
@@ -217,7 +222,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       dockPosition,
     });
     dispatch(setDevtoolsOpen(webview.getWebContentsId()));
-  }, [dispatch, dockPosition]);
+  }, [devtoolsOpenForWebviewId, dispatch, dockPosition]);
 
   const inspectElement = useCallback(
     async (deviceX: number, deviceY: number) => {
