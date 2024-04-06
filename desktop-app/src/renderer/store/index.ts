@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import deviceManagerReducer from './features/device-manager';
 import devtoolsReducer from './features/devtools';
 import rendererReducer from './features/renderer';
+import rulersReducer from './features/ruler';
 import uiReducer from './features/ui';
 import bookmarkReducer from './features/bookmarks';
 
@@ -13,6 +14,7 @@ export const store = configureStore({
     deviceManager: deviceManagerReducer,
     devtools: devtoolsReducer,
     bookmarks: bookmarkReducer,
+    rulers: rulersReducer,
   },
 });
 

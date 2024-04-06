@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ReleaseNotes, isReleaseNotesUnseen } from '../ReleaseNotes';
+import { isReleaseNotesUnseen, ReleaseNotes } from '../ReleaseNotes';
 import { Sponsorship } from '../Sponsorship';
 
 export const InfoPopups = () => {

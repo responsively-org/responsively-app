@@ -15,6 +15,7 @@ interface Props {
   device: Device;
   setScreenshotInProgress: (value: boolean) => void;
   openDevTools: () => void;
+  toggleRuler: () => void;
   onRotate: (state: boolean) => void;
   onIndividualLayoutHandler: (device: Device) => void;
   isIndividualLayout: boolean;
@@ -25,6 +26,7 @@ const Toolbar = ({
   device,
   setScreenshotInProgress,
   openDevTools,
+  toggleRuler,
   onRotate,
   onIndividualLayoutHandler,
   isIndividualLayout,
@@ -124,6 +126,13 @@ const Toolbar = ({
     setFullScreenshotLoading(false);
   };
 
+  const toggleRulers = async () => {
+    if (webview === null) {
+      return;
+    }
+    toggleRuler();
+  };
+
   const rotate = async () => {
     setRotated(!rotated);
     onRotate(!rotated);
@@ -177,6 +186,9 @@ const Toolbar = ({
                 : 'mdi:phone-rotate-landscape'
             }
           />
+        </Button>
+        <Button onClick={toggleRulers} title="Show rulers">
+          <Icon icon="tdesign:measurement-1" />
         </Button>
         <ColorBlindnessTools webview={webview} />
       </div>
