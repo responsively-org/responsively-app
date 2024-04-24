@@ -529,7 +529,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             ? scaledWidth + 30
             : scaledWidth,
         }}
-        className="relative origin-top-left bg-white"
+        className="relative origin-top-left overflow-hidden bg-white"
       >
         <GuideGrid
           scaledHeight={scaledHeight}
