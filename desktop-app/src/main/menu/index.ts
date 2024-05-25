@@ -1,6 +1,7 @@
 import { app, Menu, BrowserWindow, MenuItemConstructorOptions } from 'electron';
 import { subMenuHelp } from './help';
 import { getViewMenu } from './view';
+import { AppUpdater } from '../app-updater';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -14,8 +15,11 @@ export interface ReloadArgs {
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
 
-  constructor(mainWindow: BrowserWindow) {
+  appUpdater: AppUpdater;
+
+  constructor(mainWindow: BrowserWindow, appUpdater: AppUpdater) {
     this.mainWindow = mainWindow;
+    this.appUpdater = appUpdater;
   }
 
   buildMenu(): Menu {
@@ -118,7 +122,7 @@ export default class MenuBuilder {
       subMenuEdit,
       getViewMenu(this.mainWindow),
       subMenuWindow,
-      subMenuHelp,
+      subMenuHelp(this.mainWindow, this.appUpdater),
     ];
   }
 
@@ -141,7 +145,7 @@ export default class MenuBuilder {
         ],
       },
       getViewMenu(this.mainWindow),
-      subMenuHelp,
+      subMenuHelp(this.mainWindow, this.appUpdater),
     ];
   }
 }
