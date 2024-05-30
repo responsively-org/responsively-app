@@ -495,6 +495,61 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const scaledHeight = height * zoomfactor;
   const scaledWidth = width * zoomfactor;
 
+  useEffect(() => {
+    const webview = ref.current;
+    if (!webview) return;
+
+    const injectScrollToTopButton = () => {
+      webview
+        .executeJavaScript(`document.readyState`, false)
+        .then((readyState) => {
+          if (readyState !== 'complete') {
+            throw new Error('Document not ready for injection.');
+          }
+
+          const buttonHTML = `
+            <button id="scrollToTopButton" style="position: fixed; right: 20px; bottom: 20px; z-index: 1000; padding: 10px 15px; font-size: 16px; border: none; background-color: #007BFF; color: white; border-radius: 5px; cursor: pointer; opacity: 0; transition: opacity 0.5s;">
+              ↑
+            </button>
+          `;
+          const script = `
+            document.body.insertAdjacentHTML('beforeend', '${buttonHTML.replace(
+              /\n/g,
+              ''
+            )}');
+            const scrollToTopButton = document.getElementById('scrollToTopButton');
+            scrollToTopButton.onclick = function() {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+  
+            window.addEventListener('scroll', function() {
+              if (window.scrollY > 100) {
+                scrollToTopButton.style.opacity = 1;
+              } else {
+                scrollToTopButton.style.opacity = 0;
+              }
+            });
+          `;
+
+          return webview.executeJavaScript(script, false);
+        })
+        .then(() => null)
+        .catch((err) => {
+          console.error('Error executing script or loading document:', err);
+        });
+    };
+
+    webview.addEventListener('dom-ready', injectScrollToTopButton);
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      if (webview) {
+        webview.removeEventListener('dom-ready', injectScrollToTopButton);
+      }
+      return undefined;
+    };
+  }, [ref]);
+
   return (
     <div
       className={cx('h-fit flex-shrink-0', {
