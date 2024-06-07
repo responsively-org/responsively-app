@@ -232,7 +232,11 @@ const createWindow = async () => {
 };
 
 app.on('open-url', async (event, url) => {
-  const actualURL = url.replace(`${PROTOCOL}://`, '');
+  let actualURL = url.replace(`${PROTOCOL}://`, '');
+  if (actualURL.indexOf('//') !== -1 && actualURL.indexOf('://') === -1) {
+    // This hack is needed because the URL from the extension is missing the colon for some reason.
+    actualURL = actualURL.replace('//', '://');
+  }
   if (mainWindow == null) {
     // Will be handled by opened window
     urlToOpen = actualURL;
