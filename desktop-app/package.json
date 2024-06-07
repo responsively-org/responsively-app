@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "1.10.0",
+  "version": "1.11.1",
   "description": "A developer-friendly browser for developing responsive web apps",
   "keywords": [
     "developer-tools",
@@ -118,8 +118,9 @@
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-store": "^8.0.2",
-    "electron-updater": "^6.1.1",
+    "electron-updater": "^6.1.8",
     "emitter": "^0.0.5",
+    "javascript-time-ago": "^2.5.10",
     "mousetrap": "^1.6.5",
     "os": "^0.1.2",
     "postcss": "^8.4.31",
@@ -157,7 +158,7 @@
     "@types/node": "20.3.1",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.10",
-    "@types/react-test-renderer": "^18.0.0",
+    "@types/react-test-renderer": "^18.0.7",
     "@types/terser-webpack-plugin": "^5.0.4",
     "@types/uuid": "^9.0.2",
     "@types/webpack-bundle-analyzer": "^4.4.2",
