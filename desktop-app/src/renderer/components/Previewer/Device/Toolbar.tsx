@@ -149,7 +149,7 @@ const Toolbar = ({
 
   return (
     <div className="flex items-center justify-between gap-1">
-      <div className="my-1 inline-flex max-w-[75%] items-center gap-1 overflow-x-auto">
+      <div className="my-1 inline-flex max-w-[78%] items-center gap-1 overflow-x-auto">
         <Button onClick={refreshView} title="Refresh This View">
           <Icon icon="ic:round-refresh" />
         </Button>
@@ -196,11 +196,11 @@ const Toolbar = ({
             }
           />
         </Button>
-        <Button onClick={toggleRulers} title="Show rulers">
-          <Icon icon="tdesign:measurement-1" />
-        </Button>
         <Button onClick={scrollToTop} title="Scroll to Top">
           <Icon icon="ic:baseline-arrow-upward" />
+        </Button>
+        <Button onClick={toggleRulers} title="Show rulers">
+          <Icon icon="tdesign:measurement-1" />
         </Button>
         <ColorBlindnessTools webview={webview} />
       </div>
