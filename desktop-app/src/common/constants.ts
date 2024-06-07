@@ -29,6 +29,7 @@ export const IPC_MAIN_CHANNELS = {
   OPEN_URL: 'open-url',
   START_WATCHING_FILE: 'start-watching-file',
   STOP_WATCHER: 'stop-watcher',
+  OPEN_ABOUT_DIALOG: 'open-about-dialog',
 } as const;
 
 export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];

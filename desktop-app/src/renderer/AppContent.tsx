@@ -12,6 +12,7 @@ import DeviceManager from './components/DeviceManager';
 import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
 import { ReleaseNotes } from './components/ReleaseNotes';
 import { Sponsorship } from './components/Sponsorship';
+import { AboutDialog } from './components/AboutDialog';
 
 if ((navigator as any).userAgentData.platform === 'Windows') {
   import('./titlebar-styles.css');
@@ -51,6 +52,7 @@ const AppContent = () => {
         <ViewComponent />
         <ReleaseNotes />
         <Sponsorship />
+        <AboutDialog />
       </ThemeProvider>
     </Provider>
   );
