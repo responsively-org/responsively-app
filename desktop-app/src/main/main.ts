@@ -10,12 +10,7 @@
  */
 import path from 'path';
 import { app, BrowserWindow, shell, screen, ipcMain } from 'electron';
-import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
-import {
-  setupTitlebar,
-  attachTitlebarToWindow,
-} from 'custom-electron-titlebar/main';
+import { setupTitlebar } from 'custom-electron-titlebar/main';
 import cli from './cli';
 import { PROTOCOL } from '../common/constants';
 import MenuBuilder from './menu';
@@ -36,6 +31,7 @@ import { WebPermissionHandlers } from './web-permissions';
 import { initHttpBasicAuthHandlers } from './http-basic-auth';
 import { initAppMetaHandlers } from './app-meta';
 import { openUrl } from './protocol-handler';
+import { AppUpdater } from './app-updater';
 
 let windowShownOnOpen = false;
 
@@ -52,14 +48,6 @@ if (process.defaultApp) {
 let urlToOpen: string | undefined = cli.input[0]?.includes('electronmon')
   ? undefined
   : cli.input[0];
-
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -217,7 +205,9 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
+  const appUpdater = new AppUpdater();
+
+  const menuBuilder = new MenuBuilder(mainWindow, appUpdater);
   menuBuilder.buildMenu();
 
   // Open urls in the user's browser
@@ -239,9 +229,6 @@ const createWindow = async () => {
   ipcMain.on('stop-watcher', async () => {
     await stopWatchFiles();
   });
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
 };
 
 app.on('open-url', async (event, url) => {
