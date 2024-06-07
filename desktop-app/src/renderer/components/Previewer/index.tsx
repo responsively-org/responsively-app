@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import { DOCK_POSITION, PREVIEW_LAYOUTS } from 'common/constants';
@@ -9,12 +9,9 @@ import {
 import { getDevicesMap, Device as IDevice } from 'common/deviceList';
 import { useState } from 'react';
 import { selectLayout } from 'renderer/store/features/renderer';
-import { Icon } from '@iconify/react';
-import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
 import IndividualLayoutToolbar from './IndividualLayoutToolBar';
-import Button from '../Button';
 
 const Previewer = () => {
   const activeSuite = useSelector(selectActiveSuite);
@@ -23,7 +20,6 @@ const Previewer = () => {
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const layout = useSelector(selectLayout);
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
-  const dispatch = useDispatch();
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
@@ -69,17 +65,6 @@ const Previewer = () => {
                   setIndividualDevice={setIndividualDevice}
                 />
               ))}
-              <Button
-                isTextButton
-                className="h-fit gap-2 whitespace-nowrap text-sm"
-                isPrimary
-                onClick={() => {
-                  dispatch(setAppView(APP_VIEWS.DEVICE_MANAGER));
-                }}
-              >
-                <Icon icon="mdi:plus" />
-                Add Device
-              </Button>
             </>
           )}
         </div>
