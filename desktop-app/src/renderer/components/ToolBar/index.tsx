@@ -13,6 +13,7 @@ import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import WebPage from 'main/screenshot/webpage';
 import { getDevicesMap } from 'common/deviceList';
 import { updateWebViewHeightAndScale } from 'common/webViewUtils';
+import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
 import Button from '../Button';
@@ -137,6 +138,13 @@ const ToolBar = () => {
       <ColorBlindnessControls />
       <Divider />
       <PreviewSuiteSelector />
+      <Button
+        onClick={() => {
+          dispatch(setAppView(APP_VIEWS.DEVICE_MANAGER));
+        }}
+      >
+        <Icon icon="lucide:plus" width={16} />
+      </Button>
       <Menu />
       <ModalLoader
         isOpen={isCapturingScreenshot}
