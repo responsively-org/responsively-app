@@ -458,7 +458,11 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   }, [isInspecting]);
 
   useEffect(() => {
-    if (!ref.current || !device.isMobileCapable) {
+    if (
+      !ref.current ||
+      !device.isMobileCapable ||
+      !window.electron.store.get('userPreferences.hideScrollbarForMobile')
+    ) {
       return;
     }
 
