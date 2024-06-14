@@ -117,10 +117,9 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 
 <p>&nbsp;</p>
 
-<p align="center">
-  <a href="https://www.bairesdev.com/?ref=Responsively" target="_blank" >
-    <img src="https://responsively.app/_next/static/media/bairesdev.2b0bfd41.svg" width="250px" height="120px" alt="Baires Dev">
-  </a>&nbsp;&nbsp;&nbsp;&nbsp;
+<p align="center" >
+  <a href="https://koptional.com/?ref=Responsively" target="_blank">
+    <img src="https://github.com/responsively-org/responsively-app/assets/1283424/b5f298dd-8e27-4195-91b7-2eb17713bf7a" height="120px" alt="K-Optional Software"></a>&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://www.browserstack.com/?utm_medium=partnered&utm_source=responsively" target="_blank" style="margin-left: 10px;">
     <img src="https://responsively.app/_next/static/media/browserStack.b67d4227.svg" width="250px" height="120px" alt="BrowserStack">
   </a>&nbsp;&nbsp;&nbsp;&nbsp;
