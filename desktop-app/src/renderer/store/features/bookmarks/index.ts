@@ -38,17 +38,17 @@ export const bookmarksSlice = createSlice({
       window.electron.store.set('bookmarks', bookmarks);
     },
     removeBookmark: (state, action) => {
-      const bookmarks = window.electron.store.get('bookmarks');
-      const bookmarkIndex = state.bookmarks.findIndex(
-        (bookmark) => bookmark.id === action.payload.id
-      );
-      if (bookmarkIndex === -1) {
-        return;
-      }
-      bookmarks.splice(bookmarkIndex, 1);
-      state.bookmarks = bookmarks;
-      window.electron.store.set('bookmarks', bookmarks);
-    },
+  const bookmarks = window.electron.store.get('bookmarks');
+  const bookmarkIndex = bookmarks.findIndex(
+    (bookmark) => bookmark.id === action.payload.id
+  );
+  if (bookmarkIndex === -1) {
+    return;
+  }
+  bookmarks.splice(bookmarkIndex, 1);
+  state.bookmarks = bookmarks;
+  window.electron.store.set('bookmarks', bookmarks);
+},
   },
 });
 
