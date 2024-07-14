@@ -1,6 +1,6 @@
-import React, {useMemo, useState, useEffect, useRef} from 'react';
-import {Rnd} from 'react-rnd';
-import {useSelector, useDispatch} from 'react-redux';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
+import { Rnd } from 'react-rnd';
+import { useSelector, useDispatch } from 'react-redux';
 import cx from 'classnames';
 import pubsub from 'pubsub.js';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -16,7 +16,7 @@ import useCommonStyles from '../useCommonStyles';
 import useStyles from './useStyles';
 import TextAreaWithCopyButton from '../../utils/TextAreaWithCopyButton';
 import Button from '@material-ui/core/Button';
-import {APPLY_CSS} from '../../constants/pubsubEvents';
+import { APPLY_CSS } from '../../constants/pubsubEvents';
 import {
   CSS_EDITOR_MODES,
   DEVTOOLS_MODES,
@@ -24,21 +24,21 @@ import {
   isVeriticallyStacked,
 } from '../../constants/previewerLayouts';
 import KebabMenu from '../KebabMenu';
-import {Tooltip} from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
 import DockRight from '../icons/DockRight';
-import {debounce} from 'lodash';
+import { debounce } from 'lodash';
 import CSSEditor from '../icons/CSSEditor';
 
 const getResizingDirections = position => {
   switch (position) {
     case CSS_EDITOR_MODES.LEFT:
-      return {right: true};
+      return { right: true };
     case CSS_EDITOR_MODES.RIGHT:
-      return {left: true};
+      return { left: true };
     case CSS_EDITOR_MODES.TOP:
-      return {bottom: true};
+      return { bottom: true };
     case CSS_EDITOR_MODES.BOTTOM:
-      return {top: true};
+      return { top: true };
     default:
       return true;
   }
@@ -49,12 +49,7 @@ const computeHeight = (position, devToolsConfig) => {
     return null;
   }
   return isVeriticallyStacked(position)
-    ? `calc(100vh - ${10 +
-        headerHeight +
-        statusBarHeight +
-        (devToolsConfig.open && devToolsConfig.mode === DEVTOOLS_MODES.BOTTOM
-          ? devToolsConfig.size.height
-          : 0)}px)`
+    ? `calc(100vh - ${10 + headerHeight + statusBarHeight + (devToolsConfig.open && devToolsConfig.mode === DEVTOOLS_MODES.BOTTOM ? devToolsConfig.size.height : 0)}px)`
     : 300;
 };
 
@@ -106,7 +101,7 @@ const LiveCssEditor = ({
     if (!content) {
       return;
     }
-    pubsub.publish(APPLY_CSS, [{css: content}]);
+    pubsub.publish(APPLY_CSS, [{ css: content }]);
   };
 
   useEffect(() => {
@@ -139,13 +134,13 @@ const LiveCssEditor = ({
   const disableDragging = useMemo(() => !isUndocked, [isUndocked]);
 
   return (
-    <div className={classes.wrapper} style={{height, width}}>
+    <div className={classes.wrapper} style={{ height, width }}>
       <Rnd
         ref={rndRef}
         dragHandleClassName={classes.titleBar}
         disableDragging={disableDragging}
         enableResizing={enableResizing}
-        style={{zIndex: 100}}
+        style={{ zIndex: 100 }}
         default={{
           ...getDefaultPosition(isUndocked),
           ...getDefaultSize(isUndocked),
@@ -155,7 +150,7 @@ const LiveCssEditor = ({
           if (isUndocked) {
             return;
           }
-          const {width: _width, height: _height} = ref.getBoundingClientRect();
+          const { width: _width, height: _height } = ref.getBoundingClientRect();
           if (width !== _width) {
             setWidth(_width);
           }
@@ -209,7 +204,7 @@ const LiveCssEditor = ({
               mode="css"
               theme="twilight"
               name="css"
-              onChange={debounce(onCSSEditorContentChange, 25, {maxWait: 50})}
+              onChange={debounce(onCSSEditorContentChange, 25, { maxWait: 50 })}
               fontSize={14}
               showPrintMargin={true}
               showGutter={true}
@@ -253,4 +248,14 @@ const LiveCssEditor = ({
     </div>
   );
 };
+
 export default LiveCssEditor;
+
+// HMR integration
+if (module.hot) {
+  module.hot.accept('./LiveCssEditor', () => {
+    const NextLiveCssEditor = require('./LiveCssEditor').default;
+    ReactDOM.render(<NextLiveCssEditor />, document.getElementById('app'));
+  });
+}
+

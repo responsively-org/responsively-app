@@ -133,3 +133,11 @@ ReactDOM.render(
   isChrome() ? <URLOpenerChrome /> : <URLOpenerNonChrome />,
   document.getElementById("app")
 );
+
+// HMR integration
+if (module.hot) {
+  module.hot.accept('./popup', () => {
+    const NextPopup = require('./popup').default;
+    ReactDOM.render(<NextPopup />, document.getElementById('app'));
+  });
+}
