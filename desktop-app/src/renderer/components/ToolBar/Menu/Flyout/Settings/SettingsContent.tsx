@@ -81,6 +81,8 @@ export const SettingsContent = ({ onClose }: Props) => {
         </>
       )}
 
+      <div>the import function</div>
+
       <Button
         className="mt-6 px-5 py-1"
         onClick={onSave}
