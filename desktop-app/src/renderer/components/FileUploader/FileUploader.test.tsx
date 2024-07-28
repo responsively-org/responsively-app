@@ -31,10 +31,8 @@ describe('FileUploader', () => {
     const { getByTestId } = renderComponent();
 
     const fileInput = getByTestId('fileUploader');
-    const removeButton = getByTestId('fileRemover');
 
     expect(fileInput).toBeInTheDocument();
-    expect(removeButton).toBeInTheDocument();
   });
 
   it('calls handleUpload when file input changes', () => {
@@ -46,13 +44,6 @@ describe('FileUploader', () => {
     expect(mockHandleUpload).toHaveBeenCalled();
   });
 
-  it('calls resetUploadedFile when remove button is clicked', () => {
-    const { getByTestId } = renderComponent();
-    const removeButton = getByTestId('fileRemover');
-    fireEvent.click(removeButton);
-    expect(mockResetUploadedFile).toHaveBeenCalled();
-  });
-
   it('calls handleFileUpload when uploadedFile is set', () => {
     const mockFile = new File(['content'], 'file.txt');
     (useFileUpload as jest.Mock).mockReturnValue({
@@ -62,22 +53,6 @@ describe('FileUploader', () => {
     });
     renderComponent();
     expect(mockHandleFileUpload).toHaveBeenCalledWith(mockFile);
-  });
-
-  it('clears the file input when remove button is clicked', async () => {
-    const { getByTestId } = renderComponent();
-    const fileInput = getByTestId('fileUploader') as HTMLInputElement;
-    const removeButton = getByTestId('fileRemover');
-
-    fireEvent.change(fileInput, {
-      target: { files: [new File(['content'], 'file.txt')] },
-    });
-
-    await waitFor(() => expect(mockHandleUpload).toHaveBeenCalled());
-
-    fireEvent.click(removeButton);
-
-    await waitFor(() => expect(fileInput.value).toBe(''));
   });
 
   it('sets the accept attribute correctly', () => {

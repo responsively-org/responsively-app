@@ -5,10 +5,11 @@ import { FileUploader } from 'renderer/components/FileUploader';
 import Modal from 'renderer/components/Modal';
 import { addSuites } from 'renderer/store/features/device-manager';
 import { useDispatch } from 'react-redux';
-import { defaultDevices, Device } from 'common/deviceList';
 import { transformFile } from './utils';
+import { onFileDownload, setCustomDevices } from './helpers';
+import { ManageSuitesToolError } from './ManageSuitesToolError';
 
-export const ManageSuitesTool = () => {
+export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
   const [open, setOpen] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -18,19 +19,13 @@ export const ManageSuitesTool = () => {
       .then((fileTransformed) => {
         const { customDevices, suites } = fileTransformed;
 
-        if (suites) {
-          dispatch(addSuites(suites));
+        if (customDevices) {
+          const newCustomDevices = setCustomDevices(customDevices);
+          setCustomDevicesState(newCustomDevices);
         }
 
-        if (customDevices) {
-          const importedCustomDevices = customDevices.filter(
-            (item: Device) => !defaultDevices.includes(item)
-          );
-
-          window.electron.store.set(
-            'deviceManager.customDevices',
-            importedCustomDevices
-          );
+        if (suites) {
+          dispatch(addSuites(suites));
         }
 
         setOpen(false);
@@ -39,15 +34,16 @@ export const ManageSuitesTool = () => {
       })
       .catch(() => setError(true));
 
-  const onFileUploadReset = () => {
+  const onErrorClose = () => {
     setError(false);
     setOpen(false);
   };
 
   return (
     <>
-      <div className="space-between flex flex-row">
+      <div className="flex flex-row content-end justify-end">
         <Button
+          data-testid="upload-btn"
           className="aspect-square w-12 rounded-full hover:!bg-slate-500"
           onClick={() => setOpen(true)}
         >
@@ -58,13 +54,14 @@ export const ManageSuitesTool = () => {
           />
         </Button>
         <Button
+          data-testid="download-btn"
           className="aspect-square w-12 rounded-full hover:!bg-slate-500"
-          onClick={() => setOpen(true)}
+          onClick={onFileDownload}
         >
           <Icon
             icon="mdi:folder-download"
             fontSize={18}
-            onClick={() => setOpen(true)}
+            onClick={onFileDownload}
           />
         </Button>
       </div>
@@ -83,16 +80,7 @@ export const ManageSuitesTool = () => {
             <Icon icon="mdi:alert" />
             <p className="pl-2">Importing will replace all current settings.</p>
           </div>
-          {error && (
-            <div className="absolute top-0 left-0 flex h-full w-full flex-col flex-wrap items-center justify-center bg-slate-600 bg-opacity-95">
-              <div className="text-center text-sm text-white">
-                <p>There has been an error, please try again.</p>
-              </div>
-              <Button onClick={onFileUploadReset} className="p-2">
-                Close
-              </Button>
-            </div>
-          )}
+          {error && <ManageSuitesToolError onClose={onErrorClose} />}
         </>
       </Modal>
     </>

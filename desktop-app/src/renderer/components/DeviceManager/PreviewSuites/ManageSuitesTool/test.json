@@ -27,32 +27,10 @@
             },
             {
                 "id": "a4c142fc-debd-4eaa-beba-aef60093151c",
-                "name": "my custom suite hehehe",
+                "name": "my custom suite",
                 "devices": [
                     "10008",
                     "30014"
-                ]
-            },
-            {
-                "id": "e0395ce6-ce1a-413d-9202-4669ffb35c45",
-                "name": "ouhu",
-                "devices": [
-                    "30014",
-                    "10008"
-                ]
-            },
-            {
-                "id": "4c2d85be-64a1-44ba-bebd-749e8badbb86",
-                "name": "ouhujnn nk",
-                "devices": [
-                    "10008"
-                ]
-            },
-            {
-                "id": "f4b1c0b1-c2c2-4ca9-b9c5-8f28a87b745b",
-                "name": "customdev",
-                "devices": [
-                    "10008"
                 ]
             }
         ]

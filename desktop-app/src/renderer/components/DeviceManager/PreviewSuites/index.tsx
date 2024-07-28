@@ -15,15 +15,14 @@ import { ManageSuitesTool } from './ManageSuitesTool/ManageSuitesTool';
 export const PreviewSuites = () => {
   const suites = useSelector(selectSuites);
   const activeSuite = useSelector(selectActiveSuite);
-  console.log(suites, 'suites');
+
   return (
     <div className="flex flex-col">
-      <div className="space-between mb-6 flex w-full flex-row items-center gap-2 text-lg">
+      <div className="  mb-6 flex w-full flex-row items-center justify-between gap-2 text-lg">
         <div className="align-items-center flex flex-row justify-center">
           <Icon icon="heroicons:swatch" />{' '}
           <p className="pl-2">Preview Suites</p>
         </div>
-        <ManageSuitesTool />
       </div>
       <div className="flex w-full items-center gap-4 overflow-x-auto">
         <div className="flex flex-shrink-0 gap-4">

@@ -15,6 +15,8 @@ import Button from '../Button';
 import DeviceLabel from './DeviceLabel';
 import DeviceDetailsModal from './DeviceDetailsModal';
 import { PreviewSuites } from './PreviewSuites';
+import { ManageSuitesTool } from './PreviewSuites/ManageSuitesTool/ManageSuitesTool';
+import { Divider } from '../Divider';
 
 const filterDevices = (devices: Device[], filter: string) => {
   const sanitizedFilter = filter.trim().toLowerCase();
@@ -94,7 +96,10 @@ const DeviceManager = () => {
         </Button>
       </div>
       <div className="">
+        <ManageSuitesTool setCustomDevicesState={setCustomDevices} />
+        <Divider />
         <PreviewSuites />
+        <Divider />
         <div className="my-4 flex items-center justify-end  ">
           <div className="flex w-fit items-center bg-white px-1 dark:bg-slate-900">
             <Icon icon="ic:outline-search" height={24} />
@@ -168,13 +173,6 @@ const DeviceManager = () => {
         device={selectedDevice}
         onRemoveDevice={onRemoveDevice}
       />
-      <Button
-        onClick={() =>
-          customDevices.forEach((device) => onRemoveDevice(device))
-        }
-      >
-        remove all
-      </Button>
     </div>
   );
 };

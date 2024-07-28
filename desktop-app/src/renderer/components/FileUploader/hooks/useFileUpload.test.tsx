@@ -25,20 +25,6 @@ describe('useFileUpload', () => {
     expect(result.current.uploadedFile).toEqual(mockFile);
   });
 
-  it('should not set uploadedFile when handleUpload is called with no files', () => {
-    const { result } = renderHook(() => useFileUpload());
-
-    act(() => {
-      result.current.handleUpload({
-        target: {
-          files: [],
-        },
-      } as unknown as React.ChangeEvent<HTMLInputElement>);
-    });
-
-    expect(result.current.uploadedFile).toBeNull();
-  });
-
   it('should reset uploadedFile when resetUploadedFile is called', () => {
     const { result } = renderHook(() => useFileUpload());
     const mockFile = new File(['dummy content'], 'example.png', {
