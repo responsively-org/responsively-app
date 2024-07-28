@@ -168,6 +168,13 @@ const DeviceManager = () => {
         device={selectedDevice}
         onRemoveDevice={onRemoveDevice}
       />
+      <Button
+        onClick={() =>
+          customDevices.forEach((device) => onRemoveDevice(device))
+        }
+      >
+        remove all
+      </Button>
     </div>
   );
 };

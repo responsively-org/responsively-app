@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const useFileUpload = () => {
+export const useFileUpload = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,5 +19,3 @@ const useFileUpload = () => {
     resetUploadedFile,
   };
 };
-
-export default useFileUpload;

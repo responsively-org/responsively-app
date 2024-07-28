@@ -70,6 +70,12 @@ export const deviceManagerSlice = createSlice({
       state.activeSuite = action.payload.id;
       window.electron.store.set('deviceManager.previewSuites', suites);
     },
+    addSuites(state, action: PayloadAction<PreviewSuite[]>) {
+      window.electron.store.set('deviceManager.previewSuites', []);
+      state.suites = action.payload;
+      state.activeSuite = action.payload[0].id;
+      window.electron.store.set('deviceManager.previewSuites', action.payload);
+    },
     deleteSuite(state, action: PayloadAction<string>) {
       const suites: PreviewSuite[] = window.electron.store.get(
         'deviceManager.previewSuites'
@@ -93,6 +99,7 @@ export const {
   setActiveSuite,
   addSuite,
   deleteSuite,
+  addSuites,
 } = deviceManagerSlice.actions;
 
 export const selectSuites = (state: RootState) => state.deviceManager.suites;

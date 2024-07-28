@@ -5,36 +5,25 @@ import {
   selectActiveSuite,
   selectSuites,
 } from 'renderer/store/features/device-manager';
-import { CreateSuiteButton } from './CreateSuiteButton';
-import { Suite } from './Suite';
 import { useState } from 'react';
+import { FileUploader } from 'renderer/components/FileUploader';
+import Modal from 'renderer/components/Modal';
+import { Suite } from './Suite';
+import { CreateSuiteButton } from './CreateSuiteButton';
+import { ManageSuitesTool } from './ManageSuitesTool/ManageSuitesTool';
 
 export const PreviewSuites = () => {
   const suites = useSelector(selectSuites);
   const activeSuite = useSelector(selectActiveSuite);
-  const [open, setOpen] = useState<boolean>(false);
+  console.log(suites, 'suites');
   return (
     <div className="flex flex-col">
-      <div className="mb-6 flex items-center gap-2 text-lg">
-        <Icon icon="heroicons:swatch" /> Preview Suites
-        <div className="space-between">
-          <Button className="aspect-square w-16" onClick={() => setOpen(true)}>
-            <Icon
-              icon="mdi:folder-upload"
-              fontSize={8}
-              onClick={() => setOpen(true)}
-            />{' '}
-            Import Devices
-          </Button>
-          <Button className="aspect-square" onClick={() => setOpen(true)}>
-            <Icon
-              icon="mdi:folder-download"
-              fontSize={8}
-              onClick={() => setOpen(true)}
-            />
-            Export Devices
-          </Button>
+      <div className="space-between mb-6 flex w-full flex-row items-center gap-2 text-lg">
+        <div className="align-items-center flex flex-row justify-center">
+          <Icon icon="heroicons:swatch" />{' '}
+          <p className="pl-2">Preview Suites</p>
         </div>
+        <ManageSuitesTool />
       </div>
       <div className="flex w-full items-center gap-4 overflow-x-auto">
         <div className="flex flex-shrink-0 gap-4">

@@ -1,9 +1,9 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { FileUploader } from './FileUploader';
-import useFileUpload from './hooks/useFileUpload';
+import { FileUploader, FileUploaderProps } from './FileUploader';
+import { useFileUpload } from './hooks';
 
-jest.mock('./hooks/useFileUpload');
+jest.mock('./hooks');
 
 const mockHandleFileUpload = jest.fn();
 const mockHandleUpload = jest.fn();
@@ -11,24 +11,35 @@ const mockResetUploadedFile = jest.fn();
 
 describe('FileUploader', () => {
   beforeEach(() => {
-    useFileUpload.mockReturnValue({
+    (useFileUpload as jest.Mock).mockReturnValue({
       uploadedFile: null,
       handleUpload: mockHandleUpload,
       resetUploadedFile: mockResetUploadedFile,
     });
   });
 
+  const renderComponent = (props?: FileUploaderProps) =>
+    render(
+      <FileUploader
+        handleFileUpload={props?.handleFileUpload || mockHandleFileUpload}
+        multiple={props?.multiple || false}
+        acceptedFileTypes={props?.acceptedFileTypes || '*/*'}
+      />
+    );
+
   it('renders the component', () => {
-    render(<FileUploader handleFileUpload={mockHandleFileUpload} />);
-    expect(screen.getByText('Upload a File')).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /Remove file/i })
-    ).toBeInTheDocument();
+    const { getByTestId } = renderComponent();
+
+    const fileInput = getByTestId('fileUploader');
+    const removeButton = getByTestId('fileRemover');
+
+    expect(fileInput).toBeInTheDocument();
+    expect(removeButton).toBeInTheDocument();
   });
 
   it('calls handleUpload when file input changes', () => {
-    render(<FileUploader handleFileUpload={mockHandleFileUpload} />);
-    const fileInput = screen.getByRole('textbox');
+    const { getByTestId } = renderComponent();
+    const fileInput = getByTestId('fileUploader');
     fireEvent.change(fileInput, {
       target: { files: [new File(['content'], 'file.txt')] },
     });
@@ -36,20 +47,63 @@ describe('FileUploader', () => {
   });
 
   it('calls resetUploadedFile when remove button is clicked', () => {
-    render(<FileUploader handleFileUpload={mockHandleFileUpload} />);
-    const removeButton = screen.getByRole('button', { name: /Remove file/i });
+    const { getByTestId } = renderComponent();
+    const removeButton = getByTestId('fileRemover');
     fireEvent.click(removeButton);
     expect(mockResetUploadedFile).toHaveBeenCalled();
   });
 
   it('calls handleFileUpload when uploadedFile is set', () => {
     const mockFile = new File(['content'], 'file.txt');
-    useFileUpload.mockReturnValue({
+    (useFileUpload as jest.Mock).mockReturnValue({
       uploadedFile: mockFile,
       handleUpload: mockHandleUpload,
       resetUploadedFile: mockResetUploadedFile,
     });
-    render(<FileUploader handleFileUpload={mockHandleFileUpload} />);
+    renderComponent();
     expect(mockHandleFileUpload).toHaveBeenCalledWith(mockFile);
+  });
+
+  it('clears the file input when remove button is clicked', async () => {
+    const { getByTestId } = renderComponent();
+    const fileInput = getByTestId('fileUploader') as HTMLInputElement;
+    const removeButton = getByTestId('fileRemover');
+
+    fireEvent.change(fileInput, {
+      target: { files: [new File(['content'], 'file.txt')] },
+    });
+
+    await waitFor(() => expect(mockHandleUpload).toHaveBeenCalled());
+
+    fireEvent.click(removeButton);
+
+    await waitFor(() => expect(fileInput.value).toBe(''));
+  });
+
+  it('sets the accept attribute correctly', () => {
+    const { getByTestId } = renderComponent({
+      acceptedFileTypes: 'application/json',
+      handleFileUpload: mockHandleFileUpload,
+    });
+    const fileInput = getByTestId('fileUploader');
+    expect(fileInput).toHaveAttribute('accept', 'application/json');
+  });
+
+  it('allows multiple file uploads when multiple prop is true', () => {
+    const { getByTestId } = renderComponent({
+      multiple: true,
+      handleFileUpload: mockHandleFileUpload,
+    });
+    const fileInput = getByTestId('fileUploader');
+    expect(fileInput).toHaveAttribute('multiple');
+  });
+
+  it('does not allow multiple file uploads when multiple prop is false', () => {
+    const { getByTestId } = renderComponent({
+      multiple: false,
+      handleFileUpload: mockHandleFileUpload,
+    });
+    const fileInput = getByTestId('fileUploader');
+    expect(fileInput).not.toHaveAttribute('multiple');
   });
 });
