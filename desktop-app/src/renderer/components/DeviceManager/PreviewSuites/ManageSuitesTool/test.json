@@ -1,0 +1,37 @@
+{
+    "customDevices": [
+        {
+            "id": "123",
+            "name": "a new test",
+            "width": 400,
+            "height": 600,
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1",
+            "typse": "phone",
+            "dpxxi": 1,
+            "isTouchCapable": true,
+            "isMobileCapable": true,
+            "capabilities": [
+                "touch",
+                "mobile"
+            ],
+            "isCustom": true
+        }
+    ],
+    "suites": [
+            {
+                "id": "default",
+                "name": "Default",
+                "devices": [
+                    "10008"
+                ]
+            },
+            {
+                "id": "a4c142fc-debd-4eaa-beba-aef60093151c",
+                "name": "my custom suite",
+                "devices": [
+                    "10008",
+                    "30014"
+                ]
+            }
+        ]
+}

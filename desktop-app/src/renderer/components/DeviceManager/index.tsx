@@ -17,6 +17,7 @@ import DeviceDetailsModal from './DeviceDetailsModal';
 import { PreviewSuites } from './PreviewSuites';
 import { ManageSuitesTool } from './PreviewSuites/ManageSuitesTool/ManageSuitesTool';
 import { Divider } from '../Divider';
+import { AccordionItem, Accordion } from '../Accordion';
 
 const filterDevices = (devices: Device[], filter: string) => {
   const sanitizedFilter = filter.trim().toLowerCase();
@@ -35,7 +36,7 @@ const DeviceManager = () => {
   );
   const dispatch = useDispatch();
   const activeSuite = useSelector(selectActiveSuite);
-  const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
+  const devices = activeSuite.devices?.map((id) => getDevicesMap()[id]);
   const [searchText, setSearchText] = useState<string>('');
   const [filteredDevices, setFilteredDevices] =
     useState<Device[]>(defaultDevices);
@@ -89,18 +90,27 @@ const DeviceManager = () => {
 
   return (
     <div className="mx-auto flex w-4/5 flex-col gap-4 rounded-lg p-8">
-      <div className="flex w-full text-3xl">
-        <span className="w-full text-left">Device Manager</span>
+      <div className="flex w-full justify-end text-3xl">
         <Button onClick={() => dispatch(setAppView(APP_VIEWS.BROWSER))}>
-          <Icon icon="ic:round-close" />
+          <Icon icon="ic:round-close" fontSize={18} />
         </Button>
       </div>
-      <div className="">
-        <ManageSuitesTool setCustomDevicesState={setCustomDevices} />
+      <div>
+        <div className="flex items-center justify-end justify-between ">
+          <h2 className="text-2xl font-bold">Device Manager</h2>
+          <ManageSuitesTool setCustomDevicesState={setCustomDevices} />
+        </div>
         <Divider />
-        <PreviewSuites />
+        <Accordion>
+          <AccordionItem title="MANAGE SUITES">
+            <PreviewSuites />
+          </AccordionItem>
+        </Accordion>
         <Divider />
-        <div className="my-4 flex items-center justify-end  ">
+        <div className="my-4 flex items-start justify-end justify-between">
+          <div className="flex w-fit flex-col items-start px-1">
+            <h2 className="text-2xl font-bold">Manage Devices</h2>
+          </div>
           <div className="flex w-fit items-center bg-white px-1 dark:bg-slate-900">
             <Icon icon="ic:outline-search" height={24} />
             <input
@@ -111,55 +121,70 @@ const DeviceManager = () => {
             />
           </div>
         </div>
-        <div className="mt-8 mb-6 flex justify-between">
-          <div className="text-lg ">Predefined Devices</div>
-        </div>
-        <div className="ml-4 flex flex-row flex-wrap gap-4">
-          {filteredDevices.map((device) => (
-            <DeviceLabel
-              device={device}
-              key={device.id}
-              onShowDeviceDetails={onShowDeviceDetails}
-              disableSelectionControls={
-                devices.find((d) => d.id === device.id) != null &&
-                devices.length === 1
-              }
-            />
-          ))}
-          {filteredDevices.length === 0 ? (
-            <div className="m-10 flex w-full items-center justify-center">
-              Sorry, no matching devices found.
-              <Icon icon="mdi:emoticon-sad-outline" className="ml-1" />
-            </div>
-          ) : null}
-        </div>
-        <div className="mt-8 mb-6 flex justify-between">
-          <div className="text-lg ">Custom Devices</div>
-          <Button onClick={() => setIsDetailsModalOpen(true)} isActive>
-            <Icon icon="ic:baseline-add" />
-            Add Custom Device
-          </Button>
-        </div>
-        <div className="ml-4 flex flex-row flex-wrap gap-4">
-          {filteredCustomDevices.map((device) => (
-            <DeviceLabel
-              device={device}
-              key={device.id}
-              onShowDeviceDetails={onShowDeviceDetails}
-            />
-          ))}
-          {customDevices.length === 0 ? (
-            <div className="m-10 flex w-full items-center justify-center">
-              No custom devices added yet!
-            </div>
-          ) : null}
-          {customDevices.length > 0 && filteredCustomDevices.length === 0 ? (
-            <div className="m-10 flex w-full items-center justify-center">
-              Sorry, no matching devices found.
-              <Icon icon="mdi:emoticon-sad-outline" className="ml-1" />
-            </div>
-          ) : null}
-        </div>
+        <Accordion>
+          <>
+            <AccordionItem title="DEFAULT DEVICES">
+              <div className="ml-4 flex flex-row flex-wrap gap-4">
+                {filteredDevices.map((device) => (
+                  <DeviceLabel
+                    device={device}
+                    key={device.id}
+                    onShowDeviceDetails={onShowDeviceDetails}
+                    disableSelectionControls={
+                      devices.find((d) => d.id === device.id) != null &&
+                      devices.length === 1
+                    }
+                  />
+                ))}
+                {filteredDevices.length === 0 ? (
+                  <div className="m-10 flex w-full items-center justify-center">
+                    Sorry, no matching devices found.
+                    <Icon icon="mdi:emoticon-sad-outline" className="ml-1" />
+                  </div>
+                ) : null}
+              </div>
+            </AccordionItem>
+            <AccordionItem title="CUSTOM DEVICES">
+              <div className="ml-4 flex flex-row flex-wrap gap-4">
+                {filteredCustomDevices.map((device) => (
+                  <DeviceLabel
+                    device={device}
+                    key={device.id}
+                    onShowDeviceDetails={onShowDeviceDetails}
+                  />
+                ))}
+                {customDevices.length === 0 ? (
+                  <div className="m-10 flex w-full flex-col items-center justify-center">
+                    <span>No custom devices added yet!</span>
+                    <Button
+                      className="m-4 rounded-l"
+                      onClick={() => setIsDetailsModalOpen(true)}
+                      isActive
+                    >
+                      <Icon icon="ic:baseline-add" />
+                      <span className="pr-2 pl-2">Add Custom Device</span>
+                    </Button>
+                  </div>
+                ) : null}
+                {customDevices.length > 0 &&
+                filteredCustomDevices.length === 0 ? (
+                  <div className="m-10 flex w-full items-center justify-center">
+                    Sorry, no matching devices found.
+                    <Icon icon="mdi:emoticon-sad-outline" className="ml-1" />
+                  </div>
+                ) : null}
+                <Button
+                  className={customDevices.length < 1 ? 'hidden' : 'rounded-l'}
+                  onClick={() => setIsDetailsModalOpen(true)}
+                  isActive
+                >
+                  <Icon icon="ic:baseline-add" />
+                  <span className="pr-2 pl-2">Add Custom Device</span>
+                </Button>
+              </div>
+            </AccordionItem>
+          </>
+        </Accordion>
       </div>
       <DeviceDetailsModal
         onSaveDevice={onSaveDevice}
