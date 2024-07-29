@@ -104,11 +104,16 @@ export const deviceManagerSlice = createSlice({
       window.electron.store.set('deviceManager.previewSuites', suites);
     },
     deleteAllSuites(state) {
+      const defaultSuites = {
+        id: 'default',
+        name: 'Default',
+        devices: ['10008', '10013', '10015'],
+      };
       const suites: PreviewSuite[] = window.electron.store.get(
         'deviceManager.previewSuites'
       );
-      window.electron.store.set('deviceManager.previewSuites', []);
-      state.suites = [];
+      window.electron.store.set('deviceManager.previewSuites', [defaultSuites]);
+      state.suites = [defaultSuites];
     },
   },
 });

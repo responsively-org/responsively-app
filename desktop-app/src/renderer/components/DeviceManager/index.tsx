@@ -174,7 +174,11 @@ const DeviceManager = () => {
                   </div>
                 ) : null}
                 <Button
-                  className={customDevices.length < 1 ? 'hidden' : 'rounded-l'}
+                  className={
+                    customDevices.length < 1 || filteredCustomDevices.length < 1
+                      ? 'hidden'
+                      : 'rounded-l'
+                  }
                   onClick={() => setIsDetailsModalOpen(true)}
                   isActive
                 >
