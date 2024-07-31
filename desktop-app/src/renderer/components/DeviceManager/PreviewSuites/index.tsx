@@ -5,8 +5,12 @@ import {
   selectActiveSuite,
   selectSuites,
 } from 'renderer/store/features/device-manager';
-import { CreateSuiteButton } from './CreateSuiteButton';
+import { useState } from 'react';
+import { FileUploader } from 'renderer/components/FileUploader';
+import Modal from 'renderer/components/Modal';
 import { Suite } from './Suite';
+import { CreateSuiteButton } from './CreateSuiteButton';
+import { ManageSuitesTool } from './ManageSuitesTool/ManageSuitesTool';
 
 export const PreviewSuites = () => {
   const suites = useSelector(selectSuites);
@@ -14,9 +18,6 @@ export const PreviewSuites = () => {
 
   return (
     <div className="flex flex-col">
-      <p className="mb-6 flex items-center gap-2 text-lg">
-        <Icon icon="heroicons:swatch" /> Preview Suites
-      </p>
       <div className="flex w-full items-center gap-4 overflow-x-auto">
         <div className="flex flex-shrink-0 gap-4">
           {suites.map((suite) => (
