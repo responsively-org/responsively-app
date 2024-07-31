@@ -739,6 +739,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "violetadev",
+      "name": "V",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36138541?v=4",
+      "profile": "http://www.violeta.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
