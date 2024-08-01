@@ -2,6 +2,7 @@ import { useDispatch } from 'react-redux';
 
 import Button from 'renderer/components/Button';
 import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
+import MasonryLayout from 'renderer/components/Masonry/MasonryLayout';
 import Devtools from './Devtools';
 import UITheme from './UITheme';
 import Zoom from './Zoom';
@@ -26,11 +27,13 @@ const MenuFlyout = ({ closeFlyout }: Props) => {
     <div className="absolute top-[26px] right-[4px] z-50 flex w-80 flex-col gap-2 rounded bg-white p-2 pb-0 text-sm shadow-lg ring-1 ring-slate-500 !ring-opacity-40 focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
       <Zoom />
       <PreviewLayout />
+      <MasonryLayout />
       <UITheme />
       <Devtools />
       <AllowInSecureSSL />
       <ClearHistory />
       <Divider />
+
       <div>
         <Bookmark />
         <Settings closeFlyout={closeFlyout} />
