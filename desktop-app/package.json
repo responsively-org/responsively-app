@@ -40,6 +40,7 @@
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "jest --config ./jest.config.js",
     "test:watch": "jest --watch --config ./jest.config.js",
+    "test:coverage": "jest --coverage --config ./jest.config.js",
     "typecheck": "tsc --noEmit"
   },
   "lint-staged": {
