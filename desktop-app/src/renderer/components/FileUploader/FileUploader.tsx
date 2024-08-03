@@ -26,7 +26,7 @@ export const FileUploader = ({
   }, [handleFileUpload, resetUploadedFile, uploadedFile]);
 
   return (
-    <div className="flex flex-row flex-wrap">
+    <div className="flex flex-row flex-wrap" data-testid="file-uploader">
       <input
         ref={fileInputRef}
         type="file"

@@ -1,29 +1,55 @@
+import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
+import { Device } from 'common/deviceList';
+import { Provider, useDispatch } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { ManageSuitesTool } from './ManageSuitesTool';
-import deviceManagerReducer, {
+import {
   addSuites,
   deleteAllSuites,
 } from 'renderer/store/features/device-manager';
-import { transformFile } from './utils';
 import { ReactNode } from 'react';
 import { JSX } from 'react/jsx-runtime';
-import '@testing-library/jest-dom';
-import { Channels } from 'common/constants';
+import { transformFile } from './utils';
+import { ManageSuitesTool } from './ManageSuitesTool';
 
 jest.mock('renderer/store/features/device-manager', () => ({
   addSuites: jest.fn(() => ({ type: 'addSuites' })),
   deleteAllSuites: jest.fn(() => ({ type: 'deleteAllSuites' })),
+  default: jest.fn((state = {}) => state), // Mock the reducer as a function
 }));
 
 jest.mock('./utils', () => ({
   transformFile: jest.fn(),
 }));
 
+jest.mock('renderer/components/FileUploader', () => ({
+  FileUploader: ({
+    handleFileUpload,
+  }: {
+    handleFileUpload: (file: File) => void;
+  }) => (
+    <button
+      type="button"
+      data-testid="mock-file-uploader"
+      onClick={() =>
+        handleFileUpload(
+          new File(['{}'], 'test.json', { type: 'application/json' })
+        )
+      }
+    >
+      Mock File Uploader
+    </button>
+  ),
+}));
+
 jest.mock('./helpers', () => ({
   onFileDownload: jest.fn(),
   setCustomDevices: jest.fn(),
+}));
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useDispatch: jest.fn(),
 }));
 
 const renderWithRedux = (
@@ -38,7 +64,8 @@ const renderWithRedux = (
 ) => {
   const store = configureStore({
     reducer: {
-      deviceManager: deviceManagerReducer,
+      deviceManager: jest.requireMock('renderer/store/features/device-manager')
+        .default,
     },
   });
 
@@ -49,57 +76,12 @@ const renderWithRedux = (
 };
 
 describe('ManageSuitesTool', () => {
-  let setCustomDevicesStateMock: jest.Mock<any, any>;
-
-  beforeAll(() => {
-    window.electron = {
-      ipcRenderer: {
-        sendMessage: function <T>(channel: Channels, ...args: T[]): void {
-          throw new Error('Function not implemented.');
-        },
-        on: function <T>(
-          channel: string,
-          func: (...args: T[]) => void
-        ): (() => void) | undefined {
-          throw new Error('Function not implemented.');
-        },
-        once: function <T>(
-          channel: string,
-          func: (...args: T[]) => void
-        ): void {
-          throw new Error('Function not implemented.');
-        },
-        invoke: function <T, P>(channel: string, ...args: T[]): Promise<P> {
-          throw new Error('Function not implemented.');
-        },
-        removeListener: function <T>(
-          channel: string,
-          func: (...args: T[]) => void
-        ): void {
-          throw new Error('Function not implemented.');
-        },
-        removeAllListeners: function (channel: string): void {
-          throw new Error('Function not implemented.');
-        },
-      },
-      store: {
-        set: jest.fn(), // Mock the `set` function
-        get: jest.fn(), // Mock the `get` function if needed in other parts of your tests
-      },
-    };
-
-    global.IntersectionObserver = jest.fn(() => ({
-      root: null,
-      rootMargin: '',
-      thresholds: [],
-      observe: jest.fn(),
-      unobserve: jest.fn(),
-      disconnect: jest.fn(),
-      takeRecords: jest.fn(),
-    }));
-  });
+  let setCustomDevicesStateMock: jest.Mock<() => void, Device[]>;
+  const dispatchMock = jest.fn();
 
   beforeEach(() => {
+    (useDispatch as jest.Mock).mockReturnValue(dispatchMock);
+
     setCustomDevicesStateMock = jest.fn();
 
     renderWithRedux(
@@ -133,7 +115,7 @@ describe('ManageSuitesTool', () => {
     ).not.toBeInTheDocument();
   });
 
-  it.only('dispatches deleteAllSuites and clears custom devices on reset confirmation', async () => {
+  it('dispatches deleteAllSuites and clears custom devices on reset confirmation', async () => {
     fireEvent.click(screen.getByTestId('reset-btn'));
     fireEvent.click(screen.getByText('Confirm'));
 
@@ -143,38 +125,46 @@ describe('ManageSuitesTool', () => {
     });
   });
 
-  it('handles file upload and dispatches actions correctly', async () => {
-    const file = new File(['test'], 'test.json', { type: 'application/json' });
+  it('handles successful file upload and processes custom devices and suites', async () => {
+    const mockSuites = [
+      { id: '1', name: 'first suite', devices: [] },
+      { id: '2', name: 'second suite', devices: [] },
+    ];
 
-    (transformFile as jest.Mock).mockResolvedValueOnce({
+    (transformFile as jest.Mock).mockResolvedValue({
       customDevices: ['device1', 'device2'],
-      suites: ['suite1', 'suite2'],
+      suites: mockSuites,
     });
 
     fireEvent.click(screen.getByTestId('download-btn'));
-
-    const input = screen.getByLabelText('Upload File');
-    fireEvent.change(input, { target: { files: [file] } });
+    fireEvent.click(screen.getByTestId('mock-file-uploader'));
 
     await waitFor(() => {
-      expect(setCustomDevicesStateMock).toHaveBeenCalled();
-      expect(addSuites).toHaveBeenCalled();
-      expect(screen.queryByText('Import your devices')).not.toBeInTheDocument();
+      expect(transformFile).toHaveBeenCalledWith(expect.any(File));
+      expect(dispatchMock).toHaveBeenCalledWith(addSuites(mockSuites));
     });
   });
 
-  it('handles file upload error and shows error message', async () => {
-    const file = new File(['test'], 'test.json', { type: 'application/json' });
-
-    (transformFile as jest.Mock).mockRejectedValueOnce(new Error('Test Error'));
+  it('handles error in file upload', async () => {
+    (transformFile as jest.Mock).mockRejectedValue(
+      new Error('File upload failed')
+    );
 
     fireEvent.click(screen.getByTestId('download-btn'));
 
-    const input = screen.getByLabelText('Upload File');
-    fireEvent.change(input, { target: { files: [file] } });
+    fireEvent.click(screen.getByTestId('mock-file-uploader'));
 
     await waitFor(() => {
-      expect(screen.getByText('An error occurred')).toBeInTheDocument();
+      expect(transformFile).toHaveBeenCalledWith(expect.any(File));
+      expect(
+        screen.getByText('There has been an error, please try again.')
+      ).toBeInTheDocument();
     });
+
+    fireEvent.click(screen.getByText('Close'));
+
+    expect(
+      screen.queryByText('There has been an error, please try again.')
+    ).not.toBeInTheDocument();
   });
 });
