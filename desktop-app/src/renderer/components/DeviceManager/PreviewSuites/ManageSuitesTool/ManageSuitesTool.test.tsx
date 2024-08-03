@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Device } from 'common/deviceList';
 import { Provider, useDispatch } from 'react-redux';
@@ -7,7 +8,6 @@ import {
   deleteAllSuites,
 } from 'renderer/store/features/device-manager';
 import { ReactNode } from 'react';
-import { JSX } from 'react/jsx-runtime';
 import { transformFile } from './utils';
 import { ManageSuitesTool } from './ManageSuitesTool';
 
