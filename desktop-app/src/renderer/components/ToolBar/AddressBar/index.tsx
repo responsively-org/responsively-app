@@ -266,6 +266,11 @@ const AddressBar = () => {
               setIsSuggesting(false);
             }, 100);
           }}
+          onClick={() => {
+            setTimeout(() => {
+              inputRef.current?.select();
+            }, 0);
+          }}
         />
         <div
           className={`${
