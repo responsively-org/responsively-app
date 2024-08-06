@@ -40,6 +40,7 @@ const AddressBar = () => {
   const [homepage, setHomepage] = useState<string>(
     window.electron.store.get('homepage')
   );
+  const [isFocused, setIsFocused] = useState(false);
   const [deleteStorageLoading, setDeleteStorageLoading] =
     useState<boolean>(false);
   const [deleteCookiesLoading, setDeleteCookiesLoading] =
@@ -262,9 +263,16 @@ const AddressBar = () => {
           onChange={(e) => setTypedAddress(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={() => {
+            setIsFocused(false);
             setTimeout(() => {
               setIsSuggesting(false);
             }, 100);
+          }}
+          onSelect={(e) => {
+            if (e.target === inputRef.current && !isFocused) {
+              inputRef.current?.select();
+              setIsFocused(true);
+            }
           }}
         />
         <div
