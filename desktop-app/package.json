@@ -172,7 +172,7 @@
     "react-refresh": "^0.14.0",
     "react-test-renderer": "^18.2.0",
     "replace-in-file": "^7.0.1",
-    "rimraf": "^4.2.0",
+    "rimraf": "^6.0.1",
     "sass": "^1.54.4",
     "sass-loader": "^13.3.2",
     "style-loader": "^3.3.1",
