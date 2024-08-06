@@ -6,6 +6,8 @@
 </div>
 <br>
 
+<div id="scroll-to-top"></div>
+
 <p align="center">
   <a href="https://twitter.com/ResponsivelyApp" target="_blank">
     <img src="https://img.shields.io/twitter/follow/responsivelyApp?color=26A0ED&label=Follow&logo=twitter&logoColor=white&style=flat" alt="Twitter">
@@ -272,3 +274,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+<div align="right">
+  <a href="#scroll-to-top" align="right">Go to Top</a>
+</div>
