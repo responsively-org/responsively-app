@@ -9,8 +9,8 @@
 		"lint:css": "stylelint source/**/*.css",
 		"lint-fix": "run-p 'lint:* -- --fix'",
 		"test": "run-s lint:* build",
-		"build": "webpack --mode=production",
-		"start": "webpack --mode=development --watch",
+		"start": "webpack serve --mode=development --hot --open",
+ 	 	"build": "webpack --mode=production",
 		"release:cws": "webstore upload --source=dist --auto-publish",
 		"release:amo": "web-ext-submit --source-dir dist",
 		"release": "run-s build release:*"
