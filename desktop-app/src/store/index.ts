@@ -104,7 +104,7 @@ const schema = {
             type: {
               type: 'string',
             },
-            dpi: {
+            dpr: {
               type: 'number',
             },
             isTouchCapable: {
