@@ -86,4 +86,27 @@ export const migrations = {
       },
     ]);
   },
+  '1.13.0': (store: Store) => {
+    // Migrate dpi to dpr in custom devices
+    try {
+      const previousCustomDevices: any[] = store.get(
+        'deviceManager.customDevices'
+      ) as any[];
+      const newCustomDevices: Device[] = previousCustomDevices.map((device) => {
+        const newDevice = {
+          ...device,
+          dpr: device.dpi !== undefined ? device.dpi : device.dpr,
+        };
+        delete newDevice.dpi;
+        return newDevice as Device;
+      });
+      store.set('deviceManager.customDevices', newCustomDevices);
+      console.log(
+        'Migration for 1.13.0 successful',
+        store.get('deviceManager.customDevices')
+      );
+    } catch (e) {
+      console.log('Migration for 1.13.0 failed', e);
+    }
+  },
 };
