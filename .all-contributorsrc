@@ -766,6 +766,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "brandonyee-cs",
+      "name": "Brandon Yee",
+      "avatar_url": "https://avatars.githubusercontent.com/u/139765638?v=4",
+      "profile": "https://github.com/brandonyee-cs",
+      "contributions": [
+        "content"
+      ]
     }
   ],
   "contributorsPerLine": 5,
