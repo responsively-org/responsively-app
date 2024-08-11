@@ -261,9 +261,13 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     </tr>
     <tr>
       <td align="center" valign="top" width="20%"><a href="https://sagarhedaoo.com/"><img src="https://avatars.githubusercontent.com/u/10000167?v=4?s=100" width="100px;" alt="Sagar Hedaoo"/><br /><sub><b>Sagar Hedaoo</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=sagarhedaoo" title="Code">💻</a></td>
-      <td align="center" valign="top" width="20%"><a href="http://www.violeta.dev"><img src="https://avatars.githubusercontent.com/u/36138541?v=4?s=100" width="100px;" alt="V"/><br /><sub><b>V</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=violetadev" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="http://www.violeta.dev"><img src="https://avatars.githubusercontent.com/u/36138541?v=4?s=100" width="100px;" alt="V"/><br /><sub><b>V</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=violetadev" title="Code">💻</a> <a href="https://github.com/responsively-org/responsively-app/commits?author=violetadev" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/minowau"><img src="https://avatars.githubusercontent.com/u/139740712?v=4?s=100" width="100px;" alt="Prabhas Jupalli"/><br /><sub><b>Prabhas Jupalli</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=minowau" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="http://devpulkit.in"><img src="https://avatars.githubusercontent.com/u/65671483?v=4?s=100" width="100px;" alt="Pulkit"/><br /><sub><b>Pulkit</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Pulkitxm" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/brandonyee-cs"><img src="https://avatars.githubusercontent.com/u/139765638?v=4?s=100" width="100px;" alt="Brandon Yee"/><br /><sub><b>Brandon Yee</b></sub></a><br /><a href="#content-brandonyee-cs" title="Content">🖋</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/wp043"><img src="https://avatars.githubusercontent.com/u/110360465?v=4?s=100" width="100px;" alt="Wendy Pan"/><br /><sub><b>Wendy Pan</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=wp043" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
