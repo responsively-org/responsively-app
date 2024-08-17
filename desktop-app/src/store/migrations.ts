@@ -86,7 +86,7 @@ export const migrations = {
       },
     ]);
   },
-  '1.13.0': (store: Store) => {
+  '1.14.0': (store: Store) => {
     // Migrate dpi to dpr in custom devices
     try {
       const previousCustomDevices: any[] = store.get(
@@ -102,11 +102,11 @@ export const migrations = {
       });
       store.set('deviceManager.customDevices', newCustomDevices);
       console.log(
-        'Migration for 1.13.0 successful',
+        'Migration for 1.14.0 successful',
         store.get('deviceManager.customDevices')
       );
     } catch (e) {
-      console.log('Migration for 1.13.0 failed', e);
+      console.log('Migration for 1.14.0 failed', e);
     }
   },
 };
