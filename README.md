@@ -268,6 +268,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     </tr>
     <tr>
       <td align="center" valign="top" width="20%"><a href="https://github.com/wp043"><img src="https://avatars.githubusercontent.com/u/110360465?v=4?s=100" width="100px;" alt="Wendy Pan"/><br /><sub><b>Wendy Pan</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=wp043" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/pranavithape"><img src="https://avatars.githubusercontent.com/u/170559714?v=4?s=100" width="100px;" alt="Pranav Ithape"/><br /><sub><b>Pranav Ithape</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=pranavithape" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
