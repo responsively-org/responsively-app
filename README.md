@@ -118,8 +118,8 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 <p>&nbsp;</p>
 
 <p align="center" >
-  <a href="https://koptional.com/?ref=Responsively" target="_blank">
-    <img src="https://github.com/responsively-org/responsively-app/assets/1283424/b5f298dd-8e27-4195-91b7-2eb17713bf7a" height="120px" alt="K-Optional Software"></a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://www.syncfusion.com/?utm_source=responsivelyapp&utm_medium=cpc&utm_campaign=responsivelyapp_esee_banaug24" target="_blank">
+    <img src="https://responsively.app/assets/img/logos/syncfusion.png" height="120px" alt="Syncfusion"></a>&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://www.browserstack.com/?utm_medium=partnered&utm_source=responsively" target="_blank" style="margin-left: 10px;">
     <img src="https://responsively.app/_next/static/media/browserStack.b67d4227.svg" width="250px" height="120px" alt="BrowserStack">
   </a>&nbsp;&nbsp;&nbsp;&nbsp;
