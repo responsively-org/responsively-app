@@ -870,6 +870,47 @@ export const defaultDevices: Device[] = [
     isTouchCapable: false,
     isMobileCapable: false,
   },
+  {
+    id: '90004',
+    name: 'Galaxy Z Fold 5',
+    width: 344,
+    height: 882,
+    dpr: 1,
+    capabilities: ['touch', 'mobile'],
+    userAgent:
+      'Mozilla/5.0 (Linux; Android 13; SM-F946B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.131 Mobile Safari/537.36',
+    type: 'phone',
+    isTouchCapable: true,
+    isMobileCapable: true,
+},
+{
+  id: '90005',
+  name: 'Asus Zenbook Fold',
+  width: 853,
+  height: 1280,
+  dpr: 2,
+  capabilities: ['touch', 'tablet'],
+  userAgent:
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36',
+  type: 'tablet',
+  isTouchCapable: true,
+  isMobileCapable: false,
+},
+{
+  id: '90006',
+  name: 'Pixel 7',
+  width: 412,
+  height: 915,
+  dpr: 2.625, 
+  capabilities: ['touch', 'mobile'],
+  userAgent:
+    'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
+  type: 'phone',
+  isTouchCapable: true,
+  isMobileCapable: true,
+},
+
+
 ];
 
 const customDevices: () => Device[] = () => {
