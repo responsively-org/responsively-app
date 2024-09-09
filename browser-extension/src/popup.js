@@ -1,5 +1,5 @@
 import openCustomProtocolURI from "custom-protocol-check";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import ReactDOM from "react-dom";
 import spinner from "./spinner.svg";
 
