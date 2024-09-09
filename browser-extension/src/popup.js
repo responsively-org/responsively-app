@@ -27,27 +27,22 @@ const isChrome = () => {
 
 const URLOpenerNonChrome = () => {
   const [status, setStatus] = useState("loading");
-  useEffect(() => {
-    (async () => {
-      const [tab] = await window.browser.tabs.query({
-        currentWindow: true,
-        active: true,
-      });
-      if (!tab || !tab.url) {
-        setStatus("false");
-        return;
-      }
-      openCustomProtocolURI(
-        `responsively://${tab.url}`,
-        () => {
-          setStatus("false");
-        },
-        () => {
-          setStatus("true");
-        }
-      );
-    })();
+  const checkProtocolAndUpdateStatus = useCallback(async () => {
+    const [tab] = await window.browser.tabs.query({ currentWindow: true, active: true });
+    if (!tab || !tab.url) {
+      setStatus("false");
+      return;
+    }
+    openCustomProtocolURI(
+      `responsively://${tab.url}`,
+      () => setStatus("false"),
+      () => setStatus("true")
+    );
   }, []);
+
+  useEffect(() => {
+    checkProtocolAndUpdateStatus();
+  }, [checkProtocolAndUpdateStatus]);
 
   if (status === "loading") {
     return (
@@ -87,23 +82,20 @@ const URLOpenerNonChrome = () => {
 };
 
 const URLOpenerChrome = () => {
+  const updateTabURL = useCallback(async () => {
+    const [tab] = await window.browser.tabs.query({ currentWindow: true, active: true });
+    if (!tab || !tab.url) {
+      return;
+    }
+    window.browser.tabs.update({ url: `responsively://${tab.url}` });
+  }, []);
+
   useEffect(() => {
-    (async () => {
-      const [tab] = await window.browser.tabs.query({
-        currentWindow: true,
-        active: true,
-      });
-      if (!tab || !tab.url) {
-        return;
-      }
-      window.browser.tabs.update({
-        url: `responsively://${tab.url}`,
-      });
-    })();
-    return setTimeout(() => {
+    updateTabURL();
+    setTimeout(() => {
       window.close();
     }, 5000);
-  }, []);
+  }, [updateTabURL]);
 
   return (
     <div className="popup">
