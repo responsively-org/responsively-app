@@ -11,6 +11,7 @@
 import path from 'path';
 import { app, BrowserWindow, shell, screen, ipcMain } from 'electron';
 import { setupTitlebar } from 'custom-electron-titlebar/main';
+import { useState } from 'react';
 import cli from './cli';
 import { PROTOCOL } from '../common/constants';
 import MenuBuilder from './menu';
@@ -102,7 +103,12 @@ if (customTitlebarStatus && process.platform === 'win32') {
 
 const createWindow = async () => {
   windowShownOnOpen = false;
+  let isAppInitiated = false;
   await installExtensions();
+
+  const setIsAppInitiated = () => {
+    isAppInitiated = true;
+  };
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -202,20 +208,24 @@ const createWindow = async () => {
   });
 
   mainWindow.on('ready-to-show', async () => {
-    await initInstance();
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    webPermissionHandlers.init();
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.showInactive();
-      if (!windowShownOnOpen) {
-        windowShownOnOpen = true;
-        mainWindow.show();
+    if (!isAppInitiated) {
+      await initInstance();
+      setIsAppInitiated();
+
+      if (!mainWindow) {
+        throw new Error('"mainWindow" is not defined');
+      }
+      webPermissionHandlers.init();
+      if (process.env.START_MINIMIZED) {
+        mainWindow.minimize();
       } else {
         mainWindow.showInactive();
+        if (!windowShownOnOpen) {
+          windowShownOnOpen = true;
+          mainWindow.show();
+        } else {
+          mainWindow.showInactive();
+        }
       }
     }
   });
