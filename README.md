@@ -111,8 +111,7 @@ If you face any problems while using the application, please open an issue here 
 
 ## Roadmap
 
-Here is the roadmap of the desktop app - https://github.com/responsively-org/responsively-app/projects/12?fullscreen=true.
-
+Here is the roadmap of the desktop app - https://github.com/responsively-org/responsively-app/projects/
 ## Gold sponsors 🥇
 
 <p>&nbsp;</p>
