@@ -276,8 +276,10 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       }
     };
     webview.addEventListener('did-navigate', didNavigateHandler);
+    webview.addEventListener('did-navigate-in-page', didNavigateHandler);
     handlerRemovers.push(() => {
       webview.removeEventListener('did-navigate', didNavigateHandler);
+      webview.removeEventListener('did-navigate-in-page', didNavigateHandler);
     });
 
     const ipcMessageHandler = (e: Electron.IpcMessageEvent) => {
