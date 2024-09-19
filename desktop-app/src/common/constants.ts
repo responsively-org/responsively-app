@@ -10,6 +10,7 @@ export const PREVIEW_LAYOUTS = {
   COLUMN: 'COLUMN',
   FLEX: 'FLEX',
   INDIVIDUAL: 'INDIVIDUAL',
+  MASONRY: 'MASONRY',
 } as const;
 
 export type PreviewLayout =
