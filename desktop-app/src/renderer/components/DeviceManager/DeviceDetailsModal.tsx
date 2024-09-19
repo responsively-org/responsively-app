@@ -48,12 +48,14 @@ const DeviceDetailsModal = ({
       setIsTouchCapable(device.isTouchCapable);
       setIsMobileCapable(device.isMobileCapable);
     } else {
-      setName('');
-      setWidth(400);
-      setHeight(600);
-      setUserAgent('');
-      setType('phone');
-      setDpr(1);
+      setTimeout(() => {
+        setName('');
+        setWidth(400);
+        setHeight(600);
+        setUserAgent('');
+        setType('phone');
+        setDpr(1);
+      }, 500);
       setIsTouchCapable(true);
       setIsMobileCapable(true);
     }
