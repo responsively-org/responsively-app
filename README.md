@@ -270,6 +270,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="https://github.com/pranavithape"><img src="https://avatars.githubusercontent.com/u/170559714?v=4?s=100" width="100px;" alt="Pranav Ithape"/><br /><sub><b>Pranav Ithape</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=pranavithape" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/Sukrit-Prakash"><img src="https://avatars.githubusercontent.com/u/136228545?v=4?s=100" width="100px;" alt="SUKRIT PRAKASH SINGH"/><br /><sub><b>SUKRIT PRAKASH SINGH</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Sukrit-Prakash" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/aryan262"><img src="https://avatars.githubusercontent.com/u/97938438?v=4?s=100" width="100px;" alt="Aryan Panchal"/><br /><sub><b>Aryan Panchal</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=aryan262" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/Asatyam"><img src="https://avatars.githubusercontent.com/u/95954551?v=4?s=100" width="100px;" alt="SatyamAgrawal"/><br /><sub><b>SatyamAgrawal</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=asatyam" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
