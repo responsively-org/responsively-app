@@ -40,9 +40,9 @@ const Menu = () => {
     <div className="relative mr-2 flex items-center" ref={ref}>
       <Button onClick={handleFlyout} isActive={isMenuFlyoutOpen}>
         <Icon icon="carbon:overflow-menu-vertical" />
-        {notifications?.length > 0 && Boolean(hasNewNotifications) && (
-          <NotificationsBubble />
-        )}
+        {notifications &&
+          notifications?.length > 0 &&
+          Boolean(hasNewNotifications) && <NotificationsBubble />}
       </Button>
       <div style={{ visibility: isMenuFlyoutOpen ? 'visible' : 'hidden' }}>
         <MenuFlyout closeFlyout={onClose} />

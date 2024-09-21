@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { gt } from 'semver';
+import useLocalStorage from '../useLocalStorage/useLocalStorage';
 
 const fetchAssets = async () => {
   try {
@@ -30,29 +31,47 @@ const useCheckVersion = () => {
   const [isNewVersionAvailable, setIsNewVersionAvailable] = useState<
     null | boolean
   >(null);
-  const [latestVersion, setLatestVersion] = useState('');
+  const [latestVersion, setLatestVersion] = useLocalStorage<undefined | string>(
+    'latestVersion'
+  );
   const [currentVersion, setCurrentVersion] = useState('');
+  const [lastCheck, setLastCheck] = useLocalStorage<number | undefined>(
+    'lastCheck'
+  );
+  const biWeeklyCheckInMs = 1209600000;
 
   useEffect(() => {
     const checkVersion = async () => {
       const currentVersionResult = await getAppVersion();
-      const latestVersionResult = await fetchAssets();
 
       setCurrentVersion(currentVersionResult);
-      setLatestVersion(latestVersionResult);
 
+      const now = Date.now();
+      if (!latestVersion || !lastCheck || now - lastCheck > biWeeklyCheckInMs) {
+        const latestVersionResult = await fetchAssets();
+        if (latestVersionResult) {
+          setLatestVersion(latestVersionResult);
+          setLastCheck(now);
+        }
+      }
       const isNewVersion =
         currentVersionResult &&
-        latestVersionResult &&
-        gt(latestVersionResult, currentVersionResult);
+        latestVersion &&
+        gt(latestVersion, currentVersionResult);
 
-      setIsNewVersionAvailable(isNewVersion);
+      setIsNewVersionAvailable(Boolean(isNewVersion));
     };
 
     if (isNewVersionAvailable === null) {
       checkVersion();
     }
-  }, [currentVersion, isNewVersionAvailable, latestVersion]);
+  }, [
+    isNewVersionAvailable,
+    lastCheck,
+    latestVersion,
+    setLastCheck,
+    setLatestVersion,
+  ]);
 
   return {
     isNewVersionAvailable,
