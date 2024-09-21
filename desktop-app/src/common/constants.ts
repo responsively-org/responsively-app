@@ -16,6 +16,13 @@ export const PREVIEW_LAYOUTS = {
 export type PreviewLayout =
   typeof PREVIEW_LAYOUTS[keyof typeof PREVIEW_LAYOUTS];
 
+export type Notification = {
+  id: string;
+  link?: string;
+  linkText?: string;
+  text: string;
+};
+
 export interface OpenUrlArgs {
   url: string;
 }

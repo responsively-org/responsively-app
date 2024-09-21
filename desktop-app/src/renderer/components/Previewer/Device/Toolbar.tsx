@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from 'renderer/components/Button';
 import useSound from 'use-sound';
 import { ScreenshotArgs, ScreenshotResult } from 'main/screenshot';
@@ -8,6 +8,9 @@ import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
 import { updateWebViewHeightAndScale } from 'common/webViewUtils';
+import useCheckVersion from 'renderer/components/useCheckVersion/useCheckVersion';
+import { useDispatch } from 'react-redux';
+import { setNotifications } from 'renderer/store/features/renderer';
 import { ColorBlindnessTools } from './ColorBlindnessTools';
 
 interface Props {
@@ -20,6 +23,13 @@ interface Props {
   onIndividualLayoutHandler: (device: Device) => void;
   isIndividualLayout: boolean;
 }
+
+const newVersionText = {
+  id: 'new-version',
+  text: 'There is a new version available.',
+  link: 'https://responsively.app/download',
+  linkText: 'See More',
+};
 
 const Toolbar = ({
   webview,
@@ -37,6 +47,16 @@ const Toolbar = ({
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
+
+  const dispatch = useDispatch();
+
+  const { isNewVersionAvailable } = useCheckVersion();
+
+  useEffect(() => {
+    if (isNewVersionAvailable) {
+      dispatch(setNotifications(newVersionText));
+    }
+  }, [dispatch, isNewVersionAvailable]);
 
   const refreshView = () => {
     if (webview) {

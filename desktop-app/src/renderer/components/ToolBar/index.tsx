@@ -6,6 +6,7 @@ import {
   setIsCapturingScreenshot,
   setIsInspecting,
   setRotate,
+  setNotifications,
 } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
 import { ScreenshotAllArgs } from 'main/screenshot';
@@ -103,9 +104,7 @@ const ToolBar = () => {
   return (
     <div className="flex items-center justify-between gap-2">
       <NavigationControls />
-
       <AddressBar />
-
       <Button
         onClick={handleRotate}
         isActive={rotateDevices}
