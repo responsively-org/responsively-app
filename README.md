@@ -274,6 +274,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     </tr>
     <tr>
       <td align="center" valign="top" width="20%"><a href="https://github.com/Asatyam"><img src="https://avatars.githubusercontent.com/u/95954551?v=4?s=100" width="100px;" alt="SatyamAgrawal"/><br /><sub><b>SatyamAgrawal</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=asatyam" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/saiTharunDusa"><img src="https://avatars.githubusercontent.com/u/169873642?v=4?s=100" width="100px;" alt="Sai Tharun Dusa"/><br /><sub><b>Sai Tharun Dusa</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=saiTharunDusa" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
