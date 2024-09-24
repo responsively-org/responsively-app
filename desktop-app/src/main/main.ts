@@ -263,10 +263,6 @@ const createWindow = async () => {
   ipcMain.on('stop-watcher', async () => {
     await stopWatchFiles();
   });
-
-  ipcMain.handle('get-app-version', () => {
-    return app.getVersion();
-  });
 };
 
 app.on('open-url', async (event, url) => {
