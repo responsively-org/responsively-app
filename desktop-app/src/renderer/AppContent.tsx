@@ -12,6 +12,7 @@ import DeviceManager from './components/DeviceManager';
 import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
 import { ReleaseNotes } from './components/ReleaseNotes';
 import { Sponsorship } from './components/Sponsorship';
+import { ChromePopup } from './components/ChromePopup';
 import { AboutDialog } from './components/AboutDialog';
 
 if ((navigator as any).userAgentData.platform === 'Windows') {
@@ -52,6 +53,7 @@ const AppContent = () => {
         <ViewComponent />
         <ReleaseNotes />
         <Sponsorship />
+        <ChromePopup />
         <AboutDialog />
       </ThemeProvider>
     </Provider>
