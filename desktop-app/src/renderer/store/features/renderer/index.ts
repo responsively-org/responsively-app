@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import {
   IPC_MAIN_CHANNELS,
+  Notification,
   PREVIEW_LAYOUTS,
   PreviewLayout,
 } from 'common/constants';
@@ -16,6 +17,7 @@ export interface RendererState {
   isInspecting: boolean | undefined;
   layout: PreviewLayout;
   isCapturingScreenshot: boolean;
+  notifications: Notification[] | null;
 }
 
 const zoomSteps = [
@@ -41,6 +43,7 @@ const initialState: RendererState = {
   isInspecting: undefined,
   layout: window.electron.store.get('ui.previewLayout'),
   isCapturingScreenshot: false,
+  notifications: null,
 };
 
 export const updateFileWatcher = (newURL: string) => {
@@ -126,6 +129,16 @@ export const rendererSlice = createSlice({
     setIsCapturingScreenshot: (state, action: PayloadAction<boolean>) => {
       state.isCapturingScreenshot = action.payload;
     },
+    setNotifications: (state, action: PayloadAction<Notification>) => {
+      const notifications = state.notifications || [];
+      const index = notifications.findIndex(
+        (notification: Notification) => notification.id === action.payload.id
+      );
+
+      if (index === -1) {
+        state.notifications = [...notifications, action.payload];
+      }
+    },
   },
 });
 
@@ -139,6 +152,7 @@ export const {
   setLayout,
   setIsCapturingScreenshot,
   setPageTitle,
+  setNotifications,
 } = rendererSlice.actions;
 
 // Use different zoom factor based on state's current layout
@@ -157,5 +171,7 @@ export const selectIsInspecting = (state: RootState) =>
 export const selectLayout = (state: RootState) => state.renderer.layout;
 export const selectIsCapturingScreenshot = (state: RootState) =>
   state.renderer.isCapturingScreenshot;
+export const selectNotifications = (state: RootState) =>
+  state.renderer.notifications;
 
 export default rendererSlice.reducer;

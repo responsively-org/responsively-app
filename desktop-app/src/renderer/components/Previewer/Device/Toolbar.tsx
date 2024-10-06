@@ -21,6 +21,13 @@ interface Props {
   isIndividualLayout: boolean;
 }
 
+const newVersionText = {
+  id: 'new-version',
+  text: 'There is a new version available.',
+  link: 'https://responsively.app/download',
+  linkText: 'See More',
+};
+
 const Toolbar = ({
   webview,
   device,
