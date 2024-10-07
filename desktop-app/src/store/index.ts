@@ -138,6 +138,10 @@ const schema = {
         type: 'boolean',
         default: false,
       },
+      hideScrollbarForMobile: {
+        type: 'boolean',
+        default: true,
+      },
       guides: {
         type: 'array',
         items: {
