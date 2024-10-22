@@ -121,3 +121,59 @@
 .withMarginRight {
   margin-right: 5rem;
 }
+
+/* For tablets (iPad Mini, iPad Pro, general tablet size) */
+@media (max-width: 1024px) {
+  .webViewContainer {
+    min-width: 150px;
+  }
+  .webViewToolbar {
+    margin: 5px 2px;
+    flex-direction: column;
+  }
+  .webViewToolbarIcons {
+    height: 25px;
+    width: 25px;
+  }
+  .resizableView {
+    margin: 0 0.5rem 0.5rem 0;
+  }
+}
+
+/* For mobile devices (iPhone X, iPhone 14 Pro) */
+@media (max-width: 768px) {
+  .webViewContainer {
+    min-width: 120px;
+  }
+  .webViewToolbar {
+    margin: 3px 1px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .webViewToolbarIcons {
+    height: 20px;
+    width: 20px;
+  }
+  .resizableView {
+    margin: 0 0.25rem 0.25rem 0;
+  }
+}
+
+/* For small screens */
+@media (max-width: 480px) {
+  .webViewContainer {
+    min-width: 100px;
+  }
+  .webViewToolbar {
+    margin: 2px 1px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .webViewToolbarIcons {
+    height: 18px;
+    width: 18px;
+  }
+  .resizableView {
+    margin: 0 0.25rem 0.25rem 0;
+  }
+}
