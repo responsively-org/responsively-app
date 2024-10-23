@@ -9,6 +9,7 @@ import ClearHistory from './ClearHistory';
 import PreviewLayout from './PreviewLayout';
 import Bookmark from './Bookmark';
 import { Settings } from './Settings';
+import HideScrollBarForMobile from './HideScrollbarForMobile';
 
 interface Props {
   closeFlyout: () => void;
@@ -23,6 +24,7 @@ const MenuFlyout = ({ closeFlyout }: Props) => {
       <UITheme />
       <Devtools />
       <AllowInSecureSSL />
+      <HideScrollBarForMobile />
       <ClearHistory />
       <Divider />
 
