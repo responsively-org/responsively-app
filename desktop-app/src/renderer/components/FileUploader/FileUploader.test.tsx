@@ -1,4 +1,4 @@
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { FileUploader, FileUploaderProps } from './FileUploader';
 import { useFileUpload } from './hooks';
