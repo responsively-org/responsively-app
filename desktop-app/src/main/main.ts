@@ -11,7 +11,6 @@
 import path from 'path';
 import { app, BrowserWindow, shell, screen, ipcMain } from 'electron';
 import { setupTitlebar } from 'custom-electron-titlebar/main';
-import { useState } from 'react';
 import cli from './cli';
 import { PROTOCOL } from '../common/constants';
 import MenuBuilder from './menu';
