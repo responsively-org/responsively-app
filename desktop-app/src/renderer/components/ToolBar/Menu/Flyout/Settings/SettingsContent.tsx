@@ -2,6 +2,7 @@ import { useId, useState } from 'react';
 
 import Button from 'renderer/components/Button';
 import Toggle from 'renderer/components/Toggle';
+import { SettingsContentHeaders } from './SettingsContentHeaders';
 
 interface Props {
   onClose: () => void;
@@ -15,6 +16,13 @@ export const SettingsContent = ({ onClose }: Props) => {
   const [enableCustomTitlebar, setEnableCustomTitlebar] = useState<boolean>(
     window.electron.store.get('userPreferences.customTitlebar')
   );
+
+  const [webRequestHeaderAcceptLanguage, setWebRequestHeaderAcceptLanguage] =
+    useState<string>(
+      window.electron.store.get(
+        'userPreferences.webRequestHeaderAcceptLanguage'
+      )
+    );
 
   const onSave = () => {
     if (screenshotSaveLocation === '' || screenshotSaveLocation == null) {
@@ -32,6 +40,11 @@ export const SettingsContent = ({ onClose }: Props) => {
       enableCustomTitlebar
     );
 
+    window.electron.store.set(
+      'userPreferences.webRequestHeaderAcceptLanguage',
+      webRequestHeaderAcceptLanguage
+    );
+
     onClose();
   };
 
@@ -43,6 +56,7 @@ export const SettingsContent = ({ onClose }: Props) => {
           <label htmlFor={id} className="flex flex-col">
             Location
             <input
+              data-testid="settings-screenshot_location-input"
               type="text"
               id={id}
               className="mt-2 rounded-md border border-gray-300 px-4 py-2 text-base focus-visible:outline-gray-400 dark:border-gray-500 dark:bg-slate-900"
@@ -56,7 +70,12 @@ export const SettingsContent = ({ onClose }: Props) => {
         </div>
       </div>
 
-      {(navigator as any).userAgentData.platform === 'Windows' && (
+      <SettingsContentHeaders
+        acceptLanguage={webRequestHeaderAcceptLanguage}
+        setAcceptLanguage={setWebRequestHeaderAcceptLanguage}
+      />
+
+      {(navigator as any)?.userAgentData?.platform === 'Windows' && (
         <>
           <h2>Preferences</h2>
           <div className="my-4 flex flex-col space-y-4 text-sm">
@@ -82,6 +101,7 @@ export const SettingsContent = ({ onClose }: Props) => {
       )}
 
       <Button
+        data-testid="settings-save-button"
         className="mt-6 px-5 py-1"
         onClick={onSave}
         isPrimary

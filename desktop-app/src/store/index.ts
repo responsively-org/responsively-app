@@ -134,6 +134,10 @@ const schema = {
   userPreferences: {
     type: 'object',
     properties: {
+      webRequestHeaderAcceptLanguage: {
+        type: 'string',
+        default: 'us-US',
+      },
       allowInsecureSSLConnections: {
         type: 'boolean',
         default: false,
