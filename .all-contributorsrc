@@ -846,7 +846,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/179954458?v=4",
       "profile": "http://happymvp.com",
       "contributions": [
-        "code"
+        "code",
+        "test"
       ]
     }
   ],
