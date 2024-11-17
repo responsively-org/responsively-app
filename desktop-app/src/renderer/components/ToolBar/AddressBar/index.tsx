@@ -74,7 +74,7 @@ const AddressBar = () => {
         }
         newAddress = protocol + typedAddress;
       }
-
+      if (url && url !== typedAddress) setTypedAddress(url);
       dispatch(setAddress(newAddress));
     },
     [dispatch, typedAddress]
@@ -131,9 +131,15 @@ const AddressBar = () => {
     setPermissionRequest(null);
   };
 
-  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = () => {
-    if (!isSuggesting) {
+  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (!isSuggesting && !['Escape', 'Enter'].includes(e.key)) {
       setIsSuggesting(true);
+    } else if (e.key === 'Escape' && isSuggesting) {
+      setIsSuggesting(false);
+    } else if (e.key === 'Enter' && !isSuggesting) {
+      dispatchAddress(typedAddress);
     }
   };
 
