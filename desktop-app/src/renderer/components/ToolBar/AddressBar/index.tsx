@@ -131,7 +131,9 @@ const AddressBar = () => {
     setPermissionRequest(null);
   };
 
-  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
     if (!isSuggesting && !['Escape', 'Enter'].includes(e.key)) {
       setIsSuggesting(true);
     } else if (e.key === 'Escape' && isSuggesting) {
