@@ -72,7 +72,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const [singleRotated, setSingleRotated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorState | null>(null);
-  const [screenshotInProgress, setScreenshotInProgess] =
+  const [screenshotInProgress, setScreenshotInProgress] =
     useState<boolean>(false);
   const address = useSelector(selectAddress);
   const zoomfactor = useSelector(selectZoomFactor);
@@ -497,10 +497,13 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const scaledHeight = height * zoomfactor;
   const scaledWidth = width * zoomfactor;
 
+  const isRestrictedMinimumDeviceSize =
+    device.width < 400 && zoomfactor < 0.6 && !rotateDevices && !singleRotated;
+
   return (
     <div
-      className={cx('h-fit flex-shrink-0', {
-        'w-52': device.width < 400 && zoomfactor < 0.6,
+      className={cx('h-fit', {
+        'w-52': isRestrictedMinimumDeviceSize,
       })}
     >
       <div className="flex justify-between">
@@ -515,7 +518,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       <Toolbar
         webview={ref.current}
         device={device}
-        setScreenshotInProgress={setScreenshotInProgess}
+        setScreenshotInProgress={setScreenshotInProgress}
         openDevTools={openDevTools}
         toggleRuler={toggleRuler}
         onRotate={onRotateHandler}
