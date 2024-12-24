@@ -141,12 +141,11 @@ const createWindow = async () => {
 
   // Add BROWSER_SYNC_HOST to the allowed Content-Security-Policy origins
   mainWindow.webContents.session.webRequest.onHeadersReceived(
-    async (details, callback) => {
+    (details, callback) => {
       const cspKey = 'content-security-policy';
-  
+      // Ensure responseHeaders and cspKey exist
       if (details.responseHeaders?.[cspKey]) {
-        const cspHeader = details.responseHeaders[cspKey][0];
-  
+        const cspHeader = details.responseHeaders[cspKey]?.[0] || '';
         // Define the rules to replace dynamically
         const replacements: Record<string, string> = {
           'default-src': `default-src ${BROWSER_SYNC_HOST}`,
@@ -156,21 +155,19 @@ const createWindow = async () => {
           'child-src': `child-src ${BROWSER_SYNC_HOST}`,
           'worker-src': `worker-src ${BROWSER_SYNC_HOST}`,
         };
-  
-        // Apply replacements
+        // Apply replacements dynamically
         const updatedCSPHeader = Object.entries(replacements).reduce(
-          (header, [key, value]) => header.replace(key, value),
+          (header, [key, value]) => (header ? header.replace(key, value) : ''),
           cspHeader
         );
-  
         // Update the response headers
         details.responseHeaders[cspKey][0] = updatedCSPHeader;
       }
-  
+      // Callback with updated headers
       callback({ responseHeaders: details.responseHeaders });
     }
   );
-
+  
   mainWindow.loadURL(
     `${resolveHtmlPath('index.html')}?urlToOpen=${encodeURI(
       urlToOpen ?? 'undefined'
