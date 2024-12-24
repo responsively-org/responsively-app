@@ -336,7 +336,7 @@ export const defaultDevices: Device[] = [
     type: 'phone',
     isTouchCapable: true,
     isMobileCapable: true,
-  },  
+  },
   {
     id: '20001',
     name: 'Nexus 4',
