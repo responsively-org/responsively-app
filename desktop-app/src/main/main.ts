@@ -167,7 +167,7 @@ const createWindow = async () => {
       callback({ responseHeaders: details.responseHeaders });
     }
   );
-  
+
   mainWindow.loadURL(
     `${resolveHtmlPath('index.html')}?urlToOpen=${encodeURI(
       urlToOpen ?? 'undefined'
