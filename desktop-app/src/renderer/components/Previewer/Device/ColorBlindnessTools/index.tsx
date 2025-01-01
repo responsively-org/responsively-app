@@ -159,6 +159,7 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
   top: -75vmax;
 }`,
         [SIMULATIONS.FAR]: `body { filter: blur(2px); }`,
+        [SIMULATIONS.COLOR_CONTRAST_LOSS]: `body { filter: grayscale(0.5) contrast(0.8); }`,
       };
       const css = impairments[visualImpairment.toLowerCase()];
       let js = null;

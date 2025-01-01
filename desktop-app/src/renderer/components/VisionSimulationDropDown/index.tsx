@@ -54,6 +54,7 @@ export const SIMULATIONS = {
   FAR: 'farsightedness',
   GLAUCOME: 'glaucoma',
   SOLARIZE: 'solarize',
+  COLOR_CONTRAST_LOSS: 'color-contrast-loss',
 };
 
 export const RED_GREEN = [
@@ -68,6 +69,7 @@ export const VISUAL_IMPAIRMENTS = [
   SIMULATIONS.CATARACT,
   SIMULATIONS.FAR,
   SIMULATIONS.GLAUCOME,
+  SIMULATIONS.COLOR_CONTRAST_LOSS,
 ];
 export const SUNLIGHT = [SIMULATIONS.SOLARIZE];
 
