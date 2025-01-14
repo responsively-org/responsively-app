@@ -119,9 +119,6 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 <p align="center" >
   <a href="https://www.syncfusion.com/?utm_source=responsivelyapp&utm_medium=cpc&utm_campaign=responsivelyapp_esee_ban" target="_blank">
     <img src="https://responsively.app/assets/img/logos/syncfusion.png" height="120px" alt="Syncfusion"></a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://www.browserstack.com/?utm_medium=partnered&utm_source=responsively" target="_blank" style="margin-left: 10px;">
-    <img src="https://responsively.app/_next/static/media/browserStack.b67d4227.svg" width="250px" height="120px" alt="BrowserStack">
-  </a>&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://opencollective.com/responsively" target="_blank">
     <img src="https://user-images.githubusercontent.com/1283424/142834528-4cd5b8eb-eeae-4437-b749-d09c96dde160.png" height="120px" alt="Sponsor to add your company logo here">
   </a>
