@@ -11,6 +11,7 @@ import {
 import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
 import { defaultDevices, Device, getDevicesMap } from 'common/deviceList';
 
+import cx from 'classnames';
 import Button from '../Button';
 import DeviceLabel from './DeviceLabel';
 import DeviceDetailsModal from './DeviceDetailsModal';
@@ -18,6 +19,7 @@ import { PreviewSuites } from './PreviewSuites';
 import { ManageSuitesTool } from './PreviewSuites/ManageSuitesTool/ManageSuitesTool';
 import { Divider } from '../Divider';
 import { AccordionItem, Accordion } from '../Accordion';
+import { DropDown } from '../DropDown';
 
 const filterDevices = (devices: Device[], filter: string) => {
   const sanitizedFilter = filter.trim().toLowerCase();
@@ -38,6 +40,7 @@ const DeviceManager = () => {
   const activeSuite = useSelector(selectActiveSuite);
   const devices = activeSuite.devices?.map((id) => getDevicesMap()[id]);
   const [searchText, setSearchText] = useState<string>('');
+  const [filteredType, setFilteredType] = useState<string | null>(null);
   const [filteredDevices, setFilteredDevices] =
     useState<Device[]>(defaultDevices);
   const [customDevices, setCustomDevices] = useState<Device[]>(
@@ -45,11 +48,20 @@ const DeviceManager = () => {
   );
   const [filteredCustomDevices, setFilteredCustomDevices] =
     useState<Device[]>(customDevices);
+  const deviceTypes = Array.from(
+    new Set(defaultDevices.map((device) => device.type))
+  );
 
   useEffect(() => {
-    setFilteredDevices(filterDevices(defaultDevices, searchText));
-    setFilteredCustomDevices(filterDevices(customDevices, searchText));
-  }, [customDevices, searchText]);
+    const filtered = filterDevices(defaultDevices, searchText).filter(
+      (device) => (filteredType ? device.type === filteredType : true)
+    );
+    const filteredCustom = filterDevices(customDevices, searchText).filter(
+      (device) => (filteredType ? device.type === filteredType : true)
+    );
+    setFilteredDevices(filtered);
+    setFilteredCustomDevices(filteredCustom);
+  }, [customDevices, searchText, filteredType]);
 
   const saveCustomDevices = (newCustomDevices: Device[]) => {
     setCustomDevices(newCustomDevices);
@@ -110,6 +122,50 @@ const DeviceManager = () => {
         <div className="my-4 flex items-start justify-end justify-between">
           <div className="flex w-fit flex-col items-start px-1">
             <h2 className="text-2xl font-bold">Manage Devices</h2>
+          </div>
+          <div>
+            <DropDown
+              label={
+                <div className="flex items-center gap-2">
+                  <Icon icon="mdi:devices" fontSize={18} />
+                  <span>Device Type</span>
+                </div>
+              }
+              options={[
+                {
+                  label: (
+                    <div className="flex items-center gap-2">
+                      {filteredType === null && <Icon icon="mdi:check" />}
+                      <span
+                        className={cx('capitalize', {
+                          'font-semibold text-black dark:text-white':
+                            filteredType === null,
+                        })}
+                      >
+                        All Device Types
+                      </span>
+                    </div>
+                  ),
+                  onClick: () => setFilteredType(null),
+                },
+                ...deviceTypes.map((type) => ({
+                  label: (
+                    <div className="flex items-center gap-2">
+                      {filteredType === type && <Icon icon="mdi:check" />}
+                      <span
+                        className={cx('capitalize', {
+                          'font-semibold text-black dark:text-white':
+                            filteredType === type,
+                        })}
+                      >
+                        {type}
+                      </span>
+                    </div>
+                  ),
+                  onClick: () => setFilteredType(type),
+                })),
+              ]}
+            />
           </div>
           <div className="flex w-fit items-center bg-white px-1 dark:bg-slate-900">
             <Icon icon="ic:outline-search" height={24} />
