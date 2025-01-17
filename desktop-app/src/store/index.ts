@@ -136,7 +136,7 @@ const schema = {
     properties: {
       webRequestHeaderAcceptLanguage: {
         type: 'string',
-        default: 'us-US',
+        default: 'en-US',
       },
       allowInsecureSSLConnections: {
         type: 'boolean',
