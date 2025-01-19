@@ -23,10 +23,11 @@ const Bookmark = () => {
 
   return (
     <div
+      className="relative"
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <div className="">
+      <div>
         <div className="relative right-2 w-80 dark:border-slate-400">
           <Button
             className="flex w-full items-center justify-between pl-6"

@@ -29,7 +29,7 @@ const ViewAllBookmarks = ({ bookmarks, handleBookmarkFlyout }: Props) => {
 
   return (
     <div>
-      <div className="absolute top-[179px] right-[322px] z-50 flex max-h-[60vh] min-h-min flex-col overflow-x-auto overflow-y-auto rounded border bg-white focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
+      <div className="absolute right-[316px] top-0 z-50 flex max-h-[60vh] min-h-min flex-col overflow-x-auto overflow-y-auto rounded border bg-slate-100 focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
         {bookmarks.map((bookmark) => {
           return (
             <div key={bookmark.id}>
@@ -48,7 +48,7 @@ const ViewAllBookmarks = ({ bookmarks, handleBookmarkFlyout }: Props) => {
           </Button>
         )}
       </div>
-      <div className="absolute right-[565px] top-[179px]">
+      <div className="absolute right-[560px]">
         {openFlyout && (
           <BookmarkFlyout
             bookmark={currentBookmark}

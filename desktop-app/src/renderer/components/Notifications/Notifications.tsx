@@ -10,7 +10,7 @@ const Notifications = () => {
 
   return (
     <div className="mb-4 max-h-[200px] overflow-y-auto rounded-lg p-1 px-4 shadow-lg dark:bg-slate-900">
-      <span className="text-lg">Notifications</span>
+      <span className="text-md">Notifications</span>
       <div className="mt-2">
         {(!notificationsState ||
           (notificationsState && notificationsState?.length === 0)) && (
