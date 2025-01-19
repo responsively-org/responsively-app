@@ -15,7 +15,14 @@ const PreviewLayoutSelector = () => {
     dispatch(setLayout(newLayout));
   };
 
-  useKeyboardShortcut(SHORTCUT_CHANNEL.PREVIEW_LAYOUT, handleLayout);
+  const toggleNextLayout = () => {
+    const layouts = Object.values(PREVIEW_LAYOUTS);
+    const currentIndex = layouts.findIndex((l) => l === layout);
+    const nextIndex = (currentIndex + 1) % layouts.length;
+    dispatch(setLayout(layouts[nextIndex]));
+  };
+
+  useKeyboardShortcut(SHORTCUT_CHANNEL.PREVIEW_LAYOUT, toggleNextLayout);
 
   return (
     <div className="flex flex-row items-center justify-start px-4">
