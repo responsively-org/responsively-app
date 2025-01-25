@@ -29,7 +29,8 @@ export const SettingsContentHeaders: FC<ISettingsContentHeaders> = ({
             />
           </label>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            HTTP request Accept-Language parameter
+            HTTP request Accept-Language parameter (default: language from OS
+            locale settings)
           </p>
         </div>
       </div>

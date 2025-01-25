@@ -32,9 +32,14 @@ export const WebPermissionHandlers = (mainWindow: BrowserWindow) => {
           urls: ['<all_urls>'],
         },
         (details, callback) => {
-          details.requestHeaders['Accept-Language'] = store.get(
+          const acceptLanguage = store.get(
             'userPreferences.webRequestHeaderAcceptLanguage'
           );
+          if (acceptLanguage != null && acceptLanguage !== '') {
+            details.requestHeaders['Accept-Language'] = store.get(
+              'userPreferences.webRequestHeaderAcceptLanguage'
+            );
+          }
           callback({ requestHeaders: details.requestHeaders });
         }
       );
