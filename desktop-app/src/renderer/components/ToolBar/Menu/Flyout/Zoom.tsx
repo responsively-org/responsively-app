@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, ReactNode } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
 import useKeyboardShortcut, {
@@ -11,7 +11,7 @@ import {
 } from 'renderer/store/features/renderer';
 
 interface ZoomButtonProps {
-  children: React.ReactNode;
+  children: ReactNode;
   onClick: () => void;
 }
 
