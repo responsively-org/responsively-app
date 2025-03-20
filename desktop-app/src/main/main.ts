@@ -193,16 +193,6 @@ const createWindow = async () => {
   });
 
   mainWindow.on('focus', () => {
-    console.log('Window focused');
-    console.log('Current Open Windows:', BrowserWindow.getAllWindows().length);
-  });
-
-  mainWindow.on('blur', () => {
-    console.log('Window lost focus');
-    console.log('Current Open Windows:', BrowserWindow.getAllWindows().length);
-  });
-
-  mainWindow.on('focus', () => {
     if (isWindows && needsFocusFix && !triggeringProgrammaticBlur) {
       needsFocusFix = false;
       triggeringProgrammaticBlur = true;
