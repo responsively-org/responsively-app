@@ -183,7 +183,7 @@ const Toolbar = ({
             mobileMenu
               ? `absolute top-[38px] left-[2px] z-50 my-1 box-border gap-1 rounded-lg py-[4px]  ${
                   mobileMenu && mobileDropdown ? 'flex' : 'hidden'
-                }  w-[70%] flex-wrap gap-1 border-[1px] border-slate-600 bg-slate-800 p-2 pr-[1rem]`
+                }  w-[70%] flex-wrap gap-1 border-[1px] border-slate-300 bg-slate-100 p-2 pr-[1rem] dark:border-slate-600 dark:bg-slate-800`
               : 'flex gap-1'
           }  `}
         >
