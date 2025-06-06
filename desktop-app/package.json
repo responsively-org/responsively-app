@@ -255,7 +255,7 @@
   "collective": {
     "url": "https://opencollective.com/responsively"
   },
-  "devEngines": {
+  "engines": {
     "node": ">=14.x",
     "npm": ">=7.x"
   },
