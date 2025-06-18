@@ -59,11 +59,12 @@ const Toolbar = ({
       await webview.executeJavaScript(
         `
         if(window.___browserSync___){
-          window.___browserSync___.socket.${eventMirroringOff ? 'open' : 'close'
-        }()
+          window.___browserSync___.socket.${
+            eventMirroringOff ? 'open' : 'close'
+          }()
         }
         true
-      `
+      `,
       );
       setEventMirroringOff(!eventMirroringOff);
     } catch (error) {
@@ -148,7 +149,7 @@ const Toolbar = ({
     if (webview) {
       webview.executeJavaScript(
         'window.scrollTo({ top: 0, behavior: "smooth" })',
-        false
+        false,
       );
     }
   };
