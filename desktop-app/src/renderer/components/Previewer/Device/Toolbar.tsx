@@ -64,7 +64,7 @@ const Toolbar = ({
           }()
         }
         true
-      `,
+      `
       );
       setEventMirroringOff(!eventMirroringOff);
     } catch (error) {
@@ -149,14 +149,14 @@ const Toolbar = ({
     if (webview) {
       webview.executeJavaScript(
         'window.scrollTo({ top: 0, behavior: "smooth" })',
-        false,
+        false
       );
     }
   };
 
   return (
     <div className="flex items-center justify-between gap-1">
-      <div className="my-1 inline-flex max-w-[78%] items-center gap-1 flex-wrap">
+      <div className="my-1 inline-flex max-w-[78%] flex-wrap items-center gap-1">
         <Button onClick={refreshView} title="Refresh This View">
           <Icon icon="ic:round-refresh" />
         </Button>
