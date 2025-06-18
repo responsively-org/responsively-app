@@ -59,9 +59,8 @@ const Toolbar = ({
       await webview.executeJavaScript(
         `
         if(window.___browserSync___){
-          window.___browserSync___.socket.${
-            eventMirroringOff ? 'open' : 'close'
-          }()
+          window.___browserSync___.socket.${eventMirroringOff ? 'open' : 'close'
+        }()
         }
         true
       `
@@ -156,7 +155,7 @@ const Toolbar = ({
 
   return (
     <div className="flex items-center justify-between gap-1">
-      <div className="my-1 inline-flex max-w-[78%] items-center gap-1 overflow-x-auto">
+      <div className="my-1 inline-flex max-w-[78%] items-center gap-1 flex-wrap">
         <Button onClick={refreshView} title="Refresh This View">
           <Icon icon="ic:round-refresh" />
         </Button>
