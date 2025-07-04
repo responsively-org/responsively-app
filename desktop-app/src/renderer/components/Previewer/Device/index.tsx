@@ -336,11 +336,21 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     const didFailLoadHandler = ({
       errorCode,
       errorDescription,
+      isMainFrame,
     }: Electron.DidFailLoadEvent) => {
       if (errorCode === -3) {
         // Aborted error, can be ignored
         return;
       }
+
+      // Only show error overlay for main frame errors
+      // Iframe errors (like CSP violations) should only go to console
+      if (!isMainFrame) {
+        // eslint-disable-next-line no-console
+        console.warn('iframe error:', errorCode, errorDescription);
+        return;
+      }
+
       setError({
         code: errorCode,
         description: errorDescription,
