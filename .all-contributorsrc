@@ -849,6 +849,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "AnalyticalDataArtisan",
+      "name": "AnalyticalDataArtisan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/183036785?v=4",
+      "profile": "https://github.com/AnalyticalDataArtisan",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
