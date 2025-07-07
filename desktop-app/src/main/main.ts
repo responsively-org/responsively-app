@@ -141,37 +141,29 @@ const createWindow = async () => {
 
   // Add BROWSER_SYNC_HOST to the allowed Content-Security-Policy origins
   mainWindow.webContents.session.webRequest.onHeadersReceived(
-    async (details, callback) => {
-      if (details.responseHeaders?.['content-security-policy']) {
-        let cspHeader = details.responseHeaders['content-security-policy'][0];
-
-        cspHeader = cspHeader.replace(
-          'default-src',
-          `default-src ${BROWSER_SYNC_HOST}`
+    (details, callback) => {
+      const cspKey = 'content-security-policy';
+      // Ensure responseHeaders and cspKey exist
+      if (details.responseHeaders?.[cspKey]) {
+        const cspHeader = details.responseHeaders[cspKey]?.[0] || '';
+        // Define the rules to replace dynamically
+        const replacements: Record<string, string> = {
+          'default-src': `default-src ${BROWSER_SYNC_HOST}`,
+          'script-src': `script-src ${BROWSER_SYNC_HOST}`,
+          'script-src-elem': `script-src-elem ${BROWSER_SYNC_HOST}`,
+          'connect-src': `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST}`,
+          'child-src': `child-src ${BROWSER_SYNC_HOST}`,
+          'worker-src': `worker-src ${BROWSER_SYNC_HOST}`,
+        };
+        // Apply replacements dynamically
+        const updatedCSPHeader = Object.entries(replacements).reduce(
+          (header, [key, value]) => (header ? header.replace(key, value) : ''),
+          cspHeader
         );
-        cspHeader = cspHeader.replace(
-          'script-src',
-          `script-src ${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'script-src-elem',
-          `script-src-elem ${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'connect-src',
-          `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'child-src',
-          `child-src ${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'worker-src',
-          `worker-src ${BROWSER_SYNC_HOST}`
-        ); // Required when/if the browser-sync script is eventually relocated to a web worker
-
-        details.responseHeaders['content-security-policy'][0] = cspHeader;
+        // Update the response headers
+        details.responseHeaders[cspKey][0] = updatedCSPHeader;
       }
+      // Callback with updated headers
       callback({ responseHeaders: details.responseHeaders });
     }
   );
