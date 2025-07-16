@@ -58,19 +58,18 @@ initWebviewStorageManagerHandlers();
 initNativeFunctionHandlers();
 
 if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support');
-  sourceMapSupport.install();
+  import('source-map-support').then((mod) => mod.default.install());
 }
 
 const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
-  require('electron-debug')();
+  import('electron-debug').then((mod) => mod.default());
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-assembler');
+  const installer = await import('electron-devtools-assembler');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = [
     'REACT_DEVELOPER_TOOLS',
@@ -84,12 +83,10 @@ const installExtensions = async () => {
     'APOLLO_DEVELOPER_TOOLS',
   ];
 
-  return installer
-    .default(
-      extensions.map((name) => installer[name]),
-      forceDownload
-    )
-    .catch(console.log);
+  return installer.default(
+    extensions.map((name) => installer[name]),
+    forceDownload
+  ).catch(console.log);
 };
 
 // Custom titlebar config for windows

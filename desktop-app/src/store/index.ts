@@ -2,8 +2,7 @@ import path from 'path';
 import { homedir } from 'os';
 import { DOCK_POSITION, PREVIEW_LAYOUTS } from '../common/constants';
 import { migrations } from './migrations';
-
-const Store = require('electron-store');
+import ElectronStore from 'electron-store';
 
 const schema = {
   ui: {
@@ -224,7 +223,7 @@ const schema = {
   },
   homepage: {
     type: 'string',
-    default: 'https://www.google.com/',
+    default: 'https://search.brave.com/',
   },
   seenReleaseNotes: {
     type: 'array',
@@ -262,7 +261,7 @@ const schema = {
   },
 } as const;
 
-const store = new Store({
+const store = new ElectronStore({
   schema,
   watch: true,
   migrations,
