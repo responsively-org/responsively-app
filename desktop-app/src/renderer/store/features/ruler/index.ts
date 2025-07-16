@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import type { RootState } from '../..';
 
 export interface Coordinates {
@@ -36,21 +37,30 @@ export const rulerSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const { setRuler } = rulerSlice.actions;
 
-export const selectRuler =
-  (state: RootState) =>
-  (resolution: ViewResolution | undefined): RulersState | undefined => {
-    if (resolution && state.rulers[resolution]) {
-      return state.rulers[resolution];
+export const selectRuler = createSelector(
+  [
+    (state: RootState) => state.rulers,
+    (_: RootState, resolution: ViewResolution | undefined) => resolution,
+  ],
+  (rulers, resolution): RulersState | undefined => {
+    if (resolution && rulers[resolution]) {
+      return rulers[resolution];
     }
     return undefined;
-  };
+  }
+);
 
-export const selectRulerEnabled =
-  (state: RootState) => (resolution: ViewResolution | undefined) => {
-    if (resolution && state.rulers[resolution]) {
-      return state.rulers[resolution].isRulerEnabled;
+export const selectRulerEnabled = createSelector(
+  [
+    (state: RootState) => state.rulers,
+    (_: RootState, resolution: ViewResolution | undefined) => resolution,
+  ],
+  (rulers, resolution): boolean => {
+    if (resolution && rulers[resolution]) {
+      return rulers[resolution].isRulerEnabled;
     }
     return false;
-  };
+  }
+);
 
 export default rulerSlice.reducer;

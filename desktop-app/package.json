@@ -110,6 +110,7 @@
     "redux": "^5.0.1",
     "redux-thunk": "^3.1.0",
     "replace": "^1.2.2",
+    "reselect": "^5.1.1",
     "tailwindcss": "^4.1.11",
     "use-sound": "^5.0.0",
     "uuid": "^11.1.0"
