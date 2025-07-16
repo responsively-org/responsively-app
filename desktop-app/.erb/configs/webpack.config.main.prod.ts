@@ -15,15 +15,8 @@ import deleteSourceMaps from '../scripts/delete-source-maps';
 checkNodeEnv('production');
 deleteSourceMaps();
 
-const devtoolsConfig =
-  process.env.DEBUG_PROD === 'true'
-    ? {
-        devtool: 'source-map',
-      }
-    : {};
-
 const configuration: webpack.Configuration = {
-  ...devtoolsConfig,
+  devtool: 'source-map',
 
   mode: 'production',
 
@@ -32,13 +25,7 @@ const configuration: webpack.Configuration = {
   entry: {
     main: path.join(webpackPaths.srcMainPath, 'main.ts'),
     preload: path.join(webpackPaths.srcMainPath, 'preload.ts'),
-    'preload-webview': path.join(
-      webpackPaths.srcMainPath,
-      'preload-webview.ts'
-    ),
   },
-
-  externals: ['fsevents'],
 
   output: {
     path: webpackPaths.distMainPath,
@@ -59,6 +46,7 @@ const configuration: webpack.Configuration = {
   plugins: [
     new BundleAnalyzerPlugin({
       analyzerMode: process.env.ANALYZE === 'true' ? 'server' : 'disabled',
+      analyzerPort: 8888,
     }),
 
     /**

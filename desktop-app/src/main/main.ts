@@ -69,24 +69,16 @@ if (isDebug) {
 }
 
 const installExtensions = async () => {
-  const installer = await import('electron-devtools-assembler');
+  const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = [
-    'REACT_DEVELOPER_TOOLS',
-    'REDUX_DEVTOOLS',
-    'EMBER_INSPECTOR',
-    'BACKBONE_DEBUGGER',
-    'JQUERY_DEBUGGER',
-    'ANGULAR_DEVTOOLS',
-    'VUEJS_DEVTOOLS',
-    'MOBX_DEVTOOLS',
-    'APOLLO_DEVELOPER_TOOLS',
-  ];
+  const extensions = ['REACT_DEVELOPER_TOOLS'];
 
-  return installer.default(
-    extensions.map((name) => installer[name]),
-    forceDownload
-  ).catch(console.log);
+  return installer
+    .default(
+      extensions.map((name) => installer[name]),
+      forceDownload,
+    )
+    .catch(console.log);
 };
 
 // Custom titlebar config for windows
