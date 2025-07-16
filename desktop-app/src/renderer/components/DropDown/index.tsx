@@ -46,7 +46,7 @@ export function DropDown({ label, options, className }: Props) {
                   if (option.type === 'separator') {
                     return (
                       <div
-                        className="m-1 border-t-[1px] border-t-slate-500"
+                        className="m-1 border-t border-t-slate-500"
                         // eslint-disable-next-line react/no-array-index-key
                         key={`divider-${idx}`}
                       />

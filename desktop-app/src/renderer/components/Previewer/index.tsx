@@ -63,9 +63,9 @@ const Previewer = () => {
           'justify-center': isIndividualLayout,
         })}
       >
-        <div className="flex flex-grow overflow-hidden">
+        <div className="flex grow overflow-hidden">
           <div
-            className="w-full flex-grow overflow-y-auto"
+            className="w-full grow overflow-y-auto"
             style={{ height: '100%' }}
           >
             {isMasonryLayout ? (

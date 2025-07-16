@@ -114,7 +114,7 @@ const DevtoolsResizer = () => {
         enable={config.resizeDirections}
       >
         <div className="flex h-full w-full flex-col">
-          <div className="flex justify-between border-b-[1px]">
+          <div className="flex justify-between border-b">
             <div>
               <Button
                 onClick={() => dispatch(setIsInspecting(!isInspecting))}
@@ -163,7 +163,7 @@ const DevtoolsResizer = () => {
               </Button>
             </div>
           </div>
-          <div className="flex-grow" ref={ref} />
+          <div className="grow" ref={ref} />
         </div>
       </Resizable>
     </div>

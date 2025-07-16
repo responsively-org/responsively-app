@@ -22,7 +22,7 @@ const NavigationButton = ({ label, icon, action }: NavigationItemProps) => {
   const shortcutName: ShortcutChannel = label.toUpperCase() as ShortcutChannel;
   useKeyboardShortcut(SHORTCUT_CHANNEL[shortcutName], action);
   return (
-    <Button className="!rounded-full px-2 py-1" onClick={action} title={label}>
+    <Button className="rounded-full! px-2 py-1" onClick={action} title={label}>
       <Icon icon={icon} />
     </Button>
   );

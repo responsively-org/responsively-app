@@ -219,7 +219,7 @@ const AddressBar = () => {
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragExit}
         onDrop={handleDrop}
-        className="relative z-10 w-full flex-grow"
+        className="relative z-10 w-full grow"
       >
         <div className="absolute top-2 left-2 mr-2 flex flex-col items-start">
           <Icon icon="mdi:web" className="text-gray-500" />

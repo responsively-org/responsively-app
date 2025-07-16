@@ -30,7 +30,7 @@ export const PreviewSuiteSelector = () => {
         },
         {
           label: (
-            <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+            <div className="flex w-full shrink-0 items-center justify-between gap-12 whitespace-nowrap">
               <span>Manage Suites</span>
             </div>
           ),

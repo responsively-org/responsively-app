@@ -81,8 +81,12 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
   const layout = useSelector(selectLayout);
-  const rulerEnabled = useSelector(selectRulerEnabled);
-  const getRuler = useSelector(selectRuler);
+  const rulerEnabled = useSelector((state: any) =>
+    selectRulerEnabled(state, `${device.width}x${device.height}`)
+  );
+  const getRuler = useSelector((state: any) => (resolution: string) =>
+    selectRuler(state, resolution)
+  );
   const dispatch = useDispatch();
   const dockPosition = useSelector(selectDockPosition);
   const darkMode = useSelector(selectDarkMode);
@@ -527,12 +531,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       />
       <div
         style={{
-          height: rulerEnabled(`${width}x${height}`)
-            ? scaledHeight + 30
-            : scaledHeight,
-          width: rulerEnabled(`${width}x${height}`)
-            ? scaledWidth + 30
-            : scaledWidth,
+          height: rulerEnabled ? scaledHeight + 30 : scaledHeight,
+          width: rulerEnabled ? scaledWidth + 30 : scaledWidth,
         }}
         className="relative origin-top-left overflow-hidden bg-white"
       >
@@ -544,7 +544,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           coordinates={coordinates}
           zoomFactor={zoomfactor}
           night={darkMode}
-          enabled={rulerEnabled(`${width}x${height}`)}
+          enabled={rulerEnabled}
           defaultGuides={window.electron.store
             .get('userPreferences.guides')
             .flatMap((x: any) => x)
@@ -561,8 +561,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
               width,
               display: 'inline-flex',
               transform: `scale(${zoomfactor})`,
-              marginLeft: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
-              marginTop: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
+              marginLeft: rulerEnabled ? '30px' : 0,
+              marginTop: rulerEnabled ? '30px' : 0,
             }}
             ref={ref}
             className="origin-top-left"

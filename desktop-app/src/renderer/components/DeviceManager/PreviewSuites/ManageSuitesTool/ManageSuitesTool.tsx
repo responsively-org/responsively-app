@@ -61,21 +61,21 @@ export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
       <div className="flex flex-row content-end justify-end">
         <Button
           data-testid="download-btn"
-          className="aspect-square w-12 rounded-full hover:!bg-slate-500"
+          className="aspect-square w-12 rounded-full hover:bg-slate-500!"
           onClick={() => setOpen(true)}
         >
           <Icon icon="uil:export" fontSize={18} />
         </Button>
         <Button
           data-testid="upload-btn"
-          className="aspect-square w-12 rounded-full hover:!bg-slate-500"
+          className="aspect-square w-12 rounded-full hover:bg-slate-500!"
           onClick={onFileDownload}
         >
           <Icon icon="uil:import" fontSize={18} />
         </Button>
         <Button
           data-testid="reset-btn"
-          className="aspect-square w-12 rounded-full hover:!bg-slate-500"
+          className="aspect-square w-12 rounded-full hover:bg-slate-500!"
           onClick={() => setResetConfirmation(true)}
         >
           <Icon icon="uil:redo" fontSize={18} />

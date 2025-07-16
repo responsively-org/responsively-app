@@ -15,7 +15,7 @@ export const Settings = ({ closeFlyout }: Props) => {
   return (
     <div className="relative right-2 w-80">
       <Button
-        className="right-2 m-0 flex w-80 !justify-start pl-6"
+        className="right-2 m-0 flex w-80 justify-start! pl-6"
         onClick={() => {
           setIsOpen(true);
           closeFlyout();

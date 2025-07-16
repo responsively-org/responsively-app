@@ -52,7 +52,7 @@ const IndividualLayoutToolbar = ({
           {devices.map((device, idx) => (
             <Tab
               className={cx(
-                'border-1 bottom-auto flex flex-shrink-0 cursor-pointer items-center rounded-t-md border-gray-300 px-4',
+                'border bottom-auto flex shrink-0 cursor-pointer items-center rounded-t-md border-gray-300 px-4',
                 {
                   'bg-slate-400/60': isActive(idx),
                   'dark:bg-slate-100/90': isActive(idx),

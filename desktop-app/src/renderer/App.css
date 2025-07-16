@@ -3,14 +3,20 @@
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
 
-@import '~@fontsource/lato/300.css';
-@import '~@fontsource/lato/400.css';
-@import '~@fontsource/lato/400-italic.css';
-@import '~@fontsource/lato/700.css';
+@import '@fontsource/lato/300.css';
+@import '@fontsource/lato/400.css';
+@import '@fontsource/lato/400-italic.css';
+@import '@fontsource/lato/700.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-dark-normal: #d1d5db; /* colors.gray[300] */
+  --color-light-normal: #374151; /* colors.gray[700] */
+  --font-sans: "Lato", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+@plugin "@tailwindcss/typography";
 
 html {
   user-select: none;

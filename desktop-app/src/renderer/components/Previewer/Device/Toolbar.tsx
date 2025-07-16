@@ -172,7 +172,7 @@ const Toolbar = ({
             />
             <Icon
               icon="clarity:lightning-solid"
-              className="absolute top-[-1px] right-[-2px]"
+              className="absolute -top-px right-[-2px]"
               height={8}
             />
           </div>
