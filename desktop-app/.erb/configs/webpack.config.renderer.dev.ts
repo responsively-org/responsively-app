@@ -209,6 +209,15 @@ const configuration: webpack.Configuration = {
         .on('close', (code: number) => process.exit(code!))
         .on('error', (spawnError) => console.error(spawnError));
 
+      console.log('Starting preload-webview.js builder...');
+      const preloadWebviewProcess = spawn(
+        'npm',
+        ['run', 'start:preloadWebview'],
+        { shell: true, stdio: 'inherit' },
+      )
+        .on('close', (code: number) => process.exit(code!))
+        .on('error', (spawnError) => console.error(spawnError));
+
       console.log('Starting Main Process...');
       let args = ['run', 'start:main'];
       if (process.env.MAIN_ARGS) {
@@ -222,6 +231,7 @@ const configuration: webpack.Configuration = {
       })
         .on('close', (code: number) => {
           preloadProcess.kill();
+          preloadWebviewProcess.kill();
           process.exit(code!);
         })
         .on('error', (spawnError) => console.error(spawnError));
