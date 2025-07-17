@@ -25,6 +25,8 @@ global.IntersectionObserver = jest.fn(() => ({
 
 global.ResizeObserver = class {
   observe() {}
+
   unobserve() {}
+
   disconnect() {}
 };

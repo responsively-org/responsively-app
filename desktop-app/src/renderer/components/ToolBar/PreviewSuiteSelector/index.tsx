@@ -8,7 +8,7 @@ import {
 } from 'renderer/store/features/device-manager';
 import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
 
-export const PreviewSuiteSelector = () => {
+export function PreviewSuiteSelector() {
   const dispatch = useDispatch();
   const suites = useSelector(selectSuites);
   const activeSuite = useSelector(selectActiveSuite);
@@ -41,4 +41,4 @@ export const PreviewSuiteSelector = () => {
       ]}
     />
   );
-};
+}

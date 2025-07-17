@@ -3,7 +3,7 @@ import type { PreviewSuites } from '.';
 
 export const sanitizeSuites = () => {
   const existingSuites: PreviewSuites = window.electron.store.get(
-    'deviceManager.previewSuites'
+    'deviceManager.previewSuites',
   );
   if (existingSuites == null || existingSuites.length === 0) {
     window.electron.store.set('deviceManager.previewSuites', [
@@ -21,7 +21,7 @@ export const sanitizeSuites = () => {
 
   existingSuites.forEach((suite) => {
     const availableDevices = suite.devices.filter(
-      (id) => getDevicesMap()[id] != null
+      (id) => getDevicesMap()[id] != null,
     );
     if (availableDevices.length !== suite.devices.length) {
       suite.devices = availableDevices;

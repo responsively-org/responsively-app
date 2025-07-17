@@ -12,7 +12,7 @@ import { Suite } from './Suite';
 import { CreateSuiteButton } from './CreateSuiteButton';
 import { ManageSuitesTool } from './ManageSuitesTool/ManageSuitesTool';
 
-export const PreviewSuites = () => {
+export function PreviewSuites() {
   const suites = useSelector(selectSuites);
   const activeSuite = useSelector(selectActiveSuite);
 
@@ -32,4 +32,4 @@ export const PreviewSuites = () => {
       </div>
     </div>
   );
-};
+}

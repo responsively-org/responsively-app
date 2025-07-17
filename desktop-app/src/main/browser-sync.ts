@@ -32,7 +32,7 @@ export async function initInstance(): Promise<BrowserSyncInstance> {
           return reject(err);
         }
         return resolve(bs);
-      }
+      },
     );
   });
 }
@@ -53,7 +53,7 @@ export function watchFiles(filePath: string) {
         if (event === 'change') {
           browserSyncEmbed.reload(file);
         }
-      }
+      },
     );
   }
 }

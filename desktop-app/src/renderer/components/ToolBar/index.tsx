@@ -28,9 +28,11 @@ import useKeyboardShortcut, {
 import Shortcuts from './Shortcuts';
 import { ColorBlindnessControls } from './ColorBlindnessControls';
 
-const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
+function Divider() {
+  return <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
+}
 
-const ToolBar = () => {
+function ToolBar() {
   const rotateDevices = useSelector(selectRotate);
   const isInspecting = useSelector(selectIsInspecting);
   const isCapturingScreenshot = useSelector(selectIsCapturingScreenshot);
@@ -71,7 +73,7 @@ const ToolBar = () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     await window.electron.ipcRenderer.invoke<Array<ScreenshotAllArgs>, any>(
       'screenshot:All',
-      screens
+      screens,
     );
 
     // reset webviews to original size
@@ -97,7 +99,7 @@ const ToolBar = () => {
   useKeyboardShortcut(SHORTCUT_CHANNEL.ROTATE_ALL, handleRotate);
   useKeyboardShortcut(
     SHORTCUT_CHANNEL.SCREENSHOT_ALL,
-    screenshotCaptureHandler
+    screenshotCaptureHandler,
   );
   useKeyboardShortcut(SHORTCUT_CHANNEL.INSPECT_ELEMENTS, handleInspectShortcut);
 
@@ -152,6 +154,6 @@ const ToolBar = () => {
       />
     </div>
   );
-};
+}
 
 export default ToolBar;

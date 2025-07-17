@@ -13,7 +13,7 @@ import { transformFile } from './utils';
 import { onFileDownload, setCustomDevices } from './helpers';
 import { ManageSuitesToolError } from './ManageSuitesToolError';
 
-export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
+export function ManageSuitesTool({ setCustomDevicesState }: any) {
   const [open, setOpen] = useState<boolean>(false);
   const [resetConfirmation, setResetConfirmation] = useState<boolean>(false);
 
@@ -109,4 +109,4 @@ export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
       </Modal>
     </>
   );
-};
+}

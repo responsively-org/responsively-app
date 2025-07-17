@@ -1,8 +1,8 @@
 import path from 'path';
 import { homedir } from 'os';
+import ElectronStore from 'electron-store';
 import { DOCK_POSITION, PREVIEW_LAYOUTS } from '../common/constants';
 import { migrations } from './migrations';
-import ElectronStore from 'electron-store';
 
 const schema = {
   ui: {

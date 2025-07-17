@@ -8,12 +8,12 @@ export const keyboardShortcutsPubsub = new PubSub();
 const useMousetrapEmitter = (
   accelerator: string | string[],
   eventChannel: ShortcutChannel,
-  action?: string | undefined
+  action?: string | undefined,
 ) => {
   useEffect(() => {
     const callback = async (
       _e: Mousetrap.ExtendedKeyboardEvent,
-      _combo: string
+      _combo: string,
     ) => {
       try {
         await keyboardShortcutsPubsub.publish(eventChannel);

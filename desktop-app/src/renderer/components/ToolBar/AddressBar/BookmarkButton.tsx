@@ -20,7 +20,7 @@ interface Props {
   pageTitle: string;
 }
 
-const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
+function BookmarkButton({ currentAddress, pageTitle }: Props) {
   const [openFlyout, setOpenFlyout] = useState<boolean>(false);
   const dispatch = useDispatch();
   const ref = useDetectClickOutside({
@@ -39,7 +39,7 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
   const bookmarks = useSelector(selectBookmarks);
   const bookmarkFound = useMemo(
     () => bookmarks.find((bm: IBookmarks) => bm.address === currentAddress),
-    [currentAddress, bookmarks]
+    [currentAddress, bookmarks],
   );
 
   const isPageBookmarked = !!bookmarkFound;
@@ -81,6 +81,6 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
       </div>
     </div>
   );
-};
+}
 
 export default BookmarkButton;

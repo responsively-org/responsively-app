@@ -19,7 +19,7 @@ export const PERMISSION_STATE = {
   UNKNOWN: 'UNKNOWN',
 } as const;
 
-type PermissionState = typeof PERMISSION_STATE[keyof typeof PERMISSION_STATE];
+type PermissionState = (typeof PERMISSION_STATE)[keyof typeof PERMISSION_STATE];
 
 interface PersistedPermission {
   origin: string;
@@ -44,10 +44,13 @@ const loadPermissions = () => {
         }, {} as PermissionRecords),
       };
     })
-    .reduce((acc, { origin, permissions: permissionRecords }) => {
-      acc[origin] = permissionRecords;
-      return acc;
-    }, {} as Record<string, PermissionRecords>);
+    .reduce(
+      (acc, { origin, permissions: permissionRecords }) => {
+        acc[origin] = permissionRecords;
+        return acc;
+      },
+      {} as Record<string, PermissionRecords>,
+    );
 
   return permissions;
 };
@@ -71,7 +74,7 @@ const savePermissions = (permissions: Record<string, PermissionRecords>) => {
             };
           }),
       };
-    }
+    },
   );
   store.set('webPermissions', persistedPermissions);
 };
@@ -88,12 +91,12 @@ class PermissionsManager {
     this.permissions = loadPermissions();
     const handler = (
       _event: Electron.IpcMainInvokeEvent,
-      arg: PermissionResponseArg
+      arg: PermissionResponseArg,
     ) => {
       this.setPermissionState(
         arg.permissionRequest.requestingOrigin,
         arg.permissionRequest.permission,
-        arg.allow ? PERMISSION_STATE.GRANTED : PERMISSION_STATE.DENIED
+        arg.allow ? PERMISSION_STATE.GRANTED : PERMISSION_STATE.DENIED,
       );
       const key = `${arg.permissionRequest.requestingOrigin}-${arg.permissionRequest.permission}`;
       const callbacks = this.callbacks[key];
@@ -111,7 +114,7 @@ class PermissionsManager {
         // eslint-disable-next-line no-console
         console.error(
           'Error adding listener for permission response channel',
-          e
+          e,
         );
       }
     }
@@ -137,7 +140,7 @@ class PermissionsManager {
   requestPermission(
     origin: string,
     type: string,
-    callback: PermissionCallback
+    callback: PermissionCallback,
   ): void {
     this.permissions[origin] = this.permissions[origin] || {};
     const previousState = this.permissions[origin][type];

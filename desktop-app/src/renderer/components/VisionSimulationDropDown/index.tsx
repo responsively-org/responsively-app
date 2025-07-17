@@ -2,13 +2,13 @@ import cx from 'classnames';
 import { Icon } from '@iconify/react';
 import { DropDown } from '../DropDown';
 
-const MenuItemLabel = ({
+function MenuItemLabel({
   label,
   isActive,
 }: {
   label: string;
   isActive: boolean;
-}) => {
+}) {
   return (
     <div className="justify-normal flex w-full shrink-0 items-center gap-1 whitespace-nowrap">
       <Icon
@@ -26,9 +26,9 @@ const MenuItemLabel = ({
       </span>
     </div>
   );
-};
+}
 
-const MenuItemHeader = ({ label }: { label: string }) => {
+function MenuItemHeader({ label }: { label: string }) {
   return (
     <div className="relative flex w-full min-w-44 items-center justify-between gap-1 whitespace-nowrap">
       <div className="absolute inset-0 flex items-center" aria-hidden="true">
@@ -39,7 +39,7 @@ const MenuItemHeader = ({ label }: { label: string }) => {
       </span>
     </div>
   );
-};
+}
 
 export const SIMULATIONS = {
   DEUTERANOPIA: 'deuteranopia',
@@ -78,10 +78,7 @@ interface Props {
   onChange: (name: string | undefined) => void;
 }
 
-export const VisionSimulationDropDown = ({
-  simulationName,
-  onChange,
-}: Props) => {
+export function VisionSimulationDropDown({ simulationName, onChange }: Props) {
   return (
     <DropDown
       className={cx('rounded-lg text-xs', {
@@ -192,4 +189,4 @@ export const VisionSimulationDropDown = ({
       ]}
     />
   );
-};
+}

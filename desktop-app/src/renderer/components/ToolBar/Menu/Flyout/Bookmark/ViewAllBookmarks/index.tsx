@@ -11,7 +11,7 @@ export interface Props {
   handleBookmarkFlyout: () => void;
 }
 
-const ViewAllBookmarks = ({ bookmarks, handleBookmarkFlyout }: Props) => {
+function ViewAllBookmarks({ bookmarks, handleBookmarkFlyout }: Props) {
   const [currentBookmark, setCurrentBookmark] = useState<IBookmarks>({
     id: '',
     name: '',
@@ -58,6 +58,6 @@ const ViewAllBookmarks = ({ bookmarks, handleBookmarkFlyout }: Props) => {
       </div>
     </div>
   );
-};
+}
 
 export default ViewAllBookmarks;

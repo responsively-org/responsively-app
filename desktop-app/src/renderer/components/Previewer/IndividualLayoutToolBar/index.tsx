@@ -14,11 +14,11 @@ interface Props {
   devices: IDevice[];
 }
 
-const IndividualLayoutToolbar = ({
+function IndividualLayoutToolbar({
   individualDevice,
   setIndividualDevice,
   devices,
-}: Props) => {
+}: Props) {
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState(0);
 
@@ -32,7 +32,7 @@ const IndividualLayoutToolbar = ({
 
   useEffect(() => {
     const activeTabIndex = devices.findIndex(
-      (device) => device.id === individualDevice.id
+      (device) => device.id === individualDevice.id,
     );
     setActiveTab(activeTabIndex);
   }, [individualDevice, devices]);
@@ -46,7 +46,7 @@ const IndividualLayoutToolbar = ({
       >
         <TabList
           className={cx(
-            'custom-scrollbar flex flex-1  justify-center gap-1 overflow-x-auto border-b border-slate-400/60 dark:border-white'
+            'custom-scrollbar flex flex-1  justify-center gap-1 overflow-x-auto border-b border-slate-400/60 dark:border-white',
           )}
         >
           {devices.map((device, idx) => (
@@ -57,7 +57,7 @@ const IndividualLayoutToolbar = ({
                   'bg-slate-400/60': isActive(idx),
                   'dark:bg-slate-100/90': isActive(idx),
                   'text-light-normal': isActive(idx),
-                }
+                },
               )}
               key={device.id}
             >
@@ -76,6 +76,6 @@ const IndividualLayoutToolbar = ({
       </div>
     </div>
   );
-};
+}
 
 export default IndividualLayoutToolbar;

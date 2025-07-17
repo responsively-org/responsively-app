@@ -17,7 +17,7 @@ interface Props {
   isActive: boolean;
 }
 
-export const Suite = ({ suite: { id, name, devices }, isActive }: Props) => {
+export function Suite({ suite: { id, name, devices }, isActive }: Props) {
   const [, drop] = useDrop(() => ({ accept: DND_TYPE }));
   const dispatch = useDispatch();
 
@@ -32,7 +32,7 @@ export const Suite = ({ suite: { id, name, devices }, isActive }: Props) => {
         'relative min-w-56 shrink-0  rounded bg-white dark:bg-slate-900',
         {
           'border-2 border-slate-500 ': isActive,
-        }
+        },
       )}
     >
       {!isActive ? (
@@ -70,4 +70,4 @@ export const Suite = ({ suite: { id, name, devices }, isActive }: Props) => {
       </div>
     </div>
   );
-};
+}

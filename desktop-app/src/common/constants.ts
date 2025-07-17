@@ -14,7 +14,7 @@ export const PREVIEW_LAYOUTS = {
 } as const;
 
 export type PreviewLayout =
-  typeof PREVIEW_LAYOUTS[keyof typeof PREVIEW_LAYOUTS];
+  (typeof PREVIEW_LAYOUTS)[keyof typeof PREVIEW_LAYOUTS];
 
 export type Notification = {
   id: string;
@@ -40,6 +40,7 @@ export const IPC_MAIN_CHANNELS = {
   OPEN_ABOUT_DIALOG: 'open-about-dialog',
 } as const;
 
-export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];
+export type Channels =
+  (typeof IPC_MAIN_CHANNELS)[keyof typeof IPC_MAIN_CHANNELS];
 
 export const PROTOCOL = 'responsively';

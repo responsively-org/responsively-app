@@ -15,15 +15,15 @@ interface ZoomButtonProps {
   onClick: () => void;
 }
 
-const ZoomButton = ({ children, onClick }: ZoomButtonProps) => {
+function ZoomButton({ children, onClick }: ZoomButtonProps) {
   return (
     <Button className="p-0 px-2" onClick={onClick} subtle>
       {children}
     </Button>
   );
-};
+}
 
-const Zoom = () => {
+function Zoom() {
   const zoomfactor = useSelector(selectZoomFactor);
   const dispatch = useDispatch();
 
@@ -48,6 +48,6 @@ const Zoom = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Zoom;

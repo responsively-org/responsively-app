@@ -32,13 +32,13 @@ export const ADDRESS_BAR_EVENTS = {
   DELETE_CACHE: 'DELETE_CACHE',
 };
 
-const AddressBar = () => {
+function AddressBar() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [typedAddress, setTypedAddress] = useState<string>('');
   const [isSuggesting, setIsSuggesting] = useState<boolean>(false);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [homepage, setHomepage] = useState<string>(
-    window.electron.store.get('homepage')
+    window.electron.store.get('homepage'),
   );
   const [isFocused, setIsFocused] = useState(false);
   const [deleteStorageLoading, setDeleteStorageLoading] =
@@ -77,7 +77,7 @@ const AddressBar = () => {
       if (url && url !== typedAddress) setTypedAddress(url);
       dispatch(setAddress(newAddress));
     },
-    [dispatch, typedAddress]
+    [dispatch, typedAddress],
   );
 
   useEffect(() => {
@@ -85,31 +85,31 @@ const AddressBar = () => {
       IPC_MAIN_CHANNELS.PERMISSION_REQUEST,
       (args) => {
         setPermissionRequest(args);
-      }
+      },
     );
 
     window.electron.ipcRenderer.on<AuthRequestArgs>(
       IPC_MAIN_CHANNELS.AUTH_REQUEST,
       (args) => {
         setAuthRequest(args);
-      }
+      },
     );
     window.electron.ipcRenderer.on<OpenUrlArgs>(
       IPC_MAIN_CHANNELS.OPEN_URL,
       (args) => {
         dispatchAddress(args.url);
-      }
+      },
     );
 
     return () => {
       window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.PERMISSION_REQUEST
+        IPC_MAIN_CHANNELS.PERMISSION_REQUEST,
       );
       window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.AUTH_REQUEST
+        IPC_MAIN_CHANNELS.AUTH_REQUEST,
       );
       window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.OPEN_URL
+        IPC_MAIN_CHANNELS.OPEN_URL,
       );
     };
   }, [dispatchAddress]);
@@ -132,7 +132,7 @@ const AddressBar = () => {
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (!isSuggesting && !['Escape', 'Enter'].includes(e.key)) {
       setIsSuggesting(true);
@@ -263,7 +263,7 @@ const AddressBar = () => {
             {
               'rounded-tl-lg rounded-tr-lg rounded-bl-none rounded-br-none outline-none':
                 isSuggesting,
-            }
+            },
           )}
           value={typedAddress}
           onChange={(e) => setTypedAddress(e.target.value)}
@@ -336,6 +336,6 @@ const AddressBar = () => {
       />
     </>
   );
-};
+}
 
 export default AddressBar;

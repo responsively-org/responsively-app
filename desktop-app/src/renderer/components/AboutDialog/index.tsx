@@ -11,7 +11,7 @@ TimeAgo.addLocale(en);
 
 const timeAgo = new TimeAgo('en-US');
 
-export const AboutDialog = () => {
+export function AboutDialog() {
   const [show, setShow] = useState(false);
   const [args, setArgs] = useState<AboutDialogArgs | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -29,12 +29,12 @@ export const AboutDialog = () => {
     };
     window.electron.ipcRenderer.on<AboutDialogArgs>(
       IPC_MAIN_CHANNELS.OPEN_ABOUT_DIALOG,
-      onOpenAboutDialog
+      onOpenAboutDialog,
     );
     return () => {
       window.electron.ipcRenderer.removeListener(
         IPC_MAIN_CHANNELS.OPEN_ABOUT_DIALOG,
-        onOpenAboutDialog
+        onOpenAboutDialog,
       );
     };
   }, []);
@@ -120,7 +120,7 @@ export const AboutDialog = () => {
               onClick={async () => {
                 window.electron.ipcRenderer.invoke<string, void>(
                   'copy-to-clipboard',
-                  `App Version: ${args?.environmentInfo.appVersion}\nElectron Version: ${args?.environmentInfo.electronVersion}\nChrome Version: ${args?.environmentInfo.chromeVersion}\nNode.js Version: ${args?.environmentInfo.nodeVersion}\nV8 Version: ${args?.environmentInfo.v8Version}\nOS: ${args?.environmentInfo.osInfo}`
+                  `App Version: ${args?.environmentInfo.appVersion}\nElectron Version: ${args?.environmentInfo.electronVersion}\nChrome Version: ${args?.environmentInfo.chromeVersion}\nNode.js Version: ${args?.environmentInfo.nodeVersion}\nV8 Version: ${args?.environmentInfo.v8Version}\nOS: ${args?.environmentInfo.osInfo}`,
                 );
               }}
             >
@@ -167,4 +167,4 @@ export const AboutDialog = () => {
       </div>
     </Modal>
   );
-};
+}

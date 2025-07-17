@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectBookmarks } from 'renderer/store/features/bookmarks';
 import ViewAllBookmarks from './ViewAllBookmarks';
 
-const Bookmark = () => {
+function Bookmark() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
   const menuFlyout = useSelector(selectMenuFlyout);
@@ -50,6 +50,6 @@ const Bookmark = () => {
       )}
     </div>
   );
-};
+}
 
 export default Bookmark;

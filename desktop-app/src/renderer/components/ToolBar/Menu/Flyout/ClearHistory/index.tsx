@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/react';
 import Button from 'renderer/components/Button';
 
-const ClearHistory = () => {
+function ClearHistory() {
   return (
     <div className="flex flex-row items-center justify-start px-4">
       <span className="w-1/2">Clear History</span>
@@ -17,6 +17,6 @@ const ClearHistory = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ClearHistory;

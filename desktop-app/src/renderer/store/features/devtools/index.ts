@@ -4,7 +4,7 @@ import type { RootState } from '../..';
 
 const defaultBounds = { x: 0, y: 0, width: 0, height: 0 };
 
-export type DockPosition = typeof DOCK_POSITION[keyof typeof DOCK_POSITION];
+export type DockPosition = (typeof DOCK_POSITION)[keyof typeof DOCK_POSITION];
 
 export interface DevtoolsState {
   bounds: {

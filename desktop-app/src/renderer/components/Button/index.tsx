@@ -13,7 +13,7 @@ interface CustomProps {
   subtle?: boolean;
 }
 
-const Button = ({
+function Button({
   className = '',
   isActive = false,
   isLoading = false,
@@ -28,7 +28,7 @@ const Button = ({
   React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
-  >) => {
+  >) {
   const [isLoadingDone, setIsLoadingDone] = useState<boolean>(false);
   const prevLoadingState = useRef(false);
 
@@ -66,7 +66,7 @@ const Button = ({
           'bg-slate-200': isActionButton,
           'dark:bg-slate-700': isActionButton,
           'px-2': isActionButton || isTextButton,
-        }
+        },
       )}
       type="button"
       // eslint-disable-next-line react/jsx-props-no-spreading
@@ -79,6 +79,6 @@ const Button = ({
       {!isLoading && !isLoadingDone ? children : null}
     </button>
   );
-};
+}
 
 export default Button;

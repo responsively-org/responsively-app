@@ -7,7 +7,7 @@ interface Props {
   closeFlyout: () => void;
 }
 
-export const Settings = ({ closeFlyout }: Props) => {
+export function Settings({ closeFlyout }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const onClose = () => setIsOpen(false);
@@ -28,4 +28,4 @@ export const Settings = ({ closeFlyout }: Props) => {
       </Modal>
     </div>
   );
-};
+}

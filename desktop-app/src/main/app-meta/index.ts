@@ -18,7 +18,7 @@ export const initAppMetaHandlers = () => {
           : path.join(__dirname, '../../../.erb/dll/preload-webview.js'),
         appVersion: app.getVersion(),
       };
-    }
+    },
   );
 
   ipcMain.on('electron-store-get', async (event, val) => {

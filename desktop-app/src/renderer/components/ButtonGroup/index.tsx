@@ -10,7 +10,7 @@ interface Props {
   }[];
 }
 
-export const ButtonGroup = ({ buttons }: Props) => {
+export function ButtonGroup({ buttons }: Props) {
   return (
     <span className="isolate inline-flex rounded-md shadow-sm">
       {buttons.map(({ content, srContent, onClick, isActive }, index) => (
@@ -23,7 +23,7 @@ export const ButtonGroup = ({ buttons }: Props) => {
               'rounded-l-md': index === 0,
               'rounded-r-md': index === buttons.length - 1,
               'bg-slate-200 dark:bg-slate-600': isActive,
-            }
+            },
           )}
           onClick={onClick}
         >
@@ -33,4 +33,4 @@ export const ButtonGroup = ({ buttons }: Props) => {
       ))}
     </span>
   );
-};
+}

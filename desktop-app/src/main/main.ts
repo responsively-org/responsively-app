@@ -83,7 +83,7 @@ const installExtensions = async () => {
 
 // Custom titlebar config for windows
 const customTitlebarStatus = store.get(
-  'userPreferences.customTitlebar'
+  'userPreferences.customTitlebar',
 ) as boolean;
 if (customTitlebarStatus && process.platform === 'win32') {
   setupTitlebar();
@@ -136,39 +136,39 @@ const createWindow = async () => {
 
         cspHeader = cspHeader.replace(
           'default-src',
-          `default-src ${BROWSER_SYNC_HOST}`
+          `default-src ${BROWSER_SYNC_HOST}`,
         );
         cspHeader = cspHeader.replace(
           'script-src',
-          `script-src ${BROWSER_SYNC_HOST}`
+          `script-src ${BROWSER_SYNC_HOST}`,
         );
         cspHeader = cspHeader.replace(
           'script-src-elem',
-          `script-src-elem ${BROWSER_SYNC_HOST}`
+          `script-src-elem ${BROWSER_SYNC_HOST}`,
         );
         cspHeader = cspHeader.replace(
           'connect-src',
-          `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST}`
+          `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST}`,
         );
         cspHeader = cspHeader.replace(
           'child-src',
-          `child-src ${BROWSER_SYNC_HOST}`
+          `child-src ${BROWSER_SYNC_HOST}`,
         );
         cspHeader = cspHeader.replace(
           'worker-src',
-          `worker-src ${BROWSER_SYNC_HOST}`
+          `worker-src ${BROWSER_SYNC_HOST}`,
         ); // Required when/if the browser-sync script is eventually relocated to a web worker
 
         details.responseHeaders['content-security-policy'][0] = cspHeader;
       }
       callback({ responseHeaders: details.responseHeaders });
-    }
+    },
   );
 
   mainWindow.loadURL(
     `${resolveHtmlPath('index.html')}?urlToOpen=${encodeURI(
-      urlToOpen ?? 'undefined'
-    )}`
+      urlToOpen ?? 'undefined',
+    )}`,
   );
 
   const isWindows = process.platform === 'win32';

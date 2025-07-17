@@ -4,7 +4,7 @@ import {
 } from 'common/constants';
 import Button from '../Button';
 
-const Notification = ({ notification }: { notification: NotificationType }) => {
+function Notification({ notification }: { notification: NotificationType }) {
   const handleLinkClick = (url: string) => {
     window.electron.ipcRenderer.sendMessage(IPC_MAIN_CHANNELS.OPEN_EXTERNAL, {
       url,
@@ -28,6 +28,6 @@ const Notification = ({ notification }: { notification: NotificationType }) => {
       )}
     </div>
   );
-};
+}
 
 export default Notification;

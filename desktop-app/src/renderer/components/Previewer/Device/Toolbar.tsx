@@ -28,7 +28,7 @@ const newVersionText = {
   linkText: 'See More',
 };
 
-const Toolbar = ({
+function Toolbar({
   webview,
   device,
   setScreenshotInProgress,
@@ -37,7 +37,7 @@ const Toolbar = ({
   onRotate,
   onIndividualLayoutHandler,
   isIndividualLayout,
-}: Props) => {
+}: Props) {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
@@ -64,7 +64,7 @@ const Toolbar = ({
           }()
         }
         true
-      `
+      `,
       );
       setEventMirroringOff(!eventMirroringOff);
     } catch (error) {
@@ -149,7 +149,7 @@ const Toolbar = ({
     if (webview) {
       webview.executeJavaScript(
         'window.scrollTo({ top: 0, behavior: "smooth" })',
-        false
+        false,
       );
     }
   };
@@ -225,6 +225,6 @@ const Toolbar = ({
       </Button>
     </div>
   );
-};
+}
 
 export default Toolbar;

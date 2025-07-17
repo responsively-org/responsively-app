@@ -45,7 +45,7 @@ const CONTENT_COPY = [
   },
 ];
 
-export const Sponsorship = () => {
+export function Sponsorship() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export const Sponsorship = () => {
   // Choose a random content copy
   const contentCopy = useMemo(
     () => CONTENT_COPY[Math.floor(Math.random() * CONTENT_COPY.length)],
-    []
+    [],
   );
 
   return (
@@ -97,7 +97,7 @@ export const Sponsorship = () => {
                 IPC_MAIN_CHANNELS.OPEN_EXTERNAL,
                 {
                   url: `https://responsively.app/sponsor?utm_source=app&utm_medium=app-banner&utm_campaign=sponsor&utm_term=${contentCopy.id}`,
-                }
+                },
               );
               onClose();
             }}
@@ -110,4 +110,4 @@ export const Sponsorship = () => {
       </div>
     </Modal>
   );
-};
+}

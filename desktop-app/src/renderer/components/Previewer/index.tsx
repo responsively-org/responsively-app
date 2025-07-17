@@ -29,7 +29,7 @@ interface MasonryProps {
 
 const TypedMasonry: React.FC<MasonryProps> = Masonry as any;
 
-const Previewer = () => {
+function Previewer() {
   const activeSuite = useSelector(selectActiveSuite);
   const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
   const dockPosition = useSelector(selectDockPosition);
@@ -117,6 +117,6 @@ const Previewer = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Previewer;

@@ -15,7 +15,7 @@ export const migrations = {
 
       // Migrate custom devices
       const previousCustomDevices: Device[] = store.get(
-        'deviceManager.customDevices'
+        'deviceManager.customDevices',
       ) as Device[];
       const newCustomDevices: Device[] = previousCustomDevices.map((device) => {
         const newDevice = {
@@ -28,7 +28,7 @@ export const migrations = {
 
       // Migrate active devices to suites
       const previousActiveDevices: string[] = store.get(
-        'deviceManager.activeDevices'
+        'deviceManager.activeDevices',
       ) as string[];
 
       const newActiveDevices: string[] = previousActiveDevices
@@ -90,7 +90,7 @@ export const migrations = {
     // Migrate dpi to dpr in custom devices
     try {
       const previousCustomDevices: any[] = store.get(
-        'deviceManager.customDevices'
+        'deviceManager.customDevices',
       ) as any[];
       const newCustomDevices: Device[] = previousCustomDevices.map((device) => {
         const newDevice = {
@@ -103,7 +103,7 @@ export const migrations = {
       store.set('deviceManager.customDevices', newCustomDevices);
       console.log(
         'Migration for 1.14.0 successful',
-        store.get('deviceManager.customDevices')
+        store.get('deviceManager.customDevices'),
       );
     } catch (e) {
       console.log('Migration for 1.14.0 failed', e);

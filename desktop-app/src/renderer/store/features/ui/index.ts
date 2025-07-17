@@ -7,7 +7,7 @@ export const APP_VIEWS = {
   DEVICE_MANAGER: 'DEVICE_MANAGER',
 } as const;
 
-export type AppView = typeof APP_VIEWS[keyof typeof APP_VIEWS];
+export type AppView = (typeof APP_VIEWS)[keyof typeof APP_VIEWS];
 
 export interface UIState {
   darkMode: boolean;

@@ -22,33 +22,31 @@ export const shortcutsList = [
   },
 ];
 
-const ShortcutsModal = ({ isOpen, onClose }: Props) => {
+function ShortcutsModal({ isOpen, onClose }: Props) {
   return (
-    <>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <div className="flex w-[380px] flex-col gap-4 px-2">
-          {Object.values(shortcutsList).map((category) => (
-            <div key={category.id}>
-              <h3 className="mb-3 border-b border-slate-600 pb-1 text-lg">
-                {category.name}
-              </h3>
-              {category.shortcuts.map((value) => (
-                <div className="my-2.5 flex justify-between" key={value[0]}>
-                  <ShortcutName text={value[0]} />
-                  <ShortcutButton text={value[1]} />
-                </div>
-              ))}
-            </div>
-          ))}
-          <div className="mb-2 flex flex-row justify-end gap-2">
-            <Button className="px-2" onClick={onClose}>
-              Close
-            </Button>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <div className="flex w-[380px] flex-col gap-4 px-2">
+        {Object.values(shortcutsList).map((category) => (
+          <div key={category.id}>
+            <h3 className="mb-3 border-b border-slate-600 pb-1 text-lg">
+              {category.name}
+            </h3>
+            {category.shortcuts.map((value) => (
+              <div className="my-2.5 flex justify-between" key={value[0]}>
+                <ShortcutName text={value[0]} />
+                <ShortcutButton text={value[1]} />
+              </div>
+            ))}
           </div>
+        ))}
+        <div className="mb-2 flex flex-row justify-end gap-2">
+          <Button className="px-2" onClick={onClose}>
+            Close
+          </Button>
         </div>
-      </Modal>
-    </>
+      </div>
+    </Modal>
   );
-};
+}
 
 export default ShortcutsModal;

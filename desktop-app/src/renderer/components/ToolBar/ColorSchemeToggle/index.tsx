@@ -6,7 +6,7 @@ import {
 import { useState } from 'react';
 import Button from 'renderer/components/Button';
 
-const ColorSchemeToggle = () => {
+function ColorSchemeToggle() {
   const [isDarkColorScheme, setIsDarkColorScheme] = useState<boolean>(false);
 
   return (
@@ -33,6 +33,6 @@ const ColorSchemeToggle = () => {
       </span>
     </Button>
   );
-};
+}
 
 export default ColorSchemeToggle;

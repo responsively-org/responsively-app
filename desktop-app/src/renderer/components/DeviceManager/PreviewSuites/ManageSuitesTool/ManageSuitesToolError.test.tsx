@@ -8,7 +8,7 @@ describe('ManageSuitesToolError', () => {
     render(<ManageSuitesToolError onClose={onClose} />);
 
     expect(
-      screen.getByText('There has been an error, please try again.')
+      screen.getByText('There has been an error, please try again.'),
     ).toBeInTheDocument();
     expect(screen.getByText('Close')).toBeInTheDocument();
   });

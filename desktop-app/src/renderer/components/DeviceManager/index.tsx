@@ -24,15 +24,15 @@ const filterDevices = (devices: Device[], filter: string) => {
 
   return devices.filter((device: Device) =>
     `${device.name.toLowerCase()}${device.width}x${device.height}`.includes(
-      sanitizedFilter
-    )
+      sanitizedFilter,
+    ),
   );
 };
 
-const DeviceManager = () => {
+function DeviceManager() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState<boolean>(false);
   const [selectedDevice, setSelectedDevice] = useState<Device | undefined>(
-    undefined
+    undefined,
   );
   const dispatch = useDispatch();
   const activeSuite = useSelector(selectActiveSuite);
@@ -41,7 +41,7 @@ const DeviceManager = () => {
   const [filteredDevices, setFilteredDevices] =
     useState<Device[]>(defaultDevices);
   const [customDevices, setCustomDevices] = useState<Device[]>(
-    window.electron.store.get('deviceManager.customDevices')
+    window.electron.store.get('deviceManager.customDevices'),
   );
   const [filteredCustomDevices, setFilteredCustomDevices] =
     useState<Device[]>(customDevices);
@@ -67,7 +67,7 @@ const DeviceManager = () => {
         setSuiteDevices({
           suite: activeSuite.id,
           devices: [...activeSuite.devices, device.id],
-        })
+        }),
       );
     }
   };
@@ -79,7 +79,7 @@ const DeviceManager = () => {
       setSuiteDevices({
         suite: activeSuite.id,
         devices: activeSuite.devices.filter((d) => d !== device.id),
-      })
+      }),
     );
   };
 
@@ -204,10 +204,12 @@ const DeviceManager = () => {
       />
     </div>
   );
-};
+}
 
-export default () => (
-  <DndProvider backend={HTML5Backend}>
-    <DeviceManager />
-  </DndProvider>
-);
+export default function () {
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <DeviceManager />
+    </DndProvider>
+  );
+}

@@ -88,7 +88,7 @@ const configuration: webpack.Configuration = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: {'@tailwindcss/postcss': {}},
+                plugins: { '@tailwindcss/postcss': {} },
               },
             },
           },

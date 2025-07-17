@@ -68,7 +68,7 @@ interface ErrorState {
   description: string;
 }
 
-const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
+function Device({ isPrimary, device, setIndividualDevice }: Props) {
   const [singleRotated, setSingleRotated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorState | null>(null);
@@ -82,10 +82,10 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
   const layout = useSelector(selectLayout);
   const rulerEnabled = useSelector((state: any) =>
-    selectRulerEnabled(state, `${device.width}x${device.height}`)
+    selectRulerEnabled(state, `${device.width}x${device.height}`),
   );
-  const getRuler = useSelector((state: any) => (resolution: string) =>
-    selectRuler(state, resolution)
+  const getRuler = useSelector(
+    (state: any) => (resolution: string) => selectRuler(state, resolution),
   );
   const dispatch = useDispatch();
   const dockPosition = useSelector(selectDockPosition);
@@ -187,7 +187,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             isRulerEnabled: !ruler.isRulerEnabled,
             rulerCoordinates: ruler.rulerCoordinates,
           },
-        })
+        }),
       );
     } else {
       dispatch(
@@ -197,7 +197,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             isRulerEnabled: true,
             rulerCoordinates: coordinates,
           },
-        })
+        }),
       );
     }
   }, [dispatch, getRuler, height, width, coordinates]);
@@ -243,7 +243,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       const { x: webViewX, y: webViewY } = webview.getBoundingClientRect();
       webview.inspectElement(
         Math.round(webViewX + deviceX * zoomfactor),
-        Math.round(webViewY + deviceY * zoomfactor)
+        Math.round(webViewY + deviceY * zoomfactor),
       );
     },
     [
@@ -252,7 +252,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       isDevtoolsOpen,
       openDevTools,
       zoomfactor,
-    ]
+    ],
   );
 
   const onRotateHandler = (state: boolean) => setSingleRotated(state);
@@ -458,7 +458,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         isInspecting ? 'enable-inspector-overlay' : 'disable-inspector-overlay',
         {
           webviewId: webview.getWebContentsId(),
-        }
+        },
       );
     })();
   }, [isInspecting]);
@@ -598,6 +598,6 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       </div>
     </div>
   );
-};
+}
 
 export default Device;

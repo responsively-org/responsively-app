@@ -7,7 +7,7 @@ import useKeyboardShortcut, {
 } from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
 import { selectLayout, setLayout } from 'renderer/store/features/renderer';
 
-const PreviewLayoutSelector = () => {
+function PreviewLayoutSelector() {
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
 
@@ -68,6 +68,6 @@ const PreviewLayoutSelector = () => {
       </div>
     </div>
   );
-};
+}
 
 export default PreviewLayoutSelector;

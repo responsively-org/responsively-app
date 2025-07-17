@@ -23,7 +23,7 @@ export const isReleaseNotesUnseen = async () => {
   return true;
 };
 
-export const ReleaseNotes = () => {
+export function ReleaseNotes() {
   const [version, setVersion] = useState<string>('');
   const [content, setContent] = useState<string | undefined>();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -40,7 +40,7 @@ export const ReleaseNotes = () => {
       >(IPC_MAIN_CHANNELS.APP_META, {});
       setVersion(appMeta.appVersion);
       const release = await fetch(
-        `https://api.github.com/repos/responsively-org/responsively-app/releases/tags/v${appMeta.appVersion}`
+        `https://api.github.com/repos/responsively-org/responsively-app/releases/tags/v${appMeta.appVersion}`,
       ).then((res) => res.json());
       try {
         setContent(
@@ -49,7 +49,7 @@ export const ReleaseNotes = () => {
             .replaceAll(/(https[^\n ]*)/g, `[$1]($1)`)
             .replaceAll(/\*\*Full.*/g, ``)
             .replaceAll(/@(\w+)/g, '[@$1](https://github.com/$1)')
-            .trim()
+            .trim(),
         );
         setIsOpen(true);
       } catch (error) {
@@ -101,7 +101,7 @@ export const ReleaseNotes = () => {
                         IPC_MAIN_CHANNELS.OPEN_EXTERNAL,
                         {
                           url: e.target.href,
-                        }
+                        },
                       );
                     }}
                     role="link"
@@ -124,7 +124,7 @@ export const ReleaseNotes = () => {
                   IPC_MAIN_CHANNELS.OPEN_EXTERNAL,
                   {
                     url: `https://github.com/responsively-org/responsively-app/releases/tag/v${version}`,
-                  }
+                  },
                 );
                 closeAndMarkAsRead();
               }}
@@ -145,7 +145,7 @@ export const ReleaseNotes = () => {
                 IPC_MAIN_CHANNELS.OPEN_EXTERNAL,
                 {
                   url: 'https://responsively.app/sponsor?utm_source=app&utm_medium=release_notes&utm_campaign=sponsor',
-                }
+                },
               );
             }}
             isPrimary
@@ -157,4 +157,4 @@ export const ReleaseNotes = () => {
       </>
     </Modal>
   );
-};
+}

@@ -11,12 +11,12 @@ export interface Props {
   setOpenFlyout: (bool: boolean) => void;
 }
 
-const BookmarkListButton = ({
+function BookmarkListButton({
   bookmark,
   handleBookmarkClick,
   setCurrentBookmark,
   setOpenFlyout,
-}: Props) => {
+}: Props) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -48,6 +48,6 @@ const BookmarkListButton = ({
       </button>
     </div>
   );
-};
+}
 
 export default BookmarkListButton;

@@ -49,7 +49,7 @@ const RightDockConfig: DockConfig = {
   },
 };
 
-const DevtoolsResizer = () => {
+function DevtoolsResizer() {
   const dispatch = useDispatch();
   const dockPosition = useSelector(selectDockPosition);
   const webviewId = useSelector(selectDevtoolsWebviewId);
@@ -168,6 +168,6 @@ const DevtoolsResizer = () => {
       </Resizable>
     </div>
   );
-};
+}
 
 export default DevtoolsResizer;

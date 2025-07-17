@@ -12,19 +12,19 @@ export const WebPermissionHandlers = (mainWindow: BrowserWindow) => {
           permissionsManager.requestPermission(
             new URL(webContents.getURL()).origin,
             permission,
-            callback
+            callback,
           );
-        }
+        },
       );
 
       session.defaultSession.setPermissionCheckHandler(
         (_webContents, permission, requestingOrigin) => {
           const status = permissionsManager.getPermissionState(
             requestingOrigin,
-            permission
+            permission,
           );
           return status === PERMISSION_STATE.GRANTED;
-        }
+        },
       );
 
       session.defaultSession.webRequest.onBeforeSendHeaders(
@@ -33,15 +33,15 @@ export const WebPermissionHandlers = (mainWindow: BrowserWindow) => {
         },
         (details, callback) => {
           const acceptLanguage = store.get(
-            'userPreferences.webRequestHeaderAcceptLanguage'
+            'userPreferences.webRequestHeaderAcceptLanguage',
           );
           if (acceptLanguage != null && acceptLanguage !== '') {
             details.requestHeaders['Accept-Language'] = store.get(
-              'userPreferences.webRequestHeaderAcceptLanguage'
+              'userPreferences.webRequestHeaderAcceptLanguage',
             );
           }
           callback({ requestHeaders: details.requestHeaders });
-        }
+        },
       );
     },
   };

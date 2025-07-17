@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { isReleaseNotesUnseen, ReleaseNotes } from '../ReleaseNotes';
 import { Sponsorship } from '../Sponsorship';
 
-export const InfoPopups = () => {
+export function InfoPopups() {
   const [showReleaseNotes, setShowReleaseNotes] = useState<boolean>(false);
   const [showSponsorship, setShowSponsorship] = useState<boolean>(false);
 
@@ -25,4 +25,4 @@ export const InfoPopups = () => {
   }
 
   return null;
-};
+}

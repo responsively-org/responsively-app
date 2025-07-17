@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Button from '../Button';
 import Modal from '../Modal';
 
-export const ConfirmDialog = ({
+export function ConfirmDialog({
   onClose,
   onConfirm,
   open,
@@ -12,7 +12,7 @@ export const ConfirmDialog = ({
   onConfirm?: () => void;
   open: boolean;
   confirmText?: string;
-}) => {
+}) {
   const [isOpen, setIsOpen] = useState(open);
 
   useEffect(() => {
@@ -59,4 +59,4 @@ export const ConfirmDialog = ({
       </div>
     </Modal>
   );
-};
+}

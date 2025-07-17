@@ -1003,6 +1003,6 @@ export const getDevicesMap = (): DeviceMap => {
       map[device.id] = device;
       return map;
     },
-    {}
+    {},
   );
 };

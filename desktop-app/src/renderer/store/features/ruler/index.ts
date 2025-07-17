@@ -27,7 +27,7 @@ export const rulerSlice = createSlice({
       action: PayloadAction<{
         rulerState: RulersState;
         resolution: ViewResolution;
-      }>
+      }>,
     ) => {
       state[action.payload.resolution] = action.payload.rulerState;
     },
@@ -47,7 +47,7 @@ export const selectRuler = createSelector(
       return rulers[resolution];
     }
     return undefined;
-  }
+  },
 );
 
 export const selectRulerEnabled = createSelector(
@@ -60,7 +60,7 @@ export const selectRulerEnabled = createSelector(
       return rulers[resolution].isRulerEnabled;
     }
     return false;
-  }
+  },
 );
 
 export default rulerSlice.reducer;

@@ -33,7 +33,7 @@ const documentBodyInit = () => {
       body.offsetHeight,
       html.clientHeight,
       html.scrollHeight,
-      html.offsetHeight
+      html.offsetHeight,
     );
 
     ipcRenderer.sendToHost('pass-scroll-data', {

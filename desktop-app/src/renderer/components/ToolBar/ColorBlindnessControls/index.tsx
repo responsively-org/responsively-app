@@ -4,9 +4,9 @@ import { webViewPubSub } from 'renderer/lib/pubsub';
 
 export const COLOR_BLINDNESS_CHANNEL = 'color-blindness';
 
-export const ColorBlindnessControls = () => {
+export function ColorBlindnessControls() {
   const [simulationName, setSimulationName] = useState<string | undefined>(
-    undefined
+    undefined,
   );
 
   useEffect(() => {
@@ -19,4 +19,4 @@ export const ColorBlindnessControls = () => {
       onChange={setSimulationName}
     />
   );
-};
+}
