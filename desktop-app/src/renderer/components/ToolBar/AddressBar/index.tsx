@@ -259,7 +259,7 @@ function AddressBar() {
           ref={inputRef}
           type="text"
           className={cx(
-            'w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-40 dark:bg-slate-900',
+            'w-full text-ellipsis bg-white rounded-full px-2 py-1 pl-8 pr-40 dark:bg-slate-900',
             {
               'rounded-tl-lg rounded-tr-lg rounded-bl-none rounded-br-none outline-none':
                 isSuggesting,
