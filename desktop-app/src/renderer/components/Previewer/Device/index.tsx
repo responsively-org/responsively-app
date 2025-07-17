@@ -513,7 +513,6 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
         </span>
         {loading ? <Spinner spinnerHeight={24} /> : null}
       </div>
-      <div className="flex items-start justify-between">
       <Toolbar
         webview={ref.current}
         device={device}
@@ -591,7 +590,6 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
           </div>
         ) : null}
       </div>
-    </div>
     </div>
   );
 }
