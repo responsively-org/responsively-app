@@ -11,6 +11,16 @@
 import path from 'path';
 import { app, BrowserWindow, shell, screen, ipcMain } from 'electron';
 import { setupTitlebar } from 'custom-electron-titlebar/main';
+import {
+  BACKBONE_DEBUGGER,
+  EMBER_INSPECTOR,
+  JQUERY_DEBUGGER,
+  MOBX_DEVTOOLS,
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
+  VUEJS_DEVTOOLS,
+  installExtension,
+} from 'electron-devtools-installer';
 import cli from './cli';
 import { PROTOCOL } from '../common/constants';
 import MenuBuilder from './menu';
@@ -71,22 +81,18 @@ if (isDebug) {
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS',
-    'REDUX_DEVTOOLS',
-    'EMBER_INSPECTOR',
-    'BACKBONE_DEBUGGER',
-    'JQUERY_DEBUGGER',
-    'ANGULAR_DEVTOOLS',
-    'VUEJS_DEVTOOLS',
-    'MOBX_DEVTOOLS',
-    'APOLLO_DEVELOPER_TOOLS',];
+  const extensions = [
+    EMBER_INSPECTOR,
+    REACT_DEVELOPER_TOOLS,
+    BACKBONE_DEBUGGER,
+    JQUERY_DEBUGGER,
+    VUEJS_DEVTOOLS,
+    REDUX_DEVTOOLS,
+    MOBX_DEVTOOLS,
+    'jdkknkkbebbapilgoeccciglkfbmbnfm',
+  ];
 
-  return installer
-    .default(
-      extensions.map((name) => installer[name]),
-      forceDownload,
-    )
-    .catch(console.log);
+  return installExtension(extensions);
 };
 
 // Custom titlebar config for windows
