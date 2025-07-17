@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
-import { dependencies } from 'ResponsivelyApp/package.json';
+import { dependencies } from '../../package.json';
 import webpackPaths from '../configs/webpack.paths';
 
 if (
