@@ -4,7 +4,8 @@
 
 import webpack from 'webpack';
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
-import { dependencies as externals } from 'ResponsivelyApp/package.json';
+// eslint-disable-next-line import/no-relative-packages
+import { dependencies as externals } from '../../release/app/package.json';
 import webpackPaths from './webpack.paths';
 
 const configuration: webpack.Configuration = {
