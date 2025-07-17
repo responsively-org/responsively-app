@@ -69,7 +69,7 @@ function Toolbar({
       setEventMirroringOff(!eventMirroringOff);
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error('Error while toggleing event mirroring', error);
+      console.error('Error while toggling event mirroring', error);
     }
   };
 
