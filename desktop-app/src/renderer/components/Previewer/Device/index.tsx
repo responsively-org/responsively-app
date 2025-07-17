@@ -74,6 +74,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
   const [error, setError] = useState<ErrorState | null>(null);
   const [screenshotInProgress, setScreenshotInProgress] =
     useState<boolean>(false);
+  const [domReady, setDomReady] = useState(false);
   const address = useSelector(selectAddress);
   const zoomfactor = useSelector(selectZoomFactor);
   const isInspecting = useSelector(selectIsInspecting);
@@ -446,7 +447,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
   ]);
 
   useEffect(() => {
-    if (!ref.current || isInspecting === undefined) {
+    if (!ref.current || isInspecting === undefined || !domReady) {
       return;
     }
     const webview = ref.current as Electron.WebviewTag;
@@ -461,26 +462,19 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
         },
       );
     })();
-  }, [isInspecting]);
+  }, [isInspecting, domReady]);
 
   useEffect(() => {
     if (!ref.current || !device.isMobileCapable) {
       return;
     }
-
     const webview = ref.current;
-    webview.addEventListener('dom-ready', () => {
-      webview.insertCSS(`
-               ::-webkit-scrollbar {
-              display: none;
-              } `);
-    });
-
-    // eslint-disable-next-line consistent-return
+    const domReadyHandler = () => setDomReady(true);
+    webview.addEventListener('dom-ready', domReadyHandler);
     return () => {
-      webview.removeEventListener('dom-ready', () => {});
+      webview.removeEventListener('dom-ready', domReadyHandler);
     };
-  }, [device.isMobileCapable]);
+  }, [ref, device.isMobileCapable]);
 
   useEffect(() => {
     const webview = ref.current;
@@ -519,6 +513,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
         </span>
         {loading ? <Spinner spinnerHeight={24} /> : null}
       </div>
+      <div className="flex items-start justify-between">
       <Toolbar
         webview={ref.current}
         device={device}
@@ -596,6 +591,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
           </div>
         ) : null}
       </div>
+    </div>
     </div>
   );
 }
