@@ -272,7 +272,7 @@ function AddressBar() {
             setIsFocused(false);
             setTimeout(() => {
               setIsSuggesting(false);
-            }, 100);
+            }, 200);
           }}
           onSelect={(e) => {
             if (e.target === inputRef.current && !isFocused) {
