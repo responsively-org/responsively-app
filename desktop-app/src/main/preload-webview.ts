@@ -1,10 +1,10 @@
 import { ipcRenderer } from 'electron';
+import { BROWSER_SYNC_URL } from './browser-sync';
 
 const documentBodyInit = () => {
   // Browser Sync
   const bsScript = window.document.createElement('script');
-  bsScript.src =
-    'https://localhost:12719/browser-sync/browser-sync-client.js?v=2.27.10';
+  bsScript.src = BROWSER_SYNC_URL;
   bsScript.async = true;
   window.document.body.appendChild(bsScript);
 
