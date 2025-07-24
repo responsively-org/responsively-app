@@ -87,6 +87,22 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const dockPosition = useSelector(selectDockPosition);
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
+  const isNavigatingFromAddressBar = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (ref.current && isPrimary) {
+      try {
+        const currentUrl = ref.current.getURL();
+        if (address !== currentUrl) {
+          isNavigatingFromAddressBar.current = true;
+          ref.current.loadURL(address);
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Error loading URL', err);
+      }
+    }
+  }, [address, isPrimary]);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
@@ -270,7 +286,13 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     const handlerRemovers: (() => void)[] = [];
 
     const didNavigateHandler = (e: Electron.DidNavigateEvent) => {
-      dispatch(setAddress(e.url));
+      // Only update Redux on the primary device and only if this navigation wasn't initiated by AddressBar
+      if (isPrimary && !isNavigatingFromAddressBar.current) {
+        dispatch(setAddress(e.url));
+      } else if (isPrimary) {
+        isNavigatingFromAddressBar.current = false; // Reset the flag
+      }
+
       if (isPrimary) {
         appendHistory(webview.getURL(), webview.getTitle());
       }
@@ -389,6 +411,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     isPrimary,
     inspectElement,
     openDevTools,
+    address,
   ]);
 
   useEffect(() => {
@@ -557,7 +580,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           enabled={rulerEnabled(`${width}x${height}`)}
           defaultGuides={window.electron.store
             .get('userPreferences.guides')
-            .flatMap((x: any) => x)
+            .flatMap((x: unknown) => x as DefaultGuide[])
             .filter((x: DefaultGuide) => {
               return x.resolution === `${width}x${height}`;
             })}
