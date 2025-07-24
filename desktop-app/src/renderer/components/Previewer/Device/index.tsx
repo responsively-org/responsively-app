@@ -95,14 +95,14 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         const currentUrl = ref.current.getURL();
         if (address !== currentUrl) {
           isNavigatingFromAddressBar.current = true;
-          ref.current.loadURL(address);
+          dispatch(setAddress(address));
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error('Error loading URL', err);
       }
     }
-  }, [address, isPrimary]);
+  }, [address, isPrimary, dispatch]);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
