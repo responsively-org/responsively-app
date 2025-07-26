@@ -20,7 +20,10 @@ contextBridge.exposeInMainWorld('electron', {
     invoke<T, P>(channel: Channels, ...args: T[]): Promise<P> {
       return ipcRenderer.invoke(channel, ...args);
     },
-    removeListener<T>(channel: Channels, listener: (...args: T[]) => void) {
+    removeListener(
+      channel: Channels,
+      listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+    ) {
       ipcRenderer.removeListener(channel, listener);
     },
     removeAllListeners(channel: Channels) {
