@@ -22,18 +22,19 @@
     "email": "p.manoj.vivek@gmail.com"
   },
   "license": "MIT",
-  "main": "./src/main/main.ts",
+  "main": "./.erb/dll/main.bundle.dev.js",
   "scripts": {
     "build": "concurrently \"yarn run build:main\" \"yarn run build:renderer\"",
     "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
+    "build:main-dev": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --watch --config ./.erb/configs/webpack.config.main.dev.ts",
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
-    "postinstall": "yarn rimraf --glob node_modules/browser-sync/dist/**/*.map && ts-node .erb/scripts/check-native-dep.js && ts-node postinstall.ts && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
+    "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "package": "ts-node ./.erb/scripts/clean.js dist && yarn run build && electron-builder build --publish never",
     "prepare": "cd .. && husky install desktop-app/.husky && chmod a+x desktop-app/.husky/pre-commit",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "dev": "yarn start",
-    "start": "ts-node ./.erb/scripts/check-port-in-use.js && yarn run start:renderer",
+    "start": "ts-node ./.erb/scripts/check-port-in-use.js && concurrently \"yarn run start:renderer\" \"yarn run start:main\"",
     "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only .",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:preloadWebview": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload-webview.dev.ts",
@@ -114,7 +115,7 @@
   },
   "devDependencies": {
     "@electron/notarize": "^1.2.3",
-    "@electron/rebuild": "^3.2.13",
+    "@electron/rebuild": "^4.0.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@svgr/webpack": "^7.0.0",
     "@tailwindcss/typography": "^0.5.9",
@@ -126,7 +127,7 @@
     "@types/howler": "^2.2.7",
     "@types/jest": "^28.1.7",
     "@types/mousetrap": "^1.6.10",
-    "@types/node": "20.3.1",
+    "@types/node": "22.13.10",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.10",
     "@types/react-test-renderer": "^18.0.7",
@@ -143,8 +144,8 @@
     "css-loader": "^6.7.3",
     "css-minimizer-webpack-plugin": "^5.0.1",
     "detect-port": "^1.3.0",
-    "electron": "^27.0.4",
-    "electron-builder": "^23.6.0",
+    "electron": "^35.0.2",
+    "electron-builder": "^26.0.12",
     "electron-devtools-assembler": "^1.2.0",
     "electronmon": "^2.0.2",
     "eslint": "^8.36.0",
@@ -180,9 +181,9 @@
     "terser-webpack-plugin": "^5.3.9",
     "ts-jest": "^28.0.8",
     "ts-loader": "^9.4.2",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "tsconfig-paths-webpack-plugin": "^4.0.1",
-    "typescript": "^5.0.4",
+    "typescript": "^5.8.2",
     "url-loader": "^4.1.1",
     "webpack": "^5.76.0",
     "webpack-bundle-analyzer": "^4.5.0",
@@ -255,16 +256,15 @@
   "collective": {
     "url": "https://opencollective.com/responsively"
   },
-  "devEngines": {
-    "node": ">=14.x",
+  "engines": {
+    "node": ">=20.x",
     "npm": ">=7.x"
   },
   "electronmon": {
     "patterns": [
       "!**/**",
-      "src/main/**/*",
-      "src/store/**/*",
-      "src/common/**/*"
+      "src/main/**",
+      ".erb/dll/**"
     ],
     "logLevel": "quiet"
   }
