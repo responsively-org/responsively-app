@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from 'renderer/components/Button';
 import useSound from 'use-sound';
 import { ScreenshotArgs, ScreenshotResult } from 'main/screenshot';
@@ -44,12 +44,20 @@ const Toolbar = ({
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
-
+  const [mobileMenu, setMobileMenu] = useState<boolean>(false);
+  const [mobileDropdown, setMobileDropdown] = useState<boolean>(false);
   const refreshView = () => {
     if (webview) {
       webview.reload();
     }
   };
+
+  useEffect(() => {
+    if (device.width < 700) {
+      setMobileMenu(true);
+      setMobileDropdown(false);
+    }
+  }, [device.width]);
 
   const toggleEventMirroring = async () => {
     if (webview === null) {
@@ -154,75 +162,117 @@ const Toolbar = ({
     }
   };
 
+  const handleMobileDropdown = () => {
+    setMobileDropdown(!mobileDropdown);
+  };
+
   return (
-    <div className="flex items-center justify-between gap-1">
-      <div className="my-1 inline-flex max-w-[78%] items-center gap-1 overflow-x-auto">
-        <Button onClick={refreshView} title="Refresh This View">
-          <Icon icon="ic:round-refresh" />
-        </Button>
-        <Button
-          onClick={quickScreenshot}
-          isLoading={screenshotLoading}
-          title="Quick Screenshot"
+    <div className=" flex items-center justify-between gap-1">
+      <div className="relative flex h-full w-full justify-between gap-1 py-[4px]">
+        {mobileMenu && (
+          <button
+            type="button"
+            className="flex items-center gap-1 py-[4px]"
+            onClick={handleMobileDropdown}
+          >
+            Tools <Icon icon="mdi:chevron-down" />
+          </button>
+        )}
+        <div
+          className={`${
+            mobileMenu
+              ? `absolute top-[38px] left-[2px] z-50 my-1 box-border gap-1 rounded-lg py-[4px]  ${
+                  mobileMenu && mobileDropdown ? 'flex' : 'hidden'
+                }  w-[70%] flex-wrap gap-1 border-[1px] border-slate-300 bg-slate-100 p-2 pr-[1rem] dark:border-slate-600 dark:bg-slate-800`
+              : 'flex gap-1'
+          }  `}
         >
-          <div className="relative h-4 w-4">
+          <Button onClick={refreshView} title="Refresh This View">
+            <Icon icon="ic:round-refresh" />
+          </Button>
+          <Button
+            onClick={quickScreenshot}
+            isLoading={screenshotLoading}
+            title="Quick Screenshot"
+          >
+            <div className="relative h-4 w-4">
+              <Icon
+                icon="ic:outline-photo-camera"
+                className="absolute top-0 left-0"
+              />
+              <Icon
+                icon="clarity:lightning-solid"
+                className="absolute top-[-1px] right-[-2px]"
+                height={8}
+              />
+            </div>
+          </Button>
+          <Button
+            onClick={fullScreenshot}
+            isLoading={fullScreenshotLoading}
+            title="Full Page Screenshot"
+          >
+            <Icon icon="ic:outline-photo-camera" />
+          </Button>
+          <Button
+            onClick={toggleEventMirroring}
+            isActive={eventMirroringOff}
+            title="Disable Event Mirroring"
+          >
+            <Icon icon="fluent:plug-disconnected-24-regular" />
+          </Button>
+          <Button onClick={openDevTools} title="Open Devtools">
+            <Icon icon="ic:round-code" />
+          </Button>
+          <Button onClick={rotate} title="Rotate This Device">
             <Icon
-              icon="ic:outline-photo-camera"
-              className="absolute top-0 left-0"
+              icon={
+                rotated
+                  ? 'mdi:phone-rotate-portrait'
+                  : 'mdi:phone-rotate-landscape'
+              }
             />
-            <Icon
-              icon="clarity:lightning-solid"
-              className="absolute top-[-1px] right-[-2px]"
-              height={8}
-            />
-          </div>
-        </Button>
+          </Button>
+          <Button onClick={scrollToTop} title="Scroll to Top">
+            <Icon icon="ic:baseline-arrow-upward" />
+          </Button>
+          <Button onClick={toggleRulers} title="Show rulers">
+            <Icon icon="tdesign:measurement-1" />
+          </Button>
+          <ColorBlindnessTools webview={webview} />
+          {mobileMenu && (
+            <div
+              tabIndex={0}
+              role="button"
+              onClick={() => setMobileDropdown(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setMobileDropdown(false);
+                }
+              }}
+              className="absolute bottom-1 right-1 box-border flex h-[14px] w-[14px] cursor-pointer items-center justify-center border-[1px] leading-none opacity-25"
+            >
+              &times;
+            </div>
+          )}
+        </div>
+
         <Button
-          onClick={fullScreenshot}
-          isLoading={fullScreenshotLoading}
-          title="Full Page Screenshot"
+          onClick={() => onIndividualLayoutHandler(device)}
+          title={`${
+            isIndividualLayout ? 'Disable' : 'Enable'
+          } Individual Layout`}
         >
-          <Icon icon="ic:outline-photo-camera" />
-        </Button>
-        <Button
-          onClick={toggleEventMirroring}
-          isActive={eventMirroringOff}
-          title="Disable Event Mirroring"
-        >
-          <Icon icon="fluent:plug-disconnected-24-regular" />
-        </Button>
-        <Button onClick={openDevTools} title="Open Devtools">
-          <Icon icon="ic:round-code" />
-        </Button>
-        <Button onClick={rotate} title="Rotate This Device">
           <Icon
             icon={
-              rotated
-                ? 'mdi:phone-rotate-portrait'
-                : 'mdi:phone-rotate-landscape'
+              isIndividualLayout
+                ? 'ic:twotone-zoom-in-map'
+                : 'ic:twotone-zoom-out-map'
             }
           />
         </Button>
-        <Button onClick={scrollToTop} title="Scroll to Top">
-          <Icon icon="ic:baseline-arrow-upward" />
-        </Button>
-        <Button onClick={toggleRulers} title="Show rulers">
-          <Icon icon="tdesign:measurement-1" />
-        </Button>
-        <ColorBlindnessTools webview={webview} />
       </div>
-      <Button
-        onClick={() => onIndividualLayoutHandler(device)}
-        title={`${isIndividualLayout ? 'Disable' : 'Enable'} Individual Layout`}
-      >
-        <Icon
-          icon={
-            isIndividualLayout
-              ? 'ic:twotone-zoom-in-map'
-              : 'ic:twotone-zoom-out-map'
-          }
-        />
-      </Button>
     </div>
   );
 };
