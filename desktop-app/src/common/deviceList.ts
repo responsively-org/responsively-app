@@ -830,7 +830,8 @@ export const defaultDevices: Device[] = [
     type: 'tablet',
     isTouchCapable: true,
     isMobileCapable: true,
-  },{
+  },
+  {
     id: '30023',
     name: 'Samsung Galaxy Fold3 (Folded - Portrait)',
     width: 320,
@@ -1106,6 +1107,6 @@ export const getDevicesMap = (): DeviceMap => {
       map[device.id] = device;
       return map;
     },
-    {}
+    {},
   );
 };
