@@ -10,10 +10,18 @@ export const PREVIEW_LAYOUTS = {
   COLUMN: 'COLUMN',
   FLEX: 'FLEX',
   INDIVIDUAL: 'INDIVIDUAL',
+  MASONRY: 'MASONRY',
 } as const;
 
 export type PreviewLayout =
   typeof PREVIEW_LAYOUTS[keyof typeof PREVIEW_LAYOUTS];
+
+export type Notification = {
+  id: string;
+  link?: string;
+  linkText?: string;
+  text: string;
+};
 
 export interface OpenUrlArgs {
   url: string;
@@ -29,6 +37,7 @@ export const IPC_MAIN_CHANNELS = {
   OPEN_URL: 'open-url',
   START_WATCHING_FILE: 'start-watching-file',
   STOP_WATCHER: 'stop-watcher',
+  OPEN_ABOUT_DIALOG: 'open-about-dialog',
 } as const;
 
 export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];

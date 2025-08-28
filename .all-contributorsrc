@@ -730,6 +730,143 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "sagarhedaoo",
+      "name": "Sagar Hedaoo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10000167?v=4",
+      "profile": "https://sagarhedaoo.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "violetadev",
+      "name": "V",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36138541?v=4",
+      "profile": "http://www.violeta.dev",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "minowau",
+      "name": "Prabhas Jupalli",
+      "avatar_url": "https://avatars.githubusercontent.com/u/139740712?v=4",
+      "profile": "https://github.com/minowau",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Pulkitxm",
+      "name": "Pulkit",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65671483?v=4",
+      "profile": "http://devpulkit.in",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "brandonyee-cs",
+      "name": "Brandon Yee",
+      "avatar_url": "https://avatars.githubusercontent.com/u/139765638?v=4",
+      "profile": "https://github.com/brandonyee-cs",
+      "contributions": [
+        "content"
+      ]
+    },
+    {
+      "login": "wp043",
+      "name": "Wendy Pan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/110360465?v=4",
+      "profile": "https://github.com/wp043",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "pranavithape",
+      "name": "Pranav Ithape",
+      "avatar_url": "https://avatars.githubusercontent.com/u/170559714?v=4",
+      "profile": "https://github.com/pranavithape",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Sukrit-Prakash",
+      "name": "SUKRIT PRAKASH SINGH",
+      "avatar_url": "https://avatars.githubusercontent.com/u/136228545?v=4",
+      "profile": "https://github.com/Sukrit-Prakash",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "aryan262",
+      "name": "Aryan Panchal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/97938438?v=4",
+      "profile": "https://github.com/aryan262",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "samranahm",
+      "name": "Samran Ahmed",
+      "avatar_url": "https://avatars.githubusercontent.com/u/149153498?v=4",
+      "profile": "https://github.com/samranahm",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "asatyam",
+      "name": "SatyamAgrawal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/95954551?v=4",
+      "profile": "https://github.com/Asatyam",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "saiTharunDusa",
+      "name": "Sai Tharun Dusa",
+      "avatar_url": "https://avatars.githubusercontent.com/u/169873642?v=4",
+      "profile": "https://github.com/saiTharunDusa",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "happymvp",
+      "name": "Pavlo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/179954458?v=4",
+      "profile": "http://happymvp.com",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "AnalyticalDataArtisan",
+      "name": "AnalyticalDataArtisan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/183036785?v=4",
+      "profile": "https://github.com/AnalyticalDataArtisan",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Kieren-Foenander",
+      "name": "Kieren-Foenander",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68266113?v=4",
+      "profile": "https://github.com/Kieren-Foenander",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,

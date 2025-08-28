@@ -21,6 +21,13 @@ interface Props {
   isIndividualLayout: boolean;
 }
 
+const newVersionText = {
+  id: 'new-version',
+  text: 'There is a new version available.',
+  link: 'https://responsively.app/download',
+  linkText: 'See More',
+};
+
 const Toolbar = ({
   webview,
   device,
@@ -138,9 +145,18 @@ const Toolbar = ({
     onRotate(!rotated);
   };
 
+  const scrollToTop = () => {
+    if (webview) {
+      webview.executeJavaScript(
+        'window.scrollTo({ top: 0, behavior: "smooth" })',
+        false
+      );
+    }
+  };
+
   return (
     <div className="flex items-center justify-between gap-1">
-      <div className="my-1 inline-flex max-w-[75%] items-center gap-1 overflow-x-auto">
+      <div className="my-1 inline-flex max-w-[78%] items-center gap-1 overflow-x-auto">
         <Button onClick={refreshView} title="Refresh This View">
           <Icon icon="ic:round-refresh" />
         </Button>
@@ -186,6 +202,9 @@ const Toolbar = ({
                 : 'mdi:phone-rotate-landscape'
             }
           />
+        </Button>
+        <Button onClick={scrollToTop} title="Scroll to Top">
+          <Icon icon="ic:baseline-arrow-upward" />
         </Button>
         <Button onClick={toggleRulers} title="Show rulers">
           <Icon icon="tdesign:measurement-1" />

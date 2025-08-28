@@ -104,7 +104,7 @@ const schema = {
             type: {
               type: 'string',
             },
-            dpi: {
+            dpr: {
               type: 'number',
             },
             isTouchCapable: {
@@ -134,6 +134,10 @@ const schema = {
   userPreferences: {
     type: 'object',
     properties: {
+      webRequestHeaderAcceptLanguage: {
+        type: 'string',
+        default: '',
+      },
       allowInsecureSSLConnections: {
         type: 'boolean',
         default: false,

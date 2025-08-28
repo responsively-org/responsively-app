@@ -29,7 +29,7 @@ const DeviceDetailsModal = ({
   const [height, setHeight] = useState<number>(device?.height ?? 600);
   const [userAgent, setUserAgent] = useState<string>(device?.userAgent ?? '');
   const [type, setType] = useState<string>(device?.type ?? 'phone');
-  const [dpi, setDpi] = useState<number>(device?.dpi ?? 1);
+  const [dpr, setDpr] = useState<number>(device?.dpr ?? 1);
   const [isTouchCapable, setIsTouchCapable] = useState<boolean>(
     device?.isTouchCapable ?? true
   );
@@ -44,7 +44,7 @@ const DeviceDetailsModal = ({
       setHeight(device.height);
       setUserAgent(device.userAgent);
       setType(device.type);
-      setDpi(device.dpi);
+      setDpr(device.dpr);
       setIsTouchCapable(device.isTouchCapable);
       setIsMobileCapable(device.isMobileCapable);
     } else {
@@ -53,7 +53,7 @@ const DeviceDetailsModal = ({
       setHeight(600);
       setUserAgent('');
       setType('phone');
-      setDpi(1);
+      setDpr(1);
       setIsTouchCapable(true);
       setIsMobileCapable(true);
     }
@@ -110,7 +110,7 @@ const DeviceDetailsModal = ({
         height,
         userAgent,
         type,
-        dpi,
+        dpr,
         isTouchCapable,
         isMobileCapable,
         capabilities,
@@ -158,11 +158,12 @@ const DeviceDetailsModal = ({
               disabled={!isCustom}
             />
             <Input
-              label="Device DPI"
+              label="Device DPR"
               type="number"
               min="1"
-              value={dpi}
-              onChange={(e) => setDpi(parseInt(e.target.value, 10))}
+              step="0.1"
+              value={dpr}
+              onChange={(e) => setDpr(parseFloat(e.target.value))}
               disabled={!isCustom}
             />
             <Select

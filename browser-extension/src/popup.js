@@ -1,5 +1,5 @@
 import openCustomProtocolURI from "custom-protocol-check";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import ReactDOM from "react-dom";
 import spinner from "./spinner.svg";
 
@@ -27,27 +27,22 @@ const isChrome = () => {
 
 const URLOpenerNonChrome = () => {
   const [status, setStatus] = useState("loading");
-  useEffect(() => {
-    (async () => {
-      const [tab] = await window.browser.tabs.query({
-        currentWindow: true,
-        active: true,
-      });
-      if (!tab || !tab.url) {
-        setStatus("false");
-        return;
-      }
-      openCustomProtocolURI(
-        `responsively://${tab.url}`,
-        () => {
-          setStatus("false");
-        },
-        () => {
-          setStatus("true");
-        }
-      );
-    })();
+  const checkProtocolAndUpdateStatus = useCallback(async () => {
+    const [tab] = await window.browser.tabs.query({ currentWindow: true, active: true });
+    if (!tab || !tab.url) {
+      setStatus("false");
+      return;
+    }
+    openCustomProtocolURI(
+      `responsively://${tab.url}`,
+      () => setStatus("false"),
+      () => setStatus("true")
+    );
   }, []);
+
+  useEffect(() => {
+    checkProtocolAndUpdateStatus();
+  }, [checkProtocolAndUpdateStatus]);
 
   if (status === "loading") {
     return (
@@ -87,23 +82,20 @@ const URLOpenerNonChrome = () => {
 };
 
 const URLOpenerChrome = () => {
+  const updateTabURL = useCallback(async () => {
+    const [tab] = await window.browser.tabs.query({ currentWindow: true, active: true });
+    if (!tab || !tab.url) {
+      return;
+    }
+    window.browser.tabs.update({ url: `responsively://${tab.url}` });
+  }, []);
+
   useEffect(() => {
-    (async () => {
-      const [tab] = await window.browser.tabs.query({
-        currentWindow: true,
-        active: true,
-      });
-      if (!tab || !tab.url) {
-        return;
-      }
-      window.browser.tabs.update({
-        url: `responsively://${tab.url}`,
-      });
-    })();
-    return setTimeout(() => {
+    updateTabURL();
+    setTimeout(() => {
       window.close();
     }, 5000);
-  }, []);
+  }, [updateTabURL]);
 
   return (
     <div className="popup">
@@ -133,3 +125,11 @@ ReactDOM.render(
   isChrome() ? <URLOpenerChrome /> : <URLOpenerNonChrome />,
   document.getElementById("app")
 );
+
+// HMR integration
+if (module.hot) {
+  module.hot.accept('./popup', () => {
+    const NextPopup = require('./popup').default;
+    ReactDOM.render(<NextPopup />, document.getElementById('app'));
+  });
+}

@@ -10,12 +10,7 @@
  */
 import path from 'path';
 import { app, BrowserWindow, shell, screen, ipcMain } from 'electron';
-import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
-import {
-  setupTitlebar,
-  attachTitlebarToWindow,
-} from 'custom-electron-titlebar/main';
+import { setupTitlebar } from 'custom-electron-titlebar/main';
 import cli from './cli';
 import { PROTOCOL } from '../common/constants';
 import MenuBuilder from './menu';
@@ -36,6 +31,7 @@ import { WebPermissionHandlers } from './web-permissions';
 import { initHttpBasicAuthHandlers } from './http-basic-auth';
 import { initAppMetaHandlers } from './app-meta';
 import { openUrl } from './protocol-handler';
+import { AppUpdater } from './app-updater';
 
 let windowShownOnOpen = false;
 
@@ -52,14 +48,6 @@ if (process.defaultApp) {
 let urlToOpen: string | undefined = cli.input[0]?.includes('electronmon')
   ? undefined
   : cli.input[0];
-
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -114,7 +102,12 @@ if (customTitlebarStatus && process.platform === 'win32') {
 
 const createWindow = async () => {
   windowShownOnOpen = false;
+  let isAppInitiated = false;
   await installExtensions();
+
+  const setIsAppInitiated = () => {
+    isAppInitiated = true;
+  };
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -189,21 +182,49 @@ const createWindow = async () => {
     )}`
   );
 
-  mainWindow.on('ready-to-show', async () => {
-    await initInstance();
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
+  const isWindows = process.platform === 'win32';
+  let needsFocusFix = false;
+  let triggeringProgrammaticBlur = false;
+
+  mainWindow.on('blur', () => {
+    if (!triggeringProgrammaticBlur) {
+      needsFocusFix = true;
     }
-    webPermissionHandlers.init();
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.showInactive();
-      if (!windowShownOnOpen) {
-        windowShownOnOpen = true;
-        mainWindow.show();
+  });
+
+  mainWindow.on('focus', () => {
+    if (isWindows && needsFocusFix) {
+      needsFocusFix = false;
+      triggeringProgrammaticBlur = true;
+      setTimeout(function () {
+        mainWindow!.blur();
+        mainWindow!.focus();
+        setTimeout(function () {
+          triggeringProgrammaticBlur = false;
+        }, 100);
+      }, 100);
+    }
+  });
+
+  mainWindow.on('ready-to-show', async () => {
+    if (!isAppInitiated) {
+      await initInstance();
+      setIsAppInitiated();
+
+      if (!mainWindow) {
+        throw new Error('"mainWindow" is not defined');
+      }
+      webPermissionHandlers.init();
+      if (process.env.START_MINIMIZED) {
+        mainWindow.minimize();
       } else {
         mainWindow.showInactive();
+        if (!windowShownOnOpen) {
+          windowShownOnOpen = true;
+          mainWindow.show();
+        } else {
+          mainWindow.showInactive();
+        }
       }
     }
   });
@@ -217,7 +238,9 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
+  const appUpdater = new AppUpdater();
+
+  const menuBuilder = new MenuBuilder(mainWindow, appUpdater);
   menuBuilder.buildMenu();
 
   // Open urls in the user's browser
@@ -239,13 +262,14 @@ const createWindow = async () => {
   ipcMain.on('stop-watcher', async () => {
     await stopWatchFiles();
   });
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
 };
 
 app.on('open-url', async (event, url) => {
-  const actualURL = url.replace(`${PROTOCOL}://`, '');
+  let actualURL = url.replace(`${PROTOCOL}://`, '');
+  if (actualURL.indexOf('//') !== -1 && actualURL.indexOf('://') === -1) {
+    // This hack is needed because the URL from the extension is missing the colon for some reason.
+    actualURL = actualURL.replace('//', '://');
+  }
   if (mainWindow == null) {
     // Will be handled by opened window
     urlToOpen = actualURL;

@@ -59,7 +59,16 @@ export const getPackageJson = () => {
   return {};
 };
 
-export const getEnvironmentInfo = () => {
+export interface EnvironmentInfo {
+  appVersion: string;
+  electronVersion: string;
+  chromeVersion: string;
+  nodeVersion: string;
+  v8Version: string;
+  osInfo: string;
+}
+
+export const getEnvironmentInfo = (): EnvironmentInfo => {
   const pkg = getPackageJson();
   const appVersion = pkg.version || 'Unknown';
   const electronVersion = process.versions.electron || 'Unknown';

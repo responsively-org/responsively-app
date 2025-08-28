@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "1.10.0",
+  "version": "1.17.0",
   "description": "A developer-friendly browser for developing responsive web apps",
   "keywords": [
     "developer-tools",
@@ -38,7 +38,9 @@
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:preloadWebview": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload-webview.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "test": "jest",
+    "test": "jest --config ./jest.config.js",
+    "test:watch": "jest --watch --config ./jest.config.js",
+    "test:coverage": "jest --coverage --config ./jest.config.js",
     "typecheck": "tsc --noEmit"
   },
   "lint-staged": {
@@ -70,38 +72,6 @@
       }
     ]
   },
-  "jest": {
-    "moduleDirectories": [
-      "node_modules",
-      "release/app/node_modules",
-      "src"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
-      "json"
-    ],
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/.erb/mocks/fileMock.js",
-      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
-    },
-    "setupFiles": [
-      "./.erb/scripts/check-build-exists.ts"
-    ],
-    "testEnvironment": "jsdom",
-    "testEnvironmentOptions": {
-      "url": "http://localhost/"
-    },
-    "testPathIgnorePatterns": [
-      "release/app/dist",
-      ".erb/dll"
-    ],
-    "transform": {
-      "\\.(ts|tsx|js|jsx)$": "ts-jest"
-    }
-  },
   "dependencies": {
     "@fontsource/lato": "^5.0.17",
     "@headlessui-float/react": "^0.12.0",
@@ -118,8 +88,9 @@
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-store": "^8.0.2",
-    "electron-updater": "^6.1.1",
+    "electron-updater": "^6.1.8",
     "emitter": "^0.0.5",
+    "javascript-time-ago": "^2.5.10",
     "mousetrap": "^1.6.5",
     "os": "^0.1.2",
     "postcss": "^8.4.31",
@@ -130,6 +101,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.7",
+    "react-masonry-component": "^6.3.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.3.0",
     "react-tabs": "^6.0.2",
@@ -157,7 +129,7 @@
     "@types/node": "20.3.1",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.10",
-    "@types/react-test-renderer": "^18.0.0",
+    "@types/react-test-renderer": "^18.0.7",
     "@types/terser-webpack-plugin": "^5.0.4",
     "@types/uuid": "^9.0.2",
     "@types/webpack-bundle-analyzer": "^4.4.2",
@@ -283,7 +255,7 @@
   "collective": {
     "url": "https://opencollective.com/responsively"
   },
-  "devEngines": {
+  "engines": {
     "node": ">=14.x",
     "npm": ">=7.x"
   },

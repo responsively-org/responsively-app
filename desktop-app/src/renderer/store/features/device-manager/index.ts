@@ -70,6 +70,26 @@ export const deviceManagerSlice = createSlice({
       state.activeSuite = action.payload.id;
       window.electron.store.set('deviceManager.previewSuites', suites);
     },
+    addSuites(state, action: PayloadAction<PreviewSuite[]>) {
+      const existingSuites = window.electron.store.get(
+        'deviceManager.previewSuites'
+      );
+
+      const suitesMap = new Map();
+      action.payload.forEach((suite) => suitesMap.set(suite.name, suite));
+
+      existingSuites.forEach((suite: PreviewSuite) => {
+        if (!suitesMap.has(suite.name)) {
+          suitesMap.set(suite.name, suite);
+        }
+      });
+
+      const mergedSuites = Array.from(suitesMap.values());
+
+      state.suites = mergedSuites;
+      state.activeSuite = action.payload[0].id;
+      window.electron.store.set('deviceManager.previewSuites', mergedSuites);
+    },
     deleteSuite(state, action: PayloadAction<string>) {
       const suites: PreviewSuite[] = window.electron.store.get(
         'deviceManager.previewSuites'
@@ -83,6 +103,18 @@ export const deviceManagerSlice = createSlice({
       state.activeSuite = suites[0].id;
       window.electron.store.set('deviceManager.previewSuites', suites);
     },
+    deleteAllSuites(state) {
+      const defaultSuites = {
+        id: 'default',
+        name: 'Default',
+        devices: ['10008', '10013', '10015'],
+      };
+      const suites: PreviewSuite[] = window.electron.store.get(
+        'deviceManager.previewSuites'
+      );
+      window.electron.store.set('deviceManager.previewSuites', [defaultSuites]);
+      state.suites = [defaultSuites];
+    },
   },
 });
 
@@ -92,7 +124,9 @@ export const {
   setSuiteDevices,
   setActiveSuite,
   addSuite,
+  addSuites,
   deleteSuite,
+  deleteAllSuites,
 } = deviceManagerSlice.actions;
 
 export const selectSuites = (state: RootState) => state.deviceManager.suites;

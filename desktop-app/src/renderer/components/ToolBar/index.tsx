@@ -6,6 +6,7 @@ import {
   setIsCapturingScreenshot,
   setIsInspecting,
   setRotate,
+  setNotifications,
 } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
 import { ScreenshotAllArgs } from 'main/screenshot';
@@ -13,6 +14,7 @@ import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import WebPage from 'main/screenshot/webpage';
 import { getDevicesMap } from 'common/deviceList';
 import { updateWebViewHeightAndScale } from 'common/webViewUtils';
+import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
 import Button from '../Button';
@@ -102,9 +104,7 @@ const ToolBar = () => {
   return (
     <div className="flex items-center justify-between gap-2">
       <NavigationControls />
-
       <AddressBar />
-
       <Button
         onClick={handleRotate}
         isActive={rotateDevices}
@@ -137,6 +137,13 @@ const ToolBar = () => {
       <ColorBlindnessControls />
       <Divider />
       <PreviewSuiteSelector />
+      <Button
+        onClick={() => {
+          dispatch(setAppView(APP_VIEWS.DEVICE_MANAGER));
+        }}
+      >
+        <Icon icon="lucide:plus" width={16} />
+      </Button>
       <Menu />
       <ModalLoader
         isOpen={isCapturingScreenshot}

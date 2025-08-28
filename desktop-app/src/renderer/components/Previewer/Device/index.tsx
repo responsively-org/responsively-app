@@ -72,7 +72,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const [singleRotated, setSingleRotated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorState | null>(null);
-  const [screenshotInProgress, setScreenshotInProgess] =
+  const [screenshotInProgress, setScreenshotInProgress] =
     useState<boolean>(false);
   const address = useSelector(selectAddress);
   const zoomfactor = useSelector(selectZoomFactor);
@@ -87,6 +87,22 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const dockPosition = useSelector(selectDockPosition);
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
+  const isNavigatingFromAddressBar = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (ref.current && isPrimary) {
+      try {
+        const currentUrl = ref.current.getURL();
+        if (address !== currentUrl) {
+          isNavigatingFromAddressBar.current = true;
+          dispatch(setAddress(address));
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Error loading URL', err);
+      }
+    }
+  }, [address, isPrimary, dispatch]);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
@@ -275,14 +291,22 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     const handlerRemovers: (() => void)[] = [];
 
     const didNavigateHandler = (e: Electron.DidNavigateEvent) => {
-      dispatch(setAddress(e.url));
+      // Only update Redux on the primary device and only if this navigation wasn't initiated by AddressBar
+      if (isPrimary && !isNavigatingFromAddressBar.current) {
+        dispatch(setAddress(e.url));
+      } else if (isPrimary) {
+        isNavigatingFromAddressBar.current = false; // Reset the flag
+      }
+
       if (isPrimary) {
         appendHistory(webview.getURL(), webview.getTitle());
       }
     };
     webview.addEventListener('did-navigate', didNavigateHandler);
+    webview.addEventListener('did-navigate-in-page', didNavigateHandler);
     handlerRemovers.push(() => {
       webview.removeEventListener('did-navigate', didNavigateHandler);
+      webview.removeEventListener('did-navigate-in-page', didNavigateHandler);
     });
 
     const ipcMessageHandler = (e: Electron.IpcMessageEvent) => {
@@ -339,11 +363,21 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     const didFailLoadHandler = ({
       errorCode,
       errorDescription,
+      isMainFrame,
     }: Electron.DidFailLoadEvent) => {
       if (errorCode === -3) {
         // Aborted error, can be ignored
         return;
       }
+
+      // Only show error overlay for main frame errors
+      // Iframe errors (like CSP violations) should only go to console
+      if (!isMainFrame) {
+        // eslint-disable-next-line no-console
+        console.warn('iframe error:', errorCode, errorDescription);
+        return;
+      }
+
       setError({
         code: errorCode,
         description: errorDescription,
@@ -382,6 +416,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     isPrimary,
     inspectElement,
     openDevTools,
+    address,
   ]);
 
   useEffect(() => {
@@ -500,10 +535,13 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const scaledHeight = height * zoomfactor;
   const scaledWidth = width * zoomfactor;
 
+  const isRestrictedMinimumDeviceSize =
+    device.width < 400 && zoomfactor < 0.6 && !rotateDevices && !singleRotated;
+
   return (
     <div
-      className={cx('h-fit flex-shrink-0', {
-        'w-52': device.width < 400 && zoomfactor < 0.6,
+      className={cx('h-fit', {
+        'w-52': isRestrictedMinimumDeviceSize,
       })}
     >
       <div className="flex justify-between">
@@ -518,7 +556,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       <Toolbar
         webview={ref.current}
         device={device}
-        setScreenshotInProgress={setScreenshotInProgess}
+        setScreenshotInProgress={setScreenshotInProgress}
         openDevTools={openDevTools}
         toggleRuler={toggleRuler}
         onRotate={onRotateHandler}
@@ -534,7 +572,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             ? scaledWidth + 30
             : scaledWidth,
         }}
-        className="relative origin-top-left bg-white"
+        className="relative origin-top-left overflow-hidden bg-white"
       >
         <GuideGrid
           scaledHeight={scaledHeight}
@@ -547,7 +585,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           enabled={rulerEnabled(`${width}x${height}`)}
           defaultGuides={window.electron.store
             .get('userPreferences.guides')
-            .flatMap((x: any) => x)
+            .flatMap((x: unknown) => x as DefaultGuide[])
             .filter((x: DefaultGuide) => {
               return x.resolution === `${width}x${height}`;
             })}
