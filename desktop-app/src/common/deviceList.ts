@@ -337,7 +337,7 @@ export const defaultDevices: Device[] = [
     isTouchCapable: true,
     isMobileCapable: true,
   },
-
+  // new option added
   {
     id: '10025',
     name: 'iPhone 17',
