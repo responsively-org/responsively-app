@@ -8,7 +8,7 @@ import './App.css';
 import ThemeProvider from './context/ThemeProvider';
 import type { AppView } from './store/features/ui';
 import { APP_VIEWS, selectAppView } from './store/features/ui';
-import DeviceManager from './components/DeviceManager';
+import { DeviceManager } from './components/DeviceManager';
 import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
 import { ReleaseNotes } from './components/ReleaseNotes';
 import { Sponsorship } from './components/Sponsorship';
