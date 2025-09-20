@@ -276,6 +276,9 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="https://github.com/AnalyticalDataArtisan"><img src="https://avatars.githubusercontent.com/u/183036785?v=4?s=100" width="100px;" alt="AnalyticalDataArtisan"/><br /><sub><b>AnalyticalDataArtisan</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=AnalyticalDataArtisan" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/Kieren-Foenander"><img src="https://avatars.githubusercontent.com/u/68266113?v=4?s=100" width="100px;" alt="Kieren-Foenander"/><br /><sub><b>Kieren-Foenander</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Kieren-Foenander" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/Trishix"><img src="https://avatars.githubusercontent.com/u/170200412?v=4?s=100" width="100px;" alt="Trishit Swarnakar"/><br /><sub><b>Trishit Swarnakar</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Trishix" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
