@@ -32,6 +32,7 @@ import { initHttpBasicAuthHandlers } from './http-basic-auth';
 import { initAppMetaHandlers } from './app-meta';
 import { openUrl } from './protocol-handler';
 import { AppUpdater } from './app-updater';
+import { loadVueDevTools } from './extensions';
 
 let windowShownOnOpen = false;
 
@@ -83,7 +84,7 @@ const installExtensions = async () => {
     'MOBX_DEVTOOLS',
     'APOLLO_DEVELOPER_TOOLS',
   ];
-
+  await loadVueDevTools();
   return installer
     .default(
       extensions.map((name) => installer[name]),
