@@ -10,39 +10,66 @@
       rel="stylesheet"
     />
     <meta charset="utf-8" />
-    <title>Responsively</title>
+    <title>Responsively App</title>
+
+    <!-- Load electron cookies -->
     <script src="../node_modules/electron-cookies/dist/electron-cookies.js"></script>
+
+    <!-- Heap Analytics -->
     <script type="text/javascript">
-      // prettier-ignore
-      window.heap = window.heap || [], heap.load = function (e, t) { window.heap.appid = e, window.heap.config = t = t || {}; var r = t.forceSSL || "https:" === document.location.protocol, a = document.createElement("script"); a.type = "text/javascript", a.async = !0, a.src =  "https://cdn.heapanalytics.com/js/heap-" + e + ".js"; var n = document.getElementsByTagName("script")[0]; n.parentNode.insertBefore(a, n); for (var o = function (e) { return function () { heap.push([e].concat(Array.prototype.slice.call(arguments, 0))) } }, p = ["addEventProperties", "addUserProperties", "clearEventProperties", "identify", "resetIdentity", "removeEventProperty", "setEventProperties", "track", "unsetEventProperty"], c = 0; c < p.length; c++)heap[p[c]] = o(p[c]) };
+      window.heap = window.heap || [], heap.load = function (e, t) {
+        window.heap.appid = e;
+        window.heap.config = t = t || {};
+        var r = t.forceSSL || "https:" === document.location.protocol;
+        var a = document.createElement("script");
+        a.type = "text/javascript";
+        a.async = !0;
+        a.src = "https://cdn.heapanalytics.com/js/heap-" + e + ".js";
+        var n = document.getElementsByTagName("script")[0];
+        n.parentNode.insertBefore(a, n);
+        for (var o = function (e) {
+          return function () {
+            heap.push([e].concat(Array.prototype.slice.call(arguments, 0)))
+          }
+        }, p = ["addEventProperties", "addUserProperties", "clearEventProperties", "identify", "resetIdentity", "removeEventProperty", "setEventProperties", "track", "unsetEventProperty"], c = 0; c < p.length; c++) heap[p[c]] = o(p[c])
+      };
       heap.load('3453744655');
     </script>
+
+    <!-- Load stylesheet if not hot-reloading -->
     <script>
-      (function() {
+      (function () {
         if (!process.env.HOT) {
           const link = document.createElement('link');
           link.rel = 'stylesheet';
           link.href = './dist/style.css';
-          // HACK: Writing the script path should be done with webpack
-          document.getElementsByTagName('head')[0].appendChild(link);
+          document.head.appendChild(link);
         }
       })();
     </script>
   </head>
 
   <body>
+    <!-- Root app mount point -->
     <div id="root"></div>
+
+    <!-- ✅ UX improvement: Fallback for users with JS disabled -->
+    <noscript>
+      <div style="text-align:center; font-family: sans-serif; margin-top: 50px; color: #555;">
+        <h2>JavaScript is disabled</h2>
+        <p>This application requires JavaScript to function properly. Please enable it and reload.</p>
+      </div>
+    </noscript>
+
+    <!-- Load scripts dynamically -->
     <script>
       {
         const scripts = [];
 
-        // Dynamically insert the DLL script in development env in the
-        // renderer process
         if (process.env.NODE_ENV === 'development') {
           scripts.push('../dll/renderer.dev.dll.js');
         }
 
-        // Dynamically insert the bundled app script in the renderer process
         const port = process.env.PORT || 1212;
         scripts.push(
           process.env.HOT
