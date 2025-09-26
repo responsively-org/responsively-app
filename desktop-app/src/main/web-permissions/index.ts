@@ -1,5 +1,6 @@
-import { BrowserWindow, session } from 'electron';
+import { BrowserWindow, session, ipcMain } from 'electron';
 import PermissionsManager, { PERMISSION_STATE } from './PermissionsManager';
+import { IPC_MAIN_CHANNELS } from '../../common/constants';
 import store from '../../store';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -41,6 +42,41 @@ export const WebPermissionHandlers = (mainWindow: BrowserWindow) => {
             );
           }
           callback({ requestHeaders: details.requestHeaders });
+        }
+      );
+
+      // Add IPC handlers for site permissions management
+      ipcMain.handle(
+        IPC_MAIN_CHANNELS.GET_SITE_PERMISSIONS,
+        (_event, origin: string) => {
+          return permissionsManager.getSitePermissions(origin);
+        }
+      );
+
+      ipcMain.handle(
+        IPC_MAIN_CHANNELS.UPDATE_SITE_PERMISSION,
+        (
+          _event,
+          {
+            origin,
+            type,
+            state,
+          }: { origin: string; type: string; state: string }
+        ) => {
+          permissionsManager.updateSitePermission(
+            origin,
+            type,
+            state as typeof PERMISSION_STATE[keyof typeof PERMISSION_STATE]
+          );
+          return true;
+        }
+      );
+
+      ipcMain.handle(
+        IPC_MAIN_CHANNELS.CLEAR_SITE_PERMISSIONS,
+        (_event, origin: string) => {
+          permissionsManager.clearSitePermissions(origin);
+          return true;
         }
       );
     },

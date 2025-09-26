@@ -38,8 +38,33 @@ export const IPC_MAIN_CHANNELS = {
   START_WATCHING_FILE: 'start-watching-file',
   STOP_WATCHER: 'stop-watcher',
   OPEN_ABOUT_DIALOG: 'open-about-dialog',
+  GET_SITE_PERMISSIONS: 'get-site-permissions',
+  UPDATE_SITE_PERMISSION: 'update-site-permission',
+  CLEAR_SITE_PERMISSIONS: 'clear-site-permissions',
+  PERMISSION_UPDATED: 'permission-updated',
 } as const;
 
 export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];
 
 export const PROTOCOL = 'responsively';
+
+export const PERMISSION_TYPES = {
+  CAMERA: 'camera',
+  MICROPHONE: 'microphone',
+  LOCATION: 'geolocation',
+  NOTIFICATIONS: 'notifications',
+  CLIPBOARD: 'clipboard-read',
+  FULLSCREEN: 'fullscreen',
+  MIDI: 'midi',
+  POINTER_LOCK: 'pointerLock',
+} as const;
+
+export type PermissionType =
+  typeof PERMISSION_TYPES[keyof typeof PERMISSION_TYPES];
+
+export interface SitePermission {
+  type: string;
+  state: 'GRANTED' | 'DENIED' | 'PROMPT' | 'UNKNOWN';
+  displayName: string;
+  icon: string;
+}
