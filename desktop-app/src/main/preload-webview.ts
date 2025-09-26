@@ -24,6 +24,28 @@ const documentBodyInit = () => {
     });
   });
 
+  // Handle F key for fullscreen toggle
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault();
+
+      // Check if already in fullscreen
+      if (document.fullscreenElement) {
+        // Exit fullscreen
+        document.exitFullscreen().catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Error exiting fullscreen:', err);
+        });
+      } else {
+        // Request fullscreen
+        document.documentElement.requestFullscreen().catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Error requesting fullscreen:', err);
+        });
+      }
+    }
+  });
+
   window.addEventListener('dom-ready', () => {
     const { body } = document;
     const html = document.documentElement;
