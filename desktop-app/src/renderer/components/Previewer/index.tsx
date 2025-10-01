@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import cx from 'classnames';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import { DOCK_POSITION, PREVIEW_LAYOUTS } from 'common/constants';
@@ -7,8 +7,8 @@ import {
   selectIsDevtoolsOpen,
 } from 'renderer/store/features/devtools';
 import { getDevicesMap, Device as IDevice } from 'common/deviceList';
-import { useState } from 'react';
-import { selectLayout } from 'renderer/store/features/renderer';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { selectLayout, zoomIn, zoomOut } from 'renderer/store/features/renderer';
 import Masonry from 'react-masonry-component';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
@@ -38,6 +38,40 @@ const Previewer = () => {
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
   const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY; // New state for Masonry layout
+  const dispatch = useDispatch();
+  const previewAreaRef = useRef<HTMLDivElement>(null);
+
+  // Handle trackpad pinch-to-zoom gestures
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      // Check if this is a pinch gesture (Ctrl+wheel on most systems, including macOS)
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        
+        // Determine zoom direction based on deltaY
+        // Negative deltaY means zooming in (pinch out), positive means zooming out (pinch in)
+        if (e.deltaY < 0) {
+          dispatch(zoomIn());
+        } else if (e.deltaY > 0) {
+          dispatch(zoomOut());
+        }
+      }
+    },
+    [dispatch]
+  );
+
+  // Add wheel event listener to preview area
+  useEffect(() => {
+    const previewArea = previewAreaRef.current;
+    if (!previewArea) return;
+
+    // Add wheel event listener with passive: false to allow preventDefault
+    previewArea.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      previewArea.removeEventListener('wheel', handleWheel);
+    };
+  }, [handleWheel]);
 
   const masonryOptions = {
     columnWidth: 275,
@@ -65,6 +99,7 @@ const Previewer = () => {
       >
         <div className="flex flex-grow overflow-hidden">
           <div
+            ref={previewAreaRef}
             className="w-full flex-grow overflow-y-auto"
             style={{ height: '100%' }}
           >
