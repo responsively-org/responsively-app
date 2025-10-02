@@ -1,69 +1,105 @@
+
 <div align="center">
   <img src="https://responsively.app/assets/img/logo.png" alt="Responsively Logo" width="150">
   <h1>Responsively App <a href="https://github.com/responsively-org/responsively-app/releases/latest" target="_blank"><img alt="GitHub release" src="https://img.shields.io/github/v/release/responsively-org/responsively-app"></a></h1>
-  <strong>A must-have dev tool for web developers for quicker responsive web development. 🚀</strong>
-  <h6>Save time by becoming 5x faster!</h6>
+  <p><strong>A must-have dev tool for web developers for quicker responsive web development. <span style="font-size:1.2em">🚀</span></strong></p>
+  <p><em>Save time by becoming <b>5x faster</b>!</em></p>
+  <p>
+    <a href="https://responsively.app/download" target="_blank"><img src="https://img.shields.io/badge/Download-Now-brightgreen?style=for-the-badge&logo=github" alt="Download"></a>
+    <a href="https://responsively.app/join-discord" target="_blank"><img src="https://img.shields.io/discord/708884555418591273?label=Join%20Discord&logo=discord&style=for-the-badge" alt="Discord"></a>
+    <a href="https://twitter.com/ResponsivelyApp" target="_blank"><img src="https://img.shields.io/twitter/follow/responsivelyApp?color=26A0ED&label=Follow&logo=twitter&logoColor=white&style=for-the-badge" alt="Twitter"></a>
+    <a href="https://github.com/responsively-org/responsively-app/issues" target="_blank"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge" alt="PRs Welcome"></a>
+  </p>
 </div>
-<br>
 
-<p align="center">
-  <a href="https://twitter.com/ResponsivelyApp" target="_blank">
-    <img src="https://img.shields.io/twitter/follow/responsivelyApp?color=26A0ED&label=Follow&logo=twitter&logoColor=white&style=flat" alt="Twitter">
-  </a>
-
-  <a href="#contributors-" target="_blank">
-    <img src="https://img.shields.io/github/all-contributors/responsively-org/responsively-app?style=flat" alt="contributors">
-  </a>
+<hr/>
 
 
-
-  <a href="https://responsively.app/join-discord" target="_blank">
-    <img src="https://img.shields.io/badge/Join%20-Discord-blue?logo=discord&logoColor=white" alt="Discord">
-  </a>
-
-  <a href="https://xscode.com/manojvivek/responsively-app" target="_blank">
-    <img src="https://img.shields.io/badge/Available%20on-xs%3Acode-blue?style=?style=flat&logo=appveyor&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////////VXz1bAAAAAJ0Uk5T/wDltzBKAAAAlUlEQVR42uzXSwqAMAwE0Mn9L+3Ggtgkk35QwcnSJo9S+yGwM9DCooCbgn4YrJ4CIPUcQF7/XSBbx2TEz4sAZ2q1RAECBAiYBlCtvwN+KiYAlG7UDGj59MViT9hOwEqAhYCtAsUZvL6I6W8c2wcbd+LIWSCHSTeSAAECngN4xxIDSK9f4B9t377Wd7H5Nt7/Xz8eAgwAvesLRjYYPuUAAAAASUVORK5CYII=" alt="XS:Code">
-  </a>
-
-  <a href="https://github.com/responsively-org/responsively-app/issues" target="_blank">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" alt="PRs Welcome">
-  </a>
-
-   <a href="https://opencollective.com/responsively" target="_blank">
-    <img alt="Open Collective backers and sponsors" src="https://img.shields.io/opencollective/all/responsively">
-  </a>
-</p>
-
-<p align="center">
+<div align="center">
   <a href="https://www.producthunt.com/posts/responsively?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-responsively" target="_blank">
-    <img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=200375&theme=light&period=daily" alt="ProductHunt">
+    <img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=200375&theme=light&period=daily" alt="ProductHunt" style="margin: 0 8px;"/>
   </a>
-</p>
+  <a href="https://responsively.app/download" target="_blank">
+    <img src="https://img.shields.io/badge/Download%20Now-Free!-brightgreen?style=for-the-badge" alt="Download Now"/>
+  </a>
+</div>
+
+<hr/>
+
+
+---
+
+
+<h2 align="center">🚀 Quick Start</h2>
+
+1. **Download & Install**
+  - [Download Responsively App](https://responsively.app/download) for Windows, macOS, or Linux.
+  - Or use:
+    - **macOS:** `brew install --cask responsively`
+    - **Windows:** `choco install responsively` or `winget install ResponsivelyApp`
+    - **Linux:** Download the AppImage or use the RPM package from the [releases page](https://github.com/responsively-org/responsively-app/releases).
+
+2. **Launch the App**
+  - Open Responsively App from your applications menu or via terminal.
+
+3. **Start Developing**
+  - Enter your website URL in the address bar.
+  - Instantly preview your site across multiple devices.
+  - Interact with any device preview—actions are mirrored across all.
+
+4. **(Optional) Install the [Browser Extension](#browser-extension)**
+  - Send links from your browser to Responsively App in one click.
+
+---
+
+
+<h2 align="center">🎬 Demo</h2>
 
 <p align="center">
-  Download Now (free!): <a href="https://responsively.app/download" target="_blank">
-    responsively.app
-  </a>
+  <img src="https://responsively.app/assets/img/responsively-app.gif" alt="Responsively App Demo" style="border-radius:8px; box-shadow:0 2px 8px #0002; max-width:90%;"/>
 </p>
-<br>
 
-## Responsively App
+<hr/>
 
-> A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development.
-> <br>
+<h2 align="center">✨ Features</h2>
 
-![Quick Demo](https://responsively.app/assets/img/responsively-app.gif)
+- Mirrored user interactions across all device previews
+- Customizable preview layout
+- One handy elements inspector for all devices
+- 30+ built-in device profiles (add your own too)
+- One-click screenshots for all devices
+- Hot reloading for developers
 
-## Features
+---
 
-1. Mirrored User-interactions across all devices.
-2. Customizable preview layout to suit all your needs.
-3. One handy elements inspector for all devices in preview.
-4. 30+ built-in device profiles with the option to add custom devices.
-5. One-click screenshots on all your devices.
-6. Hot reloading is supported for developers.
 
-Please visit the website to learn more about the application - https://responsively.app
+<h2 align="center">💡 Common Use Cases</h2>
+
+- **Responsive Web Design:** Instantly see how your site looks and behaves on phones, tablets, and desktops.
+- **Cross-device Testing:** Interact with your site in one device and see the same action mirrored on all.
+- **UI Debugging:** Use the unified inspector to debug elements across all device views.
+- **Screenshots:** Capture screenshots of your site on multiple devices with a single click.
+- **Team Demos:** Share your screen to showcase responsive layouts in real time.
+
+---
+
+
+<h2 align="center">🛠️ Example Workflow</h2>
+
+1. Open Responsively App and enter `https://your-site.com` in the address bar.
+2. Click and scroll in any device preview—see all devices update together.
+3. Use the device manager to add a custom device (e.g., iPhone 15 Pro).
+4. Open the Elements Inspector to debug a button across all devices.
+5. Click the camera icon to take screenshots of all device previews.
+
+---
+
+
+<h2 align="center">📥 Download</h2>
+
+Responsively App is available for Mac, Windows, and Linux:
+
+...existing code...
 
 ## Download
 
@@ -97,7 +133,8 @@ otherwise, download an AppImage from [the releases page](https://github.com/resp
 
 Follow us on Twitter for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://twitter.com/ResponsivelyApp)
 
-## Browser Extension
+
+<h2 align="center">🧩 Browser Extension</h2>
 
 Install the handy browser extension to easily send links from your browser to the app and preview instantly.
 
@@ -105,14 +142,17 @@ Install the handy browser extension to easily send links from your browser to th
 - [Download for Firefox](https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/) <a href="https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/" target="_blank"><img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/responsively-helper"></a>
 - [Download for Edge](https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn) <a href="https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn" target="_blank"><img alt="Edge Add-on" src="https://img.shields.io/badge/dynamic/json?label=users&query=%24.activeInstallCount&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fooiejjgflcgkbbehheengalibfehaojn"></a>
 
-## Issues
+
+<h2 align="center">🐞 Issues</h2>
 
 If you face any problems while using the application, please open an issue here - https://github.com/responsively-org/responsively-app/issues
 
-## Roadmap
+
+<h2 align="center">🗺️ Roadmap</h2>
 
 Here is the roadmap of the desktop app - https://github.com/responsively-org/responsively-app/projects/
-## Gold sponsors 🥇
+
+<h2 align="center">🥇 Gold Sponsors</h2>
 
 <p>&nbsp;</p>
 
@@ -126,15 +166,18 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 
 [Become a sponsor and have your company logo here](https://opencollective.com/responsively)
 
-## Contribute
+
+<h2 align="center">🤝 Contribute</h2>
 
 To get started with contributing your awesome ideas to Responsively, follow the [comprehensive guide here](https://github.com/responsively-org/responsively-app/blob/main/CONTRIBUTING.md)!
 
-## Get in touch
+
+<h2 align="center">💬 Get in Touch</h2>
 
 Come say hi to us on [Discord](https://responsively.app/join-discord)! :wave:
 
-## Contributors ✨
+
+<h2 align="center">✨ Contributors</h2>
 
 Thanks go to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
