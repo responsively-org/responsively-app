@@ -876,6 +876,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "cseas",
+      "name": "Abhijeet Singh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/29686866?v=4",
+      "profile": "https://blog.absingh.com/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 5,
