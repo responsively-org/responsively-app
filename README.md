@@ -278,6 +278,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     <tr>
       <td align="center" valign="top" width="20%"><a href="https://github.com/Trishix"><img src="https://avatars.githubusercontent.com/u/170200412?v=4?s=100" width="100px;" alt="Trishit Swarnakar"/><br /><sub><b>Trishit Swarnakar</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Trishix" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://blog.absingh.com/"><img src="https://avatars.githubusercontent.com/u/29686866?v=4?s=100" width="100px;" alt="Abhijeet Singh"/><br /><sub><b>Abhijeet Singh</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=cseas" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="20%"><a href="http://aaryancreates.framer.media"><img src="https://avatars.githubusercontent.com/u/93996658?v=4?s=100" width="100px;" alt="aaryan"/><br /><sub><b>aaryan</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=meezumi" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
