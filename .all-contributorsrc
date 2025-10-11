@@ -885,6 +885,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "meezumi",
+      "name": "aaryan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/93996658?v=4",
+      "profile": "http://aaryancreates.framer.media",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
