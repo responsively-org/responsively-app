@@ -209,7 +209,7 @@ export const defaultDevices: Device[] = [
   },
   {
     id: '10015',
-    name: 'MacBook Pro',
+    name: 'MacBook Pro 15"',
     width: 1440,
     height: 900,
     dpr: 2,
@@ -389,6 +389,19 @@ export const defaultDevices: Device[] = [
     type: 'phone',
     isTouchCapable: true,
     isMobileCapable: true,
+  },
+  {
+    id: '10025',
+    name: 'iMac 27"',
+    width: 2560,
+    height: 1440,
+    dpr: 2,
+    capabilities: [],
+    userAgent:
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15',
+    type: 'desktop',
+    isTouchCapable: false,
+    isMobileCapable: false,
   },
   {
     id: '20001',
