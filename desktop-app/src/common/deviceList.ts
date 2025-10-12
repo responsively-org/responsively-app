@@ -391,6 +391,19 @@ export const defaultDevices: Device[] = [
     isMobileCapable: true,
   },
   {
+    id: '10025',
+    name: 'iPhone 11',
+    width: 414,
+    height: 896,
+    dpr: 2,
+    capabilities: ['touch', 'mobile'],
+    userAgent:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/137.0.7151.79 Mobile/15E148 Safari/604.1',
+    type: 'phone',
+    isTouchCapable: true,
+    isMobileCapable: true,
+  },
+  {
     id: '20001',
     name: 'Nexus 4',
     width: 384,
