@@ -116,9 +116,11 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 <p>&nbsp;</p>
 
 <p align="center" >
+  <a href="https://www.lambdatest.com/?ref=responsivelyapp" target="_blank">
+    <img src="https://responsively.app/assets/img/logos/lambdatest.svg" height="220px" width="380px" alt="LambdaTest" style="height=100px'"></a>&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://www.syncfusion.com/?utm_source=responsivelyapp&utm_medium=cpc&utm_campaign=responsivelyapp_esee_ban" target="_blank">
     <img src="https://responsively.app/assets/img/logos/syncfusion.png" height="120px" alt="Syncfusion"></a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://opencollective.com/responsively" target="_blank">
+  <a href="https://github.com/sponsors/responsively-org" target="_blank">
     <img src="https://user-images.githubusercontent.com/1283424/142834528-4cd5b8eb-eeae-4437-b749-d09c96dde160.png" height="120px" alt="Sponsor to add your company logo here">
   </a>
 </p>
