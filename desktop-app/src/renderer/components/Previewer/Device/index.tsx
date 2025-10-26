@@ -108,7 +108,11 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
 
   let { height, width } = device;
 
-  if (rotateDevices || singleRotated) {
+  // Check if device is rotatable (has touch or mobile capabilities)
+  const isDeviceRotatable = device.isTouchCapable || device.isMobileCapable;
+
+  // Apply rotation: global rotation only affects rotatable devices, individual rotation works for all
+  if ((rotateDevices && isDeviceRotatable) || singleRotated) {
     const temp = width;
     width = height;
     height = temp;
@@ -531,7 +535,10 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const scaledWidth = width * zoomfactor;
 
   const isRestrictedMinimumDeviceSize =
-    device.width < 400 && zoomfactor < 0.6 && !rotateDevices && !singleRotated;
+    device.width < 400 &&
+    zoomfactor < 0.6 &&
+    !(rotateDevices && isDeviceRotatable) &&
+    !singleRotated;
 
   return (
     <div
