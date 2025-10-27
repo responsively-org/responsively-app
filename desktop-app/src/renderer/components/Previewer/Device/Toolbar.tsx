@@ -19,14 +19,8 @@ interface Props {
   onRotate: (state: boolean) => void;
   onIndividualLayoutHandler: (device: Device) => void;
   isIndividualLayout: boolean;
+  isDeviceRotationEnabled: boolean;
 }
-
-const newVersionText = {
-  id: 'new-version',
-  text: 'There is a new version available.',
-  link: 'https://responsively.app/download',
-  linkText: 'See More',
-};
 
 const Toolbar = ({
   webview,
@@ -37,6 +31,7 @@ const Toolbar = ({
   onRotate,
   onIndividualLayoutHandler,
   isIndividualLayout,
+  isDeviceRotationEnabled,
 }: Props) => {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
@@ -194,7 +189,15 @@ const Toolbar = ({
         <Button onClick={openDevTools} title="Open Devtools">
           <Icon icon="ic:round-code" />
         </Button>
-        <Button onClick={rotate} title="Rotate This Device">
+        <Button
+          onClick={rotate}
+          disabled={!isDeviceRotationEnabled}
+          title={
+            isDeviceRotationEnabled
+              ? 'Rotate This Device'
+              : 'Rotation not available for non-mobile devices'
+          }
+        >
           <Icon
             icon={
               rotated
