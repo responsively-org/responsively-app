@@ -610,7 +610,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             preload={`file://${window.responsively.webviewPreloadPath}`}
             data-scale-factor={zoomfactor}
             /* eslint-disable-next-line react/no-unknown-property */
-            allowpopups={isPrimary ? 'true' : undefined}
+            allowpopups={isPrimary ? true : undefined}
             /* eslint-disable-next-line react/no-unknown-property */
             useragent={device.userAgent}
           />
