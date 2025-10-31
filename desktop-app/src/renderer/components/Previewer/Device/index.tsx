@@ -95,20 +95,24 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         const currentUrl = ref.current.getURL();
         if (address !== currentUrl) {
           isNavigatingFromAddressBar.current = true;
-          dispatch(setAddress(address));
+          ref.current.loadURL(address);
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error('Error loading URL', err);
       }
     }
-  }, [address, isPrimary, dispatch]);
+  }, [address, isPrimary]);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
   let { height, width } = device;
 
-  if (rotateDevices || singleRotated) {
+  // Check if device rotation is enabled (only mobile-capable devices can be rotated)
+  const isDeviceRotationEnabled = device.isMobileCapable && (rotateDevices || singleRotated);
+  
+  // Apply rotation: both global and individual rotation only affect mobile-capable devices
+  if (isDeviceRotationEnabled) {
     const temp = width;
     width = height;
     height = temp;
@@ -531,7 +535,9 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const scaledWidth = width * zoomfactor;
 
   const isRestrictedMinimumDeviceSize =
-    device.width < 400 && zoomfactor < 0.6 && !rotateDevices && !singleRotated;
+    device.width < 400 &&
+    zoomfactor < 0.6 &&
+    !isDeviceRotationEnabled;
 
   return (
     <div
@@ -557,6 +563,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         onRotate={onRotateHandler}
         onIndividualLayoutHandler={onIndividualLayoutHandler}
         isIndividualLayout={isIndividualLayout}
+        isDeviceRotationEnabled={isDeviceRotationEnabled}
       />
       <div
         style={{
@@ -603,7 +610,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             preload={`file://${window.responsively.webviewPreloadPath}`}
             data-scale-factor={zoomfactor}
             /* eslint-disable-next-line react/no-unknown-property */
-            allowpopups={isPrimary ? ('true' as any) : undefined}
+            allowpopups={isPrimary ? true : undefined}
             /* eslint-disable-next-line react/no-unknown-property */
             useragent={device.userAgent}
           />
