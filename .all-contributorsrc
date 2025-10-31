@@ -894,6 +894,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mklikushin",
+      "name": "Michael Klikushin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/135151016?v=4",
+      "profile": "https://github.com/mklikushin",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
