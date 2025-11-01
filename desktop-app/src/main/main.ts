@@ -193,13 +193,16 @@ const createWindow = async () => {
   });
 
   mainWindow.on('focus', () => {
-    if (isWindows && needsFocusFix) {
+    if (isWindows && needsFocusFix && !triggeringProgrammaticBlur) {
       needsFocusFix = false;
       triggeringProgrammaticBlur = true;
-      setTimeout(function () {
-        mainWindow!.blur();
-        mainWindow!.focus();
-        setTimeout(function () {
+
+      setTimeout(() => {
+        if (!mainWindow!.isFocused()) {
+          mainWindow!.blur();
+          mainWindow!.focus();
+        }
+        setTimeout(() => {
           triggeringProgrammaticBlur = false;
         }, 100);
       }, 100);
