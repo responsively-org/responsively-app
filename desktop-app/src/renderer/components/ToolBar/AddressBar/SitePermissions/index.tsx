@@ -22,7 +22,7 @@ interface PermissionToggleProps {
   onToggle: (type: string, state: string) => void;
 }
 
-const PermissionToggle = ({ permission, onToggle }: PermissionToggleProps) => {
+function PermissionToggle({ permission, onToggle }: PermissionToggleProps) {
   const getStateDisplay = (state: string) => {
     switch (state) {
       case PERMISSION_STATES.GRANTED:
@@ -53,7 +53,7 @@ const PermissionToggle = ({ permission, onToggle }: PermissionToggleProps) => {
       PERMISSION_STATES.DENIED,
     ];
     const currentIndex = states.findIndex(
-      (state) => state === permission.state
+      (state) => state === permission.state,
     );
     const nextIndex = (currentIndex + 1) % states.length;
     onToggle(permission.type, states[nextIndex]);
@@ -77,13 +77,13 @@ const PermissionToggle = ({ permission, onToggle }: PermissionToggleProps) => {
       </button>
     </div>
   );
-};
+}
 
-const SitePermissionsDropdown = ({
+function SitePermissionsDropdown({
   currentAddress,
   isVisible,
   onClose,
-}: SitePermissionsDropdownProps) => {
+}: SitePermissionsDropdownProps) {
   const [sitePermissions, setSitePermissions] = useState<SitePermission[]>([]);
   const [origin, setOrigin] = useState<string>('');
   const [showRefreshNotification, setShowRefreshNotification] = useState(false);
@@ -153,7 +153,7 @@ const SitePermissionsDropdown = ({
         try {
           const permissions = (await window.electron.ipcRenderer.invoke(
             IPC_MAIN_CHANNELS.GET_SITE_PERMISSIONS,
-            currentOrigin
+            currentOrigin,
           )) as SitePermission[];
           setSitePermissions(permissions);
         } catch (error) {
@@ -184,8 +184,8 @@ const SitePermissionsDropdown = ({
           prev.map((p) =>
             p.type === args.type
               ? { ...p, state: args.state as SitePermission['state'] }
-              : p
-          )
+              : p,
+          ),
         );
 
         // Show refresh notification when permission changes
@@ -195,13 +195,13 @@ const SitePermissionsDropdown = ({
 
     window.electron.ipcRenderer.on(
       IPC_MAIN_CHANNELS.PERMISSION_UPDATED,
-      handlePermissionUpdate
+      handlePermissionUpdate,
     );
 
     return () => {
       window.electron.ipcRenderer.removeListener(
         IPC_MAIN_CHANNELS.PERMISSION_UPDATED,
-        handlePermissionUpdate
+        handlePermissionUpdate,
       );
     };
   }, [origin]);
@@ -214,7 +214,7 @@ const SitePermissionsDropdown = ({
           origin,
           type,
           state,
-        }
+        },
       );
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -226,7 +226,7 @@ const SitePermissionsDropdown = ({
     try {
       await window.electron.ipcRenderer.invoke(
         IPC_MAIN_CHANNELS.CLEAR_SITE_PERMISSIONS,
-        origin
+        origin,
       );
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -237,7 +237,7 @@ const SitePermissionsDropdown = ({
   const hasActivePermissions = sitePermissions.some(
     (p) =>
       p.state === PERMISSION_STATES.GRANTED ||
-      p.state === PERMISSION_STATES.DENIED
+      p.state === PERMISSION_STATES.DENIED,
   );
 
   if (!isVisible) return null;
@@ -354,6 +354,6 @@ const SitePermissionsDropdown = ({
       </div>
     </div>
   );
-};
+}
 
 export default SitePermissionsDropdown;

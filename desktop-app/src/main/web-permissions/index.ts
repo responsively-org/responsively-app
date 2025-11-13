@@ -50,7 +50,7 @@ export const WebPermissionHandlers = (mainWindow: BrowserWindow) => {
         IPC_MAIN_CHANNELS.GET_SITE_PERMISSIONS,
         (_event, origin: string) => {
           return permissionsManager.getSitePermissions(origin);
-        }
+        },
       );
 
       ipcMain.handle(
@@ -61,15 +61,15 @@ export const WebPermissionHandlers = (mainWindow: BrowserWindow) => {
             origin,
             type,
             state,
-          }: { origin: string; type: string; state: string }
+          }: { origin: string; type: string; state: string },
         ) => {
           permissionsManager.updateSitePermission(
             origin,
             type,
-            state as typeof PERMISSION_STATE[keyof typeof PERMISSION_STATE]
+            state as (typeof PERMISSION_STATE)[keyof typeof PERMISSION_STATE],
           );
           return true;
-        }
+        },
       );
 
       ipcMain.handle(
@@ -77,7 +77,7 @@ export const WebPermissionHandlers = (mainWindow: BrowserWindow) => {
         (_event, origin: string) => {
           permissionsManager.clearSitePermissions(origin);
           return true;
-        }
+        },
       );
     },
   };

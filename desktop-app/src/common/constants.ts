@@ -65,7 +65,7 @@ export const PERMISSION_TYPES = {
 } as const;
 
 export type PermissionType =
-  typeof PERMISSION_TYPES[keyof typeof PERMISSION_TYPES];
+  (typeof PERMISSION_TYPES)[keyof typeof PERMISSION_TYPES];
 
 export interface SitePermission {
   type: string;

@@ -22,7 +22,7 @@ interface Props {
   isDeviceRotationEnabled: boolean;
 }
 
-const Toolbar = ({
+function Toolbar({
   webview,
   device,
   setScreenshotInProgress,
@@ -32,7 +32,7 @@ const Toolbar = ({
   onIndividualLayoutHandler,
   isIndividualLayout,
   isDeviceRotationEnabled,
-}: Props) => {
+}: Props) {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);

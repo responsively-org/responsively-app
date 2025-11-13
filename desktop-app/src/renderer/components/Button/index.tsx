@@ -14,7 +14,7 @@ interface CustomProps {
   disabled?: boolean;
 }
 
-const Button = ({
+function Button({
   className = '',
   isActive = false,
   isLoading = false,
@@ -30,7 +30,7 @@ const Button = ({
   React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
-  >) => {
+  >) {
   const [isLoadingDone, setIsLoadingDone] = useState<boolean>(false);
   const prevLoadingState = useRef(false);
 
@@ -70,7 +70,7 @@ const Button = ({
           'px-2': isActionButton || isTextButton,
           'cursor-not-allowed opacity-40': disabled,
           'hover:bg-transparent dark:hover:bg-transparent': disabled,
-        }
+        },
       )}
       type="button"
       disabled={disabled}
@@ -84,6 +84,6 @@ const Button = ({
       {!isLoading && !isLoadingDone ? children : null}
     </button>
   );
-};
+}
 
 export default Button;
