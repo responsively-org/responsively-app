@@ -304,8 +304,6 @@ app.on('certificate-error', (event, _, url, __, ___, callback) => {
   return callback(store.get('userPreferences.allowInsecureSSLConnections'));
 });
 
-
-
 app.on('web-contents-created', (_event, contents) => {
   contents.on('will-attach-webview', (_wawevent, webPreferences, _params) => {
     // Delete the unused preloadURL property
