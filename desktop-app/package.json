@@ -1,7 +1,7 @@
 {
   "name": "Responsively-App",
   "productName": "ResponsivelyApp",
-  "version": "1.16.0",
+  "version": "1.18.0",
   "description": "A developer-friendly browser for developing responsive web apps",
   "keywords": [
     "developer-tools",
@@ -154,28 +154,28 @@
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-erb": "^4.1.0",
-    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-import-resolver-typescript": "^4.1.1",
     "eslint-import-resolver-webpack": "^0.13.10",
     "eslint-plugin-compat": "^6.0.2",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jest": "^29.0.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jest": "^28.11.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-promise": "^7.2.1",
-    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.2.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.6.3",
     "husky": "^9.1.7",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^30.0.3",
-    "jest-environment-jsdom": "^30.0.2",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "lint-staged": "^16.1.2",
     "mini-css-extract-plugin": "^2.9.2",
     "postcss-loader": "^8.1.1",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
-    "react-refresh": "^0.17.0",
-    "react-test-renderer": "^18.3.1",
+    "react-refresh": "^0.16.0",
+    "react-test-renderer": "^18.0.0",
     "replace-in-file": "^8.3.0",
     "rimraf": "^6.0.1",
     "sass": "^1.89.2",
@@ -259,6 +259,10 @@
   "collective": {
     "url": "https://opencollective.com/responsively"
   },
+  "engines": {
+    "node": ">=14.x",
+    "npm": ">=7.x"
+  },
   "electronmon": {
     "patterns": [
       "!**/**",
@@ -267,5 +271,10 @@
       "src/common/**/*"
     ],
     "logLevel": "quiet"
+  },
+  "overrides": {
+    "react-masonry-component": {
+      "react": "^0.14.0 || ^15.0.0-0 || ^16.0.0-0 || ^17.0.0 || ^18.0.0"
+    }
   }
 }
