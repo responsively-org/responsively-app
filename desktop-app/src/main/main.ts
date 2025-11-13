@@ -304,6 +304,21 @@ app.on('certificate-error', (event, _, url, __, ___, callback) => {
   return callback(store.get('userPreferences.allowInsecureSSLConnections'));
 });
 
+
+
+app.on('web-contents-created', (_event, contents) => {
+  contents.on('will-attach-webview', (_wawevent, webPreferences, _params) => {
+    // Delete the unused preloadURL property
+    delete webPreferences.preload;
+    delete webPreferences.preloadURL;
+
+    // Set the correct preload script path
+    webPreferences.preload = app.isPackaged
+      ? path.join(__dirname, 'preload-webview.js')
+      : path.join(__dirname, '../../.erb/dll/preload-webview.js');
+  });
+});
+
 app
   .whenReady()
   .then(() => {

@@ -560,8 +560,6 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
             }}
             ref={ref}
             className="origin-top-left"
-            /* eslint-disable-next-line react/no-unknown-property */
-            preload={`file://${window.responsively.webviewPreloadPath}`}
             data-scale-factor={zoomfactor}
             /* eslint-disable-next-line react/no-unknown-property */
             allowpopups={isPrimary ? ('true' as any) : undefined}

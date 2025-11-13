@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { BROWSER_SYNC_URL } from './browser-sync';
+import { BROWSER_SYNC_URL } from '../common/constants';
 
 const documentBodyInit = () => {
   // Browser Sync
