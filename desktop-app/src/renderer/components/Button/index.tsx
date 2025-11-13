@@ -11,9 +11,10 @@ interface CustomProps {
   disableHoverEffects?: boolean;
   isActionButton?: boolean;
   subtle?: boolean;
+  disabled?: boolean;
 }
 
-function Button({
+const Button = ({
   className = '',
   isActive = false,
   isLoading = false,
@@ -22,13 +23,14 @@ function Button({
   isActionButton = false,
   subtle = false,
   disableHoverEffects = false,
+  disabled = false,
   children,
   ...props
 }: CustomProps &
   React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
-  >) {
+  >) => {
   const [isLoadingDone, setIsLoadingDone] = useState<boolean>(false);
   const prevLoadingState = useRef(false);
 
@@ -66,9 +68,12 @@ function Button({
           'bg-slate-200': isActionButton,
           'dark:bg-slate-700': isActionButton,
           'px-2': isActionButton || isTextButton,
-        },
+          'cursor-not-allowed opacity-40': disabled,
+          'hover:bg-transparent dark:hover:bg-transparent': disabled,
+        }
       )}
       type="button"
+      disabled={disabled}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     >
@@ -79,6 +84,6 @@ function Button({
       {!isLoading && !isLoadingDone ? children : null}
     </button>
   );
-}
+};
 
 export default Button;

@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow, ipcMain, session } from 'electron';
 import { IPC_MAIN_CHANNELS } from '../../common/constants';
 import store from '../../store';
 
@@ -61,7 +61,7 @@ const savePermissions = (permissions: Record<string, PermissionRecords>) => {
       return {
         origin,
         permissions: Object.entries(permissionRecords)
-          .filter(([_, status]) => {
+          .filter(([, status]) => {
             return (
               status === PERMISSION_STATE.GRANTED ||
               status === PERMISSION_STATE.DENIED
@@ -112,6 +112,7 @@ class PermissionsManager {
         ipcMain.handle(PERMISSION_RESPONSE_CHANNEL, handler);
       } catch (e) {
         // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
         console.error(
           'Error adding listener for permission response channel',
           e,
@@ -135,6 +136,12 @@ class PermissionsManager {
       };
     }
     savePermissions(this.permissions);
+
+    this.mainWindow.webContents.send(IPC_MAIN_CHANNELS.PERMISSION_UPDATED, {
+      origin,
+      type,
+      state,
+    });
   }
 
   requestPermission(
@@ -143,32 +150,117 @@ class PermissionsManager {
     callback: PermissionCallback,
   ): void {
     this.permissions[origin] = this.permissions[origin] || {};
-    const previousState = this.permissions[origin][type];
-    if (previousState !== PERMISSION_STATE.GRANTED) {
-      this.permissions[origin][type] = PERMISSION_STATE.PROMPT;
-    }
+    const currentState = this.permissions[origin][type];
+
     const key = `${origin}-${type}`;
     let callbacks = this.callbacks[key];
     if (callbacks === undefined) {
       callbacks = [];
       this.callbacks[key] = callbacks;
     }
-    if (previousState === PERMISSION_STATE.GRANTED) {
+
+    // If permission is explicitly granted, allow immediately
+    if (currentState === PERMISSION_STATE.GRANTED) {
       callback(true);
       return;
     }
-    if (previousState === PERMISSION_STATE.DENIED) {
+
+    // If permission is explicitly denied, block immediately
+    if (currentState === PERMISSION_STATE.DENIED) {
       callback(false);
       return;
     }
-    callbacks.push(callback);
-    if (previousState === PERMISSION_STATE.PROMPT) {
-      return;
+
+    // For PROMPT or UNKNOWN states, show permission dialog
+    // Set to PROMPT state to indicate it's requesting
+    if (currentState !== PERMISSION_STATE.PROMPT) {
+      this.permissions[origin][type] = PERMISSION_STATE.PROMPT;
     }
-    this.mainWindow.webContents.send(IPC_MAIN_CHANNELS.PERMISSION_REQUEST, {
-      permission: type,
-      requestingOrigin: origin,
-    });
+
+    callbacks.push(callback);
+
+    // Only show dialog if no other requests are pending for this permission
+    if (callbacks.length === 1) {
+      this.mainWindow.webContents.send(IPC_MAIN_CHANNELS.PERMISSION_REQUEST, {
+        permission: type,
+        requestingOrigin: origin,
+      });
+    }
+  }
+
+  getSitePermissions(origin: string) {
+    const permissions = this.permissions[origin] || {};
+    const commonPermissions = [
+      { type: 'camera', displayName: 'Camera', icon: 'mdi:camera' },
+      { type: 'microphone', displayName: 'Microphone', icon: 'mdi:microphone' },
+      { type: 'geolocation', displayName: 'Location', icon: 'mdi:map-marker' },
+      { type: 'notifications', displayName: 'Notifications', icon: 'mdi:bell' },
+      {
+        type: 'clipboard-read',
+        displayName: 'Clipboard',
+        icon: 'mdi:content-paste',
+      },
+      { type: 'fullscreen', displayName: 'Fullscreen', icon: 'mdi:fullscreen' },
+      { type: 'midi', displayName: 'MIDI Devices', icon: 'mdi:piano' },
+      {
+        type: 'pointerLock',
+        displayName: 'Pointer Lock',
+        icon: 'mdi:cursor-move',
+      },
+    ];
+
+    return commonPermissions.map((permission) => ({
+      ...permission,
+      state: permissions[permission.type] || PERMISSION_STATE.UNKNOWN,
+    }));
+  }
+
+  updateSitePermission(origin: string, type: string, state: PermissionState) {
+    // If changing to PROMPT state, clear any cached permission decisions in the session
+    if (state === PERMISSION_STATE.PROMPT) {
+      // Clear storage data for this origin to ensure fresh permission requests
+      session.defaultSession
+        .clearStorageData({
+          origin,
+          storages: [],
+          quotas: [],
+        })
+        .catch((e) => {
+          // eslint-disable-next-line no-console
+          console.error('Failed to clear storage data for origin:', origin, e);
+        });
+    }
+
+    this.setPermissionState(origin, type, state);
+  }
+
+  clearSitePermissions(origin: string) {
+    const permissions = this.permissions[origin];
+    if (permissions) {
+      // Clear storage data for this origin to ensure fresh permission requests
+      session.defaultSession
+        .clearStorageData({
+          origin,
+          storages: [],
+          quotas: [],
+        })
+        .catch((e) => {
+          // eslint-disable-next-line no-console
+          console.error('Failed to clear storage data for origin:', origin, e);
+        });
+
+      // Notify about each permission being cleared (reset to UNKNOWN)
+      Object.keys(permissions).forEach((type) => {
+        this.mainWindow.webContents.send(IPC_MAIN_CHANNELS.PERMISSION_UPDATED, {
+          origin,
+          type,
+          state: PERMISSION_STATE.UNKNOWN,
+        });
+      });
+    }
+
+    delete this.permissions[origin];
+    savePermissions(this.permissions);
   }
 }
 

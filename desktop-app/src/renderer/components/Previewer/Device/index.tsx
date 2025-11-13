@@ -92,12 +92,32 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
   const dockPosition = useSelector(selectDockPosition);
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
+  const isNavigatingFromAddressBar = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (ref.current && isPrimary) {
+      try {
+        const currentUrl = ref.current.getURL();
+        if (address !== currentUrl) {
+          isNavigatingFromAddressBar.current = true;
+          ref.current.loadURL(address);
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Error loading URL', err);
+      }
+    }
+  }, [address, isPrimary]);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
   let { height, width } = device;
 
-  if (rotateDevices || singleRotated) {
+  // Check if device rotation is enabled (only mobile-capable devices can be rotated)
+  const isDeviceRotationEnabled = device.isMobileCapable && (rotateDevices || singleRotated);
+  
+  // Apply rotation: both global and individual rotation only affect mobile-capable devices
+  if (isDeviceRotationEnabled) {
     const temp = width;
     width = height;
     height = temp;
@@ -275,7 +295,13 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
     const handlerRemovers: (() => void)[] = [];
 
     const didNavigateHandler = (e: Electron.DidNavigateEvent) => {
-      dispatch(setAddress(e.url));
+      // Only update Redux on the primary device and only if this navigation wasn't initiated by AddressBar
+      if (isPrimary && !isNavigatingFromAddressBar.current) {
+        dispatch(setAddress(e.url));
+      } else if (isPrimary) {
+        isNavigatingFromAddressBar.current = false; // Reset the flag
+      }
+
       if (isPrimary) {
         appendHistory(webview.getURL(), webview.getTitle());
       }
@@ -341,11 +367,21 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
     const didFailLoadHandler = ({
       errorCode,
       errorDescription,
+      isMainFrame,
     }: Electron.DidFailLoadEvent) => {
       if (errorCode === -3) {
         // Aborted error, can be ignored
         return;
       }
+
+      // Only show error overlay for main frame errors
+      // Iframe errors (like CSP violations) should only go to console
+      if (!isMainFrame) {
+        // eslint-disable-next-line no-console
+        console.warn('iframe error:', errorCode, errorDescription);
+        return;
+      }
+
       setError({
         code: errorCode,
         description: errorDescription,
@@ -384,6 +420,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
     isPrimary,
     inspectElement,
     openDevTools,
+    address,
   ]);
 
   useEffect(() => {
@@ -496,7 +533,9 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
   const scaledWidth = width * zoomfactor;
 
   const isRestrictedMinimumDeviceSize =
-    device.width < 400 && zoomfactor < 0.6 && !rotateDevices && !singleRotated;
+    device.width < 400 &&
+    zoomfactor < 0.6 &&
+    !isDeviceRotationEnabled;
 
   return (
     <div
@@ -522,6 +561,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
         onRotate={onRotateHandler}
         onIndividualLayoutHandler={onIndividualLayoutHandler}
         isIndividualLayout={isIndividualLayout}
+        isDeviceRotationEnabled={isDeviceRotationEnabled}
       />
       <div
         style={{
@@ -541,7 +581,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
           enabled={rulerEnabled}
           defaultGuides={window.electron.store
             .get('userPreferences.guides')
-            .flatMap((x: any) => x)
+            .flatMap((x: unknown) => x as DefaultGuide[])
             .filter((x: DefaultGuide) => {
               return x.resolution === `${width}x${height}`;
             })}
@@ -562,7 +602,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
             className="origin-top-left"
             data-scale-factor={zoomfactor}
             /* eslint-disable-next-line react/no-unknown-property */
-            allowpopups={isPrimary ? ('true' as any) : undefined}
+            allowpopups={isPrimary ? true : undefined}
             /* eslint-disable-next-line react/no-unknown-property */
             useragent={device.userAgent}
           />

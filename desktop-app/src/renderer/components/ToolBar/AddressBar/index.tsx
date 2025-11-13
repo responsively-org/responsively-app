@@ -25,6 +25,7 @@ import useKeyboardShortcut, {
 import AuthModal from './AuthModal';
 import SuggestionList from './SuggestionList';
 import Bookmark from './BookmarkButton';
+import SitePermissionsDropdown from './SitePermissions';
 
 export const ADDRESS_BAR_EVENTS = {
   DELETE_COOKIES: 'DELETE_COOKIES',
@@ -49,6 +50,7 @@ function AddressBar() {
   const [permissionRequest, setPermissionRequest] =
     useState<PermissionRequestArg | null>(null);
   const [authRequest, setAuthRequest] = useState<AuthRequestArgs | null>(null);
+  const [showSitePermissions, setShowSitePermissions] = useState(false);
   const address = useSelector(selectAddress);
   const pageTitle = useSelector(selectPageTitle);
   const dispatch = useDispatch();
@@ -170,7 +172,8 @@ function AddressBar() {
         throw new Error('Invalid URL');
       }
     } catch (err) {
-      console.log('Invalid URL');
+      // eslint-disable-next-line no-console
+      console.error('Invalid URL', err);
     }
   };
 
@@ -221,40 +224,56 @@ function AddressBar() {
         onDrop={handleDrop}
         className="relative z-10 w-full grow"
       >
-        <div className="absolute top-2 left-2 mr-2 flex flex-col items-start">
-          <Icon icon="mdi:web" className="text-gray-500" />
-          {permissionRequest != null ? (
-            <div className="z-40 mt-4 flex w-96 flex-col gap-8 rounded bg-white p-6 shadow-lg ring-1 ring-slate-500 !ring-opacity-40 focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
-              <span>
-                {permissionRequest.requestingOrigin} requests permission for:{' '}
-                <br />
-                <span className="flex justify-center font-bold capitalize">
-                  {permissionRequest.permission}
-                </span>
+        <div className="absolute inset-y-0 left-2 flex items-center">
+          <button
+            type="button"
+            onClick={() => setShowSitePermissions(!showSitePermissions)}
+            className="rounded-full p-1 transition-colors hover:bg-gray-200 dark:hover:bg-slate-700"
+            title="Site permissions"
+          >
+            <Icon icon="mdi:web" className="text-gray-500" />
+          </button>
+        </div>
+
+        <div className="absolute top-full left-2 z-50">
+          <SitePermissionsDropdown
+            currentAddress={address}
+            isVisible={showSitePermissions}
+            onClose={() => setShowSitePermissions(false)}
+          />
+        </div>
+
+        {permissionRequest != null ? (
+          <div className="absolute top-12 left-2 z-40 flex w-96 flex-col gap-8 rounded bg-white p-6 shadow-lg ring-1 ring-slate-500 !ring-opacity-40 focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
+            <span>
+              {permissionRequest.requestingOrigin} requests permission for:{' '}
+              <br />
+              <span className="flex justify-center font-bold capitalize">
+                {permissionRequest.permission}
               </span>
-              <div className="flex justify-end">
-                <div className="flex w-1/2 justify-around">
-                  <Button
-                    onClick={() => {
-                      permissionReqClickHandler(false);
-                    }}
-                    isActionButton
-                  >
-                    Block
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      permissionReqClickHandler(true);
-                    }}
-                    isActionButton
-                  >
-                    Allow
-                  </Button>
-                </div>
+            </span>
+            <div className="flex justify-end">
+              <div className="flex w-1/2 justify-around">
+                <Button
+                  onClick={() => {
+                    permissionReqClickHandler(false);
+                  }}
+                  isActionButton
+                >
+                  Block
+                </Button>
+                <Button
+                  onClick={() => {
+                    permissionReqClickHandler(true);
+                  }}
+                  isActionButton
+                >
+                  Allow
+                </Button>
               </div>
             </div>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
         <input
           ref={inputRef}
           type="text"

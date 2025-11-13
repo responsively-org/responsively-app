@@ -9,7 +9,7 @@
       "login": "manojVivek",
       "name": "Manoj Vivek",
       "avatar_url": "https://avatars1.githubusercontent.com/u/1283424?v=4",
-      "profile": "http://twitter.com/vivek_jonam",
+      "profile": "http://x.com/vivek_jonam",
       "contributions": [
         "code",
         "test",
@@ -177,7 +177,7 @@
       "login": "prashantpalikhe",
       "name": "Prashant Palikhe",
       "avatar_url": "https://avatars0.githubusercontent.com/u/2657709?v=4",
-      "profile": "https://twitter.com/PrashantPalikhe",
+      "profile": "https://x.com/PrashantPalikhe",
       "contributions": [
         "code"
       ]
@@ -321,7 +321,7 @@
       "login": "gorogoroumaru",
       "name": "gorogoroumaru",
       "avatar_url": "https://avatars3.githubusercontent.com/u/30716350?v=4",
-      "profile": "https://twitter.com/gorogoroumaru",
+      "profile": "https://x.com/gorogoroumaru",
       "contributions": [
         "code"
       ]
@@ -627,7 +627,7 @@
       "login": "amenk",
       "name": "Alexander Menk",
       "avatar_url": "https://avatars.githubusercontent.com/u/1087128?v=4",
-      "profile": "http://www.twitter.com/s3lf",
+      "profile": "http://www.x.com/s3lf",
       "contributions": [
         "doc"
       ]
@@ -848,6 +848,60 @@
       "contributions": [
         "code",
         "test"
+      ]
+    },
+    {
+      "login": "AnalyticalDataArtisan",
+      "name": "AnalyticalDataArtisan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/183036785?v=4",
+      "profile": "https://github.com/AnalyticalDataArtisan",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Kieren-Foenander",
+      "name": "Kieren-Foenander",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68266113?v=4",
+      "profile": "https://github.com/Kieren-Foenander",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Trishix",
+      "name": "Trishit Swarnakar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/170200412?v=4",
+      "profile": "https://github.com/Trishix",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "cseas",
+      "name": "Abhijeet Singh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/29686866?v=4",
+      "profile": "https://blog.absingh.com/",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "meezumi",
+      "name": "aaryan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/93996658?v=4",
+      "profile": "http://aaryancreates.framer.media",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mklikushin",
+      "name": "Michael Klikushin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/135151016?v=4",
+      "profile": "https://github.com/mklikushin",
+      "contributions": [
+        "code"
       ]
     }
   ],
