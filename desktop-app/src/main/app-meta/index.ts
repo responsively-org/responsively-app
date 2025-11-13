@@ -13,9 +13,7 @@ export const initAppMetaHandlers = () => {
     IPC_MAIN_CHANNELS.APP_META,
     async (): Promise<AppMetaResponse> => {
       return {
-        webviewPreloadPath: app.isPackaged
-          ? path.join(__dirname, 'preload-webview.js')
-          : path.join(__dirname, '../../../.erb/dll/preload-webview.js'),
+        webviewPreloadPath: path.join(__dirname, 'preload-webview.js'),
         appVersion: app.getVersion(),
       };
     },
