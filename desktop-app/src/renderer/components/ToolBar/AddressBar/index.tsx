@@ -1,9 +1,9 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import cx from 'classnames';
 import { IPC_MAIN_CHANNELS, OpenUrlArgs } from 'common/constants';
 import { AuthRequestArgs } from 'main/http-basic-auth';
 import { PermissionRequestArg } from 'main/web-permissions/PermissionsManager';
-import {
+import React, {
   DragEvent,
   KeyboardEventHandler,
   useCallback,

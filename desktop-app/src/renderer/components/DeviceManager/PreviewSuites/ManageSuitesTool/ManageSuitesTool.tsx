@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import Button from 'renderer/components/Button';
 import { useState } from 'react';
 import { FileUploader } from 'renderer/components/FileUploader';
@@ -64,21 +64,21 @@ export function ManageSuitesTool({ setCustomDevicesState }: any) {
           className="aspect-square w-12 rounded-full hover:bg-slate-500!"
           onClick={() => setOpen(true)}
         >
-          <Icon icon="uil:export" fontSize={18} />
+          <Icon icon="uil:export" className="text-[18px]" />
         </Button>
         <Button
           data-testid="upload-btn"
           className="aspect-square w-12 rounded-full hover:bg-slate-500!"
           onClick={onFileDownload}
         >
-          <Icon icon="uil:import" fontSize={18} />
+          <Icon icon="uil:import" className="text-[18px]" />
         </Button>
         <Button
           data-testid="reset-btn"
           className="aspect-square w-12 rounded-full hover:bg-slate-500!"
           onClick={() => setResetConfirmation(true)}
         >
-          <Icon icon="uil:redo" fontSize={18} />
+          <Icon icon="uil:redo" className="text-[18px]" />
         </Button>
       </div>
       <ConfirmDialog

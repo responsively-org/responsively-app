@@ -8,7 +8,7 @@ import {
   setRotate,
   setNotifications,
 } from 'renderer/store/features/renderer';
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { ScreenshotAllArgs } from 'main/screenshot';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import WebPage from 'main/screenshot/webpage';
@@ -21,7 +21,7 @@ import Button from '../Button';
 import AddressBar from './AddressBar';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import ModalLoader from '../ModalLoader';
-import { PreviewSuiteSelector } from './PreviewSuiteSelector';
+import PreviewSuiteSelector from './PreviewSuiteSelector';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from '../KeyboardShortcutsManager/useKeyboardShortcut';

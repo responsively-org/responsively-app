@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { useState, useEffect, useRef } from 'react';
 import { IPC_MAIN_CHANNELS, SitePermission } from 'common/constants';
 import { webViewPubSub } from 'renderer/lib/pubsub';

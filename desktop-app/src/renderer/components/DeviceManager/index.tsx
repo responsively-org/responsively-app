@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -92,7 +92,7 @@ function DeviceManager() {
     <div className="mx-auto flex w-4/5 flex-col gap-4 rounded-lg p-8">
       <div className="flex w-full justify-end text-3xl">
         <Button onClick={() => dispatch(setAppView(APP_VIEWS.BROWSER))}>
-          <Icon icon="ic:round-close" fontSize={18} />
+          <Icon icon="ic:round-close" className="text-[18px]" />
         </Button>
       </div>
       <div>

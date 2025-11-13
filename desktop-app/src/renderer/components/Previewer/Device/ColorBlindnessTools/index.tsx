@@ -1,7 +1,7 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import cx from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
-import { DropDown } from 'renderer/components/DropDown';
+import DropDown from 'renderer/components/DropDown';
 import { COLOR_BLINDNESS_CHANNEL } from 'renderer/components/ToolBar/ColorBlindnessControls';
 import {
   BLUE_YELLOW,

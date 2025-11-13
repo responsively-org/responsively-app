@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import Button from 'renderer/components/Button';
 
 function ClearHistory() {

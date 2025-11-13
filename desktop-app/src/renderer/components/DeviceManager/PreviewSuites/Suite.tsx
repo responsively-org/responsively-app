@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import cx from 'classnames';
 import { Device, getDevicesMap } from 'common/deviceList';
 import { useDrop } from 'react-dnd';

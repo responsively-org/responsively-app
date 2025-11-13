@@ -1,6 +1,6 @@
 import cx from 'classnames';
-import { Icon } from '@iconify/react';
-import { DropDown } from '../DropDown';
+import { Icon } from '@iconify-icon/react';
+import DropDown from '../DropDown';
 
 function MenuItemLabel({
   label,
@@ -84,7 +84,7 @@ export function VisionSimulationDropDown({ simulationName, onChange }: Props) {
       className={cx('rounded-lg text-xs', {
         'bg-slate-400/60': simulationName != null,
       })}
-      label={<Icon icon="bx:low-vision" fontSize={18} />}
+      label={<Icon icon="bx:low-vision" className="text-[18px]" />}
       options={[
         {
           label: <MenuItemHeader label="No deficiency" />,

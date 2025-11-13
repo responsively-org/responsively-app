@@ -75,6 +75,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
   const [screenshotInProgress, setScreenshotInProgress] =
     useState<boolean>(false);
   const [domReady, setDomReady] = useState(false);
+  const [webviewReady, setWebviewReady] = useState(false);
   const address = useSelector(selectAddress);
   const zoomfactor = useSelector(selectZoomFactor);
   const isInspecting = useSelector(selectIsInspecting);
@@ -95,7 +96,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
   const isNavigatingFromAddressBar = useRef<boolean>(false);
 
   useEffect(() => {
-    if (ref.current && isPrimary) {
+    if (ref.current && isPrimary && webviewReady) {
       try {
         const currentUrl = ref.current.getURL();
         if (address !== currentUrl) {
@@ -107,7 +108,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
         console.error('Error loading URL', err);
       }
     }
-  }, [address, isPrimary]);
+  }, [address, isPrimary, webviewReady]);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
@@ -503,13 +504,25 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
   }, [isInspecting, domReady]);
 
   useEffect(() => {
-    if (!ref.current || !device.isMobileCapable) {
-      return;
+    if (!ref.current) {
+      return () => {};
     }
     const webview = ref.current;
-    const domReadyHandler = () => setDomReady(true);
+
+    // Set webviewReady for all devices to enable getURL() calls
+    const webviewReadyHandler = () => setWebviewReady(true);
+    webview.addEventListener('dom-ready', webviewReadyHandler);
+
+    // Set domReady only for mobile-capable devices (used for inspector overlay)
+    const domReadyHandler = () => {
+      if (device.isMobileCapable) {
+        setDomReady(true);
+      }
+    };
     webview.addEventListener('dom-ready', domReadyHandler);
+
     return () => {
+      webview.removeEventListener('dom-ready', webviewReadyHandler);
       webview.removeEventListener('dom-ready', domReadyHandler);
     };
   }, [ref, device.isMobileCapable]);
@@ -601,7 +614,7 @@ function Device({ isPrimary, device, setIndividualDevice }: Props) {
             className="origin-top-left"
             data-scale-factor={zoomfactor}
             /* eslint-disable-next-line react/no-unknown-property */
-            allowpopups={isPrimary ? true : undefined}
+            allowpopups={isPrimary ? 'true' : undefined}
             /* eslint-disable-next-line react/no-unknown-property */
             useragent={device.userAgent}
           />

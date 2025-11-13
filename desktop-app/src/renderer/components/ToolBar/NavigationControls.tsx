@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import Button from '../Button';
 import useKeyboardShortcut, {

@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { useState, useMemo } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useDispatch, useSelector } from 'react-redux';

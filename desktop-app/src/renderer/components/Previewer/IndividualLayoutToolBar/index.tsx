@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Tab, Tabs, TabList } from 'react-tabs';
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import cx from 'classnames';
 import { setLayout } from 'renderer/store/features/renderer';
 import { PREVIEW_LAYOUTS } from 'common/constants';

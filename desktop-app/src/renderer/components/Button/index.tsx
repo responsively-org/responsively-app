@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import cx from 'classnames';
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 
 interface CustomProps {
   className?: string;
