@@ -1,8 +1,8 @@
-import { BrowserView, BrowserWindow, ipcMain, webContents } from 'electron';
+import { WebContentsView, BrowserWindow, ipcMain, webContents } from 'electron';
 import { DOCK_POSITION } from '../../common/constants';
 import { DockPosition } from '../../renderer/store/features/devtools';
 
-let devtoolsBrowserView: BrowserView | undefined;
+let devtoolsBrowserView: WebContentsView | undefined;
 let devtoolsWebview: Electron.WebContents;
 let mainWindow: BrowserWindow | undefined;
 
@@ -144,8 +144,8 @@ const openDevtools = async (
     devtoolsWebview.openDevTools({ mode: 'detach' });
     return { status: true };
   }
-  devtoolsBrowserView = new BrowserView();
-  mainWindow.setBrowserView(devtoolsBrowserView);
+  devtoolsBrowserView = new WebContentsView();
+  mainWindow.contentView.addChildView(devtoolsBrowserView);
   devtoolsBrowserView.setBounds({
     x: 0,
     y: 0,
@@ -212,7 +212,7 @@ const closeDevTools = async () => {
   if (devtoolsBrowserView == null) {
     return;
   }
-  mainWindow?.removeBrowserView(devtoolsBrowserView);
+  mainWindow?.contentView.removeChildView(devtoolsBrowserView);
   (devtoolsBrowserView.webContents as any).destroy();
   devtoolsBrowserView.webContents.close();
   devtoolsBrowserView = undefined;
