@@ -91,16 +91,36 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
 
   useEffect(() => {
     if (ref.current && isPrimary) {
-      try {
-        const currentUrl = ref.current.getURL();
-        if (address !== currentUrl) {
-          isNavigatingFromAddressBar.current = true;
-          ref.current.loadURL(address);
+      const webview = ref.current as Electron.WebviewTag;
+
+      // Check if webview is ready before calling getURL
+      const checkAndLoadURL = () => {
+        try {
+          const currentUrl = webview.getURL();
+          if (address !== currentUrl) {
+            isNavigatingFromAddressBar.current = true;
+            webview.loadURL(address);
+          }
+        } catch (err) {
+          // WebView not ready yet, wait for dom-ready event
+          const domReadyHandler = () => {
+            try {
+              const currentUrl = webview.getURL();
+              if (address !== currentUrl) {
+                isNavigatingFromAddressBar.current = true;
+                webview.loadURL(address);
+              }
+            } catch (loadErr) {
+              // eslint-disable-next-line no-console
+              console.error('Error loading URL', loadErr);
+            }
+            webview.removeEventListener('dom-ready', domReadyHandler);
+          };
+          webview.addEventListener('dom-ready', domReadyHandler);
         }
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error('Error loading URL', err);
-      }
+      };
+
+      checkAndLoadURL();
     }
   }, [address, isPrimary]);
 
@@ -109,8 +129,9 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   let { height, width } = device;
 
   // Check if device rotation is enabled (only mobile-capable devices can be rotated)
-  const isDeviceRotationEnabled = device.isMobileCapable && (rotateDevices || singleRotated);
-  
+  const isDeviceRotationEnabled =
+    device.isMobileCapable && (rotateDevices || singleRotated);
+
   // Apply rotation: both global and individual rotation only affect mobile-capable devices
   if (isDeviceRotationEnabled) {
     const temp = width;
@@ -535,9 +556,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const scaledWidth = width * zoomfactor;
 
   const isRestrictedMinimumDeviceSize =
-    device.width < 400 &&
-    zoomfactor < 0.6 &&
-    !isDeviceRotationEnabled;
+    device.width < 400 && zoomfactor < 0.6 && !isDeviceRotationEnabled;
 
   return (
     <div
@@ -610,7 +629,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             preload={`file://${window.responsively.webviewPreloadPath}`}
             data-scale-factor={zoomfactor}
             /* eslint-disable-next-line react/no-unknown-property */
-            allowpopups={isPrimary ? true : undefined}
+            allowpopups={isPrimary ? 'true' : undefined}
             /* eslint-disable-next-line react/no-unknown-property */
             useragent={device.userAgent}
           />
