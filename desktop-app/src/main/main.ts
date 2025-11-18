@@ -32,6 +32,7 @@ import { initHttpBasicAuthHandlers } from './http-basic-auth';
 import { initAppMetaHandlers } from './app-meta';
 import { openUrl } from './protocol-handler';
 import { AppUpdater } from './app-updater';
+import { initAIChat } from './ai-chat';
 
 let windowShownOnOpen = false;
 
@@ -56,6 +57,7 @@ initWebviewContextMenu();
 initScreenshotHandlers();
 initWebviewStorageManagerHandlers();
 initNativeFunctionHandlers();
+initAIChat();
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
