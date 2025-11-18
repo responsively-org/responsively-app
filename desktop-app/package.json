@@ -74,6 +74,7 @@
   },
   "dependencies": {
     "@fontsource/lato": "^5.0.17",
+    "@google/generative-ai": "^0.24.1",
     "@headlessui-float/react": "^0.12.0",
     "@headlessui/react": "^1.7.4",
     "@iconify/react": "^3.2.2",
