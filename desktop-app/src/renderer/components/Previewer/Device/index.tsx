@@ -41,6 +41,11 @@ import {
   setPageTitle,
 } from 'renderer/store/features/renderer';
 import { PREVIEW_LAYOUTS } from 'common/constants';
+import {
+  selectDeviceRotationById,
+  setDeviceRotation,
+} from 'renderer/store/features/device-orientation';
+import type { RootState } from 'renderer/store';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
@@ -69,7 +74,6 @@ interface ErrorState {
 }
 
 const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
-  const [singleRotated, setSingleRotated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorState | null>(null);
   const [screenshotInProgress, setScreenshotInProgress] =
@@ -88,6 +92,9 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
   const isNavigatingFromAddressBar = useRef<boolean>(false);
+  const singleRotated = useSelector((state: RootState) =>
+    selectDeviceRotationById(state, device.id)
+  );
 
   useEffect(() => {
     if (ref.current && isPrimary) {
@@ -292,7 +299,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     ]
   );
 
-  const onRotateHandler = (state: boolean) => setSingleRotated(state);
+  const onRotateHandler = (state: boolean) =>
+    dispatch(setDeviceRotation({ deviceId: device.id, rotated: state }));
 
   const onIndividualLayoutHandler = (selectedDevice: IDevice) => {
     if (!isIndividualLayout) {
@@ -583,6 +591,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         onIndividualLayoutHandler={onIndividualLayoutHandler}
         isIndividualLayout={isIndividualLayout}
         isDeviceRotationEnabled={isDeviceRotationEnabled}
+        rotated={singleRotated}
       />
       <div
         style={{
