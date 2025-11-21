@@ -305,6 +305,42 @@ const schema = {
     },
     default: {},
   },
+  visualDiff: {
+    type: 'object',
+    properties: {
+      baselines: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            deviceId: {
+              type: 'string',
+            },
+            deviceName: {
+              type: 'string',
+            },
+            address: {
+              type: 'string',
+            },
+            filePath: {
+              type: 'string',
+            },
+            width: {
+              type: 'number',
+            },
+            height: {
+              type: 'number',
+            },
+            createdAt: {
+              type: 'number',
+            },
+          },
+        },
+        default: [],
+      },
+    },
+    default: {},
+  },
 } as const;
 
 const store = new Store({
