@@ -25,7 +25,9 @@ export const initAIChat = () => {
       return 'API key is not set. Please set it in the chat settings.';
     }
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-pro' });
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-2.0-flash-lite',
+      });
       const result = await model.generateContent(message);
       const response = await result.response;
       const text = response.text();
