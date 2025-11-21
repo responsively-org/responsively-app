@@ -47,6 +47,10 @@ export const IPC_MAIN_CHANNELS = {
 
 export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];
 
+export const AI_CHAT_EVENTS = {
+  GET_PAGE_SOURCE: 'GET_PAGE_SOURCE',
+} as const;
+
 export const PROTOCOL = 'responsively';
 
 export const PERMISSION_TYPES = {

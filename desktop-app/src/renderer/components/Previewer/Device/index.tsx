@@ -40,7 +40,7 @@ import {
   setLayout,
   setPageTitle,
 } from 'renderer/store/features/renderer';
-import { PREVIEW_LAYOUTS } from 'common/constants';
+import { PREVIEW_LAYOUTS, AI_CHAT_EVENTS } from 'common/constants';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
@@ -109,8 +109,9 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   let { height, width } = device;
 
   // Check if device rotation is enabled (only mobile-capable devices can be rotated)
-  const isDeviceRotationEnabled = device.isMobileCapable && (rotateDevices || singleRotated);
-  
+  const isDeviceRotationEnabled =
+    device.isMobileCapable && (rotateDevices || singleRotated);
+
   // Apply rotation: both global and individual rotation only affect mobile-capable devices
   if (isDeviceRotationEnabled) {
     const temp = width;
@@ -181,6 +182,22 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           webContentsId: webview.getWebContentsId(),
           storages: ['network-cache'],
         });
+      });
+
+      webViewPubSub.subscribe(AI_CHAT_EVENTS.GET_PAGE_SOURCE, async () => {
+        if (!ref.current) {
+          return '';
+        }
+        const webview = ref.current as Electron.WebviewTag;
+        try {
+          const html = await webview.executeJavaScript(
+            'document.documentElement.outerHTML'
+          );
+          return html;
+        } catch (err) {
+          console.error('Error getting page source:', err);
+          return '';
+        }
       });
     }
   }, [isPrimary]);
@@ -535,9 +552,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const scaledWidth = width * zoomfactor;
 
   const isRestrictedMinimumDeviceSize =
-    device.width < 400 &&
-    zoomfactor < 0.6 &&
-    !isDeviceRotationEnabled;
+    device.width < 400 && zoomfactor < 0.6 && !isDeviceRotationEnabled;
 
   return (
     <div

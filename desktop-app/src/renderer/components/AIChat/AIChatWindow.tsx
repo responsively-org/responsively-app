@@ -6,6 +6,8 @@ import {
   selectHasApiKey,
   setApiKey,
 } from '../../store/features/aiChat';
+import { selectAddress, selectPageTitle } from '../../store/features/renderer';
+import { selectDevices } from '../../store/features/device-manager';
 import { IPC_MAIN_CHANNELS } from '../../../common/constants';
 import APIKeyModal from '../APIKeyModal';
 
@@ -17,6 +19,10 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
   const dispatch = useDispatch();
   const messages = useSelector(selectChatMessages);
   const hasApiKey = useSelector(selectHasApiKey);
+  const address = useSelector(selectAddress);
+  const pageTitle = useSelector(selectPageTitle);
+  const devices = useSelector(selectDevices);
+
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isApiModalOpen, setApiModalOpen] = useState(false);
@@ -33,10 +39,59 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
       setIsLoading(true);
 
       try {
+        // Fetch page source from the primary device
+        const results = await import('../../lib/pubsub').then(
+          ({ webViewPubSub }) =>
+            webViewPubSub.publish(
+              import('../../../common/constants').then(
+                (m) => m.AI_CHAT_EVENTS.GET_PAGE_SOURCE
+              ) as any
+            )
+        );
+
+        // The publish method returns an array of results from all subscribers.
+        // Since we only subscribe in the primary device, we expect one valid string result.
+        // However, publish is async and returns promises, so we need to handle that.
+        // Actually, looking at PubSub implementation:
+        // publish returns Promise<HandlerResult[]> where HandlerResult is { result: any, error: any }
+
+        // Let's re-import properly to avoid dynamic import issues in the function body if possible,
+        // but for now let's just use the imported constant if we can, or hardcode the string if imports are tricky here.
+        // Better: Import webViewPubSub and AI_CHAT_EVENTS at top level.
+
+        // Wait, I need to update imports first.
+        // Let's assume I updated imports.
+
+        const sourceCodeResults = await import('../../lib/pubsub').then(
+          async ({ webViewPubSub }) => {
+            const { AI_CHAT_EVENTS } = await import(
+              '../../../common/constants'
+            );
+            return webViewPubSub.publish(AI_CHAT_EVENTS.GET_PAGE_SOURCE);
+          }
+        );
+
+        const sourceCode =
+          sourceCodeResults.find((r) => r.result)?.result || '';
+
+        const context = {
+          url: address,
+          pageTitle,
+          devices: devices.map((d) => ({
+            name: d.name,
+            width: d.width,
+            height: d.height,
+          })),
+          sourceCode: sourceCode as string,
+        };
+
         const response = await window.electron.ipcRenderer.invoke<
           string,
-          string
-        >(IPC_MAIN_CHANNELS['ai-chat:sendMessage'], inputValue);
+          { message: string; context: any }
+        >(IPC_MAIN_CHANNELS['ai-chat:sendMessage'], {
+          message: inputValue,
+          context,
+        });
 
         const aiMessage = {
           id: Date.now().toString(),

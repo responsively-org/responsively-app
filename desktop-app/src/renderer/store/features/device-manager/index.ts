@@ -131,6 +131,8 @@ export const {
 
 export const selectSuites = (state: RootState) => state.deviceManager.suites;
 
+export const selectDevices = (state: RootState) => state.deviceManager.devices;
+
 export const selectActiveSuite = (state: RootState): PreviewSuite => {
   const { activeSuite, suites } = state.deviceManager;
   return suites.find((suite) => suite.id === activeSuite) ?? suites[0];
