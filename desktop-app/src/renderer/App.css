@@ -15,3 +15,71 @@
 html {
   user-select: none;
 }
+
+/* Theme CSS Variables - Default values */
+:root {
+  --theme-bg: #1e1e1e;
+  --theme-bg-secondary: #2f2f33;
+  --theme-text: #f8f8f8;
+  --theme-text-secondary: #868686;
+  --theme-primary: #536be7;
+  --theme-secondary: #424242;
+  --theme-border: #383838;
+  --theme-accent: #7587ec;
+}
+
+/* Apply theme colors with transitions */
+body {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Override all dark mode background colors */
+.dark .bg-slate-800,
+.dark .bg-slate-900,
+.dark .bg-slate-100,
+.dark .bg-slate-200 {
+  background-color: var(--theme-bg) !important;
+}
+
+.dark .bg-slate-700,
+.dark .bg-white {
+  background-color: var(--theme-bg-secondary) !important;
+}
+
+/* Override text colors */
+.dark .text-slate-200,
+.dark .text-slate-300,
+.dark .text-slate-500,
+.dark .text-light-normal,
+.dark .text-dark-normal {
+  color: var(--theme-text) !important;
+}
+
+.dark .text-slate-400,
+.dark .text-slate-500 {
+  color: var(--theme-text-secondary) !important;
+}
+
+/* Override border colors */
+.dark .border-slate-400,
+.dark .border-slate-600,
+.dark .border-slate-700,
+.dark .border-gray-300,
+.dark .border-gray-700 {
+  border-color: var(--theme-border) !important;
+}
+
+/* Override ring colors */
+.dark .ring-slate-500,
+.dark .ring-white {
+  --tw-ring-color: var(--theme-border) !important;
+}
+
+/* Override hover states */
+.dark .hover\:bg-slate-600:hover,
+.dark .hover\:bg-slate-700:hover {
+  background-color: var(--theme-accent) !important;
+  opacity: 0.8;
+}
