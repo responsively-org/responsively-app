@@ -9,12 +9,18 @@ import {
   selectHasApiKey,
   setApiKey,
   clearMessages,
+  setSelectedModel,
+  setCustomSystemPrompt,
+  selectSelectedModel,
+  selectCustomSystemPrompt,
+  setPreferredLanguage,
+  selectPreferredLanguage,
 } from '../../store/features/aiChat';
 import { selectAddress, selectPageTitle } from '../../store/features/renderer';
 import { selectDevices } from '../../store/features/device-manager';
 import { IPC_MAIN_CHANNELS, AI_CHAT_EVENTS } from '../../../common/constants';
 import { webViewPubSub } from '../../lib/pubsub';
-import APIKeyModal from '../APIKeyModal';
+import SettingsModal from '../SettingsModal';
 
 type AIChatWindowProps = {
   onClose: () => void;
@@ -27,6 +33,9 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
   const address = useSelector(selectAddress);
   const pageTitle = useSelector(selectPageTitle);
   const devices = useSelector(selectDevices);
+  const selectedModel = useSelector(selectSelectedModel);
+  const customSystemPrompt = useSelector(selectCustomSystemPrompt);
+  const preferredLanguage = useSelector(selectPreferredLanguage);
 
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -239,6 +248,9 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
           })),
           sourceCode,
           screenshot: attachedScreenshot || undefined,
+          selectedModel,
+          customSystemPrompt,
+          preferredLanguage,
         };
 
         const response = await window.electron.ipcRenderer.invoke<string>(
@@ -269,9 +281,19 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
     }
   };
 
-  const handleSaveApiKey = (apiKey: string) => {
-    dispatch(setApiKey(apiKey));
-    window.electron.store.set('geminiApiKey', apiKey);
+  const handleSaveSettings = (settings: {
+    apiKey: string;
+    model: string;
+    customPrompt: string;
+    preferredLanguage: string;
+  }) => {
+    if (settings.apiKey) {
+      dispatch(setApiKey(settings.apiKey));
+      window.electron.store.set('geminiApiKey', settings.apiKey);
+    }
+    dispatch(setSelectedModel(settings.model));
+    dispatch(setCustomSystemPrompt(settings.customPrompt));
+    dispatch(setPreferredLanguage(settings.preferredLanguage));
   };
 
   return (
@@ -502,10 +524,10 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
           </div>
         </Resizable>
       </div>
-      <APIKeyModal
+      <SettingsModal
         isOpen={isApiModalOpen}
         onClose={() => setApiModalOpen(false)}
-        onSave={handleSaveApiKey}
+        onSave={handleSaveSettings}
       />
     </>
   );

@@ -12,6 +12,9 @@ type AIChatState = {
   messages: Message[];
   hasApiKey: boolean;
   apiKey: string | null;
+  selectedModel: string;
+  customSystemPrompt: string;
+  preferredLanguage: string;
 };
 
 const initialState: AIChatState = {
@@ -19,6 +22,12 @@ const initialState: AIChatState = {
   messages: window.electron.store.get('aiChat.messages') || [],
   hasApiKey: false,
   apiKey: null,
+  selectedModel:
+    window.electron.store.get('aiChat.selectedModel') || 'gemini-2.5-flash',
+  customSystemPrompt:
+    window.electron.store.get('aiChat.customSystemPrompt') || '',
+  preferredLanguage:
+    window.electron.store.get('aiChat.preferredLanguage') || 'English',
 };
 
 const aiChatSlice = createSlice({
@@ -40,6 +49,18 @@ const aiChatSlice = createSlice({
       state.messages = [];
       window.electron.store.set('aiChat.messages', []);
     },
+    setSelectedModel: (state, action: PayloadAction<string>) => {
+      state.selectedModel = action.payload;
+      window.electron.store.set('aiChat.selectedModel', action.payload);
+    },
+    setCustomSystemPrompt: (state, action: PayloadAction<string>) => {
+      state.customSystemPrompt = action.payload;
+      window.electron.store.set('aiChat.customSystemPrompt', action.payload);
+    },
+    setPreferredLanguage: (state, action: PayloadAction<string>) => {
+      state.preferredLanguage = action.payload;
+      window.electron.store.set('aiChat.preferredLanguage', action.payload);
+    },
   },
 });
 
@@ -48,11 +69,24 @@ type RootStateWithAIChat = {
   aiChat: AIChatState;
 };
 
-export const { toggleChat, addMessage, setApiKey, clearMessages } =
-  aiChatSlice.actions;
+export const {
+  toggleChat,
+  addMessage,
+  setApiKey,
+  clearMessages,
+  setSelectedModel,
+  setCustomSystemPrompt,
+  setPreferredLanguage,
+} = aiChatSlice.actions;
 
 export const selectIsChatOpen = (state: RootState) => state.aiChat.isOpen;
 export const selectChatMessages = (state: RootState) => state.aiChat.messages;
 export const selectHasApiKey = (state: RootState) => state.aiChat.hasApiKey;
+export const selectSelectedModel = (state: RootState) =>
+  state.aiChat.selectedModel;
+export const selectCustomSystemPrompt = (state: RootState) =>
+  state.aiChat.customSystemPrompt;
+export const selectPreferredLanguage = (state: RootState) =>
+  state.aiChat.preferredLanguage;
 
 export default aiChatSlice.reducer;

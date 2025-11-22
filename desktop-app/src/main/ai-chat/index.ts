@@ -4,6 +4,16 @@ import store from '../../store';
 import { APP_KNOWLEDGE } from './appKnowledge';
 import { optimizeHtml } from './htmlOptimizer';
 
+// Valid Gemini models
+const VALID_MODELS = [
+  'gemini-2.5-flash',
+  'gemini-2.0-flash-lite',
+  'gemini-3-pro-preview',
+  'gemini-1.5-pro',
+  'gemini-1.5-flash',
+];
+const DEFAULT_MODEL = 'gemini-2.5-flash';
+
 let genAI: GoogleGenerativeAI | null = null;
 
 const initializeGenAI = () => {
@@ -34,6 +44,9 @@ export const initAIChat = () => {
           devices: { name: string; width: number; height: number }[];
           sourceCode?: string;
           screenshot?: string;
+          selectedModel?: string;
+          customSystemPrompt?: string;
+          preferredLanguage?: string;
         };
       }
     ) => {
@@ -41,18 +54,46 @@ export const initAIChat = () => {
         return 'API key is not set. Please set it in the chat settings.';
       }
       try {
-        const model = genAI.getGenerativeModel({
-          model: 'gemini-2.0-flash-lite',
+        const { message, context } = payload;
+
+        // Validate and sanitize model name
+        const requestedModel = context.selectedModel || DEFAULT_MODEL;
+        const selectedModelName = VALID_MODELS.includes(requestedModel)
+          ? requestedModel
+          : DEFAULT_MODEL;
+
+        // Log warning if model was changed
+        if (selectedModelName !== requestedModel) {
+          console.warn(
+            `Invalid model "${requestedModel}" requested. Falling back to "${DEFAULT_MODEL}".`
+          );
+        }
+
+        // Log for debugging
+        console.log('AI Chat Request:', {
+          requestedModel,
+          selectedModel: selectedModelName,
+          hasCustomPrompt: !!context.customSystemPrompt,
+          hasScreenshot: !!context.screenshot,
         });
 
-        const { message, context } = payload;
+        const model = genAI.getGenerativeModel({
+          model: selectedModelName,
+        });
 
         const optimizedSource = context.sourceCode
           ? optimizeHtml(context.sourceCode)
           : 'Not available';
 
-        const systemPrompt = `
-You are an intelligent assistant for Responsively App, a browser for responsive web development.
+        const basePrompt = context.customSystemPrompt
+          ? `${context.customSystemPrompt}\n\n`
+          : '';
+
+        const languageInstruction = context.preferredLanguage
+          ? `\nIMPORTANT: Respond in ${context.preferredLanguage}. All your answers must be written in ${context.preferredLanguage}.\n\n`
+          : '';
+
+        const systemPrompt = `${basePrompt}${languageInstruction}You are an intelligent assistant for Responsively App, a browser for responsive web development.
 
 About Responsively App:
 ${APP_KNOWLEDGE}
@@ -96,7 +137,55 @@ If the user asks "what do you see?" or "how does this look?", refer to the provi
         return text;
       } catch (error) {
         console.error('Error communicating with AI:', error);
-        return 'Sorry, I encountered an error.';
+
+        // Return specific error messages based on error type
+        if (error instanceof Error) {
+          const errorMsg = error.message.toLowerCase();
+
+          // API key errors
+          if (
+            errorMsg.includes('api key') ||
+            errorMsg.includes('api_key') ||
+            errorMsg.includes('invalid key') ||
+            errorMsg.includes('unauthorized')
+          ) {
+            return 'API key is invalid or missing. Please check your settings and ensure you have a valid Gemini API key.';
+          }
+
+          // Quota/billing errors
+          if (
+            errorMsg.includes('quota') ||
+            errorMsg.includes('limit') ||
+            errorMsg.includes('rate limit') ||
+            errorMsg.includes('billing')
+          ) {
+            return 'API quota exceeded or billing issue. Please check your Google Cloud Console for usage limits and billing status.';
+          }
+
+          // Model errors
+          if (
+            errorMsg.includes('model') ||
+            errorMsg.includes('not found') ||
+            errorMsg.includes('does not exist')
+          ) {
+            return `Model "${context.selectedModel}" is not available. Please try selecting a different model in Settings.`;
+          }
+
+          // Network errors
+          if (
+            errorMsg.includes('network') ||
+            errorMsg.includes('fetch') ||
+            errorMsg.includes('timeout') ||
+            errorMsg.includes('econnrefused')
+          ) {
+            return 'Network error. Please check your internet connection and try again.';
+          }
+
+          // Generic error with message
+          return `Sorry, I encountered an error: ${error.message}`;
+        }
+
+        return 'Sorry, I encountered an unexpected error. Please try again.';
       }
     }
   );
