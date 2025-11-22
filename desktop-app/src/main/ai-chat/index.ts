@@ -1,7 +1,8 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { ipcMain } from 'electron';
+import { ipcMain, BrowserWindow } from 'electron';
 import store from '../../store';
 import { APP_KNOWLEDGE } from './appKnowledge';
+import { optimizeHtml } from './htmlOptimizer';
 
 let genAI: GoogleGenerativeAI | null = null;
 
@@ -32,6 +33,7 @@ export const initAIChat = () => {
           pageTitle: string;
           devices: { name: string; width: number; height: number }[];
           sourceCode?: string;
+          screenshot?: string;
         };
       }
     ) => {
@@ -44,6 +46,10 @@ export const initAIChat = () => {
         });
 
         const { message, context } = payload;
+
+        const optimizedSource = context.sourceCode
+          ? optimizeHtml(context.sourceCode)
+          : 'Not available';
 
         const systemPrompt = `
 You are an intelligent assistant for Responsively App, a browser for responsive web development.
@@ -58,16 +64,33 @@ Current Context:
           .map((d) => `${d.name} (${d.width}x${d.height})`)
           .join(', ')}
 
-Page Source (HTML):
+Page Source (HTML - Optimized):
 \`\`\`html
-${context.sourceCode ? context.sourceCode.substring(0, 20000) : 'Not available'}
+${optimizedSource.substring(0, 50000)}
 \`\`\`
-(Note: Source code may be truncated if too long)
+(Note: Source code is optimized and may be truncated if too long)
 
 User Message: ${message}
+
+IMPORTANT: You are provided with a screenshot of the current page or app window. 
+Use this image to answer questions about the visual layout, design, and content. 
+If the user asks "what do you see?" or "how does this look?", refer to the provided screenshot.
 `;
 
-        const result = await model.generateContent(systemPrompt);
+        const parts: any[] = [systemPrompt];
+
+        if (context.screenshot) {
+          // Remove the data URL prefix (e.g., "data:image/png;base64,")
+          const base64Data = context.screenshot.split(',')[1];
+          parts.push({
+            inlineData: {
+              data: base64Data,
+              mimeType: 'image/png',
+            },
+          });
+        }
+
+        const result = await model.generateContent(parts);
         const response = await result.response;
         const text = response.text();
         return text;
@@ -77,4 +100,16 @@ User Message: ${message}
       }
     }
   );
+
+  ipcMain.handle('ai-chat:get-app-screenshot', async () => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (!win) return null;
+    try {
+      const image = await win.capturePage();
+      return image.toDataURL();
+    } catch (error) {
+      console.error('Error capturing app screenshot:', error);
+      return null;
+    }
+  });
 };

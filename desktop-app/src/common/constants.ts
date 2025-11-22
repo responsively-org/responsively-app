@@ -43,12 +43,14 @@ export const IPC_MAIN_CHANNELS = {
   CLEAR_SITE_PERMISSIONS: 'clear-site-permissions',
   PERMISSION_UPDATED: 'permission-updated',
   'ai-chat:sendMessage': 'ai-chat:sendMessage',
+  'ai-chat:get-app-screenshot': 'ai-chat:get-app-screenshot',
 } as const;
 
 export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];
 
 export const AI_CHAT_EVENTS = {
   GET_PAGE_SOURCE: 'GET_PAGE_SOURCE',
+  GET_SCREENSHOT: 'GET_SCREENSHOT',
 } as const;
 
 export const PROTOCOL = 'responsively';

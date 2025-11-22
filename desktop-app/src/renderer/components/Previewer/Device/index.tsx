@@ -199,8 +199,36 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           return '';
         }
       });
+
+      webViewPubSub.subscribe(
+        AI_CHAT_EVENTS.GET_SCREENSHOT,
+        async (targetDeviceName?: string) => {
+          if (!ref.current) {
+            return null;
+          }
+
+          // If a target device is specified, only capture if names match
+          if (targetDeviceName && targetDeviceName !== device.name) {
+            return null;
+          }
+
+          // If no target specified, default to primary (legacy behavior)
+          if (!targetDeviceName && !isPrimary) {
+            return null;
+          }
+
+          const webview = ref.current as Electron.WebviewTag;
+          try {
+            const image = await webview.capturePage();
+            return image.toDataURL();
+          } catch (err) {
+            console.error('Error capturing screenshot:', err);
+            return null;
+          }
+        }
+      );
     }
-  }, [isPrimary]);
+  }, [isPrimary, device.name]);
 
   const toggleRuler = useCallback(() => {
     if (!ref.current) {

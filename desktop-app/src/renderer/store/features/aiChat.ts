@@ -1,9 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 
 type Message = {
   id: string;
   text: string;
   sender: 'user' | 'ai';
+  image?: string;
 };
 
 type AIChatState = {
@@ -15,7 +16,7 @@ type AIChatState = {
 
 const initialState: AIChatState = {
   isOpen: false,
-  messages: [],
+  messages: window.electron.store.get('aiChat.messages') || [],
   hasApiKey: false,
   apiKey: null,
 };
@@ -29,10 +30,15 @@ const aiChatSlice = createSlice({
     },
     addMessage: (state, action: PayloadAction<Message>) => {
       state.messages.push(action.payload);
+      window.electron.store.set('aiChat.messages', current(state.messages));
     },
     setApiKey: (state, action: PayloadAction<string>) => {
       state.apiKey = action.payload;
       state.hasApiKey = !!action.payload;
+    },
+    clearMessages: (state) => {
+      state.messages = [];
+      window.electron.store.set('aiChat.messages', []);
     },
   },
 });
@@ -42,7 +48,8 @@ type RootStateWithAIChat = {
   aiChat: AIChatState;
 };
 
-export const { toggleChat, addMessage, setApiKey } = aiChatSlice.actions;
+export const { toggleChat, addMessage, setApiKey, clearMessages } =
+  aiChatSlice.actions;
 
 export const selectIsChatOpen = (state: RootState) => state.aiChat.isOpen;
 export const selectChatMessages = (state: RootState) => state.aiChat.messages;

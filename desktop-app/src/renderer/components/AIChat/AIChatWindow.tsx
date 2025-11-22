@@ -8,10 +8,12 @@ import {
   selectChatMessages,
   selectHasApiKey,
   setApiKey,
+  clearMessages,
 } from '../../store/features/aiChat';
 import { selectAddress, selectPageTitle } from '../../store/features/renderer';
 import { selectDevices } from '../../store/features/device-manager';
-import { IPC_MAIN_CHANNELS } from '../../../common/constants';
+import { IPC_MAIN_CHANNELS, AI_CHAT_EVENTS } from '../../../common/constants';
+import { webViewPubSub } from '../../lib/pubsub';
 import APIKeyModal from '../APIKeyModal';
 
 type AIChatWindowProps = {
@@ -29,6 +31,7 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isApiModalOpen, setApiModalOpen] = useState(false);
+  const [isContextEnabled, setIsContextEnabled] = useState(true);
 
   // Window State
   const [position, setPosition] = useState({
@@ -161,43 +164,70 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
     setPosition({ x: newX, y: newY });
   };
 
+  const fetchPageSource = async (): Promise<string> => {
+    try {
+      const results = await Promise.race([
+        webViewPubSub.publish(AI_CHAT_EVENTS.GET_PAGE_SOURCE),
+        new Promise<any[]>((_resolve, reject) =>
+          setTimeout(() => reject(new Error('Timeout')), 5000)
+        ),
+      ]);
+      return results.find((r) => r.result)?.result || '';
+    } catch (error) {
+      console.error('Failed to fetch page source:', error);
+      return '';
+    }
+  };
+
+  const fetchScreenshot = async (): Promise<string | null> => {
+    try {
+      return await window.electron.ipcRenderer.invoke(
+        IPC_MAIN_CHANNELS['ai-chat:get-app-screenshot']
+      );
+    } catch (error) {
+      console.error('Failed to fetch screenshot:', error);
+      return null;
+    }
+  };
+
+  const [attachedScreenshot, setAttachedScreenshot] = useState<string | null>(
+    null
+  );
+
+  const handleCaptureScreenshot = async () => {
+    const screenshot = await fetchScreenshot();
+    if (screenshot) {
+      setAttachedScreenshot(screenshot);
+    }
+  };
+
   const handleSendMessage = async () => {
     if (inputValue.trim() && !isLoading) {
-      const userMessage = {
-        id: Date.now().toString(),
-        text: inputValue,
-        sender: 'user' as const,
-      };
-      dispatch(addMessage(userMessage));
-      setInputValue('');
-      setIsLoading(true);
-
       try {
-        // Fetch page source from the primary device
         let sourceCode = '';
-        try {
-          const results = await import('../../lib/pubsub').then(
-            ({ webViewPubSub }) =>
-              webViewPubSub.publish(
-                import('../../../common/constants').then(
-                  (m) => m.AI_CHAT_EVENTS.GET_PAGE_SOURCE
-                ) as any
-              )
-          );
 
-          // Re-fetch correctly to avoid issues
-          const sourceCodeResults = await import('../../lib/pubsub').then(
-            async ({ webViewPubSub }) => {
-              const { AI_CHAT_EVENTS } = await import(
-                '../../../common/constants'
-              );
-              return webViewPubSub.publish(AI_CHAT_EVENTS.GET_PAGE_SOURCE);
-            }
+        const promises = [];
+        if (isContextEnabled) {
+          promises.push(
+            fetchPageSource().then((res) => {
+              sourceCode = res;
+              return undefined;
+            })
           );
-          sourceCode = sourceCodeResults.find((r) => r.result)?.result || '';
-        } catch (e) {
-          console.error('Failed to fetch source code', e);
         }
+
+        await Promise.all(promises);
+
+        const userMessage = {
+          id: Date.now().toString(),
+          text: inputValue,
+          sender: 'user' as const,
+          image: attachedScreenshot || undefined,
+        };
+        dispatch(addMessage(userMessage));
+        setInputValue('');
+        setAttachedScreenshot(null);
+        setIsLoading(true);
 
         const context = {
           url: address,
@@ -208,15 +238,16 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
             height: d.height,
           })),
           sourceCode,
+          screenshot: attachedScreenshot || undefined,
         };
 
-        const response = await window.electron.ipcRenderer.invoke<
-          string,
-          { message: string; context: any }
-        >(IPC_MAIN_CHANNELS['ai-chat:sendMessage'], {
-          message: inputValue,
-          context,
-        });
+        const response = await window.electron.ipcRenderer.invoke<string>(
+          IPC_MAIN_CHANNELS['ai-chat:sendMessage'],
+          {
+            message: inputValue,
+            context,
+          }
+        );
 
         const aiMessage = {
           id: Date.now().toString(),
@@ -277,6 +308,42 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
             <div className="flex items-center gap-3">
               <button
                 type="button"
+                onClick={() => setIsContextEnabled(!isContextEnabled)}
+                className={`text-xs ${
+                  isContextEnabled
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-gray-400 dark:text-gray-500'
+                }`}
+                title={
+                  isContextEnabled
+                    ? 'Page context enabled'
+                    : 'Page context disabled'
+                }
+              >
+                <Icon
+                  icon={isContextEnabled ? 'lucide:eye' : 'lucide:eye-off'}
+                  width={16}
+                />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      'Are you sure you want to clear the chat history?'
+                    )
+                  ) {
+                    dispatch(clearMessages());
+                  }
+                }}
+                className="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400"
+                title="Clear Chat"
+              >
+                <Icon icon="lucide:trash-2" width={14} />
+              </button>
+              <button
+                type="button"
                 onClick={() => setApiModalOpen(true)}
                 className="text-xs text-blue-500 hover:underline dark:text-blue-400"
                 title="Settings"
@@ -321,15 +388,30 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
                   />
                 </div>
 
-                {/* Message Bubble */}
-                <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm shadow-sm ${
-                    message.sender === 'user'
-                      ? 'bg-blue-500 text-white'
-                      : 'prose prose-sm max-w-none bg-white dark:bg-gray-800 dark:prose-invert dark:text-gray-200'
-                  }`}
-                >
-                  <ReactMarkdown>{message.text}</ReactMarkdown>
+                {/* Message Content */}
+                <div className="flex max-w-[85%] flex-col gap-2">
+                  {message.image && (
+                    <img
+                      src={message.image}
+                      alt="Screenshot"
+                      className={`max-h-60 w-auto rounded-lg border object-contain shadow-sm ${
+                        message.sender === 'user'
+                          ? 'self-end border-blue-400 bg-blue-600'
+                          : 'self-start border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800'
+                      }`}
+                    />
+                  )}
+                  {message.text && (
+                    <div
+                      className={`rounded-2xl px-4 py-2 text-sm shadow-sm ${
+                        message.sender === 'user'
+                          ? 'bg-blue-500 text-white'
+                          : 'prose prose-sm max-w-none bg-white dark:bg-gray-800 dark:prose-invert dark:text-gray-200'
+                      }`}
+                    >
+                      <ReactMarkdown>{message.text}</ReactMarkdown>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -352,8 +434,42 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ onClose }) => {
 
           {/* Input Area */}
           <div className="rounded-b-lg border-t border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
+            {attachedScreenshot && (
+              <div className="mb-2 flex items-center gap-2">
+                <div className="relative">
+                  <img
+                    src={attachedScreenshot}
+                    alt="Attached Screenshot"
+                    className="h-16 w-auto rounded border border-gray-300 object-contain dark:border-gray-600"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setAttachedScreenshot(null)}
+                    className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600"
+                  >
+                    <Icon icon="lucide:x" width={10} />
+                  </button>
+                </div>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  Screenshot attached
+                </span>
+              </div>
+            )}
             {hasApiKey ? (
               <div className="flex items-end gap-2">
+                <button
+                  type="button"
+                  onClick={handleCaptureScreenshot}
+                  disabled={isLoading || !!attachedScreenshot}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+                    attachedScreenshot
+                      ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
+                      : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-500 dark:hover:bg-gray-600'
+                  }`}
+                  title="Attach Screenshot"
+                >
+                  <Icon icon="lucide:camera" width={18} />
+                </button>
                 <textarea
                   ref={textareaRef}
                   rows={1}
