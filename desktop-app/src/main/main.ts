@@ -30,6 +30,7 @@ import { initNativeFunctionHandlers } from './native-functions';
 import { WebPermissionHandlers } from './web-permissions';
 import { initHttpBasicAuthHandlers } from './http-basic-auth';
 import { initAppMetaHandlers } from './app-meta';
+import { initNetworkThrottlingHandlers } from './network-throttling';
 import { openUrl } from './protocol-handler';
 import { AppUpdater } from './app-updater';
 
@@ -53,6 +54,7 @@ let mainWindow: BrowserWindow | null = null;
 
 initAppMetaHandlers();
 initWebviewContextMenu();
+initNetworkThrottlingHandlers();
 initScreenshotHandlers();
 initWebviewStorageManagerHandlers();
 initNativeFunctionHandlers();

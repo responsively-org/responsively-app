@@ -42,6 +42,7 @@ export const IPC_MAIN_CHANNELS = {
   UPDATE_SITE_PERMISSION: 'update-site-permission',
   CLEAR_SITE_PERMISSIONS: 'clear-site-permissions',
   PERMISSION_UPDATED: 'permission-updated',
+  SET_NETWORK_PROFILE: 'set-network-profile',
 } as const;
 
 export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];

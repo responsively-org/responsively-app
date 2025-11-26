@@ -6,6 +6,7 @@ import {
   PREVIEW_LAYOUTS,
   PreviewLayout,
 } from 'common/constants';
+import type { NetworkProfile } from 'common/networkProfiles';
 import type { RootState } from '../..';
 
 export interface RendererState {
@@ -18,6 +19,7 @@ export interface RendererState {
   layout: PreviewLayout;
   isCapturingScreenshot: boolean;
   notifications: Notification[] | null;
+  networkProfile: NetworkProfile;
 }
 
 const zoomSteps = [
@@ -44,6 +46,9 @@ const initialState: RendererState = {
   layout: window.electron.store.get('ui.previewLayout'),
   isCapturingScreenshot: false,
   notifications: null,
+  networkProfile:
+    (window.electron.store.get('renderer.networkProfile') as NetworkProfile) ??
+    'online',
 };
 
 export const updateFileWatcher = (newURL: string) => {
@@ -139,6 +144,10 @@ export const rendererSlice = createSlice({
         state.notifications = [...notifications, action.payload];
       }
     },
+    setNetworkProfile: (state, action: PayloadAction<NetworkProfile>) => {
+      state.networkProfile = action.payload;
+      window.electron.store.set('renderer.networkProfile', action.payload);
+    },
   },
 });
 
@@ -153,6 +162,7 @@ export const {
   setIsCapturingScreenshot,
   setPageTitle,
   setNotifications,
+  setNetworkProfile,
 } = rendererSlice.actions;
 
 // Use different zoom factor based on state's current layout
@@ -173,5 +183,7 @@ export const selectIsCapturingScreenshot = (state: RootState) =>
   state.renderer.isCapturingScreenshot;
 export const selectNotifications = (state: RootState) =>
   state.renderer.notifications;
+export const selectNetworkProfile = (state: RootState) =>
+  state.renderer.networkProfile;
 
 export default rendererSlice.reducer;
