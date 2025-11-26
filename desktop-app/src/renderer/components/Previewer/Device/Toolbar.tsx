@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
 import useSound from 'use-sound';
 import { ScreenshotArgs, ScreenshotResult } from 'main/screenshot';
@@ -9,6 +10,11 @@ import WebPage from 'main/screenshot/webpage';
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
 import { updateWebViewHeightAndScale } from 'common/webViewUtils';
 import { ColorBlindnessTools } from './ColorBlindnessTools';
+import {
+  selectMeasurementEnabled,
+  setMeasurementEnabled,
+  clearDeviceMeasurements,
+} from '../../../store/features/element-measurement';
 
 interface Props {
   webview: Electron.WebviewTag | null;
@@ -33,12 +39,22 @@ const Toolbar = ({
   isIndividualLayout,
   isDeviceRotationEnabled,
 }: Props) => {
+  const dispatch = useDispatch();
+  const isMeasurementEnabled = useSelector(selectMeasurementEnabled);
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
+
+  const toggleMeasurement = () => {
+    dispatch(setMeasurementEnabled(!isMeasurementEnabled));
+  };
+
+  const clearMeasurements = () => {
+    dispatch(clearDeviceMeasurements(device.name));
+  };
 
   const refreshView = () => {
     if (webview) {
@@ -212,6 +228,18 @@ const Toolbar = ({
         <Button onClick={toggleRulers} title="Show rulers">
           <Icon icon="tdesign:measurement-1" />
         </Button>
+        <Button
+          onClick={toggleMeasurement}
+          isActive={isMeasurementEnabled}
+          title="Measure distance between elements"
+        >
+          <Icon icon="mdi:ruler-square" />
+        </Button>
+        {isMeasurementEnabled && (
+          <Button onClick={clearMeasurements} title="Clear all measurements">
+            <Icon icon="mdi:eraser" />
+          </Button>
+        )}
         <ColorBlindnessTools webview={webview} />
       </div>
       <Button

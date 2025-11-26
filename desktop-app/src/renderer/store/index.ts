@@ -6,6 +6,7 @@ import rendererReducer from './features/renderer';
 import rulersReducer from './features/ruler';
 import uiReducer from './features/ui';
 import bookmarkReducer from './features/bookmarks';
+import elementMeasurementReducer from './features/element-measurement';
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     devtools: devtoolsReducer,
     bookmarks: bookmarkReducer,
     rulers: rulersReducer,
+    elementMeasurement: elementMeasurementReducer,
   },
 });
 
