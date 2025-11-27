@@ -28,7 +28,6 @@ interface MasonryProps {
   children: React.ReactNode;
 }
 
-const TypedMasonry = Masonry as React.ComponentType<MasonryProps>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TypedMasonry: React.FC<MasonryProps> = Masonry as any;
 

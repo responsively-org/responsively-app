@@ -42,9 +42,11 @@ import {
   setPageTitle,
   setNotifications,
 } from 'renderer/store/features/renderer';
-import { IPC_MAIN_CHANNELS, PREVIEW_LAYOUTS } from 'common/constants';
-import { PREVIEW_LAYOUTS, AI_CHAT_EVENTS } from 'common/constants';
-import { PREVIEW_LAYOUTS } from 'common/constants';
+import {
+  IPC_MAIN_CHANNELS,
+  PREVIEW_LAYOUTS,
+  AI_CHAT_EVENTS,
+} from 'common/constants';
 import {
   selectDeviceRotationById,
   setDeviceRotation,
@@ -384,8 +386,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         }
       );
     }
-  }, [isPrimary, networkProfile]);
-  }, [isPrimary, device.name]);
+  }, [isPrimary, networkProfile, device.name]);
 
   const toggleRuler = useCallback(() => {
     if (!ref.current) {

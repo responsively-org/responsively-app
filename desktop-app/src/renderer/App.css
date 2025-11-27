@@ -82,6 +82,8 @@ body {
 .dark .hover\:bg-slate-700:hover {
   background-color: var(--theme-accent) !important;
   opacity: 0.8;
+}
+
 /* 가로 스크롤바 스타일 - 매우 크고 눈에 띄게 */
 .horizontal-scrollbar {
   overflow-x: scroll !important;
