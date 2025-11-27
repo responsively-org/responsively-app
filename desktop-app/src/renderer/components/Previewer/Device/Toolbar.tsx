@@ -20,6 +20,12 @@ interface Props {
   onIndividualLayoutHandler: (device: Device) => void;
   isIndividualLayout: boolean;
   isDeviceRotationEnabled: boolean;
+  rotated: boolean;
+  onCaptureBaseline: () => void;
+  onCompareBaseline: () => void;
+  isSavingBaseline: boolean;
+  isComparingBaseline: boolean;
+  hasBaseline: boolean;
 }
 
 const Toolbar = ({
@@ -32,13 +38,18 @@ const Toolbar = ({
   onIndividualLayoutHandler,
   isIndividualLayout,
   isDeviceRotationEnabled,
+  rotated,
+  onCaptureBaseline,
+  onCompareBaseline,
+  isSavingBaseline,
+  isComparingBaseline,
+  hasBaseline,
 }: Props) => {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
-  const [rotated, setRotated] = useState<boolean>(false);
 
   const refreshView = () => {
     if (webview) {
@@ -136,7 +147,6 @@ const Toolbar = ({
   };
 
   const rotate = async () => {
-    setRotated(!rotated);
     onRotate(!rotated);
   };
 
@@ -178,6 +188,25 @@ const Toolbar = ({
           title="Full Page Screenshot"
         >
           <Icon icon="ic:outline-photo-camera" />
+        </Button>
+        <Button
+          onClick={onCaptureBaseline}
+          isLoading={isSavingBaseline}
+          title="Save Baseline"
+        >
+          <Icon icon="mdi:content-save-outline" />
+        </Button>
+        <Button
+          onClick={onCompareBaseline}
+          isLoading={isComparingBaseline}
+          disabled={!hasBaseline}
+          title={
+            hasBaseline
+              ? 'Compare with Baseline'
+              : 'No baseline saved. Save a baseline first.'
+          }
+        >
+          <Icon icon="mdi:image-search-outline" />
         </Button>
         <Button
           onClick={toggleEventMirroring}

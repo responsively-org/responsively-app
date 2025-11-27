@@ -6,6 +6,8 @@ import rendererReducer from './features/renderer';
 import rulersReducer from './features/ruler';
 import uiReducer from './features/ui';
 import bookmarkReducer from './features/bookmarks';
+import aiChatReducer from './features/aiChat';
+import deviceOrientationReducer from './features/device-orientation';
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +17,8 @@ export const store = configureStore({
     devtools: devtoolsReducer,
     bookmarks: bookmarkReducer,
     rulers: rulersReducer,
+    aiChat: aiChatReducer,
+    deviceOrientation: deviceOrientationReducer,
   },
 });
 

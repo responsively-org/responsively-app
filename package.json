@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0"
+  }
+}

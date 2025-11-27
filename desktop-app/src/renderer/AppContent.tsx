@@ -13,8 +13,17 @@ import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
 import { ReleaseNotes } from './components/ReleaseNotes';
 import { Sponsorship } from './components/Sponsorship';
 import { AboutDialog } from './components/AboutDialog';
+import AIChat from './components/AIChat';
+import SessionRestoreManager from './components/SessionRestore/SessionRestoreManager';
 
-if ((navigator as any).userAgentData.platform === 'Windows') {
+type NavigatorWithUAData = Navigator & {
+  userAgentData?: {
+    platform?: string;
+  };
+};
+
+const navigatorWithUAData = navigator as NavigatorWithUAData;
+if (navigatorWithUAData.userAgentData?.platform === 'Windows') {
   import('./titlebar-styles.css');
 }
 
@@ -49,10 +58,12 @@ const AppContent = () => {
     <Provider store={store}>
       <ThemeProvider>
         <KeyboardShortcutsManager />
+        <SessionRestoreManager />
         <ViewComponent />
         <ReleaseNotes />
         <Sponsorship />
         <AboutDialog />
+        <AIChat />
       </ThemeProvider>
     </Provider>
   );

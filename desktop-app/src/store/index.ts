@@ -260,6 +260,87 @@ const schema = {
     },
     default: {},
   },
+  session: {
+    type: 'object',
+    properties: {
+      lastSnapshot: {
+        type: 'object',
+        properties: {
+          address: {
+            type: 'string',
+          },
+          activeSuiteId: {
+            type: 'string',
+          },
+          activeSuiteName: {
+            type: 'string',
+          },
+          deviceIds: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+          layout: {
+            type: 'string',
+            enum: Object.values(PREVIEW_LAYOUTS),
+          },
+          rotateAllDevices: {
+            type: 'boolean',
+          },
+          perDeviceRotations: {
+            type: 'object',
+            additionalProperties: {
+              type: 'boolean',
+            },
+          },
+          timestamp: {
+            type: 'number',
+          },
+          shouldPrompt: {
+            type: 'boolean',
+          },
+        },
+      },
+    },
+    default: {},
+  },
+  visualDiff: {
+    type: 'object',
+    properties: {
+      baselines: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            deviceId: {
+              type: 'string',
+            },
+            deviceName: {
+              type: 'string',
+            },
+            address: {
+              type: 'string',
+            },
+            filePath: {
+              type: 'string',
+            },
+            width: {
+              type: 'number',
+            },
+            height: {
+              type: 'number',
+            },
+            createdAt: {
+              type: 'number',
+            },
+          },
+        },
+        default: [],
+      },
+    },
+    default: {},
+  },
 } as const;
 
 const store = new Store({
