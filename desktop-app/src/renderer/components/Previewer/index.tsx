@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
 import { selectActiveSuite } from 'renderer/store/features/device-manager';
 import { DOCK_POSITION, PREVIEW_LAYOUTS } from 'common/constants';
@@ -7,9 +7,10 @@ import {
   selectIsDevtoolsOpen,
 } from 'renderer/store/features/devtools';
 import { getDevicesMap, Device as IDevice } from 'common/deviceList';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { selectLayout } from 'renderer/store/features/renderer';
 import Masonry from 'react-masonry-component';
+import { syncDeviceRotations } from 'renderer/store/features/device-orientation';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
 import IndividualLayoutToolbar from './IndividualLayoutToolBar';
@@ -27,18 +28,28 @@ interface MasonryProps {
   children: React.ReactNode;
 }
 
+const TypedMasonry = Masonry as React.ComponentType<MasonryProps>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TypedMasonry: React.FC<MasonryProps> = Masonry as any;
 
 const Previewer = () => {
+  const dispatch = useDispatch();
   const activeSuite = useSelector(selectActiveSuite);
-  const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
+  const activeDeviceIds = activeSuite.devices;
+  const devices = useMemo(
+    () => activeDeviceIds.map((id) => getDevicesMap()[id]),
+    [activeDeviceIds]
+  );
   const dockPosition = useSelector(selectDockPosition);
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const layout = useSelector(selectLayout);
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
   const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY; // New state for Masonry layout
+
+  useEffect(() => {
+    dispatch(syncDeviceRotations(activeDeviceIds));
+  }, [dispatch, activeDeviceIds]);
 
   const masonryOptions = {
     columnWidth: 275,
