@@ -13,6 +13,7 @@ import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
 import { ReleaseNotes } from './components/ReleaseNotes';
 import { Sponsorship } from './components/Sponsorship';
 import { AboutDialog } from './components/AboutDialog';
+import AIChat from './components/AIChat';
 import SessionRestoreManager from './components/SessionRestore/SessionRestoreManager';
 
 type NavigatorWithUAData = Navigator & {
@@ -62,6 +63,7 @@ const AppContent = () => {
         <ReleaseNotes />
         <Sponsorship />
         <AboutDialog />
+        <AIChat />
       </ThemeProvider>
     </Provider>
   );

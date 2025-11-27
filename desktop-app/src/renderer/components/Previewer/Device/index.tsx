@@ -41,6 +41,7 @@ import {
   setPageTitle,
   setNotifications,
 } from 'renderer/store/features/renderer';
+import { PREVIEW_LAYOUTS, AI_CHAT_EVENTS } from 'common/constants';
 import { PREVIEW_LAYOUTS } from 'common/constants';
 import {
   selectDeviceRotationById,
@@ -308,8 +309,52 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           storages: ['network-cache'],
         });
       });
+
+      webViewPubSub.subscribe(AI_CHAT_EVENTS.GET_PAGE_SOURCE, async () => {
+        if (!ref.current) {
+          return '';
+        }
+        const webview = ref.current as Electron.WebviewTag;
+        try {
+          const html = await webview.executeJavaScript(
+            'document.documentElement.outerHTML'
+          );
+          return html;
+        } catch (err) {
+          console.error('Error getting page source:', err);
+          return '';
+        }
+      });
+
+      webViewPubSub.subscribe(
+        AI_CHAT_EVENTS.GET_SCREENSHOT,
+        async (targetDeviceName?: string) => {
+          if (!ref.current) {
+            return null;
+          }
+
+          // If a target device is specified, only capture if names match
+          if (targetDeviceName && targetDeviceName !== device.name) {
+            return null;
+          }
+
+          // If no target specified, default to primary (legacy behavior)
+          if (!targetDeviceName && !isPrimary) {
+            return null;
+          }
+
+          const webview = ref.current as Electron.WebviewTag;
+          try {
+            const image = await webview.capturePage();
+            return image.toDataURL();
+          } catch (err) {
+            console.error('Error capturing screenshot:', err);
+            return null;
+          }
+        }
+      );
     }
-  }, [isPrimary]);
+  }, [isPrimary, device.name]);
 
   const toggleRuler = useCallback(() => {
     if (!ref.current) {
