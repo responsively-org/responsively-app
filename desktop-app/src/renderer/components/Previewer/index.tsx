@@ -29,6 +29,8 @@ interface MasonryProps {
 }
 
 const TypedMasonry = Masonry as React.ComponentType<MasonryProps>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const TypedMasonry: React.FC<MasonryProps> = Masonry as any;
 
 const Previewer = () => {
   const dispatch = useDispatch();
@@ -73,32 +75,58 @@ const Previewer = () => {
           'justify-center': isIndividualLayout,
         })}
       >
-        <div className="flex flex-grow overflow-hidden">
+        <div
+          className="flex flex flex-grow flex-col"
+          style={{ minHeight: 0, overflow: 'hidden' }}
+        >
           <div
-            className="w-full flex-grow overflow-y-auto"
-            style={{ height: '100%' }}
+            className="flex w-full flex-grow flex-col"
+            style={{
+              height: '100%',
+              minHeight: 0,
+              overflow: 'hidden',
+              paddingBottom: '40px' /* 스크롤바 높이만큼 공간 확보 */,
+              boxSizing: 'border-box',
+            }}
           >
             {isMasonryLayout ? (
-              <TypedMasonry
-                options={masonryOptions}
-                className="w-full gap-4 p-2"
+              <div
+                className="flex-1 overflow-y-auto overflow-x-hidden"
+                style={{ minHeight: 0 }}
               >
-                {devices.map((device) => (
-                  <div key={device.id} className="device-item p-4">
-                    <Device
-                      device={device}
-                      isPrimary={device.id === devices[0].id}
-                      setIndividualDevice={setIndividualDevice}
-                    />
-                  </div>
-                ))}
-              </TypedMasonry>
+                <TypedMasonry
+                  options={masonryOptions}
+                  className="w-full gap-4 p-2"
+                >
+                  {devices.map((device) => (
+                    <div key={device.id} className="device-item p-4">
+                      <Device
+                        device={device}
+                        isPrimary={device.id === devices[0].id}
+                        setIndividualDevice={setIndividualDevice}
+                      />
+                    </div>
+                  ))}
+                </TypedMasonry>
+              </div>
             ) : (
               <div
-                className={cx('flex h-full gap-4 overflow-auto p-4', {
+                className={cx('horizontal-scrollbar flex flex-1 gap-4', {
                   'flex-wrap': layout === PREVIEW_LAYOUTS.FLEX,
                   'justify-center': isIndividualLayout,
                 })}
+                style={{
+                  overflowX:
+                    layout === PREVIEW_LAYOUTS.FLEX ? 'visible' : 'scroll',
+                  overflowY: 'auto',
+                  padding: '16px',
+                  boxSizing: 'border-box',
+                  minHeight: 0,
+                  height: '100%',
+                  maxHeight: '100%',
+                  display: 'flex',
+                  position: 'relative',
+                }}
               >
                 {isIndividualLayout ? (
                   <Device
