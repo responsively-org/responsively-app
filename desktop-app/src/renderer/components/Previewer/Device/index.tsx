@@ -65,6 +65,7 @@ import {
   setRuler,
 } from '../../../store/features/ruler';
 import GuideGrid, { DefaultGuide } from '../Guides';
+import ElementMeasurement from '../ElementMeasurement';
 import { selectDarkMode } from '../../../store/features/ui';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
@@ -863,7 +864,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
               return x.resolution === `${width}x${height}`;
             })}
         />
-        <div className="bg-white">
+        <div className="relative bg-white">
           <webview
             id={device.name}
             src={address}
@@ -884,6 +885,12 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             allowpopups={isPrimary ? 'true' : undefined}
             /* eslint-disable-next-line react/no-unknown-property */
             useragent={device.userAgent}
+          />
+          <ElementMeasurement
+            deviceId={device.name}
+            width={width}
+            height={height}
+            zoomFactor={zoomfactor}
           />
         </div>
 
