@@ -41,6 +41,11 @@ import {
   setPageTitle,
 } from 'renderer/store/features/renderer';
 import { PREVIEW_LAYOUTS } from 'common/constants';
+import {
+  selectDeviceRotationById,
+  setDeviceRotation,
+} from 'renderer/store/features/device-orientation';
+import type { RootState } from 'renderer/store';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
@@ -69,7 +74,6 @@ interface ErrorState {
 }
 
 const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
-  const [singleRotated, setSingleRotated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorState | null>(null);
   const [screenshotInProgress, setScreenshotInProgress] =
@@ -88,13 +92,17 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
   const isNavigatingFromAddressBar = useRef<boolean>(false);
+  const singleRotated = useSelector((state: RootState) =>
+    selectDeviceRotationById(state, device.id)
+  );
 
   useEffect(() => {
     if (ref.current && isPrimary) {
-      const webview = ref.current as Electron.WebviewTag;
+      const webview = ref.current;
+      let isDomReady = false;
 
-      // Check if webview is ready before calling getURL
-      const checkAndLoadURL = () => {
+      const handleDomReady = () => {
+        isDomReady = true;
         try {
           const currentUrl = webview.getURL();
           if (address !== currentUrl) {
@@ -102,26 +110,36 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             webview.loadURL(address);
           }
         } catch (err) {
-          // WebView not ready yet, wait for dom-ready event
-          const domReadyHandler = () => {
-            try {
-              const currentUrl = webview.getURL();
-              if (address !== currentUrl) {
-                isNavigatingFromAddressBar.current = true;
-                webview.loadURL(address);
-              }
-            } catch (loadErr) {
-              // eslint-disable-next-line no-console
-              console.error('Error loading URL', loadErr);
-            }
-            webview.removeEventListener('dom-ready', domReadyHandler);
-          };
-          webview.addEventListener('dom-ready', domReadyHandler);
+          // WebView가 아직 준비되지 않았을 수 있음
         }
       };
 
-      checkAndLoadURL();
+      // dom-ready 이벤트 리스너 등록
+      webview.addEventListener('dom-ready', handleDomReady);
+
+      // 이미 dom-ready가 발생했을 수 있으므로 약간의 지연 후 확인
+      const checkTimeout = setTimeout(() => {
+        if (!isDomReady) {
+          try {
+            // WebView가 준비되었는지 확인 시도
+            const currentUrl = webview.getURL();
+            if (address !== currentUrl) {
+              isNavigatingFromAddressBar.current = true;
+              webview.loadURL(address);
+            }
+          } catch (err) {
+            // 아직 준비되지 않았으면 dom-ready 이벤트를 기다림
+          }
+        }
+      }, 100);
+
+      return () => {
+        clearTimeout(checkTimeout);
+        webview.removeEventListener('dom-ready', handleDomReady);
+      };
     }
+    // eslint-disable-next-line consistent-return
+    return undefined;
   }, [address, isPrimary]);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
@@ -292,7 +310,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     ]
   );
 
-  const onRotateHandler = (state: boolean) => setSingleRotated(state);
+  const onRotateHandler = (state: boolean) =>
+    dispatch(setDeviceRotation({ deviceId: device.id, rotated: state }));
 
   const onIndividualLayoutHandler = (selectedDevice: IDevice) => {
     if (!isIndividualLayout) {
@@ -583,6 +602,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         onIndividualLayoutHandler={onIndividualLayoutHandler}
         isIndividualLayout={isIndividualLayout}
         isDeviceRotationEnabled={isDeviceRotationEnabled}
+        rotated={singleRotated}
       />
       <div
         style={{
