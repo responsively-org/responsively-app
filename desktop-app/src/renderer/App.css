@@ -15,3 +15,95 @@
 html {
   user-select: none;
 }
+
+/* 가로 스크롤바 스타일 - 매우 크고 눈에 띄게 */
+.horizontal-scrollbar {
+  overflow-x: scroll !important;
+  overflow-y: auto !important;
+  scrollbar-width: auto !important; /* Firefox */
+  scrollbar-color: #666666 #e0e0e0 !important; /* Firefox - thumb track */
+  /* 스크롤바가 컨테이너 내부에 완전히 보이도록 */
+  position: relative;
+  box-sizing: border-box;
+  /* 스크롤바 공간 확보 - 하단 padding 추가 */
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* WebKit 스크롤바 - 매우 크게 표시 */
+.horizontal-scrollbar::-webkit-scrollbar {
+  height: 10px !important;
+  width: auto !important;
+  -webkit-appearance: none !important;
+  display: block !important;
+  background-color: #e0e0e0 !important;
+}
+
+.horizontal-scrollbar::-webkit-scrollbar:horizontal {
+  height: 10px !important;
+}
+
+.horizontal-scrollbar::-webkit-scrollbar-track {
+  background: #e0e0e0 !important;
+  border-radius: 20px !important;
+  margin: 5px !important;
+  -webkit-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.horizontal-scrollbar::-webkit-scrollbar-thumb {
+  background: #666666 !important;
+  border-radius: 20px !important;
+  border: 3px solid #e0e0e0 !important;
+  -webkit-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  min-width: 50px !important;
+}
+
+.horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555555 !important;
+  border-color: #d0d0d0 !important;
+}
+
+.horizontal-scrollbar::-webkit-scrollbar-thumb:active {
+  background: #444444 !important;
+}
+
+.horizontal-scrollbar::-webkit-scrollbar-corner {
+  background: #e0e0e0 !important;
+}
+
+/* 다크 모드 지원 */
+.dark .horizontal-scrollbar {
+  scrollbar-color: #aaaaaa #333333 !important; /* Firefox */
+}
+
+.dark .horizontal-scrollbar::-webkit-scrollbar {
+  background-color: #333333 !important;
+}
+
+.dark .horizontal-scrollbar::-webkit-scrollbar-track {
+  background: #333333 !important;
+  -webkit-box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1) !important;
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .horizontal-scrollbar::-webkit-scrollbar-thumb {
+  background: #aaaaaa !important;
+  border: 3px solid #333333 !important;
+  -webkit-box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.2) !important;
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark .horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #bbbbbb !important;
+  border-color: #444444 !important;
+}
+
+.dark .horizontal-scrollbar::-webkit-scrollbar-thumb:active {
+  background: #cccccc !important;
+}
+
+.dark .horizontal-scrollbar::-webkit-scrollbar-corner {
+  background: #333333 !important;
+}
