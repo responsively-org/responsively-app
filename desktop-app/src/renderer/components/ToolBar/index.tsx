@@ -7,7 +7,6 @@ import {
   setIsCapturingScreenshot,
   setIsInspecting,
   setRotate,
-  setNotifications,
 } from 'renderer/store/features/renderer';
 import { Icon } from '@iconify/react';
 import { ScreenshotAllArgs } from 'main/screenshot';
@@ -28,6 +27,7 @@ import useKeyboardShortcut, {
 } from '../KeyboardShortcutsManager/useKeyboardShortcut';
 import Shortcuts from './Shortcuts';
 import { ColorBlindnessControls } from './ColorBlindnessControls';
+import NetworkSpeedSelector from './NetworkSpeedSelector';
 
 const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
@@ -154,6 +154,7 @@ const ToolBar = () => {
         <Icon icon="lucide:camera" />
       </Button>
       <ColorSchemeToggle />
+      <NetworkSpeedSelector />
       <Shortcuts />
       <ColorBlindnessControls />
       <Divider />

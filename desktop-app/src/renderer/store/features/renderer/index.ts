@@ -6,6 +6,7 @@ import {
   PREVIEW_LAYOUTS,
   PreviewLayout,
 } from 'common/constants';
+import type { NetworkProfile } from 'common/networkProfiles';
 import type { RootState } from '../..';
 
 export interface RendererState {
@@ -18,6 +19,7 @@ export interface RendererState {
   layout: PreviewLayout;
   isCapturingScreenshot: boolean;
   notifications: Notification[] | null;
+  networkProfile: NetworkProfile;
 }
 
 // 더 세분화된 줌 단계 (0.25배 ~ 3.0배, 총 56단계)
@@ -71,6 +73,9 @@ const initialState: RendererState = {
   layout: window.electron.store.get('ui.previewLayout'),
   isCapturingScreenshot: false,
   notifications: null,
+  networkProfile:
+    (window.electron.store.get('renderer.networkProfile') as NetworkProfile) ??
+    'online',
 };
 
 export const updateFileWatcher = (newURL: string) => {
@@ -223,6 +228,10 @@ export const rendererSlice = createSlice({
         state.notifications = [...notifications, action.payload];
       }
     },
+    setNetworkProfile: (state, action: PayloadAction<NetworkProfile>) => {
+      state.networkProfile = action.payload;
+      window.electron.store.set('renderer.networkProfile', action.payload);
+    },
   },
 });
 
@@ -238,6 +247,7 @@ export const {
   setIsCapturingScreenshot,
   setPageTitle,
   setNotifications,
+  setNetworkProfile,
 } = rendererSlice.actions;
 
 // zoomSteps를 외부에서 사용할 수 있도록 export
@@ -261,5 +271,7 @@ export const selectIsCapturingScreenshot = (state: RootState) =>
   state.renderer.isCapturingScreenshot;
 export const selectNotifications = (state: RootState) =>
   state.renderer.notifications;
+export const selectNetworkProfile = (state: RootState) =>
+  state.renderer.networkProfile;
 
 export default rendererSlice.reducer;

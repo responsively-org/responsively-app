@@ -33,6 +33,7 @@ import {
   selectAddress,
   selectIsInspecting,
   selectLayout,
+  selectNetworkProfile,
   selectRotate,
   selectZoomFactor,
   setAddress,
@@ -41,6 +42,7 @@ import {
   setPageTitle,
   setNotifications,
 } from 'renderer/store/features/renderer';
+import { IPC_MAIN_CHANNELS, PREVIEW_LAYOUTS } from 'common/constants';
 import { PREVIEW_LAYOUTS, AI_CHAT_EVENTS } from 'common/constants';
 import { PREVIEW_LAYOUTS } from 'common/constants';
 import {
@@ -99,6 +101,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const layout = useSelector(selectLayout);
   const rulerEnabled = useSelector(selectRulerEnabled);
   const getRuler = useSelector(selectRuler);
+  const networkProfile = useSelector(selectNetworkProfile);
   const dispatch = useDispatch();
   const dockPosition = useSelector(selectDockPosition);
   const darkMode = useSelector(selectDarkMode);
@@ -255,7 +258,33 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const registerNavigationHandlers = useCallback(() => {
     webViewPubSub.subscribe(NAVIGATION_EVENTS.RELOAD, () => {
       if (ref.current) {
-        ref.current.reload();
+        const webview = ref.current as Electron.WebviewTag;
+        // Clear any existing error state and set loading
+        setError(null);
+        setLoading(true);
+
+        // If offline mode, reload ignoring cache to show offline state
+        if (networkProfile === 'offline') {
+          // Set a timeout to show offline error if did-fail-load doesn't fire
+          const offlineTimeout = setTimeout(() => {
+            setError({
+              code: -106, // ERR_INTERNET_DISCONNECTED
+              description:
+                'You are currently offline. Please check your network connection.',
+            });
+            setLoading(false);
+          }, 2000);
+
+          // Force reload ignoring cache
+          webview.reloadIgnoringCache();
+
+          // Clear timeout if did-fail-load fires (handled in didFailLoadHandler)
+          // Store timeout ID to clear it when error occurs
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-underscore-dangle
+          (webview as any).offlineTimeoutId = offlineTimeout;
+        } else {
+          webview.reload();
+        }
       }
     });
     if (isPrimary) {
@@ -354,6 +383,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         }
       );
     }
+  }, [isPrimary, networkProfile]);
   }, [isPrimary, device.name]);
 
   const toggleRuler = useCallback(() => {
@@ -536,8 +566,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       errorDescription,
       isMainFrame,
     }: Electron.DidFailLoadEvent) => {
-      if (errorCode === -3) {
-        // Aborted error, can be ignored
+      if (errorCode === -3 && networkProfile !== 'offline') {
+        // Aborted error outside of offline mode can be ignored
         return;
       }
 
@@ -549,27 +579,87 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         return;
       }
 
+      // Clear any pending offline timeout
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-underscore-dangle
+      const webviewAny = webview as any;
+      if (webviewAny.offlineTimeoutId) {
+        clearTimeout(webviewAny.offlineTimeoutId);
+        delete webviewAny.offlineTimeoutId;
+      }
+
+      const offlineErrorDescription =
+        'You are currently offline. Please check your network connection.';
+
+      // In offline mode we let the webview fall back to its own skeleton/placeholder UI
+      // instead of showing our overlay. Some requests surface ERR_ABORTED (-3) when
+      // cancelled by webRequest, so treat that as an offline scenario too.
+      if (
+        networkProfile === 'offline' &&
+        (errorCode === -106 ||
+          errorCode === -105 ||
+          errorCode === -118 ||
+          errorCode === -3)
+      ) {
+        setLoading(false);
+        setError(null);
+        return;
+      }
+
       setError({
         code: errorCode,
-        description: errorDescription,
+        description: errorDescription || offlineErrorDescription,
       });
+      setLoading(false);
     };
     webview.addEventListener('did-fail-load', didFailLoadHandler);
     handlerRemovers.push(() => {
       webview.removeEventListener('did-fail-load', didFailLoadHandler);
     });
 
-    if (!isPrimary) {
-      setTimeout(() => {
-        webview.addEventListener('dom-ready', () => {
-          window.electron.ipcRenderer.invoke<
-            DisableDefaultWindowOpenHandlerArgs,
-            DisableDefaultWindowOpenHandlerResult
-          >('disable-default-window-open-handler', {
-            webContentsId: webview.getWebContentsId(),
-          });
+    // Apply network profile when webview is ready
+    const applyNetworkProfile = async () => {
+      try {
+        const webContentsId = webview.getWebContentsId();
+        await window.electron.ipcRenderer.invoke<
+          { webContentsId: number; profile: typeof networkProfile },
+          { success: boolean }
+        >(IPC_MAIN_CHANNELS.SET_NETWORK_PROFILE, {
+          webContentsId,
+          profile: networkProfile,
         });
-      }, 2000);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to apply network profile:', err);
+      }
+    };
+
+    const domReadyHandler = () => {
+      applyNetworkProfile();
+      if (!isPrimary) {
+        window.electron.ipcRenderer.invoke<
+          DisableDefaultWindowOpenHandlerArgs,
+          DisableDefaultWindowOpenHandlerResult
+        >('disable-default-window-open-handler', {
+          webContentsId: webview.getWebContentsId(),
+        });
+      }
+    };
+
+    webview.addEventListener('dom-ready', domReadyHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('dom-ready', domReadyHandler);
+    });
+
+    // Apply network profile immediately if webview is already ready
+    if (webview.getWebContentsId) {
+      try {
+        const webContentsId = webview.getWebContentsId();
+        if (webContentsId) {
+          applyNetworkProfile();
+        }
+      } catch {
+        // Webview not ready yet, will be applied on dom-ready
+      }
     }
 
     registerNavigationHandlers();
@@ -588,6 +678,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     inspectElement,
     openDevTools,
     address,
+    networkProfile,
   ]);
 
   const handleCloseVisualDiff = () => {

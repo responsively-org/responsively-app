@@ -42,6 +42,7 @@ export const IPC_MAIN_CHANNELS = {
   UPDATE_SITE_PERMISSION: 'update-site-permission',
   CLEAR_SITE_PERMISSIONS: 'clear-site-permissions',
   PERMISSION_UPDATED: 'permission-updated',
+  SET_NETWORK_PROFILE: 'set-network-profile',
   'ai-chat:sendMessage': 'ai-chat:sendMessage',
   'ai-chat:get-app-screenshot': 'ai-chat:get-app-screenshot',
 } as const;

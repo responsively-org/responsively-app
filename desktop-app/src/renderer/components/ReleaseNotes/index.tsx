@@ -7,20 +7,8 @@ import Button from '../Button';
 import Modal from '../Modal';
 
 export const isReleaseNotesUnseen = async () => {
-  const appMeta = await window.electron.ipcRenderer.invoke<
-    object,
-    AppMetaResponse
-  >(IPC_MAIN_CHANNELS.APP_META, {});
-  const seenVersions = window.electron.store.get('seenReleaseNotes');
-  if (seenVersions && seenVersions.includes(appMeta.appVersion)) {
-    return false;
-  }
-  if (!seenVersions || seenVersions.length === 0) {
-    // First time user, so we don't show release notes
-    window.electron.store.set('seenReleaseNotes', [appMeta.appVersion]);
-    return false;
-  }
-  return true;
+  // Always return false to disable release notes
+  return false;
 };
 
 export const ReleaseNotes = () => {
