@@ -39,8 +39,19 @@ import {
   setIsInspecting,
   setLayout,
   setPageTitle,
+  setNotifications,
 } from 'renderer/store/features/renderer';
 import { PREVIEW_LAYOUTS, AI_CHAT_EVENTS } from 'common/constants';
+import { PREVIEW_LAYOUTS } from 'common/constants';
+import {
+  selectDeviceRotationById,
+  setDeviceRotation,
+} from 'renderer/store/features/device-orientation';
+import type { RootState } from 'renderer/store';
+import {
+  VisualDiffResultPayload,
+  VISUAL_DIFF_CHANNELS,
+} from 'common/visualDiff';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
@@ -56,6 +67,7 @@ import { selectDarkMode } from '../../../store/features/ui';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from '../../KeyboardShortcutsManager/useKeyboardShortcut';
+import VisualDiffModal from '../../VisualDiff/VisualDiffModal';
 
 interface Props {
   device: IDevice;
@@ -69,12 +81,16 @@ interface ErrorState {
 }
 
 const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
-  const [singleRotated, setSingleRotated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorState | null>(null);
   const [screenshotInProgress, setScreenshotInProgress] =
     useState<boolean>(false);
+  const [isSavingBaseline, setIsSavingBaseline] = useState(false);
+  const [isComparingBaseline, setIsComparingBaseline] = useState(false);
+  const [visualDiffResult, setVisualDiffResult] =
+    useState<VisualDiffResultPayload | null>(null);
   const address = useSelector(selectAddress);
+  const [hasBaseline, setHasBaseline] = useState(false);
   const zoomfactor = useSelector(selectZoomFactor);
   const isInspecting = useSelector(selectIsInspecting);
   const rotateDevices = useSelector(selectRotate);
@@ -88,21 +104,131 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
   const isNavigatingFromAddressBar = useRef<boolean>(false);
+  const singleRotated = useSelector((state: RootState) =>
+    selectDeviceRotationById(state, device.id)
+  );
 
   useEffect(() => {
     if (ref.current && isPrimary) {
-      try {
-        const currentUrl = ref.current.getURL();
-        if (address !== currentUrl) {
-          isNavigatingFromAddressBar.current = true;
-          ref.current.loadURL(address);
+      const webview = ref.current;
+      let isDomReady = false;
+
+      const handleDomReady = () => {
+        isDomReady = true;
+        try {
+          const currentUrl = webview.getURL();
+          if (address !== currentUrl) {
+            isNavigatingFromAddressBar.current = true;
+            webview.loadURL(address);
+          }
+        } catch (err) {
+          // WebView가 아직 준비되지 않았을 수 있음
         }
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error('Error loading URL', err);
-      }
+      };
+
+      // dom-ready 이벤트 리스너 등록
+      webview.addEventListener('dom-ready', handleDomReady);
+
+      // 이미 dom-ready가 발생했을 수 있으므로 약간의 지연 후 확인
+      const checkTimeout = setTimeout(() => {
+        if (!isDomReady) {
+          try {
+            // WebView가 준비되었는지 확인 시도
+            const currentUrl = webview.getURL();
+            if (address !== currentUrl) {
+              isNavigatingFromAddressBar.current = true;
+              webview.loadURL(address);
+            }
+          } catch (err) {
+            // 아직 준비되지 않았으면 dom-ready 이벤트를 기다림
+          }
+        }
+      }, 100);
+
+      return () => {
+        clearTimeout(checkTimeout);
+        webview.removeEventListener('dom-ready', handleDomReady);
+      };
     }
+    // eslint-disable-next-line consistent-return
+    return undefined;
   }, [address, isPrimary]);
+
+  useEffect(() => {
+    const baselines: Array<{
+      deviceId: string;
+      address: string;
+    }> = window.electron.store.get('visualDiff.baselines') || [];
+    const exists = baselines.some(
+      (baseline) =>
+        baseline.deviceId === device.id && baseline.address === address
+    );
+    setHasBaseline(exists);
+  }, [device.id, address]);
+
+  const notify = (text: string) => {
+    dispatch(
+      setNotifications({
+        id: `${device.id}-${Date.now()}`,
+        text,
+      })
+    );
+  };
+
+  const handleCaptureBaseline = async () => {
+    if (!ref.current) {
+      return;
+    }
+    setIsSavingBaseline(true);
+    try {
+      await window.electron.ipcRenderer.invoke(
+        VISUAL_DIFF_CHANNELS.CAPTURE_BASELINE,
+        {
+          webContentsId: ref.current.getWebContentsId(),
+          deviceId: device.id,
+          deviceName: device.name,
+          address,
+        }
+      );
+      setHasBaseline(true);
+      notify('기준 스크린샷을 저장했습니다.');
+    } catch (err) {
+      notify(
+        err instanceof Error
+          ? `기준 스크린샷 저장 실패: ${err.message}`
+          : '기준 스크린샷 저장 중 오류가 발생했습니다.'
+      );
+    } finally {
+      setIsSavingBaseline(false);
+    }
+  };
+
+  const handleCompareBaseline = async () => {
+    if (!ref.current) {
+      return;
+    }
+    setIsComparingBaseline(true);
+    try {
+      const result = await window.electron.ipcRenderer.invoke<
+        unknown,
+        VisualDiffResultPayload
+      >(VISUAL_DIFF_CHANNELS.COMPARE_WITH_BASELINE, {
+        webContentsId: ref.current.getWebContentsId(),
+        deviceId: device.id,
+        deviceName: device.name,
+        address,
+      });
+      setVisualDiffResult(result);
+    } catch (err) {
+      notify(
+        err instanceof Error
+          ? `비교 실패: ${err.message}`
+          : '비교 중 오류가 발생했습니다.'
+      );
+    } finally {
+      setIsComparingBaseline(false);
+    }
+  };
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
@@ -316,7 +442,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     ]
   );
 
-  const onRotateHandler = (state: boolean) => setSingleRotated(state);
+  const onRotateHandler = (state: boolean) =>
+    dispatch(setDeviceRotation({ deviceId: device.id, rotated: state }));
 
   const onIndividualLayoutHandler = (selectedDevice: IDevice) => {
     if (!isIndividualLayout) {
@@ -463,6 +590,10 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     address,
   ]);
 
+  const handleCloseVisualDiff = () => {
+    setVisualDiffResult(null);
+  };
+
   useEffect(() => {
     // Reload keyboard shortcuts effect
     if (!ref.current) {
@@ -607,6 +738,12 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         onIndividualLayoutHandler={onIndividualLayoutHandler}
         isIndividualLayout={isIndividualLayout}
         isDeviceRotationEnabled={isDeviceRotationEnabled}
+        rotated={singleRotated}
+        onCaptureBaseline={handleCaptureBaseline}
+        onCompareBaseline={handleCompareBaseline}
+        isSavingBaseline={isSavingBaseline}
+        isComparingBaseline={isComparingBaseline}
+        hasBaseline={hasBaseline}
       />
       <div
         style={{
@@ -653,7 +790,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             preload={`file://${window.responsively.webviewPreloadPath}`}
             data-scale-factor={zoomfactor}
             /* eslint-disable-next-line react/no-unknown-property */
-            allowpopups={isPrimary ? true : undefined}
+            allowpopups={isPrimary ? 'true' : undefined}
             /* eslint-disable-next-line react/no-unknown-property */
             useragent={device.userAgent}
           />
@@ -679,6 +816,12 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           </div>
         ) : null}
       </div>
+      <VisualDiffModal
+        isOpen={isComparingBaseline || visualDiffResult !== null}
+        isLoading={isComparingBaseline && visualDiffResult === null}
+        result={visualDiffResult}
+        onClose={handleCloseVisualDiff}
+      />
     </div>
   );
 };
