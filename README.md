@@ -283,6 +283,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="https://blog.absingh.com/"><img src="https://avatars.githubusercontent.com/u/29686866?v=4?s=100" width="100px;" alt="Abhijeet Singh"/><br /><sub><b>Abhijeet Singh</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=cseas" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="20%"><a href="http://aaryancreates.framer.media"><img src="https://avatars.githubusercontent.com/u/93996658?v=4?s=100" width="100px;" alt="aaryan"/><br /><sub><b>aaryan</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=meezumi" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/mklikushin"><img src="https://avatars.githubusercontent.com/u/135151016?v=4?s=100" width="100px;" alt="Michael Klikushin"/><br /><sub><b>Michael Klikushin</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=mklikushin" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/bhnprksh222"><img src="https://avatars.githubusercontent.com/u/48930756?v=4?s=100" width="100px;" alt="Bhanu Prakash"/><br /><sub><b>Bhanu Prakash</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=bhnprksh222" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
