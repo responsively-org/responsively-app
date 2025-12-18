@@ -31,6 +31,7 @@ export const ADDRESS_BAR_EVENTS = {
   DELETE_COOKIES: 'DELETE_COOKIES',
   DELETE_STORAGE: 'DELETE_STORAGE',
   DELETE_CACHE: 'DELETE_CACHE',
+  NAVIGATE: 'ADDRESS_BAR_NAVIGATE',
 };
 
 const AddressBar = () => {
@@ -64,7 +65,7 @@ const AddressBar = () => {
   }, [address]);
 
   const dispatchAddress = useCallback(
-    (url?: string) => {
+    async (url?: string) => {
       let newAddress = url ?? typedAddress;
       if (newAddress.indexOf('://') === -1) {
         let protocol = 'https://';
@@ -77,6 +78,8 @@ const AddressBar = () => {
         newAddress = protocol + typedAddress;
       }
       if (url && url !== typedAddress) setTypedAddress(url);
+      // Notify Device components that navigation is from address bar (must await before dispatch)
+      await webViewPubSub.publish(ADDRESS_BAR_EVENTS.NAVIGATE);
       dispatch(setAddress(newAddress));
     },
     [dispatch, typedAddress]

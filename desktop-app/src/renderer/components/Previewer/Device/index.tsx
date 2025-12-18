@@ -88,18 +88,22 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
   const isNavigatingFromAddressBar = useRef<boolean>(false);
+  // Store initial URL to avoid re-triggering navigation on SPA route changes
+  const initialUrl = useRef<string>(address);
 
   useEffect(() => {
-    if (ref.current && isPrimary) {
+    // Only trigger loadURL when navigating from address bar, not from SPA navigation
+    if (ref.current && isPrimary && isNavigatingFromAddressBar.current) {
       try {
         const currentUrl = ref.current.getURL();
         if (address !== currentUrl) {
-          isNavigatingFromAddressBar.current = true;
           ref.current.loadURL(address);
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error('Error loading URL', err);
+      } finally {
+        isNavigatingFromAddressBar.current = false;
       }
     }
   }, [address, isPrimary]);
@@ -133,6 +137,11 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       }
     });
     if (isPrimary) {
+      // Listen for address bar navigation to set the flag
+      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.NAVIGATE, () => {
+        isNavigatingFromAddressBar.current = true;
+      });
+
       webViewPubSub.subscribe(NAVIGATION_EVENTS.BACK, () => {
         if (ref.current) {
           ref.current.goBack();
@@ -594,7 +603,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         <div className="bg-white">
           <webview
             id={device.name}
-            src={address}
+            src={initialUrl.current}
             style={{
               height,
               width,

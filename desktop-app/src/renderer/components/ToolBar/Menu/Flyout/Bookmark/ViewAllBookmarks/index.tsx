@@ -3,6 +3,8 @@ import Button from 'renderer/components/Button';
 import { IBookmarks } from 'renderer/store/features/bookmarks';
 import { setAddress } from 'renderer/store/features/renderer';
 import { useState } from 'react';
+import { webViewPubSub } from 'renderer/lib/pubsub';
+import { ADDRESS_BAR_EVENTS } from 'renderer/components/ToolBar/AddressBar';
 import BookmarkListButton from './BookmarkListButton';
 import BookmarkFlyout from './BookmarkFlyout';
 
@@ -22,7 +24,8 @@ const ViewAllBookmarks = ({ bookmarks, handleBookmarkFlyout }: Props) => {
 
   const areBookmarksPresent = bookmarks.length > 0;
 
-  const handleBookmarkClick = (address: string) => {
+  const handleBookmarkClick = async (address: string) => {
+    await webViewPubSub.publish(ADDRESS_BAR_EVENTS.NAVIGATE);
     dispatch(setAddress(address));
     handleBookmarkFlyout();
   };
