@@ -1,9 +1,9 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { useState } from 'react';
 import Button from 'renderer/components/Button';
 import ShortcutsModal from './ShortcutsModal';
 
-const Shortcuts = () => {
+function Shortcuts() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const handleClose = () => setIsOpen(!isOpen);
 
@@ -17,6 +17,6 @@ const Shortcuts = () => {
       <ShortcutsModal isOpen={isOpen} onClose={handleClose} />
     </>
   );
-};
+}
 
 export default Shortcuts;

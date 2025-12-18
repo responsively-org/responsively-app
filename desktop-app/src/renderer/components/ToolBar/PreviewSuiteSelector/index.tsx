@@ -1,6 +1,6 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { useDispatch, useSelector } from 'react-redux';
-import { DropDown } from 'renderer/components/DropDown';
+import DropDown from 'renderer/components/DropDown';
 import {
   selectActiveSuite,
   selectSuites,
@@ -8,13 +8,13 @@ import {
 } from 'renderer/store/features/device-manager';
 import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
 
-export const PreviewSuiteSelector = () => {
+function PreviewSuiteSelector() {
   const dispatch = useDispatch();
   const suites = useSelector(selectSuites);
   const activeSuite = useSelector(selectActiveSuite);
   return (
     <DropDown
-      label={<Icon icon="heroicons:swatch" fontSize={18} />}
+      label={<Icon icon="heroicons:swatch" className="text-[18px]" />}
       options={[
         ...suites.map((suite) => ({
           label: (
@@ -30,7 +30,7 @@ export const PreviewSuiteSelector = () => {
         },
         {
           label: (
-            <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+            <div className="flex w-full shrink-0 items-center justify-between gap-12 whitespace-nowrap">
               <span>Manage Suites</span>
             </div>
           ),
@@ -41,4 +41,6 @@ export const PreviewSuiteSelector = () => {
       ]}
     />
   );
-};
+}
+
+export default PreviewSuiteSelector

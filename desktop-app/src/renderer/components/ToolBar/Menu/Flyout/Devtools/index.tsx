@@ -6,7 +6,7 @@ import {
 } from 'renderer/store/features/devtools';
 import Toggle from 'renderer/components/Toggle';
 
-const Devtools = () => {
+function Devtools() {
   const dockPosition = useSelector(selectDockPosition);
   const dispatch = useDispatch();
 
@@ -27,6 +27,6 @@ const Devtools = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Devtools;

@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
 import useKeyboardShortcut, {
@@ -6,7 +6,7 @@ import useKeyboardShortcut, {
 } from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
 import { selectDarkMode, setDarkMode } from 'renderer/store/features/ui';
 
-const UITheme = () => {
+function UITheme() {
   const darkMode = useSelector(selectDarkMode);
   const dispatch = useDispatch();
 
@@ -24,6 +24,6 @@ const UITheme = () => {
       </div>
     </div>
   );
-};
+}
 
 export default UITheme;

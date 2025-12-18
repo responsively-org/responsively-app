@@ -8,20 +8,20 @@ interface Props {
   onClose: () => void;
 }
 
-export const SettingsContent = ({ onClose }: Props) => {
+export function SettingsContent({ onClose }: Props) {
   const id = useId();
   const [screenshotSaveLocation, setScreenshotSaveLocation] = useState<string>(
-    window.electron.store.get('userPreferences.screenshot.saveLocation')
+    window.electron.store.get('userPreferences.screenshot.saveLocation'),
   );
   const [enableCustomTitlebar, setEnableCustomTitlebar] = useState<boolean>(
-    window.electron.store.get('userPreferences.customTitlebar')
+    window.electron.store.get('userPreferences.customTitlebar'),
   );
 
   const [webRequestHeaderAcceptLanguage, setWebRequestHeaderAcceptLanguage] =
     useState<string>(
       window.electron.store.get(
-        'userPreferences.webRequestHeaderAcceptLanguage'
-      )
+        'userPreferences.webRequestHeaderAcceptLanguage',
+      ),
     );
 
   const onSave = () => {
@@ -33,16 +33,16 @@ export const SettingsContent = ({ onClose }: Props) => {
 
     window.electron.store.set(
       'userPreferences.screenshot.saveLocation',
-      screenshotSaveLocation
+      screenshotSaveLocation,
     );
     window.electron.store.set(
       'userPreferences.customTitlebar',
-      enableCustomTitlebar
+      enableCustomTitlebar,
     );
 
     window.electron.store.set(
       'userPreferences.webRequestHeaderAcceptLanguage',
-      webRequestHeaderAcceptLanguage
+      webRequestHeaderAcceptLanguage,
     );
 
     onClose();
@@ -111,4 +111,4 @@ export const SettingsContent = ({ onClose }: Props) => {
       </Button>
     </div>
   );
-};
+}

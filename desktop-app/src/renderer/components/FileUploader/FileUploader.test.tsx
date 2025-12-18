@@ -24,7 +24,7 @@ describe('FileUploader', () => {
         handleFileUpload={props?.handleFileUpload || mockHandleFileUpload}
         multiple={props?.multiple || false}
         acceptedFileTypes={props?.acceptedFileTypes || '*/*'}
-      />
+      />,
     );
 
   it('renders the component', () => {

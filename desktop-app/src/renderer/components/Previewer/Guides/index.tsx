@@ -22,7 +22,7 @@ interface Props {
   defaultGuides: DefaultGuide[];
 }
 
-const GuideGrid = ({
+function GuideGrid({
   scaledHeight,
   scaledWidth,
   height,
@@ -32,7 +32,7 @@ const GuideGrid = ({
   night,
   enabled,
   defaultGuides,
-}: Props) => {
+}: Props) {
   const horizontalGuidesRef = useRef<Guides>();
   const verticalGuidesRef = useRef<Guides>();
   const defaultsHor = useMemo(() => {
@@ -45,7 +45,7 @@ const GuideGrid = ({
       defaultGuides
         .filter((x: DefaultGuide) => x.is_vertical)
         .flatMap((x) => x.positions),
-    [defaultGuides]
+    [defaultGuides],
   );
 
   useEffect(() => {
@@ -93,104 +93,102 @@ const GuideGrid = ({
   return (
     <>
       {enabled ? (
-        <>
-          <div
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            pointerEvents: 'none',
+            width: `${scaledWidth + 30}px`,
+            height: `${scaledHeight + 30}px`,
+            zIndex: 1,
+            overflow: 'hidden',
+          }}
+        >
+          <div className="box bg-slate-200 dark:bg-slate-800" />
+          <Guides
+            ref={horizontalGuidesRef as LegacyRef<Guides>}
+            type="horizontal"
+            backgroundColor="transparent"
+            className="bg-slate-200 dark:bg-slate-800"
+            textColor={night ? 'rgb(209, 213, 219)' : 'rgb(55, 65, 81)'}
+            mainLineSize="40%"
+            longLineSize="5"
+            shortLineSize="1"
+            lineColor={night ? '#fefefe' : '#777777'}
+            zoom={zoomFactor}
             style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              pointerEvents: 'none',
-              width: `${scaledWidth + 30}px`,
-              height: `${scaledHeight + 30}px`,
-              zIndex: 1,
-              overflow: 'hidden',
+              height: '30px',
+              left: '30px',
+              width: scaledWidth * 2,
+              pointerEvents: 'auto',
             }}
-          >
-            <div className="box bg-slate-200 dark:bg-slate-800" />
-            <Guides
-              ref={horizontalGuidesRef as LegacyRef<Guides>}
-              type="horizontal"
-              backgroundColor="transparent"
-              className="bg-slate-200 dark:bg-slate-800"
-              textColor={night ? 'rgb(209, 213, 219)' : 'rgb(55, 65, 81)'}
-              mainLineSize="40%"
-              longLineSize="5"
-              shortLineSize="1"
-              lineColor={night ? '#fefefe' : '#777777'}
-              zoom={zoomFactor}
-              style={{
-                height: '30px',
-                left: '30px',
-                width: scaledWidth * 2,
-                pointerEvents: 'auto',
-              }}
-              displayDragPos
-              displayGuidePos
-              useResizeObserver
-              defaultGuides={defaultsHor.length > 0 ? defaultsHor : undefined}
-              onChangeGuides={({ guides }) => {
-                window.electron.store.set('userPreferences.guides', [
-                  ...window.electron.store
-                    .get('userPreferences.guides')
-                    .filter((x: DefaultGuide) => {
-                      if (x.resolution !== `${width}x${height}`) {
-                        return true;
-                      }
-                      return x.is_vertical;
-                    }),
-                  {
-                    resolution: `${width}x${height}`,
-                    is_vertical: false,
-                    positions: guides.filter((x) => x > 0),
-                  },
-                ]);
-              }}
-            />
-            <Guides
-              ref={verticalGuidesRef as LegacyRef<Guides>}
-              type="vertical"
-              backgroundColor="transparent"
-              className="bg-slate-200 dark:bg-slate-800"
-              textColor={night ? 'rgb(209, 213, 219)' : 'rgb(55, 65, 81)'}
-              mainLineSize="40%"
-              longLineSize="5"
-              shortLineSize="1"
-              lineColor={night ? '#fefefe' : '#777777'}
-              zoom={zoomFactor}
-              style={{
-                width: '30px',
-                top: '0px',
-                pointerEvents: 'auto',
-              }}
-              displayDragPos
-              displayGuidePos
-              useResizeObserver
-              defaultGuides={defaultsVer.length > 0 ? defaultsVer : undefined}
-              onChangeGuides={({ guides }) => {
-                window.electron.store.set('userPreferences.guides', [
-                  ...window.electron.store
-                    .get('userPreferences.guides')
-                    .filter((x: DefaultGuide) => {
-                      if (x.resolution !== `${width}x${height}`) {
-                        return true;
-                      }
-                      return !x.is_vertical;
-                    }),
-                  {
-                    resolution: `${width}x${height}`,
-                    is_vertical: true,
-                    positions: guides.filter((x) => x > 0),
-                  },
-                ]);
-              }}
-            />
-          </div>
-        </>
+            displayDragPos
+            displayGuidePos
+            useResizeObserver
+            defaultGuides={defaultsHor.length > 0 ? defaultsHor : undefined}
+            onChangeGuides={({ guides }) => {
+              window.electron.store.set('userPreferences.guides', [
+                ...window.electron.store
+                  .get('userPreferences.guides')
+                  .filter((x: DefaultGuide) => {
+                    if (x.resolution !== `${width}x${height}`) {
+                      return true;
+                    }
+                    return x.is_vertical;
+                  }),
+                {
+                  resolution: `${width}x${height}`,
+                  is_vertical: false,
+                  positions: guides.filter((x) => x > 0),
+                },
+              ]);
+            }}
+          />
+          <Guides
+            ref={verticalGuidesRef as LegacyRef<Guides>}
+            type="vertical"
+            backgroundColor="transparent"
+            className="bg-slate-200 dark:bg-slate-800"
+            textColor={night ? 'rgb(209, 213, 219)' : 'rgb(55, 65, 81)'}
+            mainLineSize="40%"
+            longLineSize="5"
+            shortLineSize="1"
+            lineColor={night ? '#fefefe' : '#777777'}
+            zoom={zoomFactor}
+            style={{
+              width: '30px',
+              top: '0px',
+              pointerEvents: 'auto',
+            }}
+            displayDragPos
+            displayGuidePos
+            useResizeObserver
+            defaultGuides={defaultsVer.length > 0 ? defaultsVer : undefined}
+            onChangeGuides={({ guides }) => {
+              window.electron.store.set('userPreferences.guides', [
+                ...window.electron.store
+                  .get('userPreferences.guides')
+                  .filter((x: DefaultGuide) => {
+                    if (x.resolution !== `${width}x${height}`) {
+                      return true;
+                    }
+                    return !x.is_vertical;
+                  }),
+                {
+                  resolution: `${width}x${height}`,
+                  is_vertical: true,
+                  positions: guides.filter((x) => x > 0),
+                },
+              ]);
+            }}
+          />
+        </div>
       ) : (
         <></>
       )}
     </>
   );
-};
+}
 
 export default GuideGrid;

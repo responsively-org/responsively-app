@@ -4,14 +4,14 @@ interface Props {
   label: string;
 }
 
-const Select = ({
+function Select({
   label,
   ...props
 }: Props &
   React.DetailedHTMLProps<
     React.SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
-  >) => {
+  >) {
   const id = useId();
   return (
     <div className="flex flex-col gap-1">
@@ -26,6 +26,6 @@ const Select = ({
       </select>
     </div>
   );
-};
+}
 
 export default Select;

@@ -18,14 +18,14 @@ if ((navigator as any).userAgentData.platform === 'Windows') {
   import('./titlebar-styles.css');
 }
 
-const Browser = () => {
+function Browser() {
   return (
     <div className="h-screen gap-2 overflow-hidden pt-2">
       <ToolBar />
       <Previewer />
     </div>
   );
-};
+}
 
 const getView = (appView: AppView) => {
   switch (appView) {
@@ -38,13 +38,13 @@ const getView = (appView: AppView) => {
   }
 };
 
-const ViewComponent = () => {
+function ViewComponent() {
   const appView = useSelector(selectAppView);
 
   return <>{getView(appView)}</>;
-};
+}
 
-const AppContent = () => {
+function AppContent() {
   return (
     <Provider store={store}>
       <ThemeProvider>
@@ -56,5 +56,5 @@ const AppContent = () => {
       </ThemeProvider>
     </Provider>
   );
-};
+}
 export default AppContent;

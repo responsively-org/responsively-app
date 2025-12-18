@@ -4,7 +4,7 @@ import { keyboardShortcutsPubsub } from './useMousetrapEmitter';
 
 const useKeyboardShortcut = (
   eventChannel: ShortcutChannel,
-  callback: () => void
+  callback: () => void,
 ) => {
   useEffect(() => {
     keyboardShortcutsPubsub.subscribe(eventChannel, callback);

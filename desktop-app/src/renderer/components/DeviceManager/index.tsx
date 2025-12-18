@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -24,15 +24,15 @@ const filterDevices = (devices: Device[], filter: string) => {
 
   return devices.filter((device: Device) =>
     `${device.name.toLowerCase()}${device.width}x${device.height}`.includes(
-      sanitizedFilter
-    )
+      sanitizedFilter,
+    ),
   );
 };
 
-const DeviceManager = () => {
+function DeviceManager() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState<boolean>(false);
   const [selectedDevice, setSelectedDevice] = useState<Device | undefined>(
-    undefined
+    undefined,
   );
   const dispatch = useDispatch();
   const activeSuite = useSelector(selectActiveSuite);
@@ -41,7 +41,7 @@ const DeviceManager = () => {
   const [filteredDevices, setFilteredDevices] =
     useState<Device[]>(defaultDevices);
   const [customDevices, setCustomDevices] = useState<Device[]>(
-    window.electron.store.get('deviceManager.customDevices')
+    window.electron.store.get('deviceManager.customDevices'),
   );
   const [filteredCustomDevices, setFilteredCustomDevices] =
     useState<Device[]>(customDevices);
@@ -67,7 +67,7 @@ const DeviceManager = () => {
         setSuiteDevices({
           suite: activeSuite.id,
           devices: [...activeSuite.devices, device.id],
-        })
+        }),
       );
     }
   };
@@ -79,7 +79,7 @@ const DeviceManager = () => {
       setSuiteDevices({
         suite: activeSuite.id,
         devices: activeSuite.devices.filter((d) => d !== device.id),
-      })
+      }),
     );
   };
 
@@ -92,7 +92,7 @@ const DeviceManager = () => {
     <div className="mx-auto flex w-4/5 flex-col gap-4 rounded-lg p-8">
       <div className="flex w-full justify-end text-3xl">
         <Button onClick={() => dispatch(setAppView(APP_VIEWS.BROWSER))}>
-          <Icon icon="ic:round-close" fontSize={18} />
+          <Icon icon="ic:round-close" className="text-[18px]" />
         </Button>
       </div>
       <div>
@@ -204,10 +204,12 @@ const DeviceManager = () => {
       />
     </div>
   );
-};
+}
 
-export default () => (
-  <DndProvider backend={HTML5Backend}>
-    <DeviceManager />
-  </DndProvider>
-);
+export default function () {
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <DeviceManager />
+    </DndProvider>
+  );
+}

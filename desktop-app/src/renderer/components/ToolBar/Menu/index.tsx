@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import Button from 'renderer/components/Button';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,14 +8,14 @@ import useLocalStorage from 'renderer/components/useLocalStorage/useLocalStorage
 import NotificationsBubble from 'renderer/components/Notifications/NotificationsBubble';
 import MenuFlyout from './Flyout';
 
-const Menu = () => {
+function Menu() {
   const dispatch = useDispatch();
   const isMenuFlyoutOpen = useSelector(selectMenuFlyout);
   const notifications = useSelector(selectNotifications);
 
   const [hasNewNotifications, setHasNewNotifications] = useLocalStorage(
     'hasNewNotifications',
-    true
+    true,
   );
 
   const ref = useDetectClickOutside({
@@ -49,6 +49,6 @@ const Menu = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Menu;

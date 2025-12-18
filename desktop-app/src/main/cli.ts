@@ -30,7 +30,7 @@ const cli = parseArgs(
     alias: {
       h: 'help',
     },
-  }
+  },
 );
 
 export default cli;

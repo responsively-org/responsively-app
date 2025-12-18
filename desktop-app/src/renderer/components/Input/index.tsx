@@ -5,14 +5,14 @@ interface Props {
   label: string;
 }
 
-const Input = ({
+function Input({
   label,
   ...props
 }: Props &
   React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
-  >) => {
+  >) {
   const id = useId();
   const isCheckbox = props.type === 'checkbox';
   return (
@@ -32,6 +32,6 @@ const Input = ({
       />
     </div>
   );
-};
+}
 
 export default Input;

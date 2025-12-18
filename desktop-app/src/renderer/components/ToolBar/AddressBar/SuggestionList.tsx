@@ -12,10 +12,10 @@ interface Props {
   onEnter: (url?: string) => void;
 }
 
-const SuggestionList = ({ match, onEnter }: Props) => {
+function SuggestionList({ match, onEnter }: Props) {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [history] = useState<HistoryItem[]>(
-    window.electron.store.get('history')
+    window.electron.store.get('history'),
   );
 
   const suggestions = useMemo(() => {
@@ -34,7 +34,7 @@ const SuggestionList = ({ match, onEnter }: Props) => {
         onEnter(
           suggestions[activeIndex] != null
             ? suggestions[activeIndex].url
-            : undefined
+            : undefined,
         );
         return;
       }
@@ -51,7 +51,7 @@ const SuggestionList = ({ match, onEnter }: Props) => {
         setActiveIndex(activeIndex + 1);
       }
     },
-    [activeIndex, suggestions, onEnter]
+    [activeIndex, suggestions, onEnter],
   );
 
   useEffect(() => {
@@ -65,12 +65,12 @@ const SuggestionList = ({ match, onEnter }: Props) => {
     <div className="absolute z-20 flex w-full flex-col items-start rounded-b-lg bg-white pb-2  shadow-lg dark:bg-slate-900">
       {suggestions.map(({ title, url }, idx) => (
         <button
-          onClickCapture={() => {
+          onClick={() => {
             onEnter(url);
           }}
           className={cx(
             'pointer-events-auto flex w-full items-center gap-2 py-1 pl-2 pr-8 hover:bg-slate-200 dark:hover:bg-slate-700',
-            { 'bg-slate-200 dark:bg-slate-700': activeIndex === idx }
+            { 'bg-slate-200 dark:bg-slate-700': activeIndex === idx },
           )}
           type="button"
           key={url}
@@ -95,6 +95,6 @@ const SuggestionList = ({ match, onEnter }: Props) => {
       ))}
     </div>
   );
-};
+}
 
 export default SuggestionList;

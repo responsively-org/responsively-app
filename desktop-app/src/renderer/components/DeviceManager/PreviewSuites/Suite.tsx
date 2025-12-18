@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import cx from 'classnames';
 import { Device, getDevicesMap } from 'common/deviceList';
 import { useDrop } from 'react-dnd';
@@ -17,7 +17,7 @@ interface Props {
   isActive: boolean;
 }
 
-export const Suite = ({ suite: { id, name, devices }, isActive }: Props) => {
+export function Suite({ suite: { id, name, devices }, isActive }: Props) {
   const [, drop] = useDrop(() => ({ accept: DND_TYPE }));
   const dispatch = useDispatch();
 
@@ -29,16 +29,16 @@ export const Suite = ({ suite: { id, name, devices }, isActive }: Props) => {
   return (
     <div
       className={cx(
-        'relative min-w-56 flex-shrink-0  rounded bg-white dark:bg-slate-900',
+        'relative min-w-56 shrink-0  rounded bg-white dark:bg-slate-900',
         {
           'border-2 border-slate-500 ': isActive,
-        }
+        },
       )}
     >
       {!isActive ? (
         <div className="absolute flex h-full w-full items-center justify-center bg-gray-100 !bg-opacity-70 dark:bg-slate-800">
           <Button
-            className="aspect-square w-16 rounded-full hover:!bg-slate-500"
+            className="aspect-square w-16 rounded-full hover:bg-slate-500!"
             onClick={() => dispatch(setActiveSuite(id))}
           >
             <Icon icon="mdi:eye-settings-outline" fontSize={20} />
@@ -70,4 +70,4 @@ export const Suite = ({ suite: { id, name, devices }, isActive }: Props) => {
       </div>
     </div>
   );
-};
+}

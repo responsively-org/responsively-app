@@ -1,7 +1,7 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import cx from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
-import { DropDown } from 'renderer/components/DropDown';
+import DropDown from 'renderer/components/DropDown';
 import { COLOR_BLINDNESS_CHANNEL } from 'renderer/components/ToolBar/ColorBlindnessControls';
 import {
   BLUE_YELLOW,
@@ -25,7 +25,7 @@ interface Props {
   webview: Electron.WebviewTag | null;
 }
 
-export const ColorBlindnessTools = ({ webview }: Props) => {
+export function ColorBlindnessTools({ webview }: Props) {
   const [injectCss, setInjectCss] = useState<InjectedCss>();
 
   const reApplyCss = useCallback(async () => {
@@ -76,7 +76,7 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
         setInjectCss(undefined);
       }
     },
-    [setInjectCss, webview, injectCss]
+    [setInjectCss, webview, injectCss],
   );
 
   const clearSimulation = useCallback(async () => {
@@ -117,7 +117,7 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
       `;
       return applyCss(colorDeficiency, css);
     },
-    [applyCss]
+    [applyCss],
   );
 
   const applySunlight = useCallback(
@@ -125,7 +125,7 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
       const css = 'body {backdrop-filter: brightness(0.5) !important;}';
       return applyCss(condition, css);
     },
-    [applyCss]
+    [applyCss],
   );
 
   const applyVisualImpairment = useCallback(
@@ -187,7 +187,7 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
       }
       return applyCss(visualImpairment, css, js);
     },
-    [applyCss]
+    [applyCss],
   );
 
   const applySimulation = useCallback(
@@ -215,7 +215,7 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
       applyVisualImpairment,
       applySunlight,
       clearSimulation,
-    ]
+    ],
   );
 
   useEffect(() => {
@@ -235,4 +235,4 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
       onChange={applySimulation}
     />
   );
-};
+}

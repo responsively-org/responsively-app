@@ -55,7 +55,7 @@ export const updateFileWatcher = (newURL: string) => {
       IPC_MAIN_CHANNELS.START_WATCHING_FILE,
       {
         path: newURL,
-      }
+      },
     );
   else window.electron.ipcRenderer.sendMessage(IPC_MAIN_CHANNELS.STOP_WATCHER);
 };
@@ -87,7 +87,7 @@ export const rendererSlice = createSlice({
           state.individualZoomFactor = zoomSteps[newIndex];
           window.electron.store.set(
             'renderer.individualZoomStepIndex',
-            newIndex
+            newIndex,
           );
         } else {
           const newIndex = index + 1;
@@ -107,7 +107,7 @@ export const rendererSlice = createSlice({
           state.individualZoomFactor = zoomSteps[newIndex];
           window.electron.store.set(
             'renderer.individualZoomStepIndex',
-            newIndex
+            newIndex,
           );
         } else {
           const newIndex = index - 1;
@@ -132,7 +132,7 @@ export const rendererSlice = createSlice({
     setNotifications: (state, action: PayloadAction<Notification>) => {
       const notifications = state.notifications || [];
       const index = notifications.findIndex(
-        (notification: Notification) => notification.id === action.payload.id
+        (notification: Notification) => notification.id === action.payload.id,
       );
 
       if (index === -1) {

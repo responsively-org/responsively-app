@@ -6,7 +6,7 @@ interface Props {
   title: JSX.Element | string;
 }
 
-const ModalLoader = ({ isOpen, onClose, title }: Props) => {
+function ModalLoader({ isOpen, onClose, title }: Props) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <div className="flex flex-col items-center justify-center gap-4">
@@ -14,6 +14,6 @@ const ModalLoader = ({ isOpen, onClose, title }: Props) => {
       </div>
     </Modal>
   );
-};
+}
 
 export default ModalLoader;

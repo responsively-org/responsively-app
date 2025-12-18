@@ -7,11 +7,11 @@ export type FileUploaderProps = {
   acceptedFileTypes?: string;
 };
 
-export const FileUploader = ({
+export function FileUploader({
   handleFileUpload,
   multiple,
   acceptedFileTypes,
-}: FileUploaderProps) => {
+}: FileUploaderProps) {
   const { uploadedFile, handleUpload, resetUploadedFile } = useFileUpload();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,4 +38,4 @@ export const FileUploader = ({
       />
     </div>
   );
-};
+}

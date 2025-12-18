@@ -19,7 +19,7 @@ export const SHORTCUT_CHANNEL = {
 } as const;
 
 export type ShortcutChannel =
-  typeof SHORTCUT_CHANNEL[keyof typeof SHORTCUT_CHANNEL];
+  (typeof SHORTCUT_CHANNEL)[keyof typeof SHORTCUT_CHANNEL];
 
 export const SHORTCUT_KEYS: { [key in ShortcutChannel]: string[] } = {
   [SHORTCUT_CHANNEL.BACK]: ['alt+left'],

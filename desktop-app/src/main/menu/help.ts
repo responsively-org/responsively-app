@@ -16,7 +16,7 @@ export interface AboutDialogArgs {
 
 export const subMenuHelp = (
   mainWindow: BrowserWindow,
-  appUpdater: AppUpdater
+  appUpdater: AppUpdater,
 ): MenuItemConstructorOptions => {
   const environmentInfo = getEnvironmentInfo();
   ipcMain.handle('get-about-info', async (_): Promise<AboutDialogArgs> => {
@@ -39,7 +39,7 @@ export const subMenuHelp = (
         label: 'Open Source',
         click() {
           shell.openExternal(
-            'https://github.com/responsively-org/responsively-app'
+            'https://github.com/responsively-org/responsively-app',
           );
         },
       },
@@ -53,7 +53,7 @@ export const subMenuHelp = (
         label: 'Search Issues',
         click() {
           shell.openExternal(
-            'https://github.com/responsively-org/responsively-app/issues'
+            'https://github.com/responsively-org/responsively-app/issues',
           );
         },
       },
@@ -61,7 +61,7 @@ export const subMenuHelp = (
         label: 'Sponsor Responsively',
         click() {
           shell.openExternal(
-            'https://responsively.app/sponsor?utm_source=app&utm_medium=menu&utm_campaign=sponsor'
+            'https://responsively.app/sponsor?utm_source=app&utm_medium=menu&utm_campaign=sponsor',
           );
         },
       },

@@ -7,7 +7,7 @@ declare global {
         sendMessage<T>(channel: Channels, ...args: T[]): void;
         on<T>(
           channel: string,
-          func: (...args: T[]) => void
+          func: (...args: T[]) => void,
         ): (() => void) | undefined;
         once<T>(channel: string, func: (...args: T[]) => void): void;
         invoke<T, P>(channel: string, ...args: T[]): Promise<P>;

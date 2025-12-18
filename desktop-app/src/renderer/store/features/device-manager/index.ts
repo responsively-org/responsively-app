@@ -4,11 +4,11 @@ import type { RootState } from '../..';
 import { sanitizeSuites } from './utils';
 
 const activeDeviceIds: string[] = window.electron.store.get(
-  'deviceManager.activeDevices'
+  'deviceManager.activeDevices',
 );
 
 const DEFAULT_DEVICES: Device[] = activeDeviceIds.map(
-  (id) => getDevicesMap()[id]
+  (id) => getDevicesMap()[id],
 );
 
 export interface PreviewSuite {
@@ -41,16 +41,16 @@ export const deviceManagerSlice = createSlice({
       state.devices = action.payload;
       window.electron.store.set(
         'deviceManager.activeDevices',
-        action.payload.map((device) => device.id)
+        action.payload.map((device) => device.id),
       );
     },
     setSuiteDevices: (
       state,
-      action: PayloadAction<{ suite: string; devices: string[] }>
+      action: PayloadAction<{ suite: string; devices: string[] }>,
     ) => {
       const { suite, devices } = action.payload;
       const suites: PreviewSuites = window.electron.store.get(
-        'deviceManager.previewSuites'
+        'deviceManager.previewSuites',
       );
       const suiteIndex = suites.findIndex((s) => s.id === suite);
       if (suiteIndex === -1) {
@@ -72,7 +72,7 @@ export const deviceManagerSlice = createSlice({
     },
     addSuites(state, action: PayloadAction<PreviewSuite[]>) {
       const existingSuites = window.electron.store.get(
-        'deviceManager.previewSuites'
+        'deviceManager.previewSuites',
       );
 
       const suitesMap = new Map();
@@ -92,7 +92,7 @@ export const deviceManagerSlice = createSlice({
     },
     deleteSuite(state, action: PayloadAction<string>) {
       const suites: PreviewSuite[] = window.electron.store.get(
-        'deviceManager.previewSuites'
+        'deviceManager.previewSuites',
       );
       const suiteIndex = suites.findIndex((s) => s.id === action.payload);
       if (suiteIndex === -1) {
@@ -110,7 +110,7 @@ export const deviceManagerSlice = createSlice({
         devices: ['10008', '10013', '10015'],
       };
       const suites: PreviewSuite[] = window.electron.store.get(
-        'deviceManager.previewSuites'
+        'deviceManager.previewSuites',
       );
       window.electron.store.set('deviceManager.previewSuites', [defaultSuites]);
       state.suites = [defaultSuites];

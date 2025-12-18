@@ -12,7 +12,7 @@ interface Props {
   authInfo: AuthInfo | null;
 }
 
-const AuthModal = ({ isOpen, onClose, authInfo }: Props) => {
+function AuthModal({ isOpen, onClose, authInfo }: Props) {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
@@ -33,7 +33,7 @@ const AuthModal = ({ isOpen, onClose, authInfo }: Props) => {
         authInfo,
         username: proceed ? username : '',
         password: proceed ? password : '',
-      }
+      },
     );
     onClose();
   };
@@ -70,6 +70,6 @@ const AuthModal = ({ isOpen, onClose, authInfo }: Props) => {
       </div>
     </Modal>
   );
-};
+}
 
 export default AuthModal;

@@ -1,9 +1,9 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import cx from 'classnames';
 import { IPC_MAIN_CHANNELS, OpenUrlArgs } from 'common/constants';
 import { AuthRequestArgs } from 'main/http-basic-auth';
 import { PermissionRequestArg } from 'main/web-permissions/PermissionsManager';
-import {
+import React, {
   DragEvent,
   KeyboardEventHandler,
   useCallback,
@@ -33,13 +33,13 @@ export const ADDRESS_BAR_EVENTS = {
   DELETE_CACHE: 'DELETE_CACHE',
 };
 
-const AddressBar = () => {
+function AddressBar() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [typedAddress, setTypedAddress] = useState<string>('');
   const [isSuggesting, setIsSuggesting] = useState<boolean>(false);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [homepage, setHomepage] = useState<string>(
-    window.electron.store.get('homepage')
+    window.electron.store.get('homepage'),
   );
   const [isFocused, setIsFocused] = useState(false);
   const [deleteStorageLoading, setDeleteStorageLoading] =
@@ -79,7 +79,7 @@ const AddressBar = () => {
       if (url && url !== typedAddress) setTypedAddress(url);
       dispatch(setAddress(newAddress));
     },
-    [dispatch, typedAddress]
+    [dispatch, typedAddress],
   );
 
   useEffect(() => {
@@ -87,31 +87,31 @@ const AddressBar = () => {
       IPC_MAIN_CHANNELS.PERMISSION_REQUEST,
       (args) => {
         setPermissionRequest(args);
-      }
+      },
     );
 
     window.electron.ipcRenderer.on<AuthRequestArgs>(
       IPC_MAIN_CHANNELS.AUTH_REQUEST,
       (args) => {
         setAuthRequest(args);
-      }
+      },
     );
     window.electron.ipcRenderer.on<OpenUrlArgs>(
       IPC_MAIN_CHANNELS.OPEN_URL,
       (args) => {
         dispatchAddress(args.url);
-      }
+      },
     );
 
     return () => {
       window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.PERMISSION_REQUEST
+        IPC_MAIN_CHANNELS.PERMISSION_REQUEST,
       );
       window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.AUTH_REQUEST
+        IPC_MAIN_CHANNELS.AUTH_REQUEST,
       );
       window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.OPEN_URL
+        IPC_MAIN_CHANNELS.OPEN_URL,
       );
     };
   }, [dispatchAddress]);
@@ -134,7 +134,7 @@ const AddressBar = () => {
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (!isSuggesting && !['Escape', 'Enter'].includes(e.key)) {
       setIsSuggesting(true);
@@ -222,7 +222,7 @@ const AddressBar = () => {
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragExit}
         onDrop={handleDrop}
-        className="relative z-10 w-full flex-grow"
+        className="relative z-10 w-full grow"
       >
         <div className="absolute inset-y-0 left-2 flex items-center">
           <button
@@ -278,11 +278,11 @@ const AddressBar = () => {
           ref={inputRef}
           type="text"
           className={cx(
-            'w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-40 dark:bg-slate-900',
+            'w-full text-ellipsis bg-white rounded-full px-2 py-1 pl-8 pr-40 dark:bg-slate-900',
             {
               'rounded-tl-lg rounded-tr-lg rounded-bl-none rounded-br-none outline-none':
                 isSuggesting,
-            }
+            },
           )}
           value={typedAddress}
           onChange={(e) => setTypedAddress(e.target.value)}
@@ -291,7 +291,7 @@ const AddressBar = () => {
             setIsFocused(false);
             setTimeout(() => {
               setIsSuggesting(false);
-            }, 100);
+            }, 200);
           }}
           onSelect={(e) => {
             if (e.target === inputRef.current && !isFocused) {
@@ -355,6 +355,6 @@ const AddressBar = () => {
       />
     </>
   );
-};
+}
 
 export default AddressBar;

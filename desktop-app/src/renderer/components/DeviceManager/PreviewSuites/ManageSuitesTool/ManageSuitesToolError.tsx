@@ -1,6 +1,6 @@
 import Button from 'renderer/components/Button';
 
-export const ManageSuitesToolError = ({ onClose }: { onClose: () => void }) => {
+export function ManageSuitesToolError({ onClose }: { onClose: () => void }) {
   return (
     <div
       data-testid="manage-suites-error"
@@ -14,4 +14,4 @@ export const ManageSuitesToolError = ({ onClose }: { onClose: () => void }) => {
       </Button>
     </div>
   );
-};
+}

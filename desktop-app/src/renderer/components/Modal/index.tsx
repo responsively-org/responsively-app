@@ -9,7 +9,7 @@ interface Props {
   children?: JSX.Element | string;
 }
 
-const Modal = ({ isOpen, onClose, title, description, children }: Props) => {
+function Modal({ isOpen, onClose, title, description, children }: Props) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog onClose={onClose} className="relative z-50" as="div">
@@ -55,6 +55,6 @@ const Modal = ({ isOpen, onClose, title, description, children }: Props) => {
       </Dialog>
     </Transition>
   );
-};
+}
 
 export default Modal;

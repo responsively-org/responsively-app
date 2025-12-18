@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import BrowserSync, { BrowserSyncInstance } from 'browser-sync';
 import fs from 'fs-extra';
+import {
+  BROWSER_SYNC_PORT,
+  BROWSER_SYNC_HOST,
+  BROWSER_SYNC_URL,
+} from '../common/constants';
 
-export const BROWSER_SYNC_PORT = 12719;
-export const BROWSER_SYNC_HOST = `localhost:${BROWSER_SYNC_PORT}`;
-export const BROWSER_SYNC_URL = `https://${BROWSER_SYNC_HOST}/browser-sync/browser-sync-client.js?v=2.27.10`;
+export { BROWSER_SYNC_PORT, BROWSER_SYNC_HOST, BROWSER_SYNC_URL };
 
 const browserSyncEmbed: BrowserSyncInstance = BrowserSync.create('embed');
 
@@ -32,7 +35,7 @@ export async function initInstance(): Promise<BrowserSyncInstance> {
           return reject(err);
         }
         return resolve(bs);
-      }
+      },
     );
   });
 }
@@ -53,7 +56,7 @@ export function watchFiles(filePath: string) {
         if (event === 'change') {
           browserSyncEmbed.reload(file);
         }
-      }
+      },
     );
   }
 }

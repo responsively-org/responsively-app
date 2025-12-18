@@ -5,7 +5,7 @@ const isDev =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 const getToggleFullScreen = (
-  mainWindow: BrowserWindow
+  mainWindow: BrowserWindow,
 ): MenuItemConstructorOptions => ({
   label: 'Toggle &Full Screen',
   accelerator: isMac ? 'Ctrl+CommandOrControl+F' : 'F11',
@@ -15,7 +15,7 @@ const getToggleFullScreen = (
 });
 
 const getToggleDevTools = (
-  mainWindow: BrowserWindow
+  mainWindow: BrowserWindow,
 ): MenuItemConstructorOptions => ({
   label: 'Toggle &Developer Tools',
   accelerator: isMac ? 'Alt+CommandOrControl+I' : 'Alt+Ctrl+I',
@@ -25,7 +25,7 @@ const getToggleDevTools = (
 });
 
 const getReloadMenu = (
-  mainWindow: BrowserWindow
+  mainWindow: BrowserWindow,
 ): MenuItemConstructorOptions => ({
   label: '&Reload',
   accelerator: 'CommandOrControl+R',
@@ -39,7 +39,7 @@ const getReloadMenu = (
 });
 
 const getReloadIgnoringCacheMenu = (
-  mainWindow: BrowserWindow
+  mainWindow: BrowserWindow,
 ): MenuItemConstructorOptions => ({
   label: 'Reload Ignoring Cache',
   accelerator: 'CommandOrControl+Shift+R',
@@ -49,7 +49,7 @@ const getReloadIgnoringCacheMenu = (
 });
 
 const getViewMenuProd = (
-  mainWindow: BrowserWindow
+  mainWindow: BrowserWindow,
 ): MenuItemConstructorOptions => ({
   label: '&View',
   submenu: [
@@ -60,7 +60,7 @@ const getViewMenuProd = (
 });
 
 const getViewMenuDev = (
-  mainWindow: BrowserWindow
+  mainWindow: BrowserWindow,
 ): MenuItemConstructorOptions => ({
   label: '&View',
   submenu: [

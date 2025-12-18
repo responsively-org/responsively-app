@@ -1,8 +1,8 @@
-import { BrowserView, BrowserWindow, ipcMain, webContents } from 'electron';
+import { WebContentsView, BrowserWindow, ipcMain, webContents } from 'electron';
 import { DOCK_POSITION } from '../../common/constants';
 import { DockPosition } from '../../renderer/store/features/devtools';
 
-let devtoolsBrowserView: BrowserView | undefined;
+let devtoolsBrowserView: WebContentsView | undefined;
 let devtoolsWebview: Electron.WebContents;
 let mainWindow: BrowserWindow | undefined;
 
@@ -32,7 +32,7 @@ export interface InspectElementArgs {
 const onInspectNodeRequested = async (
   backendNodeId: number,
   dbg: Electron.Debugger,
-  webviewId: number
+  webviewId: number,
 ) => {
   const [
     {
@@ -62,7 +62,7 @@ const onDebuggerEvent = async (
   method: string,
   params: any,
   dbg: Electron.Debugger,
-  webviewId: number
+  webviewId: number,
 ) => {
   switch (method) {
     case 'Overlay.inspectNodeRequested':
@@ -75,7 +75,7 @@ const onDebuggerEvent = async (
 
 const enableInspector = async (
   _: any,
-  args: ToggleInspectorArgs
+  args: ToggleInspectorArgs,
 ): Promise<ToggleInspectorResult> => {
   const { webviewId } = args;
   const webViewContents = webContents.fromId(webviewId);
@@ -108,7 +108,7 @@ const enableInspector = async (
 
 const disableInspector = async (
   _: any,
-  args: ToggleInspectorArgs
+  args: ToggleInspectorArgs,
 ): Promise<ToggleInspectorResult> => {
   const { webviewId } = args;
   const webViewContents = webContents.fromId(webviewId);
@@ -132,7 +132,7 @@ const disableInspector = async (
 
 const openDevtools = async (
   _: any,
-  arg: OpenDevtoolsArgs
+  arg: OpenDevtoolsArgs,
 ): Promise<OpenDevtoolsResult> => {
   const { webviewId, dockPosition } = arg;
   const optionalWebview = webContents.fromId(webviewId);
@@ -144,8 +144,8 @@ const openDevtools = async (
     devtoolsWebview.openDevTools({ mode: 'detach' });
     return { status: true };
   }
-  devtoolsBrowserView = new BrowserView();
-  mainWindow.setBrowserView(devtoolsBrowserView);
+  devtoolsBrowserView = new WebContentsView();
+  mainWindow.contentView.addChildView(devtoolsBrowserView);
   devtoolsBrowserView.setBounds({
     x: 0,
     y: 0,
@@ -172,7 +172,7 @@ const openDevtools = async (
           }
         }
       })()
-    `
+    `,
     )
     .catch((err) => {
       // eslint-disable-next-line no-console
@@ -212,14 +212,14 @@ const closeDevTools = async () => {
   if (devtoolsBrowserView == null) {
     return;
   }
-  mainWindow?.removeBrowserView(devtoolsBrowserView);
+  mainWindow?.contentView.removeChildView(devtoolsBrowserView);
   (devtoolsBrowserView.webContents as any).destroy();
   devtoolsBrowserView.webContents.close();
   devtoolsBrowserView = undefined;
 };
 
 export const initDevtoolsHandlers = (
-  _mainWindow: BrowserWindow | undefined
+  _mainWindow: BrowserWindow | undefined,
 ) => {
   mainWindow = _mainWindow;
 

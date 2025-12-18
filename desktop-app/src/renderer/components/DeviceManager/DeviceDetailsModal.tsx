@@ -16,14 +16,14 @@ interface Props {
   onClose: () => void;
 }
 
-const DeviceDetailsModal = ({
+function DeviceDetailsModal({
   onSaveDevice,
   onRemoveDevice,
   existingDevices,
   device,
   isOpen,
   onClose,
-}: Props) => {
+}: Props) {
   const [name, setName] = useState<string>(device?.name ?? '');
   const [width, setWidth] = useState<number>(device?.width ?? 400);
   const [height, setHeight] = useState<number>(device?.height ?? 600);
@@ -31,10 +31,10 @@ const DeviceDetailsModal = ({
   const [type, setType] = useState<string>(device?.type ?? 'phone');
   const [dpr, setDpr] = useState<number>(device?.dpr ?? 1);
   const [isTouchCapable, setIsTouchCapable] = useState<boolean>(
-    device?.isTouchCapable ?? true
+    device?.isTouchCapable ?? true,
   );
   const [isMobileCapable, setIsMobileCapable] = useState<boolean>(
-    device?.isMobileCapable ?? true
+    device?.isMobileCapable ?? true,
   );
 
   useEffect(() => {
@@ -82,7 +82,7 @@ const DeviceDetailsModal = ({
   }, [type, userAgent]);
 
   const isNew = !device;
-  const isCustom = device != null ? device.isCustom ?? false : true;
+  const isCustom = device != null ? (device.isCustom ?? false) : true;
 
   const handleAddDevice = async (): Promise<void> => {
     const existingDevice = existingDevices.find((d) => d.name === name);
@@ -92,7 +92,7 @@ const DeviceDetailsModal = ({
     if (doesDeviceExist) {
       // eslint-disable-next-line no-alert
       return alert(
-        'Device With the name already exists, try with a different name'
+        'Device With the name already exists, try with a different name',
       );
     }
     const capabilities = [];
@@ -116,125 +116,123 @@ const DeviceDetailsModal = ({
         capabilities,
         isCustom,
       },
-      isNew
+      isNew,
     );
 
     return onClose();
   };
 
   return (
-    <>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        title={isNew ? 'Add Custom Device' : 'Device Details'}
-      >
-        <div className="flex flex-col gap-4">
-          <div className="flex w-[420px] flex-col gap-2">
-            <Input
-              label="Device Name"
-              type="text"
-              placeholder="My Mobile Device"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              disabled={!isCustom}
-            />
-            <Input
-              label="Device Width"
-              type="number"
-              placeholder="1200"
-              min="100"
-              value={width}
-              onChange={(e) => setWidth(parseInt(e.target.value, 10))}
-              disabled={!isCustom}
-            />
-            <Input
-              label="Device Height"
-              type="number"
-              placeholder="800"
-              min="100"
-              value={height}
-              onChange={(e) => setHeight(parseInt(e.target.value, 10))}
-              disabled={!isCustom}
-            />
-            <Input
-              label="Device DPR"
-              type="number"
-              min="1"
-              step="0.1"
-              value={dpr}
-              onChange={(e) => setDpr(parseFloat(e.target.value))}
-              disabled={!isCustom}
-            />
-            <Select
-              label="Device type"
-              onChange={(e) => setType(e.target.value)}
-              value={type}
-              disabled={!isCustom}
-            >
-              <option value="notebook">Desktop</option>
-              <option value="phone">Phone</option>
-              <option value="tablet">Tablet</option>
-            </Select>
-            <Input
-              label="User Agent String"
-              type="text"
-              placeholder="User agent string for this device's network requests"
-              value={userAgent}
-              onChange={(e) => setUserAgent(e.target.value)}
-              disabled={!isCustom}
-            />
-            <Input
-              label="Touch Capable"
-              type="checkbox"
-              checked={isTouchCapable}
-              onChange={(e) => setIsTouchCapable(e.target.checked)}
-              disabled={!isCustom}
-            />
-            <Input
-              label="Mobile Capable (Rotatable)"
-              type="checkbox"
-              checked={isMobileCapable}
-              onChange={(e) => setIsMobileCapable(e.target.checked)}
-              disabled={!isCustom}
-            />
-          </div>
-          {isCustom ? (
-            <div className="flex flex-row justify-between">
-              {device != null ? (
-                <Button
-                  className="bg-red-500 px-2 text-white hover:bg-red-700 dark:hover:bg-red-600"
-                  onClick={async () => {
-                    await onRemoveDevice(device);
-                    onClose();
-                  }}
-                >
-                  Delete
-                </Button>
-              ) : (
-                <div />
-              )}
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={isNew ? 'Add Custom Device' : 'Device Details'}
+    >
+      <div className="flex flex-col gap-4">
+        <div className="flex w-[420px] flex-col gap-2">
+          <Input
+            label="Device Name"
+            type="text"
+            placeholder="My Mobile Device"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={!isCustom}
+          />
+          <Input
+            label="Device Width"
+            type="number"
+            placeholder="1200"
+            min="100"
+            value={width}
+            onChange={(e) => setWidth(parseInt(e.target.value, 10))}
+            disabled={!isCustom}
+          />
+          <Input
+            label="Device Height"
+            type="number"
+            placeholder="800"
+            min="100"
+            value={height}
+            onChange={(e) => setHeight(parseInt(e.target.value, 10))}
+            disabled={!isCustom}
+          />
+          <Input
+            label="Device DPR"
+            type="number"
+            min="1"
+            step="0.1"
+            value={dpr}
+            onChange={(e) => setDpr(parseFloat(e.target.value))}
+            disabled={!isCustom}
+          />
+          <Select
+            label="Device type"
+            onChange={(e) => setType(e.target.value)}
+            value={type}
+            disabled={!isCustom}
+          >
+            <option value="notebook">Desktop</option>
+            <option value="phone">Phone</option>
+            <option value="tablet">Tablet</option>
+          </Select>
+          <Input
+            label="User Agent String"
+            type="text"
+            placeholder="User agent string for this device's network requests"
+            value={userAgent}
+            onChange={(e) => setUserAgent(e.target.value)}
+            disabled={!isCustom}
+          />
+          <Input
+            label="Touch Capable"
+            type="checkbox"
+            checked={isTouchCapable}
+            onChange={(e) => setIsTouchCapable(e.target.checked)}
+            disabled={!isCustom}
+          />
+          <Input
+            label="Mobile Capable (Rotatable)"
+            type="checkbox"
+            checked={isMobileCapable}
+            onChange={(e) => setIsMobileCapable(e.target.checked)}
+            disabled={!isCustom}
+          />
+        </div>
+        {isCustom ? (
+          <div className="flex flex-row justify-between">
+            {device != null ? (
+              <Button
+                className="bg-red-500 px-2 text-white hover:bg-red-700 dark:hover:bg-red-600"
+                onClick={async () => {
+                  await onRemoveDevice(device);
+                  onClose();
+                }}
+              >
+                Delete
+              </Button>
+            ) : (
+              <div />
+            )}
 
-              <div className="flex flex-row justify-end gap-2">
-                <Button className="px-2" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button className="px-2" onClick={handleAddDevice} isActive>
-                  {isNew ? 'Add' : 'Save'}
-                </Button>
-              </div>
-            </div>
-          ) : (
             <div className="flex flex-row justify-end gap-2">
               <Button className="px-2" onClick={onClose}>
-                Close
+                Cancel
+              </Button>
+              <Button className="px-2" onClick={handleAddDevice} isActive>
+                {isNew ? 'Add' : 'Save'}
               </Button>
             </div>
-          )}
-        </div>
-      </Modal>
-    </>
+          </div>
+        ) : (
+          <div className="flex flex-row justify-end gap-2">
+            <Button className="px-2" onClick={onClose}>
+              Close
+            </Button>
+          </div>
+        )}
+      </div>
+    </Modal>
   );
-};
+}
 
 export default DeviceDetailsModal;

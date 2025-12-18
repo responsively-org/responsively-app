@@ -47,7 +47,7 @@ window.onerror = function (errorMsg, url, lineNumber) {
 window.addEventListener('DOMContentLoaded', () => {
   const customTitlebarStatus = ipcRenderer.sendSync(
     'electron-store-get',
-    'userPreferences.customTitlebar'
+    'userPreferences.customTitlebar',
   ) as boolean;
 
   if (customTitlebarStatus && process.platform === 'win32') {

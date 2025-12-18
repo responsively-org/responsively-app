@@ -7,7 +7,7 @@ export const initWebviewContextMenu = () => {
   ipcMain.removeAllListeners('show-context-menu');
   ipcMain.on('show-context-menu', (event, ...args) => {
     const template: Electron.MenuItemConstructorOptions[] = Object.values(
-      CONTEXT_MENUS
+      CONTEXT_MENUS,
     ).map((menu) => {
       return {
         label: menu.label,
@@ -21,7 +21,7 @@ export const initWebviewContextMenu = () => {
     });
     const menu = Menu.buildFromTemplate(template);
     menu.popup(
-      BrowserWindow.fromWebContents(event.sender) as Electron.PopupOptions
+      BrowserWindow.fromWebContents(event.sender) as Electron.PopupOptions,
     );
   });
   // ipcMain.on('pass-scroll-data', (event, ...args) => {
