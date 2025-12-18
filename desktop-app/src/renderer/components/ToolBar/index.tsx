@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  selectAddress,
   selectIsCapturingScreenshot,
   selectIsInspecting,
   selectRotate,
@@ -32,6 +33,7 @@ const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
 const ToolBar = () => {
   const rotateDevices = useSelector(selectRotate);
+  const address = useSelector(selectAddress);
   const isInspecting = useSelector(selectIsInspecting);
   const isCapturingScreenshot = useSelector(selectIsCapturingScreenshot);
   const activeSuite = useSelector(selectActiveSuite);
@@ -86,6 +88,22 @@ const ToolBar = () => {
     dispatch(setIsCapturingScreenshot(false));
   };
 
+  const masterRefreshHandler = () => {
+    if (!address) {
+      return;
+    }
+    const webViews: NodeListOf<Electron.WebviewTag> =
+      document.querySelectorAll('webview');
+    webViews.forEach((webview) => {
+      try {
+        webview.loadURL(address);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to refresh webview', error);
+      }
+    });
+  };
+
   const handleClose = () => {
     // Do nothing. Prevent Dialog from closing.
   };
@@ -124,6 +142,9 @@ const ToolBar = () => {
         title="Inspect Elements"
       >
         <Icon icon="lucide:inspect" />
+      </Button>
+      <Button onClick={masterRefreshHandler} title="Refresh All Devices">
+        <Icon icon="mdi:refresh-circle" />
       </Button>
       <Button
         onClick={screenshotCaptureHandler}

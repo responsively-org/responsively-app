@@ -20,6 +20,7 @@ interface Props {
   onIndividualLayoutHandler: (device: Device) => void;
   isIndividualLayout: boolean;
   isDeviceRotationEnabled: boolean;
+  rotated: boolean;
 }
 
 const Toolbar = ({
@@ -32,13 +33,13 @@ const Toolbar = ({
   onIndividualLayoutHandler,
   isIndividualLayout,
   isDeviceRotationEnabled,
+  rotated,
 }: Props) => {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
-  const [rotated, setRotated] = useState<boolean>(false);
 
   const refreshView = () => {
     if (webview) {
@@ -136,7 +137,6 @@ const Toolbar = ({
   };
 
   const rotate = async () => {
-    setRotated(!rotated);
     onRotate(!rotated);
   };
 

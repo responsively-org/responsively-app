@@ -16,6 +16,16 @@ module.exports = {
         light: {
           normal: colors.gray['700'],
         },
+        theme: {
+          bg: 'var(--theme-bg)',
+          'bg-secondary': 'var(--theme-bg-secondary)',
+          text: 'var(--theme-text)',
+          'text-secondary': 'var(--theme-text-secondary)',
+          primary: 'var(--theme-primary)',
+          secondary: 'var(--theme-secondary)',
+          border: 'var(--theme-border)',
+          accent: 'var(--theme-accent)',
+        },
       },
       fontFamily: {
         sans: ['Lato', ...defaultTheme.fontFamily.sans],
