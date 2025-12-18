@@ -30,6 +30,7 @@ class AddressBar extends React.Component {
       suggestionList: [],
       canShowSuggestions: false,
       cursor: null,
+      isNavigating: false,
     };
     this.inputRef = React.createRef();
   }
@@ -40,10 +41,19 @@ class AddressBar extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener('click', this._handleClickOutside);
+    // Cancel any pending debounced calls
+    if (this._debouncedOnChange && this._debouncedOnChange.cancel) {
+      this._debouncedOnChange.cancel();
+    }
+    if (this._filterExistingUrl && this._filterExistingUrl.cancel) {
+      this._filterExistingUrl.cancel();
+    }
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.address !== state.previousAddress) {
+    // Don't update address if we're in the middle of navigating
+    // This prevents race condition where props update interferes with user navigation
+    if (props.address !== state.previousAddress && !state.isNavigating) {
       return {
         userTypedAddress: props.address,
         previousAddress: props.address,
@@ -261,13 +271,34 @@ class AddressBar extends React.Component {
       return;
     }
 
-    notifyPermissionToHandleReloadOrNewAddress();
-    this.props.onChange(normalize(this.state.userTypedAddress), true);
+    // Set navigation flag to prevent state sync issues
+    this.setState({isNavigating: true}, () => {
+      notifyPermissionToHandleReloadOrNewAddress();
+      this.props.onChange(normalize(this.state.userTypedAddress), true);
+      
+      // Clear navigation flag after a brief delay to allow props to update
+      setTimeout(() => {
+        this.setState({isNavigating: false});
+      }, 100);
+    });
   };
+
+  // Debounced version to prevent rapid successive calls
+  _debouncedOnChange = debounce(() => {
+    this._onChange();
+  }, 300);
 
   _onSearchedUrlClick = (url, index) => {
     if (url !== this.state.previousAddress) {
-      this.props.onChange(normalize(url), true);
+      // Set navigation flag to prevent state sync issues
+      this.setState({isNavigating: true}, () => {
+        this.props.onChange(normalize(url), true);
+        
+        // Clear navigation flag after a brief delay to allow props to update
+        setTimeout(() => {
+          this.setState({isNavigating: false});
+        }, 100);
+      });
     }
 
     this.setState({
