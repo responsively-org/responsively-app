@@ -24,6 +24,43 @@ const documentBodyInit = () => {
     });
   });
 
+  // To detect if user is typing in an input field
+  const isUserTyping = () => {
+    const el = document.activeElement;
+    if (!el) return false;
+
+    return (
+      el.tagName === 'INPUT' ||
+      el.tagName === 'TEXTAREA' ||
+      (el as HTMLElement).isContentEditable
+    );
+  };
+
+  // Handle F key for fullscreen toggle
+  window.addEventListener('keydown', (e) => {
+    // Prevent fullscreen if user is typing
+    if (isUserTyping()) return;
+
+    if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault();
+
+      // Check if already in fullscreen
+      if (document.fullscreenElement) {
+        // Exit fullscreen
+        document.exitFullscreen().catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Error exiting fullscreen:', err);
+        });
+      } else {
+        // Request fullscreen
+        document.documentElement.requestFullscreen().catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Error requesting fullscreen:', err);
+        });
+      }
+    }
+  });
+
   window.addEventListener('dom-ready', () => {
     const { body } = document;
     const html = document.documentElement;
