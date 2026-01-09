@@ -122,6 +122,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const [coordinates, setCoordinates] = useState<Coordinates>({
     deltaX: 0,
     deltaY: 0,
+    scrollX: 0,
+    scrollY: 0,
     innerWidth: width * 2,
     innerHeight: height * 2,
   });
@@ -314,6 +316,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         setCoordinates({
           deltaX: e.args[0].coordinates.x,
           deltaY: e.args[0].coordinates.y,
+          scrollX: e.args[0].coordinates.x,
+          scrollY: e.args[0].coordinates.y,
           innerHeight: e.args[0].innerHeight,
           innerWidth: e.args[0].innerWidth,
         });
