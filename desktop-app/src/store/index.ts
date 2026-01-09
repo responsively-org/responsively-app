@@ -174,6 +174,19 @@ const schema = {
         },
         default: {},
       },
+      designOverlays: {
+        type: 'object',
+        additionalProperties: {
+          type: 'object',
+          properties: {
+            image: { type: 'string' },
+            opacity: { type: 'number' },
+            position: { type: 'string', enum: ['overlay', 'side'] },
+            enabled: { type: 'boolean' },
+          },
+        },
+        default: {},
+      },
     },
     default: {},
   },
