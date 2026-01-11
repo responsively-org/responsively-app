@@ -10,8 +10,6 @@ const defaultActiveDevices = ['10008', '10013', '10015'];
 export const migrations = {
   '1.2.0': (store: Store) => {
     try {
-      // eslint-disable-next-line no-console
-      console.log('Migrating for 1.2.0', store.get('deviceManager'));
 
       // Migrate custom devices
       const previousCustomDevices: Device[] = store.get(
@@ -42,7 +40,6 @@ export const migrations = {
         newActiveDevices.every((id) => defaultActiveDevices.includes(id))
       ) {
         // default devices so no need to migrate
-        console.log('No need to migrate');
         return;
       }
 
@@ -57,8 +54,6 @@ export const migrations = {
         },
       ]);
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log('Migration failed', e);
       store.set('deviceManager.previewSuites', [
         {
           id: 'default',
@@ -69,9 +64,7 @@ export const migrations = {
       return;
     }
     // eslint-disable-next-line no-console
-    console.log('Migration successful', store.get('deviceManager'));
-  },
-  '1.2.1': (store: Store) => {
+    c
     const suites = store.get('deviceManager.previewSuites') as
       | PreviewSuites
       | undefined;
@@ -101,12 +94,7 @@ export const migrations = {
         return newDevice as Device;
       });
       store.set('deviceManager.customDevices', newCustomDevices);
-      console.log(
-        'Migration for 1.14.0 successful',
-        store.get('deviceManager.customDevices')
-      );
     } catch (e) {
-      console.log('Migration for 1.14.0 failed', e);
     }
   },
 };

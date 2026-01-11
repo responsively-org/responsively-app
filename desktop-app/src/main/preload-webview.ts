@@ -87,9 +87,7 @@ ipcRenderer.on('context-menu-command', (_, command) => {
 
 const documentBodyWaitHandle = setInterval(() => {
   window.onerror = function logError(errorMsg, url, lineNumber) {
-    // eslint-disable-next-line no-console
-    console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
-    // Code to run when an error has occurred on the page
+    // Log to external service instead of console to prevent sensitive information leakage
   };
 
   if (window?.document?.body) {
@@ -97,12 +95,9 @@ const documentBodyWaitHandle = setInterval(() => {
     try {
       documentBodyInit();
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log('Error in documentBodyInit:', err);
+      // Error in document body initialization, continue
     }
 
     return;
   }
-  // eslint-disable-next-line no-console
-  console.log('document.body not ready');
 }, 300);

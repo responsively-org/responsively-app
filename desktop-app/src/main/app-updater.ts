@@ -45,8 +45,6 @@ export class AppUpdater {
     });
     autoUpdater.on('download-progress', (progressObj) => {
       const logMessage = `Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}% (${progressObj.transferred}/${progressObj.total})`;
-      // eslint-disable-next-line no-console
-      console.log(logMessage);
       this.status = `DOWNLOADING - ${progressObj.percent}%`;
       this.progress = progressObj.percent;
       this.size = progressObj.total;

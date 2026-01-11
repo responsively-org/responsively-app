@@ -28,8 +28,7 @@ export const initAppMetaHandlers = () => {
     store.set(key, val);
   });
 
-  ipcMain.on(IPC_MAIN_CHANNELS.OPEN_EXTERNAL, async (_, { url }) => {
-    console.log('Opening external url', url);
+  ipcMain.on(IPC_MAIN_CHANNELS.OPEN_EXTERNAL, (_, { url }) => {
     shell.openExternal(url);
   });
 };

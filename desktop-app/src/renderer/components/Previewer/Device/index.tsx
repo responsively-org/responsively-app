@@ -332,8 +332,6 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             break;
           }
           default:
-            // eslint-disable-next-line no-console
-            console.log('Unhandled context menu command', command);
         }
       }
     };

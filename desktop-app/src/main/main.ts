@@ -89,7 +89,9 @@ const installExtensions = async () => {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch(console.log);
+    .catch((err) => {
+      console.error('Failed to install extensions:', err);
+    });
 };
 
 // Custom titlebar config for windows
@@ -230,7 +232,6 @@ const createWindow = async () => {
   });
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    console.log('window open handler', url);
     return { action: 'deny' };
   });
 
@@ -297,7 +298,6 @@ app.on('certificate-error', (event, _, url, __, ___, callback) => {
     event.preventDefault();
     return callback(true);
   }
-  console.log('certificate-error event', url, BROWSER_SYNC_HOST);
   return callback(store.get('userPreferences.allowInsecureSSLConnections'));
 });
 
@@ -311,4 +311,6 @@ app
       if (mainWindow === null) createWindow();
     });
   })
-  .catch(console.log);
+  .catch((err) => {
+    console.error('Failed to create window:', err);
+  });

@@ -124,8 +124,7 @@ const disableInspector = async (
 
     dbg.removeAllListeners().detach();
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.log('Error detaching debugger', err);
+    // Error detaching debugger, continue
   }
   return { status: true };
 };
