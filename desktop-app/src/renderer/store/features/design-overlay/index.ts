@@ -8,6 +8,7 @@ export interface DesignOverlayState {
   opacity: number;
   position: DesignOverlayPosition;
   enabled: boolean;
+  fileName?: string;
 }
 
 export type ViewResolution = string;

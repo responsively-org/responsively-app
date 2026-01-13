@@ -36,9 +36,9 @@ const documentBodyInit = () => {
         y: 0,
         scrollX: window.scrollX,
         scrollY: window.scrollY,
-        innerHeight: document.body.scrollHeight,
-        innerWidth: window.innerWidth,
       },
+      innerHeight: document.body.scrollHeight,
+      innerWidth: window.innerWidth,
     });
   });
 

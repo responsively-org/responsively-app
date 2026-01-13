@@ -183,6 +183,7 @@ const schema = {
             opacity: { type: 'number' },
             position: { type: 'string', enum: ['overlay', 'side'] },
             enabled: { type: 'boolean' },
+            fileName: { type: 'string' },
           },
         },
         default: {},
