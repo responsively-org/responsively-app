@@ -9,6 +9,7 @@ import WebPage from 'main/screenshot/webpage';
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
 import { updateWebViewHeightAndScale } from 'common/webViewUtils';
 import { ColorBlindnessTools } from './ColorBlindnessTools';
+import DesignOverlayControls from './DesignOverlayControls';
 
 interface Props {
   webview: Electron.WebviewTag | null;
@@ -39,6 +40,8 @@ const Toolbar = ({
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
+  const [isDesignOverlayModalOpen, setIsDesignOverlayModalOpen] =
+    useState<boolean>(false);
 
   const refreshView = () => {
     if (webview) {
@@ -180,6 +183,12 @@ const Toolbar = ({
           <Icon icon="ic:outline-photo-camera" />
         </Button>
         <Button
+          onClick={() => setIsDesignOverlayModalOpen(true)}
+          title="Design Overlay"
+        >
+          <Icon icon="lucide:layers" />
+        </Button>
+        <Button
           onClick={toggleEventMirroring}
           isActive={eventMirroringOff}
           title="Disable Event Mirroring"
@@ -226,6 +235,11 @@ const Toolbar = ({
           }
         />
       </Button>
+      <DesignOverlayControls
+        device={device}
+        isOpen={isDesignOverlayModalOpen}
+        onClose={() => setIsDesignOverlayModalOpen(false)}
+      />
     </div>
   );
 };
