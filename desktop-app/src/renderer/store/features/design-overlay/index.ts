@@ -44,7 +44,7 @@ export const designOverlaySlice = createSlice({
       const overlays =
         window.electron.store.get('userPreferences.designOverlays') || {};
       overlays[action.payload.resolution] = action.payload.overlayState;
-      window.electron.store.set('usePreferences.designOverlays', overlays);
+      window.electron.store.set('userPreferences.designOverlays', overlays);
     },
     removeDesignOverlay: (
       state,
