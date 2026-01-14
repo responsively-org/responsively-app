@@ -59,8 +59,12 @@ const DesignOverlay = ({
     const clampedScrollY = Math.max(0, Math.min(scrollY, maxScrollY));
     const clampedScrollX = Math.max(0, Math.min(scrollX, maxScrollX));
 
+    // Scale scroll positions by zoomFactor to match the scaled image dimensions
+    // The webview has (width x height) dimensions, but the image is scaled (scaledWidth x scaledHeight)
     if (imageRef.current) {
-      imageRef.current.style.transform = `translate(${-clampedScrollX}px, ${-clampedScrollY}px)`;
+      imageRef.current.style.transform = `translate(${
+        -clampedScrollX * zoomFactor
+      }px, ${-clampedScrollY * zoomFactor}px)`;
     }
   }, [
     coordinates,
