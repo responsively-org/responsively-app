@@ -112,19 +112,18 @@ If you face any problems while using the application, please open an issue here 
 Here is the roadmap of the desktop app - https://github.com/responsively-org/responsively-app/projects/
 
 ## Gold sponsors 🥇
-
-<p>&nbsp;</p>
-
-<p align="center" >
-  <a href="https://www.lambdatest.com/?utm_source=responsively&utm_medium=sponsor" target="_blank">
-            <img src="https://www.lambdatest.com/blue-logo.png" style="vertical-align: middle;" width="380" height="220" />
-        </a>
-  <a href="https://www.syncfusion.com/?utm_source=responsivelyapp&utm_medium=cpc&utm_campaign=responsivelyapp_esee_ban" target="_blank">
-    <img src="https://responsively.app/assets/img/logos/syncfusion.png" height="120px" alt="Syncfusion"></a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/sponsors/responsively-org" target="_blank">
+<table style="width: 100%; border: none;" cellspacing="0" cellpadding="0" border="0" align="center" id="sponsors">
+  <tr>
+    <td style="border: none;"><a href="https://www.testmu.ai/?utm_source=responsively&utm_medium=sponsor" target="_blank">
+            <img src="https://responsively.app/_next/static/media/testmu.a5a8be46.svg" style="vertical-align: middle;" width="280" />
+        </a></td>
+    <td rowspan="3" style="border: none;"><a href="https://github.com/sponsors/responsively-org" target="_blank">
     <img src="https://user-images.githubusercontent.com/1283424/142834528-4cd5b8eb-eeae-4437-b749-d09c96dde160.png" height="120px" alt="Sponsor to add your company logo here">
-  </a>
-</p>
+  </a></td>
+  </tr>
+</table>
+
+
 
 [Become a sponsor and have your company logo here](https://opencollective.com/responsively)
 
