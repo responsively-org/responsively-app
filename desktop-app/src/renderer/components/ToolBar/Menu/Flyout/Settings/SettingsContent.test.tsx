@@ -15,7 +15,7 @@ describe('SettingsContentHeader', () => {
 
     const acceptLanguageInput = getByTestId('settings-accept_language-input');
     const screenshotLocationInput = getByTestId(
-      'settings-screenshot_location-input'
+      'settings-screenshot_location-input',
     );
     const saveButton = getByTestId('settings-save-button');
 
@@ -28,17 +28,17 @@ describe('SettingsContentHeader', () => {
     expect(window.electron.store.set).toHaveBeenNthCalledWith(
       1,
       'userPreferences.screenshot.saveLocation',
-      './path/location'
+      './path/location',
     );
     expect(window.electron.store.set).toHaveBeenNthCalledWith(
       2,
       'userPreferences.customTitlebar',
-      undefined
+      undefined,
     );
     expect(window.electron.store.set).toHaveBeenNthCalledWith(
       3,
       'userPreferences.webRequestHeaderAcceptLanguage',
-      'cz-Cz'
+      'cz-Cz',
     );
 
     expect(mockOnClose).toHaveBeenCalled();

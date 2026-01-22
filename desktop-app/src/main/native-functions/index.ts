@@ -21,13 +21,13 @@ export const initNativeFunctionHandlers = () => {
     'disable-default-window-open-handler',
     async (
       _,
-      arg: DisableDefaultWindowOpenHandlerArgs
+      arg: DisableDefaultWindowOpenHandlerArgs,
     ): Promise<DisableDefaultWindowOpenHandlerResult> => {
       webContents.fromId(arg.webContentsId)?.setWindowOpenHandler(() => {
         return { action: 'deny' };
       });
       return { done: true };
-    }
+    },
   );
 
   ipcMain.handle(
@@ -36,7 +36,7 @@ export const initNativeFunctionHandlers = () => {
       const { theme } = arg;
       nativeTheme.themeSource = theme;
       return { done: true };
-    }
+    },
   );
 
   ipcMain.handle('copy-to-clipboard', async (_, arg: string): Promise<void> => {

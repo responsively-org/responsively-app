@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import Button from 'renderer/components/Button';
 import { IBookmarks } from 'renderer/store/features/bookmarks';
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { useState } from 'react';
 
 export interface Props {
@@ -11,12 +11,12 @@ export interface Props {
   setOpenFlyout: (bool: boolean) => void;
 }
 
-const BookmarkListButton = ({
+function BookmarkListButton({
   bookmark,
   handleBookmarkClick,
   setCurrentBookmark,
   setOpenFlyout,
-}: Props) => {
+}: Props) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -48,6 +48,6 @@ const BookmarkListButton = ({
       </button>
     </div>
   );
-};
+}
 
 export default BookmarkListButton;

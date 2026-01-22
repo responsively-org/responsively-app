@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { DOCK_POSITION } from 'common/constants';
 import { OpenDevtoolsArgs, OpenDevtoolsResult } from 'main/devtools';
 import { Resizable, Size } from 're-resizable';
@@ -49,7 +49,7 @@ const RightDockConfig: DockConfig = {
   },
 };
 
-const DevtoolsResizer = () => {
+function DevtoolsResizer() {
   const dispatch = useDispatch();
   const dockPosition = useSelector(selectDockPosition);
   const webviewId = useSelector(selectDevtoolsWebviewId);
@@ -114,7 +114,7 @@ const DevtoolsResizer = () => {
         enable={config.resizeDirections}
       >
         <div className="flex h-full w-full flex-col">
-          <div className="flex justify-between border-b-[1px]">
+          <div className="flex justify-between border-b">
             <div>
               <Button
                 onClick={() => dispatch(setIsInspecting(!isInspecting))}
@@ -163,11 +163,11 @@ const DevtoolsResizer = () => {
               </Button>
             </div>
           </div>
-          <div className="flex-grow" ref={ref} />
+          <div className="grow" ref={ref} />
         </div>
       </Resizable>
     </div>
   );
-};
+}
 
 export default DevtoolsResizer;

@@ -5,7 +5,7 @@ import { Notification as NotificationType } from 'common/constants';
 import Notification from './Notification';
 import NotificationEmptyStatus from './NotificationEmptyStatus';
 
-const Notifications = () => {
+function Notifications() {
   const notificationsState = useSelector(selectNotifications);
 
   return (
@@ -24,6 +24,6 @@ const Notifications = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Notifications;

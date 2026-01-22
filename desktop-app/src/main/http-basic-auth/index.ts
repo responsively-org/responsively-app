@@ -16,7 +16,7 @@ const inProgressAuthentications: { [key: string]: Callback[] } = {};
 const handleLogin = async (
   authInfo: AuthInfo,
   mainWindow: BrowserWindow,
-  callback: (username: string, password: string) => void
+  callback: (username: string, password: string) => void,
 ) => {
   if (inProgressAuthentications[authInfo.host]) {
     inProgressAuthentications[authInfo.host].push(callback);
@@ -29,10 +29,10 @@ const handleLogin = async (
     IPC_MAIN_CHANNELS.AUTH_RESPONSE,
     (_, { authInfo: respAuthInfo, username, password }: AuthResponseArgs) => {
       inProgressAuthentications[respAuthInfo.host].forEach((cb) =>
-        cb(username, password)
+        cb(username, password),
       );
       delete inProgressAuthentications[respAuthInfo.host];
-    }
+    },
   );
 };
 

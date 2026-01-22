@@ -32,7 +32,7 @@ jest.mock('renderer/components/FileUploader', () => ({
       data-testid="mock-file-uploader"
       onClick={() =>
         handleFileUpload(
-          new File(['{}'], 'test.json', { type: 'application/json' })
+          new File(['{}'], 'test.json', { type: 'application/json' }),
         )
       }
     >
@@ -59,7 +59,7 @@ const renderWithRedux = (
     | Iterable<ReactNode>
     | JSX.Element
     | null
-    | undefined
+    | undefined,
 ) => {
   const store = configureStore({
     reducer: {
@@ -84,7 +84,7 @@ describe('ManageSuitesTool', () => {
     setCustomDevicesStateMock = jest.fn();
 
     renderWithRedux(
-      <ManageSuitesTool setCustomDevicesState={setCustomDevicesStateMock} />
+      <ManageSuitesTool setCustomDevicesState={setCustomDevicesStateMock} />,
     );
   });
 
@@ -102,7 +102,7 @@ describe('ManageSuitesTool', () => {
   it('opens the reset confirmation dialog when reset button is clicked', () => {
     fireEvent.click(screen.getByTestId('reset-btn'));
     expect(
-      screen.getByText('Do you want to reset all settings?')
+      screen.getByText('Do you want to reset all settings?'),
     ).toBeInTheDocument();
   });
 
@@ -110,7 +110,7 @@ describe('ManageSuitesTool', () => {
     fireEvent.click(screen.getByTestId('reset-btn'));
     fireEvent.click(screen.getByText('Cancel'));
     expect(
-      screen.queryByText('Do you want to reset all settings?')
+      screen.queryByText('Do you want to reset all settings?'),
     ).not.toBeInTheDocument();
   });
 
@@ -146,7 +146,7 @@ describe('ManageSuitesTool', () => {
 
   it('handles error in file upload', async () => {
     (transformFile as jest.Mock).mockRejectedValue(
-      new Error('File upload failed')
+      new Error('File upload failed'),
     );
 
     fireEvent.click(screen.getByTestId('download-btn'));
@@ -156,14 +156,14 @@ describe('ManageSuitesTool', () => {
     await waitFor(() => {
       expect(transformFile).toHaveBeenCalledWith(expect.any(File));
       expect(
-        screen.getByText('There has been an error, please try again.')
+        screen.getByText('There has been an error, please try again.'),
       ).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByText('Close'));
 
     expect(
-      screen.queryByText('There has been an error, please try again.')
+      screen.queryByText('There has been an error, please try again.'),
     ).not.toBeInTheDocument();
   });
 });

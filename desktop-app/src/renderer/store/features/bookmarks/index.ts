@@ -24,7 +24,7 @@ export const bookmarksSlice = createSlice({
       const bookmarks: IBookmarks[] = window.electron.store.get('bookmarks');
       if (action.payload.id) {
         const index = bookmarks.findIndex(
-          (bookmark) => bookmark.id === action.payload.id
+          (bookmark) => bookmark.id === action.payload.id,
         );
         bookmarks[index] = action.payload;
       } else {
@@ -40,7 +40,7 @@ export const bookmarksSlice = createSlice({
     removeBookmark: (state, action) => {
       const bookmarks = window.electron.store.get('bookmarks');
       const bookmarkIndex = state.bookmarks.findIndex(
-        (bookmark) => bookmark.id === action.payload.id
+        (bookmark) => bookmark.id === action.payload.id,
       );
       if (bookmarkIndex === -1) {
         return;

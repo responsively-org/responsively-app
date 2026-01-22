@@ -14,7 +14,7 @@ export const PREVIEW_LAYOUTS = {
 } as const;
 
 export type PreviewLayout =
-  typeof PREVIEW_LAYOUTS[keyof typeof PREVIEW_LAYOUTS];
+  (typeof PREVIEW_LAYOUTS)[keyof typeof PREVIEW_LAYOUTS];
 
 export type Notification = {
   id: string;
@@ -26,6 +26,10 @@ export type Notification = {
 export interface OpenUrlArgs {
   url: string;
 }
+
+export const BROWSER_SYNC_PORT = 12719;
+export const BROWSER_SYNC_HOST = `localhost:${BROWSER_SYNC_PORT}`;
+export const BROWSER_SYNC_URL = `https://${BROWSER_SYNC_HOST}/browser-sync/browser-sync-client.js`;
 
 export const IPC_MAIN_CHANNELS = {
   APP_META: 'app-meta',
@@ -44,7 +48,8 @@ export const IPC_MAIN_CHANNELS = {
   PERMISSION_UPDATED: 'permission-updated',
 } as const;
 
-export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];
+export type Channels =
+  (typeof IPC_MAIN_CHANNELS)[keyof typeof IPC_MAIN_CHANNELS];
 
 export const PROTOCOL = 'responsively';
 
@@ -60,7 +65,7 @@ export const PERMISSION_TYPES = {
 } as const;
 
 export type PermissionType =
-  typeof PERMISSION_TYPES[keyof typeof PERMISSION_TYPES];
+  (typeof PERMISSION_TYPES)[keyof typeof PERMISSION_TYPES];
 
 export interface SitePermission {
   type: string;

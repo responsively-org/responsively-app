@@ -23,7 +23,7 @@ export interface ScreenshotResult {
   done: boolean;
 }
 const captureImage = async (
-  webContentsId: number
+  webContentsId: number,
 ): Promise<Electron.NativeImage | undefined> => {
   const WebContents = webContents.fromId(webContentsId);
 
@@ -48,7 +48,7 @@ const captureImage = async (
 };
 
 const quickScreenshot = async (
-  arg: ScreenshotArgs
+  arg: ScreenshotArgs,
 ): Promise<ScreenshotResult> => {
   const {
     webContentsId,
@@ -69,7 +69,7 @@ const quickScreenshot = async (
 };
 
 const captureAllDecies = async (
-  args: Array<ScreenshotAllArgs>
+  args: Array<ScreenshotAllArgs>,
 ): Promise<ScreenshotResult> => {
   const screenShots = args.map((arg) => {
     const { device, webContentsId } = arg;
@@ -86,13 +86,13 @@ export const initScreenshotHandlers = () => {
     'screenshot',
     async (_, arg: ScreenshotArgs): Promise<ScreenshotResult> => {
       return quickScreenshot(arg);
-    }
+    },
   );
 
   ipcMain.handle(
     'screenshot:All',
     async (event, args: Array<ScreenshotAllArgs>) => {
       return captureAllDecies(args);
-    }
+    },
   );
 };

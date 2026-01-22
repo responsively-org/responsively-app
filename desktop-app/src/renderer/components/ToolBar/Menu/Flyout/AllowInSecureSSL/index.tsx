@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import Toggle from 'renderer/components/Toggle';
 
-const AllowInSecureSSL = () => {
+function AllowInSecureSSL() {
   const [allowed, setAllowed] = useState<boolean>(
-    window.electron.store.get('userPreferences.allowInsecureSSLConnections')
+    window.electron.store.get('userPreferences.allowInsecureSSLConnections'),
   );
 
   return (
@@ -16,13 +16,13 @@ const AllowInSecureSSL = () => {
             setAllowed(value.target.checked);
             window.electron.store.set(
               'userPreferences.allowInsecureSSLConnections',
-              value.target.checked
+              value.target.checked,
             );
           }}
         />
       </div>
     </div>
   );
-};
+}
 
 export default AllowInSecureSSL;

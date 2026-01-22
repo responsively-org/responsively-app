@@ -1,7 +1,7 @@
 import { defaultDevices, Device } from 'common/deviceList';
 
 export const downloadFile = <T extends Record<string, unknown>>(
-  fileData: T
+  fileData: T,
 ) => {
   const jsonString = JSON.stringify(fileData, null, 2);
   const blob = new Blob([jsonString], { type: 'application/json' });
@@ -19,12 +19,12 @@ export const downloadFile = <T extends Record<string, unknown>>(
 
 export const setCustomDevices = (customDevices: Device[]) => {
   const importedCustomDevices = customDevices.filter(
-    (item: Device) => !defaultDevices.includes(item)
+    (item: Device) => !defaultDevices.includes(item),
   );
 
   window.electron.store.set(
     'deviceManager.customDevices',
-    importedCustomDevices
+    importedCustomDevices,
   );
 
   return importedCustomDevices;

@@ -10,7 +10,7 @@ export interface DeleteStorageResult {
 }
 
 const deleteStorage = async (
-  arg: DeleteStorageArgs
+  arg: DeleteStorageArgs,
 ): Promise<DeleteStorageResult> => {
   const { webContentsId, storages } = arg;
   if (storages?.length === 1 && storages[0] === 'network-cache') {
@@ -28,6 +28,6 @@ export const initWebviewStorageManagerHandlers = () => {
     'delete-storage',
     async (_, arg: DeleteStorageArgs): Promise<DeleteStorageResult> => {
       return deleteStorage(arg);
-    }
+    },
   );
 };

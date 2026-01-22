@@ -13,7 +13,7 @@ interface Props {
   onClose: () => void;
 }
 
-export const CreateSuiteModal = ({ isOpen, onClose }: Props) => {
+export function CreateSuiteModal({ isOpen, onClose }: Props) {
   const [name, setName] = useState<string>('');
   const dispatch = useDispatch();
 
@@ -21,7 +21,7 @@ export const CreateSuiteModal = ({ isOpen, onClose }: Props) => {
     if (name === '') {
       // eslint-disable-next-line no-alert
       return alert(
-        'Suite name cannot be empty. Please enter a name for the suite.'
+        'Suite name cannot be empty. Please enter a name for the suite.',
       );
     }
     dispatch(addSuite({ id: uuidv4(), name, devices: ['10008'] }));
@@ -29,30 +29,28 @@ export const CreateSuiteModal = ({ isOpen, onClose }: Props) => {
   };
 
   return (
-    <>
-      <Modal isOpen={isOpen} onClose={onClose} title="Add Suite">
-        <div className="flex flex-col gap-4">
-          <div className="flex w-[420px] flex-col gap-2">
-            <Input
-              label="Suite Name"
-              type="text"
-              placeholder="My Custom Suite"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-row justify-between">
-            <div className="flex flex-row justify-end gap-2">
-              <Button className="px-2" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button className="px-2" onClick={handleAddSuite} isActive>
-                Add
-              </Button>
-            </div>
+    <Modal isOpen={isOpen} onClose={onClose} title="Add Suite">
+      <div className="flex flex-col gap-4">
+        <div className="flex w-[420px] flex-col gap-2">
+          <Input
+            label="Suite Name"
+            type="text"
+            placeholder="My Custom Suite"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div className="flex flex-row justify-between">
+          <div className="flex flex-row justify-end gap-2">
+            <Button className="px-2" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button className="px-2" onClick={handleAddSuite} isActive>
+              Add
+            </Button>
           </div>
         </div>
-      </Modal>
-    </>
+      </div>
+    </Modal>
   );
-};
+}

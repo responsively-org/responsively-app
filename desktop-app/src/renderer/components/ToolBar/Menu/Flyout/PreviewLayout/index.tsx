@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { PREVIEW_LAYOUTS, PreviewLayout } from 'common/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { ButtonGroup } from 'renderer/components/ButtonGroup';
@@ -7,7 +7,7 @@ import useKeyboardShortcut, {
 } from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
 import { selectLayout, setLayout } from 'renderer/store/features/renderer';
 
-const PreviewLayoutSelector = () => {
+function PreviewLayoutSelector() {
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
 
@@ -68,6 +68,6 @@ const PreviewLayoutSelector = () => {
       </div>
     </div>
   );
-};
+}
 
 export default PreviewLayoutSelector;

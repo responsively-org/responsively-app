@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { useState } from 'react';
 import Button from 'renderer/components/Button';
 import useSound from 'use-sound';
@@ -22,7 +22,7 @@ interface Props {
   isDeviceRotationEnabled: boolean;
 }
 
-const Toolbar = ({
+function Toolbar({
   webview,
   device,
   setScreenshotInProgress,
@@ -32,7 +32,7 @@ const Toolbar = ({
   onIndividualLayoutHandler,
   isIndividualLayout,
   isDeviceRotationEnabled,
-}: Props) => {
+}: Props) {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
@@ -59,12 +59,12 @@ const Toolbar = ({
           }()
         }
         true
-      `
+      `,
       );
       setEventMirroringOff(!eventMirroringOff);
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error('Error while toggleing event mirroring', error);
+      console.error('Error while toggling event mirroring', error);
     }
   };
 
@@ -144,7 +144,7 @@ const Toolbar = ({
     if (webview) {
       webview.executeJavaScript(
         'window.scrollTo({ top: 0, behavior: "smooth" })',
-        false
+        false,
       );
     }
   };
@@ -167,7 +167,7 @@ const Toolbar = ({
             />
             <Icon
               icon="clarity:lightning-solid"
-              className="absolute top-[-1px] right-[-2px]"
+              className="absolute -top-px right-[-2px]"
               height={8}
             />
           </div>
@@ -228,6 +228,6 @@ const Toolbar = ({
       </Button>
     </div>
   );
-};
+}
 
 export default Toolbar;

@@ -11,6 +11,6 @@ export const appendHistory = (url: string, title: string) => {
     [
       { url, title, lastVisited: new Date().getTime() },
       ...history.filter(({ url: _url }) => url !== _url),
-    ].slice(0, 100)
+    ].slice(0, 100),
   );
 };

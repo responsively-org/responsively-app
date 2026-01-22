@@ -29,7 +29,7 @@ interface MasonryProps {
 
 const TypedMasonry: React.FC<MasonryProps> = Masonry as any;
 
-const Previewer = () => {
+function Previewer() {
   const activeSuite = useSelector(selectActiveSuite);
   const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
   const dockPosition = useSelector(selectDockPosition);
@@ -63,9 +63,9 @@ const Previewer = () => {
           'justify-center': isIndividualLayout,
         })}
       >
-        <div className="flex flex-grow overflow-hidden">
+        <div className="flex grow overflow-hidden">
           <div
-            className="w-full flex-grow overflow-y-auto"
+            className="w-full grow overflow-y-auto"
             style={{ height: '100%' }}
           >
             {isMasonryLayout ? (
@@ -117,6 +117,6 @@ const Previewer = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Previewer;

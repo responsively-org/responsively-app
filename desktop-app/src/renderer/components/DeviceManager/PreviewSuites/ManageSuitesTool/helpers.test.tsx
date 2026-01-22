@@ -29,16 +29,16 @@ describe('onFileDownload', () => {
           return mockSuites;
         }
         return null;
-      }
+      },
     );
 
     Helpers.onFileDownload();
 
     expect(window.electron.store.get).toHaveBeenCalledWith(
-      'deviceManager.customDevices'
+      'deviceManager.customDevices',
     );
     expect(window.electron.store.get).toHaveBeenCalledWith(
-      'deviceManager.previewSuites'
+      'deviceManager.previewSuites',
     );
     expect(spyOnDownloadFileFn).toHaveBeenCalledWith({
       customDevices: mockCustomDevices,
@@ -66,7 +66,7 @@ describe('downloadFile', () => {
         >
           Download
         </Button>
-      </div>
+      </div>,
     );
 
     const link = getByTestId('mockDownloadBtn');
@@ -130,7 +130,7 @@ describe('setCustomDevices', () => {
 
     expect(window.electron.store.set).not.toHaveBeenCalledWith(
       'deviceManager.customDevices',
-      [mockCustomDevices[1]]
+      [mockCustomDevices[1]],
     );
 
     expect(filteredDevices).toEqual(mockCustomDevices);

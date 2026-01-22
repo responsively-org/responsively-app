@@ -62,7 +62,7 @@ describe('Button Component', () => {
     render(
       <Button disableHoverEffects subtle>
         Click me
-      </Button>
+      </Button>,
     );
     const buttonElement = screen.getByRole('button', { name: /click me/i });
     expect(buttonElement).not.toHaveClass('hover:bg-slate-200');

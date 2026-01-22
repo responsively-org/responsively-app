@@ -5,7 +5,7 @@ type AccordionItemProps = {
   children: JSX.Element;
 };
 
-export const AccordionItem = ({ title, children }: AccordionItemProps) => {
+export function AccordionItem({ title, children }: AccordionItemProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const toggle = () => {
@@ -51,4 +51,4 @@ export const AccordionItem = ({ title, children }: AccordionItemProps) => {
       </div>
     </div>
   );
-};
+}

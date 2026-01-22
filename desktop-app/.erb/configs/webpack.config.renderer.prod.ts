@@ -18,23 +18,14 @@ import deleteSourceMaps from '../scripts/delete-source-maps';
 checkNodeEnv('production');
 deleteSourceMaps();
 
-const devtoolsConfig =
-  process.env.DEBUG_PROD === 'true'
-    ? {
-        devtool: 'source-map',
-      }
-    : {};
-
 const configuration: webpack.Configuration = {
-  ...devtoolsConfig,
+  devtool: 'source-map',
 
   mode: 'production',
 
   target: ['web', 'electron-renderer'],
 
   entry: [path.join(webpackPaths.srcRendererPath, 'index.tsx')],
-
-  externals: ['fsevents'],
 
   output: {
     path: webpackPaths.distRendererPath,
@@ -73,7 +64,7 @@ const configuration: webpack.Configuration = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [require('tailwindcss'), require('autoprefixer')],
+                plugins: { '@tailwindcss/postcss': {} },
               },
             },
           },
@@ -87,7 +78,7 @@ const configuration: webpack.Configuration = {
       },
       // Images
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        test: /\.(png|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
       },
       // SVG
@@ -122,12 +113,7 @@ const configuration: webpack.Configuration = {
 
   optimization: {
     minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        parallel: true,
-      }),
-      new CssMinimizerPlugin(),
-    ],
+    minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
   },
 
   plugins: [
@@ -151,6 +137,7 @@ const configuration: webpack.Configuration = {
 
     new BundleAnalyzerPlugin({
       analyzerMode: process.env.ANALYZE === 'true' ? 'server' : 'disabled',
+      analyzerPort: 8889,
     }),
 
     new HtmlWebpackPlugin({
@@ -162,11 +149,11 @@ const configuration: webpack.Configuration = {
         removeComments: true,
       },
       isBrowser: false,
-      isDevelopment: process.env.NODE_ENV !== 'production',
+      isDevelopment: false,
     }),
 
     new webpack.DefinePlugin({
-      'process.type': '"browser"',
+      'process.type': '"renderer"',
     }),
   ],
 };

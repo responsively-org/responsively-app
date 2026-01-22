@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import { webViewPubSub } from 'renderer/lib/pubsub';
 import Button from '../Button';
 import useKeyboardShortcut, {
@@ -18,15 +18,15 @@ interface NavigationItemProps {
   action: () => void;
 }
 
-const NavigationButton = ({ label, icon, action }: NavigationItemProps) => {
+function NavigationButton({ label, icon, action }: NavigationItemProps) {
   const shortcutName: ShortcutChannel = label.toUpperCase() as ShortcutChannel;
   useKeyboardShortcut(SHORTCUT_CHANNEL[shortcutName], action);
   return (
-    <Button className="!rounded-full px-2 py-1" onClick={action} title={label}>
+    <Button className="rounded-full! px-2 py-1" onClick={action} title={label}>
       <Icon icon={icon} />
     </Button>
   );
-};
+}
 
 const ITEMS: NavigationItemProps[] = [
   {
@@ -52,7 +52,7 @@ const ITEMS: NavigationItemProps[] = [
   },
 ];
 
-const NavigationControls = () => {
+function NavigationControls() {
   return (
     <div className="flex">
       {ITEMS.map((item) => (
@@ -61,6 +61,6 @@ const NavigationControls = () => {
       ))}
     </div>
   );
-};
+}
 
 export default NavigationControls;

@@ -1,16 +1,16 @@
 import cx from 'classnames';
-import { Icon } from '@iconify/react';
-import { DropDown } from '../DropDown';
+import { Icon } from '@iconify-icon/react';
+import DropDown from '../DropDown';
 
-const MenuItemLabel = ({
+function MenuItemLabel({
   label,
   isActive,
 }: {
   label: string;
   isActive: boolean;
-}) => {
+}) {
   return (
-    <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
+    <div className="justify-normal flex w-full shrink-0 items-center gap-1 whitespace-nowrap">
       <Icon
         icon="ic:round-check"
         className={cx('opacity-0', {
@@ -26,20 +26,20 @@ const MenuItemLabel = ({
       </span>
     </div>
   );
-};
+}
 
-const MenuItemHeader = ({ label }: { label: string }) => {
+function MenuItemHeader({ label }: { label: string }) {
   return (
     <div className="relative flex w-full min-w-44 items-center justify-between gap-1 whitespace-nowrap">
       <div className="absolute inset-0 flex items-center" aria-hidden="true">
         <div className="w-full border-t border-gray-300 dark:border-gray-600" />
       </div>
-      <span className="mxl-1 z-10 flex-shrink-0 bg-slate-100 pr-2 dark:bg-slate-900">
+      <span className="mxl-1 z-10 shrink-0 bg-slate-100 pr-2 dark:bg-slate-900">
         {label}
       </span>
     </div>
   );
-};
+}
 
 export const SIMULATIONS = {
   DEUTERANOPIA: 'deuteranopia',
@@ -78,16 +78,13 @@ interface Props {
   onChange: (name: string | undefined) => void;
 }
 
-export const VisionSimulationDropDown = ({
-  simulationName,
-  onChange,
-}: Props) => {
+export function VisionSimulationDropDown({ simulationName, onChange }: Props) {
   return (
     <DropDown
       className={cx('rounded-lg text-xs', {
         'bg-slate-400/60': simulationName != null,
       })}
-      label={<Icon icon="bx:low-vision" fontSize={18} />}
+      label={<Icon icon="bx:low-vision" className="text-[18px]" />}
       options={[
         {
           label: <MenuItemHeader label="No deficiency" />,
@@ -192,4 +189,4 @@ export const VisionSimulationDropDown = ({
       ]}
     />
   );
-};
+}

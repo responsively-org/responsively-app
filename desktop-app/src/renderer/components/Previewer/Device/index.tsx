@@ -68,12 +68,14 @@ interface ErrorState {
   description: string;
 }
 
-const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
+function Device({ isPrimary, device, setIndividualDevice }: Props) {
   const [singleRotated, setSingleRotated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorState | null>(null);
   const [screenshotInProgress, setScreenshotInProgress] =
     useState<boolean>(false);
+  const [domReady, setDomReady] = useState(false);
+  const [webviewReady, setWebviewReady] = useState(false);
   const address = useSelector(selectAddress);
   const zoomfactor = useSelector(selectZoomFactor);
   const isInspecting = useSelector(selectIsInspecting);
@@ -81,8 +83,12 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
   const layout = useSelector(selectLayout);
-  const rulerEnabled = useSelector(selectRulerEnabled);
-  const getRuler = useSelector(selectRuler);
+  const rulerEnabled = useSelector((state: any) =>
+    selectRulerEnabled(state, `${device.width}x${device.height}`),
+  );
+  const getRuler = useSelector(
+    (state: any) => (resolution: string) => selectRuler(state, resolution),
+  );
   const dispatch = useDispatch();
   const dockPosition = useSelector(selectDockPosition);
   const darkMode = useSelector(selectDarkMode);
@@ -90,7 +96,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const isNavigatingFromAddressBar = useRef<boolean>(false);
 
   useEffect(() => {
-    if (ref.current && isPrimary) {
+    if (ref.current && isPrimary && webviewReady) {
       try {
         const currentUrl = ref.current.getURL();
         if (address !== currentUrl) {
@@ -102,7 +108,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         console.error('Error loading URL', err);
       }
     }
-  }, [address, isPrimary]);
+  }, [address, isPrimary, webviewReady]);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
@@ -204,7 +210,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             isRulerEnabled: !ruler.isRulerEnabled,
             rulerCoordinates: ruler.rulerCoordinates,
           },
-        })
+        }),
       );
     } else {
       dispatch(
@@ -214,7 +220,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             isRulerEnabled: true,
             rulerCoordinates: coordinates,
           },
-        })
+        }),
       );
     }
   }, [dispatch, getRuler, height, width, coordinates]);
@@ -260,7 +266,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       const { x: webViewX, y: webViewY } = webview.getBoundingClientRect();
       webview.inspectElement(
         Math.round(webViewX + deviceX * zoomfactor),
-        Math.round(webViewY + deviceY * zoomfactor)
+        Math.round(webViewY + deviceY * zoomfactor),
       );
     },
     [
@@ -269,7 +275,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       isDevtoolsOpen,
       openDevTools,
       zoomfactor,
-    ]
+    ],
   );
 
   const onRotateHandler = (state: boolean) => setSingleRotated(state);
@@ -480,7 +486,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   ]);
 
   useEffect(() => {
-    if (!ref.current || isInspecting === undefined) {
+    if (!ref.current || isInspecting === undefined || !domReady) {
       return;
     }
     const webview = ref.current as Electron.WebviewTag;
@@ -492,29 +498,34 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         isInspecting ? 'enable-inspector-overlay' : 'disable-inspector-overlay',
         {
           webviewId: webview.getWebContentsId(),
-        }
+        },
       );
     })();
-  }, [isInspecting]);
+  }, [isInspecting, domReady]);
 
   useEffect(() => {
-    if (!ref.current || !device.isMobileCapable) {
-      return;
+    if (!ref.current) {
+      return () => {};
     }
-
     const webview = ref.current;
-    webview.addEventListener('dom-ready', () => {
-      webview.insertCSS(`
-               ::-webkit-scrollbar {
-              display: none;
-              } `);
-    });
 
-    // eslint-disable-next-line consistent-return
-    return () => {
-      webview.removeEventListener('dom-ready', () => {});
+    // Set webviewReady for all devices to enable getURL() calls
+    const webviewReadyHandler = () => setWebviewReady(true);
+    webview.addEventListener('dom-ready', webviewReadyHandler);
+
+    // Set domReady only for mobile-capable devices (used for inspector overlay)
+    const domReadyHandler = () => {
+      if (device.isMobileCapable) {
+        setDomReady(true);
+      }
     };
-  }, [device.isMobileCapable]);
+    webview.addEventListener('dom-ready', domReadyHandler);
+
+    return () => {
+      webview.removeEventListener('dom-ready', webviewReadyHandler);
+      webview.removeEventListener('dom-ready', domReadyHandler);
+    };
+  }, [ref, device.isMobileCapable]);
 
   useEffect(() => {
     const webview = ref.current;
@@ -566,12 +577,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       />
       <div
         style={{
-          height: rulerEnabled(`${width}x${height}`)
-            ? scaledHeight + 30
-            : scaledHeight,
-          width: rulerEnabled(`${width}x${height}`)
-            ? scaledWidth + 30
-            : scaledWidth,
+          height: rulerEnabled ? scaledHeight + 30 : scaledHeight,
+          width: rulerEnabled ? scaledWidth + 30 : scaledWidth,
         }}
         className="relative origin-top-left overflow-hidden bg-white"
       >
@@ -583,7 +590,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           coordinates={coordinates}
           zoomFactor={zoomfactor}
           night={darkMode}
-          enabled={rulerEnabled(`${width}x${height}`)}
+          enabled={rulerEnabled}
           defaultGuides={window.electron.store
             .get('userPreferences.guides')
             .flatMap((x: unknown) => x as DefaultGuide[])
@@ -600,16 +607,14 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
               width,
               display: 'inline-flex',
               transform: `scale(${zoomfactor})`,
-              marginLeft: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
-              marginTop: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
+              marginLeft: rulerEnabled ? '30px' : 0,
+              marginTop: rulerEnabled ? '30px' : 0,
             }}
             ref={ref}
             className="origin-top-left"
-            /* eslint-disable-next-line react/no-unknown-property */
-            preload={`file://${window.responsively.webviewPreloadPath}`}
             data-scale-factor={zoomfactor}
             /* eslint-disable-next-line react/no-unknown-property */
-            allowpopups={isPrimary ? true : undefined}
+            allowpopups={isPrimary ? 'true' : undefined}
             /* eslint-disable-next-line react/no-unknown-property */
             useragent={device.userAgent}
           />
@@ -637,6 +642,6 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       </div>
     </div>
   );
-};
+}
 
 export default Device;

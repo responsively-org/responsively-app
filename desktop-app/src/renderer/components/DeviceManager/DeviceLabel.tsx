@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify-icon/react';
 import cx from 'classnames';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,14 +21,14 @@ interface Props {
   disableSelectionControls?: boolean;
 }
 
-const DeviceLabel = ({
+function DeviceLabel({
   device,
   moveDevice = () => {},
   enableDnd = false,
   onShowDeviceDetails,
   hideSelectionControls = false,
   disableSelectionControls = false,
-}: Props) => {
+}: Props) {
   const dispatch = useDispatch();
   const activeSuite = useSelector(selectActiveSuite);
   const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
@@ -48,7 +48,7 @@ const DeviceLabel = ({
         }
       },
     }),
-    [device.name, originalIndex, moveDevice]
+    [device.name, originalIndex, moveDevice],
   );
 
   const [, drop] = useDrop(
@@ -60,7 +60,7 @@ const DeviceLabel = ({
         }
       },
     }),
-    [moveDevice]
+    [moveDevice],
   );
 
   const opacity = isDragging ? 0 : 1;
@@ -84,8 +84,8 @@ const DeviceLabel = ({
           disableSelectionControls
             ? 'Cannot make the suite empty add another device to remove this one'
             : isChecked
-            ? 'Click to remove the device'
-            : 'Click to add the device'
+              ? 'Click to remove the device'
+              : 'Click to add the device'
         }
         checked={isChecked}
         onChange={(e) => {
@@ -94,14 +94,14 @@ const DeviceLabel = ({
               setSuiteDevices({
                 suite: activeSuite.id,
                 devices: [...activeSuite.devices, device.id],
-              })
+              }),
             );
           } else {
             dispatch(
               setSuiteDevices({
                 suite: activeSuite.id,
                 devices: activeSuite.devices.filter((d) => d !== device.id),
-              })
+              }),
             );
           }
         }}
@@ -120,6 +120,6 @@ const DeviceLabel = ({
       </Button>
     </div>
   );
-};
+}
 
 export default DeviceLabel;

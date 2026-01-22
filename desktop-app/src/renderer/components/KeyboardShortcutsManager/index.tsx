@@ -1,7 +1,7 @@
 import { SHORTCUT_KEYS, ShortcutChannel } from './constants';
 import useMousetrapEmitter from './useMousetrapEmitter';
 
-const KeyboardShortcutsManager = () => {
+function KeyboardShortcutsManager() {
   // eslint-disable-next-line no-restricted-syntax
   for (const [channel, keys] of Object.entries(SHORTCUT_KEYS)) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -9,6 +9,6 @@ const KeyboardShortcutsManager = () => {
   }
 
   return null;
-};
+}
 
 export default KeyboardShortcutsManager;

@@ -11,6 +11,16 @@
 import path from 'path';
 import { app, BrowserWindow, shell, screen, ipcMain } from 'electron';
 import { setupTitlebar } from 'custom-electron-titlebar/main';
+import {
+  BACKBONE_DEBUGGER,
+  EMBER_INSPECTOR,
+  JQUERY_DEBUGGER,
+  MOBX_DEVTOOLS,
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
+  VUEJS_DEVTOOLS,
+  installExtension,
+} from 'electron-devtools-installer';
 import cli from './cli';
 import { PROTOCOL } from '../common/constants';
 import MenuBuilder from './menu';
@@ -58,43 +68,36 @@ initWebviewStorageManagerHandlers();
 initNativeFunctionHandlers();
 
 if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support');
-  sourceMapSupport.install();
+  import('source-map-support').then((mod) => mod.default.install());
 }
 
 const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
-  require('electron-debug')();
+  import('electron-debug').then((mod) => mod.default());
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-assembler');
+  const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = [
-    'REACT_DEVELOPER_TOOLS',
-    'REDUX_DEVTOOLS',
-    'EMBER_INSPECTOR',
-    'BACKBONE_DEBUGGER',
-    'JQUERY_DEBUGGER',
-    'ANGULAR_DEVTOOLS',
-    'VUEJS_DEVTOOLS',
-    'MOBX_DEVTOOLS',
-    'APOLLO_DEVELOPER_TOOLS',
+    EMBER_INSPECTOR,
+    REACT_DEVELOPER_TOOLS,
+    BACKBONE_DEBUGGER,
+    JQUERY_DEBUGGER,
+    VUEJS_DEVTOOLS,
+    REDUX_DEVTOOLS,
+    MOBX_DEVTOOLS,
+    'jdkknkkbebbapilgoeccciglkfbmbnfm',
   ];
 
-  return installer
-    .default(
-      extensions.map((name) => installer[name]),
-      forceDownload
-    )
-    .catch(console.log);
+  return installExtension(extensions);
 };
 
 // Custom titlebar config for windows
 const customTitlebarStatus = store.get(
-  'userPreferences.customTitlebar'
+  'userPreferences.customTitlebar',
 ) as boolean;
 if (customTitlebarStatus && process.platform === 'win32') {
   setupTitlebar();
@@ -147,39 +150,39 @@ const createWindow = async () => {
 
         cspHeader = cspHeader.replace(
           'default-src',
-          `default-src ${BROWSER_SYNC_HOST}`
+          `default-src ${BROWSER_SYNC_HOST}`,
         );
         cspHeader = cspHeader.replace(
           'script-src',
-          `script-src ${BROWSER_SYNC_HOST}`
+          `script-src ${BROWSER_SYNC_HOST}`,
         );
         cspHeader = cspHeader.replace(
           'script-src-elem',
-          `script-src-elem ${BROWSER_SYNC_HOST}`
+          `script-src-elem ${BROWSER_SYNC_HOST}`,
         );
         cspHeader = cspHeader.replace(
           'connect-src',
-          `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST}`
+          `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST}`,
         );
         cspHeader = cspHeader.replace(
           'child-src',
-          `child-src ${BROWSER_SYNC_HOST}`
+          `child-src ${BROWSER_SYNC_HOST}`,
         );
         cspHeader = cspHeader.replace(
           'worker-src',
-          `worker-src ${BROWSER_SYNC_HOST}`
+          `worker-src ${BROWSER_SYNC_HOST}`,
         ); // Required when/if the browser-sync script is eventually relocated to a web worker
 
         details.responseHeaders['content-security-policy'][0] = cspHeader;
       }
       callback({ responseHeaders: details.responseHeaders });
-    }
+    },
   );
 
   mainWindow.loadURL(
     `${resolveHtmlPath('index.html')}?urlToOpen=${encodeURI(
-      urlToOpen ?? 'undefined'
-    )}`
+      urlToOpen ?? 'undefined',
+    )}`,
   );
 
   const isWindows = process.platform === 'win32';
@@ -299,6 +302,19 @@ app.on('certificate-error', (event, _, url, __, ___, callback) => {
   }
   console.log('certificate-error event', url, BROWSER_SYNC_HOST);
   return callback(store.get('userPreferences.allowInsecureSSLConnections'));
+});
+
+app.on('web-contents-created', (_event, contents) => {
+  contents.on('will-attach-webview', (_wawevent, webPreferences, _params) => {
+    // Delete the unused preloadURL property
+    delete webPreferences.preload;
+    delete webPreferences.preloadURL;
+
+    // Set the correct preload script path
+    webPreferences.preload = app.isPackaged
+      ? path.join(__dirname, 'preload-webview.js')
+      : path.join(__dirname, '../../.erb/dll/preload-webview.js');
+  });
 });
 
 app
