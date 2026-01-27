@@ -39,6 +39,8 @@ import {
   setIsInspecting,
   setLayout,
   setPageTitle,
+  zoomIn,
+  zoomOut,
 } from 'renderer/store/features/renderer';
 import { PREVIEW_LAYOUTS } from 'common/constants';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
@@ -125,6 +127,66 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     innerWidth: width * 2,
     innerHeight: height * 2,
   });
+
+  // Pinch gesture state
+  const [touchState, setTouchState] = useState({
+    isPinching: false,
+    initialDistance: 0,
+    lastTouchTime: 0,
+  });
+
+  // Calculate distance between two touch points
+  const getDistance = (touch1: React.Touch, touch2: React.Touch) => {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  // Handle touch start for pinch gesture
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      const distance = getDistance(e.touches[0], e.touches[1]);
+      setTouchState({
+        isPinching: true,
+        initialDistance: distance,
+        lastTouchTime: Date.now(),
+      });
+      e.preventDefault();
+    }
+  };
+
+  // Handle touch move for pinch gesture
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchState.isPinching && e.touches.length === 2) {
+      const currentDistance = getDistance(e.touches[0], e.touches[1]);
+      const scaleFactor = currentDistance / touchState.initialDistance;
+
+      // Trigger zoom based on pinch scale factor
+      if (scaleFactor > 1.1) {
+        dispatch(zoomIn());
+        setTouchState((prev) => ({
+          ...prev,
+          initialDistance: currentDistance,
+        }));
+      } else if (scaleFactor < 0.9) {
+        dispatch(zoomOut());
+        setTouchState((prev) => ({
+          ...prev,
+          initialDistance: currentDistance,
+        }));
+      }
+      e.preventDefault();
+    }
+  };
+
+  // Handle touch end for pinch gesture
+  const handleTouchEnd = () => {
+    setTouchState({
+      isPinching: false,
+      initialDistance: 0,
+      lastTouchTime: Date.now(),
+    });
+  };
 
   const registerNavigationHandlers = useCallback(() => {
     webViewPubSub.subscribe(NAVIGATION_EVENTS.RELOAD, () => {
@@ -574,6 +636,9 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
             : scaledWidth,
         }}
         className="relative origin-top-left overflow-hidden bg-white"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <GuideGrid
           scaledHeight={scaledHeight}
