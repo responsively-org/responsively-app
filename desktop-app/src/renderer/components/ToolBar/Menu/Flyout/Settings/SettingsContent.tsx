@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 
-import Button from 'renderer/components/Button';
-import Toggle from 'renderer/components/Toggle';
+import Button from '../../../../Button';
+import Toggle from '../../../../Toggle';
 import { SettingsContentHeaders } from './SettingsContentHeaders';
 
 interface Props {
@@ -11,17 +11,22 @@ interface Props {
 export const SettingsContent = ({ onClose }: Props) => {
   const id = useId();
   const [screenshotSaveLocation, setScreenshotSaveLocation] = useState<string>(
-    window.electron.store.get('userPreferences.screenshot.saveLocation')
+    window.electron.store.get('userPreferences.screenshot.saveLocation') ?? ''
+  );
+  const initialEnableCustomTitlebar = window.electron.store.get(
+    'userPreferences.customTitlebar'
   );
   const [enableCustomTitlebar, setEnableCustomTitlebar] = useState<boolean>(
-    window.electron.store.get('userPreferences.customTitlebar')
+    Boolean(initialEnableCustomTitlebar)
   );
+  const [enableCustomTitlebarChanged, setEnableCustomTitlebarChanged] =
+    useState<boolean>(false);
 
   const [webRequestHeaderAcceptLanguage, setWebRequestHeaderAcceptLanguage] =
     useState<string>(
       window.electron.store.get(
         'userPreferences.webRequestHeaderAcceptLanguage'
-      )
+      ) ?? ''
     );
 
   const onSave = () => {
@@ -37,7 +42,9 @@ export const SettingsContent = ({ onClose }: Props) => {
     );
     window.electron.store.set(
       'userPreferences.customTitlebar',
-      enableCustomTitlebar
+      enableCustomTitlebarChanged
+        ? enableCustomTitlebar
+        : initialEnableCustomTitlebar
     );
 
     window.electron.store.set(
@@ -90,6 +97,7 @@ export const SettingsContent = ({ onClose }: Props) => {
                 isOn={enableCustomTitlebar}
                 onChange={(value) => {
                   setEnableCustomTitlebar(value.target.checked);
+                  setEnableCustomTitlebarChanged(true);
                 }}
               />
             </div>
