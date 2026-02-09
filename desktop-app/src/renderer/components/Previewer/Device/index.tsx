@@ -290,7 +290,11 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     const webview = ref.current as Electron.WebviewTag;
     const handlerRemovers: (() => void)[] = [];
 
-    const didNavigateHandler = (e: Electron.DidNavigateEvent) => {
+    const didNavigateHandler = (
+      e: Electron.DidNavigateEvent | Electron.DidNavigateInPageEvent
+    ) => {
+      // Only DidNavigateInPageEvent has isMainFrame
+      if ('isMainFrame' in e && e.isMainFrame === false) return;
       // Only update Redux on the primary device and only if this navigation wasn't initiated by AddressBar
       if (isPrimary && !isNavigatingFromAddressBar.current) {
         dispatch(setAddress(e.url));
