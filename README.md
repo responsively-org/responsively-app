@@ -114,7 +114,7 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
 ## Gold sponsors 🥇
 <table style="width: 100%; border: none;" cellspacing="0" cellpadding="0" border="0" align="center" id="sponsors">
   <tr>
-    <td style="border: none;"><a href="https://www.testmu.ai/?utm_source=responsively&utm_medium=sponsor" target="_blank">
+    <td style="border: none;"><a href="https://www.testmuai.com/?utm_medium=sponsor&utm_source=responsively-app" target="_blank">
             <img src="https://responsively.app/_next/static/media/testmu.a5a8be46.svg" style="vertical-align: middle;" width="280" />
         </a></td>
     <td rowspan="3" style="border: none;"><a href="https://github.com/sponsors/responsively-org" target="_blank">
