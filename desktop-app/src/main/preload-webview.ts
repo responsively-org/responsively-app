@@ -18,7 +18,25 @@ const documentBodyInit = () => {
 
   window.addEventListener('wheel', (e) => {
     ipcRenderer.sendToHost('pass-scroll-data', {
-      coordinates: { x: e.deltaX, y: e.deltaY },
+      coordinates: {
+        x: e.deltaX,
+        y: e.deltaY,
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
+      },
+      innerHeight: document.body.scrollHeight,
+      innerWidth: window.innerWidth,
+    });
+  });
+
+  window.addEventListener('scroll', () => {
+    ipcRenderer.sendToHost('pass-scroll-data', {
+      coordinates: {
+        x: 0,
+        y: 0,
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
+      },
       innerHeight: document.body.scrollHeight,
       innerWidth: window.innerWidth,
     });

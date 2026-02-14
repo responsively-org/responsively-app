@@ -1,5 +1,6 @@
-import { Device as IDevice } from 'common/deviceList';
 import cx from 'classnames';
+import { PREVIEW_LAYOUTS } from 'common/constants';
+import { Device as IDevice } from 'common/deviceList';
 import {
   InspectElementArgs,
   OpenDevtoolsArgs,
@@ -40,10 +41,11 @@ import {
   setLayout,
   setPageTitle,
 } from 'renderer/store/features/renderer';
-import { PREVIEW_LAYOUTS } from 'common/constants';
-import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
-import Toolbar from './Toolbar';
-import { appendHistory } from './utils';
+import type { RootState } from '../../../store';
+import {
+  selectDesignOverlay,
+  type ViewResolution,
+} from '../../../store/features/design-overlay';
 import {
   Coordinates,
   RulersState,
@@ -51,11 +53,15 @@ import {
   selectRulerEnabled,
   setRuler,
 } from '../../../store/features/ruler';
-import GuideGrid, { DefaultGuide } from '../Guides';
 import { selectDarkMode } from '../../../store/features/ui';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from '../../KeyboardShortcutsManager/useKeyboardShortcut';
+import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
+import GuideGrid, { DefaultGuide } from '../Guides';
+import DesignOverlay from './DesignOverlay';
+import Toolbar from './Toolbar';
+import { appendHistory } from './utils';
 
 interface Props {
   device: IDevice;
@@ -119,9 +125,16 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     height = temp;
   }
 
+  const resolution: ViewResolution = `${width}x${height}`;
+  const designOverlay = useSelector((state: RootState) =>
+    selectDesignOverlay(state)(resolution)
+  );
+
   const [coordinates, setCoordinates] = useState<Coordinates>({
     deltaX: 0,
     deltaY: 0,
+    scrollX: 0,
+    scrollY: 0,
     innerWidth: width * 2,
     innerHeight: height * 2,
   });
@@ -194,7 +207,6 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     if (webview == null) {
       return;
     }
-    const resolution = `${width}x${height}`;
     const ruler: RulersState | undefined = getRuler(resolution);
     if (ruler) {
       dispatch(
@@ -217,7 +229,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         })
       );
     }
-  }, [dispatch, getRuler, height, width, coordinates]);
+  }, [dispatch, getRuler, coordinates, resolution]);
 
   useKeyboardShortcut(SHORTCUT_CHANNEL.TOGGLE_RULERS, toggleRuler);
 
@@ -314,6 +326,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         setCoordinates({
           deltaX: e.args[0].coordinates.x,
           deltaY: e.args[0].coordinates.y,
+          scrollX: e.args[0].coordinates.scrollX,
+          scrollY: e.args[0].coordinates.scrollY,
           innerHeight: e.args[0].innerHeight,
           innerWidth: e.args[0].innerWidth,
         });
@@ -564,76 +578,110 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         isIndividualLayout={isIndividualLayout}
         isDeviceRotationEnabled={isDeviceRotationEnabled}
       />
-      <div
-        style={{
-          height: rulerEnabled(`${width}x${height}`)
-            ? scaledHeight + 30
-            : scaledHeight,
-          width: rulerEnabled(`${width}x${height}`)
-            ? scaledWidth + 30
-            : scaledWidth,
-        }}
-        className="relative origin-top-left overflow-hidden bg-white"
-      >
-        <GuideGrid
-          scaledHeight={scaledHeight}
-          scaledWidth={scaledWidth}
-          height={height}
-          width={width}
-          coordinates={coordinates}
-          zoomFactor={zoomfactor}
-          night={darkMode}
-          enabled={rulerEnabled(`${width}x${height}`)}
-          defaultGuides={window.electron.store
-            .get('userPreferences.guides')
-            .flatMap((x: unknown) => x as DefaultGuide[])
-            .filter((x: DefaultGuide) => {
-              return x.resolution === `${width}x${height}`;
-            })}
-        />
-        <div className="bg-white">
-          <webview
-            id={device.name}
-            src={address}
-            style={{
-              height,
-              width,
-              display: 'inline-flex',
-              transform: `scale(${zoomfactor})`,
-              marginLeft: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
-              marginTop: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
-            }}
-            ref={ref}
-            className="origin-top-left"
-            /* eslint-disable-next-line react/no-unknown-property */
-            preload={`file://${window.responsively.webviewPreloadPath}`}
-            data-scale-factor={zoomfactor}
-            /* eslint-disable-next-line react/no-unknown-property */
-            allowpopups={isPrimary ? true : undefined}
-            /* eslint-disable-next-line react/no-unknown-property */
-            useragent={device.userAgent}
+      <div className="flex gap-4">
+        <div
+          style={{
+            height: rulerEnabled(`${width}x${height}`)
+              ? scaledHeight + 30
+              : scaledHeight,
+            width: rulerEnabled(`${width}x${height}`)
+              ? scaledWidth + 30
+              : scaledWidth,
+          }}
+          className="relative origin-top-left overflow-hidden bg-white"
+        >
+          <GuideGrid
+            scaledHeight={scaledHeight}
+            scaledWidth={scaledWidth}
+            height={height}
+            width={width}
+            coordinates={coordinates}
+            zoomFactor={zoomfactor}
+            night={darkMode}
+            enabled={rulerEnabled(`${width}x${height}`)}
+            defaultGuides={window.electron.store
+              .get('userPreferences.guides')
+              .flatMap((x: unknown) => x as DefaultGuide[])
+              .filter((x: DefaultGuide) => {
+                return x.resolution === `${width}x${height}`;
+              })}
           />
+          <div className="bg-white">
+            <webview
+              id={device.name}
+              src={address}
+              style={{
+                height,
+                width,
+                display: 'inline-flex',
+                transform: `scale(${zoomfactor})`,
+                marginLeft: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
+                marginTop: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
+              }}
+              ref={ref}
+              className="origin-top-left"
+              /* eslint-disable-next-line react/no-unknown-property */
+              preload={`file://${window.responsively.webviewPreloadPath}`}
+              data-scale-factor={zoomfactor}
+              /* eslint-disable-next-line react/no-unknown-property */
+              allowpopups={isPrimary ? true : undefined}
+              /* eslint-disable-next-line react/no-unknown-property */
+              useragent={device.userAgent}
+            />
+          </div>
+
+          {designOverlay?.enabled &&
+            designOverlay.image &&
+            designOverlay.position === 'overlay' && (
+              <DesignOverlay
+                resolution={resolution}
+                scaledWidth={scaledWidth}
+                scaledHeight={scaledHeight}
+                zoomFactor={zoomfactor}
+                coordinates={coordinates}
+                position={designOverlay.position}
+                rulerMargin={rulerEnabled(`${width}x${height}`) ? 30 : 0}
+                width={width}
+                height={height}
+              />
+            )}
+
+          {screenshotInProgress ? (
+            <div
+              className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
+              style={{ height: scaledHeight, width: scaledWidth }}
+            >
+              <Spinner spinnerHeight={30} />
+            </div>
+          ) : null}
+          {error != null ? (
+            <div
+              className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
+              style={{ height: scaledHeight, width: scaledWidth }}
+            >
+              <div className="text-center text-sm text-white">
+                <div className="text-base font-bold">ERROR: {error.code}</div>
+                <div className="text-sm">{error.description}</div>
+              </div>
+            </div>
+          ) : null}
         </div>
 
-        {screenshotInProgress ? (
-          <div
-            className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
-            style={{ height: scaledHeight, width: scaledWidth }}
-          >
-            <Spinner spinnerHeight={30} />
-          </div>
-        ) : null}
-        {error != null ? (
-          <div
-            className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
-            style={{ height: scaledHeight, width: scaledWidth }}
-          >
-            <div className="text-center text-sm text-white">
-              <div className="text-base font-bold">ERROR: {error.code}</div>
-              <div className="text-sm">{error.description}</div>
-            </div>
-          </div>
-        ) : null}
+        {designOverlay?.enabled &&
+          designOverlay.image &&
+          designOverlay.position === 'side' && (
+            <DesignOverlay
+              resolution={resolution}
+              scaledWidth={scaledWidth}
+              scaledHeight={scaledHeight}
+              zoomFactor={zoomfactor}
+              coordinates={coordinates}
+              position={designOverlay.position}
+              rulerMargin={rulerEnabled(`${width}x${height}`) ? 30 : 0}
+              width={width}
+              height={height}
+            />
+          )}
       </div>
     </div>
   );

@@ -4,6 +4,8 @@ import type { RootState } from '../..';
 export interface Coordinates {
   deltaX: number;
   deltaY: number;
+  scrollX?: number;
+  scrollY?: number;
   innerHeight: number;
   innerWidth: number;
 }
