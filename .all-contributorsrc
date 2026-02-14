@@ -912,6 +912,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "sayagodev",
+      "name": "Saúl Sáyago",
+      "avatar_url": "https://avatars.githubusercontent.com/u/67727553?v=4",
+      "profile": "http://sayago.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 5,
