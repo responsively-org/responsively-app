@@ -78,7 +78,7 @@ const installExtensions = async () => {
     'EMBER_INSPECTOR',
     'BACKBONE_DEBUGGER',
     'JQUERY_DEBUGGER',
-    'ANGULAR_DEVTOOLS',
+    // 'ANGULAR_DEVTOOLS',
     'VUEJS_DEVTOOLS',
     'MOBX_DEVTOOLS',
     'APOLLO_DEVELOPER_TOOLS',
