@@ -56,11 +56,19 @@ const documentBodyInit = () => {
 
   // Handle F key for fullscreen toggle (with Ctrl modifier)
   window.addEventListener('keydown', (e) => {
+    // Prevent repeated firing if key is held down
+    if (e.repeat) return;
+    // Ensure this webview/document is actually focused
+    if (!document.hasFocus()) return;
     // Prevent fullscreen if user is typing
     if (isUserTyping()) return;
 
-    // Only trigger fullscreen with Ctrl+F or Alt+F to avoid intercepting normal typing
-    if ((e.key === 'f' || e.key === 'F') && (e.ctrlKey || e.altKey)) {
+    // Support both Windows/Linux (Ctrl) and macOS (Command)
+    const isModifier = e.ctrlKey || e.metaKey;
+
+    // Use Ctrl/Command + Shift + F to avoid
+    // Overriding standard browser shortcuts like Ctrl + F (Find) to avoid intercepting normal typing
+    if (e.key.toLowerCase() === 'f' && isModifier && e.shiftKey) {
       e.preventDefault();
 
       // Check if already in fullscreen
