@@ -54,12 +54,13 @@ const documentBodyInit = () => {
     );
   };
 
-  // Handle F key for fullscreen toggle
+  // Handle F key for fullscreen toggle (with Ctrl modifier)
   window.addEventListener('keydown', (e) => {
     // Prevent fullscreen if user is typing
     if (isUserTyping()) return;
 
-    if (e.key === 'f' || e.key === 'F') {
+    // Only trigger fullscreen with Ctrl+F or Alt+F to avoid intercepting normal typing
+    if ((e.key === 'f' || e.key === 'F') && (e.ctrlKey || e.altKey)) {
       e.preventDefault();
 
       // Check if already in fullscreen
