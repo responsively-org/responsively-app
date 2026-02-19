@@ -23,6 +23,7 @@ export interface RendererState {
 const zoomSteps = [
   0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2,
 ];
+const zoomDefaultStep = 8;
 
 const urlFromQueryParam = () => {
   const params = new URLSearchParams(window.location.search);
@@ -116,6 +117,15 @@ export const rendererSlice = createSlice({
         }
       }
     },
+    zoomReset: (state) => {
+      state.zoomFactor = zoomSteps[zoomDefaultStep];
+      state.individualZoomFactor = zoomSteps[zoomDefaultStep];
+      window.electron.store.set(
+        'renderer.individualZoomStepIndex',
+        zoomDefaultStep
+      );
+      window.electron.store.set('renderer.zoomStepIndex', zoomDefaultStep);
+    },
     setRotate: (state, action: PayloadAction<boolean>) => {
       state.rotate = action.payload;
     },
@@ -147,6 +157,7 @@ export const {
   setAddress,
   zoomIn,
   zoomOut,
+  zoomReset,
   setRotate,
   setIsInspecting,
   setLayout,

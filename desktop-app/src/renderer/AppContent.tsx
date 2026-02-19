@@ -13,6 +13,7 @@ import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
 import { ReleaseNotes } from './components/ReleaseNotes';
 import { Sponsorship } from './components/Sponsorship';
 import { AboutDialog } from './components/AboutDialog';
+import { ZoomWidget } from './components/ZoomWidget/ZoomWidget';
 
 if ((navigator as any).userAgentData.platform === 'Windows') {
   import('./titlebar-styles.css');
@@ -23,6 +24,7 @@ const Browser = () => {
     <div className="h-screen gap-2 overflow-hidden pt-2">
       <ToolBar />
       <Previewer />
+      <ZoomWidget className="absolute bottom-5 right-5 z-50" />
     </div>
   );
 };
