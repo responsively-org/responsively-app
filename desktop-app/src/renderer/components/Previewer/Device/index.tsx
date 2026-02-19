@@ -550,7 +550,9 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     };
   }, [dispatch, isPrimary]);
 
-  const scaledHeight = height * zoomfactor;
+  const scaledHeight = device.isMobileCapable
+    ? height * zoomfactor
+    : (height + 30) * zoomfactor;
   const scaledWidth = width * zoomfactor;
 
   const isRestrictedMinimumDeviceSize =
