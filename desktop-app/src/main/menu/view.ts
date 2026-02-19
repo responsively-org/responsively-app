@@ -30,11 +30,18 @@ const getReloadMenu = (
   label: '&Reload',
   accelerator: 'CommandOrControl+R',
   click: () => {
-    if (isDev) {
-      mainWindow.webContents.reload();
-      return;
+    if (
+      mainWindow &&
+      !mainWindow.isDestroyed() &&
+      mainWindow.webContents &&
+      !mainWindow.webContents.isDestroyed()
+    ) {
+      if (isDev) {
+        mainWindow.webContents.reload();
+      } else {
+        mainWindow.webContents.send('reload', {});
+      }
     }
-    mainWindow.webContents.send('reload', {});
   },
 });
 
@@ -44,7 +51,14 @@ const getReloadIgnoringCacheMenu = (
   label: 'Reload Ignoring Cache',
   accelerator: 'CommandOrControl+Shift+R',
   click: () => {
-    mainWindow.webContents.send('reload', { ignoreCache: true });
+    if (
+      mainWindow &&
+      !mainWindow.isDestroyed() &&
+      mainWindow.webContents &&
+      !mainWindow.webContents.isDestroyed()
+    ) {
+      mainWindow.webContents.send('reload', { ignoreCache: true });
+    }
   },
 });
 
