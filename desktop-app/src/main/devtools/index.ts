@@ -1,8 +1,13 @@
-import { BrowserView, BrowserWindow, ipcMain, webContents } from 'electron';
+import {
+  BrowserWindow,
+  ipcMain,
+  webContents,
+  WebContentsView,
+} from 'electron';
 import { DOCK_POSITION } from '../../common/constants';
 import { DockPosition } from '../../renderer/store/features/devtools';
 
-let devtoolsBrowserView: BrowserView | undefined;
+let devtoolsView: WebContentsView | undefined;
 let devtoolsWebview: Electron.WebContents;
 let mainWindow: BrowserWindow | undefined;
 
@@ -10,6 +15,10 @@ export interface OpenDevtoolsArgs {
   webviewId: number;
   dockPosition: DockPosition;
   bounds?: Electron.Rectangle;
+}
+
+export interface ResizeDevtoolsArgs {
+  bounds: Electron.Rectangle;
 }
 
 export interface OpenDevtoolsResult {
@@ -144,18 +153,11 @@ const openDevtools = async (
     devtoolsWebview.openDevTools({ mode: 'detach' });
     return { status: true };
   }
-  devtoolsBrowserView = new BrowserView();
-  mainWindow.setBrowserView(devtoolsBrowserView);
-  devtoolsBrowserView.setBounds({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  });
-  devtoolsWebview.setDevToolsWebContents(devtoolsBrowserView.webContents);
+  devtoolsView = new WebContentsView();
+  devtoolsWebview.setDevToolsWebContents(devtoolsView.webContents);
   devtoolsWebview.openDevTools();
 
-  devtoolsBrowserView.webContents
+  devtoolsView.webContents
     .executeJavaScript(
       `
       (async function () {
@@ -182,22 +184,15 @@ const openDevtools = async (
   return { status: true };
 };
 
-const resizeDevtools = async (_: any, arg: OpenDevtoolsArgs) => {
+const resizeDevtools = async (_: any, arg: ResizeDevtoolsArgs) => {
+  if (devtoolsView == null || mainWindow == null) {
+    return;
+  }
   try {
-    if (devtoolsBrowserView == null) {
-      return;
+    if (!mainWindow.contentView.children.includes(devtoolsView)) {
+      mainWindow.contentView.addChildView(devtoolsView);
     }
-    const { bounds } = arg;
-    if (bounds == null) {
-      return;
-    }
-    const { x, y, width, height } = bounds;
-    devtoolsBrowserView.setBounds({
-      x: Math.round(x),
-      y: Math.round(y),
-      width: Math.round(width),
-      height: Math.round(height),
-    });
+    devtoolsView.setBounds(arg.bounds);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error resizing devtools', err);
@@ -209,13 +204,12 @@ const closeDevTools = async () => {
     return;
   }
   devtoolsWebview.closeDevTools();
-  if (devtoolsBrowserView == null) {
+  if (devtoolsView == null) {
     return;
   }
-  mainWindow?.removeBrowserView(devtoolsBrowserView);
-  (devtoolsBrowserView.webContents as any).destroy();
-  devtoolsBrowserView.webContents.close();
-  devtoolsBrowserView = undefined;
+  mainWindow?.contentView.removeChildView(devtoolsView);
+  devtoolsView.webContents.close();
+  devtoolsView = undefined;
 };
 
 export const initDevtoolsHandlers = (

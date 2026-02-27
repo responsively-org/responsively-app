@@ -11,16 +11,14 @@ const useMousetrapEmitter = (
   action?: string | undefined
 ) => {
   useEffect(() => {
-    const callback = async (
+    const callback = (
       _e: Mousetrap.ExtendedKeyboardEvent,
       _combo: string
     ) => {
-      try {
-        await keyboardShortcutsPubsub.publish(eventChannel);
-      } catch (err) {
+      keyboardShortcutsPubsub.publish(eventChannel).catch((err) => {
         // eslint-disable-next-line no-console
         console.error('useMousetrapEmitter: callback: error: ', err);
-      }
+      });
     };
     Mousetrap.bind(accelerator, callback, action);
 

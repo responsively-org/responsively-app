@@ -2,7 +2,7 @@ import { Icon } from '@iconify/react';
 import { DOCK_POSITION } from 'common/constants';
 import { OpenDevtoolsArgs, OpenDevtoolsResult } from 'main/devtools';
 import { Resizable, Size } from 're-resizable';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'renderer/components/Button';
 import {
@@ -59,31 +59,26 @@ const DevtoolsResizer = () => {
   if (dockPosition === DOCK_POSITION.RIGHT) {
     config = RightDockConfig;
   }
-  const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<SizeValue>(config.defaultSize.width);
   const [height, setHeight] = useState<SizeValue>(config.defaultSize.height);
   const [sizeBeforeResize, setSizeBeforeResize] = useState<Size>({
     width: 0,
     height: 0,
   });
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  const resizeEffect = () => {
-    if (ref.current == null || ref.current.parentNode == null) {
-      return;
-    }
-    if (ref.current?.getBoundingClientRect() == null) {
-      return;
-    }
-    const margin = 28;
-    const {
-      x,
-      y,
-      height: h,
-      width: w,
-    } = ref.current?.getBoundingClientRect() || {};
-    const bounds = { x, y: y + margin, height: h - margin, width: w };
-    window.electron.ipcRenderer.invoke('resize-devtools', { bounds });
-  };
+  const sendBounds = useCallback(() => {
+    if (!contentRef.current) return;
+    const rect = contentRef.current.getBoundingClientRect();
+    window.electron.ipcRenderer.invoke('resize-devtools', {
+      bounds: {
+        x: Math.round(rect.x),
+        y: Math.round(rect.y),
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+      },
+    });
+  }, []);
 
   useEffect(() => {
     setHeight(config.defaultSize.height);
@@ -91,13 +86,17 @@ const DevtoolsResizer = () => {
   }, [config]);
 
   useEffect(() => {
-    resizeEffect();
-  }, [width, height, ref, dockPosition]);
+    sendBounds();
+  }, [width, height, dockPosition, sendBounds]);
+
   useEffect(() => {
-    setTimeout(() => {
-      resizeEffect();
-    });
-  }, []);
+    const timer = setTimeout(sendBounds, 50);
+    window.addEventListener('resize', sendBounds);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', sendBounds);
+    };
+  }, [sendBounds]);
 
   return (
     <div className="border-[#d0d0d0] bg-[#f3f3f3] text-[#555]">
@@ -163,7 +162,7 @@ const DevtoolsResizer = () => {
               </Button>
             </div>
           </div>
-          <div className="flex-grow" ref={ref} />
+          <div ref={contentRef} className="flex-grow" />
         </div>
       </Resizable>
     </div>

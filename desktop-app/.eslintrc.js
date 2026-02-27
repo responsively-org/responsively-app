@@ -6,6 +6,11 @@ module.exports = {
     'import/no-unresolved': 'error',
 
     'import/prefer-default-export': 'off',
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      { ts: 'never', tsx: 'never', js: 'never', jsx: 'never' },
+    ],
 
     // Since React 17 and typescript 4.1 you can safely disable the rule
     'react/react-in-jsx-scope': 'off',

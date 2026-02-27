@@ -94,6 +94,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
   const isNavigatingFromAddressBar = useRef<boolean>(false);
+  const [webviewReady, setWebviewReady] = useState<boolean>(false);
 
   useEffect(() => {
     if (ref.current && isPrimary) {
@@ -109,6 +110,17 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       }
     }
   }, [address, isPrimary]);
+
+  useEffect(() => {
+    const webview = ref.current;
+    if (!webview) return undefined;
+    const onDomReady = () => setWebviewReady(true);
+    webview.addEventListener('dom-ready', onDomReady);
+    return () => {
+      webview.removeEventListener('dom-ready', onDomReady);
+      setWebviewReady(false);
+    };
+  }, [ref]);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
@@ -457,7 +469,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   }, [ref]);
 
   useEffect(() => {
-    if (!ref.current) {
+    if (!ref.current || !webviewReady) {
       return undefined;
     }
     const webview = ref.current as Electron.WebviewTag;
@@ -491,10 +503,11 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     openDevTools,
     zoomfactor,
     inspectElement,
+    webviewReady,
   ]);
 
   useEffect(() => {
-    if (!ref.current || isInspecting === undefined) {
+    if (!ref.current || !webviewReady || isInspecting === undefined) {
       return;
     }
     const webview = ref.current as Electron.WebviewTag;
@@ -509,7 +522,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         }
       );
     })();
-  }, [isInspecting]);
+  }, [isInspecting, webviewReady]);
 
   useEffect(() => {
     if (!ref.current || !device.isMobileCapable) {

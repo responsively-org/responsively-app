@@ -32,11 +32,6 @@ describe('SettingsContentHeader', () => {
     );
     expect(window.electron.store.set).toHaveBeenNthCalledWith(
       2,
-      'userPreferences.customTitlebar',
-      undefined
-    );
-    expect(window.electron.store.set).toHaveBeenNthCalledWith(
-      3,
       'userPreferences.webRequestHeaderAcceptLanguage',
       'cz-Cz'
     );
