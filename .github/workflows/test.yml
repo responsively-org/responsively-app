@@ -16,12 +16,12 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node.js and NPM
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
           cache: ${{ !env.ACT && 'npm' || '' }} # Disable cache for nektos/act
           cache-dependency-path: ./desktop-app/yarn.lock
 
