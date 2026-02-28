@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import {configureStore} from '@reduxjs/toolkit';
 
 import deviceManagerReducer from './features/device-manager';
 import devtoolsReducer from './features/devtools';

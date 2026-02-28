@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom';
 // import { downloadFile, onFileDownload, setCustomDevices } from './helpers';
 
-import { Device } from 'common/deviceList';
-import { fireEvent, render } from '@testing-library/react';
+import {Device} from 'common/deviceList';
+import {fireEvent, render} from '@testing-library/react';
 import Button from 'renderer/components/Button';
 import * as Helpers from './helpers';
 
@@ -15,31 +15,25 @@ describe('onFileDownload', () => {
   afterEach(() => jest.clearAllMocks());
 
   it('should get customDevices and suites from the store and download the file', () => {
-    const mockCustomDevices = [{ name: 'Device1', width: 800, height: 600 }];
-    const mockSuites = [{ name: 'Suite1' }];
+    const mockCustomDevices = [{name: 'Device1', width: 800, height: 600}];
+    const mockSuites = [{name: 'Suite1'}];
 
     const spyOnDownloadFileFn = jest.spyOn(Helpers, 'downloadFile');
 
-    (window.electron.store.get as jest.Mock).mockImplementation(
-      (key: string) => {
-        if (key === 'deviceManager.customDevices') {
-          return mockCustomDevices;
-        }
-        if (key === 'deviceManager.previewSuites') {
-          return mockSuites;
-        }
-        return null;
+    (window.electron.store.get as jest.Mock).mockImplementation((key: string) => {
+      if (key === 'deviceManager.customDevices') {
+        return mockCustomDevices;
       }
-    );
+      if (key === 'deviceManager.previewSuites') {
+        return mockSuites;
+      }
+      return null;
+    });
 
     Helpers.onFileDownload();
 
-    expect(window.electron.store.get).toHaveBeenCalledWith(
-      'deviceManager.customDevices'
-    );
-    expect(window.electron.store.get).toHaveBeenCalledWith(
-      'deviceManager.previewSuites'
-    );
+    expect(window.electron.store.get).toHaveBeenCalledWith('deviceManager.customDevices');
+    expect(window.electron.store.get).toHaveBeenCalledWith('deviceManager.previewSuites');
     expect(spyOnDownloadFileFn).toHaveBeenCalledWith({
       customDevices: mockCustomDevices,
       suites: mockSuites,
@@ -49,21 +43,16 @@ describe('onFileDownload', () => {
 
 describe('downloadFile', () => {
   it('should create and download a JSON file', () => {
-    const mockFileData = { key: 'value' };
+    const mockFileData = {key: 'value'};
     const mockedUrl = 'http://localhost/#';
 
-    const createObjectURLSpy = jest
-      .spyOn(URL, 'createObjectURL')
-      .mockReturnValue(mockedUrl);
+    const createObjectURLSpy = jest.spyOn(URL, 'createObjectURL').mockReturnValue(mockedUrl);
     const revokeObjectURLSpy = jest.spyOn(URL, 'revokeObjectURL');
     const spyOnDownloadFileFn = jest.spyOn(Helpers, 'downloadFile');
 
-    const { getByTestId } = render(
+    const {getByTestId} = render(
       <div>
-        <Button
-          onClick={() => Helpers.downloadFile(mockFileData)}
-          data-testid="mockDownloadBtn"
-        >
+        <Button onClick={() => Helpers.downloadFile(mockFileData)} data-testid="mockDownloadBtn">
           Download
         </Button>
       </div>
@@ -128,10 +117,9 @@ describe('setCustomDevices', () => {
 
     const filteredDevices = Helpers.setCustomDevices(mockCustomDevices);
 
-    expect(window.electron.store.set).not.toHaveBeenCalledWith(
-      'deviceManager.customDevices',
-      [mockCustomDevices[1]]
-    );
+    expect(window.electron.store.set).not.toHaveBeenCalledWith('deviceManager.customDevices', [
+      mockCustomDevices[1],
+    ]);
 
     expect(filteredDevices).toEqual(mockCustomDevices);
   });

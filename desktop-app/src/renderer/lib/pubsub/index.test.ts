@@ -25,8 +25,8 @@ describe('PubSub', () => {
 
     const results = await pubsub.publish('test');
     expect(results).toEqual([
-      { result: 'handler1', error: null },
-      { result: 'handler2', error: null },
+      {result: 'handler1', error: null},
+      {result: 'handler2', error: null},
     ]);
   });
 

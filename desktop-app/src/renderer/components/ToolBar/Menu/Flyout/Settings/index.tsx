@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import Button from 'renderer/components/Button';
 import Modal from 'renderer/components/Modal';
-import { SettingsContent } from './SettingsContent';
+import {SettingsContent} from './SettingsContent';
 
 interface Props {
   closeFlyout: () => void;
 }
 
-export const Settings = ({ closeFlyout }: Props) => {
+export const Settings = ({closeFlyout}: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const onClose = () => setIsOpen(false);

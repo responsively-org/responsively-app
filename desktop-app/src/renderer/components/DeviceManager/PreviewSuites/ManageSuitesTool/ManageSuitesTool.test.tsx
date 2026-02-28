@@ -1,19 +1,16 @@
 import '@testing-library/jest-dom';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { Device } from 'common/deviceList';
-import { Provider, useDispatch } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import {
-  addSuites,
-  deleteAllSuites,
-} from 'renderer/store/features/device-manager';
-import { ReactNode } from 'react';
-import { transformFile } from './utils';
-import { ManageSuitesTool } from './ManageSuitesTool';
+import {render, screen, fireEvent, waitFor} from '@testing-library/react';
+import {Device} from 'common/deviceList';
+import {Provider, useDispatch} from 'react-redux';
+import {configureStore} from '@reduxjs/toolkit';
+import {addSuites, deleteAllSuites} from 'renderer/store/features/device-manager';
+import {ReactNode} from 'react';
+import {transformFile} from './utils';
+import {ManageSuitesTool} from './ManageSuitesTool';
 
 jest.mock('renderer/store/features/device-manager', () => ({
-  addSuites: jest.fn(() => ({ type: 'addSuites' })),
-  deleteAllSuites: jest.fn(() => ({ type: 'deleteAllSuites' })),
+  addSuites: jest.fn(() => ({type: 'addSuites'})),
+  deleteAllSuites: jest.fn(() => ({type: 'deleteAllSuites'})),
   default: jest.fn((state = {}) => state), // Mock the reducer as a function
 }));
 
@@ -22,19 +19,11 @@ jest.mock('./utils', () => ({
 }));
 
 jest.mock('renderer/components/FileUploader', () => ({
-  FileUploader: ({
-    handleFileUpload,
-  }: {
-    handleFileUpload: (file: File) => void;
-  }) => (
+  FileUploader: ({handleFileUpload}: {handleFileUpload: (file: File) => void}) => (
     <button
       type="button"
       data-testid="mock-file-uploader"
-      onClick={() =>
-        handleFileUpload(
-          new File(['{}'], 'test.json', { type: 'application/json' })
-        )
-      }
+      onClick={() => handleFileUpload(new File(['{}'], 'test.json', {type: 'application/json'}))}
     >
       Mock File Uploader
     </button>
@@ -52,19 +41,11 @@ jest.mock('react-redux', () => ({
 }));
 
 const renderWithRedux = (
-  component:
-    | string
-    | number
-    | boolean
-    | Iterable<ReactNode>
-    | JSX.Element
-    | null
-    | undefined
+  component: string | number | boolean | Iterable<ReactNode> | JSX.Element | null | undefined
 ) => {
   const store = configureStore({
     reducer: {
-      deviceManager: jest.requireMock('renderer/store/features/device-manager')
-        .default,
+      deviceManager: jest.requireMock('renderer/store/features/device-manager').default,
     },
   });
 
@@ -83,9 +64,7 @@ describe('ManageSuitesTool', () => {
 
     setCustomDevicesStateMock = jest.fn();
 
-    renderWithRedux(
-      <ManageSuitesTool setCustomDevicesState={setCustomDevicesStateMock} />
-    );
+    renderWithRedux(<ManageSuitesTool setCustomDevicesState={setCustomDevicesStateMock} />);
   });
 
   it('renders the component correctly', () => {
@@ -101,17 +80,13 @@ describe('ManageSuitesTool', () => {
 
   it('opens the reset confirmation dialog when reset button is clicked', () => {
     fireEvent.click(screen.getByTestId('reset-btn'));
-    expect(
-      screen.getByText('Do you want to reset all settings?')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Do you want to reset all settings?')).toBeInTheDocument();
   });
 
   it('closes the reset confirmation dialog when the close button is clicked', () => {
     fireEvent.click(screen.getByTestId('reset-btn'));
     fireEvent.click(screen.getByText('Cancel'));
-    expect(
-      screen.queryByText('Do you want to reset all settings?')
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Do you want to reset all settings?')).not.toBeInTheDocument();
   });
 
   it('dispatches deleteAllSuites and clears custom devices on reset confirmation', async () => {
@@ -126,8 +101,8 @@ describe('ManageSuitesTool', () => {
 
   it('handles successful file upload and processes custom devices and suites', async () => {
     const mockSuites = [
-      { id: '1', name: 'first suite', devices: [] },
-      { id: '2', name: 'second suite', devices: [] },
+      {id: '1', name: 'first suite', devices: []},
+      {id: '2', name: 'second suite', devices: []},
     ];
 
     (transformFile as jest.Mock).mockResolvedValue({
@@ -145,9 +120,7 @@ describe('ManageSuitesTool', () => {
   });
 
   it('handles error in file upload', async () => {
-    (transformFile as jest.Mock).mockRejectedValue(
-      new Error('File upload failed')
-    );
+    (transformFile as jest.Mock).mockRejectedValue(new Error('File upload failed'));
 
     fireEvent.click(screen.getByTestId('download-btn'));
 
@@ -155,9 +128,7 @@ describe('ManageSuitesTool', () => {
 
     await waitFor(() => {
       expect(transformFile).toHaveBeenCalledWith(expect.any(File));
-      expect(
-        screen.getByText('There has been an error, please try again.')
-      ).toBeInTheDocument();
+      expect(screen.getByText('There has been an error, please try again.')).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByText('Close'));

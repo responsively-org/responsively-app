@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import BrowserSync, { BrowserSyncInstance } from 'browser-sync';
+import BrowserSync, {BrowserSyncInstance} from 'browser-sync';
 import fs from 'fs-extra';
 
 export const BROWSER_SYNC_PORT = 12719;

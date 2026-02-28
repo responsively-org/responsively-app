@@ -1,8 +1,8 @@
-import { Icon } from '@iconify/react';
+import {Icon} from '@iconify/react';
 import cx from 'classnames';
-import { Device, getDevicesMap } from 'common/deviceList';
-import { useDrop } from 'react-dnd';
-import { useDispatch } from 'react-redux';
+import {Device, getDevicesMap} from 'common/deviceList';
+import {useDrop} from 'react-dnd';
+import {useDispatch} from 'react-redux';
 import Button from 'renderer/components/Button';
 import {
   PreviewSuite,
@@ -10,30 +10,27 @@ import {
   setActiveSuite,
   setSuiteDevices,
 } from 'renderer/store/features/device-manager';
-import DeviceLabel, { DND_TYPE } from '../DeviceLabel';
+import DeviceLabel, {DND_TYPE} from '../DeviceLabel';
 
 interface Props {
   suite: PreviewSuite;
   isActive: boolean;
 }
 
-export const Suite = ({ suite: { id, name, devices }, isActive }: Props) => {
-  const [, drop] = useDrop(() => ({ accept: DND_TYPE }));
+export const Suite = ({suite: {id, name, devices}, isActive}: Props) => {
+  const [, drop] = useDrop(() => ({accept: DND_TYPE}));
   const dispatch = useDispatch();
 
   const moveDevice = (device: Device, atIndex: number) => {
     const newDevices = devices.filter((d) => d !== device.id);
     newDevices.splice(atIndex, 0, device.id);
-    dispatch(setSuiteDevices({ suite: id, devices: newDevices }));
+    dispatch(setSuiteDevices({suite: id, devices: newDevices}));
   };
   return (
     <div
-      className={cx(
-        'relative min-w-56 flex-shrink-0  rounded bg-white dark:bg-slate-900',
-        {
-          'border-2 border-slate-500 ': isActive,
-        }
-      )}
+      className={cx('relative min-w-56 flex-shrink-0  rounded bg-white dark:bg-slate-900', {
+        'border-2 border-slate-500 ': isActive,
+      })}
     >
       {!isActive ? (
         <div className="absolute flex h-full w-full items-center justify-center bg-gray-100 !bg-opacity-70 dark:bg-slate-800">

@@ -1,5 +1,5 @@
-import { BrowserWindow, ipcMain, session } from 'electron';
-import { IPC_MAIN_CHANNELS } from '../../common/constants';
+import {BrowserWindow, ipcMain, session} from 'electron';
+import {IPC_MAIN_CHANNELS} from '../../common/constants';
 import store from '../../store';
 
 export interface PermissionRequestArg {
@@ -19,7 +19,7 @@ export const PERMISSION_STATE = {
   UNKNOWN: 'UNKNOWN',
 } as const;
 
-type PermissionState = typeof PERMISSION_STATE[keyof typeof PERMISSION_STATE];
+type PermissionState = (typeof PERMISSION_STATE)[keyof typeof PERMISSION_STATE];
 
 interface PersistedPermission {
   origin: string;
@@ -35,16 +35,16 @@ type PermissionCallback = (permissionGranted: boolean) => void;
 
 const loadPermissions = () => {
   const permissions = (store.get('webPermissions') as PersistedPermission[])
-    .map(({ origin, permissions: permissionRecords }) => {
+    .map(({origin, permissions: permissionRecords}) => {
       return {
         origin,
-        permissions: permissionRecords.reduce((acc, { type, status }) => {
+        permissions: permissionRecords.reduce((acc, {type, status}) => {
           acc[type] = status;
           return acc;
         }, {} as PermissionRecords),
       };
     })
-    .reduce((acc, { origin, permissions: permissionRecords }) => {
+    .reduce((acc, {origin, permissions: permissionRecords}) => {
       acc[origin] = permissionRecords;
       return acc;
     }, {} as Record<string, PermissionRecords>);
@@ -53,26 +53,21 @@ const loadPermissions = () => {
 };
 
 const savePermissions = (permissions: Record<string, PermissionRecords>) => {
-  const persistedPermissions = Object.entries(permissions).map(
-    ([origin, permissionRecords]) => {
-      return {
-        origin,
-        permissions: Object.entries(permissionRecords)
-          .filter(([, status]) => {
-            return (
-              status === PERMISSION_STATE.GRANTED ||
-              status === PERMISSION_STATE.DENIED
-            );
-          })
-          .map(([type, status]) => {
-            return {
-              type,
-              status,
-            };
-          }),
-      };
-    }
-  );
+  const persistedPermissions = Object.entries(permissions).map(([origin, permissionRecords]) => {
+    return {
+      origin,
+      permissions: Object.entries(permissionRecords)
+        .filter(([, status]) => {
+          return status === PERMISSION_STATE.GRANTED || status === PERMISSION_STATE.DENIED;
+        })
+        .map(([type, status]) => {
+          return {
+            type,
+            status,
+          };
+        }),
+    };
+  });
   store.set('webPermissions', persistedPermissions);
 };
 
@@ -86,10 +81,7 @@ class PermissionsManager {
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
     this.permissions = loadPermissions();
-    const handler = (
-      _event: Electron.IpcMainInvokeEvent,
-      arg: PermissionResponseArg
-    ) => {
+    const handler = (_event: Electron.IpcMainInvokeEvent, arg: PermissionResponseArg) => {
       this.setPermissionState(
         arg.permissionRequest.requestingOrigin,
         arg.permissionRequest.permission,
@@ -110,10 +102,7 @@ class PermissionsManager {
       } catch (e) {
         // eslint-disable-next-line no-console
         // eslint-disable-next-line no-console
-        console.error(
-          'Error adding listener for permission response channel',
-          e
-        );
+        console.error('Error adding listener for permission response channel', e);
       }
     }
   }
@@ -141,11 +130,7 @@ class PermissionsManager {
     });
   }
 
-  requestPermission(
-    origin: string,
-    type: string,
-    callback: PermissionCallback
-  ): void {
+  requestPermission(origin: string, type: string, callback: PermissionCallback): void {
     this.permissions[origin] = this.permissions[origin] || {};
     const currentState = this.permissions[origin][type];
 
@@ -188,17 +173,17 @@ class PermissionsManager {
   getSitePermissions(origin: string) {
     const permissions = this.permissions[origin] || {};
     const commonPermissions = [
-      { type: 'camera', displayName: 'Camera', icon: 'mdi:camera' },
-      { type: 'microphone', displayName: 'Microphone', icon: 'mdi:microphone' },
-      { type: 'geolocation', displayName: 'Location', icon: 'mdi:map-marker' },
-      { type: 'notifications', displayName: 'Notifications', icon: 'mdi:bell' },
+      {type: 'camera', displayName: 'Camera', icon: 'mdi:camera'},
+      {type: 'microphone', displayName: 'Microphone', icon: 'mdi:microphone'},
+      {type: 'geolocation', displayName: 'Location', icon: 'mdi:map-marker'},
+      {type: 'notifications', displayName: 'Notifications', icon: 'mdi:bell'},
       {
         type: 'clipboard-read',
         displayName: 'Clipboard',
         icon: 'mdi:content-paste',
       },
-      { type: 'fullscreen', displayName: 'Fullscreen', icon: 'mdi:fullscreen' },
-      { type: 'midi', displayName: 'MIDI Devices', icon: 'mdi:piano' },
+      {type: 'fullscreen', displayName: 'Fullscreen', icon: 'mdi:fullscreen'},
+      {type: 'midi', displayName: 'MIDI Devices', icon: 'mdi:piano'},
       {
         type: 'pointerLock',
         displayName: 'Pointer Lock',

@@ -1,5 +1,5 @@
-import { RootState } from 'renderer/store';
-import { configureStore } from '@reduxjs/toolkit';
+import {RootState} from 'renderer/store';
+import {configureStore} from '@reduxjs/toolkit';
 import designOverlayReducer, {
   setDesignOverlay,
   removeDesignOverlay,
@@ -71,7 +71,7 @@ describe('designOverlaySlice', () => {
 
     it('should update existing overlay', () => {
       const store = createStore();
-      const updatedState = { ...mockOverlayState, opacity: 75 };
+      const updatedState = {...mockOverlayState, opacity: 75};
 
       store.dispatch(
         setDesignOverlay({
@@ -102,7 +102,7 @@ describe('designOverlaySlice', () => {
         })
       );
 
-      store.dispatch(removeDesignOverlay({ resolution }));
+      store.dispatch(removeDesignOverlay({resolution}));
 
       const state = store.getState();
       expect(state.designOverlay[resolution]).toBeUndefined();
@@ -114,12 +114,9 @@ describe('designOverlaySlice', () => {
         [resolution]: mockOverlayState,
       });
 
-      store.dispatch(removeDesignOverlay({ resolution }));
+      store.dispatch(removeDesignOverlay({resolution}));
 
-      expect(mockStore.set).toHaveBeenCalledWith(
-        'userPreferences.designOverlays',
-        {}
-      );
+      expect(mockStore.set).toHaveBeenCalledWith('userPreferences.designOverlays', {});
     });
   });
 
@@ -172,7 +169,7 @@ describe('designOverlaySlice', () => {
       store.dispatch(
         setDesignOverlay({
           resolution,
-          overlayState: { ...mockOverlayState, enabled: false },
+          overlayState: {...mockOverlayState, enabled: false},
         })
       );
 

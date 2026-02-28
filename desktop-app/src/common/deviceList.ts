@@ -1593,14 +1593,11 @@ const customDevices: () => Device[] = () => {
     : [];
 };
 
-type DeviceMap = { [key: string]: Device };
+type DeviceMap = {[key: string]: Device};
 
 export const getDevicesMap = (): DeviceMap => {
-  return [...defaultDevices, ...customDevices()].reduce(
-    (map: DeviceMap, device) => {
-      map[device.id] = device;
-      return map;
-    },
-    {}
-  );
+  return [...defaultDevices, ...customDevices()].reduce((map: DeviceMap, device) => {
+    map[device.id] = device;
+    return map;
+  }, {});
 };

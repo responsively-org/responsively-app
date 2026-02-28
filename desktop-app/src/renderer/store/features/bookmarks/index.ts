@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { v4 as uuidv4 } from 'uuid';
-import type { RootState } from '../..';
+import {createSlice} from '@reduxjs/toolkit';
+import type {PayloadAction} from '@reduxjs/toolkit';
+import {v4 as uuidv4} from 'uuid';
+import type {RootState} from '../..';
 
 export interface IBookmarks {
   id?: string;
@@ -23,9 +23,7 @@ export const bookmarksSlice = createSlice({
     addBookmark: (state, action: PayloadAction<IBookmarks>) => {
       const bookmarks: IBookmarks[] = window.electron.store.get('bookmarks');
       if (action.payload.id) {
-        const index = bookmarks.findIndex(
-          (bookmark) => bookmark.id === action.payload.id
-        );
+        const index = bookmarks.findIndex((bookmark) => bookmark.id === action.payload.id);
         bookmarks[index] = action.payload;
       } else {
         const updatedPayload = {
@@ -53,7 +51,7 @@ export const bookmarksSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { addBookmark, removeBookmark } = bookmarksSlice.actions;
+export const {addBookmark, removeBookmark} = bookmarksSlice.actions;
 
 export const selectBookmarks = (state: RootState) => state.bookmarks.bookmarks;
 

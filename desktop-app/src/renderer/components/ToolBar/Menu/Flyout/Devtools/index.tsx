@@ -1,9 +1,6 @@
-import { DOCK_POSITION } from 'common/constants';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectDockPosition,
-  setDockPosition,
-} from 'renderer/store/features/devtools';
+import {DOCK_POSITION} from 'common/constants';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectDockPosition, setDockPosition} from 'renderer/store/features/devtools';
 import Toggle from 'renderer/components/Toggle';
 
 const Devtools = () => {

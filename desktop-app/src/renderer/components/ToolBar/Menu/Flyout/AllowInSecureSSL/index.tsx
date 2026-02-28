@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import Toggle from 'renderer/components/Toggle';
 
 const AllowInSecureSSL = () => {

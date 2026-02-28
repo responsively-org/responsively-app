@@ -1,12 +1,12 @@
-import { transformFile } from './utils';
+import {transformFile} from './utils';
 
 describe('transformFile', () => {
   it('should parse JSON content of the file', async () => {
-    const jsonContent = { key: 'value' };
+    const jsonContent = {key: 'value'};
     const file = new Blob([JSON.stringify(jsonContent)], {
       type: 'application/json',
     }) as File;
-    Object.defineProperty(file, 'name', { value: 'test.json' });
+    Object.defineProperty(file, 'name', {value: 'test.json'});
 
     const result = await transformFile(file);
     expect(result).toEqual(jsonContent);
@@ -17,7 +17,7 @@ describe('transformFile', () => {
     const file = new Blob([invalidJsonContent], {
       type: 'application/json',
     }) as File;
-    Object.defineProperty(file, 'name', { value: 'test.json' });
+    Object.defineProperty(file, 'name', {value: 'test.json'});
 
     await expect(transformFile(file)).rejects.toThrow();
   });

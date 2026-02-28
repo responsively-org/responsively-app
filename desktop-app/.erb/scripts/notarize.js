@@ -1,7 +1,7 @@
-const { notarize } = require('@electron/notarize');
+const {notarize} = require('@electron/notarize');
 
 exports.default = async function notarizeMacos(context) {
-  const { electronPlatformName, appOutDir } = context;
+  const {electronPlatformName, appOutDir} = context;
   if (electronPlatformName !== 'darwin') {
     return;
   }
@@ -12,11 +12,7 @@ exports.default = async function notarizeMacos(context) {
   }
 
   if (
-    !(
-      'APPLE_ID' in process.env &&
-      'APPLE_ID_PASS' in process.env &&
-      'APPLE_TEAM_ID' in process.env
-    )
+    !('APPLE_ID' in process.env && 'APPLE_ID_PASS' in process.env && 'APPLE_TEAM_ID' in process.env)
   ) {
     console.warn(
       'Skipping notarizing step. APPLE_ID, APPLE_ID_PASS, and APPLE_TEAM_ID env variables must be set'

@@ -1,5 +1,5 @@
-import { Icon } from '@iconify/react';
-import { webViewPubSub } from 'renderer/lib/pubsub';
+import {Icon} from '@iconify/react';
+import {webViewPubSub} from 'renderer/lib/pubsub';
 import Button from '../Button';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
@@ -18,7 +18,7 @@ interface NavigationItemProps {
   action: () => void;
 }
 
-const NavigationButton = ({ label, icon, action }: NavigationItemProps) => {
+const NavigationButton = ({label, icon, action}: NavigationItemProps) => {
   const shortcutName: ShortcutChannel = label.toUpperCase() as ShortcutChannel;
   useKeyboardShortcut(SHORTCUT_CHANNEL[shortcutName], action);
   return (

@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '../..';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import type {RootState} from '../..';
 
 export interface Coordinates {
   deltaX: number;
@@ -17,7 +17,7 @@ export type RulersState = {
 
 export type ViewResolution = string;
 
-const initialState: { [key: ViewResolution]: RulersState } = {};
+const initialState: {[key: ViewResolution]: RulersState} = {};
 
 export const rulerSlice = createSlice({
   name: 'rulers',
@@ -36,7 +36,7 @@ export const rulerSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setRuler } = rulerSlice.actions;
+export const {setRuler} = rulerSlice.actions;
 
 export const selectRuler =
   (state: RootState) =>

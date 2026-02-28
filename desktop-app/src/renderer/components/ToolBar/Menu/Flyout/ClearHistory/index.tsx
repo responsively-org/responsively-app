@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import {Icon} from '@iconify/react';
 import Button from 'renderer/components/Button';
 
 const ClearHistory = () => {

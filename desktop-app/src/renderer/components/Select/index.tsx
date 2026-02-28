@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import {useId} from 'react';
 
 interface Props {
   label: string;
@@ -8,10 +8,7 @@ const Select = ({
   label,
   ...props
 }: Props &
-  React.DetailedHTMLProps<
-    React.SelectHTMLAttributes<HTMLSelectElement>,
-    HTMLSelectElement
-  >) => {
+  React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>) => {
   const id = useId();
   return (
     <div className="flex flex-col gap-1">

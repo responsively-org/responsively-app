@@ -1,13 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '../..';
+import {createSlice} from '@reduxjs/toolkit';
+import type {PayloadAction} from '@reduxjs/toolkit';
+import type {RootState} from '../..';
 
 export const APP_VIEWS = {
   BROWSER: 'BROWSER',
   DEVICE_MANAGER: 'DEVICE_MANAGER',
 } as const;
 
-export type AppView = typeof APP_VIEWS[keyof typeof APP_VIEWS];
+export type AppView = (typeof APP_VIEWS)[keyof typeof APP_VIEWS];
 
 export interface UIState {
   darkMode: boolean;
@@ -39,7 +39,7 @@ export const uiSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setDarkMode, setAppView, closeMenuFlyout } = uiSlice.actions;
+export const {setDarkMode, setAppView, closeMenuFlyout} = uiSlice.actions;
 
 export const selectDarkMode = (state: RootState) => state.ui.darkMode;
 export const selectAppView = (state: RootState) => state.ui.appView;

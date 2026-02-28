@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 import Mousetrap from 'mousetrap';
 import PubSub from 'renderer/lib/pubsub';
-import { ShortcutChannel } from './constants';
+import {ShortcutChannel} from './constants';
 
 export const keyboardShortcutsPubsub = new PubSub();
 
@@ -11,10 +11,7 @@ const useMousetrapEmitter = (
   action?: string | undefined
 ) => {
   useEffect(() => {
-    const callback = (
-      _e: Mousetrap.ExtendedKeyboardEvent,
-      _combo: string
-    ) => {
+    const callback = (_e: Mousetrap.ExtendedKeyboardEvent, _combo: string) => {
       keyboardShortcutsPubsub.publish(eventChannel).catch((err) => {
         // eslint-disable-next-line no-console
         console.error('useMousetrapEmitter: callback: error: ', err);

@@ -1,23 +1,20 @@
-import { useId, useState } from 'react';
+import {useId, useState} from 'react';
 
 import Button from 'renderer/components/Button';
-import { SettingsContentHeaders } from './SettingsContentHeaders';
+import {SettingsContentHeaders} from './SettingsContentHeaders';
 
 interface Props {
   onClose: () => void;
 }
 
-export const SettingsContent = ({ onClose }: Props) => {
+export const SettingsContent = ({onClose}: Props) => {
   const id = useId();
   const [screenshotSaveLocation, setScreenshotSaveLocation] = useState<string>(
     window.electron.store.get('userPreferences.screenshot.saveLocation')
   );
-  const [webRequestHeaderAcceptLanguage, setWebRequestHeaderAcceptLanguage] =
-    useState<string>(
-      window.electron.store.get(
-        'userPreferences.webRequestHeaderAcceptLanguage'
-      )
-    );
+  const [webRequestHeaderAcceptLanguage, setWebRequestHeaderAcceptLanguage] = useState<string>(
+    window.electron.store.get('userPreferences.webRequestHeaderAcceptLanguage')
+  );
 
   const onSave = () => {
     if (screenshotSaveLocation === '' || screenshotSaveLocation == null) {
@@ -26,10 +23,7 @@ export const SettingsContent = ({ onClose }: Props) => {
       return;
     }
 
-    window.electron.store.set(
-      'userPreferences.screenshot.saveLocation',
-      screenshotSaveLocation
-    );
+    window.electron.store.set('userPreferences.screenshot.saveLocation', screenshotSaveLocation);
 
     window.electron.store.set(
       'userPreferences.webRequestHeaderAcceptLanguage',

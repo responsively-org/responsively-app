@@ -1,13 +1,12 @@
-import { Channels } from 'common/constants';
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import {Channels} from 'common/constants';
+import {contextBridge, ipcRenderer, IpcRendererEvent} from 'electron';
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
     sendMessage<T>(channel: Channels, args: T[]) {
       ipcRenderer.send(channel, args);
     },
     on<T>(channel: Channels, func: (...args: T[]) => void) {
-      const subscription = (_event: IpcRendererEvent, ...args: T[]) =>
-        func(...args);
+      const subscription = (_event: IpcRendererEvent, ...args: T[]) => func(...args);
       ipcRenderer.on(channel, subscription);
 
       return () => ipcRenderer.removeListener(channel, subscription);
@@ -41,4 +40,3 @@ window.onerror = function (errorMsg, url, lineNumber) {
   console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
   // Code to run when an error has occurred on the page
 };
-

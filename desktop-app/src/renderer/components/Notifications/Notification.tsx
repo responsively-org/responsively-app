@@ -1,10 +1,7 @@
-import {
-  IPC_MAIN_CHANNELS,
-  Notification as NotificationType,
-} from 'common/constants';
+import {IPC_MAIN_CHANNELS, Notification as NotificationType} from 'common/constants';
 import Button from '../Button';
 
-const Notification = ({ notification }: { notification: NotificationType }) => {
+const Notification = ({notification}: {notification: NotificationType}) => {
   const handleLinkClick = (url: string) => {
     window.electron.ipcRenderer.sendMessage(IPC_MAIN_CHANNELS.OPEN_EXTERNAL, {
       url,
@@ -18,9 +15,7 @@ const Notification = ({ notification }: { notification: NotificationType }) => {
         <Button
           isPrimary
           title={notification.linkText}
-          onClick={() =>
-            notification.link && handleLinkClick(notification.link)
-          }
+          onClick={() => notification.link && handleLinkClick(notification.link)}
           className="mt-2"
         >
           {notification.linkText}

@@ -2,7 +2,7 @@ interface Props {
   text: string[];
 }
 
-const ShortcutButton = ({ text }: Props) => {
+const ShortcutButton = ({text}: Props) => {
   const btnText = text[0].split('+');
   const btnTextLength = btnText.length - 1;
 

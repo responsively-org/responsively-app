@@ -1,9 +1,9 @@
 import '@testing-library/jest-dom';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
+import {render, screen, fireEvent} from '@testing-library/react';
+import {Provider} from 'react-redux';
+import {configureStore} from '@reduxjs/toolkit';
 import designOverlayReducer from 'renderer/store/features/design-overlay';
-import rulersReducer, { Coordinates } from 'renderer/store/features/ruler';
+import rulersReducer, {Coordinates} from 'renderer/store/features/ruler';
 import DesignOverlay from './index';
 
 // Mock GuideGrid component
@@ -129,7 +129,7 @@ describe('DesignOverlay', () => {
 
     const image = screen.getByAltText('Design overlay');
     expect(image).toBeInTheDocument();
-    expect(image).toHaveStyle({ opacity: '0.5' });
+    expect(image).toHaveStyle({opacity: '0.5'});
   });
 
   it('applies correct opacity in overlay mode', () => {
@@ -158,7 +158,7 @@ describe('DesignOverlay', () => {
     );
 
     const image = screen.getByAltText('Design overlay');
-    expect(image).toHaveStyle({ opacity: '0.75' });
+    expect(image).toHaveStyle({opacity: '0.75'});
   });
 
   it('applies 100% opacity in side mode', () => {
@@ -187,7 +187,7 @@ describe('DesignOverlay', () => {
     );
 
     const image = screen.getByAltText('Design overlay');
-    expect(image).toHaveStyle({ opacity: '1' });
+    expect(image).toHaveStyle({opacity: '1'});
   });
 
   it('shows GuideGrid only in side mode', () => {
@@ -256,7 +256,7 @@ describe('DesignOverlay', () => {
       },
     };
 
-    const { container } = renderWithRedux(
+    const {container} = renderWithRedux(
       <DesignOverlay
         resolution={defaultProps.resolution}
         scaledWidth={defaultProps.scaledWidth}
@@ -301,7 +301,7 @@ describe('DesignOverlay', () => {
     );
 
     const image = screen.getByAltText('Design overlay');
-    expect(image).toHaveStyle({ clipPath: 'none' });
+    expect(image).toHaveStyle({clipPath: 'none'});
   });
 
   it('allows dragging the divider line', () => {
@@ -314,7 +314,7 @@ describe('DesignOverlay', () => {
       },
     };
 
-    const { container } = renderWithRedux(
+    const {container} = renderWithRedux(
       <DesignOverlay
         resolution={defaultProps.resolution}
         scaledWidth={defaultProps.scaledWidth}
@@ -378,7 +378,7 @@ describe('DesignOverlay', () => {
     const image = screen.getByAltText('Design overlay');
     // scrollX * zoomFactor = 100 * 0.5 = 50
     // scrollY * zoomFactor = 200 * 0.5 = 100
-    const { transform } = image.style;
+    const {transform} = image.style;
     expect(transform).toContain('-50px');
     expect(transform).toContain('-100px');
   });

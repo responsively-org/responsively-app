@@ -1,11 +1,11 @@
-import { Icon } from '@iconify/react';
-import type { Device } from 'common/deviceList';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {Icon} from '@iconify/react';
+import type {Device} from 'common/deviceList';
+import {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import Button from 'renderer/components/Button';
-import { FileUploader } from 'renderer/components/FileUploader';
+import {FileUploader} from 'renderer/components/FileUploader';
 import Modal from 'renderer/components/Modal';
-import type { RootState } from 'renderer/store';
+import type {RootState} from 'renderer/store';
 import {
   DesignOverlayPosition,
   removeDesignOverlay,
@@ -19,26 +19,18 @@ interface Props {
   onClose: () => void;
 }
 
-const DesignOverlayControls = ({ device, isOpen, onClose }: Props) => {
+const DesignOverlayControls = ({device, isOpen, onClose}: Props) => {
   const dispatch = useDispatch();
   const resolution = `${device.width}x${device.height}`;
-  const existingOverlay = useSelector((state: RootState) =>
-    selectDesignOverlay(state)(resolution)
-  );
+  const existingOverlay = useSelector((state: RootState) => selectDesignOverlay(state)(resolution));
 
   const [image, setImage] = useState<string>(existingOverlay?.image || '');
-  const [fileName, setFileName] = useState<string>(
-    existingOverlay?.fileName || ''
-  );
-  const [opacity, setOpacity] = useState<number>(
-    existingOverlay?.opacity ?? 50
-  );
+  const [fileName, setFileName] = useState<string>(existingOverlay?.fileName || '');
+  const [opacity, setOpacity] = useState<number>(existingOverlay?.opacity ?? 50);
   const [position, setPosition] = useState<DesignOverlayPosition>(
     existingOverlay?.position || 'overlay'
   );
-  const [enabled, setEnabled] = useState<boolean>(
-    existingOverlay?.enabled ?? false
-  );
+  const [enabled, setEnabled] = useState<boolean>(existingOverlay?.enabled ?? false);
 
   useEffect(() => {
     if (existingOverlay) {
@@ -88,7 +80,7 @@ const DesignOverlayControls = ({ device, isOpen, onClose }: Props) => {
   };
 
   const handleRemove = () => {
-    dispatch(removeDesignOverlay({ resolution }));
+    dispatch(removeDesignOverlay({resolution}));
     setImage('');
     setFileName('');
     setOpacity(50);

@@ -1,4 +1,4 @@
-import { HistoryItem } from 'renderer/components/ToolBar/AddressBar/SuggestionList';
+import {HistoryItem} from 'renderer/components/ToolBar/AddressBar/SuggestionList';
 
 // eslint-disable-next-line import/prefer-default-export
 export const appendHistory = (url: string, title: string) => {
@@ -9,8 +9,8 @@ export const appendHistory = (url: string, title: string) => {
   window.electron.store.set(
     'history',
     [
-      { url, title, lastVisited: new Date().getTime() },
-      ...history.filter(({ url: _url }) => url !== _url),
+      {url, title, lastVisited: new Date().getTime()},
+      ...history.filter(({url: _url}) => url !== _url),
     ].slice(0, 100)
   );
 };

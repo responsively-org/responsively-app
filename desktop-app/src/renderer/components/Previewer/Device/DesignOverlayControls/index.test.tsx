@@ -1,9 +1,9 @@
 import '@testing-library/jest-dom';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
+import {render, screen, fireEvent, waitFor} from '@testing-library/react';
+import {Provider} from 'react-redux';
+import {configureStore} from '@reduxjs/toolkit';
 import designOverlayReducer from 'renderer/store/features/design-overlay';
-import type { Device } from 'common/deviceList';
+import type {Device} from 'common/deviceList';
 import DesignOverlayControls from './index';
 
 // Mock electron.store
@@ -21,11 +21,7 @@ beforeEach(() => {
 
 // Mock FileUploader component
 jest.mock('renderer/components/FileUploader', () => ({
-  FileUploader: ({
-    handleFileUpload,
-  }: {
-    handleFileUpload: (file: File) => void;
-  }) => (
+  FileUploader: ({handleFileUpload}: {handleFileUpload: (file: File) => void}) => (
     <div data-testid="file-uploader">
       <input
         type="file"
@@ -42,7 +38,7 @@ jest.mock('renderer/components/FileUploader', () => ({
 // Mock Modal component
 jest.mock('renderer/components/Modal', () => ({
   __esModule: true,
-  default: ({ isOpen, onClose, title, children }: any) =>
+  default: ({isOpen, onClose, title, children}: any) =>
     isOpen ? (
       <div data-testid="modal">
         <h2>{title}</h2>
@@ -57,7 +53,7 @@ jest.mock('renderer/components/Modal', () => ({
 // Mock Button component
 jest.mock('renderer/components/Button', () => ({
   __esModule: true,
-  default: ({ children, onClick, isPrimary, isTextButton }: any) => (
+  default: ({children, onClick, isPrimary, isTextButton}: any) => (
     <button
       type="button"
       onClick={onClick}
@@ -109,9 +105,7 @@ describe('DesignOverlayControls', () => {
   });
 
   it('renders modal when isOpen is true', () => {
-    renderWithRedux(
-      <DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />
-    );
+    renderWithRedux(<DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />);
 
     expect(screen.getByTestId('modal')).toBeInTheDocument();
     expect(screen.getByText('Design Overlay Settings')).toBeInTheDocument();
@@ -119,20 +113,14 @@ describe('DesignOverlayControls', () => {
 
   it('does not render modal when isOpen is false', () => {
     renderWithRedux(
-      <DesignOverlayControls
-        device={mockDevice}
-        isOpen={false}
-        onClose={mockOnClose}
-      />
+      <DesignOverlayControls device={mockDevice} isOpen={false} onClose={mockOnClose} />
     );
 
     expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
   });
 
   it('calls onClose when cancel button is clicked', () => {
-    renderWithRedux(
-      <DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />
-    );
+    renderWithRedux(<DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />);
 
     const cancelButton = screen.getByText('Cancel');
     fireEvent.click(cancelButton);
@@ -141,14 +129,14 @@ describe('DesignOverlayControls', () => {
   });
 
   it('shows opacity slider when image is uploaded', async () => {
-    const { store } = renderWithRedux(
+    const {store} = renderWithRedux(
       <DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />
     );
 
     const fileInput = screen.getByTestId('file-input');
-    const mockFile = new File(['dummy'], 'test.png', { type: 'image/png' });
+    const mockFile = new File(['dummy'], 'test.png', {type: 'image/png'});
 
-    fireEvent.change(fileInput, { target: { files: [mockFile] } });
+    fireEvent.change(fileInput, {target: {files: [mockFile]}});
 
     await waitFor(() => {
       expect(screen.getByRole('slider')).toBeInTheDocument();
@@ -156,33 +144,33 @@ describe('DesignOverlayControls', () => {
   });
 
   it('updates opacity when slider is moved', async () => {
-    const { store } = renderWithRedux(
+    const {store} = renderWithRedux(
       <DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />
     );
 
     const fileInput = screen.getByTestId('file-input');
-    const mockFile = new File(['dummy'], 'test.png', { type: 'image/png' });
+    const mockFile = new File(['dummy'], 'test.png', {type: 'image/png'});
 
-    fireEvent.change(fileInput, { target: { files: [mockFile] } });
+    fireEvent.change(fileInput, {target: {files: [mockFile]}});
 
     await waitFor(() => {
       const opacitySlider = screen.getByRole('slider');
       expect(opacitySlider).toBeInTheDocument();
 
-      fireEvent.change(opacitySlider, { target: { value: '75' } });
+      fireEvent.change(opacitySlider, {target: {value: '75'}});
       expect(opacitySlider).toHaveValue('75');
     });
   });
 
   it('saves overlay when save button is clicked', async () => {
-    const { store } = renderWithRedux(
+    const {store} = renderWithRedux(
       <DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />
     );
 
     const fileInput = screen.getByTestId('file-input');
-    const mockFile = new File(['dummy'], 'test.png', { type: 'image/png' });
+    const mockFile = new File(['dummy'], 'test.png', {type: 'image/png'});
 
-    fireEvent.change(fileInput, { target: { files: [mockFile] } });
+    fireEvent.change(fileInput, {target: {files: [mockFile]}});
 
     await waitFor(() => {
       const saveButton = screen.getByText('Save');
@@ -206,12 +194,8 @@ describe('DesignOverlayControls', () => {
       },
     };
 
-    const { store } = renderWithRedux(
-      <DesignOverlayControls
-        device={mockDevice}
-        isOpen
-        onClose={mockOnClose}
-      />,
+    const {store} = renderWithRedux(
+      <DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />,
       initialState
     );
 

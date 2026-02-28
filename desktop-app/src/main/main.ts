@@ -9,36 +9,29 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, screen, ipcMain } from 'electron';
+import {app, BrowserWindow, shell, screen, ipcMain} from 'electron';
 import cli from './cli';
-import { PROTOCOL } from '../common/constants';
+import {PROTOCOL} from '../common/constants';
 import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
-import {
-  BROWSER_SYNC_HOST,
-  initInstance,
-  stopWatchFiles,
-  watchFiles,
-} from './browser-sync';
+import {resolveHtmlPath} from './util';
+import {BROWSER_SYNC_HOST, initInstance, stopWatchFiles, watchFiles} from './browser-sync';
 import store from '../store';
-import { initWebviewContextMenu } from './webview-context-menu/register';
-import { initScreenshotHandlers } from './screenshot';
-import { initDevtoolsHandlers } from './devtools';
-import { initWebviewStorageManagerHandlers } from './webview-storage-manager';
-import { initNativeFunctionHandlers } from './native-functions';
-import { WebPermissionHandlers } from './web-permissions';
-import { initHttpBasicAuthHandlers } from './http-basic-auth';
-import { initAppMetaHandlers } from './app-meta';
-import { openUrl } from './protocol-handler';
-import { AppUpdater } from './app-updater';
+import {initWebviewContextMenu} from './webview-context-menu/register';
+import {initScreenshotHandlers} from './screenshot';
+import {initDevtoolsHandlers} from './devtools';
+import {initWebviewStorageManagerHandlers} from './webview-storage-manager';
+import {initNativeFunctionHandlers} from './native-functions';
+import {WebPermissionHandlers} from './web-permissions';
+import {initHttpBasicAuthHandlers} from './http-basic-auth';
+import {initAppMetaHandlers} from './app-meta';
+import {openUrl} from './protocol-handler';
+import {AppUpdater} from './app-updater';
 
 let windowShownOnOpen = false;
 
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
-    app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [
-      path.resolve(process.argv[1]),
-    ]);
+    app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [path.resolve(process.argv[1])]);
   }
 } else {
   app.setAsDefaultProtocolClient(PROTOCOL);
@@ -61,8 +54,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-const isDebug =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isDebug = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
   require('electron-debug')();
@@ -108,7 +100,7 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
-  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+  const {width, height} = screen.getPrimaryDisplay().workAreaSize;
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -128,46 +120,27 @@ const createWindow = async () => {
   const webPermissionHandlers = WebPermissionHandlers(mainWindow);
 
   // Add BROWSER_SYNC_HOST to the allowed Content-Security-Policy origins
-  mainWindow.webContents.session.webRequest.onHeadersReceived(
-    async (details, callback) => {
-      if (details.responseHeaders?.['content-security-policy']) {
-        let cspHeader = details.responseHeaders['content-security-policy'][0];
+  mainWindow.webContents.session.webRequest.onHeadersReceived(async (details, callback) => {
+    if (details.responseHeaders?.['content-security-policy']) {
+      let cspHeader = details.responseHeaders['content-security-policy'][0];
 
-        cspHeader = cspHeader.replace(
-          'default-src',
-          `default-src ${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'script-src',
-          `script-src ${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'script-src-elem',
-          `script-src-elem ${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'connect-src',
-          `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'child-src',
-          `child-src ${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'worker-src',
-          `worker-src ${BROWSER_SYNC_HOST}`
-        ); // Required when/if the browser-sync script is eventually relocated to a web worker
+      cspHeader = cspHeader.replace('default-src', `default-src ${BROWSER_SYNC_HOST}`);
+      cspHeader = cspHeader.replace('script-src', `script-src ${BROWSER_SYNC_HOST}`);
+      cspHeader = cspHeader.replace('script-src-elem', `script-src-elem ${BROWSER_SYNC_HOST}`);
+      cspHeader = cspHeader.replace(
+        'connect-src',
+        `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST}`
+      );
+      cspHeader = cspHeader.replace('child-src', `child-src ${BROWSER_SYNC_HOST}`);
+      cspHeader = cspHeader.replace('worker-src', `worker-src ${BROWSER_SYNC_HOST}`); // Required when/if the browser-sync script is eventually relocated to a web worker
 
-        details.responseHeaders['content-security-policy'][0] = cspHeader;
-      }
-      callback({ responseHeaders: details.responseHeaders });
+      details.responseHeaders['content-security-policy'][0] = cspHeader;
     }
-  );
+    callback({responseHeaders: details.responseHeaders});
+  });
 
   mainWindow.loadURL(
-    `${resolveHtmlPath('index.html')}?urlToOpen=${encodeURI(
-      urlToOpen ?? 'undefined'
-    )}`
+    `${resolveHtmlPath('index.html')}?urlToOpen=${encodeURI(urlToOpen ?? 'undefined')}`
   );
 
   const isWindows = process.platform === 'win32';
@@ -217,9 +190,9 @@ const createWindow = async () => {
     }
   });
 
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+  mainWindow.webContents.setWindowOpenHandler(({url}) => {
     console.log('window open handler', url);
-    return { action: 'deny' };
+    return {action: 'deny'};
   });
 
   mainWindow.on('closed', () => {
@@ -234,7 +207,7 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
-    return { action: 'deny' };
+    return {action: 'deny'};
   });
 
   ipcMain.on('start-watching-file', async (event, fileInfo) => {

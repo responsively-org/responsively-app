@@ -13,8 +13,7 @@ export const PREVIEW_LAYOUTS = {
   MASONRY: 'MASONRY',
 } as const;
 
-export type PreviewLayout =
-  typeof PREVIEW_LAYOUTS[keyof typeof PREVIEW_LAYOUTS];
+export type PreviewLayout = (typeof PREVIEW_LAYOUTS)[keyof typeof PREVIEW_LAYOUTS];
 
 export type Notification = {
   id: string;
@@ -44,7 +43,7 @@ export const IPC_MAIN_CHANNELS = {
   PERMISSION_UPDATED: 'permission-updated',
 } as const;
 
-export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];
+export type Channels = (typeof IPC_MAIN_CHANNELS)[keyof typeof IPC_MAIN_CHANNELS];
 
 export const PROTOCOL = 'responsively';
 
@@ -59,8 +58,7 @@ export const PERMISSION_TYPES = {
   POINTER_LOCK: 'pointerLock',
 } as const;
 
-export type PermissionType =
-  typeof PERMISSION_TYPES[keyof typeof PERMISSION_TYPES];
+export type PermissionType = (typeof PERMISSION_TYPES)[keyof typeof PERMISSION_TYPES];
 
 export interface SitePermission {
   type: string;

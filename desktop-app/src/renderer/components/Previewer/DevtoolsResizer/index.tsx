@@ -1,9 +1,9 @@
-import { Icon } from '@iconify/react';
-import { DOCK_POSITION } from 'common/constants';
-import { OpenDevtoolsArgs, OpenDevtoolsResult } from 'main/devtools';
-import { Resizable, Size } from 're-resizable';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {Icon} from '@iconify/react';
+import {DOCK_POSITION} from 'common/constants';
+import {OpenDevtoolsArgs, OpenDevtoolsResult} from 'main/devtools';
+import {Resizable, Size} from 're-resizable';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import Button from 'renderer/components/Button';
 import {
   DockPosition,
@@ -12,15 +12,12 @@ import {
   setDockPosition,
   setDevtoolsClose,
 } from 'renderer/store/features/devtools';
-import {
-  selectIsInspecting,
-  setIsInspecting,
-} from 'renderer/store/features/renderer';
+import {selectIsInspecting, setIsInspecting} from 'renderer/store/features/renderer';
 
 type SizeValue = number | string;
 
 interface DockConfig {
-  resizeDirections: { [key: string]: boolean };
+  resizeDirections: {[key: string]: boolean};
   defaultSize: {
     width: SizeValue;
     height: SizeValue;
@@ -32,8 +29,8 @@ interface DockConfig {
 }
 
 const BottomDockConfig: DockConfig = {
-  resizeDirections: { top: true },
-  defaultSize: { width: '100vw', height: 500 },
+  resizeDirections: {top: true},
+  defaultSize: {width: '100vw', height: 500},
   toggle: {
     icon: 'mdi:dock-right',
     position: DOCK_POSITION.RIGHT,
@@ -41,8 +38,8 @@ const BottomDockConfig: DockConfig = {
 };
 
 const RightDockConfig: DockConfig = {
-  resizeDirections: { left: true },
-  defaultSize: { width: 500, height: '100vh' },
+  resizeDirections: {left: true},
+  defaultSize: {width: 500, height: '100vh'},
   toggle: {
     icon: 'mdi:dock-bottom',
     position: DOCK_POSITION.BOTTOM,
@@ -103,9 +100,9 @@ const DevtoolsResizer = () => {
       <Resizable
         className="border"
         key={dockPosition}
-        size={{ width, height }}
-        onResizeStart={() => setSizeBeforeResize({ width, height })}
-        onResizeStop={() => setSizeBeforeResize({ width: 0, height: 0 })}
+        size={{width, height}}
+        onResizeStart={() => setSizeBeforeResize({width, height})}
+        onResizeStop={() => setSizeBeforeResize({width: 0, height: 0})}
         onResize={(_, __, ___, d) => {
           setWidth((sizeBeforeResize.width as number) + d.width);
           setHeight((sizeBeforeResize.height as number) + d.height);
@@ -138,13 +135,13 @@ const DevtoolsResizer = () => {
                   dispatch(setDockPosition(DOCK_POSITION.UNDOCKED));
                   dispatch(setDevtoolsClose());
                   setTimeout(() => {
-                    window.electron.ipcRenderer.invoke<
-                      OpenDevtoolsArgs,
-                      OpenDevtoolsResult
-                    >('open-devtools', {
-                      webviewId,
-                      dockPosition: DOCK_POSITION.UNDOCKED,
-                    });
+                    window.electron.ipcRenderer.invoke<OpenDevtoolsArgs, OpenDevtoolsResult>(
+                      'open-devtools',
+                      {
+                        webviewId,
+                        dockPosition: DOCK_POSITION.UNDOCKED,
+                      }
+                    );
                   });
                 }}
                 disableHoverEffects

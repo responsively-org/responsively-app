@@ -1,6 +1,6 @@
-import { Device } from 'common/deviceList';
-import { v4 as uuidv4 } from 'uuid';
-import { useEffect, useState } from 'react';
+import {Device} from 'common/deviceList';
+import {v4 as uuidv4} from 'uuid';
+import {useEffect, useState} from 'react';
 import Button from '../Button';
 import Input from '../Input';
 import Modal from '../Modal';
@@ -30,12 +30,8 @@ const DeviceDetailsModal = ({
   const [userAgent, setUserAgent] = useState<string>(device?.userAgent ?? '');
   const [type, setType] = useState<string>(device?.type ?? 'phone');
   const [dpr, setDpr] = useState<number>(device?.dpr ?? 1);
-  const [isTouchCapable, setIsTouchCapable] = useState<boolean>(
-    device?.isTouchCapable ?? true
-  );
-  const [isMobileCapable, setIsMobileCapable] = useState<boolean>(
-    device?.isMobileCapable ?? true
-  );
+  const [isTouchCapable, setIsTouchCapable] = useState<boolean>(device?.isTouchCapable ?? true);
+  const [isMobileCapable, setIsMobileCapable] = useState<boolean>(device?.isMobileCapable ?? true);
 
   useEffect(() => {
     if (device) {
@@ -64,17 +60,11 @@ const DeviceDetailsModal = ({
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36';
     const phoneUA =
       'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1';
-    if (
-      (type === 'phone' || type === 'tablet') &&
-      (userAgent === desktopUA || userAgent === '')
-    ) {
+    if ((type === 'phone' || type === 'tablet') && (userAgent === desktopUA || userAgent === '')) {
       setUserAgent(phoneUA);
       setIsMobileCapable(true);
       setIsTouchCapable(true);
-    } else if (
-      type === 'notebook' &&
-      (userAgent === phoneUA || userAgent === '')
-    ) {
+    } else if (type === 'notebook' && (userAgent === phoneUA || userAgent === '')) {
       setUserAgent(desktopUA);
       setIsMobileCapable(false);
       setIsTouchCapable(false);
@@ -86,14 +76,11 @@ const DeviceDetailsModal = ({
 
   const handleAddDevice = async (): Promise<void> => {
     const existingDevice = existingDevices.find((d) => d.name === name);
-    const doesDeviceExist =
-      existingDevice != null && (isNew || existingDevice.id !== device.id);
+    const doesDeviceExist = existingDevice != null && (isNew || existingDevice.id !== device.id);
 
     if (doesDeviceExist) {
       // eslint-disable-next-line no-alert
-      return alert(
-        'Device With the name already exists, try with a different name'
-      );
+      return alert('Device With the name already exists, try with a different name');
     }
     const capabilities = [];
     if (isTouchCapable) {

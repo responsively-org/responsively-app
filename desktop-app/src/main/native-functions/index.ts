@@ -1,4 +1,4 @@
-import { clipboard, ipcMain, nativeTheme, webContents } from 'electron';
+import {clipboard, ipcMain, nativeTheme, webContents} from 'electron';
 
 export interface DisableDefaultWindowOpenHandlerArgs {
   webContentsId: number;
@@ -24,18 +24,18 @@ export const initNativeFunctionHandlers = () => {
       arg: DisableDefaultWindowOpenHandlerArgs
     ): Promise<DisableDefaultWindowOpenHandlerResult> => {
       webContents.fromId(arg.webContentsId)?.setWindowOpenHandler(() => {
-        return { action: 'deny' };
+        return {action: 'deny'};
       });
-      return { done: true };
+      return {done: true};
     }
   );
 
   ipcMain.handle(
     'set-native-theme',
     async (_, arg: SetNativeThemeArgs): Promise<SetNativeThemeResult> => {
-      const { theme } = arg;
+      const {theme} = arg;
       nativeTheme.themeSource = theme;
-      return { done: true };
+      return {done: true};
     }
   );
 

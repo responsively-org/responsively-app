@@ -1,7 +1,7 @@
-import { render, fireEvent } from '@testing-library/react';
+import {render, fireEvent} from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { FileUploader, FileUploaderProps } from './FileUploader';
-import { useFileUpload } from './hooks';
+import {FileUploader, FileUploaderProps} from './FileUploader';
+import {useFileUpload} from './hooks';
 
 jest.mock('./hooks');
 
@@ -28,7 +28,7 @@ describe('FileUploader', () => {
     );
 
   it('renders the component', () => {
-    const { getByTestId } = renderComponent();
+    const {getByTestId} = renderComponent();
 
     const fileInput = getByTestId('fileUploader');
 
@@ -36,10 +36,10 @@ describe('FileUploader', () => {
   });
 
   it('calls handleUpload when file input changes', () => {
-    const { getByTestId } = renderComponent();
+    const {getByTestId} = renderComponent();
     const fileInput = getByTestId('fileUploader');
     fireEvent.change(fileInput, {
-      target: { files: [new File(['content'], 'file.txt')] },
+      target: {files: [new File(['content'], 'file.txt')]},
     });
     expect(mockHandleUpload).toHaveBeenCalled();
   });
@@ -56,7 +56,7 @@ describe('FileUploader', () => {
   });
 
   it('sets the accept attribute correctly', () => {
-    const { getByTestId } = renderComponent({
+    const {getByTestId} = renderComponent({
       acceptedFileTypes: 'application/json',
       handleFileUpload: mockHandleFileUpload,
     });
@@ -65,7 +65,7 @@ describe('FileUploader', () => {
   });
 
   it('allows multiple file uploads when multiple prop is true', () => {
-    const { getByTestId } = renderComponent({
+    const {getByTestId} = renderComponent({
       multiple: true,
       handleFileUpload: mockHandleFileUpload,
     });
@@ -74,7 +74,7 @@ describe('FileUploader', () => {
   });
 
   it('does not allow multiple file uploads when multiple prop is false', () => {
-    const { getByTestId } = renderComponent({
+    const {getByTestId} = renderComponent({
       multiple: false,
       handleFileUpload: mockHandleFileUpload,
     });

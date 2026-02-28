@@ -1,8 +1,8 @@
-import { Menu, Transition } from '@headlessui/react';
-import { Float } from '@headlessui-float/react';
-import { Icon } from '@iconify/react';
+import {Menu, Transition} from '@headlessui/react';
+import {Float} from '@headlessui-float/react';
+import {Icon} from '@iconify/react';
 import cx from 'classnames';
-import { Fragment } from 'react';
+import {Fragment} from 'react';
 
 interface Separator {
   type: 'separator';
@@ -22,7 +22,7 @@ interface Props {
   className?: string | null;
 }
 
-export function DropDown({ label, options, className }: Props) {
+export function DropDown({label, options, className}: Props) {
   return (
     <div className="relative text-right">
       <Menu as="div" className={`inline-block text-left ${className}`}>
@@ -55,12 +55,12 @@ export function DropDown({ label, options, className }: Props) {
                   return (
                     // eslint-disable-next-line react/no-array-index-key
                     <Menu.Item key={idx.toString()}>
-                      {({ active }) =>
+                      {({active}) =>
                         option.onClick !== null ? (
                           <button
                             className={cx(
                               'group flex w-full items-center rounded-md px-2 py-2 text-sm',
-                              { 'bg-slate-200 dark:bg-slate-800': active }
+                              {'bg-slate-200 dark:bg-slate-800': active}
                             )}
                             type="button"
                             onClick={option.onClick}
@@ -69,9 +69,7 @@ export function DropDown({ label, options, className }: Props) {
                           </button>
                         ) : (
                           <div
-                            className={cx(
-                              'group mt-2 flex w-full items-center rounded-md px-2'
-                            )}
+                            className={cx('group mt-2 flex w-full items-center rounded-md px-2')}
                           >
                             {option.label}
                           </div>

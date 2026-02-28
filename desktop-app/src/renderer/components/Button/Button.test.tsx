@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { act, render, screen } from '@testing-library/react';
+import {act, render, screen} from '@testing-library/react';
 import Button from './index';
 
 jest.mock('@iconify/react', () => ({
@@ -9,13 +9,13 @@ jest.mock('@iconify/react', () => ({
 describe('Button Component', () => {
   it('renders with default props', () => {
     render(<Button>Click me</Button>);
-    const buttonElement = screen.getByRole('button', { name: /click me/i });
+    const buttonElement = screen.getByRole('button', {name: /click me/i});
     expect(buttonElement).toBeInTheDocument();
   });
 
   it('applies custom class name', () => {
     render(<Button className="custom-class">Click me</Button>);
-    const buttonElement = screen.getByRole('button', { name: /click me/i });
+    const buttonElement = screen.getByRole('button', {name: /click me/i});
     expect(buttonElement).toHaveClass('custom-class');
   });
 
@@ -27,7 +27,7 @@ describe('Button Component', () => {
 
   it('renders confirmation icon when loading is done', () => {
     jest.useFakeTimers();
-    const { rerender } = render(<Button isLoading>Click me</Button>);
+    const {rerender} = render(<Button isLoading>Click me</Button>);
 
     act(() => {
       rerender(<Button isLoading={false}>Click me</Button>);
@@ -41,20 +41,20 @@ describe('Button Component', () => {
 
   it('applies primary button styles', () => {
     render(<Button isPrimary>Click me</Button>);
-    const buttonElement = screen.getByRole('button', { name: /click me/i });
+    const buttonElement = screen.getByRole('button', {name: /click me/i});
     expect(buttonElement).toHaveClass('bg-emerald-500');
     expect(buttonElement).toHaveClass('text-white');
   });
 
   it('applies action button styles', () => {
     render(<Button isActionButton>Click me</Button>);
-    const buttonElement = screen.getByRole('button', { name: /click me/i });
+    const buttonElement = screen.getByRole('button', {name: /click me/i});
     expect(buttonElement).toHaveClass('bg-slate-200');
   });
 
   it('applies subtle hover styles', () => {
     render(<Button subtle>Click me</Button>);
-    const buttonElement = screen.getByRole('button', { name: /click me/i });
+    const buttonElement = screen.getByRole('button', {name: /click me/i});
     expect(buttonElement).toHaveClass('hover:bg-slate-200');
   });
 
@@ -64,7 +64,7 @@ describe('Button Component', () => {
         Click me
       </Button>
     );
-    const buttonElement = screen.getByRole('button', { name: /click me/i });
+    const buttonElement = screen.getByRole('button', {name: /click me/i});
     expect(buttonElement).not.toHaveClass('hover:bg-slate-200');
   });
 
@@ -75,7 +75,7 @@ describe('Button Component', () => {
   });
 
   it('does not render children when loading or loading done', () => {
-    const { rerender } = render(<Button isLoading>Click me</Button>);
+    const {rerender} = render(<Button isLoading>Click me</Button>);
     expect(screen.queryByText('Click me')).not.toBeInTheDocument();
 
     act(() => {
