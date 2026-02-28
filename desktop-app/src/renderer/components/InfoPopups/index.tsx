@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { isReleaseNotesUnseen, ReleaseNotes } from '../ReleaseNotes';
-import { Sponsorship } from '../Sponsorship';
+import {useEffect, useState} from 'react';
+import {isReleaseNotesUnseen, ReleaseNotes} from '../ReleaseNotes';
+import {Sponsorship} from '../Sponsorship';
 
 export const InfoPopups = () => {
   const [showReleaseNotes, setShowReleaseNotes] = useState<boolean>(false);

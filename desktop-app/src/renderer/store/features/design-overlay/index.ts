@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '../..';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import type {RootState} from '../..';
 
 export type DesignOverlayPosition = 'overlay' | 'side';
 
@@ -17,16 +17,14 @@ const loadPersistedOverlays = (): {
   [key: ViewResolution]: DesignOverlayState;
 } => {
   try {
-    const overlays =
-      window.electron.store.get('userPreferences.designOverlays') || {};
-    return overlays as { [key: ViewResolution]: DesignOverlayState };
+    const overlays = window.electron.store.get('userPreferences.designOverlays') || {};
+    return overlays as {[key: ViewResolution]: DesignOverlayState};
   } catch {
     return {};
   }
 };
 
-const initialState: { [key: ViewResolution]: DesignOverlayState } =
-  loadPersistedOverlays();
+const initialState: {[key: ViewResolution]: DesignOverlayState} = loadPersistedOverlays();
 
 export const designOverlaySlice = createSlice({
   name: 'designOverlay',
@@ -41,8 +39,7 @@ export const designOverlaySlice = createSlice({
     ) => {
       state[action.payload.resolution] = action.payload.overlayState;
 
-      const overlays =
-        window.electron.store.get('userPreferences.designOverlays') || {};
+      const overlays = window.electron.store.get('userPreferences.designOverlays') || {};
       overlays[action.payload.resolution] = action.payload.overlayState;
       window.electron.store.set('userPreferences.designOverlays', overlays);
     },
@@ -54,16 +51,14 @@ export const designOverlaySlice = createSlice({
     ) => {
       delete state[action.payload.resolution];
 
-      const overlays =
-        window.electron.store.get('userPreferences.designOverlays') || {};
+      const overlays = window.electron.store.get('userPreferences.designOverlays') || {};
       delete overlays[action.payload.resolution];
       window.electron.store.set('userPreferences.designOverlays', overlays);
     },
   },
 });
 
-export const { setDesignOverlay, removeDesignOverlay } =
-  designOverlaySlice.actions;
+export const {setDesignOverlay, removeDesignOverlay} = designOverlaySlice.actions;
 
 export const selectDesignOverlay =
   (state: RootState) =>

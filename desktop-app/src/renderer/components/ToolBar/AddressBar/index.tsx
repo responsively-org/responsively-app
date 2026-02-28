@@ -1,24 +1,13 @@
-import { Icon } from '@iconify/react';
+import {Icon} from '@iconify/react';
 import cx from 'classnames';
-import { IPC_MAIN_CHANNELS, OpenUrlArgs } from 'common/constants';
-import { AuthRequestArgs } from 'main/http-basic-auth';
-import { PermissionRequestArg } from 'main/web-permissions/PermissionsManager';
-import {
-  DragEvent,
-  KeyboardEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {IPC_MAIN_CHANNELS, OpenUrlArgs} from 'common/constants';
+import {AuthRequestArgs} from 'main/http-basic-auth';
+import {PermissionRequestArg} from 'main/web-permissions/PermissionsManager';
+import {DragEvent, KeyboardEventHandler, useCallback, useEffect, useRef, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import Button from 'renderer/components/Button';
-import { webViewPubSub } from 'renderer/lib/pubsub';
-import {
-  selectAddress,
-  selectPageTitle,
-  setAddress,
-} from 'renderer/store/features/renderer';
+import {webViewPubSub} from 'renderer/lib/pubsub';
+import {selectAddress, selectPageTitle, setAddress} from 'renderer/store/features/renderer';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
@@ -38,17 +27,12 @@ const AddressBar = () => {
   const [typedAddress, setTypedAddress] = useState<string>('');
   const [isSuggesting, setIsSuggesting] = useState<boolean>(false);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
-  const [homepage, setHomepage] = useState<string>(
-    window.electron.store.get('homepage')
-  );
+  const [homepage, setHomepage] = useState<string>(window.electron.store.get('homepage'));
   const [isFocused, setIsFocused] = useState(false);
-  const [deleteStorageLoading, setDeleteStorageLoading] =
-    useState<boolean>(false);
-  const [deleteCookiesLoading, setDeleteCookiesLoading] =
-    useState<boolean>(false);
+  const [deleteStorageLoading, setDeleteStorageLoading] = useState<boolean>(false);
+  const [deleteCookiesLoading, setDeleteCookiesLoading] = useState<boolean>(false);
   const [deleteCacheLoading, setDeleteCacheLoading] = useState<boolean>(false);
-  const [permissionRequest, setPermissionRequest] =
-    useState<PermissionRequestArg | null>(null);
+  const [permissionRequest, setPermissionRequest] = useState<PermissionRequestArg | null>(null);
   const [authRequest, setAuthRequest] = useState<AuthRequestArgs | null>(null);
   const [showSitePermissions, setShowSitePermissions] = useState(false);
   const address = useSelector(selectAddress);
@@ -68,10 +52,7 @@ const AddressBar = () => {
       let newAddress = url ?? typedAddress;
       if (newAddress.indexOf('://') === -1) {
         let protocol = 'https://';
-        if (
-          typedAddress.indexOf('localhost') !== -1 ||
-          typedAddress.indexOf('127.0.0.1') !== -1
-        ) {
+        if (typedAddress.indexOf('localhost') !== -1 || typedAddress.indexOf('127.0.0.1') !== -1) {
           protocol = 'http://';
         }
         newAddress = protocol + typedAddress;
@@ -90,29 +71,17 @@ const AddressBar = () => {
       }
     );
 
-    window.electron.ipcRenderer.on<AuthRequestArgs>(
-      IPC_MAIN_CHANNELS.AUTH_REQUEST,
-      (args) => {
-        setAuthRequest(args);
-      }
-    );
-    window.electron.ipcRenderer.on<OpenUrlArgs>(
-      IPC_MAIN_CHANNELS.OPEN_URL,
-      (args) => {
-        dispatchAddress(args.url);
-      }
-    );
+    window.electron.ipcRenderer.on<AuthRequestArgs>(IPC_MAIN_CHANNELS.AUTH_REQUEST, (args) => {
+      setAuthRequest(args);
+    });
+    window.electron.ipcRenderer.on<OpenUrlArgs>(IPC_MAIN_CHANNELS.OPEN_URL, (args) => {
+      dispatchAddress(args.url);
+    });
 
     return () => {
-      window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.PERMISSION_REQUEST
-      );
-      window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.AUTH_REQUEST
-      );
-      window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.OPEN_URL
-      );
+      window.electron.ipcRenderer.removeAllListeners(IPC_MAIN_CHANNELS.PERMISSION_REQUEST);
+      window.electron.ipcRenderer.removeAllListeners(IPC_MAIN_CHANNELS.AUTH_REQUEST);
+      window.electron.ipcRenderer.removeAllListeners(IPC_MAIN_CHANNELS.OPEN_URL);
     };
   }, [dispatchAddress]);
 
@@ -235,7 +204,7 @@ const AddressBar = () => {
           </button>
         </div>
 
-        <div className="absolute top-full left-2 z-50">
+        <div className="absolute left-2 top-full z-50">
           <SitePermissionsDropdown
             currentAddress={address}
             isVisible={showSitePermissions}
@@ -244,10 +213,9 @@ const AddressBar = () => {
         </div>
 
         {permissionRequest != null ? (
-          <div className="absolute top-12 left-2 z-40 flex w-96 flex-col gap-8 rounded bg-white p-6 shadow-lg ring-1 ring-slate-500 !ring-opacity-40 focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
+          <div className="absolute left-2 top-12 z-40 flex w-96 flex-col gap-8 rounded bg-white p-6 shadow-lg ring-1 ring-slate-500 !ring-opacity-40 focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
             <span>
-              {permissionRequest.requestingOrigin} requests permission for:{' '}
-              <br />
+              {permissionRequest.requestingOrigin} requests permission for: <br />
               <span className="flex justify-center font-bold capitalize">
                 {permissionRequest.permission}
               </span>
@@ -280,7 +248,7 @@ const AddressBar = () => {
           className={cx(
             'w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-40 dark:bg-slate-900',
             {
-              'rounded-tl-lg rounded-tr-lg rounded-bl-none rounded-br-none outline-none':
+              'rounded-bl-none rounded-br-none rounded-tl-lg rounded-tr-lg outline-none':
                 isSuggesting,
             }
           )}
@@ -344,9 +312,7 @@ const AddressBar = () => {
           </Button>
           <Bookmark pageTitle={pageTitle} currentAddress={address} />
         </div>
-        {isSuggesting ? (
-          <SuggestionList match={typedAddress} onEnter={onEnter} />
-        ) : null}
+        {isSuggesting ? <SuggestionList match={typedAddress} onEnter={onEnter} /> : null}
       </div>
       <AuthModal
         isOpen={authRequest != null}

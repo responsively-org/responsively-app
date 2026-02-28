@@ -1,14 +1,11 @@
-import type { Channels } from 'common/constants';
+import type {Channels} from 'common/constants';
 
 declare global {
   interface Window {
     electron: {
       ipcRenderer: {
         sendMessage<T>(channel: Channels, ...args: T[]): void;
-        on<T>(
-          channel: string,
-          func: (...args: T[]) => void
-        ): (() => void) | undefined;
+        on<T>(channel: string, func: (...args: T[]) => void): (() => void) | undefined;
         once<T>(channel: string, func: (...args: T[]) => void): void;
         invoke<T, P>(channel: string, ...args: T[]): Promise<P>;
         removeListener<T>(channel: string, func: (...args: T[]) => void): void;

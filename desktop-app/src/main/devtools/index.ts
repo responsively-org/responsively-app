@@ -1,8 +1,8 @@
-import { BrowserView, BrowserWindow, ipcMain, webContents } from 'electron';
-import { DOCK_POSITION } from '../../common/constants';
-import { DockPosition } from '../../renderer/store/features/devtools';
+import {BrowserWindow, ipcMain, webContents, WebContentsView} from 'electron';
+import {DOCK_POSITION} from '../../common/constants';
+import {DockPosition} from '../../renderer/store/features/devtools';
 
-let devtoolsBrowserView: BrowserView | undefined;
+let devtoolsView: WebContentsView | undefined;
 let devtoolsWebview: Electron.WebContents;
 let mainWindow: BrowserWindow | undefined;
 
@@ -10,6 +10,10 @@ export interface OpenDevtoolsArgs {
   webviewId: number;
   dockPosition: DockPosition;
   bounds?: Electron.Rectangle;
+}
+
+export interface ResizeDevtoolsArgs {
+  bounds: Electron.Rectangle;
 }
 
 export interface OpenDevtoolsResult {
@@ -25,7 +29,7 @@ export interface ToggleInspectorResult {
 }
 
 export interface InspectElementArgs {
-  coords: { x: number; y: number };
+  coords: {x: number; y: number};
   webviewId: number;
 }
 
@@ -51,7 +55,7 @@ const onInspectNodeRequested = async (
   ]);
 
   const args: InspectElementArgs = {
-    coords: { x, y },
+    coords: {x, y},
     webviewId,
   };
   mainWindow?.webContents.send('inspect-element', args);
@@ -77,10 +81,10 @@ const enableInspector = async (
   _: any,
   args: ToggleInspectorArgs
 ): Promise<ToggleInspectorResult> => {
-  const { webviewId } = args;
+  const {webviewId} = args;
   const webViewContents = webContents.fromId(webviewId);
   if (webViewContents === undefined) {
-    return { status: false };
+    return {status: false};
   }
 
   const dbg = webViewContents.debugger;
@@ -97,23 +101,23 @@ const enableInspector = async (
     highlightConfig: {
       showInfo: true,
       showStyles: true,
-      contentColor: { r: 111, g: 168, b: 220, a: 0.66 },
-      paddingColor: { r: 147, g: 196, b: 125, a: 0.66 },
-      borderColor: { r: 255, g: 229, b: 153, a: 0.66 },
-      marginColor: { r: 246, g: 178, b: 107, a: 0.66 },
+      contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+      paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+      borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+      marginColor: {r: 246, g: 178, b: 107, a: 0.66},
     },
   });
-  return { status: true };
+  return {status: true};
 };
 
 const disableInspector = async (
   _: any,
   args: ToggleInspectorArgs
 ): Promise<ToggleInspectorResult> => {
-  const { webviewId } = args;
+  const {webviewId} = args;
   const webViewContents = webContents.fromId(webviewId);
   if (webViewContents === undefined) {
-    return { status: false };
+    return {status: false};
   }
   const dbg = webViewContents.debugger;
   try {
@@ -127,35 +131,25 @@ const disableInspector = async (
     // eslint-disable-next-line no-console
     console.log('Error detaching debugger', err);
   }
-  return { status: true };
+  return {status: true};
 };
 
-const openDevtools = async (
-  _: any,
-  arg: OpenDevtoolsArgs
-): Promise<OpenDevtoolsResult> => {
-  const { webviewId, dockPosition } = arg;
+const openDevtools = async (_: any, arg: OpenDevtoolsArgs): Promise<OpenDevtoolsResult> => {
+  const {webviewId, dockPosition} = arg;
   const optionalWebview = webContents.fromId(webviewId);
   if (mainWindow == null || optionalWebview === undefined) {
-    return { status: false };
+    return {status: false};
   }
   devtoolsWebview = optionalWebview;
   if (dockPosition === DOCK_POSITION.UNDOCKED) {
-    devtoolsWebview.openDevTools({ mode: 'detach' });
-    return { status: true };
+    devtoolsWebview.openDevTools({mode: 'detach'});
+    return {status: true};
   }
-  devtoolsBrowserView = new BrowserView();
-  mainWindow.setBrowserView(devtoolsBrowserView);
-  devtoolsBrowserView.setBounds({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  });
-  devtoolsWebview.setDevToolsWebContents(devtoolsBrowserView.webContents);
+  devtoolsView = new WebContentsView();
+  devtoolsWebview.setDevToolsWebContents(devtoolsView.webContents);
   devtoolsWebview.openDevTools();
 
-  devtoolsBrowserView.webContents
+  devtoolsView.webContents
     .executeJavaScript(
       `
       (async function () {
@@ -179,25 +173,18 @@ const openDevtools = async (
       console.error('Error removing the native inspect button', err);
     });
 
-  return { status: true };
+  return {status: true};
 };
 
-const resizeDevtools = async (_: any, arg: OpenDevtoolsArgs) => {
+const resizeDevtools = async (_: any, arg: ResizeDevtoolsArgs) => {
+  if (devtoolsView == null || mainWindow == null) {
+    return;
+  }
   try {
-    if (devtoolsBrowserView == null) {
-      return;
+    if (!mainWindow.contentView.children.includes(devtoolsView)) {
+      mainWindow.contentView.addChildView(devtoolsView);
     }
-    const { bounds } = arg;
-    if (bounds == null) {
-      return;
-    }
-    const { x, y, width, height } = bounds;
-    devtoolsBrowserView.setBounds({
-      x: Math.round(x),
-      y: Math.round(y),
-      width: Math.round(width),
-      height: Math.round(height),
-    });
+    devtoolsView.setBounds(arg.bounds);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error resizing devtools', err);
@@ -209,18 +196,15 @@ const closeDevTools = async () => {
     return;
   }
   devtoolsWebview.closeDevTools();
-  if (devtoolsBrowserView == null) {
+  if (devtoolsView == null) {
     return;
   }
-  mainWindow?.removeBrowserView(devtoolsBrowserView);
-  (devtoolsBrowserView.webContents as any).destroy();
-  devtoolsBrowserView.webContents.close();
-  devtoolsBrowserView = undefined;
+  mainWindow?.contentView.removeChildView(devtoolsView);
+  devtoolsView.webContents.close();
+  devtoolsView = undefined;
 };
 
-export const initDevtoolsHandlers = (
-  _mainWindow: BrowserWindow | undefined
-) => {
+export const initDevtoolsHandlers = (_mainWindow: BrowserWindow | undefined) => {
   mainWindow = _mainWindow;
 
   ipcMain.removeHandler('open-devtools');

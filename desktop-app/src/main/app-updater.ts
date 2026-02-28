@@ -1,4 +1,4 @@
-import { autoUpdater } from 'electron-updater';
+import {autoUpdater} from 'electron-updater';
 
 export interface AppUpdaterStatus {
   status: string;
@@ -10,7 +10,7 @@ export interface AppUpdaterStatus {
 }
 
 export class AppUpdater {
-  status: string = 'IDLE';
+  status = 'IDLE';
 
   version?: string;
 

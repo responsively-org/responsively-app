@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { useFileUpload } from './hooks';
+import {useEffect, useRef, useState} from 'react';
+import {useFileUpload} from './hooks';
 
 export type FileUploaderProps = {
   handleFileUpload: (file: File) => void;
@@ -16,7 +16,7 @@ export const FileUploader = ({
   showFileName = false,
   initialFileName,
 }: FileUploaderProps) => {
-  const { uploadedFile, handleUpload, resetUploadedFile } = useFileUpload();
+  const {uploadedFile, handleUpload, resetUploadedFile} = useFileUpload();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [displayFileName, setDisplayFileName] = useState<string | null>(null);
 

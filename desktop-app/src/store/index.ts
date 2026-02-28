@@ -1,7 +1,7 @@
 import path from 'path';
-import { homedir } from 'os';
-import { DOCK_POSITION, PREVIEW_LAYOUTS } from '../common/constants';
-import { migrations } from './migrations';
+import {homedir} from 'os';
+import {DOCK_POSITION, PREVIEW_LAYOUTS} from '../common/constants';
+import {migrations} from './migrations';
 
 const Store = require('electron-store');
 
@@ -179,11 +179,11 @@ const schema = {
         additionalProperties: {
           type: 'object',
           properties: {
-            image: { type: 'string' },
-            opacity: { type: 'number' },
-            position: { type: 'string', enum: ['overlay', 'side'] },
-            enabled: { type: 'boolean' },
-            fileName: { type: 'string' },
+            image: {type: 'string'},
+            opacity: {type: 'number'},
+            position: {type: 'string', enum: ['overlay', 'side']},
+            enabled: {type: 'boolean'},
+            fileName: {type: 'string'},
           },
         },
         default: {},

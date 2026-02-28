@@ -1,50 +1,44 @@
-import { useEffect, useState } from 'react';
-import { Icon } from '@iconify/react';
-import { useDispatch, useSelector } from 'react-redux';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import {useEffect, useState} from 'react';
+import {Icon} from '@iconify/react';
+import {useDispatch, useSelector} from 'react-redux';
+import {DndProvider} from 'react-dnd';
+import {HTML5Backend} from 'react-dnd-html5-backend';
 import {
   selectActiveSuite,
   setDevices,
   setSuiteDevices,
 } from 'renderer/store/features/device-manager';
-import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
-import { defaultDevices, Device, getDevicesMap } from 'common/deviceList';
+import {APP_VIEWS, setAppView} from 'renderer/store/features/ui';
+import {defaultDevices, Device, getDevicesMap} from 'common/deviceList';
 
 import Button from '../Button';
 import DeviceLabel from './DeviceLabel';
 import DeviceDetailsModal from './DeviceDetailsModal';
-import { PreviewSuites } from './PreviewSuites';
-import { ManageSuitesTool } from './PreviewSuites/ManageSuitesTool/ManageSuitesTool';
-import { Divider } from '../Divider';
-import { AccordionItem, Accordion } from '../Accordion';
+import {PreviewSuites} from './PreviewSuites';
+import {ManageSuitesTool} from './PreviewSuites/ManageSuitesTool/ManageSuitesTool';
+import {Divider} from '../Divider';
+import {AccordionItem, Accordion} from '../Accordion';
 
 const filterDevices = (devices: Device[], filter: string) => {
   const sanitizedFilter = filter.trim().toLowerCase();
 
   return devices.filter((device: Device) =>
-    `${device.name.toLowerCase()}${device.width}x${device.height}`.includes(
-      sanitizedFilter
-    )
+    `${device.name.toLowerCase()}${device.width}x${device.height}`.includes(sanitizedFilter)
   );
 };
 
 const DeviceManager = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState<boolean>(false);
-  const [selectedDevice, setSelectedDevice] = useState<Device | undefined>(
-    undefined
-  );
+  const [selectedDevice, setSelectedDevice] = useState<Device | undefined>(undefined);
   const dispatch = useDispatch();
   const activeSuite = useSelector(selectActiveSuite);
   const devices = activeSuite.devices?.map((id) => getDevicesMap()[id]);
   const [searchText, setSearchText] = useState<string>('');
-  const [filteredDevices, setFilteredDevices] =
-    useState<Device[]>(defaultDevices);
+  const [filteredDevices, setFilteredDevices] = useState<Device[]>(defaultDevices);
   const [customDevices, setCustomDevices] = useState<Device[]>(
     window.electron.store.get('deviceManager.customDevices')
   );
-  const [filteredCustomDevices, setFilteredCustomDevices] =
-    useState<Device[]>(customDevices);
+  const [filteredCustomDevices, setFilteredCustomDevices] = useState<Device[]>(customDevices);
 
   useEffect(() => {
     setFilteredDevices(filterDevices(defaultDevices, searchText));
@@ -131,8 +125,7 @@ const DeviceManager = () => {
                     key={device.id}
                     onShowDeviceDetails={onShowDeviceDetails}
                     disableSelectionControls={
-                      devices.find((d) => d.id === device.id) != null &&
-                      devices.length === 1
+                      devices.find((d) => d.id === device.id) != null && devices.length === 1
                     }
                   />
                 ))}
@@ -162,12 +155,11 @@ const DeviceManager = () => {
                       isActive
                     >
                       <Icon icon="ic:baseline-add" />
-                      <span className="pr-2 pl-2">Add Custom Device</span>
+                      <span className="pl-2 pr-2">Add Custom Device</span>
                     </Button>
                   </div>
                 ) : null}
-                {customDevices.length > 0 &&
-                filteredCustomDevices.length === 0 ? (
+                {customDevices.length > 0 && filteredCustomDevices.length === 0 ? (
                   <div className="m-10 flex w-full items-center justify-center">
                     Sorry, no matching devices found.
                     <Icon icon="mdi:emoticon-sad-outline" className="ml-1" />
@@ -183,7 +175,7 @@ const DeviceManager = () => {
                   isActive
                 >
                   <Icon icon="ic:baseline-add" />
-                  <span className="pr-2 pl-2">Add Custom Device</span>
+                  <span className="pl-2 pr-2">Add Custom Device</span>
                 </Button>
               </div>
             </AccordionItem>
@@ -206,8 +198,10 @@ const DeviceManager = () => {
   );
 };
 
-export default () => (
+const DeviceManagerWithDnd = () => (
   <DndProvider backend={HTML5Backend}>
     <DeviceManager />
   </DndProvider>
 );
+
+export default DeviceManagerWithDnd;

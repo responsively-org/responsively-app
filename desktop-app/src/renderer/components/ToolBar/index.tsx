@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   selectIsCapturingScreenshot,
   selectIsInspecting,
@@ -8,25 +8,25 @@ import {
   setRotate,
   setNotifications,
 } from 'renderer/store/features/renderer';
-import { Icon } from '@iconify/react';
-import { ScreenshotAllArgs } from 'main/screenshot';
-import { selectActiveSuite } from 'renderer/store/features/device-manager';
+import {Icon} from '@iconify/react';
+import {ScreenshotAllArgs} from 'main/screenshot';
+import {selectActiveSuite} from 'renderer/store/features/device-manager';
 import WebPage from 'main/screenshot/webpage';
-import { getDevicesMap } from 'common/deviceList';
-import { updateWebViewHeightAndScale } from 'common/webViewUtils';
-import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
+import {getDevicesMap} from 'common/deviceList';
+import {updateWebViewHeightAndScale} from 'common/webViewUtils';
+import {APP_VIEWS, setAppView} from 'renderer/store/features/ui';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
 import Button from '../Button';
 import AddressBar from './AddressBar';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import ModalLoader from '../ModalLoader';
-import { PreviewSuiteSelector } from './PreviewSuiteSelector';
+import {PreviewSuiteSelector} from './PreviewSuiteSelector';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from '../KeyboardShortcutsManager/useKeyboardShortcut';
 import Shortcuts from './Shortcuts';
-import { ColorBlindnessControls } from './ColorBlindnessControls';
+import {ColorBlindnessControls} from './ColorBlindnessControls';
 
 const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
@@ -47,8 +47,7 @@ const ToolBar = () => {
     }
 
     dispatch(setIsCapturingScreenshot(true));
-    const webViews: NodeListOf<Electron.WebviewTag> =
-      document.querySelectorAll('webView');
+    const webViews: NodeListOf<Electron.WebviewTag> = document.querySelectorAll('webView');
     const screens: Array<ScreenshotAllArgs> = [];
     const devices = activeSuite.devices.map((d) => getDevicesMap()[d]);
     webViews.forEach(async (webview) => {
@@ -95,28 +94,15 @@ const ToolBar = () => {
   };
 
   useKeyboardShortcut(SHORTCUT_CHANNEL.ROTATE_ALL, handleRotate);
-  useKeyboardShortcut(
-    SHORTCUT_CHANNEL.SCREENSHOT_ALL,
-    screenshotCaptureHandler
-  );
+  useKeyboardShortcut(SHORTCUT_CHANNEL.SCREENSHOT_ALL, screenshotCaptureHandler);
   useKeyboardShortcut(SHORTCUT_CHANNEL.INSPECT_ELEMENTS, handleInspectShortcut);
 
   return (
     <div className="flex items-center justify-between gap-2">
       <NavigationControls />
       <AddressBar />
-      <Button
-        onClick={handleRotate}
-        isActive={rotateDevices}
-        title="Rotate Devices"
-      >
-        <Icon
-          icon={
-            rotateDevices
-              ? 'mdi:phone-rotate-portrait'
-              : 'mdi:phone-rotate-landscape'
-          }
-        />
+      <Button onClick={handleRotate} isActive={rotateDevices} title="Rotate Devices">
+        <Icon icon={rotateDevices ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'} />
       </Button>
       <Button
         onClick={() => dispatch(setIsInspecting(!isInspecting))}
@@ -145,11 +131,7 @@ const ToolBar = () => {
         <Icon icon="lucide:plus" width={16} />
       </Button>
       <Menu />
-      <ModalLoader
-        isOpen={isCapturingScreenshot}
-        onClose={handleClose}
-        title="Screenshot"
-      />
+      <ModalLoader isOpen={isCapturingScreenshot} onClose={handleClose} title="Screenshot" />
     </div>
   );
 };

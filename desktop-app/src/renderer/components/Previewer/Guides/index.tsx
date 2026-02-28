@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Guides from '@scena/react-guides';
-import { LegacyRef, useEffect, useRef, useMemo } from 'react';
-import { Coordinates } from '../../../store/features/ruler';
+import {LegacyRef, useEffect, useRef, useMemo} from 'react';
+import {Coordinates} from '../../../store/features/ruler';
 import './guide.css';
 
 export type DefaultGuide = {
@@ -41,10 +41,7 @@ const GuideGrid = ({
       .flatMap((x: DefaultGuide) => x.positions);
   }, [defaultGuides]);
   const defaultsVer = useMemo(
-    () =>
-      defaultGuides
-        .filter((x: DefaultGuide) => x.is_vertical)
-        .flatMap((x) => x.positions),
+    () => defaultGuides.filter((x: DefaultGuide) => x.is_vertical).flatMap((x) => x.positions),
     [defaultGuides]
   );
 
@@ -128,7 +125,7 @@ const GuideGrid = ({
               displayGuidePos
               useResizeObserver
               defaultGuides={defaultsHor.length > 0 ? defaultsHor : undefined}
-              onChangeGuides={({ guides }) => {
+              onChangeGuides={({guides}) => {
                 window.electron.store.set('userPreferences.guides', [
                   ...window.electron.store
                     .get('userPreferences.guides')
@@ -166,7 +163,7 @@ const GuideGrid = ({
               displayGuidePos
               useResizeObserver
               defaultGuides={defaultsVer.length > 0 ? defaultsVer : undefined}
-              onChangeGuides={({ guides }) => {
+              onChangeGuides={({guides}) => {
                 window.electron.store.set('userPreferences.guides', [
                   ...window.electron.store
                     .get('userPreferences.guides')

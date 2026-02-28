@@ -1,12 +1,12 @@
-import { Icon } from '@iconify/react';
-import { useDispatch, useSelector } from 'react-redux';
-import { DropDown } from 'renderer/components/DropDown';
+import {Icon} from '@iconify/react';
+import {useDispatch, useSelector} from 'react-redux';
+import {DropDown} from 'renderer/components/DropDown';
 import {
   selectActiveSuite,
   selectSuites,
   setActiveSuite,
 } from 'renderer/store/features/device-manager';
-import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
+import {APP_VIEWS, setAppView} from 'renderer/store/features/ui';
 
 export const PreviewSuiteSelector = () => {
   const dispatch = useDispatch();

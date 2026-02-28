@@ -1,11 +1,8 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { useSelector } from 'react-redux';
-import type { RootState } from 'renderer/store';
-import {
-  DesignOverlayPosition,
-  selectDesignOverlay,
-} from 'renderer/store/features/design-overlay';
-import { Coordinates, selectRulerEnabled } from 'renderer/store/features/ruler';
+import {useEffect, useRef, useState, useCallback} from 'react';
+import {useSelector} from 'react-redux';
+import type {RootState} from 'renderer/store';
+import {DesignOverlayPosition, selectDesignOverlay} from 'renderer/store/features/design-overlay';
+import {Coordinates, selectRulerEnabled} from 'renderer/store/features/ruler';
 import GuideGrid from '../../Guides';
 
 interface Props {
@@ -34,9 +31,7 @@ const DesignOverlay = ({
   const overlayRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const dividerRef = useRef<HTMLDivElement>(null);
-  const overlay = useSelector((state: RootState) =>
-    selectDesignOverlay(state)(resolution)
-  );
+  const overlay = useSelector((state: RootState) => selectDesignOverlay(state)(resolution));
   const rulerEnabled = useSelector(selectRulerEnabled);
 
   const isOverlayMode = position === 'overlay';
@@ -109,7 +104,7 @@ const DesignOverlay = ({
       capture: true,
       passive: false,
     });
-    window.addEventListener('mouseup', handleGlobalMouseUp, { capture: true });
+    window.addEventListener('mouseup', handleGlobalMouseUp, {capture: true});
 
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
@@ -150,9 +145,9 @@ const DesignOverlay = ({
     // Scale scroll positions by zoomFactor to match the scaled image dimensions
     // The webview has (width x height) dimensions, but the image is scaled (scaledWidth x scaledHeight)
     if (imageRef.current) {
-      imageRef.current.style.transform = `translate(${
-        -clampedScrollX * zoomFactor
-      }px, ${-clampedScrollY * zoomFactor}px)`;
+      imageRef.current.style.transform = `translate(${-clampedScrollX * zoomFactor}px, ${
+        -clampedScrollY * zoomFactor
+      }px)`;
 
       // Apply clip-path to hide the right part of the image based on the divider position
       // Only apply clip-path when dragging or when divider has been moved from initial position
@@ -160,9 +155,7 @@ const DesignOverlay = ({
         if (dividerPosition === 0 && !isDragging) {
           imageRef.current.style.clipPath = 'none';
         } else {
-          imageRef.current.style.clipPath = `inset(0 ${
-            100 - dividerPosition
-          }% 0 0)`;
+          imageRef.current.style.clipPath = `inset(0 ${100 - dividerPosition}% 0 0)`;
         }
       } else {
         imageRef.current.style.clipPath = 'none';
@@ -189,9 +182,7 @@ const DesignOverlay = ({
   const opacity = isSideMode ? 1 : overlay.opacity / 100;
   const hasRuler = rulerEnabled(resolution);
 
-  const marginLeft = isOverlayMode
-    ? rulerMargin
-    : scaledWidth + rulerMargin + 30;
+  const marginLeft = isOverlayMode ? rulerMargin : scaledWidth + rulerMargin + 30;
   const marginTop = rulerMargin;
 
   const containerStyle: React.CSSProperties = isOverlayMode

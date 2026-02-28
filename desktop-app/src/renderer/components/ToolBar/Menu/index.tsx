@@ -1,9 +1,9 @@
-import { Icon } from '@iconify/react';
-import { useDetectClickOutside } from 'react-detect-click-outside';
+import {Icon} from '@iconify/react';
+import {useDetectClickOutside} from 'react-detect-click-outside';
 import Button from 'renderer/components/Button';
-import { useDispatch, useSelector } from 'react-redux';
-import { closeMenuFlyout, selectMenuFlyout } from 'renderer/store/features/ui';
-import { selectNotifications } from 'renderer/store/features/renderer';
+import {useDispatch, useSelector} from 'react-redux';
+import {closeMenuFlyout, selectMenuFlyout} from 'renderer/store/features/ui';
+import {selectNotifications} from 'renderer/store/features/renderer';
 import useLocalStorage from 'renderer/components/useLocalStorage/useLocalStorage';
 import NotificationsBubble from 'renderer/components/Notifications/NotificationsBubble';
 import MenuFlyout from './Flyout';
@@ -40,11 +40,11 @@ const Menu = () => {
     <div className="relative mr-2 flex items-center" ref={ref}>
       <Button onClick={handleFlyout} isActive={isMenuFlyoutOpen}>
         <Icon icon="carbon:overflow-menu-vertical" />
-        {notifications &&
-          notifications?.length > 0 &&
-          Boolean(hasNewNotifications) && <NotificationsBubble />}
+        {notifications && notifications?.length > 0 && Boolean(hasNewNotifications) && (
+          <NotificationsBubble />
+        )}
       </Button>
-      <div style={{ visibility: isMenuFlyoutOpen ? 'visible' : 'hidden' }}>
+      <div style={{visibility: isMenuFlyoutOpen ? 'visible' : 'hidden'}}>
         <MenuFlyout closeFlyout={onClose} />
       </div>
     </div>

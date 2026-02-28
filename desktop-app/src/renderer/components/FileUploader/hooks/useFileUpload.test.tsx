@@ -1,15 +1,15 @@
-import { act, renderHook } from '@testing-library/react';
-import { useFileUpload } from './useFileUpload';
+import {act, renderHook} from '@testing-library/react';
+import {useFileUpload} from './useFileUpload';
 
 describe('useFileUpload', () => {
   it('should initialize with null uploadedFile', () => {
-    const { result } = renderHook(() => useFileUpload());
+    const {result} = renderHook(() => useFileUpload());
 
     expect(result.current.uploadedFile).toBeNull();
   });
 
   it('should set uploadedFile when handleUpload is called with a file', () => {
-    const { result } = renderHook(() => useFileUpload());
+    const {result} = renderHook(() => useFileUpload());
     const mockFile = new File(['dummy content'], 'example.png', {
       type: 'image/png',
     });
@@ -26,7 +26,7 @@ describe('useFileUpload', () => {
   });
 
   it('should reset uploadedFile when resetUploadedFile is called', () => {
-    const { result } = renderHook(() => useFileUpload());
+    const {result} = renderHook(() => useFileUpload());
     const mockFile = new File(['dummy content'], 'example.png', {
       type: 'image/png',
     });

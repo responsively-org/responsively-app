@@ -1,5 +1,6 @@
-import { RootState } from 'renderer/store';
-import { configureStore } from '@reduxjs/toolkit';
+import {RootState} from 'renderer/store';
+import {configureStore} from '@reduxjs/toolkit';
+import {type Mock} from 'vitest';
 import designOverlayReducer, {
   setDesignOverlay,
   removeDesignOverlay,
@@ -9,14 +10,14 @@ import designOverlayReducer, {
 } from './index';
 
 const mockStore = {
-  get: jest.fn(),
-  set: jest.fn(),
+  get: vi.fn(),
+  set: vi.fn(),
 };
 
 beforeEach(() => {
-  jest.clearAllMocks();
-  (window.electron.store.get as jest.Mock) = mockStore.get;
-  (window.electron.store.set as jest.Mock) = mockStore.set;
+  vi.clearAllMocks();
+  (window.electron.store.get as Mock) = mockStore.get;
+  (window.electron.store.set as Mock) = mockStore.set;
   mockStore.get.mockReturnValue({});
 });
 
@@ -71,7 +72,7 @@ describe('designOverlaySlice', () => {
 
     it('should update existing overlay', () => {
       const store = createStore();
-      const updatedState = { ...mockOverlayState, opacity: 75 };
+      const updatedState = {...mockOverlayState, opacity: 75};
 
       store.dispatch(
         setDesignOverlay({
@@ -102,7 +103,7 @@ describe('designOverlaySlice', () => {
         })
       );
 
-      store.dispatch(removeDesignOverlay({ resolution }));
+      store.dispatch(removeDesignOverlay({resolution}));
 
       const state = store.getState();
       expect(state.designOverlay[resolution]).toBeUndefined();
@@ -114,12 +115,9 @@ describe('designOverlaySlice', () => {
         [resolution]: mockOverlayState,
       });
 
-      store.dispatch(removeDesignOverlay({ resolution }));
+      store.dispatch(removeDesignOverlay({resolution}));
 
-      expect(mockStore.set).toHaveBeenCalledWith(
-        'userPreferences.designOverlays',
-        {}
-      );
+      expect(mockStore.set).toHaveBeenCalledWith('userPreferences.designOverlays', {});
     });
   });
 
@@ -172,7 +170,7 @@ describe('designOverlaySlice', () => {
       store.dispatch(
         setDesignOverlay({
           resolution,
-          overlayState: { ...mockOverlayState, enabled: false },
+          overlayState: {...mockOverlayState, enabled: false},
         })
       );
 

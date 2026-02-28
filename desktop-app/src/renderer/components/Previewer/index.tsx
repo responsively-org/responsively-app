@@ -1,14 +1,11 @@
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import cx from 'classnames';
-import { selectActiveSuite } from 'renderer/store/features/device-manager';
-import { DOCK_POSITION, PREVIEW_LAYOUTS } from 'common/constants';
-import {
-  selectDockPosition,
-  selectIsDevtoolsOpen,
-} from 'renderer/store/features/devtools';
-import { getDevicesMap, Device as IDevice } from 'common/deviceList';
-import { useState } from 'react';
-import { selectLayout } from 'renderer/store/features/renderer';
+import {selectActiveSuite} from 'renderer/store/features/device-manager';
+import {DOCK_POSITION, PREVIEW_LAYOUTS} from 'common/constants';
+import {selectDockPosition, selectIsDevtoolsOpen} from 'renderer/store/features/devtools';
+import {getDevicesMap, Device as IDevice} from 'common/deviceList';
+import {useState} from 'react';
+import {selectLayout} from 'renderer/store/features/renderer';
 import Masonry from 'react-masonry-component';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
@@ -64,15 +61,9 @@ const Previewer = () => {
         })}
       >
         <div className="flex flex-grow overflow-hidden">
-          <div
-            className="w-full flex-grow overflow-y-auto"
-            style={{ height: '100%' }}
-          >
+          <div className="w-full flex-grow overflow-y-auto" style={{height: '100%'}}>
             {isMasonryLayout ? (
-              <TypedMasonry
-                options={masonryOptions}
-                className="w-full gap-4 p-2"
-              >
+              <TypedMasonry options={masonryOptions} className="w-full gap-4 p-2">
                 {devices.map((device) => (
                   <div key={device.id} className="device-item p-4">
                     <Device
@@ -111,9 +102,7 @@ const Previewer = () => {
             )}
           </div>
         </div>
-        {isDevtoolsOpen && dockPosition !== DOCK_POSITION.UNDOCKED ? (
-          <DevtoolsResizer />
-        ) : null}
+        {isDevtoolsOpen && dockPosition !== DOCK_POSITION.UNDOCKED ? <DevtoolsResizer /> : null}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
-import { Dialog, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+import {Dialog, Transition} from '@headlessui/react';
+import {Fragment} from 'react';
 
 interface Props {
   isOpen: boolean;
@@ -9,7 +9,7 @@ interface Props {
   children?: JSX.Element | string;
 }
 
-const Modal = ({ isOpen, onClose, title, description, children }: Props) => {
+const Modal = ({isOpen, onClose, title, description, children}: Props) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog onClose={onClose} className="relative z-50" as="div">
@@ -37,13 +37,11 @@ const Modal = ({ isOpen, onClose, title, description, children }: Props) => {
             >
               <Dialog.Panel
                 className={`flex w-fit min-w-[320px] flex-col gap-4 rounded bg-slate-200 text-light-normal dark:bg-slate-800 dark:text-dark-normal ${
-                  title ? 'p-8' : 'py-4 px-8'
+                  title ? 'p-8' : 'px-8 py-4'
                 }`}
               >
                 <div>
-                  <Dialog.Title className="text-xl font-medium leading-6">
-                    {title}
-                  </Dialog.Title>
+                  <Dialog.Title className="text-xl font-medium leading-6">{title}</Dialog.Title>
                   <Dialog.Description>{description}</Dialog.Description>
                 </div>
 

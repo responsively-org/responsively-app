@@ -3,8 +3,7 @@ import parseArgs from 'electron-args';
 let binaryName = 'ResponsivelyApp';
 
 if (process.platform === 'darwin') {
-  binaryName =
-    '/Applications/ResponsivelyApp.app/Contents/MacOS/ResponsivelyApp';
+  binaryName = '/Applications/ResponsivelyApp.app/Contents/MacOS/ResponsivelyApp';
 }
 
 if (process.platform === 'win32') {

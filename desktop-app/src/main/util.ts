@@ -1,7 +1,7 @@
 /* eslint import/prefer-default-export: off */
-import { URL } from 'url';
+import {URL} from 'url';
 import path from 'path';
-import { app } from 'electron';
+import {app} from 'electron';
 import fs from 'fs-extra';
 import os from 'os';
 
@@ -27,11 +27,7 @@ export function isValidCliArgURL(arg?: string): boolean {
   }
   try {
     const url = new URL(arg);
-    if (
-      url.protocol === 'http:' ||
-      url.protocol === 'https:' ||
-      url.protocol === 'file:'
-    ) {
+    if (url.protocol === 'http:' || url.protocol === 'https:' || url.protocol === 'file:') {
       isCliArgResult = true;
       return true;
     }
@@ -75,8 +71,7 @@ export const getEnvironmentInfo = (): EnvironmentInfo => {
   const chromeVersion = process.versions.chrome || 'Unknown';
   const nodeVersion = process.versions.node || 'Unknown';
   const v8Version = process.versions.v8 || 'Unknown';
-  const osInfo =
-    `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
+  const osInfo = `${os.type()} ${os.arch()} ${os.release()}`.trim() || 'Unknown';
 
   return {
     appVersion,

@@ -1,10 +1,9 @@
-import { ipcRenderer } from 'electron';
+import {ipcRenderer} from 'electron';
 
 const documentBodyInit = () => {
   // Browser Sync
   const bsScript = window.document.createElement('script');
-  bsScript.src =
-    'https://localhost:12719/browser-sync/browser-sync-client.js?v=2.27.10';
+  bsScript.src = 'https://localhost:12719/browser-sync/browser-sync-client.js?v=2.27.10';
   bsScript.async = true;
   window.document.body.appendChild(bsScript);
 
@@ -12,7 +11,7 @@ const documentBodyInit = () => {
   window.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     ipcRenderer.send('show-context-menu', {
-      contextMenuMeta: { x: e.x, y: e.y },
+      contextMenuMeta: {x: e.x, y: e.y},
     });
   });
 
@@ -48,9 +47,7 @@ const documentBodyInit = () => {
     if (!el) return false;
 
     return (
-      el.tagName === 'INPUT' ||
-      el.tagName === 'TEXTAREA' ||
-      (el as HTMLElement).isContentEditable
+      el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || (el as HTMLElement).isContentEditable
     );
   };
 
@@ -80,7 +77,7 @@ const documentBodyInit = () => {
   });
 
   window.addEventListener('dom-ready', () => {
-    const { body } = document;
+    const {body} = document;
     const html = document.documentElement;
 
     const height = Math.max(
@@ -92,7 +89,7 @@ const documentBodyInit = () => {
     );
 
     ipcRenderer.sendToHost('pass-scroll-data', {
-      coordinates: { x: 0, y: 0 },
+      coordinates: {x: 0, y: 0},
       innerHeight: height,
       innerWidth: window.innerWidth,
     });
