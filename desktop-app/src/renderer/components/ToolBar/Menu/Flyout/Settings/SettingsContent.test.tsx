@@ -4,7 +4,7 @@ import {render, fireEvent} from '@testing-library/react';
 
 import {SettingsContent} from './SettingsContent';
 
-const mockOnClose = jest.fn();
+const mockOnClose = vi.fn();
 
 describe('SettingsContentHeader', () => {
   const renderComponent = () => render(<SettingsContent onClose={mockOnClose} />);

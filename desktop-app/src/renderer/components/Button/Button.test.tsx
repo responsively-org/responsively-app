@@ -1,8 +1,7 @@
-import '@testing-library/jest-dom';
 import {act, render, screen} from '@testing-library/react';
 import Button from './index';
 
-jest.mock('@iconify/react', () => ({
+vi.mock('@iconify/react', () => ({
   Icon: () => <div data-testid="icon" />,
 }));
 
@@ -26,17 +25,17 @@ describe('Button Component', () => {
   });
 
   it('renders confirmation icon when loading is done', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     const {rerender} = render(<Button isLoading>Click me</Button>);
 
     act(() => {
       rerender(<Button isLoading={false}>Click me</Button>);
-      jest.runAllTimers(); // Use act to advance timers
+      vi.runAllTimers(); // Use act to advance timers
     });
 
     const confirmationIcon = screen.getByTestId('icon');
     expect(confirmationIcon).toBeInTheDocument();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('applies primary button styles', () => {

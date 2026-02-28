@@ -1,26 +1,26 @@
-import '@testing-library/jest-dom';
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
 import {Provider} from 'react-redux';
 import {configureStore} from '@reduxjs/toolkit';
 import designOverlayReducer from 'renderer/store/features/design-overlay';
 import type {Device} from 'common/deviceList';
+import {type Mock} from 'vitest';
 import DesignOverlayControls from './index';
 
 // Mock electron.store
 const mockStore = {
-  get: jest.fn(),
-  set: jest.fn(),
+  get: vi.fn(),
+  set: vi.fn(),
 };
 
 beforeEach(() => {
-  jest.clearAllMocks();
-  (window.electron.store.get as jest.Mock) = mockStore.get;
-  (window.electron.store.set as jest.Mock) = mockStore.set;
+  vi.clearAllMocks();
+  (window.electron.store.get as Mock) = mockStore.get;
+  (window.electron.store.set as Mock) = mockStore.set;
   mockStore.get.mockReturnValue({});
 });
 
 // Mock FileUploader component
-jest.mock('renderer/components/FileUploader', () => ({
+vi.mock('renderer/components/FileUploader', () => ({
   FileUploader: ({handleFileUpload}: {handleFileUpload: (file: File) => void}) => (
     <div data-testid="file-uploader">
       <input
@@ -36,7 +36,7 @@ jest.mock('renderer/components/FileUploader', () => ({
 }));
 
 // Mock Modal component
-jest.mock('renderer/components/Modal', () => ({
+vi.mock('renderer/components/Modal', () => ({
   __esModule: true,
   default: ({isOpen, onClose, title, children}: any) =>
     isOpen ? (
@@ -51,7 +51,7 @@ jest.mock('renderer/components/Modal', () => ({
 }));
 
 // Mock Button component
-jest.mock('renderer/components/Button', () => ({
+vi.mock('renderer/components/Button', () => ({
   __esModule: true,
   default: ({children, onClick, isPrimary, isTextButton}: any) => (
     <button
@@ -98,7 +98,7 @@ const renderWithRedux = (component: React.ReactElement, initialState = {}) => {
 };
 
 describe('DesignOverlayControls', () => {
-  const mockOnClose = jest.fn();
+  const mockOnClose = vi.fn();
 
   beforeEach(() => {
     mockOnClose.mockClear();

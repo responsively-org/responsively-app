@@ -1,24 +1,29 @@
-import '@testing-library/jest-dom';
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
 import {Device} from 'common/deviceList';
 import {Provider, useDispatch} from 'react-redux';
 import {configureStore} from '@reduxjs/toolkit';
-import {addSuites, deleteAllSuites} from 'renderer/store/features/device-manager';
 import {ReactNode} from 'react';
+import {type Mock} from 'vitest';
 import {transformFile} from './utils';
 import {ManageSuitesTool} from './ManageSuitesTool';
 
-jest.mock('renderer/store/features/device-manager', () => ({
-  addSuites: jest.fn(() => ({type: 'addSuites'})),
-  deleteAllSuites: jest.fn(() => ({type: 'deleteAllSuites'})),
-  default: jest.fn((state = {}) => state), // Mock the reducer as a function
+// Import the mocked module — vi.mock is hoisted above imports, so this gets the mock
+import deviceManagerReducer, {
+  addSuites,
+  deleteAllSuites,
+} from 'renderer/store/features/device-manager';
+
+vi.mock('renderer/store/features/device-manager', () => ({
+  addSuites: vi.fn(() => ({type: 'addSuites'})),
+  deleteAllSuites: vi.fn(() => ({type: 'deleteAllSuites'})),
+  default: vi.fn((state = {}) => state), // Mock the reducer as a function
 }));
 
-jest.mock('./utils', () => ({
-  transformFile: jest.fn(),
+vi.mock('./utils', () => ({
+  transformFile: vi.fn(),
 }));
 
-jest.mock('renderer/components/FileUploader', () => ({
+vi.mock('renderer/components/FileUploader', () => ({
   FileUploader: ({handleFileUpload}: {handleFileUpload: (file: File) => void}) => (
     <button
       type="button"
@@ -30,22 +35,25 @@ jest.mock('renderer/components/FileUploader', () => ({
   ),
 }));
 
-jest.mock('./helpers', () => ({
-  onFileDownload: jest.fn(),
-  setCustomDevices: jest.fn(),
+vi.mock('./helpers', () => ({
+  onFileDownload: vi.fn(),
+  setCustomDevices: vi.fn(),
 }));
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: jest.fn(),
-}));
+vi.mock('react-redux', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-redux')>();
+  return {
+    ...actual,
+    useDispatch: vi.fn(),
+  };
+});
 
 const renderWithRedux = (
   component: string | number | boolean | Iterable<ReactNode> | JSX.Element | null | undefined
 ) => {
   const store = configureStore({
     reducer: {
-      deviceManager: jest.requireMock('renderer/store/features/device-manager').default,
+      deviceManager: deviceManagerReducer as any,
     },
   });
 
@@ -56,13 +64,13 @@ const renderWithRedux = (
 };
 
 describe('ManageSuitesTool', () => {
-  let setCustomDevicesStateMock: jest.Mock<() => void, Device[]>;
-  const dispatchMock = jest.fn();
+  let setCustomDevicesStateMock: Mock;
+  const dispatchMock = vi.fn();
 
   beforeEach(() => {
-    (useDispatch as jest.Mock).mockReturnValue(dispatchMock);
+    (useDispatch as Mock).mockReturnValue(dispatchMock);
 
-    setCustomDevicesStateMock = jest.fn();
+    setCustomDevicesStateMock = vi.fn();
 
     renderWithRedux(<ManageSuitesTool setCustomDevicesState={setCustomDevicesStateMock} />);
   });
@@ -105,7 +113,7 @@ describe('ManageSuitesTool', () => {
       {id: '2', name: 'second suite', devices: []},
     ];
 
-    (transformFile as jest.Mock).mockResolvedValue({
+    (transformFile as Mock).mockResolvedValue({
       customDevices: ['device1', 'device2'],
       suites: mockSuites,
     });
@@ -120,7 +128,7 @@ describe('ManageSuitesTool', () => {
   });
 
   it('handles error in file upload', async () => {
-    (transformFile as jest.Mock).mockRejectedValue(new Error('File upload failed'));
+    (transformFile as Mock).mockRejectedValue(new Error('File upload failed'));
 
     fireEvent.click(screen.getByTestId('download-btn'));
 

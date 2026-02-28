@@ -1,17 +1,17 @@
 import {render, fireEvent} from '@testing-library/react';
-import '@testing-library/jest-dom';
+import {type Mock} from 'vitest';
 import {FileUploader, FileUploaderProps} from './FileUploader';
 import {useFileUpload} from './hooks';
 
-jest.mock('./hooks');
+vi.mock('./hooks');
 
-const mockHandleFileUpload = jest.fn();
-const mockHandleUpload = jest.fn();
-const mockResetUploadedFile = jest.fn();
+const mockHandleFileUpload = vi.fn();
+const mockHandleUpload = vi.fn();
+const mockResetUploadedFile = vi.fn();
 
 describe('FileUploader', () => {
   beforeEach(() => {
-    (useFileUpload as jest.Mock).mockReturnValue({
+    (useFileUpload as Mock).mockReturnValue({
       uploadedFile: null,
       handleUpload: mockHandleUpload,
       resetUploadedFile: mockResetUploadedFile,
@@ -46,7 +46,7 @@ describe('FileUploader', () => {
 
   it('calls handleFileUpload when uploadedFile is set', () => {
     const mockFile = new File(['content'], 'file.txt');
-    (useFileUpload as jest.Mock).mockReturnValue({
+    (useFileUpload as Mock).mockReturnValue({
       uploadedFile: mockFile,
       handleUpload: mockHandleUpload,
       resetUploadedFile: mockResetUploadedFile,
