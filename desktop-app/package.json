@@ -129,7 +129,7 @@
     "detect-port": "^1.3.0",
     "electron": "40.6.1",
     "electron-builder": "^26.0.12",
-    "electron-devtools-assembler": "^1.2.0",
+    "electron-devtools-installer": "^4.0.0",
     "electronmon": "^2.0.2",
     "eslint": "^8.36.0",
     "eslint-config-prettier": "^9.1.0",
