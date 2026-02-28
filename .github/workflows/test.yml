@@ -21,7 +21,7 @@ jobs:
       - name: Install Node.js and NPM
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: ${{ !env.ACT && 'npm' || '' }} # Disable cache for nektos/act
           cache-dependency-path: ./desktop-app/yarn.lock
 
