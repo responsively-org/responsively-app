@@ -61,26 +61,24 @@ if (isDebug) {
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-assembler');
+  const installer = require('electron-devtools-installer');
+  const {
+    REACT_DEVELOPER_TOOLS,
+    REDUX_DEVTOOLS,
+    EMBER_INSPECTOR,
+    VUEJS_DEVTOOLS,
+    APOLLO_DEVELOPER_TOOLS,
+  } = installer;
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = [
-    'REACT_DEVELOPER_TOOLS',
-    'REDUX_DEVTOOLS',
-    'EMBER_INSPECTOR',
-    'BACKBONE_DEBUGGER',
-    'JQUERY_DEBUGGER',
-    // 'ANGULAR_DEVTOOLS',
-    'VUEJS_DEVTOOLS',
-    'MOBX_DEVTOOLS',
-    'APOLLO_DEVELOPER_TOOLS',
+    REACT_DEVELOPER_TOOLS,
+    REDUX_DEVTOOLS,
+    EMBER_INSPECTOR,
+    VUEJS_DEVTOOLS,
+    APOLLO_DEVELOPER_TOOLS,
   ];
 
-  return installer
-    .default(
-      extensions.map((name) => installer[name]),
-      forceDownload
-    )
-    .catch(console.log);
+  return installer.default(extensions, forceDownload).catch(console.log);
 };
 
 const createWindow = async () => {
