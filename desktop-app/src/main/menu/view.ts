@@ -23,11 +23,7 @@ const getReloadMenu = (mainWindow: BrowserWindow): MenuItemConstructorOptions =>
   label: '&Reload',
   accelerator: 'CommandOrControl+R',
   click: () => {
-    if (isDev) {
-      mainWindow.webContents.reload();
-      return;
-    }
-    mainWindow.webContents.send('reload', {});
+    mainWindow.webContents.send('window-reload');
   },
 });
 

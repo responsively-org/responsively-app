@@ -42,7 +42,7 @@ let urlToOpen: string | undefined = cli.input[0]?.includes('electronmon')
   : cli.input[0];
 
 let mainWindow: BrowserWindow | null = null;
-
+let boundsBeforeReload: Electron.Rectangle | null = null;
 initAppMetaHandlers();
 initWebviewContextMenu();
 initScreenshotHandlers();
@@ -116,6 +116,18 @@ const createWindow = async () => {
   initDevtoolsHandlers(mainWindow);
   initHttpBasicAuthHandlers(mainWindow);
   const webPermissionHandlers = WebPermissionHandlers(mainWindow);
+  ipcMain.on('window-reload', () => {
+    if (!mainWindow) return;
+    boundsBeforeReload = mainWindow.getBounds();
+    mainWindow.webContents.reload();
+  });
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    if (boundsBeforeReload) {
+      mainWindow?.setBounds(boundsBeforeReload);
+      boundsBeforeReload = null;
+    }
+  });
 
   // Add BROWSER_SYNC_HOST to the allowed Content-Security-Policy origins
   mainWindow.webContents.session.webRequest.onHeadersReceived(async (details, callback) => {
