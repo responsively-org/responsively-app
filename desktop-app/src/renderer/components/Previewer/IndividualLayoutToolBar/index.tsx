@@ -40,7 +40,7 @@ const IndividualLayoutToolbar = ({individualDevice, setIndividualDevice, devices
       >
         <TabList
           className={cx(
-            'custom-scrollbar flex flex-1  justify-center gap-1 overflow-x-auto border-b border-slate-400/60 dark:border-white'
+            'custom-scrollbar flex flex-1 justify-center gap-1 overflow-x-auto border-b border-slate-400/60 dark:border-white'
           )}
         >
           {devices.map((device, idx) => (

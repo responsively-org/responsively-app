@@ -16,7 +16,7 @@ import {AboutDialog} from './components/AboutDialog';
 
 const Browser = () => {
   return (
-    <div className="h-screen gap-2 overflow-hidden pt-2">
+    <div className="flex h-screen flex-col overflow-hidden pt-2">
       <ToolBar />
       <Previewer />
     </div>
