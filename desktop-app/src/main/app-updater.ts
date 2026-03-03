@@ -24,6 +24,9 @@ export class AppUpdater {
 
   constructor() {
     autoUpdater.logger = console;
+    if (process.env.CI || process.env.E2E_TEST) {
+      return;
+    }
     autoUpdater.checkForUpdatesAndNotify();
     autoUpdater.on('checking-for-update', () => {
       this.status = 'CHECKING';

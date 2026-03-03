@@ -85,7 +85,7 @@ const DeviceManager = () => {
   return (
     <div className="mx-auto flex w-4/5 flex-col gap-4 rounded-lg p-8">
       <div className="flex w-full justify-end text-3xl">
-        <Button onClick={() => dispatch(setAppView(APP_VIEWS.BROWSER))}>
+        <Button onClick={() => dispatch(setAppView(APP_VIEWS.BROWSER))} title="Close">
           <Icon icon="ic:round-close" fontSize={18} />
         </Button>
       </div>

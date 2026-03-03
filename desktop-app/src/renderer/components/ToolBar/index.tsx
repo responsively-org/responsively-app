@@ -127,6 +127,7 @@ const ToolBar = () => {
         onClick={() => {
           dispatch(setAppView(APP_VIEWS.DEVICE_MANAGER));
         }}
+        title="Device Manager"
       >
         <Icon icon="lucide:plus" width={16} />
       </Button>

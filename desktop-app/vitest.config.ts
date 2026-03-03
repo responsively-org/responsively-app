@@ -7,7 +7,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./setupTests.ts'],
     css: {modules: {classNameStrategy: 'non-scoped'}},
-    exclude: ['**/node_modules/**', '**/dist/**', '.erb/**', 'release/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '.erb/**', 'release/**', 'e2e/**'],
   },
   resolve: {
     alias: {

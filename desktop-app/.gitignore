@@ -27,3 +27,7 @@ npm-debug.log.*
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
+
+# Playwright E2E
+e2e/playwright-report/
+e2e/test-results/

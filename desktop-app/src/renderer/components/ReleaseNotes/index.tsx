@@ -30,7 +30,7 @@ export const ReleaseNotes = () => {
 
   useEffect(() => {
     (async () => {
-      if (!isReleaseNotesUnseen()) {
+      if (!(await isReleaseNotesUnseen())) {
         return;
       }
       await new Promise((resolve) => setTimeout(resolve, 1000));

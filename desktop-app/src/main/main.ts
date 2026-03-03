@@ -54,6 +54,13 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
+// Suppress popups during E2E tests
+if (process.env.E2E_TEST === 'true') {
+  store.set('sponsorship.lastShown', Date.now());
+  const seenVersions = store.get('seenReleaseNotes') ?? [];
+  store.set('seenReleaseNotes', [...seenVersions, app.getVersion()]);
+}
+
 const isDebug = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
@@ -84,12 +91,15 @@ const installExtensions = async () => {
 const createWindow = async () => {
   windowShownOnOpen = false;
   let isAppInitiated = false;
-  await installExtensions();
+  if (process.env.E2E_TEST !== 'true') {
+    await installExtensions();
+  }
 
   const setIsAppInitiated = () => {
     isAppInitiated = true;
   };
 
+  const isBuiltApp = app.isPackaged || process.env.E2E_TEST === 'true';
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../../assets');
@@ -107,7 +117,7 @@ const createWindow = async () => {
     icon: getAssetPath('icon.png'),
     titleBarStyle: 'default',
     webPreferences: {
-      preload: app.isPackaged
+      preload: isBuiltApp
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
       webviewTag: true,

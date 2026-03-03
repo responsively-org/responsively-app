@@ -10,8 +10,9 @@ export interface AppMetaResponse {
 
 export const initAppMetaHandlers = () => {
   ipcMain.handle(IPC_MAIN_CHANNELS.APP_META, async (): Promise<AppMetaResponse> => {
+    const isBuiltApp = app.isPackaged || process.env.E2E_TEST === 'true';
     return {
-      webviewPreloadPath: app.isPackaged
+      webviewPreloadPath: isBuiltApp
         ? path.join(__dirname, 'preload-webview.js')
         : path.join(__dirname, '../../../.erb/dll/preload-webview.js'),
       appVersion: app.getVersion(),

@@ -245,6 +245,7 @@ const AddressBar = () => {
         <input
           ref={inputRef}
           type="text"
+          data-testid="address-bar"
           className={cx(
             'w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-40 dark:bg-slate-900',
             {
