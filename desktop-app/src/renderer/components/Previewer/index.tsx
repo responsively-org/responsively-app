@@ -4,12 +4,13 @@ import {selectActiveSuite} from 'renderer/store/features/device-manager';
 import {DOCK_POSITION, PREVIEW_LAYOUTS} from 'common/constants';
 import {selectDockPosition, selectIsDevtoolsOpen} from 'renderer/store/features/devtools';
 import {getDevicesMap, Device as IDevice} from 'common/deviceList';
-import {useState} from 'react';
+import {useState, useRef} from 'react';
 import {selectLayout} from 'renderer/store/features/renderer';
 import Masonry from 'react-masonry-component';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
 import IndividualLayoutToolbar from './IndividualLayoutToolBar';
+import DeviceScrollBar from './DeviceScrollBar';
 
 interface MasonryProps {
   options?: {
@@ -34,7 +35,10 @@ const Previewer = () => {
   const layout = useSelector(selectLayout);
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
-  const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY; // New state for Masonry layout
+  const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY;
+  const isColumnLayout = layout === PREVIEW_LAYOUTS.COLUMN;
+  const isFlexLayout = layout === PREVIEW_LAYOUTS.FLEX;
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const masonryOptions = {
     columnWidth: 275,
@@ -44,7 +48,7 @@ const Previewer = () => {
   };
 
   return (
-    <div className="h-full">
+    <div className="relative min-h-0 flex-1">
       {isIndividualLayout && (
         <IndividualLayoutToolbar
           individualDevice={individualDevice}
@@ -61,11 +65,15 @@ const Previewer = () => {
         })}
       >
         <div className="flex flex-grow overflow-hidden">
-          <div className="w-full flex-grow overflow-y-auto" style={{height: '100%'}}>
+          <div
+            ref={isMasonryLayout ? scrollContainerRef : undefined}
+            className="w-full flex-grow overflow-y-auto"
+            style={{height: '100%'}}
+          >
             {isMasonryLayout ? (
               <TypedMasonry options={masonryOptions} className="w-full gap-4 p-2">
                 {devices.map((device) => (
-                  <div key={device.id} className="device-item p-4">
+                  <div key={device.id} data-device-id={device.id} className="device-item p-4">
                     <Device
                       device={device}
                       isPrimary={device.id === devices[0].id}
@@ -76,6 +84,7 @@ const Previewer = () => {
               </TypedMasonry>
             ) : (
               <div
+                ref={isColumnLayout || isFlexLayout ? scrollContainerRef : undefined}
                 className={cx('flex h-full gap-4 overflow-auto p-4', {
                   'flex-wrap': layout === PREVIEW_LAYOUTS.FLEX,
                   'justify-center': isIndividualLayout,
@@ -90,12 +99,13 @@ const Previewer = () => {
                   />
                 ) : (
                   devices.map((device, idx) => (
-                    <Device
-                      key={device.id}
-                      device={device}
-                      isPrimary={idx === 0}
-                      setIndividualDevice={setIndividualDevice}
-                    />
+                    <div key={device.id} data-device-id={device.id}>
+                      <Device
+                        device={device}
+                        isPrimary={idx === 0}
+                        setIndividualDevice={setIndividualDevice}
+                      />
+                    </div>
                   ))
                 )}
               </div>
@@ -104,6 +114,13 @@ const Previewer = () => {
         </div>
         {isDevtoolsOpen && dockPosition !== DOCK_POSITION.UNDOCKED ? <DevtoolsResizer /> : null}
       </div>
+      {!isIndividualLayout && devices.length > 1 && (
+        <DeviceScrollBar
+          devices={devices}
+          scrollContainerRef={scrollContainerRef}
+          isVertical={!isColumnLayout}
+        />
+      )}
     </div>
   );
 };
