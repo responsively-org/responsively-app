@@ -286,6 +286,7 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     </tr>
     <tr>
       <td align="center" valign="top" width="20%"><a href="http://sayago.dev"><img src="https://avatars.githubusercontent.com/u/67727553?v=4?s=100" width="100px;" alt="Saúl Sáyago"/><br /><sub><b>Saúl Sáyago</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=sayagodev" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/Dailin521"><img src="https://avatars.githubusercontent.com/u/71995555?v=4?s=100" width="100px;" alt="Dailin"/><br /><sub><b>Dailin</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Dailin521" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
