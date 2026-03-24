@@ -6,6 +6,7 @@ import {selectDockPosition, selectIsDevtoolsOpen} from 'renderer/store/features/
 import {getDevicesMap, Device as IDevice} from 'common/deviceList';
 import {useState} from 'react';
 import {selectLayout} from 'renderer/store/features/renderer';
+import {selectJavaScriptDisabledByDeviceId} from 'renderer/store/features/javascript';
 import Masonry from 'react-masonry-component';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
@@ -32,6 +33,7 @@ const Previewer = () => {
   const dockPosition = useSelector(selectDockPosition);
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const layout = useSelector(selectLayout);
+  const disabledJavaScriptByDeviceId = useSelector(selectJavaScriptDisabledByDeviceId);
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
   const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY; // New state for Masonry layout
@@ -42,6 +44,8 @@ const Previewer = () => {
     fitWidth: true,
     transitionDuration: 0,
   };
+  const getDeviceRenderKey = (deviceId: string) =>
+    `${deviceId}-${disabledJavaScriptByDeviceId[deviceId] ? 'js-off' : 'js-on'}`;
 
   return (
     <div className="h-full">
@@ -65,10 +69,11 @@ const Previewer = () => {
             {isMasonryLayout ? (
               <TypedMasonry options={masonryOptions} className="w-full gap-4 p-2">
                 {devices.map((device) => (
-                  <div key={device.id} className="device-item p-4">
+                  <div key={getDeviceRenderKey(device.id)} className="device-item p-4">
                     <Device
                       device={device}
                       isPrimary={device.id === devices[0].id}
+                      isJavaScriptDisabled={Boolean(disabledJavaScriptByDeviceId[device.id])}
                       setIndividualDevice={setIndividualDevice}
                     />
                   </div>
@@ -83,17 +88,21 @@ const Previewer = () => {
               >
                 {isIndividualLayout ? (
                   <Device
-                    key={individualDevice.id}
+                    key={getDeviceRenderKey(individualDevice.id)}
                     device={individualDevice}
                     isPrimary
+                    isJavaScriptDisabled={Boolean(
+                      disabledJavaScriptByDeviceId[individualDevice.id]
+                    )}
                     setIndividualDevice={setIndividualDevice}
                   />
                 ) : (
                   devices.map((device, idx) => (
                     <Device
-                      key={device.id}
+                      key={getDeviceRenderKey(device.id)}
                       device={device}
                       isPrimary={idx === 0}
+                      isJavaScriptDisabled={Boolean(disabledJavaScriptByDeviceId[device.id])}
                       setIndividualDevice={setIndividualDevice}
                     />
                   ))

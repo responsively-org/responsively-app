@@ -20,16 +20,17 @@ interface Props {
   label: JSX.Element | string;
   options: OptionOrSeparator[];
   className?: string | null;
+  showChevron?: boolean;
 }
 
-export function DropDown({label, options, className}: Props) {
+export function DropDown({label, options, className, showChevron = true}: Props) {
   return (
     <div className="relative text-right">
       <Menu as="div" className={`inline-block text-left ${className}`}>
         <Float placement="bottom-end" flip portal>
           <Menu.Button className="inline-flex w-full justify-center gap-1 rounded-md bg-opacity-20 p-2 text-sm font-medium hover:bg-slate-300 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 dark:hover:bg-slate-700">
             {label}
-            <Icon icon="mdi:chevron-down" />
+            {showChevron ? <Icon icon="mdi:chevron-down" /> : null}
           </Menu.Button>
           <Transition
             as={Fragment}

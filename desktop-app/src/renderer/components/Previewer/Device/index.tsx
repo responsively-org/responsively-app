@@ -60,6 +60,7 @@ import {appendHistory} from './utils';
 interface Props {
   device: IDevice;
   isPrimary: boolean;
+  isJavaScriptDisabled: boolean;
   setIndividualDevice: (device: IDevice) => void;
 }
 
@@ -68,7 +69,7 @@ interface ErrorState {
   description: string;
 }
 
-const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
+const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: Props) => {
   const [singleRotated, setSingleRotated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorState | null>(null);
@@ -558,6 +559,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       <Toolbar
         webview={ref.current}
         device={device}
+        isJavaScriptDisabled={isJavaScriptDisabled}
         setScreenshotInProgress={setScreenshotInProgress}
         openDevTools={openDevTools}
         toggleRuler={toggleRuler}
@@ -611,6 +613,8 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
               allowpopups={isPrimary ? true : undefined}
               /* eslint-disable-next-line react/no-unknown-property */
               useragent={device.userAgent}
+              /* eslint-disable-next-line react/no-unknown-property */
+              webpreferences={isJavaScriptDisabled ? 'javascript=no' : undefined}
             />
           </div>
 
