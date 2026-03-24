@@ -1,6 +1,8 @@
 import {Icon} from '@iconify/react';
 import {useState} from 'react';
+import {useDispatch} from 'react-redux';
 import Button from 'renderer/components/Button';
+import {DropDown} from 'renderer/components/DropDown';
 import useSound from 'use-sound';
 import {ScreenshotArgs, ScreenshotResult} from 'main/screenshot';
 import {Device} from 'common/deviceList';
@@ -8,12 +10,14 @@ import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
 import {updateWebViewHeightAndScale} from 'common/webViewUtils';
+import {setDeviceJavaScriptDisabled} from 'renderer/store/features/javascript';
 import {ColorBlindnessTools} from './ColorBlindnessTools';
 import DesignOverlayControls from './DesignOverlayControls';
 
 interface Props {
   webview: Electron.WebviewTag | null;
   device: Device;
+  isJavaScriptDisabled: boolean;
   setScreenshotInProgress: (value: boolean) => void;
   openDevTools: () => void;
   toggleRuler: () => void;
@@ -26,6 +30,7 @@ interface Props {
 const Toolbar = ({
   webview,
   device,
+  isJavaScriptDisabled,
   setScreenshotInProgress,
   openDevTools,
   toggleRuler,
@@ -34,12 +39,15 @@ const Toolbar = ({
   isIndividualLayout,
   isDeviceRotationEnabled,
 }: Props) => {
+  const dispatch = useDispatch();
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, {volume: 0.5});
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
   const [fullScreenshotLoading, setFullScreenshotLoading] = useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
   const [isDesignOverlayModalOpen, setIsDesignOverlayModalOpen] = useState<boolean>(false);
+  const screenshotDisabledTitle =
+    'Screenshots are unavailable while JavaScript is disabled for this preview';
 
   const refreshView = () => {
     if (webview) {
@@ -68,7 +76,7 @@ const Toolbar = ({
   };
 
   const quickScreenshot = async () => {
-    if (webview === null) {
+    if (webview === null || isJavaScriptDisabled) {
       return;
     }
     setScreenshotLoading(true);
@@ -86,7 +94,7 @@ const Toolbar = ({
   };
 
   const fullScreenshot = async () => {
-    if (webview === null) {
+    if (webview === null || isJavaScriptDisabled) {
       return;
     }
     setFullScreenshotLoading(true);
@@ -139,13 +147,27 @@ const Toolbar = ({
     }
   };
 
+  const toggleJavaScript = () => {
+    dispatch(
+      setDeviceJavaScriptDisabled({
+        deviceId: device.id,
+        disabled: !isJavaScriptDisabled,
+      })
+    );
+  };
+
   return (
     <div className="flex items-center justify-between gap-1">
       <div className="my-1 inline-flex max-w-[78%] items-center gap-1 overflow-x-auto">
         <Button onClick={refreshView} title="Refresh This View">
           <Icon icon="ic:round-refresh" />
         </Button>
-        <Button onClick={quickScreenshot} isLoading={screenshotLoading} title="Quick Screenshot">
+        <Button
+          onClick={quickScreenshot}
+          isLoading={screenshotLoading}
+          disabled={isJavaScriptDisabled}
+          title={isJavaScriptDisabled ? screenshotDisabledTitle : 'Quick Screenshot'}
+        >
           <div className="relative h-4 w-4">
             <Icon icon="ic:outline-photo-camera" className="absolute left-0 top-0" />
             <Icon
@@ -158,7 +180,8 @@ const Toolbar = ({
         <Button
           onClick={fullScreenshot}
           isLoading={fullScreenshotLoading}
-          title="Full Page Screenshot"
+          disabled={isJavaScriptDisabled}
+          title={isJavaScriptDisabled ? screenshotDisabledTitle : 'Full Page Screenshot'}
         >
           <Icon icon="ic:outline-photo-camera" />
         </Button>
@@ -194,12 +217,29 @@ const Toolbar = ({
         </Button>
         <ColorBlindnessTools webview={webview} />
       </div>
-      <Button
-        onClick={() => onIndividualLayoutHandler(device)}
-        title={`${isIndividualLayout ? 'Disable' : 'Enable'} Individual Layout`}
-      >
-        <Icon icon={isIndividualLayout ? 'ic:twotone-zoom-in-map' : 'ic:twotone-zoom-out-map'} />
-      </Button>
+      <div className="flex items-center gap-1">
+        <DropDown
+          showChevron={false}
+          label={
+            <>
+              <span className="sr-only">More options</span>
+              <Icon icon="carbon:overflow-menu-vertical" />
+            </>
+          }
+          options={[
+            {
+              label: isJavaScriptDisabled ? 'Enable JavaScript' : 'Disable JavaScript',
+              onClick: toggleJavaScript,
+            },
+          ]}
+        />
+        <Button
+          onClick={() => onIndividualLayoutHandler(device)}
+          title={`${isIndividualLayout ? 'Disable' : 'Enable'} Individual Layout`}
+        >
+          <Icon icon={isIndividualLayout ? 'ic:twotone-zoom-in-map' : 'ic:twotone-zoom-out-map'} />
+        </Button>
+      </div>
       <DesignOverlayControls
         device={device}
         isOpen={isDesignOverlayModalOpen}
