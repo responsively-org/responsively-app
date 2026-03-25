@@ -42,7 +42,6 @@ import type {RootState} from '../../../store';
 import {selectDesignOverlay, type ViewResolution} from '../../../store/features/design-overlay';
 import {
   Coordinates,
-  RulersState,
   selectRuler,
   selectRulerEnabled,
   setRuler,
@@ -81,17 +80,23 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
   const layout = useSelector(selectLayout);
-  const rulerEnabled = useSelector(selectRulerEnabled);
-  const getRuler = useSelector(selectRuler);
   const dispatch = useDispatch();
   const dockPosition = useSelector(selectDockPosition);
   const darkMode = useSelector(selectDarkMode);
-  const ref = useRef<Electron.WebviewTag>(null);
+  const ref = useRef<Electron.WebviewTag | null>(null);
+  const [webviewElement, setWebviewElement] = useState<Electron.WebviewTag | null>(null);
   const isNavigatingFromAddressBar = useRef<boolean>(false);
-  const [webviewReady, setWebviewReady] = useState<boolean>(false);
+  const webviewKey = `${device.id}-${isJavaScriptDisabled ? 'js-off' : 'js-on'}`;
+  const [readyWebviewKey, setReadyWebviewKey] = useState<string | null>(null);
+  const isCurrentWebviewReady = readyWebviewKey === webviewKey;
+  const allowPopups = (isPrimary ? 'true' : undefined) as unknown as boolean | undefined;
+  const setWebviewRef = useCallback((element: Electron.WebviewTag | null) => {
+    ref.current = element;
+    setWebviewElement(element);
+  }, []);
 
   useEffect(() => {
-    if (ref.current && isPrimary) {
+    if (ref.current && isPrimary && isCurrentWebviewReady) {
       try {
         const currentUrl = ref.current.getURL();
         if (address !== currentUrl) {
@@ -103,18 +108,20 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
         console.error('Error loading URL', err);
       }
     }
-  }, [address, isPrimary]);
+  }, [address, isPrimary, isCurrentWebviewReady, webviewElement]);
 
   useEffect(() => {
     const webview = ref.current;
     if (!webview) return undefined;
-    const onDomReady = () => setWebviewReady(true);
+    const onDomReady = () => setReadyWebviewKey(webviewKey);
     webview.addEventListener('dom-ready', onDomReady);
     return () => {
       webview.removeEventListener('dom-ready', onDomReady);
-      setWebviewReady(false);
+      setReadyWebviewKey((currentReadyWebviewKey) =>
+        currentReadyWebviewKey === webviewKey ? null : currentReadyWebviewKey
+      );
     };
-  }, [ref]);
+  }, [webviewKey]);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
@@ -132,6 +139,8 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
 
   const resolution: ViewResolution = `${width}x${height}`;
   const designOverlay = useSelector((state: RootState) => selectDesignOverlay(state)(resolution));
+  const ruler = useSelector((state: RootState) => selectRuler(state)(resolution));
+  const isRulerEnabled = useSelector((state: RootState) => selectRulerEnabled(state)(resolution));
 
   const [coordinates, setCoordinates] = useState<Coordinates>({
     deltaX: 0,
@@ -142,66 +151,6 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
     innerHeight: height * 2,
   });
 
-  const registerNavigationHandlers = useCallback(() => {
-    webViewPubSub.subscribe(NAVIGATION_EVENTS.RELOAD, () => {
-      if (ref.current) {
-        ref.current.reload();
-      }
-    });
-    if (isPrimary) {
-      webViewPubSub.subscribe(NAVIGATION_EVENTS.BACK, () => {
-        if (ref.current) {
-          ref.current.goBack();
-        }
-      });
-
-      webViewPubSub.subscribe(NAVIGATION_EVENTS.FORWARD, () => {
-        if (ref.current) {
-          ref.current.goForward();
-        }
-      });
-
-      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_STORAGE, async () => {
-        if (!ref.current) {
-          return;
-        }
-        const webview = ref.current as Electron.WebviewTag;
-        await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
-          'delete-storage',
-          {webContentsId: webview.getWebContentsId()}
-        );
-      });
-
-      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_COOKIES, async () => {
-        if (!ref.current) {
-          return;
-        }
-        const webview = ref.current as Electron.WebviewTag;
-        await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
-          'delete-storage',
-          {
-            webContentsId: webview.getWebContentsId(),
-            storages: ['cookies'],
-          }
-        );
-      });
-
-      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_CACHE, async () => {
-        if (!ref.current) {
-          return;
-        }
-        const webview = ref.current as Electron.WebviewTag;
-        await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
-          'delete-storage',
-          {
-            webContentsId: webview.getWebContentsId(),
-            storages: ['network-cache'],
-          }
-        );
-      });
-    }
-  }, [isPrimary]);
-
   const toggleRuler = useCallback(() => {
     if (!ref.current) {
       return;
@@ -210,7 +159,6 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
     if (webview == null) {
       return;
     }
-    const ruler: RulersState | undefined = getRuler(resolution);
     if (ruler) {
       dispatch(
         setRuler({
@@ -232,7 +180,7 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
         })
       );
     }
-  }, [dispatch, getRuler, coordinates, resolution]);
+  }, [dispatch, ruler, coordinates, resolution]);
 
   useKeyboardShortcut(SHORTCUT_CHANNEL.TOGGLE_RULERS, toggleRuler);
 
@@ -298,6 +246,57 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
     }
     const webview = ref.current as Electron.WebviewTag;
     const handlerRemovers: (() => void)[] = [];
+    const pubSubRemovers: (() => void)[] = [];
+    const subscribeToWebViewChannel = (
+      topic: string,
+      handler: Parameters<typeof webViewPubSub.subscribe>[1]
+    ) => {
+      webViewPubSub.subscribe(topic, handler);
+      pubSubRemovers.push(() => {
+        webViewPubSub.unsubscribe(topic, handler);
+      });
+    };
+
+    subscribeToWebViewChannel(NAVIGATION_EVENTS.RELOAD, () => {
+      webview.reload();
+    });
+
+    if (isPrimary) {
+      subscribeToWebViewChannel(NAVIGATION_EVENTS.BACK, () => {
+        webview.goBack();
+      });
+
+      subscribeToWebViewChannel(NAVIGATION_EVENTS.FORWARD, () => {
+        webview.goForward();
+      });
+
+      subscribeToWebViewChannel(ADDRESS_BAR_EVENTS.DELETE_STORAGE, async () => {
+        await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
+          'delete-storage',
+          {webContentsId: webview.getWebContentsId()}
+        );
+      });
+
+      subscribeToWebViewChannel(ADDRESS_BAR_EVENTS.DELETE_COOKIES, async () => {
+        await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
+          'delete-storage',
+          {
+            webContentsId: webview.getWebContentsId(),
+            storages: ['cookies'],
+          }
+        );
+      });
+
+      subscribeToWebViewChannel(ADDRESS_BAR_EVENTS.DELETE_CACHE, async () => {
+        await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
+          'delete-storage',
+          {
+            webContentsId: webview.getWebContentsId(),
+            storages: ['network-cache'],
+          }
+        );
+      });
+    }
 
     const didNavigateHandler = (e: Electron.DidNavigateEvent | Electron.DidNavigateInPageEvent) => {
       // Only DidNavigateInPageEvent has isMainFrame
@@ -402,27 +401,35 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
     });
 
     if (!isPrimary) {
-      setTimeout(() => {
-        webview.addEventListener('dom-ready', () => {
-          window.electron.ipcRenderer.invoke<
-            DisableDefaultWindowOpenHandlerArgs,
-            DisableDefaultWindowOpenHandlerResult
-          >('disable-default-window-open-handler', {
-            webContentsId: webview.getWebContentsId(),
-          });
+      const disableDefaultWindowOpenHandler = () => {
+        window.electron.ipcRenderer.invoke<
+          DisableDefaultWindowOpenHandlerArgs,
+          DisableDefaultWindowOpenHandlerResult
+        >('disable-default-window-open-handler', {
+          webContentsId: webview.getWebContentsId(),
+        });
+      };
+      const disableDefaultWindowOpenHandlerTimeout = window.setTimeout(() => {
+        webview.addEventListener('dom-ready', disableDefaultWindowOpenHandler);
+        handlerRemovers.push(() => {
+          webview.removeEventListener('dom-ready', disableDefaultWindowOpenHandler);
         });
       }, 2000);
+      handlerRemovers.push(() => {
+        window.clearTimeout(disableDefaultWindowOpenHandlerTimeout);
+      });
     }
-
-    registerNavigationHandlers();
 
     // eslint-disable-next-line consistent-return
     return () => {
       handlerRemovers.forEach((handlerRemover) => {
         handlerRemover();
       });
+      pubSubRemovers.forEach((handlerRemover) => {
+        handlerRemover();
+      });
     };
-  }, [ref, dispatch, registerNavigationHandlers, isPrimary, inspectElement, openDevTools, address]);
+  }, [dispatch, isPrimary, inspectElement, openDevTools, webviewKey]);
 
   useEffect(() => {
     // Reload keyboard shortcuts effect
@@ -445,10 +452,10 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
     return () => {
       window.electron.ipcRenderer.removeListener('reload', reloadHandler);
     };
-  }, [ref]);
+  }, [webviewKey]);
 
   useEffect(() => {
-    if (!ref.current || !webviewReady) {
+    if (!ref.current || !isCurrentWebviewReady) {
       return undefined;
     }
     const webview = ref.current as Electron.WebviewTag;
@@ -467,26 +474,21 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
     window.electron.ipcRenderer.on('inspect-element', inspectElementHandler);
 
     return () => {
-      try {
-        window.electron.ipcRenderer.removeAllListeners('inspect-element');
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('Error while removing ipc listener', e);
-      }
+      window.electron.ipcRenderer.removeListener('inspect-element', inspectElementHandler);
     };
   }, [
-    ref,
     dispatch,
     isDevtoolsOpen,
     devtoolsOpenForWebviewId,
     openDevTools,
     zoomfactor,
     inspectElement,
-    webviewReady,
+    isCurrentWebviewReady,
+    webviewKey,
   ]);
 
   useEffect(() => {
-    if (!ref.current || !webviewReady || isInspecting === undefined) {
+    if (!ref.current || !isCurrentWebviewReady || isInspecting === undefined) {
       return;
     }
     const webview = ref.current as Electron.WebviewTag;
@@ -498,7 +500,7 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
         }
       );
     })();
-  }, [isInspecting, webviewReady]);
+  }, [isInspecting, isCurrentWebviewReady]);
 
   useEffect(() => {
     if (!ref.current || !device.isMobileCapable) {
@@ -506,34 +508,37 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
     }
 
     const webview = ref.current;
-    webview.addEventListener('dom-ready', () => {
+    const insertScrollbarCss = () => {
       webview.insertCSS(`
                ::-webkit-scrollbar {
               display: none;
               } `);
-    });
+    };
+    webview.addEventListener('dom-ready', insertScrollbarCss);
 
     // eslint-disable-next-line consistent-return
     return () => {
-      webview.removeEventListener('dom-ready', () => {});
+      webview.removeEventListener('dom-ready', insertScrollbarCss);
     };
-  }, [device.isMobileCapable]);
+  }, [device.isMobileCapable, webviewKey]);
 
   useEffect(() => {
     const webview = ref.current;
 
     if (isPrimary && webview) {
-      webview.addEventListener('dom-ready', () => {
+      const updatePageTitle = () => {
         const pageTitle = webview.getTitle();
         dispatch(setPageTitle(pageTitle));
-      });
+      };
+      webview.addEventListener('dom-ready', updatePageTitle);
+
+      return () => {
+        webview.removeEventListener('dom-ready', updatePageTitle);
+      };
     }
 
-    // eslint-disable-next-line consistent-return
-    return () => {
-      webview?.removeEventListener('dom-ready', () => {});
-    };
-  }, [dispatch, isPrimary]);
+    return undefined;
+  }, [dispatch, isPrimary, webviewKey]);
 
   const scaledHeight = height * zoomfactor;
   const scaledWidth = width * zoomfactor;
@@ -557,7 +562,7 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
         {loading ? <Spinner spinnerHeight={24} /> : null}
       </div>
       <Toolbar
-        webview={ref.current}
+        webview={webviewElement}
         device={device}
         isJavaScriptDisabled={isJavaScriptDisabled}
         setScreenshotInProgress={setScreenshotInProgress}
@@ -571,8 +576,8 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
       <div className="flex gap-4">
         <div
           style={{
-            height: rulerEnabled(`${width}x${height}`) ? scaledHeight + 30 : scaledHeight,
-            width: rulerEnabled(`${width}x${height}`) ? scaledWidth + 30 : scaledWidth,
+            height: isRulerEnabled ? scaledHeight + 30 : scaledHeight,
+            width: isRulerEnabled ? scaledWidth + 30 : scaledWidth,
           }}
           className="relative origin-top-left overflow-hidden bg-white"
         >
@@ -584,7 +589,7 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
             coordinates={coordinates}
             zoomFactor={zoomfactor}
             night={darkMode}
-            enabled={rulerEnabled(`${width}x${height}`)}
+            enabled={isRulerEnabled}
             defaultGuides={window.electron.store
               .get('userPreferences.guides')
               .flatMap((x: unknown) => x as DefaultGuide[])
@@ -594,6 +599,7 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
           />
           <div className="bg-white">
             <webview
+              key={webviewKey}
               id={device.name}
               src={address}
               style={{
@@ -601,16 +607,16 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
                 width,
                 display: 'inline-flex',
                 transform: `scale(${zoomfactor})`,
-                marginLeft: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
-                marginTop: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
+                marginLeft: isRulerEnabled ? '30px' : 0,
+                marginTop: isRulerEnabled ? '30px' : 0,
               }}
-              ref={ref}
+              ref={setWebviewRef}
               className="origin-top-left"
               /* eslint-disable-next-line react/no-unknown-property */
               preload={`file://${window.responsively.webviewPreloadPath}`}
               data-scale-factor={zoomfactor}
               /* eslint-disable-next-line react/no-unknown-property */
-              allowpopups={isPrimary ? true : undefined}
+              allowpopups={allowPopups}
               /* eslint-disable-next-line react/no-unknown-property */
               useragent={device.userAgent}
               /* eslint-disable-next-line react/no-unknown-property */
@@ -628,7 +634,7 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
                 zoomFactor={zoomfactor}
                 coordinates={coordinates}
                 position={designOverlay.position}
-                rulerMargin={rulerEnabled(`${width}x${height}`) ? 30 : 0}
+                rulerMargin={isRulerEnabled ? 30 : 0}
                 width={width}
                 height={height}
               />
@@ -663,7 +669,7 @@ const Device = ({isPrimary, isJavaScriptDisabled, device, setIndividualDevice}: 
             zoomFactor={zoomfactor}
             coordinates={coordinates}
             position={designOverlay.position}
-            rulerMargin={rulerEnabled(`${width}x${height}`) ? 30 : 0}
+            rulerMargin={isRulerEnabled ? 30 : 0}
             width={width}
             height={height}
           />

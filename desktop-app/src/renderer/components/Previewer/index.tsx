@@ -25,7 +25,7 @@ interface MasonryProps {
   children: React.ReactNode;
 }
 
-const TypedMasonry: React.FC<MasonryProps> = Masonry as any;
+const TypedMasonry = Masonry as unknown as React.FC<MasonryProps>;
 
 const Previewer = () => {
   const activeSuite = useSelector(selectActiveSuite);
@@ -44,8 +44,6 @@ const Previewer = () => {
     fitWidth: true,
     transitionDuration: 0,
   };
-  const getDeviceRenderKey = (deviceId: string) =>
-    `${deviceId}-${disabledJavaScriptByDeviceId[deviceId] ? 'js-off' : 'js-on'}`;
 
   return (
     <div className="h-full">
@@ -69,7 +67,7 @@ const Previewer = () => {
             {isMasonryLayout ? (
               <TypedMasonry options={masonryOptions} className="w-full gap-4 p-2">
                 {devices.map((device) => (
-                  <div key={getDeviceRenderKey(device.id)} className="device-item p-4">
+                  <div key={device.id} className="device-item p-4">
                     <Device
                       device={device}
                       isPrimary={device.id === devices[0].id}
@@ -88,7 +86,7 @@ const Previewer = () => {
               >
                 {isIndividualLayout ? (
                   <Device
-                    key={getDeviceRenderKey(individualDevice.id)}
+                    key={individualDevice.id}
                     device={individualDevice}
                     isPrimary
                     isJavaScriptDisabled={Boolean(
@@ -99,7 +97,7 @@ const Previewer = () => {
                 ) : (
                   devices.map((device, idx) => (
                     <Device
-                      key={getDeviceRenderKey(device.id)}
+                      key={device.id}
                       device={device}
                       isPrimary={idx === 0}
                       isJavaScriptDisabled={Boolean(disabledJavaScriptByDeviceId[device.id])}
