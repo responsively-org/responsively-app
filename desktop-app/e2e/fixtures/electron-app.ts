@@ -97,7 +97,13 @@ export const test = base.extend<Record<string, never>, ElectronFixtures>({
     async ({}, use) => {
       const fixturesDir = path.join(__dirname, 'pages');
       const server = http.createServer((req, res) => {
-        const filePath = path.join(fixturesDir, req.url === '/' ? 'test-page.html' : req.url!);
+        const requested = req.url === '/' ? 'test-page.html' : req.url!;
+        const filePath = path.resolve(fixturesDir, path.basename(requested));
+        if (!filePath.startsWith(fixturesDir)) {
+          res.writeHead(403);
+          res.end('Forbidden');
+          return;
+        }
         const ext = path.extname(filePath);
         const contentType = ext === '.html' ? 'text/html' : 'application/octet-stream';
         fs.readFile(filePath, (err, data) => {
