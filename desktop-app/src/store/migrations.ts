@@ -95,4 +95,16 @@ export const migrations = {
       console.log('Migration for 1.14.0 failed', e);
     }
   },
+  '1.18.1': (store: Store) => {
+    const legacyPreviewLayout = store.get('ui.previewlayout');
+    const previewLayout = store.get('ui.previewLayout');
+
+    if (previewLayout == null && legacyPreviewLayout != null) {
+      store.set('ui.previewLayout', legacyPreviewLayout);
+    }
+
+    if (legacyPreviewLayout != null) {
+      store.delete('ui.previewlayout');
+    }
+  },
 };

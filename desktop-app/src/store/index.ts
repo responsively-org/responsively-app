@@ -18,7 +18,7 @@ const schema = {
         type: 'boolean',
         default: true,
       },
-      previewlayout: {
+      previewLayout: {
         enum: Object.values(PREVIEW_LAYOUTS),
         default: PREVIEW_LAYOUTS.FLEX,
       },
