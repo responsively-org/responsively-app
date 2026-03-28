@@ -13,32 +13,34 @@ export const PreviewSuiteSelector = () => {
   const suites = useSelector(selectSuites);
   const activeSuite = useSelector(selectActiveSuite);
   return (
-    <DropDown
-      label={<Icon icon="heroicons:swatch" fontSize={18} />}
-      options={[
-        ...suites.map((suite) => ({
-          label: (
-            <div className="flex w-full items-center justify-between gap-12 whitespace-nowrap">
-              <span>{suite.name}</span>
-              {suite.id === activeSuite.id ? <Icon icon="mdi:check" /> : null}
-            </div>
-          ),
-          onClick: () => dispatch(setActiveSuite(suite.id)),
-        })),
-        {
-          type: 'separator',
-        },
-        {
-          label: (
-            <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
-              <span>Manage Suites</span>
-            </div>
-          ),
-          onClick: () => {
-            dispatch(setAppView(APP_VIEWS.DEVICE_MANAGER));
+    <div data-testid="suite-selector">
+      <DropDown
+        label={<Icon icon="heroicons:swatch" fontSize={18} />}
+        options={[
+          ...suites.map((suite) => ({
+            label: (
+              <div className="flex w-full items-center justify-between gap-12 whitespace-nowrap">
+                <span>{suite.name}</span>
+                {suite.id === activeSuite.id ? <Icon icon="mdi:check" /> : null}
+              </div>
+            ),
+            onClick: () => dispatch(setActiveSuite(suite.id)),
+          })),
+          {
+            type: 'separator',
           },
-        },
-      ]}
-    />
+          {
+            label: (
+              <div className="flex w-full flex-shrink-0 items-center justify-between gap-12 whitespace-nowrap">
+                <span>Manage Suites</span>
+              </div>
+            ),
+            onClick: () => {
+              dispatch(setAppView(APP_VIEWS.DEVICE_MANAGER));
+            },
+          },
+        ]}
+      />
+    </div>
   );
 };

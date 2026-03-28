@@ -59,7 +59,14 @@ const quickScreenshot = async (arg: ScreenshotArgs): Promise<ScreenshotResult> =
   const filePath = path.join(dir, `/${fileName}-${Date.now()}.jpeg`);
   await ensureDir(dir);
   await writeFile(filePath, image.toJPEG(100));
-  setTimeout(() => shell.showItemInFolder(filePath), 100);
+  if (process.env.E2E_TEST === 'true') {
+    // Record the call for E2E test verification without opening Finder
+    const g = global as typeof globalThis & {__e2eShowItemCalls?: string[]};
+    g.__e2eShowItemCalls = g.__e2eShowItemCalls || [];
+    g.__e2eShowItemCalls.push(filePath);
+  } else {
+    setTimeout(() => shell.showItemInFolder(filePath), 100);
+  }
 
   return {done: true};
 };

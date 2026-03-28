@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Color Scheme Test</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: sans-serif;
+        background-color: #ffffff;
+        color: #000000;
+        transition: none;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #1a1a2e;
+          color: #e0e0e0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="heading">Color Scheme Test</h1>
+    <p id="scheme-label">Current scheme: detecting...</p>
+
+    <script>
+      function updateLabel() {
+        var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.getElementById('scheme-label').textContent =
+          'Current scheme: ' + (isDark ? 'dark' : 'light');
+      }
+
+      updateLabel();
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateLabel);
+    </script>
+  </body>
+</html>

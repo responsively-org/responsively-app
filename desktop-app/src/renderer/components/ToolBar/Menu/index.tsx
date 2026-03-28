@@ -38,7 +38,7 @@ const Menu = () => {
 
   return (
     <div className="relative mr-2 flex items-center" ref={ref}>
-      <Button onClick={handleFlyout} isActive={isMenuFlyoutOpen}>
+      <Button onClick={handleFlyout} isActive={isMenuFlyoutOpen} data-testid="menu-button">
         <Icon icon="carbon:overflow-menu-vertical" />
         {notifications && notifications?.length > 0 && Boolean(hasNewNotifications) && (
           <NotificationsBubble />

@@ -11,5 +11,9 @@ export const ColorBlindnessControls = () => {
     webViewPubSub.publish(COLOR_BLINDNESS_CHANNEL, {simulationName});
   }, [simulationName]);
 
-  return <VisionSimulationDropDown simulationName={simulationName} onChange={setSimulationName} />;
+  return (
+    <div data-testid="color-blindness-controls">
+      <VisionSimulationDropDown simulationName={simulationName} onChange={setSimulationName} />
+    </div>
+  );
 };

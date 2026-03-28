@@ -1,7 +1,12 @@
 import path from 'path';
+import {app} from 'electron';
 import {homedir} from 'os';
 import {DOCK_POSITION, PREVIEW_LAYOUTS} from '../common/constants';
 import {migrations} from './migrations';
+
+if (process.env.E2E_USER_DATA_DIR) {
+  app.setPath('userData', process.env.E2E_USER_DATA_DIR);
+}
 
 const Store = require('electron-store');
 
@@ -42,6 +47,7 @@ const schema = {
         default: DOCK_POSITION.BOTTOM,
       },
     },
+    default: {},
   },
   deviceManager: {
     type: 'object',

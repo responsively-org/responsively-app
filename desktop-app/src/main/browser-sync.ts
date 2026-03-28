@@ -2,9 +2,21 @@
 import BrowserSync, {BrowserSyncInstance} from 'browser-sync';
 import fs from 'fs-extra';
 
-export const BROWSER_SYNC_PORT = 12719;
-export const BROWSER_SYNC_HOST = `localhost:${BROWSER_SYNC_PORT}`;
-export const BROWSER_SYNC_URL = `https://${BROWSER_SYNC_HOST}/browser-sync/browser-sync-client.js?v=2.27.10`;
+const DEFAULT_BROWSER_SYNC_PORT = 12719;
+
+// Each instance picks a unique port to allow parallel E2E runs
+const resolvedPort: number =
+  process.env.E2E_TEST === 'true'
+    ? DEFAULT_BROWSER_SYNC_PORT + Math.floor(Math.random() * 10000)
+    : DEFAULT_BROWSER_SYNC_PORT;
+
+export function getBrowserSyncPort(): number {
+  return resolvedPort;
+}
+
+export function getBrowserSyncHost(): string {
+  return `localhost:${resolvedPort}`;
+}
 
 const browserSyncEmbed: BrowserSyncInstance = BrowserSync.create('embed');
 
@@ -25,7 +37,7 @@ export async function initInstance(): Promise<BrowserSyncInstance> {
         https: true,
         notify: false,
         ui: false,
-        port: BROWSER_SYNC_PORT,
+        port: resolvedPort,
       },
       (err: Error, bs: BrowserSyncInstance) => {
         if (err) {

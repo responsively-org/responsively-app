@@ -8,7 +8,7 @@ test.describe('Device Manager', () => {
     await expect(mainWindow.getByText('DEFAULT DEVICES')).toBeVisible({
       timeout: 10_000,
     });
-    await expect(mainWindow.getByText('CUSTOM DEVICES')).toBeVisible();
+    await expect(mainWindow.getByText('CUSTOM DEVICES', {exact: true})).toBeVisible();
   });
 
   test('search input filters device list', async ({mainWindow}) => {

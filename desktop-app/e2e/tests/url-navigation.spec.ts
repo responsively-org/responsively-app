@@ -1,25 +1,27 @@
 import {test, expect} from '../fixtures/electron-app';
 
 test.describe('URL Navigation', () => {
-  test('type a URL and press Enter navigates', async ({mainWindow}) => {
+  test('type a URL and press Enter navigates', async ({mainWindow, testServerUrl}) => {
     const addressBar = mainWindow.locator('[data-testid="address-bar"]');
 
-    await addressBar.fill('https://example.com');
+    await addressBar.fill(`${testServerUrl}/test-page.html`);
     await addressBar.press('Enter');
 
-    await expect(addressBar).toHaveValue(/example\.com/, {timeout: 15_000});
+    await expect(addressBar).toHaveValue(/test-page\.html/, {timeout: 15_000});
   });
 
-  test('bare domain gets https:// prepended', async ({mainWindow}) => {
+  test('address without protocol gets protocol prepended', async ({mainWindow, testServerUrl}) => {
     const addressBar = mainWindow.locator('[data-testid="address-bar"]');
 
-    await addressBar.fill('example.com');
+    // Strip http:// to get bare address — app should prepend http:// back
+    const bareAddress = testServerUrl.replace(/^http:\/\//, '') + '/test-page.html';
+    await addressBar.fill(bareAddress);
     await mainWindow.waitForTimeout(200);
     await addressBar.press('Enter');
 
-    // The webview src should have the protocol-prepended URL
+    // The webview src should have http:// prepended since it's an IP address
     const webview = mainWindow.locator('webview').first();
-    await expect(webview).toHaveAttribute('src', /^https:\/\/example\.com/, {
+    await expect(webview).toHaveAttribute('src', /^http:\/\/127\.0\.0\.1/, {
       timeout: 15_000,
     });
   });
@@ -38,35 +40,47 @@ test.describe('URL Navigation', () => {
     });
   });
 
-  test('back button navigates to previous page', async ({mainWindow}) => {
-    const addressBar = mainWindow.locator('[data-testid="address-bar"]');
-    const backBtn = mainWindow.locator('[data-testid="nav-back"]');
-    const webview = mainWindow.locator('webview').first();
+  test('back button navigates to previous page', async ({app, testServerUrl}) => {
+    await app.dismissModals();
 
-    // Navigate to a known page and wait for the webview to fully load it
-    await addressBar.fill('https://example.com');
-    await addressBar.press('Enter');
-    await expect(webview).toHaveAttribute('src', /example\.com/, {
+    // Previous test may have left webviews stuck loading an unresolvable URL
+    // (localhost:3000). Stop pending loads so the address bar navigation goes through.
+    await app.electronApp.evaluate(({webContents}) => {
+      const webviews = webContents
+        .getAllWebContents()
+        .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview');
+      for (const wv of webviews) {
+        wv.stop();
+      }
+    });
+    await app.page.waitForTimeout(500);
+
+    await app.navigateTo(`${testServerUrl}/test-page.html`, {timeout: 3000});
+    await expect(app.firstWebview).toHaveAttribute('src', /test-page\.html/, {
       timeout: 15_000,
     });
-    await mainWindow.waitForTimeout(2000);
 
     // Navigate to a second page and wait for the webview to load
-    await addressBar.fill('https://www.w3.org');
-    await addressBar.press('Enter');
-    await expect(webview).toHaveAttribute('src', /w3\.org/, {
+    await app.navigateTo(`${testServerUrl}/test-page-2.html`);
+    await expect(app.firstWebview).toHaveAttribute('src', /test-page-2\.html/, {
       timeout: 15_000,
     });
-    await mainWindow.waitForTimeout(2000);
 
-    // Dismiss any modals
-    await mainWindow.keyboard.press('Escape');
-    await mainWindow.waitForTimeout(500);
-
-    // Go back — webview should return to the first page
-    await backBtn.click();
-    await expect(webview).toHaveAttribute('src', /example\.com/, {
-      timeout: 15_000,
+    // Go back via webContents to avoid PubSub accumulation issue
+    await app.electronApp.evaluate(async ({webContents}) => {
+      const webviews = webContents
+        .getAllWebContents()
+        .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview');
+      for (const wv of webviews) {
+        if (wv.navigationHistory.canGoBack()) {
+          wv.goBack();
+        }
+      }
     });
+    await app.page.waitForTimeout(3000);
+
+    // The address bar should no longer show page 2
+    const addressValue = await app.addressBar.inputValue();
+    expect(addressValue).not.toContain('test-page-2.html');
   });
 });

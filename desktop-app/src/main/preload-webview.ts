@@ -2,8 +2,9 @@ import {ipcRenderer} from 'electron';
 
 const documentBodyInit = () => {
   // Browser Sync
+  const bsPort = ipcRenderer.sendSync('get-browser-sync-port');
   const bsScript = window.document.createElement('script');
-  bsScript.src = 'https://localhost:12719/browser-sync/browser-sync-client.js?v=2.27.10';
+  bsScript.src = `https://localhost:${bsPort}/browser-sync/browser-sync-client.js?v=2.27.10`;
   bsScript.async = true;
   window.document.body.appendChild(bsScript);
 

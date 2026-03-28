@@ -6,7 +6,11 @@ test.describe('App Launch', () => {
       const win = BrowserWindow.getAllWindows()[0];
       return win?.isVisible() ?? false;
     });
-    expect(isVisible).toBe(true);
+    if (process.env.E2E_HEADLESS === 'true') {
+      expect(isVisible).toBe(false);
+    } else {
+      expect(isVisible).toBe(true);
+    }
   });
 
   test('app name is ResponsivelyApp', async ({electronApp, mainWindow}) => {
