@@ -32,11 +32,11 @@ jobs:
         run: |
           yarn install --network-timeout 120000
 
-      - name: yarn test
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build
+        run: yarn run build
+
+      - name: Lint, typecheck and unit test
         run: |
-          yarn run package
           yarn run lint
           yarn exec tsc
           yarn test
@@ -54,3 +54,8 @@ jobs:
           name: playwright-report
           path: desktop-app/e2e/playwright-report/
           retention-days: 14
+
+      - name: Package
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn run package
