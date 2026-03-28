@@ -12,7 +12,8 @@ type ElectronFixtures = {
   testServerUrl: string;
 };
 
-export const test = base.extend<Record<string, never>, ElectronFixtures>({
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const test = base.extend<{}, ElectronFixtures>({
   electronApp: [
     // eslint-disable-next-line no-empty-pattern
     async ({}, use) => {
@@ -74,9 +75,10 @@ export const test = base.extend<Record<string, never>, ElectronFixtures>({
       // Hijack window.alert so it never blocks the renderer.
       // Messages are stored in window.__e2eAlerts for test assertions.
       await window.evaluate(() => {
-        (window as any).__e2eAlerts = [] as string[];
-        window.alert = (msg: string) => {
-          (window as any).__e2eAlerts.push(msg);
+        const w = globalThis as any;
+        w.__e2eAlerts = [] as string[];
+        w.alert = (msg: string) => {
+          w.__e2eAlerts.push(msg);
         };
       });
 

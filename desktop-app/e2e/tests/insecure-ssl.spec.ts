@@ -6,7 +6,8 @@ import os from 'os';
 import path from 'path';
 
 // Extend the base test to provide a self-signed HTTPS server
-const test = baseTest.extend<Record<string, never>, {selfSignedUrl: string}>({
+// eslint-disable-next-line @typescript-eslint/ban-types
+const test = baseTest.extend<{}, {selfSignedUrl: string}>({
   selfSignedUrl: [
     // eslint-disable-next-line no-empty-pattern
     async ({}, use) => {
