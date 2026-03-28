@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: ${{ !env.ACT && 'npm' || '' }} # Disable cache for nektos/act
+          cache: ${{ !env.ACT && 'yarn' || '' }} # Disable cache for nektos/act
           cache-dependency-path: ./desktop-app/yarn.lock
 
       - name: yarn install
