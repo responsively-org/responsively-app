@@ -46,6 +46,7 @@ jobs:
         env:
           CI: true
           E2E_TEST: true
+          E2E_HEADLESS: true
 
       - name: Upload E2E Report
         uses: actions/upload-artifact@v4
