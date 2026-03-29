@@ -229,7 +229,7 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
     const proxyConfig = (settings.get(NETWORK_CONFIGURATION) || {}).proxy;
     if (proxyConfig != null && proxyConfig.active) {
       const schConfig =
-        proxyConfig[url.substr(0, url.indexOf(':')).toLowerCase()];
+        proxyConfig[url.substring(0, url.indexOf(':')).toLowerCase()];
       if (schConfig != null && !schConfig.useDefault) {
         callback(schConfig.user, schConfig.password);
       } else {
