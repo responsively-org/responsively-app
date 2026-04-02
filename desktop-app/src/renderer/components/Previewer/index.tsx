@@ -44,7 +44,7 @@ const Previewer = () => {
   };
 
   return (
-    <div className="h-full">
+    <div className="flex h-full flex-col overflow-hidden">
       {isIndividualLayout && (
         <IndividualLayoutToolbar
           individualDevice={individualDevice}
@@ -53,7 +53,7 @@ const Previewer = () => {
         />
       )}
       <div
-        className={cx('flex h-full', {
+        className={cx('flex overflow-y-auto', {
           'flex-col': dockPosition === DOCK_POSITION.BOTTOM,
           'flex-row': dockPosition === DOCK_POSITION.RIGHT,
           'justify-between': !isIndividualLayout,
