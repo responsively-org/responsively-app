@@ -89,20 +89,24 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const ref = useRef<Electron.WebviewTag>(null);
   const isNavigatingFromAddressBar = useRef<boolean>(false);
 
+  const [initialAddress] = useState(address);
+
   useEffect(() => {
-    if (ref.current && isPrimary) {
+    if (ref.current) {
       try {
         const currentUrl = ref.current.getURL();
         if (address !== currentUrl) {
-          isNavigatingFromAddressBar.current = true;
-          dispatch(setAddress(address));
+          if (isPrimary) {
+            isNavigatingFromAddressBar.current = true;
+          }
+          ref.current.loadURL(address);
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error('Error loading URL', err);
       }
     }
-  }, [address, isPrimary, dispatch]);
+  }, [address, isPrimary]);
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
@@ -588,7 +592,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         <div className="bg-white">
           <webview
             id={device.name}
-            src={address}
+            src={initialAddress}
             style={{
               height,
               width,
