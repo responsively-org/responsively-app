@@ -1,14 +1,28 @@
-import {SHORTCUT_KEYS, ShortcutChannel} from './constants';
+import {useSelector} from 'react-redux';
+import {selectResolvedShortcutBindings} from 'renderer/store/features/shortcuts';
+import {ShortcutChannel} from './constants';
 import useMousetrapEmitter from './useMousetrapEmitter';
 
-const KeyboardShortcutsManager = () => {
-  // eslint-disable-next-line no-restricted-syntax
-  for (const [channel, keys] of Object.entries(SHORTCUT_KEYS)) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useMousetrapEmitter(keys, channel as ShortcutChannel);
-  }
+interface ShortcutBindingProps {
+  channel: ShortcutChannel;
+  keys: string[];
+}
 
+const ShortcutBinding = ({channel, keys}: ShortcutBindingProps) => {
+  useMousetrapEmitter(keys, channel);
   return null;
+};
+
+const KeyboardShortcutsManager = () => {
+  const shortcutBindings = useSelector(selectResolvedShortcutBindings);
+
+  return (
+    <>
+      {Object.entries(shortcutBindings).map(([channel, keys]) => (
+        <ShortcutBinding key={channel} channel={channel as ShortcutChannel} keys={keys} />
+      ))}
+    </>
+  );
 };
 
 export default KeyboardShortcutsManager;
