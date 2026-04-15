@@ -50,8 +50,6 @@
 > A modified browser built using [Electron](https://www.electronjs.org/) that helps in responsive web development.
 > <br>
 
-![Quick Demo](https://responsively.app/assets/img/responsively-app.gif)
-
 ## Features
 
 1. Mirrored User-interactions across all devices.
@@ -60,6 +58,65 @@
 4. 30+ built-in device profiles with the option to add custom devices.
 5. One-click screenshots on all your devices.
 6. Hot reloading is supported for developers.
+
+## Quick Start
+
+### For users
+
+1. Download the app for your platform from https://responsively.app/download.
+2. Open your local or staging URL inside Responsively.
+3. Interact once and verify behavior across all synced device previews.
+
+```text
+http://localhost:3000
+https://staging.example.com
+```
+
+### For contributors
+
+```bash
+git clone https://github.com/responsively-org/responsively-app.git
+cd responsively-app/desktop-app
+yarn
+yarn dev
+```
+
+## Practical Examples
+
+### Example 1: Validate a local app across devices
+
+```bash
+# In your web app project
+npm run dev
+```
+
+Then open `http://localhost:3000` in Responsively and test interactions (typing, clicking, scrolling) once to see them mirrored on every device.
+
+### Example 2: Capture screenshots for QA or PRs
+
+Use the built-in screenshot action to export device previews and attach them to bug reports or pull requests.
+
+### Example 3: Run project checks before opening a PR
+
+```bash
+cd desktop-app
+yarn lint
+yarn test
+yarn test:e2e:headless
+```
+
+## Common Use Cases
+
+- **Responsive QA before release:** Quickly verify breakpoints, spacing, and component behavior on multiple screen sizes.
+- **Debugging device-specific UI issues:** Inspect all previews with synchronized interactions to reproduce viewport-specific bugs faster.
+- **Sharing visual proof in pull requests:** Capture screenshots from multiple devices and include them in issue/PR discussions.
+- **Live frontend development:** Keep Responsively open while your app hot-reloads to continuously monitor responsive changes.
+
+## Demo
+
+See the quick demo below for the workflow in action:
+
+![Quick Demo](https://responsively.app/assets/img/responsively-app.gif)
 
 Please visit the website to learn more about the application - https://responsively.app
 
