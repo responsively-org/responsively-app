@@ -26,7 +26,7 @@ test.describe('Keyboard Shortcuts Modal', () => {
     }
 
     await expect(app.page.getByText('General Shortcuts')).toBeVisible();
-    await expect(app.page.getByText('Previewer Shorcuts')).toBeVisible();
+    await expect(app.page.getByText('Previewer Shortcuts')).toBeVisible();
   });
 
   test('shortcuts modal can be closed', async ({app}) => {
