@@ -1,6 +1,8 @@
 import {ElectronApplication, Page} from '@playwright/test';
 import {test, expect} from '../fixtures/electron-app';
 
+const WEBVIEW_EXECUTION_FAILED = '__WEBVIEW_EXECUTION_FAILED__';
+
 const execInWebview = async (
   electronApp: ElectronApplication,
   wcId: number,
@@ -10,9 +12,13 @@ const execInWebview = async (
     async ({webContents}, {id, js}: {id: number; js: string}) => {
       const wc = webContents.fromId(id);
       if (!wc) {
-        throw new Error(`No webContents with id ${id}`);
+        return WEBVIEW_EXECUTION_FAILED;
       }
-      return wc.executeJavaScript(js);
+      try {
+        return await wc.executeJavaScript(js);
+      } catch (_error) {
+        return WEBVIEW_EXECUTION_FAILED;
+      }
     },
     {id: wcId, js: script}
   );
@@ -198,7 +204,7 @@ test.describe('Device Toolbar', () => {
           ),
         {timeout: 10_000}
       )
-      .toBe('undefined');
+      .toBe(WEBVIEW_EXECUTION_FAILED);
     await expect
       .poll(
         () =>

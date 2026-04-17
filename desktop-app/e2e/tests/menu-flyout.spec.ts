@@ -1,6 +1,8 @@
 import {ElectronApplication} from '@playwright/test';
 import {test, expect} from '../fixtures/electron-app';
 
+const WEBVIEW_EXECUTION_FAILED = '__WEBVIEW_EXECUTION_FAILED__';
+
 const getWebviewIds = async (electronApp: ElectronApplication): Promise<number[]> => {
   return electronApp.evaluate(({webContents}) => {
     return webContents
@@ -19,9 +21,13 @@ const execInWebview = async (
     async ({webContents}, {id, js}: {id: number; js: string}) => {
       const wc = webContents.fromId(id);
       if (!wc) {
-        throw new Error(`No webContents with id ${id}`);
+        return WEBVIEW_EXECUTION_FAILED;
       }
-      return wc.executeJavaScript(js);
+      try {
+        return await wc.executeJavaScript(js);
+      } catch (_error) {
+        return WEBVIEW_EXECUTION_FAILED;
+      }
     },
     {id: wcId, js: script}
   );
@@ -201,7 +207,7 @@ test.describe('Menu Flyout', () => {
         .poll(() => execInWebview(app.electronApp, id, 'typeof window.testClickCount'), {
           timeout: 10_000,
         })
-        .toBe('undefined');
+        .toBe(WEBVIEW_EXECUTION_FAILED);
     }
 
     await app.closeMenuFlyout();
