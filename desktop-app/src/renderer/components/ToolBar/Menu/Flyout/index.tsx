@@ -5,6 +5,7 @@ import UITheme from './UITheme';
 import Zoom from './Zoom';
 import AllowInSecureSSL from './AllowInSecureSSL';
 import ClearHistory from './ClearHistory';
+import JavaScriptControls from './JavaScriptControls';
 import PreviewLayout from './PreviewLayout';
 import Bookmark from './Bookmark';
 import {Settings} from './Settings';
@@ -20,6 +21,7 @@ const MenuFlyout = ({closeFlyout}: Props) => {
       <UITheme />
       <Devtools />
       <AllowInSecureSSL />
+      <JavaScriptControls />
       <ClearHistory />
       <Divider />
 

@@ -6,10 +6,10 @@ import {
   setIsCapturingScreenshot,
   setIsInspecting,
   setRotate,
-  setNotifications,
 } from 'renderer/store/features/renderer';
 import {Icon} from '@iconify/react';
 import {ScreenshotAllArgs} from 'main/screenshot';
+import {selectJavaScriptDisabledByDeviceId} from 'renderer/store/features/javascript';
 import {selectActiveSuite} from 'renderer/store/features/device-manager';
 import WebPage from 'main/screenshot/webpage';
 import {getDevicesMap} from 'common/deviceList';
@@ -35,14 +35,21 @@ const ToolBar = () => {
   const isInspecting = useSelector(selectIsInspecting);
   const isCapturingScreenshot = useSelector(selectIsCapturingScreenshot);
   const activeSuite = useSelector(selectActiveSuite);
+  const disabledJavaScriptByDeviceId = useSelector(selectJavaScriptDisabledByDeviceId);
   const dispatch = useDispatch();
+  const isAnyJavaScriptDisabled = activeSuite.devices.some(
+    (deviceId) => disabledJavaScriptByDeviceId[deviceId]
+  );
+  const screenshotAllTitle = isAnyJavaScriptDisabled
+    ? 'Screenshot All WebViews is unavailable while JavaScript is disabled for one or more previews'
+    : 'Screenshot All WebViews';
 
   function handleInspectShortcut() {
     dispatch(setIsInspecting(!isInspecting));
   }
 
   const screenshotCaptureHandler = async () => {
-    if (isCapturingScreenshot) {
+    if (isCapturingScreenshot || isAnyJavaScriptDisabled) {
       return;
     }
 
@@ -114,7 +121,8 @@ const ToolBar = () => {
       <Button
         onClick={screenshotCaptureHandler}
         isActive={isCapturingScreenshot}
-        title="Screenshot All WebViews"
+        disabled={isAnyJavaScriptDisabled}
+        title={screenshotAllTitle}
       >
         <Icon icon="lucide:camera" />
       </Button>

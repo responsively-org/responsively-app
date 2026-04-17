@@ -1,4 +1,35 @@
+import {ElectronApplication, Page} from '@playwright/test';
 import {test, expect} from '../fixtures/electron-app';
+
+const WEBVIEW_EXECUTION_FAILED = '__WEBVIEW_EXECUTION_FAILED__';
+
+const execInWebview = async (
+  electronApp: ElectronApplication,
+  wcId: number,
+  script: string
+): Promise<unknown> => {
+  return electronApp.evaluate(
+    async ({webContents}, {id, js}: {id: number; js: string}) => {
+      const wc = webContents.fromId(id);
+      if (!wc) {
+        return WEBVIEW_EXECUTION_FAILED;
+      }
+      try {
+        return await wc.executeJavaScript(js);
+      } catch (_error) {
+        return WEBVIEW_EXECUTION_FAILED;
+      }
+    },
+    {id: wcId, js: script}
+  );
+};
+
+const getNthWebviewId = async (page: Page, index: number): Promise<number | null> => {
+  return page.evaluate((nth) => {
+    const webview = document.querySelectorAll('webview')[nth] as Electron.WebviewTag | undefined;
+    return webview?.getWebContentsId?.() ?? null;
+  }, index);
+};
 
 test.describe('Device Toolbar', () => {
   test('each device shows its name and dimensions in the header', async ({app}) => {
@@ -88,5 +119,130 @@ test.describe('Device Toolbar', () => {
     // Click again to disable for cleanup
     await rulerBtn.click();
     await app.page.waitForTimeout(300);
+  });
+
+  test('per-device javascript toggle remounts only the targeted preview and blocks screenshots', async ({
+    app,
+    testServerUrl,
+  }) => {
+    await app.dismissModals();
+    await app.navigateTo(`${testServerUrl}/test-page.html`, {timeout: 5000});
+
+    await expect(app.firstWebview).toHaveAttribute('src', /test-page\.html/, {
+      timeout: 15_000,
+    });
+
+    const initialFirstWebviewId = await getNthWebviewId(app.page, 0);
+    const initialSecondWebviewId = await getNthWebviewId(app.page, 1);
+
+    expect(initialFirstWebviewId).not.toBeNull();
+    expect(initialSecondWebviewId).not.toBeNull();
+
+    await expect
+      .poll(
+        () =>
+          execInWebview(
+            app.electronApp,
+            initialFirstWebviewId as number,
+            'typeof window.testClickCount'
+          ),
+        {timeout: 10_000}
+      )
+      .toBe('number');
+    await expect
+      .poll(
+        () =>
+          execInWebview(
+            app.electronApp,
+            initialSecondWebviewId as number,
+            'typeof window.testClickCount'
+          ),
+        {timeout: 10_000}
+      )
+      .toBe('number');
+
+    const firstToolbar = app.page
+      .locator('button[title="Refresh This View"]')
+      .first()
+      .locator('xpath=ancestor::div[contains(@class, "flex items-center justify-between gap-1")]');
+    const toolbarButtons = firstToolbar.locator(
+      'xpath=.//div[contains(@class, "my-1 inline-flex")]//button'
+    );
+    const quickScreenshotBtn = toolbarButtons.nth(1);
+    const fullPageScreenshotBtn = toolbarButtons.nth(2);
+    const disabledTitle =
+      'Screenshots are unavailable while JavaScript is disabled for this preview';
+
+    await expect(quickScreenshotBtn).toBeEnabled();
+    await expect(fullPageScreenshotBtn).toBeEnabled();
+
+    await firstToolbar.locator('button:has(span.sr-only)').first().click();
+    await app.page.locator('button:has-text("Disable JavaScript")').click();
+
+    await expect(quickScreenshotBtn).toBeDisabled();
+    await expect(fullPageScreenshotBtn).toBeDisabled();
+    await expect(quickScreenshotBtn).toHaveAttribute('title', disabledTitle);
+    await expect(fullPageScreenshotBtn).toHaveAttribute('title', disabledTitle);
+
+    await expect
+      .poll(() => getNthWebviewId(app.page, 0), {timeout: 10_000})
+      .not.toBe(initialFirstWebviewId);
+
+    const disabledFirstWebviewId = await getNthWebviewId(app.page, 0);
+    const disabledSecondWebviewId = await getNthWebviewId(app.page, 1);
+
+    expect(disabledFirstWebviewId).not.toBeNull();
+    expect(disabledSecondWebviewId).toBe(initialSecondWebviewId);
+
+    await expect
+      .poll(
+        () =>
+          execInWebview(
+            app.electronApp,
+            disabledFirstWebviewId as number,
+            'typeof window.testClickCount'
+          ),
+        {timeout: 10_000}
+      )
+      .toBe(WEBVIEW_EXECUTION_FAILED);
+    await expect
+      .poll(
+        () =>
+          execInWebview(
+            app.electronApp,
+            disabledSecondWebviewId as number,
+            'typeof window.testClickCount'
+          ),
+        {timeout: 10_000}
+      )
+      .toBe('number');
+
+    await firstToolbar.locator('button:has(span.sr-only)').first().click();
+    await app.page.locator('button:has-text("Enable JavaScript")').click();
+
+    await expect(quickScreenshotBtn).toBeEnabled();
+    await expect(fullPageScreenshotBtn).toBeEnabled();
+
+    await expect
+      .poll(() => getNthWebviewId(app.page, 0), {timeout: 10_000})
+      .not.toBe(disabledFirstWebviewId);
+
+    const reenabledFirstWebviewId = await getNthWebviewId(app.page, 0);
+    const reenabledSecondWebviewId = await getNthWebviewId(app.page, 1);
+
+    expect(reenabledFirstWebviewId).not.toBeNull();
+    expect(reenabledSecondWebviewId).toBe(initialSecondWebviewId);
+
+    await expect
+      .poll(
+        () =>
+          execInWebview(
+            app.electronApp,
+            reenabledFirstWebviewId as number,
+            'typeof window.testClickCount'
+          ),
+        {timeout: 10_000}
+      )
+      .toBe('number');
   });
 });

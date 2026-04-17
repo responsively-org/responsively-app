@@ -6,6 +6,7 @@ import {selectDockPosition, selectIsDevtoolsOpen} from 'renderer/store/features/
 import {getDevicesMap, Device as IDevice} from 'common/deviceList';
 import {useState} from 'react';
 import {selectLayout} from 'renderer/store/features/renderer';
+import {selectJavaScriptDisabledByDeviceId} from 'renderer/store/features/javascript';
 import Masonry from 'react-masonry-component';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
@@ -24,7 +25,7 @@ interface MasonryProps {
   children: React.ReactNode;
 }
 
-const TypedMasonry: React.FC<MasonryProps> = Masonry as any;
+const TypedMasonry = Masonry as unknown as React.FC<MasonryProps>;
 
 const Previewer = () => {
   const activeSuite = useSelector(selectActiveSuite);
@@ -32,6 +33,7 @@ const Previewer = () => {
   const dockPosition = useSelector(selectDockPosition);
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const layout = useSelector(selectLayout);
+  const disabledJavaScriptByDeviceId = useSelector(selectJavaScriptDisabledByDeviceId);
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
   const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY; // New state for Masonry layout
@@ -69,6 +71,7 @@ const Previewer = () => {
                     <Device
                       device={device}
                       isPrimary={device.id === devices[0].id}
+                      isJavaScriptDisabled={Boolean(disabledJavaScriptByDeviceId[device.id])}
                       setIndividualDevice={setIndividualDevice}
                     />
                   </div>
@@ -86,6 +89,9 @@ const Previewer = () => {
                     key={individualDevice.id}
                     device={individualDevice}
                     isPrimary
+                    isJavaScriptDisabled={Boolean(
+                      disabledJavaScriptByDeviceId[individualDevice.id]
+                    )}
                     setIndividualDevice={setIndividualDevice}
                   />
                 ) : (
@@ -94,6 +100,7 @@ const Previewer = () => {
                       key={device.id}
                       device={device}
                       isPrimary={idx === 0}
+                      isJavaScriptDisabled={Boolean(disabledJavaScriptByDeviceId[device.id])}
                       setIndividualDevice={setIndividualDevice}
                     />
                   ))
