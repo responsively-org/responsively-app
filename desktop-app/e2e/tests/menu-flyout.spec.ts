@@ -1,4 +1,31 @@
+import {ElectronApplication} from '@playwright/test';
 import {test, expect} from '../fixtures/electron-app';
+
+const getWebviewIds = async (electronApp: ElectronApplication): Promise<number[]> => {
+  return electronApp.evaluate(({webContents}) => {
+    return webContents
+      .getAllWebContents()
+      .filter((wc: Electron.WebContents & {getType?: () => string}) => wc.getType?.() === 'webview')
+      .map((wc: Electron.WebContents) => wc.id);
+  });
+};
+
+const execInWebview = async (
+  electronApp: ElectronApplication,
+  wcId: number,
+  script: string
+): Promise<unknown> => {
+  return electronApp.evaluate(
+    async ({webContents}, {id, js}: {id: number; js: string}) => {
+      const wc = webContents.fromId(id);
+      if (!wc) {
+        throw new Error(`No webContents with id ${id}`);
+      }
+      return wc.executeJavaScript(js);
+    },
+    {id: wcId, js: script}
+  );
+};
 
 test.describe('Menu Flyout', () => {
   test('clicking the overflow menu button opens the flyout', async ({app}) => {
@@ -120,6 +147,87 @@ test.describe('Menu Flyout', () => {
     await app.openMenuFlyout();
 
     await expect(app.page.getByText('Settings')).toBeVisible();
+
+    await app.closeMenuFlyout();
+  });
+
+  test('javascript all previews toggle disables every preview and blocks screenshot all', async ({
+    app,
+    testServerUrl,
+  }) => {
+    await app.dismissModals();
+    await app.navigateTo(`${testServerUrl}/test-page.html`, {timeout: 5000});
+
+    await expect(app.firstWebview).toHaveAttribute('src', /test-page\.html/, {
+      timeout: 15_000,
+    });
+
+    const initialIds = await getWebviewIds(app.electronApp);
+    expect(initialIds.length).toBeGreaterThanOrEqual(1);
+
+    for (const id of initialIds) {
+      await expect
+        .poll(() => execInWebview(app.electronApp, id, 'typeof window.testClickCount'), {
+          timeout: 10_000,
+        })
+        .toBe('number');
+    }
+
+    const screenshotAllBtn = app.page.locator('button[title="Screenshot All WebViews"]');
+    await expect(screenshotAllBtn).toBeEnabled();
+
+    await app.openMenuFlyout();
+    const jsRow = app.page.getByText('JavaScript (All Previews)').locator('xpath=..');
+    const jsToggle = jsRow.locator('input[type="checkbox"]');
+
+    await expect(jsToggle).toBeChecked();
+    await jsToggle.uncheck({force: true});
+
+    await expect(screenshotAllBtn).toBeDisabled();
+    await expect(screenshotAllBtn).toHaveAttribute(
+      'title',
+      'Screenshot All WebViews is unavailable while JavaScript is disabled for one or more previews'
+    );
+
+    await expect
+      .poll(async () => JSON.stringify(await getWebviewIds(app.electronApp)), {timeout: 10_000})
+      .not.toBe(JSON.stringify(initialIds));
+
+    const disabledIds = await getWebviewIds(app.electronApp);
+    expect(disabledIds.length).toBe(initialIds.length);
+
+    for (const id of disabledIds) {
+      await expect
+        .poll(() => execInWebview(app.electronApp, id, 'typeof window.testClickCount'), {
+          timeout: 10_000,
+        })
+        .toBe('undefined');
+    }
+
+    await app.closeMenuFlyout();
+    await app.openMenuFlyout();
+    const reenabledToggle = app.page
+      .getByText('JavaScript (All Previews)')
+      .locator('xpath=..')
+      .locator('input[type="checkbox"]');
+
+    await reenabledToggle.check({force: true});
+
+    await expect(screenshotAllBtn).toBeEnabled();
+    await expect(screenshotAllBtn).toHaveAttribute('title', 'Screenshot All WebViews');
+
+    await expect
+      .poll(async () => JSON.stringify(await getWebviewIds(app.electronApp)), {timeout: 10_000})
+      .not.toBe(JSON.stringify(disabledIds));
+
+    const reenabledIds = await getWebviewIds(app.electronApp);
+    for (const id of reenabledIds) {
+      await expect
+        .poll(() => execInWebview(app.electronApp, id, 'typeof window.testClickCount'), {
+          timeout: 10_000,
+        })
+        .toBe('number');
+    }
 
     await app.closeMenuFlyout();
   });
