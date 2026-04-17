@@ -40,7 +40,7 @@ const IndividualLayoutToolbar = ({individualDevice, setIndividualDevice, devices
       >
         <TabList
           className={cx(
-            'custom-scrollbar flex w-full max-w-full overflow-x-auto overflow-y-hidden scroll-smooth whitespace-nowrap'
+            'custom-scrollbar flex w-full max-w-full gap-1 overflow-x-auto overflow-y-hidden scroll-smooth whitespace-nowrap border-b border-slate-400/60 dark:border-white'
           )}
         >
           {devices.map((device, idx) => (
