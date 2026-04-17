@@ -155,16 +155,23 @@ test.describe('Device Toolbar', () => {
       )
       .toBe('number');
 
-    const quickScreenshotBtn = app.page.locator('button[title="Quick Screenshot"]').first();
-    const fullPageScreenshotBtn = app.page.locator('button[title="Full Page Screenshot"]').first();
+    const firstToolbar = app.page
+      .locator('button[title="Refresh This View"]')
+      .first()
+      .locator('xpath=ancestor::div[contains(@class, "flex items-center justify-between gap-1")]');
+    const toolbarButtons = firstToolbar.locator(
+      'xpath=.//div[contains(@class, "my-1 inline-flex")]//button'
+    );
+    const quickScreenshotBtn = toolbarButtons.nth(1);
+    const fullPageScreenshotBtn = toolbarButtons.nth(2);
     const disabledTitle =
       'Screenshots are unavailable while JavaScript is disabled for this preview';
 
     await expect(quickScreenshotBtn).toBeEnabled();
     await expect(fullPageScreenshotBtn).toBeEnabled();
 
-    await app.page.getByRole('button', {name: 'More options'}).first().click();
-    await app.page.getByRole('button', {name: 'Disable JavaScript'}).click();
+    await firstToolbar.locator('button:has(span.sr-only)').first().click();
+    await app.page.locator('button:has-text("Disable JavaScript")').click();
 
     await expect(quickScreenshotBtn).toBeDisabled();
     await expect(fullPageScreenshotBtn).toBeDisabled();
@@ -204,18 +211,11 @@ test.describe('Device Toolbar', () => {
       )
       .toBe('number');
 
-    await app.page.getByRole('button', {name: 'More options'}).first().click();
-    await app.page.getByRole('button', {name: 'Enable JavaScript'}).click();
+    await firstToolbar.locator('button:has(span.sr-only)').first().click();
+    await app.page.locator('button:has-text("Enable JavaScript")').click();
 
-    const reenabledQuickScreenshotBtn = app.page
-      .locator('button[title="Quick Screenshot"]')
-      .first();
-    const reenabledFullPageScreenshotBtn = app.page
-      .locator('button[title="Full Page Screenshot"]')
-      .first();
-
-    await expect(reenabledQuickScreenshotBtn).toBeEnabled();
-    await expect(reenabledFullPageScreenshotBtn).toBeEnabled();
+    await expect(quickScreenshotBtn).toBeEnabled();
+    await expect(fullPageScreenshotBtn).toBeEnabled();
 
     await expect
       .poll(() => getNthWebviewId(app.page, 0), {timeout: 10_000})

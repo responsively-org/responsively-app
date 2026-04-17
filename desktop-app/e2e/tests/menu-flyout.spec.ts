@@ -173,7 +173,7 @@ test.describe('Menu Flyout', () => {
         .toBe('number');
     }
 
-    const screenshotAllBtn = app.page.locator('button[title="Screenshot All WebViews"]');
+    const screenshotAllBtn = app.page.locator('button[title^="Screenshot All WebViews"]');
     await expect(screenshotAllBtn).toBeEnabled();
 
     await app.openMenuFlyout();
