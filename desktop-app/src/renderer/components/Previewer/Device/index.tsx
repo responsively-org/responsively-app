@@ -88,13 +88,19 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const ref = useRef<Electron.WebviewTag>(null);
   const isNavigatingFromAddressBar = useRef<boolean>(false);
   const [webviewReady, setWebviewReady] = useState<boolean>(false);
+  // Captured once on mount: the <webview> src attribute is set only on initial render,
+  // and all subsequent navigations go through loadURL below. Reactive src updates were
+  // racing with loadURL on Electron 40+, leaving the webview stuck on the previous URL.
+  const [initialAddress] = useState(address);
 
   useEffect(() => {
-    if (ref.current && isPrimary) {
+    if (ref.current) {
       try {
         const currentUrl = ref.current.getURL();
         if (address !== currentUrl) {
-          isNavigatingFromAddressBar.current = true;
+          if (isPrimary) {
+            isNavigatingFromAddressBar.current = true;
+          }
           ref.current.loadURL(address);
         }
       } catch (err) {
@@ -141,26 +147,40 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     innerHeight: height * 2,
   });
 
-  const registerNavigationHandlers = useCallback(() => {
-    webViewPubSub.subscribe(NAVIGATION_EVENTS.RELOAD, () => {
+  const registerNavigationHandlers = useCallback((): (() => void) => {
+    // Return an unsubscribe fn so the caller can clean up. Without this, every effect
+    // re-run (which happens on every address change) would add another subscriber, and a
+    // single Back click would replay accumulated handlers.
+    const unsubscribers: Array<() => void> = [];
+
+    const reloadHandler = () => {
       if (ref.current) {
         ref.current.reload();
       }
-    });
+    };
+    webViewPubSub.subscribe(NAVIGATION_EVENTS.RELOAD, reloadHandler);
+    unsubscribers.push(() => webViewPubSub.unsubscribe(NAVIGATION_EVENTS.RELOAD, reloadHandler));
+
     if (isPrimary) {
-      webViewPubSub.subscribe(NAVIGATION_EVENTS.BACK, () => {
+      const backHandler = () => {
         if (ref.current) {
           ref.current.goBack();
         }
-      });
+      };
+      webViewPubSub.subscribe(NAVIGATION_EVENTS.BACK, backHandler);
+      unsubscribers.push(() => webViewPubSub.unsubscribe(NAVIGATION_EVENTS.BACK, backHandler));
 
-      webViewPubSub.subscribe(NAVIGATION_EVENTS.FORWARD, () => {
+      const forwardHandler = () => {
         if (ref.current) {
           ref.current.goForward();
         }
-      });
+      };
+      webViewPubSub.subscribe(NAVIGATION_EVENTS.FORWARD, forwardHandler);
+      unsubscribers.push(() =>
+        webViewPubSub.unsubscribe(NAVIGATION_EVENTS.FORWARD, forwardHandler)
+      );
 
-      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_STORAGE, async () => {
+      const deleteStorageHandler = async () => {
         if (!ref.current) {
           return;
         }
@@ -169,9 +189,13 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
           'delete-storage',
           {webContentsId: webview.getWebContentsId()}
         );
-      });
+      };
+      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_STORAGE, deleteStorageHandler);
+      unsubscribers.push(() =>
+        webViewPubSub.unsubscribe(ADDRESS_BAR_EVENTS.DELETE_STORAGE, deleteStorageHandler)
+      );
 
-      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_COOKIES, async () => {
+      const deleteCookiesHandler = async () => {
         if (!ref.current) {
           return;
         }
@@ -183,9 +207,13 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
             storages: ['cookies'],
           }
         );
-      });
+      };
+      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_COOKIES, deleteCookiesHandler);
+      unsubscribers.push(() =>
+        webViewPubSub.unsubscribe(ADDRESS_BAR_EVENTS.DELETE_COOKIES, deleteCookiesHandler)
+      );
 
-      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_CACHE, async () => {
+      const deleteCacheHandler = async () => {
         if (!ref.current) {
           return;
         }
@@ -197,8 +225,14 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
             storages: ['network-cache'],
           }
         );
-      });
+      };
+      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_CACHE, deleteCacheHandler);
+      unsubscribers.push(() =>
+        webViewPubSub.unsubscribe(ADDRESS_BAR_EVENTS.DELETE_CACHE, deleteCacheHandler)
+      );
     }
+
+    return () => unsubscribers.forEach((fn) => fn());
   }, [isPrimary]);
 
   const toggleRuler = useCallback(() => {
@@ -413,13 +447,14 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       }, 2000);
     }
 
-    registerNavigationHandlers();
+    const unsubscribeNavigationHandlers = registerNavigationHandlers();
 
     // eslint-disable-next-line consistent-return
     return () => {
       handlerRemovers.forEach((handlerRemover) => {
         handlerRemover();
       });
+      unsubscribeNavigationHandlers();
     };
   }, [ref, dispatch, registerNavigationHandlers, isPrimary, inspectElement, openDevTools, address]);
 
@@ -593,7 +628,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
           <div className="bg-white">
             <webview
               id={device.name}
-              src={address}
+              src={initialAddress}
               style={{
                 height,
                 width,
