@@ -49,6 +49,33 @@ let urlToOpen: string | undefined = cli.input[0]?.includes('electronmon')
 
 let mainWindow: BrowserWindow | null = null;
 
+const bringWindowToFront = (window: BrowserWindow) => {
+  if (window.isDestroyed()) {
+    return;
+  }
+
+  if (window.isMinimized()) {
+    window.restore();
+  }
+
+  window.show();
+  window.moveTop();
+  window.focus();
+  window.flashFrame(false);
+};
+
+const gotSingleInstanceLock = app.requestSingleInstanceLock();
+
+if (!gotSingleInstanceLock) {
+  app.quit();
+}
+
+app.on('second-instance', () => {
+  if (mainWindow) {
+    bringWindowToFront(mainWindow);
+  }
+});
+
 initAppMetaHandlers();
 initWebviewContextMenu();
 initScreenshotHandlers();
@@ -158,30 +185,6 @@ const createWindow = async () => {
     `${resolveHtmlPath('index.html')}?urlToOpen=${encodeURI(urlToOpen ?? 'undefined')}`
   );
 
-  const isWindows = process.platform === 'win32';
-  let needsFocusFix = false;
-  let triggeringProgrammaticBlur = false;
-
-  mainWindow.on('blur', () => {
-    if (!triggeringProgrammaticBlur) {
-      needsFocusFix = true;
-    }
-  });
-
-  mainWindow.on('focus', () => {
-    if (isWindows && needsFocusFix) {
-      needsFocusFix = false;
-      triggeringProgrammaticBlur = true;
-      setTimeout(function () {
-        mainWindow!.blur();
-        mainWindow!.focus();
-        setTimeout(function () {
-          triggeringProgrammaticBlur = false;
-        }, 100);
-      }, 100);
-    }
-  });
-
   mainWindow.on('ready-to-show', async () => {
     if (!isAppInitiated) {
       await initInstance();
@@ -199,12 +202,11 @@ const createWindow = async () => {
         mainWindow.showInactive();
         windowShownOnOpen = true;
       } else {
-        mainWindow.showInactive();
         if (!windowShownOnOpen) {
           windowShownOnOpen = true;
-          mainWindow.show();
+          bringWindowToFront(mainWindow);
         } else {
-          mainWindow.showInactive();
+          bringWindowToFront(mainWindow);
         }
       }
     }
@@ -263,6 +265,7 @@ app.on('open-url', async (event, url) => {
   }
   windowShownOnOpen = false;
   openUrl(actualURL, mainWindow);
+  bringWindowToFront(mainWindow);
 });
 
 /**
@@ -294,6 +297,7 @@ app
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
+      else bringWindowToFront(mainWindow);
     });
   })
   .catch(console.log);

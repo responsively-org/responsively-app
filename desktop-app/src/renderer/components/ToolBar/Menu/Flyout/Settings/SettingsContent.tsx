@@ -10,10 +10,10 @@ interface Props {
 export const SettingsContent = ({onClose}: Props) => {
   const id = useId();
   const [screenshotSaveLocation, setScreenshotSaveLocation] = useState<string>(
-    window.electron.store.get('userPreferences.screenshot.saveLocation')
+    window.electron.store.get('userPreferences.screenshot.saveLocation') ?? ''
   );
   const [webRequestHeaderAcceptLanguage, setWebRequestHeaderAcceptLanguage] = useState<string>(
-    window.electron.store.get('userPreferences.webRequestHeaderAcceptLanguage')
+    window.electron.store.get('userPreferences.webRequestHeaderAcceptLanguage') ?? ''
   );
 
   const onSave = () => {
