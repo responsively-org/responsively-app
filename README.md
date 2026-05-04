@@ -52,6 +52,31 @@
 
 ![Quick Demo](https://responsively.app/assets/img/responsively-app.gif)
 
+### Quick Start
+
+Responsively app helps developers preview and test responsive websites across multiple device viewports at the same time.
+
+### Basic Usage
+
+1. Open responsively app.
+2. Enter the local or public URL of the website being tested. 
+Ex. "http://localhost:3000"
+Ex. "https://example.com"
+3. Select the devices or viewport sizes you want to preview.
+4. Interact with one viewport and Responsively will mirror actions across the others.
+5. Use developer tools, screenshots, and input previews to debug responsive design issues.
+
+### Common Use Cases
+
+- Testing a React, Vue, Angular, or Next.js app during development.
+- Checking whether a page works across mobile, tablet, and desktop layouts.
+- Debugging responsive CSS issues faster.
+- Comparing multiple device previews without opening separate browser windows.
+- Capturing screenshots of different viewport sizes for design review.
+
+### Example Workflow
+
+A developer working on a local React app can run the app locally, open 'http://localhost:3000` in Responsively, and immediately compare how the same page looks on phone, tablet, and desktop viewports.
 ## Features
 
 1. Mirrored User-interactions across all devices.
