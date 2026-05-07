@@ -564,7 +564,6 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
         onRotate={onRotateHandler}
         onIndividualLayoutHandler={onIndividualLayoutHandler}
         isIndividualLayout={isIndividualLayout}
-        isDeviceRotationEnabled={isDeviceRotationEnabled}
       />
       <div className="flex gap-4">
         <div
