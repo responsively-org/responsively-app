@@ -37,6 +37,8 @@ import {
   setIsInspecting,
   setLayout,
   setPageTitle,
+  zoomIn,
+  zoomOut,
 } from 'renderer/store/features/renderer';
 import type {RootState} from '../../../store';
 import {selectDesignOverlay, type ViewResolution} from '../../../store/features/design-overlay';
@@ -87,6 +89,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
   const isNavigatingFromAddressBar = useRef<boolean>(false);
+  const wheelDeltaRef = useRef<number>(0);
   const [webviewReady, setWebviewReady] = useState<boolean>(false);
 
   useEffect(() => {
@@ -234,6 +237,41 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   }, [dispatch, getRuler, coordinates, resolution]);
 
   useKeyboardShortcut(SHORTCUT_CHANNEL.TOGGLE_RULERS, toggleRuler);
+
+  useEffect(() => {
+    const webview = ref.current;
+
+    if (!webview) {
+      return undefined;
+    }
+
+    const wheelHandler: EventListener = (nativeEvent) => {
+      const event = nativeEvent as WheelEvent;
+
+      if (!event.ctrlKey && !event.metaKey) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      wheelDeltaRef.current += event.deltaY;
+
+      if (Math.abs(wheelDeltaRef.current) < 80) {
+        return;
+      }
+
+      dispatch(wheelDeltaRef.current < 0 ? zoomIn() : zoomOut());
+      wheelDeltaRef.current = 0;
+    };
+
+    webview.addEventListener('wheel', wheelHandler);
+
+    return () => {
+      webview.removeEventListener('wheel', wheelHandler);
+      wheelDeltaRef.current = 0;
+    };
+  }, [dispatch]);
 
   const openDevTools = useCallback(async () => {
     if (!ref.current) {
