@@ -265,7 +265,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       wheelDeltaRef.current = 0;
     };
 
-    webview.addEventListener('wheel', wheelHandler, {passive: false});
+    webview.addEventListener('wheel', wheelHandler);
 
     return () => {
       webview.removeEventListener('wheel', wheelHandler);
