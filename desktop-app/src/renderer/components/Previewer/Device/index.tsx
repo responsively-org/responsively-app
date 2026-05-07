@@ -245,7 +245,9 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       return undefined;
     }
 
-    const wheelHandler = (event: WheelEvent) => {
+    const wheelHandler: EventListener = (nativeEvent) => {
+      const event = nativeEvent as WheelEvent;
+
       if (!event.ctrlKey && !event.metaKey) {
         return;
       }
