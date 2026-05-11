@@ -119,11 +119,12 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
 
   let {height, width} = device;
 
-  // Check if device rotation is enabled (only mobile-capable devices can be rotated)
-  const isDeviceRotationEnabled = device.isMobileCapable && (rotateDevices || singleRotated);
+  // Only mobile-capable devices can rotate; rotation state decides when to swap dimensions.
+  const canRotateDevice = device.isMobileCapable;
+  const isDeviceRotated = canRotateDevice && (rotateDevices || singleRotated);
 
   // Apply rotation: both global and individual rotation only affect mobile-capable devices
-  if (isDeviceRotationEnabled) {
+  if (isDeviceRotated) {
     const temp = width;
     width = height;
     height = temp;
@@ -537,8 +538,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const scaledHeight = height * zoomfactor;
   const scaledWidth = width * zoomfactor;
 
-  const isRestrictedMinimumDeviceSize =
-    device.width < 400 && zoomfactor < 0.6 && !isDeviceRotationEnabled;
+  const isRestrictedMinimumDeviceSize = device.width < 400 && zoomfactor < 0.6 && !isDeviceRotated;
 
   return (
     <div
@@ -564,7 +564,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
         onRotate={onRotateHandler}
         onIndividualLayoutHandler={onIndividualLayoutHandler}
         isIndividualLayout={isIndividualLayout}
-        isDeviceRotationEnabled={isDeviceRotationEnabled}
+        canRotateDevice={canRotateDevice}
       />
       <div className="flex gap-4">
         <div
