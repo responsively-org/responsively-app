@@ -182,6 +182,39 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     );
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const step = e.shiftKey ? 10 : 1;
+      const change = e.key === 'ArrowRight' ? step : -step;
+      const currentVal = isDeviceRotationEnabled
+        ? (localHeight !== null ? localHeight : device.height)
+        : (localWidth !== null ? localWidth : device.width);
+      const newVal = Math.max(200, currentVal + change);
+
+      if (isDeviceRotationEnabled) {
+        setLocalHeight(newVal);
+      } else {
+        setLocalWidth(newVal);
+      }
+
+      const finalWidth = isDeviceRotationEnabled
+        ? (localWidth !== null ? localWidth : device.width)
+        : newVal;
+      const finalHeight = isDeviceRotationEnabled
+        ? newVal
+        : (localHeight !== null ? localHeight : device.height);
+
+      dispatch(
+        updateCustomDeviceDimensions({
+          id: device.id,
+          width: finalWidth,
+          height: finalHeight,
+        })
+      );
+    }
+  };
+
   const resolution: ViewResolution = `${width}x${height}`;
   const designOverlay = useSelector((state: RootState) => selectDesignOverlay(state)(resolution));
 
@@ -705,23 +738,29 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
 
           {device.isCustom && (
             <div
-              className="absolute right-0 top-0 bottom-0 w-[10px] cursor-col-resize z-50 group flex items-center justify-center select-none"
+              className="absolute right-0 top-0 bottom-0 w-[10px] cursor-col-resize z-50 group flex items-center justify-center select-none focus:outline-none focus:bg-emerald-500/10 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
               onMouseDown={handleMouseDown}
+              onKeyDown={handleKeyDown}
+              role="separator"
+              tabIndex={0}
+              aria-label={`Resize ${device.name}`}
+              aria-valuenow={width}
+              aria-valuemin={200}
             >
               {/* Highlight bar */}
               <div
                 className={cx(
                   'w-[4px] h-full transition-colors duration-150',
-                  isDragging ? 'bg-emerald-500' : 'bg-transparent group-hover:bg-emerald-500/30'
+                  isDragging ? 'bg-emerald-500' : 'bg-transparent group-hover:bg-emerald-500/30 group-focus:bg-emerald-500/30'
                 )}
               />
               {/* Gripper capsule */}
               <div
                 className={cx(
-                  'absolute w-[6px] h-10 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col items-center justify-center gap-[2px] shadow-sm transition-all duration-150 group-hover:scale-y-110',
+                  'absolute w-[6px] h-10 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col items-center justify-center gap-[2px] shadow-sm transition-all duration-150 group-hover:scale-y-110 group-focus:scale-y-110',
                   isDragging
-                    ? 'border-emerald-500 bg-emerald-50 dark:bg-slate-900'
-                    : 'opacity-0 group-hover:opacity-100'
+                    ? 'border-emerald-500 bg-emerald-50 dark:bg-slate-900 opacity-100'
+                    : 'opacity-0 group-hover:opacity-100 group-focus:opacity-100'
                 )}
               >
                 <div className="w-[2px] h-[2px] rounded-full bg-slate-400 dark:bg-slate-500" />
