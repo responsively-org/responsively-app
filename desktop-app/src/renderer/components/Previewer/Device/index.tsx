@@ -93,8 +93,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const [localWidth, setLocalWidth] = useState<number | null>(null);
   const [localHeight, setLocalHeight] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [dragStartWidth, setDragStartWidth] = useState<number>(0);
-  const [dragStartHeight, setDragStartHeight] = useState<number>(0);
+  const [dragStartVisualWidth, setDragStartVisualWidth] = useState<number>(0);
   const [dragStartX, setDragStartX] = useState<number>(0);
 
   useEffect(() => {
@@ -154,20 +153,18 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     e.preventDefault();
     setIsDragging(true);
     setDragStartX(e.clientX);
-    setDragStartWidth(device.isCustom && localWidth !== null ? localWidth : device.width);
-    setDragStartHeight(device.isCustom && localHeight !== null ? localHeight : device.height);
+    setDragStartVisualWidth(width);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
     const deltaX = e.clientX - dragStartX;
     const change = Math.round(deltaX / zoomfactor);
+    const newVisualWidth = Math.max(200, dragStartVisualWidth + change);
     if (isDeviceRotationEnabled) {
-      const newHeight = Math.max(200, dragStartHeight + change);
-      setLocalHeight(newHeight);
+      setLocalHeight(newVisualWidth);
     } else {
-      const newWidth = Math.max(200, dragStartWidth + change);
-      setLocalWidth(newWidth);
+      setLocalWidth(newVisualWidth);
     }
   };
 
