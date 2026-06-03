@@ -188,8 +188,12 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       const step = e.shiftKey ? 10 : 1;
       const change = e.key === 'ArrowRight' ? step : -step;
       const currentVal = isDeviceRotationEnabled
-        ? (localHeight !== null ? localHeight : device.height)
-        : (localWidth !== null ? localWidth : device.width);
+        ? localHeight !== null
+          ? localHeight
+          : device.height
+        : localWidth !== null
+          ? localWidth
+          : device.width;
       const newVal = Math.max(200, currentVal + change);
 
       if (isDeviceRotationEnabled) {
@@ -199,11 +203,15 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       }
 
       const finalWidth = isDeviceRotationEnabled
-        ? (localWidth !== null ? localWidth : device.width)
+        ? localWidth !== null
+          ? localWidth
+          : device.width
         : newVal;
       const finalHeight = isDeviceRotationEnabled
         ? newVal
-        : (localHeight !== null ? localHeight : device.height);
+        : localHeight !== null
+          ? localHeight
+          : device.height;
 
       dispatch(
         updateCustomDeviceDimensions({
@@ -741,17 +749,20 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
               className="absolute right-0 top-0 bottom-0 w-[10px] cursor-col-resize z-50 group flex items-center justify-center select-none focus:outline-none focus:bg-emerald-500/10 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
               onMouseDown={handleMouseDown}
               onKeyDown={handleKeyDown}
-              role="separator"
+              role="slider"
               tabIndex={0}
               aria-label={`Resize ${device.name}`}
               aria-valuenow={width}
               aria-valuemin={200}
+              aria-valuemax={3000}
             >
               {/* Highlight bar */}
               <div
                 className={cx(
                   'w-[4px] h-full transition-colors duration-150',
-                  isDragging ? 'bg-emerald-500' : 'bg-transparent group-hover:bg-emerald-500/30 group-focus:bg-emerald-500/30'
+                  isDragging
+                    ? 'bg-emerald-500'
+                    : 'bg-transparent group-hover:bg-emerald-500/30 group-focus:bg-emerald-500/30'
                 )}
               />
               {/* Gripper capsule */}
@@ -778,6 +789,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
           )}
 
           {isDragging && (
+            /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */
             <div
               className="fixed inset-0 z-[9999] cursor-col-resize bg-transparent"
               onMouseMove={handleMouseMove}
