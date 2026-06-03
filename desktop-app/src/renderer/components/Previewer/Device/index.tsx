@@ -48,6 +48,7 @@ import {
   setRuler,
 } from '../../../store/features/ruler';
 import {selectDarkMode} from '../../../store/features/ui';
+import {updateCustomDeviceDimensions} from 'renderer/store/features/device-manager';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from '../../KeyboardShortcutsManager/useKeyboardShortcut';
@@ -89,6 +90,17 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const isNavigatingFromAddressBar = useRef<boolean>(false);
   const [webviewReady, setWebviewReady] = useState<boolean>(false);
 
+  const [localWidth, setLocalWidth] = useState<number | null>(null);
+  const [localHeight, setLocalHeight] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragStartVisualWidth, setDragStartVisualWidth] = useState<number>(0);
+  const [dragStartX, setDragStartX] = useState<number>(0);
+
+  useEffect(() => {
+    setLocalWidth(null);
+    setLocalHeight(null);
+  }, [device.width, device.height, device.id]);
+
   useEffect(() => {
     if (ref.current && isPrimary) {
       try {
@@ -118,6 +130,14 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
   let {height, width} = device;
+  if (device.isCustom) {
+    if (localWidth !== null) {
+      width = localWidth;
+    }
+    if (localHeight !== null) {
+      height = localHeight;
+    }
+  }
 
   // Check if device rotation is enabled (only mobile-capable devices can be rotated)
   const isDeviceRotationEnabled = device.isMobileCapable && (rotateDevices || singleRotated);
@@ -128,6 +148,80 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     width = height;
     height = temp;
   }
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    setDragStartX(e.clientX);
+    setDragStartVisualWidth(width);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - dragStartX;
+    const change = Math.round(deltaX / zoomfactor);
+    const newVisualWidth = Math.max(200, dragStartVisualWidth + change);
+    if (isDeviceRotationEnabled) {
+      setLocalHeight(newVisualWidth);
+    } else {
+      setLocalWidth(newVisualWidth);
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    const finalWidth = localWidth !== null ? localWidth : device.width;
+    const finalHeight = localHeight !== null ? localHeight : device.height;
+    dispatch(
+      updateCustomDeviceDimensions({
+        id: device.id,
+        width: finalWidth,
+        height: finalHeight,
+      })
+    );
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const step = e.shiftKey ? 10 : 1;
+      const change = e.key === 'ArrowRight' ? step : -step;
+      const currentVal = isDeviceRotationEnabled
+        ? localHeight !== null
+          ? localHeight
+          : device.height
+        : localWidth !== null
+          ? localWidth
+          : device.width;
+      const newVal = Math.max(200, currentVal + change);
+
+      if (isDeviceRotationEnabled) {
+        setLocalHeight(newVal);
+      } else {
+        setLocalWidth(newVal);
+      }
+
+      const finalWidth = isDeviceRotationEnabled
+        ? localWidth !== null
+          ? localWidth
+          : device.width
+        : newVal;
+      const finalHeight = isDeviceRotationEnabled
+        ? newVal
+        : localHeight !== null
+          ? localHeight
+          : device.height;
+
+      dispatch(
+        updateCustomDeviceDimensions({
+          id: device.id,
+          width: finalWidth,
+          height: finalHeight,
+        })
+      );
+    }
+  };
 
   const resolution: ViewResolution = `${width}x${height}`;
   const designOverlay = useSelector((state: RootState) => selectDesignOverlay(state)(resolution));
@@ -649,6 +743,59 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
               </div>
             </div>
           ) : null}
+
+          {device.isCustom && (
+            <div
+              className="absolute right-0 top-0 bottom-0 w-[10px] cursor-col-resize z-50 group flex items-center justify-center select-none focus:outline-none focus:bg-emerald-500/10 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+              onMouseDown={handleMouseDown}
+              onKeyDown={handleKeyDown}
+              role="slider"
+              tabIndex={0}
+              aria-label={`Resize ${device.name}`}
+              aria-valuenow={width}
+              aria-valuemin={200}
+              aria-valuemax={3000}
+            >
+              {/* Highlight bar */}
+              <div
+                className={cx(
+                  'w-[4px] h-full transition-colors duration-150',
+                  isDragging
+                    ? 'bg-emerald-500'
+                    : 'bg-transparent group-hover:bg-emerald-500/30 group-focus:bg-emerald-500/30'
+                )}
+              />
+              {/* Gripper capsule */}
+              <div
+                className={cx(
+                  'absolute w-[6px] h-10 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col items-center justify-center gap-[2px] shadow-sm transition-all duration-150 group-hover:scale-y-110 group-focus:scale-y-110',
+                  isDragging
+                    ? 'border-emerald-500 bg-emerald-50 dark:bg-slate-900 opacity-100'
+                    : 'opacity-0 group-hover:opacity-100 group-focus:opacity-100'
+                )}
+              >
+                <div className="w-[2px] h-[2px] rounded-full bg-slate-400 dark:bg-slate-500" />
+                <div className="w-[2px] h-[2px] rounded-full bg-slate-400 dark:bg-slate-500" />
+                <div className="w-[2px] h-[2px] rounded-full bg-slate-400 dark:bg-slate-500" />
+              </div>
+
+              {/* Tooltip */}
+              {isDragging && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-slate-950/90 dark:bg-white/95 text-white dark:text-slate-950 text-xs font-semibold px-2.5 py-1 rounded-md shadow-xl border border-slate-800 dark:border-slate-200 pointer-events-none whitespace-nowrap z-50">
+                  {width}px
+                </div>
+              )}
+            </div>
+          )}
+
+          {isDragging && (
+            /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */
+            <div
+              className="fixed inset-0 z-[9999] cursor-col-resize bg-transparent"
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+            />
+          )}
         </div>
 
         {designOverlay?.enabled && designOverlay.image && designOverlay.position === 'side' && (

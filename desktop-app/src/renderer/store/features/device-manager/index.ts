@@ -100,6 +100,35 @@ export const deviceManagerSlice = createSlice({
       window.electron.store.set('deviceManager.previewSuites', [defaultSuites]);
       state.suites = [defaultSuites];
     },
+    updateCustomDeviceDimensions(
+      state,
+      action: PayloadAction<{id: string; width: number; height: number}>
+    ) {
+      const {id, width, height} = action.payload;
+      const customDevicesList: Device[] =
+        window.electron.store.get('deviceManager.customDevices') || [];
+      const updatedCustomDevices = customDevicesList.map((d) => {
+        if (d.id === id) {
+          return {...d, width, height};
+        }
+        return d;
+      });
+      window.electron.store.set('deviceManager.customDevices', updatedCustomDevices);
+
+      if (state.devices) {
+        state.devices = state.devices.map((d) => {
+          if (d.id === id) {
+            return {...d, width, height};
+          }
+          return d;
+        });
+      }
+
+      state.suites = state.suites.map((suite) => ({
+        ...suite,
+        devices: [...suite.devices],
+      }));
+    },
   },
 });
 
@@ -112,6 +141,7 @@ export const {
   addSuites,
   deleteSuite,
   deleteAllSuites,
+  updateCustomDeviceDimensions,
 } = deviceManagerSlice.actions;
 
 export const selectSuites = (state: RootState) => state.deviceManager.suites;
