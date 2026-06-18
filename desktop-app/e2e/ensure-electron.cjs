@@ -57,11 +57,19 @@ const resolveElectronPath = () => {
 
 const installElectron = () => {
   const env = {...process.env};
-  delete env.ELECTRON_SKIP_BINARY_DOWNLOAD;
-  delete env.npm_config_electron_skip_binary_download;
+  Object.keys(env).forEach((key) => {
+    const normalizedKey = key.toLowerCase();
+    if (
+      normalizedKey === 'electron_skip_binary_download' ||
+      normalizedKey === 'npm_config_electron_skip_binary_download'
+    ) {
+      delete env[key];
+    }
+  });
 
   fs.rmSync(path.join(electronRoot, 'dist'), {recursive: true, force: true});
 
+  console.log('Repairing Electron install...');
   childProcess.execFileSync(process.execPath, [electronInstallScript], {
     cwd: projectRoot,
     env,
@@ -69,25 +77,27 @@ const installElectron = () => {
   });
 };
 
+const repairElectron = () => {
+  if (!hasUsableElectronInstall()) {
+    installElectron();
+  }
+
+  if (hasUsableElectronInstall()) {
+    writeElectronPathFile();
+  }
+};
+
 let electronPath;
 
 try {
   electronPath = resolveElectronPath();
 } catch {
-  if (hasUsableElectronInstall()) {
-    writeElectronPathFile();
-  } else {
-    installElectron();
-  }
+  repairElectron();
   electronPath = resolveElectronPath();
 }
 
 if (!fs.existsSync(electronPath) || !hasUsableElectronInstall()) {
-  if (hasUsableElectronInstall()) {
-    writeElectronPathFile();
-  } else {
-    installElectron();
-  }
+  repairElectron();
   electronPath = resolveElectronPath();
 }
 
