@@ -27,6 +27,23 @@ const getPlatformPath = () => {
 
 const expectedPlatformPath = getPlatformPath();
 const expectedElectronPath = path.join(electronRoot, 'dist', expectedPlatformPath);
+const expectedFrameworkPath = path.join(
+  electronRoot,
+  'dist',
+  'Electron.app/Contents/Frameworks/Electron Framework.framework/Electron Framework'
+);
+
+const hasUsableElectronInstall = () => {
+  if (!fs.existsSync(expectedElectronPath)) {
+    return false;
+  }
+
+  if ((process.env.npm_config_platform || process.platform) === 'darwin') {
+    return fs.existsSync(expectedFrameworkPath);
+  }
+
+  return true;
+};
 
 const writeElectronPathFile = () => {
   fs.writeFileSync(electronPathFile, expectedPlatformPath);
@@ -57,7 +74,7 @@ let electronPath;
 try {
   electronPath = resolveElectronPath();
 } catch {
-  if (fs.existsSync(expectedElectronPath)) {
+  if (hasUsableElectronInstall()) {
     writeElectronPathFile();
   } else {
     installElectron();
@@ -65,8 +82,8 @@ try {
   electronPath = resolveElectronPath();
 }
 
-if (!fs.existsSync(electronPath)) {
-  if (fs.existsSync(expectedElectronPath)) {
+if (!fs.existsSync(electronPath) || !hasUsableElectronInstall()) {
+  if (hasUsableElectronInstall()) {
     writeElectronPathFile();
   } else {
     installElectron();
