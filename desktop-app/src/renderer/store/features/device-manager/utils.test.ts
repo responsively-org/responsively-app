@@ -22,10 +22,9 @@ describe('sanitizeSuites', () => {
 
     sanitizeSuites();
 
-    expect(window.electron.store.set).toHaveBeenCalledWith(
-      'deviceManager.previewSuites',
-      [{id: 'default', name: 'Default', devices: ['10008', '10013', '10015']}],
-    );
+    expect(window.electron.store.set).toHaveBeenCalledWith('deviceManager.previewSuites', [
+      {id: 'default', name: 'Default', devices: ['10008', '10013', '10015']},
+    ]);
   });
 
   it('creates default suite when stored suites are empty', () => {
@@ -33,10 +32,9 @@ describe('sanitizeSuites', () => {
 
     sanitizeSuites();
 
-    expect(window.electron.store.set).toHaveBeenCalledWith(
-      'deviceManager.previewSuites',
-      [{id: 'default', name: 'Default', devices: ['10008', '10013', '10015']}],
-    );
+    expect(window.electron.store.set).toHaveBeenCalledWith('deviceManager.previewSuites', [
+      {id: 'default', name: 'Default', devices: ['10008', '10013', '10015']},
+    ]);
   });
 
   it('removes invalid device IDs from suites', () => {
@@ -51,10 +49,9 @@ describe('sanitizeSuites', () => {
 
     sanitizeSuites();
 
-    expect(window.electron.store.set).toHaveBeenCalledWith(
-      'deviceManager.previewSuites',
-      [{id: 'default', name: 'Default', devices: ['10008', '10013']}],
-    );
+    expect(window.electron.store.set).toHaveBeenCalledWith('deviceManager.previewSuites', [
+      {id: 'default', name: 'Default', devices: ['10008', '10013']},
+    ]);
   });
 
   it('does not write to store when all device IDs are valid', () => {
@@ -81,12 +78,9 @@ describe('sanitizeSuites', () => {
 
     sanitizeSuites();
 
-    expect(window.electron.store.set).toHaveBeenCalledWith(
-      'deviceManager.previewSuites',
-      [
-        {id: 'default', name: 'Default', devices: ['10008', '10013']},
-        {id: 'mobile', name: 'Mobile', devices: ['10008']},
-      ],
-    );
+    expect(window.electron.store.set).toHaveBeenCalledWith('deviceManager.previewSuites', [
+      {id: 'default', name: 'Default', devices: ['10008', '10013']},
+      {id: 'mobile', name: 'Mobile', devices: ['10008']},
+    ]);
   });
 });

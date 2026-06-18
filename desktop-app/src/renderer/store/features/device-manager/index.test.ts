@@ -1,4 +1,4 @@
-import {describe, it, expect, vi, beforeEach} from 'vitest';
+import {describe, it, expect, vi} from 'vitest';
 import {configureStore, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import type {PreviewSuite, PreviewSuites} from '.';
 
@@ -60,9 +60,6 @@ const createStore = (initialOverrides?: Partial<DeviceManagerState>) => {
 
   // Build an equivalent slice that uses our controlled initial state
   // and captures the same reducer logic without touching window.electron.
-  const storeGet = vi.fn();
-  const storeSet = vi.fn();
-
   const testSlice = createSlice({
     name: 'deviceManager',
     initialState,
@@ -70,10 +67,7 @@ const createStore = (initialOverrides?: Partial<DeviceManagerState>) => {
       setDevices: (state, action: PayloadAction<Device[]>) => {
         state.devices = action.payload;
       },
-      setSuiteDevices: (
-        state,
-        action: PayloadAction<{suite: string; devices: string[]}>,
-      ) => {
+      setSuiteDevices: (state, action: PayloadAction<{suite: string; devices: string[]}>) => {
         const {suite, devices} = action.payload;
         const suiteIndex = state.suites.findIndex((s) => s.id === suite);
         if (suiteIndex === -1) {
@@ -103,9 +97,7 @@ const createStore = (initialOverrides?: Partial<DeviceManagerState>) => {
         state.activeSuite = action.payload[0].id;
       },
       deleteSuite(state, action: PayloadAction<string>) {
-        const suiteIndex = state.suites.findIndex(
-          (s) => s.id === action.payload,
-        );
+        const suiteIndex = state.suites.findIndex((s) => s.id === action.payload);
         if (suiteIndex === -1) {
           return;
         }
@@ -191,9 +183,12 @@ describe('addSuites', () => {
 
     const state = store.getState().deviceManager;
     // "Tablets" name collides — incoming wins
-    const tablets = state.suites.find((s) => s.name === 'Tablets')!;
-    expect(tablets.id).toBe('new-tablets');
-    expect(tablets.devices).toEqual(['10012', '10014']);
+    const tablets = state.suites.find((s) => s.name === 'Tablets');
+    expect(tablets).toEqual({
+      id: 'new-tablets',
+      name: 'Tablets',
+      devices: ['10012', '10014'],
+    });
     // "Default" kept
     expect(state.suites.find((s) => s.id === 'default')).toBeDefined();
     // Active suite = first incoming
@@ -206,21 +201,15 @@ describe('addSuites', () => {
 describe('setSuiteDevices', () => {
   it('updates devices for an existing suite', () => {
     const {store, actions} = createStore();
-    store.dispatch(
-      actions.setSuiteDevices({suite: 'default', devices: ['10001', '10002']}),
-    );
+    store.dispatch(actions.setSuiteDevices({suite: 'default', devices: ['10001', '10002']}));
     const suite = store.getState().deviceManager.suites[0];
     expect(suite.devices).toEqual(['10001', '10002']);
   });
 
   it('does nothing when suite id does not exist', () => {
     const {store, actions} = createStore();
-    const original = JSON.parse(
-      JSON.stringify(store.getState().deviceManager.suites),
-    );
-    store.dispatch(
-      actions.setSuiteDevices({suite: 'nonexistent', devices: ['10001']}),
-    );
+    const original = JSON.parse(JSON.stringify(store.getState().deviceManager.suites));
+    store.dispatch(actions.setSuiteDevices({suite: 'nonexistent', devices: ['10001']}));
     expect(store.getState().deviceManager.suites).toEqual(original);
   });
 });
