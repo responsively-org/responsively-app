@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-13]
+        os: [macos-latest-large]
       fail-fast: false
 
     steps:
