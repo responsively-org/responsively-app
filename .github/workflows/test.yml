@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest]
+        os: [macos-13]
       fail-fast: false
 
     steps:
@@ -40,6 +40,20 @@ jobs:
           yarn run lint
           yarn exec tsc
           yarn test
+
+      - name: Verify Electron installation
+        if: always()
+        run: |
+          echo "=== path.txt ==="
+          cat node_modules/electron/path.txt 2>&1 || echo "MISSING"
+          echo "=== dist/version ==="
+          cat node_modules/electron/dist/version 2>&1 || echo "MISSING"
+          echo "=== Binary file ==="
+          file node_modules/electron/dist/Electron.app/Contents/MacOS/Electron 2>&1 || echo "MISSING"
+          echo "=== dist/ contents ==="
+          ls -la node_modules/electron/dist/ 2>&1 || echo "EMPTY"
+          echo "=== node -e require('electron') ==="
+          node -e "console.log(require('electron'))" 2>&1 || echo "FAILED"
 
       - name: E2E Tests
         run: yarn test:e2e
