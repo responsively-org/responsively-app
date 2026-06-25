@@ -7,15 +7,15 @@ To begin working on an issue, simply leave a comment indicating that you're taki
 
 ### Before Starting
 Do keep in mind before you start working on an issue / posting a PR:
-- Search existing PRs related to that issue which might close them
-- Confirm if other contributors are working on the same issue
+- Search for existing PRs that might close that issue.
+- Confirm whether other contributors are working on the same issue.
 
 ### Tips & Things to Consider
 - We are active in Discord and can help out if you get stuck, [join us!](https://responsively.app/join-discord)
 - PRs with tests are highly appreciated
 - Avoid adding third party libraries, whenever possible
 - Unless you are helping out by updating dependencies, you should not be uploading your yarn.lock or updating any dependencies in your PR
-- If you are unsure where to start, contact us and we will point you to a first good issue
+- If you are unsure where to start, contact us and we will point you to a good first issue to work on.
 
 ## Run Locally
 Ensure you have the following dependencies installed:
