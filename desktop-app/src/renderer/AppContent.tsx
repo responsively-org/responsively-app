@@ -10,6 +10,7 @@ import type {AppView} from './store/features/ui';
 import {APP_VIEWS, selectAppView} from './store/features/ui';
 import DeviceManager from './components/DeviceManager';
 import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
+import McpBridge from './components/McpBridge';
 import {ReleaseNotes} from './components/ReleaseNotes';
 import {Sponsorship} from './components/Sponsorship';
 import {AboutDialog} from './components/AboutDialog';
@@ -45,6 +46,7 @@ const AppContent = () => {
     <Provider store={store}>
       <ThemeProvider>
         <KeyboardShortcutsManager />
+        <McpBridge />
         <ViewComponent />
         <ReleaseNotes />
         <Sponsorship />

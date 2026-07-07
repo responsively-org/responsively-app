@@ -10,13 +10,26 @@ type ElectronFixtures = {
   mainWindow: Page;
   app: ResponsivelyApp;
   testServerUrl: string;
+  mcpPort: number;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const test = base.extend<{}, ElectronFixtures>({
-  electronApp: [
+  mcpPort: [
+    // Each worker gets a deterministic port for the app's MCP server, derived
+    // from the worker index so concurrent workers can never collide. (Probing
+    // for a free port is racy: the port can be handed to another worker's
+    // probe in the window between releasing it and Electron binding it.)
+    // Base 23000 stays clear of browser-sync's E2E range (12719-22718).
     // eslint-disable-next-line no-empty-pattern
-    async ({}, use) => {
+    async ({}, use, workerInfo) => {
+      await use(23000 + workerInfo.workerIndex);
+    },
+    {scope: 'worker'},
+  ],
+
+  electronApp: [
+    async ({mcpPort}, use) => {
       const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'responsively-e2e-'));
 
       // Pre-populate electron-store config with a local homepage
@@ -30,6 +43,7 @@ export const test = base.extend<{}, ElectronFixtures>({
         NODE_ENV: 'production',
         E2E_TEST: 'true',
         E2E_USER_DATA_DIR: userDataDir,
+        RESPONSIVELY_MCP_PORT: String(mcpPort),
       } as Record<string, string>;
       if (process.env.E2E_HEADLESS === 'true' || process.env.CI) {
         env.E2E_HEADLESS = 'true';

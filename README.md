@@ -103,6 +103,40 @@ Install the handy browser extension to easily send links from your browser to th
 - [Download for Firefox](https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/) <a href="https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/" target="_blank"><img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/responsively-helper"></a>
 - [Download for Edge](https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn) <a href="https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn" target="_blank"><img alt="Edge Add-on" src="https://img.shields.io/badge/dynamic/json?label=users&query=%24.activeInstallCount&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fooiejjgflcgkbbehheengalibfehaojn"></a>
 
+## MCP Server (AI coding agents)
+
+Responsively App runs a built-in [Model Context Protocol](https://modelcontextprotocol.io) server, so AI coding agents like Claude Code and Cursor can drive the app while you build — load your dev server, switch device previews, and visually verify responsive layouts with per-device screenshots.
+
+The server listens on `http://127.0.0.1:12720/mcp` (localhost only) whenever the app is running.
+
+Connect from Claude Code:
+
+```bash
+claude mcp add --transport http responsively http://127.0.0.1:12720/mcp
+```
+
+Or add to Cursor's `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "responsively": {"url": "http://127.0.0.1:12720/mcp"}
+  }
+}
+```
+
+Available tools:
+
+| Tool | Description |
+| --- | --- |
+| `get_app_state` | Current URL, page title, layout, zoom and active devices |
+| `navigate` | Load a URL in all device previews (waits for the page to load) |
+| `list_devices` | Full device catalog, including custom devices |
+| `set_active_devices` | Change which devices are previewed, by id or name |
+| `screenshot` | Capture one or all device previews as JPEG images |
+
+Set the `RESPONSIVELY_MCP_PORT` environment variable before launching the app to use a different port. Screenshots capture the visible viewport and are downscaled to at most 1000px wide.
+
 ## Issues
 
 If you face any problems while using the application, please open an issue here - https://github.com/responsively-org/responsively-app/issues
