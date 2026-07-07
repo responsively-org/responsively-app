@@ -41,6 +41,8 @@ export const IPC_MAIN_CHANNELS = {
   UPDATE_SITE_PERMISSION: 'update-site-permission',
   CLEAR_SITE_PERMISSIONS: 'clear-site-permissions',
   PERMISSION_UPDATED: 'permission-updated',
+  MCP_COMMAND: 'mcp-command',
+  MCP_COMMAND_RESPONSE: 'mcp-command-response',
 } as const;
 
 export type Channels = (typeof IPC_MAIN_CHANNELS)[keyof typeof IPC_MAIN_CHANNELS];

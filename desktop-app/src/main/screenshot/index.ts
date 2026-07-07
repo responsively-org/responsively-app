@@ -22,7 +22,9 @@ export interface ScreenshotAllArgs {
 export interface ScreenshotResult {
   done: boolean;
 }
-const captureImage = async (webContentsId: number): Promise<Electron.NativeImage | undefined> => {
+export const captureImage = async (
+  webContentsId: number
+): Promise<Electron.NativeImage | undefined> => {
   const WebContents = webContents.fromId(webContentsId);
 
   const isExecuted = await WebContents?.executeJavaScript(`

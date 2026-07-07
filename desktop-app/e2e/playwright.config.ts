@@ -10,6 +10,7 @@ const testOrder = [
   'inspect-elements.spec.ts',
   'navigation-controls-extended.spec.ts',
   'device-color-scheme.spec.ts',
+  'mcp-server.spec.ts',
   'screenshot.spec.ts',
   'screenshot-save.spec.ts',
   'file-watching.spec.ts',
