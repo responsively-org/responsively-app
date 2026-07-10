@@ -57,14 +57,17 @@ test.describe('MCP server', () => {
     await client?.close();
   });
 
-  test('lists the five tools', async () => {
+  test('lists the available tools', async () => {
     const {tools} = await client.listTools();
     expect(tools.map((tool) => tool.name).sort()).toEqual([
+      'click',
       'get_app_state',
       'list_devices',
       'navigate',
+      'read_page',
       'screenshot',
       'set_active_devices',
+      'type_text',
     ]);
   });
 
@@ -159,6 +162,59 @@ test.describe('MCP server', () => {
     const images = content.filter((block): block is ImageBlock => block.type === 'image');
     expect(images).toHaveLength(1);
     expect((content[0] as TextBlock).text).toContain('iPad');
+  });
+
+  test('read_page lists interactive elements with selectors', async ({testServerUrl}) => {
+    await callTool(client, 'navigate', {url: `${testServerUrl}/interaction-test.html`});
+    const {content, isError} = await callTool(client, 'read_page');
+    expect(isError).toBe(false);
+    const page = firstTextJson(content);
+    expect(page.title).toBe('Interaction Test');
+    expect(page.text).toContain('Count: 0');
+    const button = page.elements.find((el: {selector: string}) => el.selector === '#counter-btn');
+    expect(button.text).toBe('Increment');
+    const input = page.elements.find((el: {selector: string}) => el.selector === '#name-input');
+    expect(input.inputType).toBe('text');
+    const link = page.elements.find((el: {selector: string}) => el.selector === '#home-link');
+    expect(link.href).toContain('test-page.html');
+  });
+
+  test('click triggers a real mouse click on the element', async ({testServerUrl}) => {
+    await callTool(client, 'navigate', {url: `${testServerUrl}/interaction-test.html`});
+    const {content, isError} = await callTool(client, 'click', {selector: '#counter-btn'});
+    expect(isError).toBe(false);
+    const result = firstTextJson(content);
+    expect(result.clicked.text).toBe('Increment');
+    const after = firstTextJson((await callTool(client, 'read_page')).content);
+    expect(after.text).toContain('Count: 1');
+  });
+
+  test('click errors clearly for unknown selectors', async ({testServerUrl}) => {
+    await callTool(client, 'navigate', {url: `${testServerUrl}/interaction-test.html`});
+    const {content, isError} = await callTool(client, 'click', {selector: '#no-such-element'});
+    expect(isError).toBe(true);
+    expect((content[0] as TextBlock).text).toContain('No element matches');
+  });
+
+  test('type_text fills a field and Enter submits the form', async ({testServerUrl}) => {
+    await callTool(client, 'navigate', {url: `${testServerUrl}/interaction-test.html`});
+    const {content, isError} = await callTool(client, 'type_text', {
+      selector: '#name-input',
+      text: 'Claude',
+      pressEnter: true,
+    });
+    expect(isError).toBe(false);
+    const result = firstTextJson(content);
+    expect(result.value).toBe('Claude');
+    const after = firstTextJson((await callTool(client, 'read_page')).content);
+    expect(after.text).toContain('Hello Claude');
+  });
+
+  test('interaction tools accept a specific device', async ({testServerUrl}) => {
+    await callTool(client, 'navigate', {url: `${testServerUrl}/interaction-test.html`});
+    const {content, isError} = await callTool(client, 'read_page', {device: 'iPad'});
+    expect(isError).toBe(false);
+    expect(firstTextJson(content).deviceName).toBe('iPad');
   });
 
   test('rejects requests with a non-loopback Host header', async ({mcpPort}) => {

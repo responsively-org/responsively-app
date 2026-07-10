@@ -11,6 +11,7 @@ import {
 } from '../../common/mcp';
 import {captureImage} from '../screenshot';
 import {GetMainWindow, sendBridgeCommand} from './bridge';
+import {clickElement, readPage, typeText} from './interactions';
 import {normalizeUrl} from './utils';
 
 const MAX_SCREENSHOT_WIDTH = 1000;
@@ -165,6 +166,89 @@ export const registerTools = (server: McpServer, getMainWindow: GetMainWindow) =
           {devices}
         );
         return textResult(result);
+      } catch (error) {
+        return errorResult(error);
+      }
+    }
+  );
+
+  server.registerTool(
+    'read_page',
+    {
+      description:
+        'Read the page rendered in a Responsively App device preview: the page text plus its ' +
+        'interactive elements (links, buttons, form fields) with CSS selectors usable with the ' +
+        'click and type_text tools. Defaults to the primary (first) device preview.',
+      inputSchema: {
+        device: z
+          .string()
+          .optional()
+          .describe('Optional device id or exact name; omit to read the primary device'),
+      },
+    },
+    async ({device}) => {
+      try {
+        return textResult(await readPage(getMainWindow, device));
+      } catch (error) {
+        return errorResult(error);
+      }
+    }
+  );
+
+  server.registerTool(
+    'click',
+    {
+      description:
+        'Click an element in a Responsively App device preview using a real (trusted) mouse ' +
+        'event at the element center; the element is scrolled into view first. With event ' +
+        'mirroring enabled (the app default), the click replicates across all device previews. ' +
+        'Use read_page to discover selectors. Returns the URL and title after the click.',
+      inputSchema: {
+        selector: z.string().min(1).describe('CSS selector of the element to click'),
+        device: z
+          .string()
+          .optional()
+          .describe('Optional device id or exact name; omit to click in the primary device'),
+      },
+    },
+    async ({selector, device}) => {
+      try {
+        return textResult(await clickElement(getMainWindow, selector, device));
+      } catch (error) {
+        return errorResult(error);
+      }
+    }
+  );
+
+  server.registerTool(
+    'type_text',
+    {
+      description:
+        'Type text into a form field in a Responsively App device preview using real ' +
+        'keystrokes. Focuses the element first (or uses the currently focused element when no ' +
+        'selector is given). Returns the field value plus URL and title after typing.',
+      inputSchema: {
+        text: z.string().describe('The text to type'),
+        selector: z
+          .string()
+          .optional()
+          .describe('CSS selector of the field; omit to type into the focused element'),
+        clear: z
+          .boolean()
+          .optional()
+          .describe('Select the existing field content first so typing replaces it'),
+        pressEnter: z.boolean().optional().describe('Press Enter after typing (submits forms)'),
+        device: z
+          .string()
+          .optional()
+          .describe('Optional device id or exact name; omit to type in the primary device'),
+      },
+    },
+    async ({text, selector, clear, pressEnter, device}) => {
+      try {
+        return textResult(
+          await typeText(getMainWindow, {text, selector, clear, pressEnter, device})
+        );
       } catch (error) {
         return errorResult(error);
       }
