@@ -134,6 +134,9 @@ Available tools:
 | `list_devices` | Full device catalog, including custom devices |
 | `set_active_devices` | Change which devices are previewed, by id or name |
 | `screenshot` | Capture one or all device previews as JPEG images |
+| `read_page` | Read a preview's page text and interactive elements with CSS selectors |
+| `click` | Click an element (trusted mouse event; mirrors across previews) |
+| `type_text` | Type into a form field with real keystrokes, optionally press Enter |
 
 Set the `RESPONSIVELY_MCP_PORT` environment variable before launching the app to use a different port. Screenshots capture the visible viewport and are downscaled to at most 1000px wide.
 

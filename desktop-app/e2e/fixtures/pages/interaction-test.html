@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interaction Test</title>
+  </head>
+  <body>
+    <h1>Interaction Test</h1>
+    <p>Count: <span id="count">0</span></p>
+    <button
+      id="counter-btn"
+      onclick="document.getElementById('count').textContent = Number(document.getElementById('count').textContent) + 1"
+    >
+      Increment
+    </button>
+    <form
+      onsubmit="event.preventDefault(); document.getElementById('greeting').textContent = 'Hello ' + document.getElementById('name-input').value;"
+    >
+      <label for="name-input">Name</label>
+      <input id="name-input" type="text" placeholder="Your name" />
+    </form>
+    <div id="greeting"></div>
+    <a id="home-link" href="test-page.html">Home</a>
+  </body>
+</html>
