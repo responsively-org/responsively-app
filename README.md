@@ -117,6 +117,9 @@ Here is the roadmap of the desktop app - https://github.com/responsively-org/res
     <td style="border: none;"><a href="https://www.testmuai.com/?utm_medium=sponsor&utm_source=responsively-app" target="_blank">
             <img src="https://responsively.app/_next/static/media/testmu.a5a8be46.svg" style="vertical-align: middle;" width="280" />
         </a></td>
+    <td style="border: none;"><a href="https://global.fun88.com/?utm_medium=sponsor&utm_source=responsively-app" target="_blank">
+            <img src="https://responsively.app/assets/img/logos/fun88.png" style="vertical-align: middle;" width="200" alt="Fun88" />
+        </a></td>
     <td rowspan="3" style="border: none;"><a href="https://github.com/sponsors/responsively-org" target="_blank">
     <img src="https://user-images.githubusercontent.com/1283424/142834528-4cd5b8eb-eeae-4437-b749-d09c96dde160.png" height="120px" alt="Sponsor to add your company logo here">
   </a></td>
