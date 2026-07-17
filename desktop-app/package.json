@@ -34,7 +34,7 @@
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "dev": "yarn start",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && yarn run start:renderer",
-    "start:main": "cross-env NODE_ENV=development electronmon ./src/main/dev-entry.cjs",
+    "start:main": "cross-env NODE_ENV=development electronmon ./src/main/dev-entry.cjs --enable-logging=stderr --log-level=3",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:preloadWebview": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload-webview.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
