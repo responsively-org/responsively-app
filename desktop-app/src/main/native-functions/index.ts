@@ -16,6 +16,15 @@ export interface SetNativeThemeResult {
   done: boolean;
 }
 
+export interface LoadURLInWebviewArgs {
+  webContentsId: number;
+  url: string;
+}
+
+export interface LoadURLInWebviewResult {
+  done: boolean;
+}
+
 export const initNativeFunctionHandlers = () => {
   ipcMain.handle(
     'disable-default-window-open-handler',
@@ -26,6 +35,23 @@ export const initNativeFunctionHandlers = () => {
       webContents.fromId(arg.webContentsId)?.setWindowOpenHandler(() => {
         return {action: 'deny'};
       });
+      return {done: true};
+    }
+  );
+
+  ipcMain.handle(
+    'load-url-in-webview',
+    async (_, arg: LoadURLInWebviewArgs): Promise<LoadURLInWebviewResult> => {
+      const contents = webContents.fromId(arg.webContentsId);
+      if (contents === undefined) {
+        return {done: false};
+      }
+      try {
+        await contents.loadURL(arg.url);
+      } catch {
+        // Superseded navigations reject with ERR_ABORTED; real load failures
+        // reach the renderer through the webview's did-fail-load event.
+      }
       return {done: true};
     }
   );

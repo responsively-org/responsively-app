@@ -71,27 +71,39 @@ const isDebug = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD
 
 if (isDebug) {
   require('electron-debug')();
+
+  // Electron warns about Chrome extension permissions it doesn't implement
+  // (e.g. Redux DevTools' 'contextMenus'). Node prints warnings through a
+  // default 'warning' listener, so swap it for one that drops just those.
+  const defaultWarningListeners = process.listeners('warning');
+  process.removeAllListeners('warning');
+  process.on('warning', (warning) => {
+    if (warning.name === 'ExtensionLoadWarning') {
+      return;
+    }
+    defaultWarningListeners.forEach((listener) => listener.call(process, warning));
+  });
 }
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
-  const {
-    REACT_DEVELOPER_TOOLS,
-    REDUX_DEVTOOLS,
-    EMBER_INSPECTOR,
-    VUEJS_DEVTOOLS,
-    APOLLO_DEVELOPER_TOOLS,
-  } = installer;
+  // Only extensions relevant to this codebase; electron-devtools-installer@4
+  // dropped some previously referenced ones (e.g. APOLLO_DEVELOPER_TOOLS), and
+  // Ember Inspector's MV3 background crashes under Electron.
+  const {REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS} = installer;
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = [
-    REACT_DEVELOPER_TOOLS,
-    REDUX_DEVTOOLS,
-    EMBER_INSPECTOR,
-    VUEJS_DEVTOOLS,
-    APOLLO_DEVELOPER_TOOLS,
-  ];
 
-  return installer.default(extensions, forceDownload).catch(console.log);
+  // electron-devtools-installer@4 still calls the deprecated session.loadExtension
+  // and session.getAllExtensions APIs; silence just those deprecation logs.
+  const previousNoDeprecation = process.noDeprecation;
+  process.noDeprecation = true;
+  try {
+    return await installer
+      .default([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS], {forceDownload})
+      .catch(console.log);
+  } finally {
+    process.noDeprecation = previousNoDeprecation;
+  }
 };
 
 const createWindow = async () => {
@@ -155,7 +167,7 @@ const createWindow = async () => {
   });
 
   mainWindow.loadURL(
-    `${resolveHtmlPath('index.html')}?urlToOpen=${encodeURI(urlToOpen ?? 'undefined')}`
+    `${resolveHtmlPath('index.html')}${urlToOpen ? `?urlToOpen=${encodeURI(urlToOpen)}` : ''}`
   );
 
   const isWindows = process.platform === 'win32';

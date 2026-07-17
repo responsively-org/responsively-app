@@ -12,6 +12,8 @@ import {ReloadArgs} from 'main/menu';
 import {
   DisableDefaultWindowOpenHandlerArgs,
   DisableDefaultWindowOpenHandlerResult,
+  LoadURLInWebviewArgs,
+  LoadURLInWebviewResult,
 } from 'main/native-functions';
 import {CONTEXT_MENUS} from 'main/webview-context-menu/common';
 import {DeleteStorageArgs, DeleteStorageResult} from 'main/webview-storage-manager';
@@ -87,22 +89,33 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
   const isNavigatingFromAddressBar = useRef<boolean>(false);
+  const initialAddress = useRef<string>(address);
   const [webviewReady, setWebviewReady] = useState<boolean>(false);
 
+  // Navigation is driven from the main process (instead of the <webview> src
+  // attribute or webview.loadURL) so that superseded loads don't surface as
+  // unhandled ERR_ABORTED errors from Electron's guest-view manager.
   useEffect(() => {
-    if (ref.current && isPrimary) {
-      try {
-        const currentUrl = ref.current.getURL();
-        if (address !== currentUrl) {
-          isNavigatingFromAddressBar.current = true;
-          ref.current.loadURL(address);
-        }
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error('Error loading URL', err);
-      }
+    const webview = ref.current;
+    if (webview == null || !webviewReady) {
+      return;
     }
-  }, [address, isPrimary]);
+    try {
+      if (webview.getURL() === address) {
+        return;
+      }
+      if (isPrimary) {
+        isNavigatingFromAddressBar.current = true;
+      }
+      window.electron.ipcRenderer.invoke<LoadURLInWebviewArgs, LoadURLInWebviewResult>(
+        'load-url-in-webview',
+        {webContentsId: webview.getWebContentsId(), url: address}
+      );
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error loading URL', err);
+    }
+  }, [address, isPrimary, webviewReady]);
 
   useEffect(() => {
     const webview = ref.current;
@@ -593,7 +606,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
           <div className="bg-white">
             <webview
               id={device.name}
-              src={address}
+              src={initialAddress.current}
               style={{
                 height,
                 width,
