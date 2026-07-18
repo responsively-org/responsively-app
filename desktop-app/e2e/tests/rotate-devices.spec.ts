@@ -53,22 +53,34 @@ test.describe('Rotate Devices', () => {
   test('per-device rotate button in device toolbar works independently', async ({app}) => {
     await app.dismissModals();
 
-    // Per-device rotate buttons — some may be disabled for non-mobile devices
     const perDeviceRotateBtn = app.page.locator('button[title="Rotate This Device"]').first();
+    await expect(perDeviceRotateBtn).toBeVisible();
+    await expect(perDeviceRotateBtn).toBeEnabled();
 
-    const isVisible = await perDeviceRotateBtn.isVisible().catch(() => false);
+    const dimensionsBefore = await app.firstWebview.evaluate((node) => {
+      const {height, width} = (node as HTMLElement).style;
+      return {height, width};
+    });
 
-    if (isVisible) {
-      await perDeviceRotateBtn.click();
-      await app.page.waitForTimeout(500);
+    await perDeviceRotateBtn.click();
+    await app.page.waitForTimeout(500);
 
-      const styleAfter = await app.firstWebview.getAttribute('style');
-      // Style should have changed for a mobile-capable device
-      expect(styleAfter).toBeTruthy();
+    const dimensionsAfter = await app.firstWebview.evaluate((node) => {
+      const {height, width} = (node as HTMLElement).style;
+      return {height, width};
+    });
 
-      // Click again to revert
-      await perDeviceRotateBtn.click();
-      await app.page.waitForTimeout(300);
-    }
+    expect(dimensionsAfter.width).toBe(dimensionsBefore.height);
+    expect(dimensionsAfter.height).toBe(dimensionsBefore.width);
+
+    await perDeviceRotateBtn.click();
+    await app.page.waitForTimeout(300);
+
+    const dimensionsRestored = await app.firstWebview.evaluate((node) => {
+      const {height, width} = (node as HTMLElement).style;
+      return {height, width};
+    });
+
+    expect(dimensionsRestored).toEqual(dimensionsBefore);
   });
 });

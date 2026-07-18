@@ -20,7 +20,7 @@ interface Props {
   onRotate: (state: boolean) => void;
   onIndividualLayoutHandler: (device: Device) => void;
   isIndividualLayout: boolean;
-  isDeviceRotationEnabled: boolean;
+  canRotateDevice: boolean;
 }
 
 const Toolbar = ({
@@ -32,7 +32,7 @@ const Toolbar = ({
   onRotate,
   onIndividualLayoutHandler,
   isIndividualLayout,
-  isDeviceRotationEnabled,
+  canRotateDevice,
 }: Props) => {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [playScreenshotDone] = useSound(screenshotSfx, {volume: 0.5});
@@ -177,11 +177,10 @@ const Toolbar = ({
         </Button>
         <Button
           onClick={rotate}
-          disabled={!isDeviceRotationEnabled}
+          disabled={!canRotateDevice}
+          isActive={rotated}
           title={
-            isDeviceRotationEnabled
-              ? 'Rotate This Device'
-              : 'Rotation not available for non-mobile devices'
+            canRotateDevice ? 'Rotate This Device' : 'Rotation not available for non-mobile devices'
           }
         >
           <Icon icon={rotated ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'} />
