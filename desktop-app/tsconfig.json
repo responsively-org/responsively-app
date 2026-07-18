@@ -9,6 +9,11 @@
     "sourceMap": true,
     "baseUrl": "./src",
     "moduleResolution": "node",
+    "paths": {
+      "@modelcontextprotocol/sdk/*": [
+        "../node_modules/@modelcontextprotocol/sdk/dist/cjs/*"
+      ]
+    },
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,

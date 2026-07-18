@@ -30,6 +30,7 @@ import {initNativeFunctionHandlers} from './native-functions';
 import {WebPermissionHandlers} from './web-permissions';
 import {initHttpBasicAuthHandlers} from './http-basic-auth';
 import {initAppMetaHandlers} from './app-meta';
+import {initMcpServer} from './mcp';
 import {openUrl} from './protocol-handler';
 import {AppUpdater} from './app-updater';
 
@@ -54,6 +55,7 @@ initWebviewContextMenu();
 initScreenshotHandlers();
 initWebviewStorageManagerHandlers();
 initNativeFunctionHandlers();
+initMcpServer(() => mainWindow);
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
