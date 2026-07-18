@@ -32,15 +32,15 @@ const IndividualLayoutToolbar = ({individualDevice, setIndividualDevice, devices
   }, [individualDevice, devices]);
 
   return (
-    <div className="my-4 ml-12 mr-4 flex justify-between">
+    <div className="overflow-x overflow-y my-4 ml-12 mr-4 flex justify-between whitespace-nowrap">
       <Tabs
         onSelect={onTabClick}
         selectedIndex={activeTab}
-        className={cx('react-tabs flex flex-1')}
+        className={cx('react-tabs flex flex-1 overflow-x-auto')}
       >
         <TabList
           className={cx(
-            'custom-scrollbar flex flex-1  justify-center gap-1 overflow-x-auto border-b border-slate-400/60 dark:border-white'
+            'custom-scrollbar flex w-full max-w-full gap-1 overflow-x-auto overflow-y-hidden scroll-smooth whitespace-nowrap border-b border-slate-400/60 dark:border-white'
           )}
         >
           {devices.map((device, idx) => (
