@@ -77,7 +77,7 @@ test.describe('Inspect Elements', () => {
     await app.page.waitForTimeout(1000);
 
     // DevtoolsResizer panel should appear
-    const devtoolsPanel = app.page.locator('.bg-\\[\\#f3f3f3\\]');
+    const devtoolsPanel = app.page.locator('[data-testid="devtools-resizer"]');
     await expect(devtoolsPanel).toBeVisible({timeout: 5000});
 
     // Container should have flex-col class (bottom dock)
@@ -95,7 +95,7 @@ test.describe('Inspect Elements', () => {
     await openDevtoolsBtn.click();
     await app.page.waitForTimeout(1000);
 
-    const devtoolsPanel = app.page.locator('.bg-\\[\\#f3f3f3\\]');
+    const devtoolsPanel = app.page.locator('[data-testid="devtools-resizer"]');
     await expect(devtoolsPanel).toBeVisible({timeout: 5000});
 
     // Click dock-toggle button (index 1) to switch to right
@@ -117,7 +117,7 @@ test.describe('Inspect Elements', () => {
     await openDevtoolsBtn.click();
     await app.page.waitForTimeout(1000);
 
-    const devtoolsPanel = app.page.locator('.bg-\\[\\#f3f3f3\\]');
+    const devtoolsPanel = app.page.locator('[data-testid="devtools-resizer"]');
     await expect(devtoolsPanel).toBeVisible({timeout: 5000});
 
     const dockToggleBtn = devtoolsPanel.locator('button').nth(1);
@@ -158,7 +158,7 @@ test.describe('Inspect Elements', () => {
     await openDevtoolsBtn.click();
     await app.page.waitForTimeout(1000);
 
-    const devtoolsPanel = app.page.locator('.bg-\\[\\#f3f3f3\\]');
+    const devtoolsPanel = app.page.locator('[data-testid="devtools-resizer"]');
     await expect(devtoolsPanel).toBeVisible({timeout: 5000});
 
     // Click close button (index 3)
@@ -176,7 +176,7 @@ test.describe('Inspect Elements', () => {
     await openDevtoolsBtn.click();
     await app.page.waitForTimeout(1000);
 
-    const devtoolsPanel = app.page.locator('.bg-\\[\\#f3f3f3\\]');
+    const devtoolsPanel = app.page.locator('[data-testid="devtools-resizer"]');
     await expect(devtoolsPanel).toBeVisible({timeout: 5000});
 
     // Click the undock button (index 2)

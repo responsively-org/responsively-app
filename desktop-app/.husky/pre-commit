@@ -1,4 +1,7 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npx lint-staged@13
+# Hooks run from the repo root, but lint-staged spawns its tasks from its own
+# cwd — which must be desktop-app so the config AND the local binaries
+# (cross-env, eslint, prettier) resolve.
+cd desktop-app && npx lint-staged@13

@@ -15,11 +15,11 @@ import {
 } from 'main/native-functions';
 import {CONTEXT_MENUS} from 'main/webview-context-menu/common';
 import {DeleteStorageArgs, DeleteStorageResult} from 'main/webview-storage-manager';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import Spinner from 'renderer/components/Spinner';
 import {ADDRESS_BAR_EVENTS} from 'renderer/components/ToolBar/AddressBar';
-import {webViewPubSub} from 'renderer/lib/pubsub';
+import {webViewPubSub, type Handler as PubSubHandler} from 'renderer/lib/pubsub';
 import {
   selectDevtoolsWebviewId,
   selectDockPosition,
@@ -142,25 +142,31 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   });
 
   const registerNavigationHandlers = useCallback(() => {
-    webViewPubSub.subscribe(NAVIGATION_EVENTS.RELOAD, () => {
+    const subscriptions: Array<[string, PubSubHandler]> = [];
+    const subscribe = (topic: string, handler: PubSubHandler) => {
+      webViewPubSub.subscribe(topic, handler);
+      subscriptions.push([topic, handler]);
+    };
+
+    subscribe(NAVIGATION_EVENTS.RELOAD, () => {
       if (ref.current) {
         ref.current.reload();
       }
     });
     if (isPrimary) {
-      webViewPubSub.subscribe(NAVIGATION_EVENTS.BACK, () => {
+      subscribe(NAVIGATION_EVENTS.BACK, () => {
         if (ref.current) {
           ref.current.goBack();
         }
       });
 
-      webViewPubSub.subscribe(NAVIGATION_EVENTS.FORWARD, () => {
+      subscribe(NAVIGATION_EVENTS.FORWARD, () => {
         if (ref.current) {
           ref.current.goForward();
         }
       });
 
-      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_STORAGE, async () => {
+      subscribe(ADDRESS_BAR_EVENTS.DELETE_STORAGE, async () => {
         if (!ref.current) {
           return;
         }
@@ -171,7 +177,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
         );
       });
 
-      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_COOKIES, async () => {
+      subscribe(ADDRESS_BAR_EVENTS.DELETE_COOKIES, async () => {
         if (!ref.current) {
           return;
         }
@@ -185,7 +191,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
         );
       });
 
-      webViewPubSub.subscribe(ADDRESS_BAR_EVENTS.DELETE_CACHE, async () => {
+      subscribe(ADDRESS_BAR_EVENTS.DELETE_CACHE, async () => {
         if (!ref.current) {
           return;
         }
@@ -199,6 +205,10 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
         );
       });
     }
+
+    return () => {
+      subscriptions.forEach(([topic, handler]) => webViewPubSub.unsubscribe(topic, handler));
+    };
   }, [isPrimary]);
 
   const toggleRuler = useCallback(() => {
@@ -401,25 +411,31 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     });
 
     if (!isPrimary) {
-      setTimeout(() => {
-        webview.addEventListener('dom-ready', () => {
-          window.electron.ipcRenderer.invoke<
-            DisableDefaultWindowOpenHandlerArgs,
-            DisableDefaultWindowOpenHandlerResult
-          >('disable-default-window-open-handler', {
-            webContentsId: webview.getWebContentsId(),
-          });
+      const disableWindowOpenHandler = () => {
+        window.electron.ipcRenderer.invoke<
+          DisableDefaultWindowOpenHandlerArgs,
+          DisableDefaultWindowOpenHandlerResult
+        >('disable-default-window-open-handler', {
+          webContentsId: webview.getWebContentsId(),
         });
+      };
+      const timer = setTimeout(() => {
+        webview.addEventListener('dom-ready', disableWindowOpenHandler);
       }, 2000);
+      handlerRemovers.push(() => {
+        clearTimeout(timer);
+        webview.removeEventListener('dom-ready', disableWindowOpenHandler);
+      });
     }
 
-    registerNavigationHandlers();
+    const unregisterNavigationHandlers = registerNavigationHandlers();
 
     // eslint-disable-next-line consistent-return
     return () => {
       handlerRemovers.forEach((handlerRemover) => {
         handlerRemover();
       });
+      unregisterNavigationHandlers();
     };
   }, [ref, dispatch, registerNavigationHandlers, isPrimary, inspectElement, openDevTools, address]);
 
@@ -505,34 +521,46 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     }
 
     const webview = ref.current;
-    webview.addEventListener('dom-ready', () => {
+    const hideScrollbars = () => {
       webview.insertCSS(`
                ::-webkit-scrollbar {
               display: none;
               } `);
-    });
+    };
+    webview.addEventListener('dom-ready', hideScrollbars);
 
     // eslint-disable-next-line consistent-return
     return () => {
-      webview.removeEventListener('dom-ready', () => {});
+      webview.removeEventListener('dom-ready', hideScrollbars);
     };
   }, [device.isMobileCapable]);
 
   useEffect(() => {
     const webview = ref.current;
 
-    if (isPrimary && webview) {
-      webview.addEventListener('dom-ready', () => {
-        const pageTitle = webview.getTitle();
-        dispatch(setPageTitle(pageTitle));
-      });
+    if (!isPrimary || !webview) {
+      return undefined;
     }
+    const updatePageTitle = () => {
+      dispatch(setPageTitle(webview.getTitle()));
+    };
+    webview.addEventListener('dom-ready', updatePageTitle);
 
-    // eslint-disable-next-line consistent-return
     return () => {
-      webview?.removeEventListener('dom-ready', () => {});
+      webview.removeEventListener('dom-ready', updatePageTitle);
     };
   }, [dispatch, isPrimary]);
+
+  // Read once per resolution, not on every render: the store read is a
+  // synchronous IPC call and a fresh array identity defeats GuideGrid's memos.
+  const defaultGuides = useMemo<DefaultGuide[]>(
+    () =>
+      window.electron.store
+        .get('userPreferences.guides')
+        .flatMap((x: unknown) => x as DefaultGuide[])
+        .filter((x: DefaultGuide) => x.resolution === `${width}x${height}`),
+    [width, height]
+  );
 
   const scaledHeight = height * zoomfactor;
   const scaledWidth = width * zoomfactor;
@@ -583,12 +611,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
             zoomFactor={zoomfactor}
             night={darkMode}
             enabled={rulerEnabled(`${width}x${height}`)}
-            defaultGuides={window.electron.store
-              .get('userPreferences.guides')
-              .flatMap((x: unknown) => x as DefaultGuide[])
-              .filter((x: DefaultGuide) => {
-                return x.resolution === `${width}x${height}`;
-              })}
+            defaultGuides={defaultGuides}
           />
           <div className="bg-white">
             <webview

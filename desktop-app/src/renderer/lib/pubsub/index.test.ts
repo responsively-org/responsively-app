@@ -1,5 +1,9 @@
-import Bluebird from 'bluebird';
 import PubSub from '.';
+
+const delay = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 
 describe('PubSub', () => {
   it('should invoke subscribed callback', async () => {
@@ -15,11 +19,11 @@ describe('PubSub', () => {
   it('should handler async handlers', async () => {
     const pubsub = new PubSub();
     pubsub.subscribe('test', async () => {
-      await Bluebird.delay(1000);
+      await delay(20);
       return 'handler1';
     });
     pubsub.subscribe('test', async () => {
-      await Bluebird.delay(2000);
+      await delay(40);
       return 'handler2';
     });
 
@@ -49,5 +53,18 @@ describe('PubSub', () => {
     expect(results).toHaveLength(1);
     expect(results[0].result).toBeNull();
     expect(results[0].error).not.toBeNull();
+  });
+
+  it('should stop invoking a handler after unsubscribe', async () => {
+    const pubsub = new PubSub();
+    let count = 0;
+    const handler = () => {
+      count += 1;
+    };
+    pubsub.subscribe('test', handler);
+    await pubsub.publish('test');
+    pubsub.unsubscribe('test', handler);
+    await pubsub.publish('test');
+    expect(count).toBe(1);
   });
 });

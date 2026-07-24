@@ -185,8 +185,13 @@ test.describe('MCP server', () => {
     expect(isError).toBe(false);
     const result = firstTextJson(content);
     expect(result.clicked.text).toBe('Increment');
-    const after = firstTextJson((await callTool(client, 'read_page')).content);
-    expect(after.text).toContain('Count: 1');
+    // Input-event delivery can lag under full-suite CPU load — poll the page
+    // instead of asserting a single read.
+    await expect
+      .poll(async () => firstTextJson((await callTool(client, 'read_page')).content).text, {
+        timeout: 10_000,
+      })
+      .toContain('Count: 1');
   });
 
   test('click errors clearly for unknown selectors', async ({testServerUrl}) => {

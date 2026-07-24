@@ -96,7 +96,10 @@ const DevtoolsResizer = () => {
   }, [sendBounds]);
 
   return (
-    <div className="border-[#d0d0d0] bg-[#f3f3f3] text-[#555]">
+    <div
+      data-testid="devtools-resizer"
+      className="border-gray-300 bg-gray-100 text-gray-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
+    >
       <Resizable
         className="border"
         key={dockPosition}

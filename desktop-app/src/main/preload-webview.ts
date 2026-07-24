@@ -1,5 +1,53 @@
 import {ipcRenderer} from 'electron';
 
+window.onerror = function logError(errorMsg, url, lineNumber) {
+  // eslint-disable-next-line no-console
+  console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
+};
+
+// Scroll/wheel mirroring can fire every frame on every preview — coalesce to
+// one host message per animation frame. Wheel deltas are summed so the total
+// mirrored scroll distance is preserved.
+let wheelDelta: {x: number; y: number} | null = null;
+let scrollPending = false;
+let flushRequested = false;
+
+const flushScrollData = () => {
+  flushRequested = false;
+  if (wheelDelta !== null) {
+    ipcRenderer.sendToHost('pass-scroll-data', {
+      coordinates: {
+        x: wheelDelta.x,
+        y: wheelDelta.y,
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
+      },
+      innerHeight: document.body.scrollHeight,
+      innerWidth: window.innerWidth,
+    });
+  } else if (scrollPending) {
+    ipcRenderer.sendToHost('pass-scroll-data', {
+      coordinates: {
+        x: 0,
+        y: 0,
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
+      },
+      innerHeight: document.body.scrollHeight,
+      innerWidth: window.innerWidth,
+    });
+  }
+  wheelDelta = null;
+  scrollPending = false;
+};
+
+const requestFlush = () => {
+  if (!flushRequested) {
+    flushRequested = true;
+    window.requestAnimationFrame(flushScrollData);
+  }
+};
+
 const documentBodyInit = () => {
   // Browser Sync
   const bsPort = ipcRenderer.sendSync('get-browser-sync-port');
@@ -17,29 +65,16 @@ const documentBodyInit = () => {
   });
 
   window.addEventListener('wheel', (e) => {
-    ipcRenderer.sendToHost('pass-scroll-data', {
-      coordinates: {
-        x: e.deltaX,
-        y: e.deltaY,
-        scrollX: window.scrollX,
-        scrollY: window.scrollY,
-      },
-      innerHeight: document.body.scrollHeight,
-      innerWidth: window.innerWidth,
-    });
+    wheelDelta = {
+      x: (wheelDelta?.x ?? 0) + e.deltaX,
+      y: (wheelDelta?.y ?? 0) + e.deltaY,
+    };
+    requestFlush();
   });
 
   window.addEventListener('scroll', () => {
-    ipcRenderer.sendToHost('pass-scroll-data', {
-      coordinates: {
-        x: 0,
-        y: 0,
-        scrollX: window.scrollX,
-        scrollY: window.scrollY,
-      },
-      innerHeight: document.body.scrollHeight,
-      innerWidth: window.innerWidth,
-    });
+    scrollPending = true;
+    requestFlush();
   });
 
   // To detect if user is typing in an input field
@@ -77,7 +112,9 @@ const documentBodyInit = () => {
     }
   });
 
-  window.addEventListener('dom-ready', () => {
+  // Report the full page height to the host once the page (and its assets,
+  // which affect layout) has loaded.
+  window.addEventListener('load', () => {
     const {body} = document;
     const html = document.documentElement;
 
@@ -101,24 +138,19 @@ ipcRenderer.on('context-menu-command', (_, command) => {
   ipcRenderer.sendToHost('context-menu-command', command);
 });
 
-const documentBodyWaitHandle = setInterval(() => {
-  window.onerror = function logError(errorMsg, url, lineNumber) {
+const init = () => {
+  try {
+    documentBodyInit();
+  } catch (err) {
     // eslint-disable-next-line no-console
-    console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
-    // Code to run when an error has occurred on the page
-  };
-
-  if (window?.document?.body) {
-    clearInterval(documentBodyWaitHandle);
-    try {
-      documentBodyInit();
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log('Error in documentBodyInit:', err);
-    }
-
-    return;
+    console.log('Error in documentBodyInit:', err);
   }
-  // eslint-disable-next-line no-console
-  console.log('document.body not ready');
-}, 300);
+};
+
+// Preload scripts run before the document is parsed; body exists by
+// DOMContentLoaded. (Replaces a 300ms polling loop.)
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
