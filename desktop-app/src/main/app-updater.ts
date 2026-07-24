@@ -1,3 +1,4 @@
+import {app} from 'electron';
 import {autoUpdater} from 'electron-updater';
 
 export interface AppUpdaterStatus {
@@ -24,7 +25,9 @@ export class AppUpdater {
 
   constructor() {
     autoUpdater.logger = console;
-    if (process.env.CI || process.env.E2E_TEST) {
+    // electron-updater can't update unpacked (dev) builds and only logs
+    // "Skip checkForUpdates" noise there, so don't even start the check.
+    if (process.env.CI || process.env.E2E_TEST || !app.isPackaged) {
       return;
     }
     autoUpdater.checkForUpdatesAndNotify();

@@ -33,9 +33,9 @@ test.describe('URL Navigation', () => {
     await mainWindow.waitForTimeout(200);
     await addressBar.press('Enter');
 
-    // Verify the webview src has http:// prepended
-    const webview = mainWindow.locator('webview').first();
-    await expect(webview).toHaveAttribute('src', /^http:\/\/localhost:3000/, {
+    // Assert on the normalized address: nothing listens on localhost:3000, and
+    // the webview only reflects its src attribute on committed navigations.
+    await expect(addressBar).toHaveValue(/^http:\/\/localhost:3000/, {
       timeout: 15_000,
     });
   });

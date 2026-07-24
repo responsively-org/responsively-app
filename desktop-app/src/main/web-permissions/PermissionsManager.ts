@@ -205,7 +205,6 @@ class PermissionsManager {
         .clearStorageData({
           origin,
           storages: [],
-          quotas: [],
         })
         .catch((e) => {
           // eslint-disable-next-line no-console
@@ -224,7 +223,6 @@ class PermissionsManager {
         .clearStorageData({
           origin,
           storages: [],
-          quotas: [],
         })
         .catch((e) => {
           // eslint-disable-next-line no-console

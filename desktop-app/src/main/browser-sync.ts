@@ -38,6 +38,8 @@ export async function initInstance(): Promise<BrowserSyncInstance> {
         notify: false,
         ui: false,
         port: resolvedPort,
+        logLevel: 'silent',
+        logSnippet: false,
       },
       (err: Error, bs: BrowserSyncInstance) => {
         if (err) {

@@ -159,7 +159,10 @@ const openDevtools = async (_: any, arg: OpenDevtoolsArgs): Promise<OpenDevtools
         while(retryCount < 10 && !done) {
           try {
             retryCount++;
-            document.querySelectorAll('div[slot="insertion-point-main"]')[0].shadowRoot.querySelectorAll('.tabbed-pane-left-toolbar.toolbar')[0].style.display = 'none'
+            // Chromium >=150 hosts the main tabbed pane at '.main-tabbed-pane';
+            // older versions wrapped it in 'div[slot="insertion-point-main"]'.
+            const pane = document.querySelector('.main-tabbed-pane') || document.querySelector('div[slot="insertion-point-main"]');
+            pane.shadowRoot.querySelector('devtools-toolbar.tabbed-pane-left-toolbar, .tabbed-pane-left-toolbar.toolbar').style.display = 'none'
             done = true
           } catch(err){
             await sleep(100);
