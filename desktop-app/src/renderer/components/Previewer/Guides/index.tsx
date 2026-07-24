@@ -33,8 +33,8 @@ const GuideGrid = ({
   enabled,
   defaultGuides,
 }: Props) => {
-  const horizontalGuidesRef = useRef<Guides>();
-  const verticalGuidesRef = useRef<Guides>();
+  const horizontalGuidesRef = useRef<Guides | null>(null);
+  const verticalGuidesRef = useRef<Guides | null>(null);
   const defaultsHor = useMemo(() => {
     return defaultGuides
       .filter((x: DefaultGuide) => !x.is_vertical)

@@ -18,7 +18,9 @@ module.exports = {
   ],
   rules: {
     'import/no-extraneous-dependencies': 'off',
-    'import/no-unresolved': 'error',
+    // The legacy resolver chain predates package exports maps; tsc (bundler
+    // resolution) already validates these imports. Revisit with flat config.
+    'import/no-unresolved': ['error', {ignore: ['^@modelcontextprotocol/sdk/']}],
     'import/prefer-default-export': 'off',
     'import/extensions': [
       'error',

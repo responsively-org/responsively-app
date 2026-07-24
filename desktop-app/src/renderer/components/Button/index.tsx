@@ -74,9 +74,14 @@ const Button = ({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     >
-      {isLoading ? <Icon icon="line-md:loading-twotone-loop" /> : null}
-      {isLoadingDone ? <Icon icon="line-md:circle-to-confirm-circle-transition" /> : null}
-      {!isLoading && !isLoadingDone ? children : null}
+      {/* pointer-events-none keeps mouse events targeting the stable button
+          node — icon SVGs can be re-rendered mid-click (e.g. by an input
+          blur), which makes the browser drop the click entirely. */}
+      <span className="pointer-events-none contents">
+        {isLoading ? <Icon icon="line-md:loading-twotone-loop" /> : null}
+        {isLoadingDone ? <Icon icon="line-md:circle-to-confirm-circle-transition" /> : null}
+        {!isLoading && !isLoadingDone ? children : null}
+      </span>
     </button>
   );
 };

@@ -1,5 +1,5 @@
 import {Icon} from '@iconify/react';
-import {useDetectClickOutside} from 'react-detect-click-outside';
+import useClickOutside from 'renderer/hooks/useClickOutside';
 import Button from 'renderer/components/Button';
 import {useDispatch, useSelector} from 'react-redux';
 import {closeMenuFlyout, selectMenuFlyout} from 'renderer/store/features/ui';
@@ -18,13 +18,11 @@ const Menu = () => {
     true
   );
 
-  const ref = useDetectClickOutside({
-    onTriggered: () => {
-      if (!isMenuFlyoutOpen) {
-        return;
-      }
-      dispatch(closeMenuFlyout(false));
-    },
+  const ref = useClickOutside(() => {
+    if (!isMenuFlyoutOpen) {
+      return;
+    }
+    dispatch(closeMenuFlyout(false));
   });
 
   const handleFlyout = () => {

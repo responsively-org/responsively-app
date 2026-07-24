@@ -3,7 +3,7 @@ import Modal from '../Modal';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  title: JSX.Element | string;
+  title: React.JSX.Element | string;
 }
 
 const ModalLoader = ({isOpen, onClose, title}: Props) => {

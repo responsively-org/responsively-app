@@ -51,7 +51,12 @@ export const Suite = ({suite: {id, name, devices}, isActive}: Props) => {
             </Button>
           ) : null}
         </div>
-        <div className="flex flex-col gap-2" ref={drop}>
+        <div
+          className="flex flex-col gap-2"
+          ref={(node) => {
+            drop(node);
+          }}
+        >
           {devices.map((deviceId) => (
             <DeviceLabel
               device={getDevicesMap()[deviceId]}

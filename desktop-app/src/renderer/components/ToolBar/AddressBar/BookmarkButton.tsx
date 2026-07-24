@@ -1,6 +1,6 @@
 import {Icon} from '@iconify/react';
 import {useState, useMemo} from 'react';
-import {useDetectClickOutside} from 'react-detect-click-outside';
+import useClickOutside from 'renderer/hooks/useClickOutside';
 import {useDispatch, useSelector} from 'react-redux';
 import cx from 'classnames';
 import Button from 'renderer/components/Button';
@@ -19,11 +19,9 @@ interface Props {
 const BookmarkButton = ({currentAddress, pageTitle}: Props) => {
   const [openFlyout, setOpenFlyout] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const ref = useDetectClickOutside({
-    onTriggered: () => {
-      if (!openFlyout) return;
-      if (openFlyout) setOpenFlyout(false);
-    },
+  const ref = useClickOutside(() => {
+    if (!openFlyout) return;
+    setOpenFlyout(false);
   });
 
   const initbookmark = {

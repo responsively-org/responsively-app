@@ -2,7 +2,7 @@ import {useState} from 'react';
 
 type AccordionItemProps = {
   title: string;
-  children: JSX.Element;
+  children: React.JSX.Element;
 };
 
 export const AccordionItem = ({title, children}: AccordionItemProps) => {

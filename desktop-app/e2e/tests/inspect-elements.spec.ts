@@ -8,6 +8,18 @@ const RIGHT_DOCK_SELECTOR = '.flex.h-full.flex-row';
 
 test.describe('Inspect Elements', () => {
   test.describe.configure({mode: 'parallel'});
+
+  // Workers are reused across spec files: an enabled inspector consumes all
+  // clicks in the webviews (CDP Overlay.setInspectMode), silently breaking
+  // whichever spec file runs next in this worker. Always leave it off.
+  test.afterEach(async ({app}) => {
+    const inspectBtn = app.page.locator('button[title="Inspect Elements"]');
+    const classNames = await inspectBtn.getAttribute('class');
+    if (classNames?.includes('bg-slate-400/60')) {
+      await inspectBtn.click();
+      await app.page.waitForTimeout(200);
+    }
+  });
   test('inspect button is visible in toolbar', async ({app}) => {
     await app.dismissModals();
 

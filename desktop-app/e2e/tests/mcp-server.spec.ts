@@ -51,6 +51,13 @@ test.describe('MCP server', () => {
     // using the tools themselves.
     await callTool(client, 'set_active_devices', {devices: DEFAULT_DEVICE_IDS});
     await callTool(client, 'navigate', {url: `${testServerUrl}/test-page.html`});
+    // Defense in depth: a predecessor file may have left inspect mode on,
+    // whose CDP overlay consumes the trusted clicks the click tool sends.
+    const inspectBtn = mainWindow.locator('button[title="Inspect Elements"]');
+    if ((await inspectBtn.getAttribute('class'))?.includes('bg-slate-400/60')) {
+      await inspectBtn.click();
+      await mainWindow.waitForTimeout(200);
+    }
   });
 
   test.afterAll(async () => {
