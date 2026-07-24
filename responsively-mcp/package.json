@@ -1,0 +1,40 @@
+{
+  "name": "@responsively/mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Responsively App — launches the installed app on demand and lets AI agents drive it",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "responsively",
+    "responsive-design",
+    "devtools",
+    "ai-agents"
+  ],
+  "homepage": "https://responsively.app",
+  "bugs": {
+    "url": "https://github.com/responsively-org/responsively-app/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/responsively-org/responsively-app.git",
+    "directory": "responsively-mcp"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Responsively",
+    "email": "p.manoj.vivek@gmail.com"
+  },
+  "bin": {
+    "responsively-mcp": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "lib"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

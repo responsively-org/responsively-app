@@ -1,19 +1,22 @@
 import '@testing-library/jest-dom/vitest';
 
-window.electron = {
-  ipcRenderer: {
-    sendMessage: vi.fn(),
-    on: vi.fn(),
-    once: vi.fn(),
-    invoke: vi.fn(),
-    removeListener: vi.fn(),
-    removeAllListeners: vi.fn(),
-  },
-  store: {
-    set: vi.fn(),
-    get: vi.fn(),
-  },
-};
+// Guarded so node-environment suites (e.g. src/mcp-cli) can share this setup.
+if (typeof window !== 'undefined') {
+  window.electron = {
+    ipcRenderer: {
+      sendMessage: vi.fn(),
+      on: vi.fn(),
+      once: vi.fn(),
+      invoke: vi.fn(),
+      removeListener: vi.fn(),
+      removeAllListeners: vi.fn(),
+    },
+    store: {
+      set: vi.fn(),
+      get: vi.fn(),
+    },
+  };
+}
 
 global.IntersectionObserver = vi.fn(() => ({
   root: null,

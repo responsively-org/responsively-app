@@ -41,6 +41,10 @@ jobs:
           yarn exec tsc
           yarn test
 
+      - name: MCP bootstrap package tests
+        working-directory: ./responsively-mcp
+        run: npm test
+
       - name: E2E Tests
         run: yarn test:e2e
         env:
