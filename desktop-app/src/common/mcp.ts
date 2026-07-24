@@ -6,6 +6,22 @@ export const MCP_PORT_ENV_VAR = 'RESPONSIVELY_MCP_PORT';
 
 export const MCP_SERVER_NAME = 'responsively';
 
+export const MCP_BEACON_FILENAME = 'app-location.json';
+
+/**
+ * Written to <userData>/app-location.json at every app startup so the
+ * @responsively/mcp npm bootstrap can locate this install (and its bundled
+ * MCP bridge) without any user configuration.
+ */
+export interface McpBeacon {
+  binaryPath: string;
+  resourcesPath?: string;
+  bridgeEntry?: string;
+  version: string;
+  mcpPort: number;
+  writtenAt: string;
+}
+
 export type McpBridgeCommand =
   | 'get-app-state'
   | 'navigate'

@@ -11,6 +11,8 @@ const testOrder = [
   'navigation-controls-extended.spec.ts',
   'device-color-scheme.spec.ts',
   'mcp-server.spec.ts',
+  'mcp-bridge-stdio.spec.ts',
+  'mcp-manifest.spec.ts',
   'screenshot.spec.ts',
   'screenshot-save.spec.ts',
   'file-watching.spec.ts',

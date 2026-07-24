@@ -105,14 +105,12 @@ Install the handy browser extension to easily send links from your browser to th
 
 ## MCP Server (AI coding agents)
 
-Responsively App runs a built-in [Model Context Protocol](https://modelcontextprotocol.io) server, so AI coding agents like Claude Code and Cursor can drive the app while you build — load your dev server, switch device previews, and visually verify responsive layouts with per-device screenshots.
+Responsively App ships a built-in [Model Context Protocol](https://modelcontextprotocol.io) server, so AI coding agents like Claude Code and Cursor can drive the app while you build — load your dev server, switch device previews, interact with pages, and visually verify responsive layouts with per-device screenshots.
 
-The server listens on `http://127.0.0.1:12720/mcp` (localhost only) whenever the app is running.
-
-Connect from Claude Code:
+Install the app, launch it once, then connect from Claude Code:
 
 ```bash
-claude mcp add --transport http responsively http://127.0.0.1:12720/mcp
+claude mcp add responsively -- npx -y @responsively/mcp
 ```
 
 Or add to Cursor's `.cursor/mcp.json`:
@@ -120,10 +118,12 @@ Or add to Cursor's `.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
-    "responsively": {"url": "http://127.0.0.1:12720/mcp"}
+    "responsively": {"command": "npx", "args": ["-y", "@responsively/mcp"]}
   }
 }
 ```
+
+**The app is launched on demand** — connecting an agent session doesn't open it; the first tool call starts it automatically (and it stays open afterwards). If it's already running, it's reused.
 
 Available tools:
 
@@ -138,7 +138,28 @@ Available tools:
 | `click` | Click an element (trusted mouse event; mirrors across previews) |
 | `type_text` | Type into a form field with real keystrokes, optionally press Enter |
 
-Set the `RESPONSIVELY_MCP_PORT` environment variable before launching the app to use a different port. Screenshots capture the visible viewport and are downscaled to at most 1000px wide.
+Screenshots capture the visible viewport and are downscaled to at most 1000px wide.
+
+<details>
+<summary>Advanced configuration</summary>
+
+The app's MCP server listens on `http://127.0.0.1:12720/mcp` (localhost only) whenever the app is running. If your MCP client can't run npx, connect to it directly — but you'll need to have the app running yourself:
+
+```bash
+claude mcp add --transport http responsively http://127.0.0.1:12720/mcp
+```
+
+Environment variables understood by `@responsively/mcp`:
+
+| Variable | Purpose |
+| --- | --- |
+| `RESPONSIVELY_APP_PATH` | Path to a custom app install (auto-detected otherwise) |
+| `RESPONSIVELY_MCP_PORT` | Port of the app's MCP server (default `12720`) |
+| `RESPONSIVELY_MCP_BRIDGE` | Direct path to a bridge `cli.js` (development override) |
+
+Linux note: the app ships as an AppImage, so launch it once before first agent use — that's how the CLI learns where it lives.
+
+</details>
 
 ## Issues
 

@@ -3,6 +3,7 @@ import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/st
 import {app} from 'electron';
 import http from 'http';
 import {MCP_SERVER_NAME} from '../../common/mcp';
+import {writeMcpBeacon} from './beacon';
 import {GetMainWindow, initMcpBridge} from './bridge';
 import {registerTools} from './tools';
 import {isAllowedHostHeader, resolveMcpPort} from './utils';
@@ -33,6 +34,7 @@ const handleMcpRequest = async (
 export const initMcpServer = (getMainWindow: GetMainWindow) => {
   initMcpBridge();
   const port = resolveMcpPort();
+  writeMcpBeacon(port);
 
   httpServer = http.createServer(async (req, res) => {
     try {
