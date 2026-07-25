@@ -1,7 +1,6 @@
-import {RootState} from 'renderer/store';
-import {configureStore} from '@reduxjs/toolkit';
+import {RootState, createAppStore} from 'renderer/store';
 import {type Mock} from 'vitest';
-import designOverlayReducer, {
+import {
   setDesignOverlay,
   removeDesignOverlay,
   selectDesignOverlay,
@@ -22,12 +21,9 @@ beforeEach(() => {
 });
 
 describe('designOverlaySlice', () => {
-  const createStore = () =>
-    configureStore({
-      reducer: {
-        designOverlay: designOverlayReducer,
-      },
-    });
+  // The app store factory includes the persistence listener middleware, so
+  // these tests cover the real persistence path.
+  const createStore = () => createAppStore();
 
   const mockOverlayState: DesignOverlayState = {
     image:
@@ -111,13 +107,11 @@ describe('designOverlaySlice', () => {
 
     it('should remove overlay from electron store', () => {
       const store = createStore();
-      mockStore.get.mockReturnValue({
-        [resolution]: mockOverlayState,
-      });
+      store.dispatch(setDesignOverlay({resolution, overlayState: mockOverlayState}));
 
       store.dispatch(removeDesignOverlay({resolution}));
 
-      expect(mockStore.set).toHaveBeenCalledWith('userPreferences.designOverlays', {});
+      expect(mockStore.set).toHaveBeenLastCalledWith('userPreferences.designOverlays', {});
     });
   });
 

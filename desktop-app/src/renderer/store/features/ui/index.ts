@@ -15,8 +15,10 @@ export interface UIState {
   menuFlyout: boolean;
 }
 
+// Persisted values are injected via the store's preloaded state
+// (store/preloadedState.ts); persistence happens in store/persistence.ts.
 const initialState: UIState = {
-  darkMode: window.electron.store.get('ui.darkMode'),
+  darkMode: true,
   appView: APP_VIEWS.BROWSER,
   menuFlyout: false,
 };
@@ -27,7 +29,6 @@ export const uiSlice = createSlice({
   reducers: {
     setDarkMode: (state, action: PayloadAction<boolean>) => {
       state.darkMode = action.payload;
-      window.electron.store.set('ui.darkMode', action.payload);
     },
     setAppView: (state, action: PayloadAction<AppView>) => {
       state.appView = action.payload;

@@ -13,18 +13,9 @@ export interface DesignOverlayState {
 
 export type ViewResolution = string;
 
-const loadPersistedOverlays = (): {
-  [key: ViewResolution]: DesignOverlayState;
-} => {
-  try {
-    const overlays = window.electron.store.get('userPreferences.designOverlays') || {};
-    return overlays as {[key: ViewResolution]: DesignOverlayState};
-  } catch {
-    return {};
-  }
-};
-
-const initialState: {[key: ViewResolution]: DesignOverlayState} = loadPersistedOverlays();
+// Persisted values are injected via the store's preloaded state
+// (store/preloadedState.ts); persistence happens in store/persistence.ts.
+const initialState: {[key: ViewResolution]: DesignOverlayState} = {};
 
 export const designOverlaySlice = createSlice({
   name: 'designOverlay',
@@ -38,10 +29,6 @@ export const designOverlaySlice = createSlice({
       }>
     ) => {
       state[action.payload.resolution] = action.payload.overlayState;
-
-      const overlays = window.electron.store.get('userPreferences.designOverlays') || {};
-      overlays[action.payload.resolution] = action.payload.overlayState;
-      window.electron.store.set('userPreferences.designOverlays', overlays);
     },
     removeDesignOverlay: (
       state,
@@ -50,10 +37,6 @@ export const designOverlaySlice = createSlice({
       }>
     ) => {
       delete state[action.payload.resolution];
-
-      const overlays = window.electron.store.get('userPreferences.designOverlays') || {};
-      delete overlays[action.payload.resolution];
-      window.electron.store.set('userPreferences.designOverlays', overlays);
     },
   },
 });

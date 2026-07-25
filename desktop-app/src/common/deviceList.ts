@@ -1589,7 +1589,7 @@ export const defaultDevices: Device[] = [
 
 const customDevices: () => Device[] = () => {
   return typeof window !== 'undefined'
-    ? window.electron.store.get('deviceManager.customDevices')
+    ? window.electron.store.get('deviceManager.customDevices') ?? []
     : [];
 };
 

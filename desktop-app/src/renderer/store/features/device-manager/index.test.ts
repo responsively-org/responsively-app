@@ -1,82 +1,55 @@
-import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {getDevicesMap} from 'common/deviceList';
-import type {PreviewSuite} from './index';
-import {freshImport, mockStoreData, storeSetMock} from '../sliceTestUtils';
+import {describe, expect, it} from 'vitest';
+import reducer, {
+  addSuite,
+  addSuites,
+  deleteAllSuites,
+  deleteSuite,
+  selectActiveSuite,
+  setActiveSuite,
+  setSuiteDevices,
+  DEFAULT_SUITE,
+  DeviceManagerState,
+  PreviewSuite,
+} from './index';
 
-type DeviceManagerModule = typeof import('./index');
+const stateWith = (overrides: Partial<DeviceManagerState>): DeviceManagerState => ({
+  devices: [],
+  activeSuite: DEFAULT_SUITE.id,
+  suites: [DEFAULT_SUITE],
+  ...overrides,
+});
 
-const DEFAULT_SUITE: PreviewSuite = {
-  id: 'default',
-  name: 'Default',
-  devices: ['10008', '10013', '10015'],
-};
-
-const loadSlice = async (overrides: Record<string, unknown> = {}): Promise<DeviceManagerModule> => {
-  mockStoreData({
-    'deviceManager.activeDevices': DEFAULT_SUITE.devices,
-    'deviceManager.previewSuites': [DEFAULT_SUITE],
-    'deviceManager.customDevices': [],
-    ...overrides,
-  });
-  return freshImport(() => import('./index'));
-};
+const MOBILE: PreviewSuite = {id: 's2', name: 'Mobile', devices: ['10008']};
 
 describe('device-manager slice', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('initializes devices from persisted active device ids', async () => {
-    const {default: reducer} = await loadSlice();
+  it('defaults to the default suite', () => {
     const state = reducer(undefined, {type: '@@INIT'});
-    expect(state.devices.map((device) => device.id)).toEqual(DEFAULT_SUITE.devices);
     expect(state.activeSuite).toBe('default');
     expect(state.suites).toEqual([DEFAULT_SUITE]);
   });
 
-  it('setDevices persists the new active device ids', async () => {
-    const {default: reducer, setDevices} = await loadSlice();
-    const devicesMap = getDevicesMap();
-    const next = [devicesMap['10008'], devicesMap['10013']];
-    const state = reducer(undefined, setDevices(next));
-    expect(state.devices).toEqual(next);
-    expect(storeSetMock()).toHaveBeenCalledWith('deviceManager.activeDevices', ['10008', '10013']);
+  it('setSuiteDevices updates the matching suite', () => {
+    const state = reducer(undefined, setSuiteDevices({suite: 'default', devices: ['10008']}));
+    expect(state.suites[0].devices).toEqual(['10008']);
   });
 
-  it('setSuiteDevices updates the matching suite and persists', async () => {
-    const {default: reducer, setSuiteDevices} = await loadSlice();
-    const state = reducer(
-      undefined,
-      setSuiteDevices({suite: 'default', devices: ['10008', '10013']})
-    );
-    expect(state.suites[0].devices).toEqual(['10008', '10013']);
-    expect(storeSetMock()).toHaveBeenCalledWith('deviceManager.previewSuites', [
-      {...DEFAULT_SUITE, devices: ['10008', '10013']},
-    ]);
-  });
-
-  it('setSuiteDevices for an unknown suite is a no-op', async () => {
-    const {default: reducer, setSuiteDevices} = await loadSlice();
-    storeSetMock().mockClear();
+  it('setSuiteDevices for an unknown suite is a no-op', () => {
     const state = reducer(undefined, setSuiteDevices({suite: 'nope', devices: ['10008']}));
     expect(state.suites).toEqual([DEFAULT_SUITE]);
-    expect(storeSetMock()).not.toHaveBeenCalled();
   });
 
-  it('addSuite appends, activates and persists the new suite', async () => {
-    const {default: reducer, addSuite} = await loadSlice();
-    const mobile: PreviewSuite = {id: 's2', name: 'Mobile', devices: ['10008']};
-    const state = reducer(undefined, addSuite(mobile));
-    expect(state.suites).toEqual([DEFAULT_SUITE, mobile]);
+  it('setActiveSuite switches the active suite', () => {
+    const state = reducer(stateWith({suites: [DEFAULT_SUITE, MOBILE]}), setActiveSuite('s2'));
     expect(state.activeSuite).toBe('s2');
-    expect(storeSetMock()).toHaveBeenCalledWith('deviceManager.previewSuites', [
-      DEFAULT_SUITE,
-      mobile,
-    ]);
   });
 
-  it('addSuites merges by name with imported suites winning', async () => {
-    const {default: reducer, addSuites} = await loadSlice();
+  it('addSuite appends and activates the new suite', () => {
+    const state = reducer(undefined, addSuite(MOBILE));
+    expect(state.suites).toEqual([DEFAULT_SUITE, MOBILE]);
+    expect(state.activeSuite).toBe('s2');
+  });
+
+  it('addSuites merges by name with imported suites winning', () => {
     const importedDefault: PreviewSuite = {id: 'imp1', name: 'Default', devices: ['10015']};
     const imported: PreviewSuite = {id: 'imp2', name: 'Imported', devices: ['10013']};
     const state = reducer(undefined, addSuites([importedDefault, imported]));
@@ -84,38 +57,29 @@ describe('device-manager slice', () => {
     expect(state.activeSuite).toBe('imp1');
   });
 
-  it('deleteSuite removes the suite and falls back to the first', async () => {
-    const mobile: PreviewSuite = {id: 's2', name: 'Mobile', devices: ['10008']};
-    const {default: reducer, deleteSuite} = await loadSlice({
-      'deviceManager.previewSuites': [DEFAULT_SUITE, mobile],
-    });
-    const state = reducer(undefined, deleteSuite('s2'));
+  it('deleteSuite removes the suite and falls back to the first', () => {
+    const state = reducer(
+      stateWith({suites: [DEFAULT_SUITE, MOBILE], activeSuite: 's2'}),
+      deleteSuite('s2')
+    );
     expect(state.suites).toEqual([DEFAULT_SUITE]);
     expect(state.activeSuite).toBe('default');
   });
 
-  it('deleteSuite with an unknown id is a no-op', async () => {
-    const {default: reducer, deleteSuite} = await loadSlice();
-    storeSetMock().mockClear();
+  it('deleteSuite with an unknown id is a no-op', () => {
     const state = reducer(undefined, deleteSuite('nope'));
     expect(state.suites).toEqual([DEFAULT_SUITE]);
-    expect(storeSetMock()).not.toHaveBeenCalled();
   });
 
-  it('deleteAllSuites resets to the default suite', async () => {
-    const mobile: PreviewSuite = {id: 's2', name: 'Mobile', devices: ['10008']};
-    const {default: reducer, deleteAllSuites} = await loadSlice({
-      'deviceManager.previewSuites': [DEFAULT_SUITE, mobile],
-    });
-    const state = reducer(undefined, deleteAllSuites());
+  it('deleteAllSuites resets to the default suite', () => {
+    const state = reducer(stateWith({suites: [DEFAULT_SUITE, MOBILE]}), deleteAllSuites());
     expect(state.suites).toEqual([DEFAULT_SUITE]);
-    expect(storeSetMock()).toHaveBeenCalledWith('deviceManager.previewSuites', [DEFAULT_SUITE]);
+    expect(state.activeSuite).toBe('default');
   });
 
-  it('selectActiveSuite falls back to the first suite for unknown ids', async () => {
-    const {selectActiveSuite} = await loadSlice();
+  it('selectActiveSuite falls back to the first suite for unknown ids', () => {
     const state = {
-      deviceManager: {devices: [], activeSuite: 'ghost', suites: [DEFAULT_SUITE]},
+      deviceManager: stateWith({activeSuite: 'ghost'}),
     };
     expect(selectActiveSuite(state as never)).toEqual(DEFAULT_SUITE);
   });

@@ -18,10 +18,12 @@ export interface DevtoolsState {
   webViewId: number;
 }
 
+// Persisted values are injected via the store's preloaded state
+// (store/preloadedState.ts); persistence happens in store/persistence.ts.
 const initialState: DevtoolsState = {
   bounds: defaultBounds,
   isOpen: false,
-  dockPosition: window.electron.store.get('devtools.dockPosition'),
+  dockPosition: DOCK_POSITION.BOTTOM,
   webViewId: -1,
 };
 
@@ -44,7 +46,6 @@ export const devtoolsSlice = createSlice({
       state.webViewId = -1;
     },
     setDockPosition: (state, action: PayloadAction<DockPosition>) => {
-      window.electron.store.set('devtools.dockPosition', action.payload);
       state.dockPosition = action.payload;
     },
   },
