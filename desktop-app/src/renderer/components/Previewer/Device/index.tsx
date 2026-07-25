@@ -413,18 +413,18 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       webview.removeEventListener('did-fail-load', didFailLoadHandler);
     });
 
-    if (!isPrimary) {
-      setTimeout(() => {
-        webview.addEventListener('dom-ready', () => {
-          window.electron.ipcRenderer.invoke<
-            DisableDefaultWindowOpenHandlerArgs,
-            DisableDefaultWindowOpenHandlerResult
-          >('disable-default-window-open-handler', {
-            webContentsId: webview.getWebContentsId(),
-          });
-        });
-      }, 2000);
-    }
+    const onDomReadyWindowOpenHandler = () => {
+      window.electron.ipcRenderer.invoke<
+        DisableDefaultWindowOpenHandlerArgs,
+        DisableDefaultWindowOpenHandlerResult
+      >('disable-default-window-open-handler', {
+        webContentsId: webview.getWebContentsId(),
+      });
+    };
+    webview.addEventListener('dom-ready', onDomReadyWindowOpenHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('dom-ready', onDomReadyWindowOpenHandler);
+    });
 
     registerNavigationHandlers();
 
@@ -514,36 +514,46 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
 
   useEffect(() => {
     if (!ref.current || !device.isMobileCapable) {
-      return;
+      return undefined;
     }
 
     const webview = ref.current;
-    webview.addEventListener('dom-ready', () => {
+    const injectScrollbarCss = () => {
       webview.insertCSS(`
-               ::-webkit-scrollbar {
-              display: none;
-              } `);
-    });
+        html, body {
+          scrollbar-width: none;
+        }
+        ::-webkit-scrollbar {
+          width: 0px !important;
+          height: 0px !important;
+          display: none !important;
+        }
+      `);
+    };
 
-    // eslint-disable-next-line consistent-return
+    webview.addEventListener('dom-ready', injectScrollbarCss);
+
     return () => {
-      webview.removeEventListener('dom-ready', () => {});
+      webview.removeEventListener('dom-ready', injectScrollbarCss);
     };
   }, [device.isMobileCapable]);
 
   useEffect(() => {
     const webview = ref.current;
 
-    if (isPrimary && webview) {
-      webview.addEventListener('dom-ready', () => {
-        const pageTitle = webview.getTitle();
-        dispatch(setPageTitle(pageTitle));
-      });
+    if (!isPrimary || !webview) {
+      return undefined;
     }
 
-    // eslint-disable-next-line consistent-return
+    const updateTitle = () => {
+      const pageTitle = webview.getTitle();
+      dispatch(setPageTitle(pageTitle));
+    };
+
+    webview.addEventListener('dom-ready', updateTitle);
+
     return () => {
-      webview?.removeEventListener('dom-ready', () => {});
+      webview.removeEventListener('dom-ready', updateTitle);
     };
   }, [dispatch, isPrimary]);
 
@@ -555,9 +565,10 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
 
   return (
     <div
-      className={cx('h-fit', {
-        'w-52': isRestrictedMinimumDeviceSize,
-      })}
+      className="h-fit"
+      style={{
+        minWidth: isRestrictedMinimumDeviceSize ? Math.max(scaledWidth, 208) : undefined,
+      }}
     >
       <div className="flex justify-between">
         <span>
