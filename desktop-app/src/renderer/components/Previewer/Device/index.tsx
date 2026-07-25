@@ -514,11 +514,11 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
 
   useEffect(() => {
     if (!ref.current || !device.isMobileCapable) {
-      return;
+      return undefined;
     }
 
     const webview = ref.current;
-    webview.addEventListener('dom-ready', () => {
+    const injectScrollbarCss = () => {
       webview.insertCSS(`
         html, body {
           scrollbar-width: none;
@@ -529,27 +529,31 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
           display: none !important;
         }
       `);
-    });
+    };
 
-    // eslint-disable-next-line consistent-return
+    webview.addEventListener('dom-ready', injectScrollbarCss);
+
     return () => {
-      webview.removeEventListener('dom-ready', () => {});
+      webview.removeEventListener('dom-ready', injectScrollbarCss);
     };
   }, [device.isMobileCapable]);
 
   useEffect(() => {
     const webview = ref.current;
 
-    if (isPrimary && webview) {
-      webview.addEventListener('dom-ready', () => {
-        const pageTitle = webview.getTitle();
-        dispatch(setPageTitle(pageTitle));
-      });
+    if (!isPrimary || !webview) {
+      return undefined;
     }
 
-    // eslint-disable-next-line consistent-return
+    const updateTitle = () => {
+      const pageTitle = webview.getTitle();
+      dispatch(setPageTitle(pageTitle));
+    };
+
+    webview.addEventListener('dom-ready', updateTitle);
+
     return () => {
-      webview?.removeEventListener('dom-ready', () => {});
+      webview.removeEventListener('dom-ready', updateTitle);
     };
   }, [dispatch, isPrimary]);
 
