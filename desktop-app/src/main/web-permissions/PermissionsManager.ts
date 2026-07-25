@@ -44,10 +44,13 @@ const loadPermissions = () => {
         }, {} as PermissionRecords),
       };
     })
-    .reduce((acc, {origin, permissions: permissionRecords}) => {
-      acc[origin] = permissionRecords;
-      return acc;
-    }, {} as Record<string, PermissionRecords>);
+    .reduce(
+      (acc, {origin, permissions: permissionRecords}) => {
+        acc[origin] = permissionRecords;
+        return acc;
+      },
+      {} as Record<string, PermissionRecords>
+    );
 
   return permissions;
 };

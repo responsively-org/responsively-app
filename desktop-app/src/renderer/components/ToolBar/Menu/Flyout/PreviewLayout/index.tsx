@@ -27,7 +27,7 @@ const PreviewLayoutSelector = () => {
   return (
     <div className="flex flex-row items-center justify-start px-4">
       <span className="w-1/2">Preview Layout</span>
-      <div className="flex w-fit items-center gap-3 px-5 ">
+      <div className="flex w-fit items-center gap-3 px-5">
         <ButtonGroup
           buttons={[
             {

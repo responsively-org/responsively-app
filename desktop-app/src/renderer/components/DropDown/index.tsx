@@ -33,7 +33,7 @@ export function DropDown({label, options, className}: Props) {
           transition
           className="z-50 mt-2 w-fit origin-top-right divide-y divide-slate-100 rounded-md bg-slate-100 shadow-lg ring-1 ring-black ring-opacity-5 transition duration-100 ease-out focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0 dark:bg-slate-900"
         >
-          <div className="px-1 py-1 ">
+          <div className="px-1 py-1">
             {options.map((option, idx) => {
               if (option.type === 'separator') {
                 return (

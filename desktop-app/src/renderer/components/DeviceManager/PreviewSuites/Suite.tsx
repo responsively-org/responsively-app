@@ -28,8 +28,8 @@ export const Suite = ({suite: {id, name, devices}, isActive}: Props) => {
   };
   return (
     <div
-      className={cx('relative min-w-56 flex-shrink-0  rounded bg-white dark:bg-slate-900', {
-        'border-2 border-slate-500 ': isActive,
+      className={cx('relative min-w-56 flex-shrink-0 rounded bg-white dark:bg-slate-900', {
+        'border-2 border-slate-500': isActive,
       })}
     >
       {!isActive ? (

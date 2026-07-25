@@ -87,8 +87,8 @@ const DeviceLabel = ({
           disableSelectionControls
             ? 'Cannot make the suite empty add another device to remove this one'
             : isChecked
-            ? 'Click to remove the device'
-            : 'Click to add the device'
+              ? 'Click to remove the device'
+              : 'Click to add the device'
         }
         checked={isChecked}
         onChange={(e) => {

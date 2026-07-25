@@ -90,7 +90,7 @@ const DeviceManager = () => {
         </Button>
       </div>
       <div>
-        <div className="flex items-center justify-end justify-between ">
+        <div className="flex items-center justify-end justify-between">
           <h2 className="text-2xl font-bold">Device Manager</h2>
           <ManageSuitesTool setCustomDevicesState={setCustomDevices} />
         </div>

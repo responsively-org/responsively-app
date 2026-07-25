@@ -65,7 +65,7 @@ const createStoreMock = (state: StoreState) =>
     get: vi.fn((key: string) => getValue(state, key)),
     set: vi.fn((key: string, value: unknown) => setValue(state, key, value)),
     delete: vi.fn((key: string) => deleteValue(state, key)),
-  } as unknown as Store);
+  }) as unknown as Store;
 
 describe('migrations', () => {
   it('moves the legacy previewlayout value to previewLayout', () => {

@@ -72,7 +72,7 @@ const DeviceDetailsModal = ({
   }, [type, userAgent]);
 
   const isNew = !device;
-  const isCustom = device != null ? device.isCustom ?? false : true;
+  const isCustom = device != null ? (device.isCustom ?? false) : true;
 
   const handleAddDevice = async (): Promise<void> => {
     const existingDevice = existingDevices.find((d) => d.name === name);

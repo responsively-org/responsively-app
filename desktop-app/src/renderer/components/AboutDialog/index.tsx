@@ -77,7 +77,7 @@ export const AboutDialog = () => {
         <div className="flex w-3/4 flex-col gap-2 rounded border border-slate-300 p-4 dark:border-slate-700">
           <div className="flex justify-center text-lg">Versions</div>
           <div className="flex flex-col gap-[2px]">
-            <div className="flex  justify-between">
+            <div className="flex justify-between">
               <span>App</span>
               <span className="text-sm">v{args?.environmentInfo.appVersion}</span>
             </div>
@@ -121,7 +121,7 @@ export const AboutDialog = () => {
         <div className="flex w-3/4 flex-col gap-4 rounded border border-slate-300 p-4 dark:border-slate-700">
           <div className="flex justify-center text-lg">Update Status</div>
           <div className="flex flex-col gap-[2px]">
-            <div className="flex  justify-between">
+            <div className="flex justify-between">
               <span>Status</span>
               <span className="text-sm capitalize">
                 {args?.updaterStatus.status.toLocaleLowerCase()}

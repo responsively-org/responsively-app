@@ -21,7 +21,7 @@ const BookmarkListButton = ({
 
   return (
     <div
-      className="flex h-[40px] w-60 justify-between hover:bg-slate-400 dark:hover:bg-slate-600 "
+      className="flex h-[40px] w-60 justify-between hover:bg-slate-400 dark:hover:bg-slate-600"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       key={bookmark.id}

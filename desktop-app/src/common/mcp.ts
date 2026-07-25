@@ -23,11 +23,7 @@ export interface McpBeacon {
 }
 
 export type McpBridgeCommand =
-  | 'get-app-state'
-  | 'navigate'
-  | 'list-devices'
-  | 'set-active-devices'
-  | 'get-capture-targets';
+  'get-app-state' | 'navigate' | 'list-devices' | 'set-active-devices' | 'get-capture-targets';
 
 export interface McpBridgeRequest {
   requestId: string;

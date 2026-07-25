@@ -54,7 +54,7 @@ const SuggestionList = ({match, onEnter}: Props) => {
   }, [keyDownHandler]);
 
   return (
-    <div className="absolute z-20 flex w-full flex-col items-start rounded-b-lg bg-white pb-2  shadow-lg dark:bg-slate-900">
+    <div className="absolute z-20 flex w-full flex-col items-start rounded-b-lg bg-white pb-2 shadow-lg dark:bg-slate-900">
       {suggestions.map(({title, url}, idx) => (
         <button
           onClickCapture={() => {
