@@ -520,9 +520,15 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     const webview = ref.current;
     webview.addEventListener('dom-ready', () => {
       webview.insertCSS(`
-               ::-webkit-scrollbar {
-              display: none;
-              } `);
+        html, body {
+          scrollbar-width: none;
+        }
+        ::-webkit-scrollbar {
+          width: 0px !important;
+          height: 0px !important;
+          display: none !important;
+        }
+      `);
     });
 
     // eslint-disable-next-line consistent-return
@@ -555,9 +561,12 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
 
   return (
     <div
-      className={cx('h-fit', {
-        'w-52': isRestrictedMinimumDeviceSize,
-      })}
+      className="h-fit"
+      style={{
+        minWidth: isRestrictedMinimumDeviceSize
+          ? Math.max(scaledWidth, 208)
+          : undefined,
+      }}
     >
       <div className="flex justify-between">
         <span>
