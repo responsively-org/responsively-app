@@ -413,18 +413,18 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       webview.removeEventListener('did-fail-load', didFailLoadHandler);
     });
 
-    if (!isPrimary) {
-      setTimeout(() => {
-        webview.addEventListener('dom-ready', () => {
-          window.electron.ipcRenderer.invoke<
-            DisableDefaultWindowOpenHandlerArgs,
-            DisableDefaultWindowOpenHandlerResult
-          >('disable-default-window-open-handler', {
-            webContentsId: webview.getWebContentsId(),
-          });
-        });
-      }, 2000);
-    }
+    const onDomReadyWindowOpenHandler = () => {
+      window.electron.ipcRenderer.invoke<
+        DisableDefaultWindowOpenHandlerArgs,
+        DisableDefaultWindowOpenHandlerResult
+      >('disable-default-window-open-handler', {
+        webContentsId: webview.getWebContentsId(),
+      });
+    };
+    webview.addEventListener('dom-ready', onDomReadyWindowOpenHandler);
+    handlerRemovers.push(() => {
+      webview.removeEventListener('dom-ready', onDomReadyWindowOpenHandler);
+    });
 
     registerNavigationHandlers();
 

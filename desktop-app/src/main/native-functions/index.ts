@@ -32,9 +32,17 @@ export const initNativeFunctionHandlers = () => {
       _,
       arg: DisableDefaultWindowOpenHandlerArgs
     ): Promise<DisableDefaultWindowOpenHandlerResult> => {
-      webContents.fromId(arg.webContentsId)?.setWindowOpenHandler(() => {
-        return {action: 'deny'};
-      });
+      const contents = webContents.fromId(arg.webContentsId);
+      if (contents) {
+        contents.setWindowOpenHandler(() => {
+          return {action: 'deny'};
+        });
+        contents.on('will-frame-navigate', (event) => {
+          if (!event.isMainFrame) {
+            event.preventDefault();
+          }
+        });
+      }
       return {done: true};
     }
   );
