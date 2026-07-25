@@ -8,7 +8,12 @@ if (process.env.E2E_USER_DATA_DIR) {
   app.setPath('userData', process.env.E2E_USER_DATA_DIR);
 }
 
-const Store = require('electron-store');
+import ElectronStore from 'electron-store';
+
+// electron-store 11 is ESM-only; the class arrives as the module default.
+// Kept loosely typed for now — the schema below predates the stricter v11
+// generics (proper typing lands with the store refactor).
+const Store = ElectronStore as any;
 
 const schema = {
   ui: {
