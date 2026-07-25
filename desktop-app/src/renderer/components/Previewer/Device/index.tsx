@@ -567,9 +567,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     <div
       className="h-fit"
       style={{
-        minWidth: isRestrictedMinimumDeviceSize
-          ? Math.max(scaledWidth, 208)
-          : undefined,
+        minWidth: isRestrictedMinimumDeviceSize ? Math.max(scaledWidth, 208) : undefined,
       }}
     >
       <div className="flex justify-between">
