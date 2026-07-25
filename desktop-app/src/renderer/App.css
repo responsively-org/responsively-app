@@ -2,16 +2,43 @@
  * @NOTE: Prepend a `~` to css file paths that are in your node_modules
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
-
 @import '~@fontsource/lato/300.css';
 @import '~@fontsource/lato/400.css';
 @import '~@fontsource/lato/400-italic.css';
 @import '~@fontsource/lato/700.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 html {
   user-select: none;
+}
+
+/* Fix for macOS stacked preview mode - ensure last device and footer are visible */
+/* Target the flex container in stacked/column mode */
+.flex.flex-col .flex.flex-grow.overflow-hidden {
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 100%;
+}
+
+/* Ensure the devices container has proper scrolling in stacked mode */
+.flex.flex-col .w-full.flex-grow.overflow-y-auto {
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* Additional fix for stacked preview layout with flex-wrap */
+.flex.flex-col .flex.h-full.gap-4.overflow-auto.p-4.flex-wrap {
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 100%;
+  height: auto;
+}
+
+/* Ensure proper height for the main preview container in stacked mode */
+@media (prefers-reduced-motion: no-preference) {
+  .flex.flex-col {
+    min-height: 100vh;
+  }
 }
