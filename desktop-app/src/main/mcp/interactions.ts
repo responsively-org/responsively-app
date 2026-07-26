@@ -1,5 +1,6 @@
 import {webContents} from 'electron';
 import {McpCaptureTargetsResult} from '../../common/mcp';
+import {isRegisteredWebview} from '../webview-registry';
 import {GetMainWindow, sendBridgeCommand} from './bridge';
 
 const EXECUTE_TIMEOUT_MS = 10_000;
@@ -59,7 +60,9 @@ const resolveTarget = async (
       `No device preview available to interact with${reasons ? ` (${reasons})` : ''}.`
     );
   }
-  const targetContents = webContents.fromId(target.webContentsId);
+  const targetContents = isRegisteredWebview(target.webContentsId)
+    ? webContents.fromId(target.webContentsId)
+    : undefined;
   if (targetContents === undefined || targetContents.isDestroyed()) {
     throw new Error(`The ${target.deviceName} preview is no longer available`);
   }

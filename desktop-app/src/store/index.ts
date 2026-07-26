@@ -154,6 +154,11 @@ const schema = {
         type: 'boolean',
         default: false,
       },
+      popupBehavior: {
+        type: 'string',
+        enum: ['in-preview', 'external'],
+        default: 'in-preview',
+      },
       guides: {
         type: 'array',
         items: {
@@ -304,5 +309,12 @@ const store = new Store({
   watch: true,
   migrations,
 });
+
+// Keys the renderer may touch through the electron-store IPC bridge.
+// windowState is main-process-only.
+const RENDERER_STORE_ROOTS = new Set(Object.keys(schema).filter((key) => key !== 'windowState'));
+
+export const isRendererStoreKey = (property: unknown): property is string =>
+  typeof property === 'string' && RENDERER_STORE_ROOTS.has(property.split('.')[0]);
 
 export default store;

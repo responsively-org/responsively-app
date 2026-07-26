@@ -3,6 +3,7 @@ import {useState} from 'react';
 import Button from 'renderer/components/Button';
 import useSound from 'use-sound';
 import {ScreenshotArgs, ScreenshotResult} from 'main/screenshot';
+import {IPC_MAIN_CHANNELS} from 'common/constants';
 import {Device} from 'common/deviceList';
 import WebPage from 'main/screenshot/webpage';
 
@@ -72,10 +73,13 @@ const Toolbar = ({
     }
     setScreenshotLoading(true);
     try {
-      await window.electron.ipcRenderer.invoke<ScreenshotArgs, ScreenshotResult>('screenshot', {
-        webContentsId: webview.getWebContentsId(),
-        device,
-      });
+      await window.electron.ipcRenderer.invoke<ScreenshotArgs, ScreenshotResult>(
+        IPC_MAIN_CHANNELS.SCREENSHOT,
+        {
+          webContentsId: webview.getWebContentsId(),
+          device,
+        }
+      );
       playScreenshotDone();
     } catch (error) {
       console.error('Error while taking quick screenshot', error);
@@ -103,10 +107,13 @@ const Toolbar = ({
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      await window.electron.ipcRenderer.invoke<ScreenshotArgs, ScreenshotResult>('screenshot', {
-        webContentsId: webview.getWebContentsId(),
-        device,
-      });
+      await window.electron.ipcRenderer.invoke<ScreenshotArgs, ScreenshotResult>(
+        IPC_MAIN_CHANNELS.SCREENSHOT,
+        {
+          webContentsId: webview.getWebContentsId(),
+          device,
+        }
+      );
 
       webviewTag.style.height = previousHeight;
       webviewTag.style.transform = previousTransform;

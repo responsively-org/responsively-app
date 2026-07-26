@@ -15,6 +15,9 @@ export const SettingsContent = ({onClose}: Props) => {
   const [webRequestHeaderAcceptLanguage, setWebRequestHeaderAcceptLanguage] = useState<string>(
     window.electron.store.get('userPreferences.webRequestHeaderAcceptLanguage')
   );
+  const [popupBehavior, setPopupBehavior] = useState<string>(
+    window.electron.store.get('userPreferences.popupBehavior') ?? 'in-preview'
+  );
 
   const onSave = () => {
     if (screenshotSaveLocation === '' || screenshotSaveLocation == null) {
@@ -28,6 +31,8 @@ export const SettingsContent = ({onClose}: Props) => {
       'userPreferences.webRequestHeaderAcceptLanguage',
       webRequestHeaderAcceptLanguage
     );
+
+    window.electron.store.set('userPreferences.popupBehavior', popupBehavior);
 
     onClose();
   };
@@ -52,6 +57,26 @@ export const SettingsContent = ({onClose}: Props) => {
             The location where screenshots will be saved.
           </p>
         </div>
+      </div>
+
+      <h2>Popups</h2>
+      <div className="my-4 flex flex-col space-y-2 text-sm">
+        <label htmlFor={`${id}-popup-behavior`} className="flex flex-col">
+          When a page opens a new window
+          <select
+            data-testid="settings-popup_behavior-select"
+            id={`${id}-popup-behavior`}
+            className="mt-2 rounded-md border border-gray-300 px-4 py-2 text-base focus-visible:outline-gray-400 dark:border-gray-500 dark:bg-slate-900"
+            value={popupBehavior}
+            onChange={(e) => setPopupBehavior(e.target.value)}
+          >
+            <option value="in-preview">Open it in the previews</option>
+            <option value="external">Open it in the default browser</option>
+          </select>
+        </label>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Applies to links with target=&quot;_blank&quot; and window.open calls.
+        </p>
       </div>
 
       <SettingsContentHeaders

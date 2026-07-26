@@ -11,7 +11,7 @@
 import path from 'path';
 import {app, BrowserWindow, session, shell, ipcMain} from 'electron';
 import cli from './cli';
-import {PROTOCOL} from '../common/constants';
+import {IPC_MAIN_CHANNELS, PROTOCOL} from '../common/constants';
 import MenuBuilder from './menu';
 import {resolveHtmlPath} from './util';
 import {
@@ -36,15 +36,18 @@ import {AppUpdater} from './app-updater';
 import {getSavedWindowState, trackWindowState} from './window-state';
 import log, {initCrashHandlers, initLogging} from './logging';
 import {injectHostIntoCsp} from './csp';
+import {isOpenableUrl} from './url-validation';
+import {wireWebviewSecurity} from './webview-registry';
 
 initLogging();
 initCrashHandlers();
 
 let windowShownOnOpen = false;
 let mainWindow: BrowserWindow | null = null;
-let urlToOpen: string | undefined = cli.input[0]?.includes('electronmon')
-  ? undefined
-  : cli.input[0];
+let urlToOpen: string | undefined =
+  cli.input[0] !== undefined && !cli.input[0].includes('electronmon') && isOpenableUrl(cli.input[0])
+    ? cli.input[0]
+    : undefined;
 
 const normalizeProtocolUrl = (url: string): string => {
   let actualURL = url.replace(`${PROTOCOL}://`, '');
@@ -81,8 +84,13 @@ app.on('second-instance', (_event, argv) => {
       arg.startsWith('file://')
   );
   if (deepLink !== undefined && mainWindow !== null && !mainWindow.isDestroyed()) {
-    windowShownOnOpen = false;
-    openUrl(normalizeProtocolUrl(deepLink), mainWindow);
+    const actualURL = normalizeProtocolUrl(deepLink);
+    if (isOpenableUrl(actualURL)) {
+      windowShownOnOpen = false;
+      openUrl(actualURL, mainWindow);
+    } else {
+      log.warn('[deep-link] rejected URL from second instance', deepLink);
+    }
   }
 });
 
@@ -108,11 +116,11 @@ initMcpServer(getMainWindow);
 initHttpBasicAuthHandlers(getMainWindow);
 const webPermissionHandlers = WebPermissionHandlers(getMainWindow);
 
-ipcMain.on('get-browser-sync-port', (event) => {
+ipcMain.on(IPC_MAIN_CHANNELS.GET_BROWSER_SYNC_PORT, (event) => {
   event.returnValue = getBrowserSyncPort();
 });
 
-ipcMain.on('start-watching-file', async (_event, fileInfo) => {
+ipcMain.on(IPC_MAIN_CHANNELS.START_WATCHING_FILE, async (_event, fileInfo) => {
   let filePath = fileInfo.path.replace('file://', '');
   if (process.platform === 'win32') {
     filePath = filePath.replace(/^\//, '');
@@ -122,7 +130,7 @@ ipcMain.on('start-watching-file', async (_event, fileInfo) => {
   watchFiles(filePath);
 });
 
-ipcMain.on('stop-watcher', async () => {
+ipcMain.on(IPC_MAIN_CHANNELS.STOP_WATCHER, async () => {
   await stopWatchFiles();
 });
 
@@ -239,6 +247,10 @@ const createWindow = async () => {
   }
   trackWindowState(mainWindow);
   initDevtoolsHandlers(mainWindow);
+  wireWebviewSecurity(mainWindow.webContents, {
+    openInPreview: (url) => openUrl(url, getMainWindow()),
+    openExternal: (url) => shell.openExternal(url),
+  });
 
   mainWindow.loadURL(
     `${resolveHtmlPath('index.html')}${urlToOpen ? `?urlToOpen=${encodeURI(urlToOpen)}` : ''}`
@@ -311,6 +323,10 @@ const createWindow = async () => {
 
 app.on('open-url', async (event, url) => {
   const actualURL = normalizeProtocolUrl(url);
+  if (!isOpenableUrl(actualURL)) {
+    log.warn('[deep-link] rejected URL', url);
+    return;
+  }
   if (mainWindow == null) {
     // Will be handled by opened window
     urlToOpen = actualURL;

@@ -41,6 +41,22 @@ export const IPC_MAIN_CHANNELS = {
   PERMISSION_UPDATED: 'permission-updated',
   MCP_COMMAND: 'mcp-command',
   MCP_COMMAND_RESPONSE: 'mcp-command-response',
+  SCREENSHOT: 'screenshot',
+  SCREENSHOT_ALL: 'screenshot:All',
+  OPEN_DEVTOOLS: 'open-devtools',
+  RESIZE_DEVTOOLS: 'resize-devtools',
+  CLOSE_DEVTOOLS: 'close-devtools',
+  ENABLE_INSPECTOR_OVERLAY: 'enable-inspector-overlay',
+  DISABLE_INSPECTOR_OVERLAY: 'disable-inspector-overlay',
+  INSPECT_ELEMENT: 'inspect-element',
+  DELETE_STORAGE: 'delete-storage',
+  LOAD_URL_IN_WEBVIEW: 'load-url-in-webview',
+  SET_NATIVE_THEME: 'set-native-theme',
+  COPY_TO_CLIPBOARD: 'copy-to-clipboard',
+  GET_BROWSER_SYNC_PORT: 'get-browser-sync-port',
+  ELECTRON_STORE_GET: 'electron-store-get',
+  ELECTRON_STORE_SET: 'electron-store-set',
+  GET_ABOUT_INFO: 'get-about-info',
 } as const;
 
 export type Channels = (typeof IPC_MAIN_CHANNELS)[keyof typeof IPC_MAIN_CHANNELS];

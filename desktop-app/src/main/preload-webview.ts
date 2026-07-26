@@ -1,4 +1,5 @@
 import {ipcRenderer} from 'electron';
+import {IPC_MAIN_CHANNELS} from 'common/constants';
 
 window.onerror = function logError(errorMsg, url, lineNumber) {
   console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
@@ -49,7 +50,7 @@ const requestFlush = () => {
 
 const documentBodyInit = () => {
   // Browser Sync
-  const bsPort = ipcRenderer.sendSync('get-browser-sync-port');
+  const bsPort = ipcRenderer.sendSync(IPC_MAIN_CHANNELS.GET_BROWSER_SYNC_PORT);
   const bsScript = window.document.createElement('script');
   bsScript.src = `https://localhost:${bsPort}/browser-sync/browser-sync-client.js?v=2.27.10`;
   bsScript.async = true;

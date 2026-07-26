@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import {PREVIEW_LAYOUTS} from 'common/constants';
+import {IPC_MAIN_CHANNELS, PREVIEW_LAYOUTS} from 'common/constants';
 import {Device as IDevice} from 'common/deviceList';
 import {
   InspectElementArgs,
@@ -9,12 +9,7 @@ import {
   ToggleInspectorResult,
 } from 'main/devtools';
 import {ReloadArgs} from 'main/menu';
-import {
-  DisableDefaultWindowOpenHandlerArgs,
-  DisableDefaultWindowOpenHandlerResult,
-  LoadURLInWebviewArgs,
-  LoadURLInWebviewResult,
-} from 'main/native-functions';
+import {LoadURLInWebviewArgs, LoadURLInWebviewResult} from 'main/native-functions';
 import {CONTEXT_MENUS} from 'main/webview-context-menu/common';
 import {DeleteStorageArgs, DeleteStorageResult} from 'main/webview-storage-manager';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -108,7 +103,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
         isNavigatingFromAddressBar.current = true;
       }
       window.electron.ipcRenderer.invoke<LoadURLInWebviewArgs, LoadURLInWebviewResult>(
-        'load-url-in-webview',
+        IPC_MAIN_CHANNELS.LOAD_URL_IN_WEBVIEW,
         {webContentsId: webview.getWebContentsId(), url: address}
       );
     } catch (err) {
@@ -184,7 +179,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
         }
         const webview = ref.current as Electron.WebviewTag;
         await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
-          'delete-storage',
+          IPC_MAIN_CHANNELS.DELETE_STORAGE,
           {webContentsId: webview.getWebContentsId()}
         );
       });
@@ -195,7 +190,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
         }
         const webview = ref.current as Electron.WebviewTag;
         await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
-          'delete-storage',
+          IPC_MAIN_CHANNELS.DELETE_STORAGE,
           {
             webContentsId: webview.getWebContentsId(),
             storages: ['cookies'],
@@ -209,7 +204,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
         }
         const webview = ref.current as Electron.WebviewTag;
         await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
-          'delete-storage',
+          IPC_MAIN_CHANNELS.DELETE_STORAGE,
           {
             webContentsId: webview.getWebContentsId(),
             storages: ['network-cache'],
@@ -267,7 +262,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       return;
     }
     await window.electron.ipcRenderer.invoke<OpenDevtoolsArgs, OpenDevtoolsResult>(
-      'open-devtools',
+      IPC_MAIN_CHANNELS.OPEN_DEVTOOLS,
       {
         webviewId: webview.getWebContentsId(),
         dockPosition,
@@ -289,7 +284,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       if (devtoolsOpenForWebviewId !== webview.getWebContentsId()) {
         if (isDevtoolsOpen) {
           dispatch(setDevtoolsClose());
-          await window.electron.ipcRenderer.invoke('close-devtools');
+          await window.electron.ipcRenderer.invoke(IPC_MAIN_CHANNELS.CLOSE_DEVTOOLS);
         }
         await openDevTools();
       }
@@ -420,24 +415,6 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       webview.removeEventListener('did-fail-load', didFailLoadHandler);
     });
 
-    if (!isPrimary) {
-      const disableWindowOpenHandler = () => {
-        window.electron.ipcRenderer.invoke<
-          DisableDefaultWindowOpenHandlerArgs,
-          DisableDefaultWindowOpenHandlerResult
-        >('disable-default-window-open-handler', {
-          webContentsId: webview.getWebContentsId(),
-        });
-      };
-      const timer = setTimeout(() => {
-        webview.addEventListener('dom-ready', disableWindowOpenHandler);
-      }, 2000);
-      handlerRemovers.push(() => {
-        clearTimeout(timer);
-        webview.removeEventListener('dom-ready', disableWindowOpenHandler);
-      });
-    }
-
     const unregisterNavigationHandlers = registerNavigationHandlers();
 
     return () => {
@@ -488,11 +465,11 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       inspectElement(deviceX, deviceY);
     };
 
-    window.electron.ipcRenderer.on('inspect-element', inspectElementHandler);
+    window.electron.ipcRenderer.on(IPC_MAIN_CHANNELS.INSPECT_ELEMENT, inspectElementHandler);
 
     return () => {
       try {
-        window.electron.ipcRenderer.removeAllListeners('inspect-element');
+        window.electron.ipcRenderer.removeAllListeners(IPC_MAIN_CHANNELS.INSPECT_ELEMENT);
       } catch (e) {
         console.error('Error while removing ipc listener', e);
       }
@@ -515,7 +492,9 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     const webview = ref.current as Electron.WebviewTag;
     (async () => {
       await window.electron.ipcRenderer.invoke<ToggleInspectorArgs, ToggleInspectorResult>(
-        isInspecting ? 'enable-inspector-overlay' : 'disable-inspector-overlay',
+        isInspecting
+          ? IPC_MAIN_CHANNELS.ENABLE_INSPECTOR_OVERLAY
+          : IPC_MAIN_CHANNELS.DISABLE_INSPECTOR_OVERLAY,
         {
           webviewId: webview.getWebContentsId(),
         }
@@ -637,8 +616,10 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
               /* eslint-disable-next-line react/no-unknown-property */
               preload={`file://${window.responsively.webviewPreloadPath}`}
               data-scale-factor={zoomfactor}
+              /* React drops boolean-valued unknown attributes entirely, so this
+                 must be a string for the attribute to reach the DOM at all. */
               /* eslint-disable-next-line react/no-unknown-property */
-              allowpopups={isPrimary ? true : undefined}
+              allowpopups="true"
               /* eslint-disable-next-line react/no-unknown-property */
               useragent={device.userAgent}
             />

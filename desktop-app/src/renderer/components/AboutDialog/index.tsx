@@ -43,7 +43,7 @@ export const AboutDialog = () => {
     if (show) {
       intervalRef.current = setInterval(() => {
         window.electron.ipcRenderer
-          .invoke<null, AboutDialogArgs>('get-about-info')
+          .invoke<null, AboutDialogArgs>(IPC_MAIN_CHANNELS.GET_ABOUT_INFO)
           .then((arg: AboutDialogArgs) => {
             setArgs(arg);
 
@@ -108,7 +108,7 @@ export const AboutDialog = () => {
               className="w-fit"
               onClick={async () => {
                 window.electron.ipcRenderer.invoke<string, void>(
-                  'copy-to-clipboard',
+                  IPC_MAIN_CHANNELS.COPY_TO_CLIPBOARD,
                   `App Version: ${args?.environmentInfo.appVersion}\nElectron Version: ${args?.environmentInfo.electronVersion}\nChrome Version: ${args?.environmentInfo.chromeVersion}\nNode.js Version: ${args?.environmentInfo.nodeVersion}\nV8 Version: ${args?.environmentInfo.v8Version}\nOS: ${args?.environmentInfo.osInfo}`
                 );
               }}

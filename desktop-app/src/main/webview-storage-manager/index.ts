@@ -1,4 +1,6 @@
 import {ClearStorageDataOptions, ipcMain, webContents} from 'electron';
+import {IPC_MAIN_CHANNELS} from '../../common/constants';
+import {isRegisteredWebview} from '../webview-registry';
 
 export interface DeleteStorageArgs {
   webContentsId: number;
@@ -11,6 +13,9 @@ export interface DeleteStorageResult {
 
 const deleteStorage = async (arg: DeleteStorageArgs): Promise<DeleteStorageResult> => {
   const {webContentsId, storages} = arg;
+  if (!isRegisteredWebview(webContentsId)) {
+    return {done: false};
+  }
   if (storages?.length === 1 && storages[0] === 'network-cache') {
     await webContents.fromId(webContentsId)?.session.clearCache();
   } else {
@@ -23,7 +28,7 @@ const deleteStorage = async (arg: DeleteStorageArgs): Promise<DeleteStorageResul
 
 export const initWebviewStorageManagerHandlers = () => {
   ipcMain.handle(
-    'delete-storage',
+    IPC_MAIN_CHANNELS.DELETE_STORAGE,
     async (_, arg: DeleteStorageArgs): Promise<DeleteStorageResult> => {
       return deleteStorage(arg);
     }

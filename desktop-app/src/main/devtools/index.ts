@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- CDP payloads are untyped by Electron */
 import {BrowserWindow, ipcMain, webContents, WebContentsView} from 'electron';
-import {DOCK_POSITION} from '../../common/constants';
+import {DOCK_POSITION, IPC_MAIN_CHANNELS} from '../../common/constants';
 import {DockPosition} from '../../renderer/store/features/devtools';
+import log from '../logging';
+import {isRegisteredWebview} from '../webview-registry';
 
 let devtoolsView: WebContentsView | undefined;
 let devtoolsWebview: Electron.WebContents;
@@ -59,7 +61,7 @@ const onInspectNodeRequested = async (
     coords: {x, y},
     webviewId,
   };
-  mainWindow?.webContents.send('inspect-element', args);
+  mainWindow?.webContents.send(IPC_MAIN_CHANNELS.INSPECT_ELEMENT, args);
 };
 
 const onDebuggerEvent = async (
@@ -83,6 +85,9 @@ const enableInspector = async (
   args: ToggleInspectorArgs
 ): Promise<ToggleInspectorResult> => {
   const {webviewId} = args;
+  if (!isRegisteredWebview(webviewId)) {
+    return {status: false};
+  }
   const webViewContents = webContents.fromId(webviewId);
   if (webViewContents === undefined) {
     return {status: false};
@@ -116,6 +121,9 @@ const disableInspector = async (
   args: ToggleInspectorArgs
 ): Promise<ToggleInspectorResult> => {
   const {webviewId} = args;
+  if (!isRegisteredWebview(webviewId)) {
+    return {status: false};
+  }
   const webViewContents = webContents.fromId(webviewId);
   if (webViewContents === undefined) {
     return {status: false};
@@ -129,13 +137,16 @@ const disableInspector = async (
 
     dbg.removeAllListeners().detach();
   } catch (err) {
-    console.log('Error detaching debugger', err);
+    log.warn('Error detaching debugger', err);
   }
   return {status: true};
 };
 
 const openDevtools = async (_: any, arg: OpenDevtoolsArgs): Promise<OpenDevtoolsResult> => {
   const {webviewId, dockPosition} = arg;
+  if (!isRegisteredWebview(webviewId)) {
+    return {status: false};
+  }
   const optionalWebview = webContents.fromId(webviewId);
   if (mainWindow == null || optionalWebview === undefined) {
     return {status: false};
@@ -172,7 +183,7 @@ const openDevtools = async (_: any, arg: OpenDevtoolsArgs): Promise<OpenDevtools
     `
     )
     .catch((err) => {
-      console.error('Error removing the native inspect button', err);
+      log.warn('Error removing the native inspect button', err);
     });
 
   return {status: true};
@@ -188,7 +199,7 @@ const resizeDevtools = async (_: any, arg: ResizeDevtoolsArgs) => {
     }
     devtoolsView.setBounds(arg.bounds);
   } catch (err) {
-    console.error('Error resizing devtools', err);
+    log.error('Error resizing devtools', err);
   }
 };
 
@@ -208,18 +219,18 @@ const closeDevTools = async () => {
 export const initDevtoolsHandlers = (_mainWindow: BrowserWindow | undefined) => {
   mainWindow = _mainWindow;
 
-  ipcMain.removeHandler('open-devtools');
-  ipcMain.handle('open-devtools', openDevtools);
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.OPEN_DEVTOOLS);
+  ipcMain.handle(IPC_MAIN_CHANNELS.OPEN_DEVTOOLS, openDevtools);
 
-  ipcMain.removeHandler('resize-devtools');
-  ipcMain.handle('resize-devtools', resizeDevtools);
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.RESIZE_DEVTOOLS);
+  ipcMain.handle(IPC_MAIN_CHANNELS.RESIZE_DEVTOOLS, resizeDevtools);
 
-  ipcMain.removeHandler('close-devtools');
-  ipcMain.handle('close-devtools', closeDevTools);
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.CLOSE_DEVTOOLS);
+  ipcMain.handle(IPC_MAIN_CHANNELS.CLOSE_DEVTOOLS, closeDevTools);
 
-  ipcMain.removeHandler('enable-inspector-overlay');
-  ipcMain.handle('enable-inspector-overlay', enableInspector);
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.ENABLE_INSPECTOR_OVERLAY);
+  ipcMain.handle(IPC_MAIN_CHANNELS.ENABLE_INSPECTOR_OVERLAY, enableInspector);
 
-  ipcMain.removeHandler('disable-inspector-overlay');
-  ipcMain.handle('disable-inspector-overlay', disableInspector);
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.DISABLE_INSPECTOR_OVERLAY);
+  ipcMain.handle(IPC_MAIN_CHANNELS.DISABLE_INSPECTOR_OVERLAY, disableInspector);
 };

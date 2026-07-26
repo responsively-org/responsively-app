@@ -2,7 +2,9 @@ import {Device} from 'common/deviceList';
 import {ipcMain, shell, webContents} from 'electron';
 import {writeFile, ensureDir} from 'fs-extra';
 import path from 'path';
+import {IPC_MAIN_CHANNELS} from '../../common/constants';
 import store from '../../store';
+import {isRegisteredWebview} from '../webview-registry';
 
 export interface ScreenshotArgs {
   webContentsId: number;
@@ -24,6 +26,10 @@ export interface ScreenshotResult {
 export const captureImage = async (
   webContentsId: number
 ): Promise<Electron.NativeImage | undefined> => {
+  // Single choke point for both the IPC and MCP screenshot paths.
+  if (!isRegisteredWebview(webContentsId)) {
+    return undefined;
+  }
   const WebContents = webContents.fromId(webContentsId);
 
   const isExecuted = await WebContents?.executeJavaScript(`
@@ -84,11 +90,17 @@ const captureAllDecies = async (args: Array<ScreenshotAllArgs>): Promise<Screens
 };
 
 export const initScreenshotHandlers = () => {
-  ipcMain.handle('screenshot', async (_, arg: ScreenshotArgs): Promise<ScreenshotResult> => {
-    return quickScreenshot(arg);
-  });
+  ipcMain.handle(
+    IPC_MAIN_CHANNELS.SCREENSHOT,
+    async (_, arg: ScreenshotArgs): Promise<ScreenshotResult> => {
+      return quickScreenshot(arg);
+    }
+  );
 
-  ipcMain.handle('screenshot:All', async (event, args: Array<ScreenshotAllArgs>) => {
-    return captureAllDecies(args);
-  });
+  ipcMain.handle(
+    IPC_MAIN_CHANNELS.SCREENSHOT_ALL,
+    async (event, args: Array<ScreenshotAllArgs>) => {
+      return captureAllDecies(args);
+    }
+  );
 };

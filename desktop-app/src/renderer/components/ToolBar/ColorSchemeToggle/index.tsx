@@ -1,4 +1,5 @@
 import {Icon} from '@iconify/react';
+import {IPC_MAIN_CHANNELS} from 'common/constants';
 import {SetNativeThemeArgs, SetNativeThemeResult} from 'main/native-functions';
 import {useState} from 'react';
 import Button from 'renderer/components/Button';
@@ -10,7 +11,7 @@ const ColorSchemeToggle = () => {
     <Button
       onClick={() => {
         window.electron.ipcRenderer.invoke<SetNativeThemeArgs, SetNativeThemeResult>(
-          'set-native-theme',
+          IPC_MAIN_CHANNELS.SET_NATIVE_THEME,
           {
             theme: isDarkColorScheme ? 'light' : 'dark',
           }

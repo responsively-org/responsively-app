@@ -1,3 +1,4 @@
+import {IPC_MAIN_CHANNELS} from 'common/constants';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   selectIsCapturingScreenshot,
@@ -68,7 +69,7 @@ const ToolBar = () => {
     });
     await new Promise((resolve) => setTimeout(resolve, 1000));
     await window.electron.ipcRenderer.invoke<Array<ScreenshotAllArgs>, unknown>(
-      'screenshot:All',
+      IPC_MAIN_CHANNELS.SCREENSHOT_ALL,
       screens
     );
 
