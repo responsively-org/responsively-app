@@ -252,6 +252,17 @@ const schema = {
     type: 'string',
     default: 'https://www.google.com/',
   },
+  windowState: {
+    type: 'object',
+    properties: {
+      x: {type: 'number'},
+      y: {type: 'number'},
+      width: {type: 'number'},
+      height: {type: 'number'},
+      isMaximized: {type: 'boolean'},
+    },
+    default: {},
+  },
   seenReleaseNotes: {
     type: 'array',
     items: {

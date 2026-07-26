@@ -2,6 +2,7 @@ import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import {app} from 'electron';
 import http from 'http';
+import log from '../logging';
 import {MCP_SERVER_NAME} from '../../common/mcp';
 import {writeMcpBeacon} from './beacon';
 import {GetMainWindow, initMcpBridge} from './bridge';
@@ -52,7 +53,7 @@ export const initMcpServer = (getMainWindow: GetMainWindow) => {
       }
       await handleMcpRequest(req, res, getMainWindow);
     } catch (error) {
-      console.error('[mcp] Error handling request:', error);
+      log.error('[mcp] Error handling request:', error);
       if (!res.headersSent) {
         res.writeHead(500, {'Content-Type': 'application/json'});
         res.end(
@@ -70,7 +71,7 @@ export const initMcpServer = (getMainWindow: GetMainWindow) => {
     // EADDRINUSE (e.g. a second app instance): the app must keep working
     // without MCP rather than crash.
 
-    console.warn(
+    log.warn(
       `[mcp] MCP server not started on port ${port} (${error.code ?? error.message}). ` +
         'Another Responsively App instance may already be running.'
     );
@@ -78,7 +79,7 @@ export const initMcpServer = (getMainWindow: GetMainWindow) => {
   });
 
   httpServer.listen(port, '127.0.0.1', () => {
-    console.log(`[mcp] MCP server listening on http://127.0.0.1:${port}/mcp`);
+    log.info(`[mcp] MCP server listening on http://127.0.0.1:${port}/mcp`);
   });
 
   app.on('will-quit', () => {

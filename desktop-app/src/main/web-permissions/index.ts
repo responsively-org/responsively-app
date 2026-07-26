@@ -3,8 +3,10 @@ import PermissionsManager, {PERMISSION_STATE} from './PermissionsManager';
 import {IPC_MAIN_CHANNELS} from '../../common/constants';
 import store from '../../store';
 
-export const WebPermissionHandlers = (mainWindow: BrowserWindow) => {
-  const permissionsManager = new PermissionsManager(mainWindow);
+// Wired once per process; the getter keeps permission prompts working across
+// macOS window close/recreate.
+export const WebPermissionHandlers = (getMainWindow: () => BrowserWindow | null) => {
+  const permissionsManager = new PermissionsManager(getMainWindow);
   return {
     init: () => {
       session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {

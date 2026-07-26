@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import {app, BrowserWindow, shell, screen, ipcMain} from 'electron';
+import {app, BrowserWindow, session, shell, ipcMain} from 'electron';
 import cli from './cli';
 import {PROTOCOL} from '../common/constants';
 import MenuBuilder from './menu';
@@ -33,8 +33,58 @@ import {initAppMetaHandlers} from './app-meta';
 import {initMcpServer} from './mcp';
 import {openUrl} from './protocol-handler';
 import {AppUpdater} from './app-updater';
+import {getSavedWindowState, trackWindowState} from './window-state';
+import log, {initCrashHandlers, initLogging} from './logging';
+import {injectHostIntoCsp} from './csp';
+
+initLogging();
+initCrashHandlers();
 
 let windowShownOnOpen = false;
+let mainWindow: BrowserWindow | null = null;
+let urlToOpen: string | undefined = cli.input[0]?.includes('electronmon')
+  ? undefined
+  : cli.input[0];
+
+const normalizeProtocolUrl = (url: string): string => {
+  let actualURL = url.replace(`${PROTOCOL}://`, '');
+  if (actualURL.indexOf('//') !== -1 && actualURL.indexOf('://') === -1) {
+    // This hack is needed because the URL from the extension is missing the colon for some reason.
+    actualURL = actualURL.replace('//', '://');
+  }
+  return actualURL;
+};
+
+// A second launch focuses the running instance instead of spawning a second
+// window (which would also silently lose the MCP/browser-sync port races).
+// The lock is keyed on userData, so parallel E2E workers with isolated
+// E2E_USER_DATA_DIRs are unaffected.
+const gotSingleInstanceLock = app.requestSingleInstanceLock();
+if (!gotSingleInstanceLock) {
+  app.quit();
+}
+
+app.on('second-instance', (_event, argv) => {
+  if (mainWindow !== null && !mainWindow.isDestroyed()) {
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore();
+    }
+    mainWindow.focus();
+  }
+  // On Windows/Linux, protocol deep links and CLI URLs arrive on the second
+  // instance's argv rather than through 'open-url'.
+  const deepLink = argv.find(
+    (arg) =>
+      arg.startsWith(`${PROTOCOL}://`) ||
+      arg.startsWith('http://') ||
+      arg.startsWith('https://') ||
+      arg.startsWith('file://')
+  );
+  if (deepLink !== undefined && mainWindow !== null && !mainWindow.isDestroyed()) {
+    windowShownOnOpen = false;
+    openUrl(normalizeProtocolUrl(deepLink), mainWindow);
+  }
+});
 
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
@@ -44,18 +94,37 @@ if (process.defaultApp) {
   app.setAsDefaultProtocolClient(PROTOCOL);
 }
 
-let urlToOpen: string | undefined = cli.input[0]?.includes('electronmon')
-  ? undefined
-  : cli.input[0];
-
-let mainWindow: BrowserWindow | null = null;
+// One-time process-level wiring: IPC handlers and app-level listeners live
+// here (never inside createWindow) so macOS close→reopen cannot register
+// duplicates. Anything window-dependent receives the getter.
+const getMainWindow = () => mainWindow;
 
 initAppMetaHandlers();
 initWebviewContextMenu();
 initScreenshotHandlers();
 initWebviewStorageManagerHandlers();
 initNativeFunctionHandlers();
-initMcpServer(() => mainWindow);
+initMcpServer(getMainWindow);
+initHttpBasicAuthHandlers(getMainWindow);
+const webPermissionHandlers = WebPermissionHandlers(getMainWindow);
+
+ipcMain.on('get-browser-sync-port', (event) => {
+  event.returnValue = getBrowserSyncPort();
+});
+
+ipcMain.on('start-watching-file', async (_event, fileInfo) => {
+  let filePath = fileInfo.path.replace('file://', '');
+  if (process.platform === 'win32') {
+    filePath = filePath.replace(/^\//, '');
+  }
+  app.addRecentDocument(filePath);
+  await stopWatchFiles();
+  watchFiles(filePath);
+});
+
+ipcMain.on('stop-watcher', async () => {
+  await stopWatchFiles();
+});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -102,22 +171,42 @@ const installExtensions = async () => {
   try {
     return await installer
       .default([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS], {forceDownload})
-      .catch(console.log);
+      .catch((error: unknown) => log.warn('DevTools extension install failed', error));
   } finally {
     process.noDeprecation = previousNoDeprecation;
   }
 };
 
+// Session-level wiring runs once, after app ready (the session does not exist
+// before that).
+const wireSessionOnce = () => {
+  // Allow the BrowserSync host (the event-mirroring transport injected into
+  // every preview) through page CSPs — every header value, exact directive
+  // names only.
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    const headers = details.responseHeaders;
+    if (headers) {
+      const bsHost = getBrowserSyncHost();
+      Object.keys(headers)
+        .filter((key) => key.toLowerCase() === 'content-security-policy')
+        .forEach((key) => {
+          headers[key] = headers[key].map((policy) => injectHostIntoCsp(policy, bsHost));
+        });
+    }
+    callback({responseHeaders: headers});
+  });
+
+  webPermissionHandlers.init();
+};
+
+let appUpdater: AppUpdater | null = null;
+let isBrowserSyncInitiated = false;
+
 const createWindow = async () => {
   windowShownOnOpen = false;
-  let isAppInitiated = false;
   if (process.env.E2E_TEST !== 'true') {
     await installExtensions();
   }
-
-  const setIsAppInitiated = () => {
-    isAppInitiated = true;
-  };
 
   const isBuiltApp = app.isPackaged || process.env.E2E_TEST === 'true';
   const RESOURCES_PATH = app.isPackaged
@@ -128,12 +217,14 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
-  const {width, height} = screen.getPrimaryDisplay().workAreaSize;
+  const windowState = getSavedWindowState();
 
   mainWindow = new BrowserWindow({
     show: false,
-    width,
-    height,
+    x: windowState.x,
+    y: windowState.y,
+    width: windowState.width,
+    height: windowState.height,
     icon: getAssetPath('icon.png'),
     titleBarStyle: 'default',
     webPreferences: {
@@ -143,30 +234,11 @@ const createWindow = async () => {
       webviewTag: true,
     },
   });
+  if (windowState.isMaximized) {
+    mainWindow.maximize();
+  }
+  trackWindowState(mainWindow);
   initDevtoolsHandlers(mainWindow);
-  initHttpBasicAuthHandlers(mainWindow);
-  const webPermissionHandlers = WebPermissionHandlers(mainWindow);
-
-  // Add BrowserSync host to the allowed Content-Security-Policy origins
-  mainWindow.webContents.session.webRequest.onHeadersReceived(async (details, callback) => {
-    if (details.responseHeaders?.['content-security-policy']) {
-      let cspHeader = details.responseHeaders['content-security-policy'][0];
-      const bsHost = getBrowserSyncHost();
-
-      cspHeader = cspHeader.replace('default-src', `default-src ${bsHost}`);
-      cspHeader = cspHeader.replace('script-src', `script-src ${bsHost}`);
-      cspHeader = cspHeader.replace('script-src-elem', `script-src-elem ${bsHost}`);
-      cspHeader = cspHeader.replace(
-        'connect-src',
-        `connect-src ${bsHost} wss://${bsHost} ws://${bsHost}`
-      );
-      cspHeader = cspHeader.replace('child-src', `child-src ${bsHost}`);
-      cspHeader = cspHeader.replace('worker-src', `worker-src ${bsHost}`); // Required when/if the browser-sync script is eventually relocated to a web worker
-
-      details.responseHeaders['content-security-policy'][0] = cspHeader;
-    }
-    callback({responseHeaders: details.responseHeaders});
-  });
 
   mainWindow.loadURL(
     `${resolveHtmlPath('index.html')}${urlToOpen ? `?urlToOpen=${encodeURI(urlToOpen)}` : ''}`
@@ -197,45 +269,37 @@ const createWindow = async () => {
   });
 
   mainWindow.on('ready-to-show', async () => {
-    if (!isAppInitiated) {
+    if (!isBrowserSyncInitiated) {
       await initInstance();
-      setIsAppInitiated();
+      isBrowserSyncInitiated = true;
+    }
 
-      if (!mainWindow) {
-        throw new Error('"mainWindow" is not defined');
-      }
-      webPermissionHandlers.init();
-      if (process.env.START_MINIMIZED) {
-        mainWindow.minimize();
-      } else if (process.env.E2E_TEST === 'true' && process.env.E2E_HEADLESS === 'true') {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      mainWindow.minimize();
+    } else if (process.env.E2E_TEST === 'true' && process.env.E2E_HEADLESS === 'true') {
+      windowShownOnOpen = true;
+    } else if (process.env.E2E_TEST === 'true') {
+      mainWindow.showInactive();
+      windowShownOnOpen = true;
+    } else {
+      mainWindow.showInactive();
+      if (!windowShownOnOpen) {
         windowShownOnOpen = true;
-      } else if (process.env.E2E_TEST === 'true') {
-        mainWindow.showInactive();
-        windowShownOnOpen = true;
+        mainWindow.show();
       } else {
         mainWindow.showInactive();
-        if (!windowShownOnOpen) {
-          windowShownOnOpen = true;
-          mainWindow.show();
-        } else {
-          mainWindow.showInactive();
-        }
       }
     }
-  });
-
-  mainWindow.webContents.setWindowOpenHandler(({url}) => {
-    console.log('window open handler', url);
-    return {action: 'deny'};
   });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 
-  const appUpdater = new AppUpdater();
-
-  const menuBuilder = new MenuBuilder(mainWindow, appUpdater);
+  const menuBuilder = new MenuBuilder(mainWindow, appUpdater!);
   menuBuilder.buildMenu();
 
   // Open urls in the user's browser
@@ -243,32 +307,10 @@ const createWindow = async () => {
     shell.openExternal(edata.url);
     return {action: 'deny'};
   });
-
-  ipcMain.on('get-browser-sync-port', (event) => {
-    event.returnValue = getBrowserSyncPort();
-  });
-
-  ipcMain.on('start-watching-file', async (event, fileInfo) => {
-    let filePath = fileInfo.path.replace('file://', '');
-    if (process.platform === 'win32') {
-      filePath = filePath.replace(/^\//, '');
-    }
-    app.addRecentDocument(filePath);
-    await stopWatchFiles();
-    watchFiles(filePath);
-  });
-
-  ipcMain.on('stop-watcher', async () => {
-    await stopWatchFiles();
-  });
 };
 
 app.on('open-url', async (event, url) => {
-  let actualURL = url.replace(`${PROTOCOL}://`, '');
-  if (actualURL.indexOf('//') !== -1 && actualURL.indexOf('://') === -1) {
-    // This hack is needed because the URL from the extension is missing the colon for some reason.
-    actualURL = actualURL.replace('//', '://');
-  }
+  const actualURL = normalizeProtocolUrl(url);
   if (mainWindow == null) {
     // Will be handled by opened window
     urlToOpen = actualURL;
@@ -296,13 +338,15 @@ app.on('certificate-error', (event, _, url, __, ___, callback) => {
     event.preventDefault();
     return callback(true);
   }
-  console.log('certificate-error event', url, getBrowserSyncHost());
+  log.info('certificate-error event', url, getBrowserSyncHost());
   return callback(store.get('userPreferences.allowInsecureSSLConnections'));
 });
 
 app
   .whenReady()
   .then(() => {
+    wireSessionOnce();
+    appUpdater = new AppUpdater();
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
@@ -310,4 +354,4 @@ app
       if (mainWindow === null) createWindow();
     });
   })
-  .catch(console.log);
+  .catch((error) => log.error('Failed to start app', error));

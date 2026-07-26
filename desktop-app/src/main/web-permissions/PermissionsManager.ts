@@ -79,10 +79,10 @@ class PermissionsManager {
 
   callbacks: Record<string, PermissionCallback[]> = {};
 
-  mainWindow: BrowserWindow;
+  getMainWindow: () => BrowserWindow | null;
 
-  constructor(mainWindow: BrowserWindow) {
-    this.mainWindow = mainWindow;
+  constructor(getMainWindow: () => BrowserWindow | null) {
+    this.getMainWindow = getMainWindow;
     this.permissions = loadPermissions();
     const handler = (_event: Electron.IpcMainInvokeEvent, arg: PermissionResponseArg) => {
       this.setPermissionState(
@@ -124,7 +124,7 @@ class PermissionsManager {
     }
     savePermissions(this.permissions);
 
-    this.mainWindow.webContents.send(IPC_MAIN_CHANNELS.PERMISSION_UPDATED, {
+    this.getMainWindow()?.webContents.send(IPC_MAIN_CHANNELS.PERMISSION_UPDATED, {
       origin,
       type,
       state,
@@ -164,7 +164,7 @@ class PermissionsManager {
 
     // Only show dialog if no other requests are pending for this permission
     if (callbacks.length === 1) {
-      this.mainWindow.webContents.send(IPC_MAIN_CHANNELS.PERMISSION_REQUEST, {
+      this.getMainWindow()?.webContents.send(IPC_MAIN_CHANNELS.PERMISSION_REQUEST, {
         permission: type,
         requestingOrigin: origin,
       });
@@ -230,7 +230,7 @@ class PermissionsManager {
 
       // Notify about each permission being cleared (reset to UNKNOWN)
       Object.keys(permissions).forEach((type) => {
-        this.mainWindow.webContents.send(IPC_MAIN_CHANNELS.PERMISSION_UPDATED, {
+        this.getMainWindow()?.webContents.send(IPC_MAIN_CHANNELS.PERMISSION_UPDATED, {
           origin,
           type,
           state: PERMISSION_STATE.UNKNOWN,

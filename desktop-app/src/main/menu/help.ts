@@ -14,6 +14,8 @@ export const subMenuHelp = (
   appUpdater: AppUpdater
 ): MenuItemConstructorOptions => {
   const environmentInfo = getEnvironmentInfo();
+  // Menus are rebuilt per window; keep the handler registration idempotent.
+  ipcMain.removeHandler('get-about-info');
   ipcMain.handle('get-about-info', async (_): Promise<AboutDialogArgs> => {
     return {
       environmentInfo,
