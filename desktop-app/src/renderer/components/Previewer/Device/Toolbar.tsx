@@ -62,7 +62,6 @@ const Toolbar = ({
       );
       setEventMirroringOff(!eventMirroringOff);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error while toggleing event mirroring', error);
     }
   };
@@ -79,7 +78,6 @@ const Toolbar = ({
       });
       playScreenshotDone();
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error while taking quick screenshot', error);
     }
     setScreenshotLoading(false);
@@ -115,7 +113,6 @@ const Toolbar = ({
       setScreenshotInProgress(false);
       playScreenshotDone();
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error while taking full screenshot', error);
     }
     setFullScreenshotLoading(false);

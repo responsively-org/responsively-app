@@ -112,7 +112,6 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
         {webContentsId: webview.getWebContentsId(), url: address}
       );
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('Error loading URL', err);
     }
   }, [address, isPrimary, webviewReady]);
@@ -367,7 +366,6 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
             break;
           }
           default:
-            // eslint-disable-next-line no-console
             console.log('Unhandled context menu command', command);
         }
       }
@@ -408,7 +406,6 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       // Only show error overlay for main frame errors
       // Iframe errors (like CSP violations) should only go to console
       if (!isMainFrame) {
-        // eslint-disable-next-line no-console
         console.warn('iframe error:', errorCode, errorDescription);
         return;
       }
@@ -443,7 +440,6 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
 
     const unregisterNavigationHandlers = registerNavigationHandlers();
 
-    // eslint-disable-next-line consistent-return
     return () => {
       handlerRemovers.forEach((handlerRemover) => {
         handlerRemover();
@@ -498,7 +494,6 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       try {
         window.electron.ipcRenderer.removeAllListeners('inspect-element');
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Error while removing ipc listener', e);
       }
     };
@@ -542,7 +537,6 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     };
     webview.addEventListener('dom-ready', hideScrollbars);
 
-    // eslint-disable-next-line consistent-return
     return () => {
       webview.removeEventListener('dom-ready', hideScrollbars);
     };

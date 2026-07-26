@@ -252,7 +252,6 @@ test.describe('Custom Device Creation', () => {
     await expect(app.page.getByLabel('Mobile Capable (Rotatable)')).toBeChecked();
 
     // The phone UA should be set
-    const phoneUA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X)';
     const uaInput = app.page.getByLabel('User Agent String');
     const initialUA = await uaInput.inputValue();
     expect(initialUA).toContain('iPhone');

@@ -44,7 +44,6 @@ const DesignOverlayControls = ({device, isOpen, onClose}: Props) => {
 
   const handleFileUpload = (file: File) => {
     if (!file.type.startsWith('image/')) {
-      // eslint-disable-next-line no-console
       console.error('File is not an image');
       return;
     }
@@ -171,7 +170,7 @@ const DesignOverlayControls = ({device, isOpen, onClose}: Props) => {
                 onChange={handleToggleEnabled}
                 className="h-4 w-4 cursor-pointer rounded border-slate-400"
               />
-              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+              {}
               <label className="text-sm font-medium" htmlFor="enabled">
                 Enable overlay
               </label>

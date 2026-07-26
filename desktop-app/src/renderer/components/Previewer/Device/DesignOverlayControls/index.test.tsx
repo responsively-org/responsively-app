@@ -129,9 +129,7 @@ describe('DesignOverlayControls', () => {
   });
 
   it('shows opacity slider when image is uploaded', async () => {
-    const {store} = renderWithRedux(
-      <DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />
-    );
+    renderWithRedux(<DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />);
 
     const fileInput = screen.getByTestId('file-input');
     const mockFile = new File(['dummy'], 'test.png', {type: 'image/png'});
@@ -144,9 +142,7 @@ describe('DesignOverlayControls', () => {
   });
 
   it('updates opacity when slider is moved', async () => {
-    const {store} = renderWithRedux(
-      <DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />
-    );
+    renderWithRedux(<DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />);
 
     const fileInput = screen.getByTestId('file-input');
     const mockFile = new File(['dummy'], 'test.png', {type: 'image/png'});

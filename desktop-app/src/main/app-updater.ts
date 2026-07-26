@@ -40,7 +40,7 @@ export class AppUpdater {
       this.version = info.version;
       this.lastChecked = Date.now();
     });
-    autoUpdater.on('update-not-available', (info) => {
+    autoUpdater.on('update-not-available', (_info) => {
       this.status = 'UP_TO_DATE';
       this.lastChecked = Date.now();
     });
@@ -51,14 +51,14 @@ export class AppUpdater {
     });
     autoUpdater.on('download-progress', (progressObj) => {
       const logMessage = `Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}% (${progressObj.transferred}/${progressObj.total})`;
-      // eslint-disable-next-line no-console
+
       console.log(logMessage);
       this.status = `DOWNLOADING - ${progressObj.percent}%`;
       this.progress = progressObj.percent;
       this.size = progressObj.total;
       this.lastChecked = Date.now();
     });
-    autoUpdater.on('update-downloaded', (info) => {
+    autoUpdater.on('update-downloaded', (_info) => {
       this.status = 'DOWNLOADED (Restart to apply update)';
       this.lastChecked = Date.now();
     });

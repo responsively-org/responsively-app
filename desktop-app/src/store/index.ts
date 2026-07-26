@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- store schema typing lands with the v11 typed-store refactor */
 import path from 'path';
 import {app} from 'electron';
 import {homedir} from 'os';

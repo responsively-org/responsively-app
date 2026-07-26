@@ -3,7 +3,6 @@ import PermissionsManager, {PERMISSION_STATE} from './PermissionsManager';
 import {IPC_MAIN_CHANNELS} from '../../common/constants';
 import store from '../../store';
 
-// eslint-disable-next-line import/prefer-default-export
 export const WebPermissionHandlers = (mainWindow: BrowserWindow) => {
   const permissionsManager = new PermissionsManager(mainWindow);
   return {

@@ -39,13 +39,12 @@ export function DropDown({label, options, className}: Props) {
                 return (
                   <div
                     className="m-1 border-t-[1px] border-t-slate-500"
-                    // eslint-disable-next-line react/no-array-index-key
+
                     key={`divider-${idx}`}
                   />
                 );
               }
               return (
-                // eslint-disable-next-line react/no-array-index-key
                 <MenuItem key={idx.toString()}>
                   {option.onClick !== null ? (
                     <button

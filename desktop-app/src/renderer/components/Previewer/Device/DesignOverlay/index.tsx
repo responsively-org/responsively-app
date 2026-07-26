@@ -208,7 +208,6 @@ const DesignOverlay = ({
     : 'relative origin-top-left overflow-hidden bg-white';
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       ref={overlayRef}
       style={containerStyle}

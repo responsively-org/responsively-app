@@ -24,7 +24,7 @@ const Input = ({
         type="text"
         id={id}
         className="rounded-sm bg-white p-1 px-1 dark:bg-slate-900"
-        /* eslint-disable-next-line react/jsx-props-no-spreading */
+
         {...props}
       />
     </div>

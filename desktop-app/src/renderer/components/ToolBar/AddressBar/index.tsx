@@ -141,7 +141,6 @@ const AddressBar = () => {
         throw new Error('Invalid URL');
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('Invalid URL', err);
     }
   };

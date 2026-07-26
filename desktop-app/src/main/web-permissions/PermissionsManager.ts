@@ -103,8 +103,6 @@ class PermissionsManager {
       try {
         ipcMain.handle(PERMISSION_RESPONSE_CHANNEL, handler);
       } catch (e) {
-        // eslint-disable-next-line no-console
-        // eslint-disable-next-line no-console
         console.error('Error adding listener for permission response channel', e);
       }
     }
@@ -210,7 +208,6 @@ class PermissionsManager {
           storages: [],
         })
         .catch((e) => {
-          // eslint-disable-next-line no-console
           console.error('Failed to clear storage data for origin:', origin, e);
         });
     }
@@ -228,7 +225,6 @@ class PermissionsManager {
           storages: [],
         })
         .catch((e) => {
-          // eslint-disable-next-line no-console
           console.error('Failed to clear storage data for origin:', origin, e);
         });
 

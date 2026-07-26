@@ -6,7 +6,7 @@ import os from 'os';
 import path from 'path';
 
 // Extend the base test to provide a self-signed HTTPS server
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 const test = baseTest.extend<{}, {selfSignedUrl: string}>({
   selfSignedUrl: [
     // eslint-disable-next-line no-empty-pattern

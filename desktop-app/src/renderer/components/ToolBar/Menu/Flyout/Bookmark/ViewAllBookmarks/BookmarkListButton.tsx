@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import Button from 'renderer/components/Button';
 import {IBookmarks} from 'renderer/store/features/bookmarks';
 import {Icon} from '@iconify/react';
 import {useState} from 'react';

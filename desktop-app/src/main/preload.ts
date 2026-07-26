@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- generic IPC bridge is intentionally untyped */
 import {Channels} from 'common/constants';
 import {contextBridge, ipcRenderer, IpcRendererEvent} from 'electron';
 contextBridge.exposeInMainWorld('electron', {
@@ -36,7 +37,6 @@ contextBridge.exposeInMainWorld('electron', {
 });
 
 window.onerror = function (errorMsg, url, lineNumber) {
-  // eslint-disable-next-line no-console
   console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
   // Code to run when an error has occurred on the page
 };

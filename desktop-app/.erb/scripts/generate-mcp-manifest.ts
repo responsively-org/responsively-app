@@ -15,7 +15,6 @@ import {MCP_SERVER_NAME} from '../../src/common/mcp';
 import {toolDefs} from '../../src/main/mcp/toolDefs';
 import webpackPaths from '../configs/webpack.paths';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const {version} = require('../../release/app/package.json');
 
 const main = async () => {
@@ -33,7 +32,7 @@ const main = async () => {
   fs.mkdirSync(outDir, {recursive: true});
   const outFile = path.join(outDir, 'manifest.json');
   fs.writeFileSync(outFile, JSON.stringify({name: MCP_SERVER_NAME, version, tools}, null, 2));
-  // eslint-disable-next-line no-console
+
   console.log(`Wrote ${tools.length} tools to ${outFile}`);
 
   await client.close();
@@ -41,7 +40,6 @@ const main = async () => {
 };
 
 main().catch((error) => {
-  // eslint-disable-next-line no-console
   console.error(error);
   process.exit(1);
 });

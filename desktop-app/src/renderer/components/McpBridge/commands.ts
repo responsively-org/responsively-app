@@ -132,11 +132,11 @@ const navigate = async (
     const finish = (result: boolean) => {
       if (settled) return;
       settled = true;
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+
       clearTimeout(timer);
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+
       webview.removeEventListener('did-stop-loading', onStopLoading);
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+
       webview.removeEventListener('did-fail-load', onFailLoad);
       resolve(result);
     };

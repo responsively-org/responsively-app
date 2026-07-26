@@ -6,16 +6,14 @@ import {test, expect} from '../fixtures/electron-app';
  * Returns them as a stable-ordered array so we can reference
  * "source" vs "other" devices consistently within a test.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 const getWebviewIds = async (electronApp: ElectronApplication): Promise<number[]> => {
   return electronApp.evaluate(({webContents}) => {
-    return (
-      webContents
-        .getAllWebContents()
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview')
-        .map((wc: Electron.WebContents) => wc.id)
-    );
+    return webContents
+      .getAllWebContents()
+
+      .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview')
+      .map((wc: Electron.WebContents) => wc.id);
   });
 };
 
@@ -26,7 +24,6 @@ const execInWebview = async (
   electronApp: ElectronApplication,
   wcId: number,
   js: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> => {
   return electronApp.evaluate(
     async ({webContents}, {id, script}: {id: number; script: string}) => {

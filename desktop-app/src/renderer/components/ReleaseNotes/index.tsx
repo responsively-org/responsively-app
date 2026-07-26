@@ -53,7 +53,6 @@ export const ReleaseNotes = () => {
         );
         setIsOpen(true);
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error('Error while fetching release notes', error);
       }
     })();
@@ -85,11 +84,10 @@ export const ReleaseNotes = () => {
         <div className="prose dark:prose-invert lg:prose-xl">
           <ReactMarkdown
             components={{
-              a: ({node, className, children, ...props}) => {
+              a: ({node: _node, className: _className, children, ...props}) => {
                 return (
                   // eslint-disable-next-line jsx-a11y/interactive-supports-focus, jsx-a11y/click-events-have-key-events
                   <a
-                    // eslint-disable-next-line react/jsx-props-no-spreading
                     {...props}
                     onClick={(e) => {
                       if (!(e.target instanceof HTMLAnchorElement)) {

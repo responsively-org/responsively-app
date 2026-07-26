@@ -52,7 +52,6 @@ export const initMcpServer = (getMainWindow: GetMainWindow) => {
       }
       await handleMcpRequest(req, res, getMainWindow);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('[mcp] Error handling request:', error);
       if (!res.headersSent) {
         res.writeHead(500, {'Content-Type': 'application/json'});
@@ -70,7 +69,7 @@ export const initMcpServer = (getMainWindow: GetMainWindow) => {
   httpServer.on('error', (error: NodeJS.ErrnoException) => {
     // EADDRINUSE (e.g. a second app instance): the app must keep working
     // without MCP rather than crash.
-    // eslint-disable-next-line no-console
+
     console.warn(
       `[mcp] MCP server not started on port ${port} (${error.code ?? error.message}). ` +
         'Another Responsively App instance may already be running.'
@@ -79,7 +78,6 @@ export const initMcpServer = (getMainWindow: GetMainWindow) => {
   });
 
   httpServer.listen(port, '127.0.0.1', () => {
-    // eslint-disable-next-line no-console
     console.log(`[mcp] MCP server listening on http://127.0.0.1:${port}/mcp`);
   });
 

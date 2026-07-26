@@ -13,7 +13,6 @@ const useMousetrapEmitter = (
   useEffect(() => {
     const callback = (_e: Mousetrap.ExtendedKeyboardEvent, _combo: string) => {
       keyboardShortcutsPubsub.publish(eventChannel).catch((err) => {
-        // eslint-disable-next-line no-console
         console.error('useMousetrapEmitter: callback: error: ', err);
       });
     };

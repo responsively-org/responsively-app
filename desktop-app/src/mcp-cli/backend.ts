@@ -90,13 +90,12 @@ export const createBackend = (options: BackendOptions) => {
         await launcher(port);
         const deadline = Date.now() + launchTimeoutMs;
         while (Date.now() < deadline) {
-          // eslint-disable-next-line no-await-in-loop
           const client = await connectOnce();
           if (client !== null) {
             cached = client;
             return client;
           }
-          // eslint-disable-next-line no-await-in-loop
+
           await sleep(pollIntervalMs);
         }
         throw new Error(

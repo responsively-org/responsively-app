@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- migrations operate on historical untyped shapes */
 import Store from 'electron-store';
 import {randomUUID} from 'crypto';
 
@@ -10,7 +11,6 @@ const defaultActiveDevices = ['10008', '10013', '10015'];
 export const migrations = {
   '1.2.0': (store: Store) => {
     try {
-      // eslint-disable-next-line no-console
       console.log('Migrating for 1.2.0', store.get('deviceManager'));
 
       // Migrate custom devices
@@ -50,7 +50,6 @@ export const migrations = {
         },
       ]);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.log('Migration failed', e);
       store.set('deviceManager.previewSuites', [
         {
@@ -61,7 +60,7 @@ export const migrations = {
       ]);
       return;
     }
-    // eslint-disable-next-line no-console
+
     console.log('Migration successful', store.get('deviceManager'));
   },
   '1.2.1': (store: Store) => {

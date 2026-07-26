@@ -6,7 +6,6 @@ import {
   setIsCapturingScreenshot,
   setIsInspecting,
   setRotate,
-  setNotifications,
 } from 'renderer/store/features/renderer';
 import {Icon} from '@iconify/react';
 import {ScreenshotAllArgs} from 'main/screenshot';
@@ -68,7 +67,7 @@ const ToolBar = () => {
       }
     });
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    await window.electron.ipcRenderer.invoke<Array<ScreenshotAllArgs>, any>(
+    await window.electron.ipcRenderer.invoke<Array<ScreenshotAllArgs>, unknown>(
       'screenshot:All',
       screens
     );

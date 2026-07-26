@@ -67,7 +67,6 @@ const NavigationControls = () => {
   return (
     <div className="flex">
       {ITEMS.map((item) => (
-        // eslint-disable-next-line react/jsx-props-no-spreading
         <NavigationButton {...item} key={item.label} />
       ))}
     </div>

@@ -18,7 +18,6 @@ export const SettingsContent = ({onClose}: Props) => {
 
   const onSave = () => {
     if (screenshotSaveLocation === '' || screenshotSaveLocation == null) {
-      // eslint-disable-next-line no-alert
       alert('Please enter a valid location.');
       return;
     }

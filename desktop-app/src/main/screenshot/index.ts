@@ -1,4 +1,3 @@
-/* eslint-disable promise/always-return */
 import {Device} from 'common/deviceList';
 import {ipcMain, shell, webContents} from 'electron';
 import {writeFile, ensureDir} from 'fs-extra';

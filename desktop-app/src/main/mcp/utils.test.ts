@@ -40,7 +40,6 @@ describe('normalizeUrl', () => {
   });
 
   it('rejects disallowed schemes', () => {
-    // eslint-disable-next-line no-script-url
     expect(() => normalizeUrl('javascript:alert(1)')).toThrow(/Unsupported URL scheme/);
     expect(() => normalizeUrl('data://text/html,hi')).toThrow(/Unsupported URL scheme/);
     expect(() => normalizeUrl('responsively://open')).toThrow(/Unsupported URL scheme/);

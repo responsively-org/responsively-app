@@ -1,5 +1,4 @@
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
-import {Device} from 'common/deviceList';
 import {Provider, useDispatch} from 'react-redux';
 import {configureStore} from '@reduxjs/toolkit';
 import {ReactNode} from 'react';

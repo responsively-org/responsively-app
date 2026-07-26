@@ -50,7 +50,6 @@ export const AboutDialog = () => {
             return arg;
           })
           .catch((err) => {
-            // eslint-disable-next-line no-console
             console.error('Error while refreshing about info', err);
           });
       }, 1000);

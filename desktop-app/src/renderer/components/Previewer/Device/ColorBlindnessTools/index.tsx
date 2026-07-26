@@ -1,7 +1,4 @@
-import {Icon} from '@iconify/react';
-import cx from 'classnames';
 import {useCallback, useEffect, useState} from 'react';
-import {DropDown} from 'renderer/components/DropDown';
 import {COLOR_BLINDNESS_CHANNEL} from 'renderer/components/ToolBar/ColorBlindnessControls';
 import {
   BLUE_YELLOW,
@@ -70,7 +67,6 @@ export const ColorBlindnessTools = ({webview}: Props) => {
         }
         setInjectCss({key, css, name: debugType, js});
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error('Error inserting css', error);
         // dispatch(setCss(undefined));
         setInjectCss(undefined);

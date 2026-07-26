@@ -71,7 +71,7 @@ const Button = ({
       )}
       type="button"
       disabled={disabled}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+
       {...props}
     >
       {/* pointer-events-none keeps mouse events targeting the stable button

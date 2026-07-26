@@ -44,7 +44,6 @@ export const writeMcpBeacon = (mcpPort: number): void => {
     fs.mkdirSync(userDataDir, {recursive: true});
     fs.writeFileSync(path.join(userDataDir, MCP_BEACON_FILENAME), JSON.stringify(beacon, null, 2));
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.warn('[mcp] Could not write the app-location beacon:', error);
   }
 };

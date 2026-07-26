@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- CDP payloads are untyped by Electron */
 import {BrowserWindow, ipcMain, webContents, WebContentsView} from 'electron';
 import {DOCK_POSITION} from '../../common/constants';
 import {DockPosition} from '../../renderer/store/features/devtools';
@@ -128,7 +129,6 @@ const disableInspector = async (
 
     dbg.removeAllListeners().detach();
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.log('Error detaching debugger', err);
   }
   return {status: true};
@@ -172,7 +172,6 @@ const openDevtools = async (_: any, arg: OpenDevtoolsArgs): Promise<OpenDevtools
     `
     )
     .catch((err) => {
-      // eslint-disable-next-line no-console
       console.error('Error removing the native inspect button', err);
     });
 
@@ -189,7 +188,6 @@ const resizeDevtools = async (_: any, arg: ResizeDevtoolsArgs) => {
     }
     devtoolsView.setBounds(arg.bounds);
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('Error resizing devtools', err);
   }
 };

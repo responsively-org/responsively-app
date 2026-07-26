@@ -115,7 +115,6 @@ const SitePermissionsDropdown = ({
         setIsRefreshing(false);
       }, 2000);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Failed to refresh page:', error);
       setIsRefreshing(false);
     }
@@ -144,7 +143,6 @@ const SitePermissionsDropdown = ({
           )) as SitePermission[];
           setSitePermissions(permissions);
         } catch (error) {
-          // eslint-disable-next-line no-console
           console.error('Failed to load site permissions:', error);
           setSitePermissions([]);
         }
@@ -192,7 +190,6 @@ const SitePermissionsDropdown = ({
         state,
       });
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Failed to update permission:', error);
     }
   };
@@ -201,7 +198,6 @@ const SitePermissionsDropdown = ({
     try {
       await window.electron.ipcRenderer.invoke(IPC_MAIN_CHANNELS.CLEAR_SITE_PERMISSIONS, origin);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Failed to clear permissions:', error);
     }
   };

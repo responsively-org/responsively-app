@@ -79,7 +79,6 @@ const DeviceDetailsModal = ({
     const doesDeviceExist = existingDevice != null && (isNew || existingDevice.id !== device.id);
 
     if (doesDeviceExist) {
-      // eslint-disable-next-line no-alert
       return alert('Device With the name already exists, try with a different name');
     }
     const capabilities = [];

@@ -113,7 +113,6 @@ test.describe('MCP server', () => {
 
   test('navigate rejects disallowed URL schemes', async () => {
     const {content, isError} = await callTool(client, 'navigate', {
-      // eslint-disable-next-line no-script-url
       url: 'javascript:alert(1)',
     });
     expect(isError).toBe(true);

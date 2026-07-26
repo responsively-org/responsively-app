@@ -1,7 +1,7 @@
 import {test, expect} from '../fixtures/electron-app';
 
 test.describe('App Launch', () => {
-  test('window is created and visible', async ({electronApp, mainWindow}) => {
+  test('window is created and visible', async ({electronApp, mainWindow: _mainWindow}) => {
     const isVisible = await electronApp.evaluate(({BrowserWindow}) => {
       const win = BrowserWindow.getAllWindows()[0];
       return win?.isVisible() ?? false;
@@ -13,7 +13,7 @@ test.describe('App Launch', () => {
     }
   });
 
-  test('app name is ResponsivelyApp', async ({electronApp, mainWindow}) => {
+  test('app name is ResponsivelyApp', async ({electronApp, mainWindow: _mainWindow}) => {
     const name = await electronApp.evaluate(async ({app}) => {
       return app.getName();
     });

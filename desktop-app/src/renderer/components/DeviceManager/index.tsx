@@ -3,11 +3,7 @@ import {Icon} from '@iconify/react';
 import {useDispatch, useSelector} from 'react-redux';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
-import {
-  selectActiveSuite,
-  setDevices,
-  setSuiteDevices,
-} from 'renderer/store/features/device-manager';
+import {selectActiveSuite, setSuiteDevices} from 'renderer/store/features/device-manager';
 import {APP_VIEWS, setAppView} from 'renderer/store/features/ui';
 import {defaultDevices, Device, getDevicesMap} from 'common/deviceList';
 

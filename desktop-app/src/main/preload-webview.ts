@@ -1,7 +1,6 @@
 import {ipcRenderer} from 'electron';
 
 window.onerror = function logError(errorMsg, url, lineNumber) {
-  // eslint-disable-next-line no-console
   console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
 };
 
@@ -99,13 +98,11 @@ const documentBodyInit = () => {
       if (document.fullscreenElement) {
         // Exit fullscreen
         document.exitFullscreen().catch((err) => {
-          // eslint-disable-next-line no-console
           console.error('Error exiting fullscreen:', err);
         });
       } else {
         // Request fullscreen
         document.documentElement.requestFullscreen().catch((err) => {
-          // eslint-disable-next-line no-console
           console.error('Error requesting fullscreen:', err);
         });
       }
@@ -142,7 +139,6 @@ const init = () => {
   try {
     documentBodyInit();
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.log('Error in documentBodyInit:', err);
   }
 };

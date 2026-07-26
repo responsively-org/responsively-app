@@ -13,7 +13,7 @@ type ElectronFixtures = {
   mcpPort: number;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export const test = base.extend<{}, ElectronFixtures>({
   mcpPort: [
     // Each worker gets a deterministic port for the app's MCP server, derived

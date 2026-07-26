@@ -83,7 +83,6 @@ const DeviceLabel = ({
         type="checkbox"
         disabled={disableSelectionControls}
         title={
-          // eslint-disable-next-line no-nested-ternary
           disableSelectionControls
             ? 'Cannot make the suite empty add another device to remove this one'
             : isChecked

@@ -31,10 +31,9 @@ export function isValidCliArgURL(arg?: string): boolean {
       isCliArgResult = true;
       return true;
     }
-    // eslint-disable-next-line no-console
+
     console.warn('Protocol not supported', url.protocol);
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.warn('Not a valid URL', arg, e);
   }
   isCliArgResult = false;

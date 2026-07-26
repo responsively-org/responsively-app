@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- generic event bus is intentionally untyped */
 interface HandlerResult {
   result: any;
   error: any;
