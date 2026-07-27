@@ -7,6 +7,7 @@ import rulersReducer from './features/ruler';
 import uiReducer from './features/ui';
 import bookmarkReducer from './features/bookmarks';
 import designOverlayReducer from './features/design-overlay';
+import headerRulesReducer from './features/header-rules';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     bookmarks: bookmarkReducer,
     rulers: rulersReducer,
     designOverlay: designOverlayReducer,
+    headerRules: headerRulesReducer,
   },
 });
 

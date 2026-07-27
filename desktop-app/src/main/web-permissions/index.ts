@@ -1,6 +1,7 @@
 import {BrowserWindow, session, ipcMain} from 'electron';
 import PermissionsManager, {PERMISSION_STATE} from './PermissionsManager';
 import {IPC_MAIN_CHANNELS} from '../../common/constants';
+import {HEADER_TYPES, HeaderRule, applyRulesToHeaders} from '../../common/headerRules';
 import store from '../../store';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -34,7 +35,14 @@ export const WebPermissionHandlers = (mainWindow: BrowserWindow) => {
               'userPreferences.webRequestHeaderAcceptLanguage'
             );
           }
-          callback({requestHeaders: details.requestHeaders});
+          callback({
+            requestHeaders: applyRulesToHeaders(
+              store.get('headerRules') as HeaderRule[],
+              details,
+              HEADER_TYPES.REQUEST,
+              details.requestHeaders
+            ),
+          });
         }
       );
 
