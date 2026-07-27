@@ -1,6 +1,7 @@
 import {Icon} from '@iconify/react';
 import cx from 'classnames';
 import {IPC_MAIN_CHANNELS, OpenUrlArgs} from 'common/constants';
+import {getMatchingActions} from 'common/headerRules';
 import {AuthRequestArgs} from 'main/http-basic-auth';
 import {PermissionRequestArg} from 'main/web-permissions/PermissionsManager';
 import {DragEvent, KeyboardEventHandler, useCallback, useEffect, useRef, useState} from 'react';
@@ -8,6 +9,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import Button from 'renderer/components/Button';
 import {webViewPubSub} from 'renderer/lib/pubsub';
 import {selectAddress, selectPageTitle, setAddress} from 'renderer/store/features/renderer';
+import {selectHeaderRules, setHeaderRulesModalOpen} from 'renderer/store/features/header-rules';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
@@ -37,6 +39,11 @@ const AddressBar = () => {
   const [showSitePermissions, setShowSitePermissions] = useState(false);
   const address = useSelector(selectAddress);
   const pageTitle = useSelector(selectPageTitle);
+  const headerRules = useSelector(selectHeaderRules);
+  const modifiedHeaderNames = getMatchingActions(headerRules, {
+    url: address,
+    resourceType: 'mainFrame',
+  }).map((action) => action.headerName);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -247,7 +254,8 @@ const AddressBar = () => {
           type="text"
           data-testid="address-bar"
           className={cx(
-            'w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-40 dark:bg-slate-900',
+            'w-full text-ellipsis rounded-full px-2 py-1 pl-8 dark:bg-slate-900',
+            modifiedHeaderNames.length > 0 ? 'pr-[15rem]' : 'pr-40',
             {
               'rounded-bl-none rounded-br-none rounded-tl-lg rounded-tr-lg outline-none':
                 isSuggesting,
@@ -278,6 +286,20 @@ const AddressBar = () => {
           <p className="text-sm font-semibold">Drop URL Here</p>
         </div>
         <div className="absolute inset-y-0 right-0 mr-2 flex items-center">
+          {modifiedHeaderNames.length > 0 ? (
+            <button
+              type="button"
+              data-testid="modified-headers-indicator"
+              onClick={() => dispatch(setHeaderRulesModalOpen(true))}
+              className="mr-1 flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
+              title={`Modified headers for this URL: ${modifiedHeaderNames.join(
+                ', '
+              )} (click to edit)`}
+            >
+              <Icon icon="mdi:tune-variant" />
+              Headers
+            </button>
+          ) : null}
           <Button
             className="rounded-full"
             onClick={deleteStorage}

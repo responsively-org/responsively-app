@@ -12,6 +12,7 @@ import path from 'path';
 import {app, BrowserWindow, shell, screen, ipcMain} from 'electron';
 import cli from './cli';
 import {PROTOCOL} from '../common/constants';
+import {HEADER_TYPES, HeaderRule, applyRulesToHeaders} from '../common/headerRules';
 import MenuBuilder from './menu';
 import {resolveHtmlPath} from './util';
 import {
@@ -163,7 +164,15 @@ const createWindow = async () => {
 
       details.responseHeaders['content-security-policy'][0] = cspHeader;
     }
-    callback({responseHeaders: details.responseHeaders});
+
+    callback({
+      responseHeaders: applyRulesToHeaders(
+        store.get('headerRules') as HeaderRule[],
+        details,
+        HEADER_TYPES.RESPONSE,
+        details.responseHeaders ?? {}
+      ),
+    });
   });
 
   mainWindow.loadURL(

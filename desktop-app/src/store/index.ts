@@ -224,6 +224,11 @@ const schema = {
     },
     default: [],
   },
+  // Shape lives in common/headerRules.ts (HeaderRule)
+  headerRules: {
+    type: 'array',
+    default: [],
+  },
   history: {
     type: 'array',
     items: {

@@ -27,6 +27,7 @@ import useKeyboardShortcut, {
 } from '../KeyboardShortcutsManager/useKeyboardShortcut';
 import Shortcuts from './Shortcuts';
 import {ColorBlindnessControls} from './ColorBlindnessControls';
+import ModifyHeadersModal from '../ModifyHeadersModal';
 
 const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
@@ -133,6 +134,7 @@ const ToolBar = () => {
       </Button>
       <Menu />
       <ModalLoader isOpen={isCapturingScreenshot} onClose={handleClose} title="Screenshot" />
+      <ModifyHeadersModal />
     </div>
   );
 };
