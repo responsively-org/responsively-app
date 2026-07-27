@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useId, useState} from 'react';
 
 type AccordionItemProps = {
   title: string;
@@ -7,6 +7,9 @@ type AccordionItemProps = {
 
 export const AccordionItem = ({title, children}: AccordionItemProps) => {
   const [isOpen, setIsOpen] = useState(true);
+  const id = useId();
+  const headingId = `${id}-heading`;
+  const bodyId = `${id}-body`;
 
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -17,10 +20,11 @@ export const AccordionItem = ({title, children}: AccordionItemProps) => {
       <h2>
         <button
           type="button"
-          className="flex w-full items-center justify-between gap-3 border border-gray-200 p-5 font-medium text-gray-500 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:focus:ring-gray-800"
+          id={headingId}
+          className="flex w-full items-center justify-between gap-3 border border-line-soft p-5 font-medium text-muted hover:bg-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           onClick={toggle}
           aria-expanded={isOpen}
-          aria-controls={`accordion-body-${title}`}
+          aria-controls={bodyId}
         >
           <span className="flex items-center">{title}</span>
           <svg
@@ -41,13 +45,12 @@ export const AccordionItem = ({title, children}: AccordionItemProps) => {
         </button>
       </h2>
       <div
-        id={`accordion-body-${title}`}
+        id={bodyId}
+        role="region"
         className={`${isOpen ? 'block' : 'hidden'}`}
-        aria-labelledby={`accordion-heading-${title}`}
+        aria-labelledby={headingId}
       >
-        <div className="border border-b-0 border-gray-200 p-5 dark:border-gray-700 dark:bg-gray-900">
-          {children}
-        </div>
+        <div className="border border-b-0 border-line-soft bg-card p-5">{children}</div>
       </div>
     </div>
   );

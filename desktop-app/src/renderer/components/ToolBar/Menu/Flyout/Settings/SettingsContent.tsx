@@ -18,10 +18,11 @@ export const SettingsContent = ({onClose}: Props) => {
   const [popupBehavior, setPopupBehavior] = useState<string>(
     window.electron.store.get('userPreferences.popupBehavior') ?? 'in-preview'
   );
+  const [locationError, setLocationError] = useState<boolean>(false);
 
   const onSave = () => {
     if (screenshotSaveLocation === '' || screenshotSaveLocation == null) {
-      alert('Please enter a valid location.');
+      setLocationError(true);
       return;
     }
 
@@ -50,9 +51,18 @@ export const SettingsContent = ({onClose}: Props) => {
               id={id}
               className="mt-2 rounded-md border border-gray-300 px-4 py-2 text-base focus-visible:outline-gray-400 dark:border-gray-500 dark:bg-slate-900"
               value={screenshotSaveLocation}
-              onChange={(e) => setScreenshotSaveLocation(e.target.value)}
+              aria-invalid={locationError || undefined}
+              onChange={(e) => {
+                setScreenshotSaveLocation(e.target.value);
+                setLocationError(false);
+              }}
             />
           </label>
+          {locationError && (
+            <p role="alert" className="text-sm text-red-500">
+              Please enter a valid location.
+            </p>
+          )}
           <p className="text-sm text-gray-500 dark:text-gray-400">
             The location where screenshots will be saved.
           </p>

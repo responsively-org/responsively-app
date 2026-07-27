@@ -32,6 +32,7 @@ const DeviceDetailsModal = ({
   const [dpr, setDpr] = useState<number>(device?.dpr ?? 1);
   const [isTouchCapable, setIsTouchCapable] = useState<boolean>(device?.isTouchCapable ?? true);
   const [isMobileCapable, setIsMobileCapable] = useState<boolean>(device?.isMobileCapable ?? true);
+  const [nameError, setNameError] = useState<string | null>(null);
 
   useEffect(() => {
     if (device) {
@@ -79,7 +80,8 @@ const DeviceDetailsModal = ({
     const doesDeviceExist = existingDevice != null && (isNew || existingDevice.id !== device.id);
 
     if (doesDeviceExist) {
-      return alert('Device With the name already exists, try with a different name');
+      setNameError('A device with this name already exists, try a different name.');
+      return undefined;
     }
     const capabilities = [];
     if (isTouchCapable) {
@@ -122,7 +124,11 @@ const DeviceDetailsModal = ({
               type="text"
               placeholder="My Mobile Device"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              error={nameError}
+              onChange={(e) => {
+                setName(e.target.value);
+                setNameError(null);
+              }}
               disabled={!isCustom}
             />
             <Input
