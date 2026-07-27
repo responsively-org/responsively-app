@@ -7,10 +7,60 @@
 @import '~@fontsource/lato/400.css';
 @import '~@fontsource/lato/400-italic.css';
 @import '~@fontsource/lato/700.css';
+@import '~@fontsource/jetbrains-mono/400.css';
+@import '~@fontsource/jetbrains-mono/700.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * Hybrid Studio design tokens (spec of record: "Redesign 2a - Hybrid Studio").
+ * ThemeProvider stamps data-theme on <html>; components consume these through
+ * the Tailwind semantic colors (bg-panel, text-fg, border-line, ...).
+ */
+:root {
+  /* dark (default) */
+  --titlebar: #10161f;
+  --titlebar-fg: #8d97a5;
+  --bg: #151d29;
+  --dot: #28344a;
+  --panel: #0d1420;
+  --card: #0f1725;
+  --line: #273246;
+  --line-soft: #1d2739;
+  --fg: #d3dae4;
+  --muted: #7d8a9c;
+  --input: #0b111b;
+  --hover: #223048;
+  --active: #2c3d5c;
+  --accent: #2fd9a2;
+  --accent-soft: rgba(47, 217, 162, 0.15);
+  --on-accent: #07271b;
+  --flash: rgba(255, 255, 255, 0.82);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='light'] {
+  --titlebar: #e8e9ec;
+  --titlebar-fg: #4d545e;
+  --bg: #eef0f4;
+  --dot: #ccd3de;
+  --panel: #ffffff;
+  --card: #ffffff;
+  --line: #d8dce4;
+  --line-soft: #e6e9ef;
+  --fg: #33404f;
+  --muted: #8b96a5;
+  --input: #f1f3f7;
+  --hover: #e7eaf1;
+  --active: #dde2ec;
+  --accent: #0e9d6e;
+  --accent-soft: rgba(14, 157, 110, 0.12);
+  --on-accent: #ffffff;
+  --flash: rgba(255, 255, 255, 0.9);
+  --shadow: 0 12px 32px rgba(23, 32, 48, 0.18), 0 0 0 1px rgba(23, 32, 48, 0.06);
+}
 
 html {
   user-select: none;

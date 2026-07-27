@@ -50,6 +50,7 @@
   },
   "browserslist": [],
   "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.3.0",
     "@fontsource/lato": "^5.0.17",
     "@headlessui/react": "^2.2.10",
     "@iconify/react": "^6.0.2",

@@ -617,9 +617,10 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
               preload={`file://${window.responsively.webviewPreloadPath}`}
               data-scale-factor={zoomfactor}
               /* React drops boolean-valued unknown attributes entirely, so this
-                 must be a string for the attribute to reach the DOM at all. */
+                 must be a string for the attribute to reach the DOM at all.
+                 (@types/react declares it boolean, which react-dom never renders.) */
               /* eslint-disable-next-line react/no-unknown-property */
-              allowpopups="true"
+              allowpopups={'true' as unknown as boolean}
               /* eslint-disable-next-line react/no-unknown-property */
               useragent={device.userAgent}
             />

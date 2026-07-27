@@ -36,6 +36,11 @@ test.describe('UI Theme', () => {
       return document.documentElement.classList.contains('dark');
     });
     expect(isDark).not.toBe(wasDark);
+
+    // The design-token palette must flip with it (data-theme drives the
+    // CSS custom properties).
+    const dataTheme = await app.page.evaluate(() => document.documentElement.dataset.theme);
+    expect(dataTheme).toBe(isDark ? 'dark' : 'light');
   });
 
   test('clicking theme toggle again switches back', async ({app}) => {
