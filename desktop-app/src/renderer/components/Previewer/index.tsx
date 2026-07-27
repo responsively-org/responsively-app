@@ -76,7 +76,7 @@ const Previewer = () => {
               </TypedMasonry>
             ) : (
               <div
-                className={cx('flex h-full gap-4 overflow-auto p-4', {
+                className={cx('flex min-h-full gap-4 overflow-auto p-4', {
                   'flex-wrap': layout === PREVIEW_LAYOUTS.FLEX,
                   'justify-center': isIndividualLayout,
                 })}
