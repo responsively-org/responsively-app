@@ -1,14 +1,8 @@
 import {Icon} from '@iconify/react';
 import {useState} from 'react';
 import Button from 'renderer/components/Button';
-import useSound from 'use-sound';
-import {ScreenshotArgs, ScreenshotResult} from 'main/screenshot';
-import {IPC_MAIN_CHANNELS} from 'common/constants';
 import {Device} from 'common/deviceList';
-import WebPage from 'main/screenshot/webpage';
-
-import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
-import {updateWebViewHeightAndScale} from 'common/webViewUtils';
+import {useDeviceScreenshot} from 'renderer/hooks/useScreenshot';
 import {ColorBlindnessTools} from './ColorBlindnessTools';
 import DesignOverlayControls from './DesignOverlayControls';
 
@@ -18,6 +12,8 @@ interface Props {
   setScreenshotInProgress: (value: boolean) => void;
   openDevTools: () => void;
   toggleRuler: () => void;
+  /** Controlled: the device's individual-rotation state lives in the store. */
+  rotated: boolean;
   onRotate: (state: boolean) => void;
   onIndividualLayoutHandler: (device: Device) => void;
   isIndividualLayout: boolean;
@@ -30,17 +26,24 @@ const Toolbar = ({
   setScreenshotInProgress,
   openDevTools,
   toggleRuler,
+  rotated,
   onRotate,
   onIndividualLayoutHandler,
   isIndividualLayout,
   isDeviceRotationEnabled,
 }: Props) => {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
-  const [playScreenshotDone] = useSound(screenshotSfx, {volume: 0.5});
-  const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
-  const [fullScreenshotLoading, setFullScreenshotLoading] = useState<boolean>(false);
-  const [rotated, setRotated] = useState<boolean>(false);
   const [isDesignOverlayModalOpen, setIsDesignOverlayModalOpen] = useState<boolean>(false);
+  const {
+    quickScreenshot,
+    fullScreenshot,
+    quickLoading: screenshotLoading,
+    fullLoading: fullScreenshotLoading,
+  } = useDeviceScreenshot({
+    webview,
+    device,
+    onFullPageCapturePending: setScreenshotInProgress,
+  });
 
   const refreshView = () => {
     if (webview) {
@@ -67,64 +70,6 @@ const Toolbar = ({
     }
   };
 
-  const quickScreenshot = async () => {
-    if (webview === null) {
-      return;
-    }
-    setScreenshotLoading(true);
-    try {
-      await window.electron.ipcRenderer.invoke<ScreenshotArgs, ScreenshotResult>(
-        IPC_MAIN_CHANNELS.SCREENSHOT,
-        {
-          webContentsId: webview.getWebContentsId(),
-          device,
-        }
-      );
-      playScreenshotDone();
-    } catch (error) {
-      console.error('Error while taking quick screenshot', error);
-    }
-    setScreenshotLoading(false);
-  };
-
-  const fullScreenshot = async () => {
-    if (webview === null) {
-      return;
-    }
-    setFullScreenshotLoading(true);
-    try {
-      const webviewTag = window.document.getElementById(device.name);
-      if (webviewTag === null) {
-        return;
-      }
-      setScreenshotInProgress(true);
-      const webPage = new WebPage(webview as unknown as Electron.WebContents);
-      const pageHeight = await webPage.getPageHeight();
-
-      const previousHeight = webviewTag.style.height;
-      const previousTransform = webviewTag.style.transform;
-      updateWebViewHeightAndScale(webviewTag, pageHeight);
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      await window.electron.ipcRenderer.invoke<ScreenshotArgs, ScreenshotResult>(
-        IPC_MAIN_CHANNELS.SCREENSHOT,
-        {
-          webContentsId: webview.getWebContentsId(),
-          device,
-        }
-      );
-
-      webviewTag.style.height = previousHeight;
-      webviewTag.style.transform = previousTransform;
-      setScreenshotInProgress(false);
-      playScreenshotDone();
-    } catch (error) {
-      console.error('Error while taking full screenshot', error);
-    }
-    setFullScreenshotLoading(false);
-  };
-
   const toggleRulers = async () => {
     if (webview === null) {
       return;
@@ -133,7 +78,6 @@ const Toolbar = ({
   };
 
   const rotate = async () => {
-    setRotated(!rotated);
     onRotate(!rotated);
   };
 

@@ -6,6 +6,7 @@ import reducer, {
   deleteSuite,
   selectActiveSuite,
   setActiveSuite,
+  setIndividualRotation,
   setSuiteDevices,
   DEFAULT_SUITE,
   DeviceManagerState,
@@ -16,6 +17,7 @@ const stateWith = (overrides: Partial<DeviceManagerState>): DeviceManagerState =
   devices: [],
   activeSuite: DEFAULT_SUITE.id,
   suites: [DEFAULT_SUITE],
+  individualRotations: {},
   ...overrides,
 });
 
@@ -82,5 +84,19 @@ describe('device-manager slice', () => {
       deviceManager: stateWith({activeSuite: 'ghost'}),
     };
     expect(selectActiveSuite(state as never)).toEqual(DEFAULT_SUITE);
+  });
+
+  it('setIndividualRotation tracks per-device rotation', () => {
+    let state = reducer(undefined, setIndividualRotation({id: '10008', rotated: true}));
+    expect(state.individualRotations).toEqual({'10008': true});
+
+    state = reducer(state, setIndividualRotation({id: '10013', rotated: true}));
+    expect(state.individualRotations).toEqual({'10008': true, '10013': true});
+  });
+
+  it('setIndividualRotation removes the entry when un-rotated', () => {
+    let state = reducer(undefined, setIndividualRotation({id: '10008', rotated: true}));
+    state = reducer(state, setIndividualRotation({id: '10008', rotated: false}));
+    expect(state.individualRotations).toEqual({});
   });
 });

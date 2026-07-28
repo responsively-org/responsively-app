@@ -11,9 +11,12 @@ import {
 import {Icon} from '@iconify/react';
 import {ScreenshotAllArgs} from 'main/screenshot';
 import {selectActiveSuite} from 'renderer/store/features/device-manager';
-import WebPage from 'main/screenshot/webpage';
 import {getDevicesMap} from 'common/deviceList';
-import {updateWebViewHeightAndScale} from 'common/webViewUtils';
+import {
+  FULL_PAGE_SETTLE_MS,
+  prepareFullPageCapture,
+  useShutterSound,
+} from 'renderer/hooks/useScreenshot';
 import {APP_VIEWS, setAppView} from 'renderer/store/features/ui';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
@@ -36,6 +39,7 @@ const ToolBar = () => {
   const isCapturingScreenshot = useSelector(selectIsCapturingScreenshot);
   const activeSuite = useSelector(selectActiveSuite);
   const dispatch = useDispatch();
+  const playShutter = useShutterSound();
 
   function handleInspectShortcut() {
     dispatch(setIsInspecting(!isInspecting));
@@ -49,40 +53,39 @@ const ToolBar = () => {
     dispatch(setIsCapturingScreenshot(true));
     const webViews: NodeListOf<Electron.WebviewTag> = document.querySelectorAll('webView');
     const screens: Array<ScreenshotAllArgs> = [];
+    const restores: Array<() => void> = [];
     const devices = activeSuite.devices.map((d) => getDevicesMap()[d]);
-    webViews.forEach(async (webview) => {
+    // Sequential await: every webview must be measured and resized before the
+    // capture fires (the old forEach(async) raced the capture call).
+    for (const webview of Array.from(webViews)) {
       const device = devices.find((d) => d.name === webview.id);
-      const webPage = new WebPage(webview as unknown as Electron.WebContents);
-      const pageHeight = await webPage.getPageHeight();
-      const previousHeight = webview.style.height;
-      const previousTransform = webview.style.transform;
-      updateWebViewHeightAndScale(webview, pageHeight);
       if (device != null) {
+        const prep = await prepareFullPageCapture(webview);
         screens.push({
           webContentsId: webview.getWebContentsId(),
           device,
-          previousHeight,
-          previousTransform,
-          pageHeight,
+          previousHeight: prep.previousHeight,
+          previousTransform: prep.previousTransform,
+          pageHeight: prep.pageHeight,
         });
+        restores.push(prep.restore);
       }
+    }
+    await new Promise((resolve) => {
+      setTimeout(resolve, FULL_PAGE_SETTLE_MS);
     });
-    await new Promise((resolve) => setTimeout(resolve, 1000));
     await window.electron.ipcRenderer.invoke<Array<ScreenshotAllArgs>, unknown>(
       IPC_MAIN_CHANNELS.SCREENSHOT_ALL,
       screens
     );
 
     // reset webviews to original size
-    webViews.forEach((webview) => {
-      const screent = screens.find((s) => s.device.name === webview.id);
-      if (screent != null) {
-        webview.style.height = screent.previousHeight;
-        webview.style.transform = screent.previousTransform;
-      }
+    restores.forEach((restore) => {
+      restore();
     });
 
     dispatch(setIsCapturingScreenshot(false));
+    playShutter();
   };
 
   const handleClose = () => {

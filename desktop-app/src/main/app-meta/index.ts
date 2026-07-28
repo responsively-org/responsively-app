@@ -7,6 +7,7 @@ import log from '../logging';
 export interface AppMetaResponse {
   appVersion: string;
   webviewPreloadPath: string;
+  isE2E: boolean;
 }
 
 const EXTERNAL_PROTOCOLS = ['http:', 'https:', 'mailto:'];
@@ -30,6 +31,7 @@ export const initAppMetaHandlers = () => {
         ? path.join(__dirname, 'preload-webview.js')
         : path.join(__dirname, '../../../.erb/dll/preload-webview.js'),
       appVersion: app.getVersion(),
+      isE2E: process.env.E2E_TEST === 'true',
     };
   });
 

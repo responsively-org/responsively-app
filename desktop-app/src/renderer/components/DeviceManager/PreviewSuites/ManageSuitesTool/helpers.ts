@@ -1,4 +1,4 @@
-import {defaultDevices, Device} from 'common/deviceList';
+import {defaultDevices, Device, invalidateDevicesMap} from 'common/deviceList';
 
 export const downloadFile = <T extends Record<string, unknown>>(fileData: T) => {
   const jsonString = JSON.stringify(fileData, null, 2);
@@ -21,6 +21,7 @@ export const setCustomDevices = (customDevices: Device[]) => {
   );
 
   window.electron.store.set('deviceManager.customDevices', importedCustomDevices);
+  invalidateDevicesMap();
 
   return importedCustomDevices;
 };

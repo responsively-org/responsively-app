@@ -1595,9 +1595,20 @@ const customDevices: () => Device[] = () => {
 
 type DeviceMap = {[key: string]: Device};
 
+// customDevices() is a synchronous IPC read; components call getDevicesMap in
+// render, so the map is cached until a custom-device write invalidates it.
+let cachedDevicesMap: DeviceMap | null = null;
+
+export const invalidateDevicesMap = () => {
+  cachedDevicesMap = null;
+};
+
 export const getDevicesMap = (): DeviceMap => {
-  return [...defaultDevices, ...customDevices()].reduce((map: DeviceMap, device) => {
-    map[device.id] = device;
-    return map;
-  }, {});
+  if (cachedDevicesMap === null) {
+    cachedDevicesMap = [...defaultDevices, ...customDevices()].reduce((map: DeviceMap, device) => {
+      map[device.id] = device;
+      return map;
+    }, {});
+  }
+  return cachedDevicesMap;
 };

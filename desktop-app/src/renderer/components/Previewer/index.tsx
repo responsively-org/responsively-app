@@ -19,6 +19,11 @@ const Previewer = () => {
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
   const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY;
+  // The remembered individual device may have left the suite; fall back to
+  // the first device instead of hiding every preview.
+  const individualDeviceId = devices.some((d) => d.id === individualDevice?.id)
+    ? individualDevice.id
+    : devices[0]?.id;
 
   return (
     <div className="h-full">
@@ -39,46 +44,36 @@ const Previewer = () => {
       >
         <div className="flex flex-grow overflow-hidden">
           <div className="w-full flex-grow overflow-y-auto" style={{height: '100%'}}>
-            {isMasonryLayout ? (
-              // CSS multi-column masonry (replaces react-masonry-component,
-              // which is unmaintained and incompatible with React 19).
-              <div className="w-full p-2" style={{columnWidth: 275, columnGap: 0}}>
-                {devices.map((device) => (
-                  <div key={device.id} className="w-fit break-inside-avoid p-4">
-                    <Device
-                      device={device}
-                      isPrimary={device.id === devices[0].id}
-                      setIndividualDevice={setIndividualDevice}
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div
-                className={cx('flex h-full gap-4 overflow-auto p-4', {
+            {/* One stable host for every layout: devices never unmount on a
+                layout switch (a remount reloads the webview). Masonry is CSS
+                multi-column (react-masonry-component is unmaintained and
+                incompatible with React 19); INDIVIDUAL hides the others. */}
+            <div
+              className={cx(
+                isMasonryLayout ? 'w-full p-2' : 'flex h-full gap-4 overflow-auto p-4',
+                {
                   'flex-wrap': layout === PREVIEW_LAYOUTS.FLEX,
                   'justify-center': isIndividualLayout,
-                })}
-              >
-                {isIndividualLayout ? (
+                }
+              )}
+              style={isMasonryLayout ? {columnWidth: 275, columnGap: 0} : undefined}
+            >
+              {devices.map((device, idx) => (
+                <div
+                  key={device.id}
+                  className={cx({
+                    'w-fit break-inside-avoid p-4': isMasonryLayout,
+                    hidden: isIndividualLayout && device.id !== individualDeviceId,
+                  })}
+                >
                   <Device
-                    key={individualDevice.id}
-                    device={individualDevice}
-                    isPrimary
+                    device={device}
+                    isPrimary={isIndividualLayout ? device.id === individualDeviceId : idx === 0}
                     setIndividualDevice={setIndividualDevice}
                   />
-                ) : (
-                  devices.map((device, idx) => (
-                    <Device
-                      key={device.id}
-                      device={device}
-                      isPrimary={idx === 0}
-                      setIndividualDevice={setIndividualDevice}
-                    />
-                  ))
-                )}
-              </div>
-            )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         {isDevtoolsOpen && dockPosition !== DOCK_POSITION.UNDOCKED ? <DevtoolsResizer /> : null}

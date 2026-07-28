@@ -41,9 +41,10 @@ const execInWebview = async (
 const waitForBrowserSync = async (
   electronApp: ElectronApplication,
   ids: number[],
-  timeoutMs = 10_000
+  timeoutMs = 20_000
 ) => {
   const start = Date.now();
+  let nudged = false;
   while (Date.now() - start < timeoutMs) {
     const results: boolean[] = [];
     for (const id of ids) {
@@ -55,6 +56,22 @@ const waitForBrowserSync = async (
       }
     }
     if (results.every(Boolean)) return;
+    // The client script is injected per page load. Under full-suite load a
+    // page can finish loading before the BrowserSync server accepts
+    // connections — only a reload re-injects the client, so nudge stragglers
+    // once at half time.
+    if (!nudged && Date.now() - start > timeoutMs / 2) {
+      nudged = true;
+      for (const [index, id] of ids.entries()) {
+        if (!results[index]) {
+          try {
+            await execInWebview(electronApp, id, 'window.location.reload()');
+          } catch {
+            // webview may be mid-navigation; the next poll retries
+          }
+        }
+      }
+    }
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
   throw new Error('BrowserSync did not initialise on all webviews within timeout');

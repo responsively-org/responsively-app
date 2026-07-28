@@ -5,7 +5,7 @@ import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {selectActiveSuite, setSuiteDevices} from 'renderer/store/features/device-manager';
 import {APP_VIEWS, setAppView} from 'renderer/store/features/ui';
-import {defaultDevices, Device, getDevicesMap} from 'common/deviceList';
+import {defaultDevices, Device, getDevicesMap, invalidateDevicesMap} from 'common/deviceList';
 
 import Button from '../Button';
 import DeviceLabel from './DeviceLabel';
@@ -44,6 +44,7 @@ const DeviceManager = () => {
   const saveCustomDevices = (newCustomDevices: Device[]) => {
     setCustomDevices(newCustomDevices);
     window.electron.store.set('deviceManager.customDevices', newCustomDevices);
+    invalidateDevicesMap();
     setFilteredCustomDevices(filterDevices(newCustomDevices, searchText));
   };
 

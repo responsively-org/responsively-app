@@ -1,45 +1,23 @@
-import cx from 'classnames';
-import {IPC_MAIN_CHANNELS, PREVIEW_LAYOUTS} from 'common/constants';
+import {PREVIEW_LAYOUTS} from 'common/constants';
 import {Device as IDevice} from 'common/deviceList';
-import {
-  InspectElementArgs,
-  OpenDevtoolsArgs,
-  OpenDevtoolsResult,
-  ToggleInspectorArgs,
-  ToggleInspectorResult,
-} from 'main/devtools';
-import {ReloadArgs} from 'main/menu';
-import {LoadURLInWebviewArgs, LoadURLInWebviewResult} from 'main/native-functions';
 import {CONTEXT_MENUS} from 'main/webview-context-menu/common';
-import {DeleteStorageArgs, DeleteStorageResult} from 'main/webview-storage-manager';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {memo, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import Spinner from 'renderer/components/Spinner';
-import {ADDRESS_BAR_EVENTS} from 'renderer/components/ToolBar/AddressBar';
-import {webViewPubSub, type Handler as PubSubHandler} from 'renderer/lib/pubsub';
 import {
-  selectDevtoolsWebviewId,
-  selectDockPosition,
-  selectIsDevtoolsOpen,
-  setDevtoolsClose,
-  setDevtoolsOpen,
-} from 'renderer/store/features/devtools';
+  selectIndividualRotations,
+  setIndividualRotation,
+} from 'renderer/store/features/device-manager';
 import {
   selectAddress,
-  selectIsInspecting,
   selectLayout,
   selectRotate,
   selectZoomFactor,
-  setAddress,
-  setIsInspecting,
   setLayout,
-  setPageTitle,
 } from 'renderer/store/features/renderer';
 import type {RootState} from '../../../store';
 import {selectDesignOverlay, type ViewResolution} from '../../../store/features/design-overlay';
 import {
   Coordinates,
-  RulersState,
   selectRuler,
   selectRulerEnabled,
   setRuler,
@@ -48,11 +26,12 @@ import {selectDarkMode} from '../../../store/features/ui';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from '../../KeyboardShortcutsManager/useKeyboardShortcut';
-import {NAVIGATION_EVENTS} from '../../ToolBar/NavigationControls';
-import GuideGrid, {DefaultGuide} from '../Guides';
-import DesignOverlay from './DesignOverlay';
+import {DefaultGuide} from '../Guides';
+import DeviceFrame from './DeviceFrame';
 import Toolbar from './Toolbar';
-import {appendHistory} from './utils';
+import useDeviceNavigation from './useDeviceNavigation';
+import useDevtoolsBridge from './useDevtoolsBridge';
+import useWebviewLifecycle from './useWebviewLifecycle';
 
 interface Props {
   device: IDevice;
@@ -60,69 +39,24 @@ interface Props {
   setIndividualDevice: (device: IDevice) => void;
 }
 
-interface ErrorState {
-  code: number;
-  description: string;
-}
-
 const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
-  const [singleRotated, setSingleRotated] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<ErrorState | null>(null);
   const [screenshotInProgress, setScreenshotInProgress] = useState<boolean>(false);
   const address = useSelector(selectAddress);
   const zoomfactor = useSelector(selectZoomFactor);
-  const isInspecting = useSelector(selectIsInspecting);
   const rotateDevices = useSelector(selectRotate);
-  const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
-  const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
+  const individualRotations = useSelector(selectIndividualRotations);
   const layout = useSelector(selectLayout);
-  const rulerEnabled = useSelector(selectRulerEnabled);
-  const getRuler = useSelector(selectRuler);
   const dispatch = useDispatch();
-  const dockPosition = useSelector(selectDockPosition);
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
-  const isNavigatingFromAddressBar = useRef<boolean>(false);
   const initialAddress = useRef<string>(address);
-  const [webviewReady, setWebviewReady] = useState<boolean>(false);
 
-  // Navigation is driven from the main process (instead of the <webview> src
-  // attribute or webview.loadURL) so that superseded loads don't surface as
-  // unhandled ERR_ABORTED errors from Electron's guest-view manager.
-  useEffect(() => {
-    const webview = ref.current;
-    if (webview == null || !webviewReady) {
-      return;
-    }
-    try {
-      if (webview.getURL() === address) {
-        return;
-      }
-      if (isPrimary) {
-        isNavigatingFromAddressBar.current = true;
-      }
-      window.electron.ipcRenderer.invoke<LoadURLInWebviewArgs, LoadURLInWebviewResult>(
-        IPC_MAIN_CHANNELS.LOAD_URL_IN_WEBVIEW,
-        {webContentsId: webview.getWebContentsId(), url: address}
-      );
-    } catch (err) {
-      console.error('Error loading URL', err);
-    }
-  }, [address, isPrimary, webviewReady]);
-
-  useEffect(() => {
-    const webview = ref.current;
-    if (!webview) return undefined;
-    const onDomReady = () => setWebviewReady(true);
-    webview.addEventListener('dom-ready', onDomReady);
-    return () => {
-      webview.removeEventListener('dom-ready', onDomReady);
-      setWebviewReady(false);
-    };
-  }, [ref]);
+  const {webviewReady} = useWebviewLifecycle(ref, {isMobileCapable: device.isMobileCapable});
+  const navigation = useDeviceNavigation({ref, isPrimary, webviewReady, address});
+  const {openDevTools, inspectElement} = useDevtoolsBridge({ref, webviewReady, zoomfactor});
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
+  const singleRotated = individualRotations[device.id] ?? false;
 
   let {height, width} = device;
 
@@ -138,6 +72,10 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
 
   const resolution: ViewResolution = `${width}x${height}`;
   const designOverlay = useSelector((state: RootState) => selectDesignOverlay(state)(resolution));
+  // Select values, not the curried selector functions: a fresh closure from
+  // useSelector re-renders every Device on every dispatch.
+  const rulerActive = useSelector((state: RootState) => selectRulerEnabled(state)(resolution));
+  const ruler = useSelector((state: RootState) => selectRuler(state)(resolution));
 
   const [coordinates, setCoordinates] = useState<Coordinates>({
     deltaX: 0,
@@ -148,85 +86,10 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     innerHeight: height * 2,
   });
 
-  const registerNavigationHandlers = useCallback(() => {
-    const subscriptions: Array<[string, PubSubHandler]> = [];
-    const subscribe = (topic: string, handler: PubSubHandler) => {
-      webViewPubSub.subscribe(topic, handler);
-      subscriptions.push([topic, handler]);
-    };
-
-    subscribe(NAVIGATION_EVENTS.RELOAD, () => {
-      if (ref.current) {
-        ref.current.reload();
-      }
-    });
-    if (isPrimary) {
-      subscribe(NAVIGATION_EVENTS.BACK, () => {
-        if (ref.current) {
-          ref.current.goBack();
-        }
-      });
-
-      subscribe(NAVIGATION_EVENTS.FORWARD, () => {
-        if (ref.current) {
-          ref.current.goForward();
-        }
-      });
-
-      subscribe(ADDRESS_BAR_EVENTS.DELETE_STORAGE, async () => {
-        if (!ref.current) {
-          return;
-        }
-        const webview = ref.current as Electron.WebviewTag;
-        await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
-          IPC_MAIN_CHANNELS.DELETE_STORAGE,
-          {webContentsId: webview.getWebContentsId()}
-        );
-      });
-
-      subscribe(ADDRESS_BAR_EVENTS.DELETE_COOKIES, async () => {
-        if (!ref.current) {
-          return;
-        }
-        const webview = ref.current as Electron.WebviewTag;
-        await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
-          IPC_MAIN_CHANNELS.DELETE_STORAGE,
-          {
-            webContentsId: webview.getWebContentsId(),
-            storages: ['cookies'],
-          }
-        );
-      });
-
-      subscribe(ADDRESS_BAR_EVENTS.DELETE_CACHE, async () => {
-        if (!ref.current) {
-          return;
-        }
-        const webview = ref.current as Electron.WebviewTag;
-        await window.electron.ipcRenderer.invoke<DeleteStorageArgs, DeleteStorageResult>(
-          IPC_MAIN_CHANNELS.DELETE_STORAGE,
-          {
-            webContentsId: webview.getWebContentsId(),
-            storages: ['network-cache'],
-          }
-        );
-      });
-    }
-
-    return () => {
-      subscriptions.forEach(([topic, handler]) => webViewPubSub.unsubscribe(topic, handler));
-    };
-  }, [isPrimary]);
-
   const toggleRuler = useCallback(() => {
     if (!ref.current) {
       return;
     }
-    const webview = ref.current as Electron.WebviewTag;
-    if (webview == null) {
-      return;
-    }
-    const ruler: RulersState | undefined = getRuler(resolution);
     if (ruler) {
       dispatch(
         setRuler({
@@ -248,56 +111,12 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
         })
       );
     }
-  }, [dispatch, getRuler, coordinates, resolution]);
+  }, [dispatch, ruler, coordinates, resolution]);
 
   useKeyboardShortcut(SHORTCUT_CHANNEL.TOGGLE_RULERS, toggleRuler);
 
-  const openDevTools = useCallback(async () => {
-    if (!ref.current) {
-      return;
-    }
-    const webview = ref.current as Electron.WebviewTag;
-
-    if (webview == null) {
-      return;
-    }
-    await window.electron.ipcRenderer.invoke<OpenDevtoolsArgs, OpenDevtoolsResult>(
-      IPC_MAIN_CHANNELS.OPEN_DEVTOOLS,
-      {
-        webviewId: webview.getWebContentsId(),
-        dockPosition,
-      }
-    );
-    dispatch(setDevtoolsOpen(webview.getWebContentsId()));
-  }, [dispatch, dockPosition]);
-
-  const inspectElement = useCallback(
-    async (deviceX: number, deviceY: number) => {
-      if (!ref.current) {
-        return;
-      }
-      const webview = ref.current as Electron.WebviewTag;
-      if (webview == null) {
-        return;
-      }
-
-      if (devtoolsOpenForWebviewId !== webview.getWebContentsId()) {
-        if (isDevtoolsOpen) {
-          dispatch(setDevtoolsClose());
-          await window.electron.ipcRenderer.invoke(IPC_MAIN_CHANNELS.CLOSE_DEVTOOLS);
-        }
-        await openDevTools();
-      }
-      const {x: webViewX, y: webViewY} = webview.getBoundingClientRect();
-      webview.inspectElement(
-        Math.round(webViewX + deviceX * zoomfactor),
-        Math.round(webViewY + deviceY * zoomfactor)
-      );
-    },
-    [dispatch, devtoolsOpenForWebviewId, isDevtoolsOpen, openDevTools, zoomfactor]
-  );
-
-  const onRotateHandler = (state: boolean) => setSingleRotated(state);
+  const onRotateHandler = (state: boolean) =>
+    dispatch(setIndividualRotation({id: device.id, rotated: state}));
 
   const onIndividualLayoutHandler = (selectedDevice: IDevice) => {
     if (!isIndividualLayout) {
@@ -308,34 +127,13 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     }
   };
 
+  // Guest → host messages: mirrored scroll coordinates and context-menu
+  // commands.
   useEffect(() => {
-    if (!ref.current) {
-      return;
+    const webview = ref.current;
+    if (!webview) {
+      return undefined;
     }
-    const webview = ref.current as Electron.WebviewTag;
-    const handlerRemovers: (() => void)[] = [];
-
-    const didNavigateHandler = (e: Electron.DidNavigateEvent | Electron.DidNavigateInPageEvent) => {
-      // Only DidNavigateInPageEvent has isMainFrame
-      if ('isMainFrame' in e && e.isMainFrame === false) return;
-      // Only update Redux on the primary device and only if this navigation wasn't initiated by AddressBar
-      if (isPrimary && !isNavigatingFromAddressBar.current) {
-        dispatch(setAddress(e.url));
-      } else if (isPrimary) {
-        isNavigatingFromAddressBar.current = false; // Reset the flag
-      }
-
-      if (isPrimary) {
-        appendHistory(webview.getURL(), webview.getTitle());
-      }
-    };
-    webview.addEventListener('did-navigate', didNavigateHandler);
-    webview.addEventListener('did-navigate-in-page', didNavigateHandler);
-    handlerRemovers.push(() => {
-      webview.removeEventListener('did-navigate', didNavigateHandler);
-      webview.removeEventListener('did-navigate-in-page', didNavigateHandler);
-    });
-
     const ipcMessageHandler = (e: Electron.IpcMessageEvent) => {
       if (e.channel === 'pass-scroll-data') {
         setCoordinates({
@@ -366,176 +164,10 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       }
     };
     webview.addEventListener('ipc-message', ipcMessageHandler);
-    handlerRemovers.push(() => {
+    return () => {
       webview.removeEventListener('ipc-message', ipcMessageHandler);
-    });
-
-    const didStartLoadingHandler = () => {
-      setLoading(true);
-      setError(null);
     };
-    webview.addEventListener('did-start-loading', didStartLoadingHandler);
-    handlerRemovers.push(() => {
-      webview.removeEventListener('did-start-loading', didStartLoadingHandler);
-    });
-
-    const didStopLoadingHandler = () => {
-      setLoading(false);
-    };
-
-    webview.addEventListener('did-stop-loading', didStopLoadingHandler);
-    handlerRemovers.push(() => {
-      webview.removeEventListener('did-stop-loading', didStopLoadingHandler);
-    });
-
-    const didFailLoadHandler = ({
-      errorCode,
-      errorDescription,
-      isMainFrame,
-    }: Electron.DidFailLoadEvent) => {
-      if (errorCode === -3) {
-        // Aborted error, can be ignored
-        return;
-      }
-
-      // Only show error overlay for main frame errors
-      // Iframe errors (like CSP violations) should only go to console
-      if (!isMainFrame) {
-        console.warn('iframe error:', errorCode, errorDescription);
-        return;
-      }
-
-      setError({
-        code: errorCode,
-        description: errorDescription,
-      });
-    };
-    webview.addEventListener('did-fail-load', didFailLoadHandler);
-    handlerRemovers.push(() => {
-      webview.removeEventListener('did-fail-load', didFailLoadHandler);
-    });
-
-    const unregisterNavigationHandlers = registerNavigationHandlers();
-
-    return () => {
-      handlerRemovers.forEach((handlerRemover) => {
-        handlerRemover();
-      });
-      unregisterNavigationHandlers();
-    };
-  }, [ref, dispatch, registerNavigationHandlers, isPrimary, inspectElement, openDevTools, address]);
-
-  useEffect(() => {
-    // Reload keyboard shortcuts effect
-    if (!ref.current) {
-      return undefined;
-    }
-    const webview = ref.current as Electron.WebviewTag;
-
-    const reloadHandler = (args: ReloadArgs) => {
-      const {ignoreCache} = args;
-      if (ignoreCache === true) {
-        webview.reloadIgnoringCache();
-      } else {
-        webview.reload();
-      }
-    };
-
-    window.electron.ipcRenderer.on<ReloadArgs>('reload', reloadHandler);
-
-    return () => {
-      window.electron.ipcRenderer.removeListener('reload', reloadHandler);
-    };
-  }, [ref]);
-
-  useEffect(() => {
-    if (!ref.current || !webviewReady) {
-      return undefined;
-    }
-    const webview = ref.current as Electron.WebviewTag;
-    const inspectElementHandler = async (_args: unknown) => {
-      const args: InspectElementArgs = _args as InspectElementArgs;
-      if (webview.getWebContentsId() !== args.webviewId) {
-        return;
-      }
-      dispatch(setIsInspecting(false));
-      const {
-        coords: {x: deviceX, y: deviceY},
-      } = args;
-      inspectElement(deviceX, deviceY);
-    };
-
-    window.electron.ipcRenderer.on(IPC_MAIN_CHANNELS.INSPECT_ELEMENT, inspectElementHandler);
-
-    return () => {
-      try {
-        window.electron.ipcRenderer.removeAllListeners(IPC_MAIN_CHANNELS.INSPECT_ELEMENT);
-      } catch (e) {
-        console.error('Error while removing ipc listener', e);
-      }
-    };
-  }, [
-    ref,
-    dispatch,
-    isDevtoolsOpen,
-    devtoolsOpenForWebviewId,
-    openDevTools,
-    zoomfactor,
-    inspectElement,
-    webviewReady,
-  ]);
-
-  useEffect(() => {
-    if (!ref.current || !webviewReady || isInspecting === undefined) {
-      return;
-    }
-    const webview = ref.current as Electron.WebviewTag;
-    (async () => {
-      await window.electron.ipcRenderer.invoke<ToggleInspectorArgs, ToggleInspectorResult>(
-        isInspecting
-          ? IPC_MAIN_CHANNELS.ENABLE_INSPECTOR_OVERLAY
-          : IPC_MAIN_CHANNELS.DISABLE_INSPECTOR_OVERLAY,
-        {
-          webviewId: webview.getWebContentsId(),
-        }
-      );
-    })();
-  }, [isInspecting, webviewReady]);
-
-  useEffect(() => {
-    if (!ref.current || !device.isMobileCapable) {
-      return;
-    }
-
-    const webview = ref.current;
-    const hideScrollbars = () => {
-      webview.insertCSS(`
-               ::-webkit-scrollbar {
-              display: none;
-              } `);
-    };
-    webview.addEventListener('dom-ready', hideScrollbars);
-
-    return () => {
-      webview.removeEventListener('dom-ready', hideScrollbars);
-    };
-  }, [device.isMobileCapable]);
-
-  useEffect(() => {
-    const webview = ref.current;
-
-    if (!isPrimary || !webview) {
-      return undefined;
-    }
-    const updatePageTitle = () => {
-      dispatch(setPageTitle(webview.getTitle()));
-    };
-    webview.addEventListener('dom-ready', updatePageTitle);
-
-    return () => {
-      webview.removeEventListener('dom-ready', updatePageTitle);
-    };
-  }, [dispatch, isPrimary]);
+  }, [ref, openDevTools, inspectElement]);
 
   // Read once per resolution, not on every render: the store read is a
   // synchronous IPC call and a fresh array identity defeats GuideGrid's memos.
@@ -548,137 +180,45 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     [width, height]
   );
 
-  const scaledHeight = height * zoomfactor;
-  const scaledWidth = width * zoomfactor;
-
   const isRestrictedMinimumDeviceSize =
     device.width < 400 && zoomfactor < 0.6 && !isDeviceRotationEnabled;
 
   return (
-    <div
-      className={cx('h-fit', {
-        'w-52': isRestrictedMinimumDeviceSize,
-      })}
-    >
-      <div className="flex justify-between">
-        <span>
-          {device.name}
-          <span className="ml-[2px] text-xs opacity-60">
-            {width}x{height}
-          </span>
-        </span>
-        {loading ? <Spinner spinnerHeight={24} /> : null}
-      </div>
-      <Toolbar
-        webview={ref.current}
-        device={device}
-        setScreenshotInProgress={setScreenshotInProgress}
-        openDevTools={openDevTools}
-        toggleRuler={toggleRuler}
-        onRotate={onRotateHandler}
-        onIndividualLayoutHandler={onIndividualLayoutHandler}
-        isIndividualLayout={isIndividualLayout}
-        isDeviceRotationEnabled={isDeviceRotationEnabled}
-      />
-      <div className="flex gap-4">
-        <div
-          style={{
-            height: rulerEnabled(`${width}x${height}`) ? scaledHeight + 30 : scaledHeight,
-            width: rulerEnabled(`${width}x${height}`) ? scaledWidth + 30 : scaledWidth,
-          }}
-          className="relative origin-top-left overflow-hidden bg-white"
-        >
-          <GuideGrid
-            scaledHeight={scaledHeight}
-            scaledWidth={scaledWidth}
-            height={height}
-            width={width}
-            coordinates={coordinates}
-            zoomFactor={zoomfactor}
-            night={darkMode}
-            enabled={rulerEnabled(`${width}x${height}`)}
-            defaultGuides={defaultGuides}
-          />
-          <div className="bg-white">
-            <webview
-              id={device.name}
-              src={initialAddress.current}
-              style={{
-                height,
-                width,
-                display: 'inline-flex',
-                transform: `scale(${zoomfactor})`,
-                marginLeft: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
-                marginTop: rulerEnabled(`${width}x${height}`) ? '30px' : 0,
-              }}
-              ref={ref}
-              className="origin-top-left"
-              /* eslint-disable-next-line react/no-unknown-property */
-              preload={`file://${window.responsively.webviewPreloadPath}`}
-              data-scale-factor={zoomfactor}
-              /* React drops boolean-valued unknown attributes entirely, so this
-                 must be a string for the attribute to reach the DOM at all.
-                 (@types/react declares it boolean, which react-dom never renders.) */
-              /* eslint-disable-next-line react/no-unknown-property */
-              allowpopups={'true' as unknown as boolean}
-              /* eslint-disable-next-line react/no-unknown-property */
-              useragent={device.userAgent}
-            />
-          </div>
-
-          {designOverlay?.enabled &&
-            designOverlay.image &&
-            designOverlay.position === 'overlay' && (
-              <DesignOverlay
-                resolution={resolution}
-                scaledWidth={scaledWidth}
-                scaledHeight={scaledHeight}
-                zoomFactor={zoomfactor}
-                coordinates={coordinates}
-                position={designOverlay.position}
-                rulerMargin={rulerEnabled(`${width}x${height}`) ? 30 : 0}
-                width={width}
-                height={height}
-              />
-            )}
-
-          {screenshotInProgress ? (
-            <div
-              className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
-              style={{height: scaledHeight, width: scaledWidth}}
-            >
-              <Spinner spinnerHeight={30} />
-            </div>
-          ) : null}
-          {error != null ? (
-            <div
-              className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
-              style={{height: scaledHeight, width: scaledWidth}}
-            >
-              <div className="text-center text-sm text-white">
-                <div className="text-base font-bold">ERROR: {error.code}</div>
-                <div className="text-sm">{error.description}</div>
-              </div>
-            </div>
-          ) : null}
-        </div>
-
-        {designOverlay?.enabled && designOverlay.image && designOverlay.position === 'side' && (
-          <DesignOverlay
-            resolution={resolution}
-            scaledWidth={scaledWidth}
-            scaledHeight={scaledHeight}
-            zoomFactor={zoomfactor}
-            coordinates={coordinates}
-            position={designOverlay.position}
-            rulerMargin={rulerEnabled(`${width}x${height}`) ? 30 : 0}
-            width={width}
-            height={height}
-          />
-        )}
-      </div>
-    </div>
+    <DeviceFrame
+      device={device}
+      width={width}
+      height={height}
+      zoomfactor={zoomfactor}
+      rulerActive={rulerActive}
+      navigation={navigation}
+      screenshotInProgress={screenshotInProgress}
+      coordinates={coordinates}
+      darkMode={darkMode}
+      defaultGuides={defaultGuides}
+      designOverlay={designOverlay}
+      resolution={resolution}
+      isRestrictedMinimumDeviceSize={isRestrictedMinimumDeviceSize}
+      initialSrc={initialAddress.current}
+      webviewRef={ref}
+      toolbar={
+        <Toolbar
+          webview={ref.current}
+          device={device}
+          setScreenshotInProgress={setScreenshotInProgress}
+          openDevTools={openDevTools}
+          toggleRuler={toggleRuler}
+          rotated={singleRotated}
+          onRotate={onRotateHandler}
+          onIndividualLayoutHandler={onIndividualLayoutHandler}
+          isIndividualLayout={isIndividualLayout}
+          isDeviceRotationEnabled={isDeviceRotationEnabled}
+        />
+      }
+    />
   );
 };
 
-export default Device;
+// Previews re-render on webview scroll events (mirrored coordinates); memo
+// keeps sibling devices and parent-driven renders from cascading into every
+// frame.
+export default memo(Device);

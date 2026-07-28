@@ -1,5 +1,6 @@
 import {Icon} from '@iconify/react';
 import type {Device} from 'common/deviceList';
+import {invalidateDevicesMap} from 'common/deviceList';
 import Button from 'renderer/components/Button';
 import {useState} from 'react';
 import {FileUploader} from 'renderer/components/FileUploader';
@@ -49,6 +50,7 @@ export const ManageSuitesTool = ({setCustomDevicesState}: ManageSuitesToolProps)
 
   const clearCustomDevices = () => {
     window.electron.store.set('deviceManager.customDevices', []);
+    invalidateDevicesMap();
     setCustomDevicesState([]);
   };
 

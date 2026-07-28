@@ -14,6 +14,9 @@ export interface DeviceManagerState {
   devices: Device[];
   activeSuite: string;
   suites: PreviewSuites;
+  // Per-device rotation (session state, not persisted). The global rotate
+  // flag lives in the renderer slice; a device is rotated when either is set.
+  individualRotations: Record<string, boolean>;
 }
 
 export const DEFAULT_SUITE: PreviewSuite = {
@@ -28,6 +31,7 @@ const initialState: DeviceManagerState = {
   devices: [],
   activeSuite: DEFAULT_SUITE.id,
   suites: [DEFAULT_SUITE],
+  individualRotations: {},
 };
 
 export const deviceManagerSlice = createSlice({
@@ -77,6 +81,14 @@ export const deviceManagerSlice = createSlice({
       state.suites = [DEFAULT_SUITE];
       state.activeSuite = DEFAULT_SUITE.id;
     },
+    setIndividualRotation(state, action: PayloadAction<{id: string; rotated: boolean}>) {
+      const {id, rotated} = action.payload;
+      if (rotated) {
+        state.individualRotations[id] = true;
+      } else {
+        delete state.individualRotations[id];
+      }
+    },
   },
 });
 
@@ -89,9 +101,13 @@ export const {
   addSuites,
   deleteSuite,
   deleteAllSuites,
+  setIndividualRotation,
 } = deviceManagerSlice.actions;
 
 export const selectSuites = (state: RootState) => state.deviceManager.suites;
+
+export const selectIndividualRotations = (state: RootState) =>
+  state.deviceManager.individualRotations;
 
 export const selectActiveSuite = (state: RootState): PreviewSuite => {
   const {activeSuite, suites} = state.deviceManager;
