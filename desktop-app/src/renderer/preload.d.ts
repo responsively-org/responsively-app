@@ -20,6 +20,7 @@ declare global {
     responsively: {
       webviewPreloadPath: string;
       isE2E: boolean;
+      platform: NodeJS.Platform;
     };
   }
 }

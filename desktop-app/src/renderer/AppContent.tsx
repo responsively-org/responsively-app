@@ -9,6 +9,7 @@ import ThemeProvider from './context/ThemeProvider';
 import type {AppView} from './store/features/ui';
 import {APP_VIEWS, selectAppView} from './store/features/ui';
 import DeviceManager from './components/DeviceManager';
+import TitleBar from './components/TitleBar';
 import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
 import McpBridge from './components/McpBridge';
 import {ReleaseNotes} from './components/ReleaseNotes';
@@ -17,7 +18,7 @@ import {AboutDialog} from './components/AboutDialog';
 
 const Browser = () => {
   return (
-    <div className="h-screen gap-2 overflow-hidden pt-2">
+    <div className="h-full gap-2 overflow-hidden pt-2">
       <ToolBar />
       <Previewer />
     </div>
@@ -47,7 +48,17 @@ const AppContent = () => {
       <ThemeProvider>
         <KeyboardShortcutsManager />
         <McpBridge />
-        <ViewComponent />
+        {/* The window is frameless: the title bar is ours, and the rest of
+            the shell fills what's left of the viewport. */}
+        <div className="flex h-screen flex-col overflow-hidden">
+          <TitleBar />
+          {/* The shell itself never scrolls — a scroll container wrapping the
+              previews would add a compositing layer around every webview.
+              Long views (Device Manager) own their scrolling instead. */}
+          <div className="min-h-0 flex-1 overflow-hidden">
+            <ViewComponent />
+          </div>
+        </div>
         <ReleaseNotes />
         <Sponsorship />
         <AboutDialog />

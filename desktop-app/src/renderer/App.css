@@ -65,3 +65,15 @@
 html {
   user-select: none;
 }
+
+/*
+ * Frameless-window drag regions. The title bar is the drag handle, so any
+ * interactive element placed inside it must opt out with .app-no-drag.
+ */
+.app-drag {
+  -webkit-app-region: drag;
+}
+
+.app-no-drag {
+  -webkit-app-region: no-drag;
+}

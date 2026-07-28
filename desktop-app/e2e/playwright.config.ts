@@ -25,6 +25,7 @@ const testOrder = [
   'menu-flyout.spec.ts',
   'url-navigation.spec.ts',
   'popup-policy.spec.ts',
+  'title-bar.spec.ts',
   'address-bar-features.spec.ts',
   'device-toolbar.spec.ts',
   'zoom-controls.spec.ts',

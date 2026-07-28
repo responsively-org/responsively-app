@@ -17,7 +17,7 @@ const ThemeProvider = ({children}: {children: React.ReactNode}) => {
     document.documentElement.classList.toggle('dark', darkMode);
   }, [darkMode]);
 
-  return <div className="min-w-screen min-h-screen">{children}</div>;
+  return <>{children}</>;
 };
 
 export default ThemeProvider;

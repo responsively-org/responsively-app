@@ -38,6 +38,7 @@ import log, {initCrashHandlers, initLogging} from './logging';
 import {injectHostIntoCsp} from './csp';
 import {isOpenableUrl} from './url-validation';
 import {wireWebviewSecurity} from './webview-registry';
+import {getTitleBarOptions} from './titlebar';
 
 initLogging();
 initCrashHandlers();
@@ -234,7 +235,7 @@ const createWindow = async () => {
     width: windowState.width,
     height: windowState.height,
     icon: getAssetPath('icon.png'),
-    titleBarStyle: 'default',
+    ...getTitleBarOptions(),
     webPreferences: {
       preload: isBuiltApp
         ? path.join(__dirname, 'preload.js')

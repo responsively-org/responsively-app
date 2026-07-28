@@ -106,4 +106,12 @@ export const migrations = {
       store.delete('ui.previewlayout');
     }
   },
+  '2.0.0': (store: Store) => {
+    // The Windows "Menus in Titlebar" option and its custom-electron-titlebar
+    // implementation are gone; drop the orphaned preference so it stops
+    // sitting in config.json for anyone who toggled it.
+    if (store.get('userPreferences.customTitlebar') !== undefined) {
+      store.delete('userPreferences.customTitlebar');
+    }
+  },
 };
