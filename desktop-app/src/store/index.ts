@@ -159,6 +159,10 @@ const schema = {
         enum: ['in-preview', 'external'],
         default: 'in-preview',
       },
+      mcpEnabled: {
+        type: 'boolean',
+        default: true,
+      },
       guides: {
         type: 'array',
         items: {

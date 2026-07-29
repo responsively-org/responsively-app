@@ -16,6 +16,7 @@ const testOrder = [
   'mcp-server.spec.ts',
   'mcp-bridge-stdio.spec.ts',
   'mcp-manifest.spec.ts',
+  'mcp-panel.spec.ts',
   'screenshot.spec.ts',
   'screenshot-save.spec.ts',
   'file-watching.spec.ts',

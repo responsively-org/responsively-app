@@ -2,6 +2,7 @@ import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import {app} from 'electron';
 import http from 'http';
+import store from '../../store';
 import log from '../logging';
 import {MCP_SERVER_NAME} from '../../common/mcp';
 import {writeMcpBeacon} from './beacon';
@@ -10,6 +11,17 @@ import {registerTools} from './tools';
 import {isAllowedHostHeader, resolveMcpPort} from './utils';
 
 let httpServer: http.Server | null = null;
+let activePort: number | null = null;
+let lastError: string | null = null;
+let getMainWindowRef: GetMainWindow | null = null;
+
+export interface McpServerStatus {
+  enabled: boolean;
+  running: boolean;
+  port: number;
+  endpoint: string;
+  error: string | null;
+}
 
 const handleMcpRequest = async (
   req: http.IncomingMessage,
@@ -32,12 +44,14 @@ const handleMcpRequest = async (
   await transport.handleRequest(req, res);
 };
 
-export const initMcpServer = (getMainWindow: GetMainWindow) => {
-  initMcpBridge();
+const startServer = (getMainWindow: GetMainWindow): void => {
+  if (httpServer !== null) {
+    return;
+  }
   const port = resolveMcpPort();
-  writeMcpBeacon(port);
+  lastError = null;
 
-  httpServer = http.createServer(async (req, res) => {
+  const server = http.createServer(async (req, res) => {
     try {
       const url = new URL(req.url ?? '/', `http://127.0.0.1:${port}`);
       if (url.pathname !== '/mcp') {
@@ -67,7 +81,7 @@ export const initMcpServer = (getMainWindow: GetMainWindow) => {
     }
   });
 
-  httpServer.on('error', (error: NodeJS.ErrnoException) => {
+  server.on('error', (error: NodeJS.ErrnoException) => {
     // EADDRINUSE (e.g. a second app instance): the app must keep working
     // without MCP rather than crash.
 
@@ -75,15 +89,63 @@ export const initMcpServer = (getMainWindow: GetMainWindow) => {
       `[mcp] MCP server not started on port ${port} (${error.code ?? error.message}). ` +
         'Another Responsively App instance may already be running.'
     );
+    lastError = error.code ?? error.message;
     httpServer = null;
+    activePort = null;
   });
 
-  httpServer.listen(port, '127.0.0.1', () => {
+  server.listen(port, '127.0.0.1', () => {
+    activePort = port;
+    // The beacon is how the npm bootstrap finds a running app, so it must
+    // only exist while the server is actually listening.
+    writeMcpBeacon(port);
     log.info(`[mcp] MCP server listening on http://127.0.0.1:${port}/mcp`);
   });
 
+  httpServer = server;
+};
+
+const stopServer = (): void => {
+  httpServer?.close();
+  httpServer = null;
+  activePort = null;
+};
+
+export const getMcpServerStatus = (): McpServerStatus => {
+  const port = activePort ?? resolveMcpPort();
+  return {
+    enabled: store.get('userPreferences.mcpEnabled') !== false,
+    running: httpServer !== null && activePort !== null,
+    port,
+    endpoint: `http://127.0.0.1:${port}/mcp`,
+    error: lastError,
+  };
+};
+
+/** Turns the server on or off and remembers the choice across launches. */
+export const setMcpServerEnabled = (enabled: boolean): McpServerStatus => {
+  store.set('userPreferences.mcpEnabled', enabled);
+  if (enabled) {
+    if (getMainWindowRef !== null) {
+      startServer(getMainWindowRef);
+    }
+  } else {
+    stopServer();
+  }
+  return getMcpServerStatus();
+};
+
+export const initMcpServer = (getMainWindow: GetMainWindow) => {
+  initMcpBridge();
+  getMainWindowRef = getMainWindow;
+
+  if (store.get('userPreferences.mcpEnabled') !== false) {
+    startServer(getMainWindow);
+  } else {
+    log.info('[mcp] MCP server disabled by user preference');
+  }
+
   app.on('will-quit', () => {
-    httpServer?.close();
-    httpServer = null;
+    stopServer();
   });
 };

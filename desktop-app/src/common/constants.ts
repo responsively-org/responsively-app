@@ -59,6 +59,8 @@ export const IPC_MAIN_CHANNELS = {
   GET_ABOUT_INFO: 'get-about-info',
   SHORTCUT_TRIGGERED: 'shortcut-triggered',
   SET_OVERLAY_OPEN: 'set-overlay-open',
+  MCP_STATUS: 'mcp-status',
+  MCP_SET_ENABLED: 'mcp-set-enabled',
 } as const;
 
 export type Channels = (typeof IPC_MAIN_CHANNELS)[keyof typeof IPC_MAIN_CHANNELS];

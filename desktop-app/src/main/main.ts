@@ -30,7 +30,7 @@ import {initNativeFunctionHandlers} from './native-functions';
 import {WebPermissionHandlers} from './web-permissions';
 import {initHttpBasicAuthHandlers} from './http-basic-auth';
 import {initAppMetaHandlers} from './app-meta';
-import {initMcpServer} from './mcp';
+import {getMcpServerStatus, initMcpServer, setMcpServerEnabled} from './mcp';
 import {openUrl} from './protocol-handler';
 import {AppUpdater} from './app-updater';
 import {getSavedWindowState, trackWindowState} from './window-state';
@@ -134,6 +134,12 @@ ipcMain.on(IPC_MAIN_CHANNELS.START_WATCHING_FILE, async (_event, fileInfo) => {
 ipcMain.on(IPC_MAIN_CHANNELS.STOP_WATCHER, async () => {
   await stopWatchFiles();
 });
+
+ipcMain.handle(IPC_MAIN_CHANNELS.MCP_STATUS, async () => getMcpServerStatus());
+
+ipcMain.handle(IPC_MAIN_CHANNELS.MCP_SET_ENABLED, async (_event, {enabled}: {enabled: boolean}) =>
+  setMcpServerEnabled(enabled)
+);
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
