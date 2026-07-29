@@ -62,9 +62,10 @@ export const rendererSlice = createSlice({
       }
     },
     zoomIn: (state) => {
-      const currentZoom = state.layout === PREVIEW_LAYOUTS.INDIVIDUAL ? state.individualZoomFactor : state.zoomFactor;
+      const currentZoom =
+        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL ? state.individualZoomFactor : state.zoomFactor;
       const nextStep = zoomSteps.find((step) => step > currentZoom + 0.001); // +0.001 to handle floating point precision
-      
+
       if (nextStep) {
         const newIndex = zoomSteps.indexOf(nextStep);
         if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
@@ -77,9 +78,10 @@ export const rendererSlice = createSlice({
       }
     },
     zoomOut: (state) => {
-      const currentZoom = state.layout === PREVIEW_LAYOUTS.INDIVIDUAL ? state.individualZoomFactor : state.zoomFactor;
+      const currentZoom =
+        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL ? state.individualZoomFactor : state.zoomFactor;
       const nextStep = [...zoomSteps].reverse().find((step) => step < currentZoom - 0.001);
-      
+
       if (nextStep) {
         const newIndex = zoomSteps.indexOf(nextStep);
         if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
@@ -95,10 +97,10 @@ export const rendererSlice = createSlice({
       const deltaY = action.payload;
       const MIN_ZOOM = zoomSteps[0];
       const MAX_ZOOM = zoomSteps[zoomSteps.length - 1];
-      
+
       // Use an exponential scale so the perceived zoom speed is consistent across all zoom levels
       const multiplier = Math.exp(-deltaY * 0.002);
-      
+
       if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
         let newZoom = state.individualZoomFactor * multiplier;
         newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));

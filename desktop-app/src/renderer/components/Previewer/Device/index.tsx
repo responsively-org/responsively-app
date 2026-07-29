@@ -39,8 +39,6 @@ import {
   setIsInspecting,
   setLayout,
   setPageTitle,
-  zoomIn,
-  zoomOut,
   zoomBy,
 } from 'renderer/store/features/renderer';
 import type {RootState} from '../../../store';
@@ -313,7 +311,6 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     }
     const webview = ref.current as Electron.WebviewTag;
     const handlerRemovers: (() => void)[] = [];
-    const accumulatedDeltaRef = { current: 0 };
 
     const didNavigateHandler = (e: Electron.DidNavigateEvent | Electron.DidNavigateInPageEvent) => {
       // Only DidNavigateInPageEvent has isMainFrame
@@ -560,8 +557,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const scaledHeight = height * zoomfactor;
   const scaledWidth = width * zoomfactor;
 
-  const isRestrictedMinimumDeviceSize =
-    device.width < 400 && !isDeviceRotationEnabled;
+  const isRestrictedMinimumDeviceSize = device.width < 400 && !isDeviceRotationEnabled;
 
   return (
     <div

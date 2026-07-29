@@ -5,7 +5,7 @@ import {DOCK_POSITION, PREVIEW_LAYOUTS} from 'common/constants';
 import {selectDockPosition, selectIsDevtoolsOpen} from 'renderer/store/features/devtools';
 import {getDevicesMap, Device as IDevice} from 'common/deviceList';
 import {useState, useEffect, useRef} from 'react';
-import {selectLayout, zoomIn, zoomOut, zoomBy} from 'renderer/store/features/renderer';
+import {selectLayout, zoomBy} from 'renderer/store/features/renderer';
 import Masonry from 'react-masonry-component';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
@@ -37,8 +37,6 @@ const Previewer = () => {
   const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY; // New state for Masonry layout
   const dispatch = useDispatch();
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const accumulatedDeltaRef = useRef(0);
 
   useEffect(() => {
     const container = containerRef.current;
