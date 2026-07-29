@@ -26,7 +26,8 @@ test.describe('Custom Device Creation', () => {
     await app.page.waitForTimeout(500);
 
     // Modal title
-    await expect(app.page.getByText('Add Custom Device').first()).toBeVisible();
+    await expect(app.page.getByTestId('device-form')).toBeVisible();
+    await expect(app.page.getByText('New custom device')).toBeVisible();
 
     // Default values
     const nameInput = app.page.getByLabel('Device Name');
@@ -38,19 +39,17 @@ test.describe('Custom Device Creation', () => {
     const heightInput = app.page.getByLabel('Device Height');
     await expect(heightInput).toHaveValue('600');
 
-    const dprInput = app.page.getByLabel('Device DPR');
-    await expect(dprInput).toHaveValue('1');
+    await expect(app.page.getByLabel('Device DPR 1x')).toHaveAttribute('aria-pressed', 'true');
 
     // Default type is phone
-    const typeSelect = app.page.getByLabel('Device type');
-    await expect(typeSelect).toHaveValue('phone');
+    await expect(app.page.getByLabel('Device type Phone')).toHaveAttribute('aria-pressed', 'true');
 
     // Touch and mobile default checked for phone
-    const touchCheckbox = app.page.getByLabel('Touch Capable');
-    await expect(touchCheckbox).toBeChecked();
-
-    const mobileCheckbox = app.page.getByLabel('Mobile Capable (Rotatable)');
-    await expect(mobileCheckbox).toBeChecked();
+    await expect(app.page.getByLabel('Touch Capable')).toHaveAttribute('aria-pressed', 'true');
+    await expect(app.page.getByLabel('Mobile Capable (Rotatable)')).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
 
     // Buttons: Cancel and Add
     await expect(app.page.getByRole('button', {name: 'Cancel'})).toBeVisible();
@@ -75,7 +74,7 @@ test.describe('Custom Device Creation', () => {
     await app.page.getByLabel('Device Name').fill('My Test Device');
     await app.page.getByLabel('Device Width').fill('1024');
     await app.page.getByLabel('Device Height').fill('768');
-    await app.page.getByLabel('Device DPR').fill('2');
+    await app.page.getByLabel('Device DPR 2x').click();
 
     // Click Add
     await app.page.getByRole('button', {name: 'Add', exact: true}).click();
@@ -156,7 +155,7 @@ test.describe('Custom Device Creation', () => {
     await app.page.waitForTimeout(500);
 
     // Modal title should say "Device Details" for editing
-    await expect(app.page.getByRole('heading', {name: 'Device Details'})).toBeVisible();
+    await expect(app.page.getByText('Edit custom device')).toBeVisible();
 
     // Buttons should show "Save" instead of "Add", and "Delete" should be visible
     await expect(app.page.getByRole('button', {name: 'Save'})).toBeVisible();
@@ -253,8 +252,11 @@ test.describe('Custom Device Creation', () => {
     await app.page.waitForTimeout(500);
 
     // Default type is phone — touch and mobile should be checked
-    await expect(app.page.getByLabel('Touch Capable')).toBeChecked();
-    await expect(app.page.getByLabel('Mobile Capable (Rotatable)')).toBeChecked();
+    await expect(app.page.getByLabel('Touch Capable')).toHaveAttribute('aria-pressed', 'true');
+    await expect(app.page.getByLabel('Mobile Capable (Rotatable)')).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
 
     // The phone UA should be set
     const uaInput = app.page.getByLabel('User Agent String');
@@ -262,7 +264,7 @@ test.describe('Custom Device Creation', () => {
     expect(initialUA).toContain('iPhone');
 
     // Change to Desktop (notebook)
-    await app.page.getByLabel('Device type').selectOption('notebook');
+    await app.page.getByLabel('Device type Laptop').click();
     await app.page.waitForTimeout(300);
 
     // UA should switch to desktop
@@ -271,8 +273,11 @@ test.describe('Custom Device Creation', () => {
     expect(newUA).not.toContain('iPhone');
 
     // Touch and mobile should be unchecked
-    await expect(app.page.getByLabel('Touch Capable')).not.toBeChecked();
-    await expect(app.page.getByLabel('Mobile Capable (Rotatable)')).not.toBeChecked();
+    await expect(app.page.getByLabel('Touch Capable')).toHaveAttribute('aria-pressed', 'false');
+    await expect(app.page.getByLabel('Mobile Capable (Rotatable)')).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    );
 
     await app.page.getByRole('button', {name: 'Cancel'}).click();
     await app.page.waitForTimeout(300);
@@ -289,20 +294,23 @@ test.describe('Custom Device Creation', () => {
     await app.page.waitForTimeout(500);
 
     // Switch to Desktop first
-    await app.page.getByLabel('Device type').selectOption('notebook');
+    await app.page.getByLabel('Device type Laptop').click();
     await app.page.waitForTimeout(300);
-    await expect(app.page.getByLabel('Touch Capable')).not.toBeChecked();
+    await expect(app.page.getByLabel('Touch Capable')).toHaveAttribute('aria-pressed', 'false');
 
     // Switch back to Phone
-    await app.page.getByLabel('Device type').selectOption('phone');
+    await app.page.getByLabel('Device type Phone').click();
     await app.page.waitForTimeout(300);
 
     const uaInput = app.page.getByLabel('User Agent String');
     const ua = await uaInput.inputValue();
     expect(ua).toContain('iPhone');
 
-    await expect(app.page.getByLabel('Touch Capable')).toBeChecked();
-    await expect(app.page.getByLabel('Mobile Capable (Rotatable)')).toBeChecked();
+    await expect(app.page.getByLabel('Touch Capable')).toHaveAttribute('aria-pressed', 'true');
+    await expect(app.page.getByLabel('Mobile Capable (Rotatable)')).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
 
     await app.page.getByRole('button', {name: 'Cancel'}).click();
     await app.page.waitForTimeout(300);

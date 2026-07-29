@@ -7,7 +7,7 @@ import useOverlayRegistry from 'renderer/hooks/useOverlayRegistry';
 import {selectActiveSuite, setSuiteDevices} from 'renderer/store/features/device-manager';
 import {APP_VIEWS, selectAppView, setAppView} from 'renderer/store/features/ui';
 import DeviceCard from './DeviceCard';
-import DeviceDetailsModal from './DeviceDetailsModal';
+import DeviceForm from './DeviceForm';
 import {ManageSuitesTool} from './PreviewSuites/ManageSuitesTool/ManageSuitesTool';
 import SuitesColumn from './SuitesColumn';
 
@@ -49,7 +49,7 @@ const DeviceManagerSheet = () => {
   const activeSuite = useSelector(selectActiveSuite);
   const [search, setSearch] = useState<string>('');
   const [filter, setFilter] = useState<FilterId>('all');
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState<boolean>(false);
+  const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [selectedDevice, setSelectedDevice] = useState<Device | undefined>(undefined);
   const [customDevices, setCustomDevices] = useState<Device[]>(
     window.electron.store.get('deviceManager.customDevices') ?? []
@@ -82,12 +82,12 @@ const DeviceManagerSheet = () => {
     invalidateDevicesMap();
   };
 
-  const onSaveDevice = async (device: Device, isNew: boolean) => {
+  const onSaveDevice = async (device: Device, isNew: boolean, addToSuite: boolean) => {
     const next = isNew
       ? [...customDevices, device]
       : customDevices.map((d) => (d.id === device.id ? device : d));
     saveCustomDevices(next);
-    if (isNew) {
+    if (isNew && addToSuite) {
       dispatch(
         setSuiteDevices({suite: activeSuite.id, devices: [...activeSuite.devices, device.id]})
       );
@@ -186,7 +186,7 @@ const DeviceManagerSheet = () => {
                 title="Add Custom Device"
                 onClick={() => {
                   setSelectedDevice(undefined);
-                  setIsDetailsModalOpen(true);
+                  setIsFormOpen(true);
                 }}
                 className="flex h-8 items-center gap-[7px] rounded-lg bg-accent px-[13px] text-[12.5px] font-bold text-on-accent transition-[filter] hover:brightness-110 focus:outline-none"
               >
@@ -213,7 +213,7 @@ const DeviceManagerSheet = () => {
                     onToggle={() => toggleMembership(device)}
                     onEdit={() => {
                       setSelectedDevice(device);
-                      setIsDetailsModalOpen(true);
+                      setIsFormOpen(true);
                     }}
                   />
                 ))}
@@ -227,7 +227,7 @@ const DeviceManagerSheet = () => {
                         type="button"
                         onClick={() => {
                           setSelectedDevice(undefined);
-                          setIsDetailsModalOpen(true);
+                          setIsFormOpen(true);
                         }}
                         className="flex h-8 items-center gap-[7px] rounded-lg border border-line px-[13px] text-[12.5px] text-fg transition-colors hover:bg-hover focus:outline-none"
                       >
@@ -242,21 +242,23 @@ const DeviceManagerSheet = () => {
               </div>
             </div>
           </div>
+
+          {isFormOpen ? (
+            <DeviceForm
+              key={selectedDevice?.id ?? 'new'}
+              device={selectedDevice}
+              existingDevices={allDevices}
+              activeSuiteName={activeSuite.name}
+              onSave={onSaveDevice}
+              onRemove={onRemoveDevice}
+              onClose={() => {
+                setSelectedDevice(undefined);
+                setIsFormOpen(false);
+              }}
+            />
+          ) : null}
         </div>
       </div>
-
-      <DeviceDetailsModal
-        onSaveDevice={onSaveDevice}
-        existingDevices={allDevices}
-        isCustom
-        isOpen={isDetailsModalOpen}
-        onClose={() => {
-          setSelectedDevice(undefined);
-          setIsDetailsModalOpen(false);
-        }}
-        device={selectedDevice}
-        onRemoveDevice={onRemoveDevice}
-      />
     </div>
   );
 };
