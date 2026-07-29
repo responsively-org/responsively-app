@@ -1,93 +1,97 @@
 import {test, expect} from '../fixtures/electron-app';
 
 test.describe('Device Manager — Extended', () => {
-  test('default devices section lists pre-loaded devices', async ({app}) => {
+  test('the grid lists devices with membership state', async ({app}) => {
+    await app.dismissModals();
     await app.openDeviceManager();
 
-    const defaultSection = app.page.getByText('DEFAULT DEVICES');
-    await expect(defaultSection).toBeVisible({timeout: 10_000});
+    const cards = app.page.locator('[data-testid^="device-card-"]');
+    expect(await cards.count()).toBeGreaterThan(0);
 
-    // Verify some well-known default devices are listed
-    const checkboxes = app.page.locator('input[type="checkbox"][title*="Click to"]');
-    const count = await checkboxes.count();
-    expect(count).toBeGreaterThan(0);
+    // At least one device belongs to the active suite.
+    const members = app.page.locator('[data-testid^="device-card-"][aria-pressed="true"]');
+    expect(await members.count()).toBeGreaterThan(0);
+
+    await app.closeDeviceManager();
   });
 
-  test('custom devices section is visible', async ({app}) => {
+  test('toggling a device card adds and removes it from the active suite', async ({app}) => {
+    await app.dismissModals();
     await app.ensureDeviceManagerOpen();
 
-    await expect(app.page.getByText('CUSTOM DEVICES', {exact: true})).toBeVisible();
-  });
-
-  test('toggling a device checkbox adds or removes it from the active suite', async ({app}) => {
-    await app.ensureDeviceManagerOpen();
-
-    // Count checked devices before toggling
-    const checkedBefore = await app.page
-      .locator('input[type="checkbox"][title="Click to remove the device"]:checked')
+    const membersBefore = await app.page
+      .locator('[data-testid^="device-card-"][aria-pressed="true"]')
       .count();
 
-    // Find a visible unchecked device checkbox and click it to add the device
-    const uncheckedBox = app.page
-      .locator('input[type="checkbox"][title="Click to add the device"]:not(.opacity-0)')
-      .first();
-    const hasUnchecked = await uncheckedBox.count().then((c) => c > 0);
+    // Pin the exact card: once clicked it becomes a member, so a
+    // `[aria-pressed="false"]` locator would re-resolve to a different one.
+    const testId = await app.page
+      .locator('[data-testid^="device-card-"][aria-pressed="false"]')
+      .first()
+      .getAttribute('data-testid');
+    const card = app.page.locator(`[data-testid="${testId}"]`);
+    await card.click();
 
-    if (hasUnchecked) {
-      await uncheckedBox.check({force: true});
-      await app.page.waitForTimeout(500);
+    await expect
+      .poll(() => app.page.locator('[data-testid^="device-card-"][aria-pressed="true"]').count())
+      .toBe(membersBefore + 1);
 
-      // Verify count of checked devices increased
-      const checkedAfter = await app.page
-        .locator('input[type="checkbox"][title="Click to remove the device"]:checked')
-        .count();
-      expect(checkedAfter).toBeGreaterThan(checkedBefore);
+    // Toggle it back so the next spec file inherits the original suite.
+    await card.click();
+    await expect
+      .poll(() => app.page.locator('[data-testid^="device-card-"][aria-pressed="true"]').count())
+      .toBe(membersBefore);
 
-      // Toggle it back off — find the last checked device and uncheck it
-      const lastChecked = app.page
-        .locator('input[type="checkbox"][title="Click to remove the device"]:checked')
-        .last();
-      await lastChecked.uncheck({force: true});
-      await app.page.waitForTimeout(500);
-    }
+    await app.closeDeviceManager();
   });
 
-  test('cannot remove the last device from a suite', async ({app}) => {
+  test('the last device of a suite cannot be removed', async ({app}) => {
+    await app.dismissModals();
     await app.ensureDeviceManagerOpen();
 
-    // The disabled checkbox should have a specific title
-    const disabledCheckbox = app.page.locator(
-      'input[type="checkbox"][title="Cannot make the suite empty add another device to remove this one"]'
-    );
-
-    // Get count of checked checkboxes — if only one device, this should be disabled
-    const checkedBoxes = app.page.locator(
-      'input[type="checkbox"][title="Click to remove the device"]:checked'
-    );
-    const checkedCount = await checkedBoxes.count();
-
-    if (checkedCount === 1) {
-      // The single remaining device should be the disabled one
-      await expect(disabledCheckbox).toBeVisible();
-      await expect(disabledCheckbox).toBeDisabled();
+    const members = app.page.locator('[data-testid^="device-card-"][aria-pressed="true"]');
+    if ((await members.count()) === 1) {
+      await expect(members.first()).toBeDisabled();
     }
-    // If more than one device is checked, no checkbox should be disabled
+
+    await app.closeDeviceManager();
   });
 
-  test('searching with no match shows empty results', async ({app}) => {
+  test('the suites column lists suites and can create one', async ({app}) => {
+    await app.dismissModals();
     await app.ensureDeviceManagerOpen();
 
-    const searchInput = app.page.locator('input[placeholder="Search ..."]');
-    await searchInput.fill('zzz_nonexistent_device_xyz');
+    const suiteRows = app.page.locator('[data-testid^="suite-row-"]');
+    const before = await suiteRows.count();
+    expect(before).toBeGreaterThan(0);
 
-    await expect(app.page.getByText('Sorry, no matching devices found.').first()).toBeVisible({
-      timeout: 5_000,
-    });
+    await app.deviceManagerSheet.getByRole('button', {name: 'New suite'}).click();
+    await expect.poll(() => suiteRows.count(), {timeout: 10_000}).toBe(before + 1);
 
-    // Clear search for future tests
-    await searchInput.fill('');
+    // Remove the suite we just made — suites persist across spec files.
+    await app.page
+      .locator('[data-testid^="suite-row-"]')
+      .last()
+      .locator('..')
+      .locator('button[title="Delete suite"]')
+      .click();
+    await expect.poll(() => suiteRows.count(), {timeout: 10_000}).toBe(before);
 
-    // Close device manager
+    await app.closeDeviceManager();
+  });
+
+  test('the default suite cannot be deleted', async ({app}) => {
+    await app.dismissModals();
+    await app.ensureDeviceManagerOpen();
+
+    const defaultRow = app.page.locator('[data-testid="suite-row-default"]');
+    if ((await defaultRow.count()) > 0) {
+      const deleteBtn = defaultRow
+        .locator('..')
+        .locator('button[title="Default suite can\'t be deleted"]');
+      await expect(deleteBtn).toBeDisabled();
+    }
+
     await app.closeDeviceManager();
   });
 });

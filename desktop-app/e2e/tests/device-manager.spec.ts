@@ -1,51 +1,69 @@
 import {test, expect} from '../fixtures/electron-app';
 
 test.describe('Device Manager', () => {
-  test('clicking + button opens device manager view', async ({mainWindow}) => {
-    const addDeviceBtn = mainWindow.locator('button[title="Device Manager"]');
-    await addDeviceBtn.click();
+  test('the toolbar button opens the Device Manager sheet', async ({app}) => {
+    await app.dismissModals();
+    await app.openDeviceManager();
 
-    await expect(mainWindow.getByText('DEFAULT DEVICES')).toBeVisible({
-      timeout: 10_000,
-    });
-    await expect(mainWindow.getByText('CUSTOM DEVICES', {exact: true})).toBeVisible();
+    await expect(app.deviceManagerSheet).toBeVisible();
+    await expect(app.deviceManagerSheet.getByText('SUITES', {exact: true})).toBeVisible();
+    await expect(app.page.locator('[data-testid="device-grid-meta"]')).toContainText('devices');
+
+    await app.closeDeviceManager();
   });
 
-  test('search input filters device list', async ({mainWindow}) => {
-    // Device Manager may already be open from the previous test (shared worker window)
-    const dmHeader = mainWindow.getByText('DEFAULT DEVICES');
-    if (!(await dmHeader.isVisible())) {
-      const addDeviceBtn = mainWindow.locator('button[title="Device Manager"]');
-      await addDeviceBtn.click();
-      await expect(dmHeader).toBeVisible({timeout: 10_000});
-    }
+  test('the previews stay mounted behind the sheet', async ({app}) => {
+    await app.dismissModals();
+    const before = await app.webviews.count();
 
-    // Type in the search input
-    const searchInput = mainWindow.locator('input[placeholder="Search ..."]');
+    await app.openDeviceManager();
+    // The sheet floats over the stage rather than replacing it.
+    expect(await app.webviews.count()).toBe(before);
+    await expect(app.addressBar).toBeVisible();
+
+    await app.closeDeviceManager();
+  });
+
+  test('search filters the device grid', async ({app}) => {
+    await app.dismissModals();
+    await app.ensureDeviceManagerOpen();
+
+    const meta = app.page.locator('[data-testid="device-grid-meta"]');
+    const searchInput = app.page.locator('input[placeholder="Search devices…"]');
+
     await searchInput.fill('iPhone');
+    await expect(app.deviceManagerSheet.getByText('iPhone', {exact: false}).first()).toBeVisible();
+    await expect(meta).toContainText('devices');
 
-    // Verify filtered results contain iPhone devices
-    const deviceLabels = mainWindow.locator('text=iPhone');
-    await expect(deviceLabels.first()).toBeVisible({timeout: 5_000});
+    await searchInput.fill('zzz_nonexistent_device_xyz');
+    await expect(app.deviceManagerSheet.getByText(/No devices match/)).toBeVisible();
+
+    await searchInput.fill('');
+    await app.closeDeviceManager();
   });
 
-  test('close button returns to browser view', async ({mainWindow}) => {
-    // Device Manager may already be open from previous tests (shared worker window)
-    const dmHeader = mainWindow.getByText('DEFAULT DEVICES');
-    if (!(await dmHeader.isVisible())) {
-      const addDeviceBtn = mainWindow.locator('button[title="Device Manager"]');
-      await addDeviceBtn.click();
-      await expect(dmHeader).toBeVisible({timeout: 10_000});
-    }
+  test('filter chips narrow the grid by device type', async ({app}) => {
+    await app.dismissModals();
+    await app.ensureDeviceManagerOpen();
 
-    // Click close button
-    const closeBtn = mainWindow.locator('button[title="Close"]');
-    await closeBtn.click();
+    const phones = app.deviceManagerSheet.getByRole('button', {name: 'Phones', exact: true});
+    await phones.click();
+    await expect(phones).toHaveAttribute('aria-pressed', 'true');
 
-    // Verify we're back to the browser view
-    await expect(mainWindow.locator('[data-testid="address-bar"]')).toBeVisible({timeout: 10_000});
+    const all = app.deviceManagerSheet.getByRole('button', {name: 'All', exact: true});
+    await all.click();
+    await expect(all).toHaveAttribute('aria-pressed', 'true');
 
-    // Device Manager sections should no longer be visible
-    await expect(mainWindow.getByText('DEFAULT DEVICES')).not.toBeVisible();
+    await app.closeDeviceManager();
+  });
+
+  test('close button dismisses the sheet', async ({app}) => {
+    await app.dismissModals();
+    await app.ensureDeviceManagerOpen();
+
+    await app.closeDeviceManager();
+
+    await expect(app.deviceManagerSheet).toBeHidden();
+    await expect(app.addressBar).toBeVisible();
   });
 });

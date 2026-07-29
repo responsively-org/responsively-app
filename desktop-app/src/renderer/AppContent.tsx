@@ -1,4 +1,4 @@
-import {Provider, useSelector} from 'react-redux';
+import {Provider} from 'react-redux';
 
 import ToolBar from './components/ToolBar';
 import Previewer from './components/Previewer';
@@ -6,8 +6,6 @@ import {store} from './store';
 
 import './App.css';
 import ThemeProvider from './context/ThemeProvider';
-import type {AppView} from './store/features/ui';
-import {APP_VIEWS, selectAppView} from './store/features/ui';
 import DeviceManager from './components/DeviceManager';
 import TitleBar from './components/TitleBar';
 import StatusBar from './components/StatusBar';
@@ -29,22 +27,17 @@ const Browser = () => {
   );
 };
 
-const getView = (appView: AppView) => {
-  switch (appView) {
-    case APP_VIEWS.BROWSER:
-      return <Browser />;
-    case APP_VIEWS.DEVICE_MANAGER:
-      return <DeviceManager />;
-    default:
-      return <Browser />;
-  }
-};
-
-const ViewComponent = () => {
-  const appView = useSelector(selectAppView);
-
-  return <>{getView(appView)}</>;
-};
+/**
+ * The Device Manager is a sheet over the stage, not a replacement view: the
+ * previews stay mounted behind it (so closing it doesn't reload every
+ * webview) and stay visible, as the design intends.
+ */
+const ViewComponent = () => (
+  <div className="relative h-full">
+    <Browser />
+    <DeviceManager />
+  </div>
+);
 
 const AppContent = () => {
   return (

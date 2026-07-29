@@ -73,21 +73,25 @@ export class ResponsivelyApp {
     await this.page.waitForTimeout(500);
   }
 
+  /** The Device Manager is a sheet over the stage, not a separate view. */
+  get deviceManagerSheet(): Locator {
+    return this.page.locator('[data-testid="device-manager-sheet"]');
+  }
+
   async openDeviceManager() {
     await this.page.locator('button[title="Device Manager"]').click();
-    await this.page.getByText('DEFAULT DEVICES').waitFor({state: 'visible', timeout: 10_000});
+    await this.deviceManagerSheet.waitFor({state: 'visible', timeout: 10_000});
   }
 
   async ensureDeviceManagerOpen() {
-    const dmHeader = this.page.getByText('DEFAULT DEVICES');
-    if (!(await dmHeader.isVisible())) {
+    if (!(await this.deviceManagerSheet.isVisible())) {
       await this.openDeviceManager();
     }
   }
 
   async closeDeviceManager() {
-    await this.page.locator('button[title="Close"]').click();
-    await this.addressBar.waitFor({state: 'visible', timeout: 10_000});
+    await this.deviceManagerSheet.locator('button[title="Close"]').click();
+    await this.deviceManagerSheet.waitFor({state: 'hidden', timeout: 10_000});
   }
 
   async openAboutDialog() {
