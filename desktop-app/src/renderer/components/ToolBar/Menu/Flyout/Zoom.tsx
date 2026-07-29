@@ -9,11 +9,12 @@ import {selectZoomFactor, zoomIn, zoomOut} from 'renderer/store/features/rendere
 interface ZoomButtonProps {
   children: React.ReactNode;
   onClick: () => void;
+  label: string;
 }
 
-const ZoomButton = ({children, onClick}: ZoomButtonProps) => {
+const ZoomButton = ({children, onClick, label}: ZoomButtonProps) => {
   return (
-    <Button className="p-0 px-2" onClick={onClick} subtle>
+    <Button className="p-0 px-2" onClick={onClick} subtle aria-label={label} title={label}>
       {children}
     </Button>
   );
@@ -38,9 +39,13 @@ const Zoom = () => {
     <div className="flex flex-row items-center justify-start px-4">
       <span className="w-1/2">Zoom</span>
       <div className="flex w-fit items-center gap-2 border-l px-4 dark:border-slate-400">
-        <ZoomButton onClick={onZoomOut}>-</ZoomButton>
+        <ZoomButton onClick={onZoomOut} label="Zoom out">
+          -
+        </ZoomButton>
         <span className="w-10 text-center">{Math.ceil(zoomfactor * 100)}%</span>
-        <ZoomButton onClick={onZoomIn}>+</ZoomButton>
+        <ZoomButton onClick={onZoomIn} label="Zoom in">
+          +
+        </ZoomButton>
       </div>
     </div>
   );
