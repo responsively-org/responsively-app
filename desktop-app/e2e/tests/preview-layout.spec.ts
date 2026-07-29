@@ -12,14 +12,10 @@ test.describe('Preview Layout', () => {
   test('selecting "Flex" layout changes the previewer container class', async ({app}) => {
     await app.dismissModals();
 
-    await app.openMenuFlyout();
-
     // Click the Flex layout button (inside ButtonGroup)
-    const flexBtn = app.page.locator('button:has-text("Flex")').first();
+    const flexBtn = app.page.locator('[data-testid="layout-FLEX"]');
     await flexBtn.click();
     await app.page.waitForTimeout(300);
-
-    await app.closeMenuFlyout();
 
     // The container should now have flex-wrap class
     const previewContainer = app.page.locator('.flex.gap-4.overflow-auto.p-4.flex-wrap').first();
@@ -29,14 +25,10 @@ test.describe('Preview Layout', () => {
   test('selecting "Column" layout stacks devices horizontally', async ({app}) => {
     await app.dismissModals();
 
-    await app.openMenuFlyout();
-
     // Click the Column layout button
-    const columnBtn = app.page.locator('button:has-text("Column")').first();
+    const columnBtn = app.page.locator('[data-testid="layout-COLUMN"]');
     await columnBtn.click();
     await app.page.waitForTimeout(300);
-
-    await app.closeMenuFlyout();
 
     // The container should have flex without flex-wrap
     const previewContainer = app.page.locator('.flex.gap-4.overflow-auto.p-4').first();
@@ -66,13 +58,10 @@ test.describe('Preview Layout', () => {
     await app.dismissModals();
 
     // Set layout to Flex
-    await app.openMenuFlyout();
 
-    const flexBtn = app.page.locator('button:has-text("Flex")').first();
+    const flexBtn = app.page.locator('[data-testid="layout-FLEX"]');
     await flexBtn.click();
     await app.page.waitForTimeout(300);
-
-    await app.closeMenuFlyout();
 
     // Navigate to a new URL
     await app.navigateTo(`${testServerUrl}/test-page.html`);
@@ -82,9 +71,7 @@ test.describe('Preview Layout', () => {
     await expect(previewContainer).toBeVisible({timeout: 5_000});
 
     // Reset to column layout
-    await app.openMenuFlyout();
-    const columnBtn = app.page.locator('button:has-text("Column")').first();
+    const columnBtn = app.page.locator('[data-testid="layout-COLUMN"]');
     await columnBtn.click();
-    await app.closeMenuFlyout();
   });
 });

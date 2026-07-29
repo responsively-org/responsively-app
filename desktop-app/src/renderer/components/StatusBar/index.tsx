@@ -1,0 +1,159 @@
+import {Icon} from '@iconify/react';
+import {PREVIEW_LAYOUTS, PreviewLayout} from 'common/constants';
+import {getDevicesMap} from 'common/deviceList';
+import {useCallback} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import useKeyboardShortcut, {
+  SHORTCUT_CHANNEL,
+} from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
+import Popover from 'renderer/components/Popover';
+import Notifications from 'renderer/components/Notifications/Notifications';
+import NotificationsBubble from 'renderer/components/Notifications/NotificationsBubble';
+import useLocalStorage from 'renderer/components/useLocalStorage/useLocalStorage';
+import {selectActiveSuite} from 'renderer/store/features/device-manager';
+import {
+  selectLayout,
+  selectNotifications,
+  selectZoomFactor,
+  setLayout,
+  zoomIn,
+  zoomOut,
+} from 'renderer/store/features/renderer';
+import {selectDarkMode, setDarkMode} from 'renderer/store/features/ui';
+
+const LAYOUTS: Array<{layout: PreviewLayout; label: string; icon: string}> = [
+  {layout: PREVIEW_LAYOUTS.COLUMN, label: 'Column', icon: 'radix-icons:layout'},
+  {layout: PREVIEW_LAYOUTS.FLEX, label: 'Flex', icon: 'lucide:layout-dashboard'},
+  {layout: PREVIEW_LAYOUTS.MASONRY, label: 'Masonry', icon: 'bx:bx-grid-alt'},
+  {layout: PREVIEW_LAYOUTS.INDIVIDUAL, label: 'Focus', icon: 'ic:twotone-zoom-in-map'},
+];
+
+const StatusBar = () => {
+  const dispatch = useDispatch();
+  const layout = useSelector(selectLayout);
+  const zoomfactor = useSelector(selectZoomFactor);
+  const darkMode = useSelector(selectDarkMode);
+  const notifications = useSelector(selectNotifications);
+  const activeSuite = useSelector(selectActiveSuite);
+  const [hasNewNotifications, setHasNewNotifications] = useLocalStorage(
+    'hasNewNotifications',
+    true
+  );
+
+  const onZoomIn = useCallback(() => dispatch(zoomIn()), [dispatch]);
+  const onZoomOut = useCallback(() => dispatch(zoomOut()), [dispatch]);
+  const handleTheme = useCallback(() => dispatch(setDarkMode(!darkMode)), [dispatch, darkMode]);
+
+  const toggleNextLayout = useCallback(() => {
+    const layouts = Object.values(PREVIEW_LAYOUTS);
+    const currentIndex = layouts.findIndex((l) => l === layout);
+    dispatch(setLayout(layouts[(currentIndex + 1) % layouts.length]));
+  }, [dispatch, layout]);
+
+  useKeyboardShortcut(SHORTCUT_CHANNEL.ZOOM_IN, onZoomIn);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.ZOOM_OUT, onZoomOut);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.THEME, handleTheme);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.PREVIEW_LAYOUT, toggleNextLayout);
+
+  const devicesMap = getDevicesMap();
+  const deviceCount = activeSuite.devices.filter((id) => devicesMap[id] != null).length;
+  const hasNotifications = notifications != null && notifications.length > 0;
+
+  return (
+    <div
+      data-testid="status-bar"
+      className="flex h-[38px] flex-shrink-0 items-center gap-[14px] border-t border-line-soft bg-panel px-3"
+    >
+      <div className="flex items-center gap-[2px] rounded-lg border border-line p-[2px]">
+        {LAYOUTS.map(({layout: value, label, icon}) => (
+          <button
+            key={value}
+            type="button"
+            title={`${label} layout`}
+            data-testid={`layout-${value}`}
+            aria-pressed={layout === value}
+            onClick={() => dispatch(setLayout(value))}
+            className={`flex h-6 items-center gap-[6px] rounded-md px-[10px] text-xs transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent ${
+              layout === value ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-hover'
+            }`}
+          >
+            <span className="pointer-events-none contents">
+              <Icon icon={icon} fontSize={13} />
+              {label}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <span className="truncate text-xs text-muted" data-testid="status-text">
+        {deviceCount} {deviceCount === 1 ? 'device' : 'devices'} · {activeSuite.name}
+      </span>
+
+      <span className="flex-1" />
+
+      <div className="flex items-center gap-[2px]">
+        <button
+          type="button"
+          title="Zoom out"
+          data-testid="zoom-out"
+          onClick={onZoomOut}
+          className="flex h-6 w-6 items-center justify-center rounded-md text-[15px] text-muted transition-colors hover:bg-hover hover:text-fg focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+        >
+          <span className="pointer-events-none contents">
+            <Icon icon="lucide:minus" />
+          </span>
+        </button>
+        <span
+          data-testid="zoom-level"
+          className="w-11 text-center font-mono text-xs font-medium text-fg"
+        >
+          {Math.ceil(zoomfactor * 100)}%
+        </span>
+        <button
+          type="button"
+          title="Zoom in"
+          data-testid="zoom-in"
+          onClick={onZoomIn}
+          className="flex h-6 w-6 items-center justify-center rounded-md text-[15px] text-muted transition-colors hover:bg-hover hover:text-fg focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+        >
+          <span className="pointer-events-none contents">
+            <Icon icon="lucide:plus" />
+          </span>
+        </button>
+      </div>
+
+      <div className="h-5 w-px bg-line" />
+
+      <Popover
+        triggerTitle="Notifications"
+        anchor="top end"
+        triggerClassName="relative flex h-[26px] w-[26px] items-center justify-center rounded-md text-[15px] text-muted transition-colors hover:bg-hover hover:text-fg"
+        className="w-[280px] p-3"
+        trigger={
+          <span className="pointer-events-none contents">
+            <Icon icon="carbon:notification" />
+            {hasNotifications && Boolean(hasNewNotifications) && <NotificationsBubble />}
+          </span>
+        }
+      >
+        <div onClick={() => setHasNewNotifications(false)} role="presentation">
+          <Notifications />
+        </div>
+      </Popover>
+
+      <button
+        type="button"
+        title="Toggle UI theme"
+        data-testid="theme-toggle"
+        onClick={handleTheme}
+        className="flex h-[26px] w-[26px] items-center justify-center rounded-md text-[15px] text-muted transition-colors hover:bg-hover hover:text-fg focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+      >
+        <span className="pointer-events-none contents">
+          <Icon icon={darkMode ? 'carbon:moon' : 'carbon:sun'} />
+        </span>
+      </button>
+    </div>
+  );
+};
+
+export default StatusBar;

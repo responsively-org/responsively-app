@@ -22,14 +22,11 @@ test.describe('UI Theme', () => {
     });
 
     // Open menu flyout
-    await app.openMenuFlyout();
 
     // Click the theme toggle button
     const themeToggle = app.page.locator('[data-testid="theme-toggle"]');
     await themeToggle.click();
     await app.page.waitForTimeout(300);
-
-    await app.closeMenuFlyout();
 
     // Verify theme toggled
     const isDark = await app.page.evaluate(() => {
@@ -50,13 +47,9 @@ test.describe('UI Theme', () => {
       return document.documentElement.classList.contains('dark');
     });
 
-    await app.openMenuFlyout();
-
     const themeToggle = app.page.locator('[data-testid="theme-toggle"]');
     await themeToggle.click();
     await app.page.waitForTimeout(300);
-
-    await app.closeMenuFlyout();
 
     const isDark = await app.page.evaluate(() => {
       return document.documentElement.classList.contains('dark');

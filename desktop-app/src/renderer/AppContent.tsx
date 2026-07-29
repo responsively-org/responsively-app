@@ -10,6 +10,7 @@ import type {AppView} from './store/features/ui';
 import {APP_VIEWS, selectAppView} from './store/features/ui';
 import DeviceManager from './components/DeviceManager';
 import TitleBar from './components/TitleBar';
+import StatusBar from './components/StatusBar';
 import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
 import McpBridge from './components/McpBridge';
 import {ReleaseNotes} from './components/ReleaseNotes';
@@ -23,6 +24,7 @@ const Browser = () => {
       <div className="min-h-0 flex-1">
         <Previewer />
       </div>
+      <StatusBar />
     </div>
   );
 };

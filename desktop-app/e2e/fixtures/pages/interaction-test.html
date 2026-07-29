@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -10,12 +10,19 @@
     <p>Count: <span id="count">0</span></p>
     <button
       id="counter-btn"
-      onclick="document.getElementById('count').textContent = Number(document.getElementById('count').textContent) + 1"
+      onclick="
+        document.getElementById('count').textContent =
+          Number(document.getElementById('count').textContent) + 1
+      "
     >
       Increment
     </button>
     <form
-      onsubmit="event.preventDefault(); document.getElementById('greeting').textContent = 'Hello ' + document.getElementById('name-input').value;"
+      onsubmit="
+        event.preventDefault();
+        document.getElementById('greeting').textContent =
+          'Hello ' + document.getElementById('name-input').value;
+      "
     >
       <label for="name-input">Name</label>
       <input id="name-input" type="text" placeholder="Your name" />
