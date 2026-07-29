@@ -39,6 +39,9 @@ import {
   setIsInspecting,
   setLayout,
   setPageTitle,
+  zoomIn,
+  zoomOut,
+  zoomBy,
 } from 'renderer/store/features/renderer';
 import type {RootState} from '../../../store';
 import {selectDesignOverlay, type ViewResolution} from '../../../store/features/design-overlay';
@@ -310,6 +313,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     }
     const webview = ref.current as Electron.WebviewTag;
     const handlerRemovers: (() => void)[] = [];
+    const accumulatedDeltaRef = { current: 0 };
 
     const didNavigateHandler = (e: Electron.DidNavigateEvent | Electron.DidNavigateInPageEvent) => {
       // Only DidNavigateInPageEvent has isMainFrame
@@ -334,14 +338,20 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
 
     const ipcMessageHandler = (e: Electron.IpcMessageEvent) => {
       if (e.channel === 'pass-scroll-data') {
-        setCoordinates({
-          deltaX: e.args[0].coordinates.x,
-          deltaY: e.args[0].coordinates.y,
-          scrollX: e.args[0].coordinates.scrollX,
-          scrollY: e.args[0].coordinates.scrollY,
-          innerHeight: e.args[0].innerHeight,
-          innerWidth: e.args[0].innerWidth,
-        });
+        const payload = e.args[0];
+        if (payload.ctrlKey) {
+          // Pass the raw deltaY to the store to handle exponential smooth zoom
+          dispatch(zoomBy(payload.coordinates.y));
+        } else {
+          setCoordinates({
+            deltaX: payload.coordinates.x,
+            deltaY: payload.coordinates.y,
+            scrollX: payload.coordinates.scrollX,
+            scrollY: payload.coordinates.scrollY,
+            innerHeight: payload.innerHeight,
+            innerWidth: payload.innerWidth,
+          });
+        }
       }
       if (e.channel === 'context-menu-command') {
         const {command, arg} = e.args[0];
@@ -551,12 +561,12 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const scaledWidth = width * zoomfactor;
 
   const isRestrictedMinimumDeviceSize =
-    device.width < 400 && zoomfactor < 0.6 && !isDeviceRotationEnabled;
+    device.width < 400 && !isDeviceRotationEnabled;
 
   return (
     <div
       className={cx('h-fit', {
-        'w-52': isRestrictedMinimumDeviceSize,
+        'min-w-[14rem]': isRestrictedMinimumDeviceSize,
       })}
     >
       <div className="flex justify-between">
