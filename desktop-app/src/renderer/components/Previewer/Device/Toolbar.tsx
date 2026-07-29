@@ -7,7 +7,7 @@ import {ColorBlindnessTools} from './ColorBlindnessTools';
 import DesignOverlayControls from './DesignOverlayControls';
 
 interface Props {
-  webview: Electron.WebviewTag | null;
+  getWebview: () => Electron.WebviewTag | null;
   device: Device;
   setScreenshotInProgress: (value: boolean) => void;
   openDevTools: () => void;
@@ -21,7 +21,7 @@ interface Props {
 }
 
 const Toolbar = ({
-  webview,
+  getWebview,
   device,
   setScreenshotInProgress,
   openDevTools,
@@ -40,18 +40,20 @@ const Toolbar = ({
     quickLoading: screenshotLoading,
     fullLoading: fullScreenshotLoading,
   } = useDeviceScreenshot({
-    webview,
+    getWebview,
     device,
     onFullPageCapturePending: setScreenshotInProgress,
   });
 
   const refreshView = () => {
+    const webview = getWebview();
     if (webview) {
       webview.reload();
     }
   };
 
   const toggleEventMirroring = async () => {
+    const webview = getWebview();
     if (webview === null) {
       return;
     }
@@ -71,7 +73,7 @@ const Toolbar = ({
   };
 
   const toggleRulers = async () => {
-    if (webview === null) {
+    if (getWebview() === null) {
       return;
     }
     toggleRuler();
@@ -82,6 +84,7 @@ const Toolbar = ({
   };
 
   const scrollToTop = () => {
+    const webview = getWebview();
     if (webview) {
       webview.executeJavaScript('window.scrollTo({ top: 0, behavior: "smooth" })', false);
     }
@@ -140,7 +143,7 @@ const Toolbar = ({
         <Button onClick={toggleRulers} title="Show rulers">
           <Icon icon="tdesign:measurement-1" />
         </Button>
-        <ColorBlindnessTools webview={webview} />
+        <ColorBlindnessTools getWebview={getWebview} />
       </div>
       <Button
         onClick={() => onIndividualLayoutHandler(device)}

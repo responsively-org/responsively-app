@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import {Device as IDevice} from 'common/deviceList';
-import {ReactNode, Ref} from 'react';
+import {ReactNode} from 'react';
 import Spinner from 'renderer/components/Spinner';
 import type {DesignOverlayState, ViewResolution} from '../../../store/features/design-overlay';
 import {Coordinates} from '../../../store/features/ruler';
@@ -26,7 +26,8 @@ interface Props {
   resolution: ViewResolution;
   isRestrictedMinimumDeviceSize: boolean;
   initialSrc: string;
-  webviewRef: Ref<Electron.WebviewTag>;
+  /** Callback ref — never a ref object (see Device for why). */
+  webviewRef: (element: Electron.WebviewTag | null) => void;
   toolbar: ReactNode;
 }
 

@@ -20,8 +20,8 @@ import {
 import {APP_VIEWS, setAppView} from 'renderer/store/features/ui';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
-import Button from '../Button';
 import AddressBar from './AddressBar';
+import {IconButton, ToolbarAction, ToolbarDivider, ToolbarGroup} from './primitives';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import ModalLoader from '../ModalLoader';
 import {PreviewSuiteSelector} from './PreviewSuiteSelector';
@@ -30,8 +30,6 @@ import useKeyboardShortcut, {
 } from '../KeyboardShortcutsManager/useKeyboardShortcut';
 import Shortcuts from './Shortcuts';
 import {ColorBlindnessControls} from './ColorBlindnessControls';
-
-const Divider = () => <div className="h-6 w-px bg-gray-300 dark:bg-gray-700" />;
 
 const ToolBar = () => {
   const rotateDevices = useSelector(selectRotate);
@@ -101,39 +99,50 @@ const ToolBar = () => {
   useKeyboardShortcut(SHORTCUT_CHANNEL.INSPECT_ELEMENTS, handleInspectShortcut);
 
   return (
-    <div className="flex items-center justify-between gap-2">
+    <div className="flex h-14 flex-shrink-0 items-center gap-3 border-b border-line-soft bg-panel px-[14px]">
       <NavigationControls />
-      <AddressBar />
-      <Button onClick={handleRotate} isActive={rotateDevices} title="Rotate Devices">
-        <Icon icon={rotateDevices ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'} />
-      </Button>
-      <Button
-        onClick={() => dispatch(setIsInspecting(!isInspecting))}
-        isActive={isInspecting}
-        title="Inspect Elements"
-      >
-        <Icon icon="lucide:inspect" />
-      </Button>
-      <Button
-        onClick={screenshotCaptureHandler}
-        isActive={isCapturingScreenshot}
-        title="Screenshot All WebViews"
-      >
-        <Icon icon="lucide:camera" />
-      </Button>
-      <ColorSchemeToggle />
-      <Shortcuts />
+      <div className="min-w-0 max-w-[540px] flex-1">
+        <AddressBar />
+      </div>
+      <div className="flex-1" />
+      <ToolbarGroup>
+        <ToolbarAction onClick={handleRotate} isActive={rotateDevices} title="Rotate Devices">
+          <Icon
+            icon={rotateDevices ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'}
+            fontSize={16}
+          />
+          Rotate
+        </ToolbarAction>
+        <ToolbarAction
+          onClick={() => dispatch(setIsInspecting(!isInspecting))}
+          isActive={isInspecting}
+          title="Inspect Elements"
+        >
+          <Icon icon="lucide:inspect" fontSize={15} />
+          Inspect
+        </ToolbarAction>
+        <ToolbarAction
+          onClick={screenshotCaptureHandler}
+          isActive={isCapturingScreenshot}
+          title="Screenshot All WebViews"
+        >
+          <Icon icon="lucide:camera" fontSize={15} />
+          Capture
+        </ToolbarAction>
+        <ColorSchemeToggle />
+      </ToolbarGroup>
       <ColorBlindnessControls />
-      <Divider />
+      <ToolbarDivider />
+      <Shortcuts />
       <PreviewSuiteSelector />
-      <Button
+      <IconButton
         onClick={() => {
           dispatch(setAppView(APP_VIEWS.DEVICE_MANAGER));
         }}
         title="Device Manager"
       >
         <Icon icon="lucide:plus" width={16} />
-      </Button>
+      </IconButton>
       <Menu />
       <ModalLoader isOpen={isCapturingScreenshot} onClose={handleClose} title="Screenshot" />
     </div>

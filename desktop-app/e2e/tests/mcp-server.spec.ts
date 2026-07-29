@@ -54,7 +54,7 @@ test.describe('MCP server', () => {
     // Defense in depth: a predecessor file may have left inspect mode on,
     // whose CDP overlay consumes the trusted clicks the click tool sends.
     const inspectBtn = mainWindow.locator('button[title="Inspect Elements"]');
-    if ((await inspectBtn.getAttribute('class'))?.includes('bg-slate-400/60')) {
+    if ((await inspectBtn.getAttribute('aria-pressed')) === 'true') {
       await inspectBtn.click();
       await mainWindow.waitForTimeout(200);
     }

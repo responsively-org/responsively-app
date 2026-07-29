@@ -45,7 +45,7 @@ export const prepareFullPageCapture = async (webview: Electron.WebviewTag) => {
 };
 
 interface DeviceScreenshotParams {
-  webview: Electron.WebviewTag | null;
+  getWebview: () => Electron.WebviewTag | null;
   device: Device;
   onFullPageCapturePending?: (inProgress: boolean) => void;
 }
@@ -55,7 +55,7 @@ interface DeviceScreenshotParams {
  * loading state and the shutter sound in one place.
  */
 export const useDeviceScreenshot = ({
-  webview,
+  getWebview,
   device,
   onFullPageCapturePending,
 }: DeviceScreenshotParams) => {
@@ -64,6 +64,7 @@ export const useDeviceScreenshot = ({
   const [fullLoading, setFullLoading] = useState<boolean>(false);
 
   const quickScreenshot = async () => {
+    const webview = getWebview();
     if (webview === null) {
       return;
     }
@@ -84,6 +85,7 @@ export const useDeviceScreenshot = ({
   };
 
   const fullScreenshot = async () => {
+    const webview = getWebview();
     if (webview === null) {
       return;
     }

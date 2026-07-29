@@ -51,6 +51,16 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const ref = useRef<Electron.WebviewTag>(null);
   const initialAddress = useRef<string>(address);
 
+  // The <webview> element and any ref object holding it are deliberately kept
+  // out of child props: React's dev-mode render logging walks prop objects and
+  // reads `$$typeof` off everything it finds, and the element exposes an own
+  // `contentWindow` — a cross-origin Window for any remote page, which throws
+  // a SecurityError on property access. Functions are never walked.
+  const setWebviewRef = useCallback((element: Electron.WebviewTag | null) => {
+    ref.current = element;
+  }, []);
+  const getWebview = useCallback(() => ref.current, []);
+
   const {webviewReady} = useWebviewLifecycle(ref, {isMobileCapable: device.isMobileCapable});
   const navigation = useDeviceNavigation({ref, isPrimary, webviewReady, address});
   const {openDevTools, inspectElement} = useDevtoolsBridge({ref, webviewReady, zoomfactor});
@@ -199,10 +209,10 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       resolution={resolution}
       isRestrictedMinimumDeviceSize={isRestrictedMinimumDeviceSize}
       initialSrc={initialAddress.current}
-      webviewRef={ref}
+      webviewRef={setWebviewRef}
       toolbar={
         <Toolbar
-          webview={ref.current}
+          getWebview={getWebview}
           device={device}
           setScreenshotInProgress={setScreenshotInProgress}
           openDevTools={openDevTools}

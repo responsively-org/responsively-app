@@ -14,8 +14,7 @@ test.describe('Inspect Elements', () => {
   // whichever spec file runs next in this worker. Always leave it off.
   test.afterEach(async ({app}) => {
     const inspectBtn = app.page.locator('button[title="Inspect Elements"]');
-    const classNames = await inspectBtn.getAttribute('class');
-    if (classNames?.includes('bg-slate-400/60')) {
+    if ((await inspectBtn.getAttribute('aria-pressed')) === 'true') {
       await inspectBtn.click();
       await app.page.waitForTimeout(200);
     }
@@ -36,9 +35,8 @@ test.describe('Inspect Elements', () => {
     await inspectBtn.click();
     await app.page.waitForTimeout(300);
 
-    // The button should have the active state class (bg-slate-400/60)
-    const classNames = await inspectBtn.getAttribute('class');
-    expect(classNames).toContain('bg-slate-400/60');
+    // Toggle buttons expose their state through aria-pressed.
+    await expect(inspectBtn).toHaveAttribute('aria-pressed', 'true');
   });
 
   test('keyboard shortcut Cmd/Ctrl+I toggles inspect mode', async ({app}) => {
@@ -50,10 +48,9 @@ test.describe('Inspect Elements', () => {
     await app.pressShortcut('i');
     await app.page.waitForTimeout(300);
 
-    // Check the button state changed
-    const classNames = await inspectBtn.getAttribute('class');
-    // It should have toggled from the previous state
-    expect(classNames).toBeTruthy();
+    // Check the button still reports a toggle state
+    const pressed = await inspectBtn.getAttribute('aria-pressed');
+    expect(pressed).toBeTruthy();
   });
 
   test('clicking inspect again disables inspect mode', async ({app}) => {
@@ -62,14 +59,12 @@ test.describe('Inspect Elements', () => {
     const inspectBtn = app.page.locator('button[title="Inspect Elements"]');
 
     // Ensure inspect is currently active, then click to disable
-    const classNamesBefore = await inspectBtn.getAttribute('class');
-    const wasActive = classNamesBefore?.includes('bg-slate-400/60');
+    const wasActive = (await inspectBtn.getAttribute('aria-pressed')) === 'true';
 
     await inspectBtn.click();
     await app.page.waitForTimeout(300);
 
-    const classNamesAfter = await inspectBtn.getAttribute('class');
-    const isActive = classNamesAfter?.includes('bg-slate-400/60');
+    const isActive = (await inspectBtn.getAttribute('aria-pressed')) === 'true';
 
     // State should have toggled
     expect(isActive).not.toBe(wasActive);
