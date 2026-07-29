@@ -53,35 +53,37 @@ test.describe('Address Bar Features', () => {
     await homepageBtn.click();
     await app.page.waitForTimeout(300);
 
-    // The button should have text-blue-500 class when set as homepage
-    const classes = await homepageBtn.getAttribute('class');
-    expect(classes).toContain('text-blue-500');
+    // The button reports the current page as the homepage.
+    await expect(homepageBtn).toHaveAttribute('aria-pressed', 'true');
   });
 
-  test('delete storage button is visible and clickable', async ({app}) => {
+  // The per-site data actions live behind the address bar's site-tools
+  // popover (Hybrid Studio design), so each one has to be opened first.
+  const siteDataActions = ['Delete Storage', 'Delete Cookies', 'Clear Cache'];
+
+  for (const title of siteDataActions) {
+    test(`site tools: ${title} is reachable and clickable`, async ({app}) => {
+      await app.dismissModals();
+
+      await app.page.locator('button[title="Site tools"]').click();
+
+      const actionBtn = app.page.locator(`button[title="${title}"]`);
+      await expect(actionBtn).toBeVisible({timeout: 5_000});
+      await actionBtn.click();
+      await app.page.waitForTimeout(500);
+
+      // Selecting an action closes the popover.
+      await expect(actionBtn).toBeHidden({timeout: 5_000});
+    });
+  }
+
+  test('site tools popover exposes the site permissions entry', async ({app}) => {
     await app.dismissModals();
 
-    const deleteStorageBtn = app.page.locator('button[title="Delete Storage"]');
-    await expect(deleteStorageBtn).toBeVisible();
-    await deleteStorageBtn.click();
-    await app.page.waitForTimeout(500);
-  });
-
-  test('delete cookies button is visible and clickable', async ({app}) => {
-    await app.dismissModals();
-
-    const deleteCookiesBtn = app.page.locator('button[title="Delete Cookies"]');
-    await expect(deleteCookiesBtn).toBeVisible();
-    await deleteCookiesBtn.click();
-    await app.page.waitForTimeout(500);
-  });
-
-  test('clear cache button is visible and clickable', async ({app}) => {
-    await app.dismissModals();
-
-    const clearCacheBtn = app.page.locator('button[title="Clear Cache"]');
-    await expect(clearCacheBtn).toBeVisible();
-    await clearCacheBtn.click();
-    await app.page.waitForTimeout(500);
+    await app.page.locator('button[title="Site tools"]').click();
+    await expect(app.page.locator('button[title="Site permissions"]')).toBeVisible({
+      timeout: 5_000,
+    });
+    await app.page.keyboard.press('Escape');
   });
 });

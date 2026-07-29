@@ -15,6 +15,8 @@ import AuthModal from './AuthModal';
 import SuggestionList from './SuggestionList';
 import Bookmark from './BookmarkButton';
 import SitePermissionsDropdown from './SitePermissions';
+import SiteToolsPopover from './SiteToolsPopover';
+import {IconButton} from '../primitives';
 
 export const ADDRESS_BAR_EVENTS = {
   DELETE_COOKIES: 'DELETE_COOKIES',
@@ -192,17 +194,6 @@ const AddressBar = () => {
         onDrop={handleDrop}
         className="relative z-10 w-full flex-grow"
       >
-        <div className="absolute inset-y-0 left-2 flex items-center">
-          <button
-            type="button"
-            onClick={() => setShowSitePermissions(!showSitePermissions)}
-            className="rounded-full p-1 transition-colors hover:bg-gray-200 dark:hover:bg-slate-700"
-            title="Site permissions"
-          >
-            <Icon icon="mdi:web" className="text-gray-500" />
-          </button>
-        </div>
-
         <div className="absolute left-2 top-full z-50">
           <SitePermissionsDropdown
             currentAddress={address}
@@ -241,33 +232,77 @@ const AddressBar = () => {
             </div>
           </div>
         ) : null}
-        <input
-          ref={inputRef}
-          type="text"
-          data-testid="address-bar"
+        <div
           className={cx(
-            'w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-40 dark:bg-slate-900',
-            {
-              'rounded-bl-none rounded-br-none rounded-tl-lg rounded-tr-lg outline-none':
-                isSuggesting,
-            }
+            'flex h-[34px] items-center gap-[6px] rounded-full border border-line-soft bg-input pl-1 pr-[6px]',
+            {'rounded-bl-none rounded-br-none': isSuggesting}
           )}
-          value={typedAddress}
-          onChange={(e) => setTypedAddress(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onBlur={() => {
-            setIsFocused(false);
-            setTimeout(() => {
-              setIsSuggesting(false);
-            }, 100);
-          }}
-          onSelect={(e) => {
-            if (e.target === inputRef.current && !isFocused) {
-              inputRef.current?.select();
-              setIsFocused(true);
-            }
-          }}
-        />
+        >
+          <SiteToolsPopover
+            address={address}
+            onShowPermissions={() => setShowSitePermissions(true)}
+            actions={[
+              {
+                title: 'Delete Storage',
+                label: 'Clear storage',
+                icon: 'mdi:database-remove-outline',
+                note: 'local + session',
+                isLoading: deleteStorageLoading,
+                run: deleteStorage,
+              },
+              {
+                title: 'Delete Cookies',
+                label: 'Clear cookies',
+                icon: 'mdi:cookie-remove-outline',
+                note: 'this site',
+                isLoading: deleteCookiesLoading,
+                run: deleteCookies,
+              },
+              {
+                title: 'Clear Cache',
+                label: 'Clear cache',
+                icon: 'mdi:wifi-remove',
+                note: 'network',
+                isLoading: deleteCacheLoading,
+                run: deleteCache,
+              },
+            ]}
+          />
+          <input
+            ref={inputRef}
+            type="text"
+            data-testid="address-bar"
+            className="min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-muted"
+
+            value={typedAddress}
+            onChange={(e) => setTypedAddress(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onBlur={() => {
+              setIsFocused(false);
+              setTimeout(() => {
+                setIsSuggesting(false);
+              }, 100);
+            }}
+            onSelect={(e) => {
+              if (e.target === inputRef.current && !isFocused) {
+                inputRef.current?.select();
+                setIsFocused(true);
+              }
+            }}
+          />
+          <IconButton
+            className="!h-[26px] !w-[26px] rounded-full text-[15px]"
+            onClick={() => setHomepage(address)}
+            isActive={isHomepage}
+            title="Homepage"
+          >
+            <Icon
+              icon={isHomepage ? 'mdi:home' : 'mdi:home-outline'}
+              className={cx({'text-accent': isHomepage})}
+            />
+          </IconButton>
+          <Bookmark pageTitle={pageTitle} currentAddress={address} />
+        </div>
         <div
           className={`${
             isDragOver ? 'opacity-100' : 'opacity-0'
@@ -275,42 +310,6 @@ const AddressBar = () => {
         >
           <Icon icon="mdi:plus" />
           <p className="text-sm font-semibold">Drop URL Here</p>
-        </div>
-        <div className="absolute inset-y-0 right-0 mr-2 flex items-center">
-          <Button
-            className="rounded-full"
-            onClick={deleteStorage}
-            isLoading={deleteStorageLoading}
-            title="Delete Storage"
-          >
-            <Icon icon="mdi:database-remove-outline" />
-          </Button>
-          <Button
-            className="rounded-full"
-            onClick={deleteCookies}
-            isLoading={deleteCookiesLoading}
-            title="Delete Cookies"
-          >
-            <Icon icon="mdi:cookie-remove-outline" />
-          </Button>
-          <Button
-            className="rounded-full"
-            onClick={deleteCache}
-            isLoading={deleteCacheLoading}
-            title="Clear Cache"
-          >
-            <Icon icon="mdi:wifi-remove" />
-          </Button>
-          <Button
-            className={cx('rounded-full', {
-              'text-blue-500': isHomepage,
-            })}
-            onClick={() => setHomepage(address)}
-            title="Homepage"
-          >
-            <Icon icon={isHomepage ? 'mdi:home' : 'mdi:home-outline'} />
-          </Button>
-          <Bookmark pageTitle={pageTitle} currentAddress={address} />
         </div>
         {isSuggesting ? <SuggestionList match={typedAddress} onEnter={onEnter} /> : null}
       </div>
