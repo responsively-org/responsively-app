@@ -1,6 +1,6 @@
 import {Icon} from '@iconify/react';
+import cx from 'classnames';
 import {useState} from 'react';
-import Button from 'renderer/components/Button';
 import {Device} from 'common/deviceList';
 import {useDeviceScreenshot} from 'renderer/hooks/useScreenshot';
 import {ColorBlindnessTools} from './ColorBlindnessTools';
@@ -19,6 +19,42 @@ interface Props {
   isIndividualLayout: boolean;
   isDeviceRotationEnabled: boolean;
 }
+
+interface PillButtonProps {
+  title: string;
+  isActive?: boolean;
+  isLoading?: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}
+
+/** 28px action inside the floating device pill (Hybrid Studio design). */
+const PillButton = ({
+  title,
+  isActive,
+  isLoading = false,
+  disabled = false,
+  onClick,
+  children,
+}: PillButtonProps) => (
+  <button
+    type="button"
+    title={title}
+    aria-pressed={isActive}
+    disabled={disabled}
+    onClick={onClick}
+    className={cx(
+      'flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[7px] text-[15px] transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent',
+      isActive === true ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-hover hover:text-fg',
+      {'cursor-not-allowed opacity-40': disabled}
+    )}
+  >
+    <span className="pointer-events-none contents">
+      {isLoading ? <Icon icon="line-md:loading-twotone-loop" /> : children}
+    </span>
+  </button>
+);
 
 const Toolbar = ({
   getWebview,
@@ -91,66 +127,64 @@ const Toolbar = ({
   };
 
   return (
-    <div className="flex items-center justify-between gap-1">
-      <div className="my-1 inline-flex max-w-[78%] items-center gap-1 overflow-x-auto">
-        <Button onClick={refreshView} title="Refresh This View">
-          <Icon icon="ic:round-refresh" />
-        </Button>
-        <Button onClick={quickScreenshot} isLoading={screenshotLoading} title="Quick Screenshot">
-          <div className="relative h-4 w-4">
-            <Icon icon="ic:outline-photo-camera" className="absolute left-0 top-0" />
-            <Icon
-              icon="clarity:lightning-solid"
-              className="absolute right-[-2px] top-[-1px]"
-              height={8}
-            />
-          </div>
-        </Button>
-        <Button
-          onClick={fullScreenshot}
-          isLoading={fullScreenshotLoading}
-          title="Full Page Screenshot"
-        >
-          <Icon icon="ic:outline-photo-camera" />
-        </Button>
-        <Button onClick={() => setIsDesignOverlayModalOpen(true)} title="Design Overlay">
-          <Icon icon="lucide:layers" />
-        </Button>
-        <Button
-          onClick={toggleEventMirroring}
-          isActive={eventMirroringOff}
-          title="Disable Event Mirroring"
-        >
-          <Icon icon="fluent:plug-disconnected-24-regular" />
-        </Button>
-        <Button onClick={openDevTools} title="Open Devtools">
-          <Icon icon="ic:round-code" />
-        </Button>
-        <Button
-          onClick={rotate}
-          disabled={!isDeviceRotationEnabled}
-          title={
-            isDeviceRotationEnabled
-              ? 'Rotate This Device'
-              : 'Rotation not available for non-mobile devices'
-          }
-        >
-          <Icon icon={rotated ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'} />
-        </Button>
-        <Button onClick={scrollToTop} title="Scroll to Top">
-          <Icon icon="ic:baseline-arrow-upward" />
-        </Button>
-        <Button onClick={toggleRulers} title="Show rulers">
-          <Icon icon="tdesign:measurement-1" />
-        </Button>
-        <ColorBlindnessTools getWebview={getWebview} />
-      </div>
-      <Button
-        onClick={() => onIndividualLayoutHandler(device)}
+    // Wrap rather than clip: at typical zoom a phone column is ~200px while the
+    // pill needs ~330px, and clipped buttons would be unclickable.
+    <div
+      data-testid="device-pill"
+      className="my-1 flex w-fit max-w-full flex-wrap items-center gap-[2px] rounded-[9px] border border-line bg-panel p-[3px] opacity-0 shadow-elevated transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100"
+    >
+      <PillButton title="Refresh This View" onClick={refreshView}>
+        <Icon icon="ic:round-refresh" />
+      </PillButton>
+      <PillButton title="Quick Screenshot" isLoading={screenshotLoading} onClick={quickScreenshot}>
+        <Icon icon="lucide:camera" />
+      </PillButton>
+      <PillButton
+        title="Full Page Screenshot"
+        isLoading={fullScreenshotLoading}
+        onClick={fullScreenshot}
+      >
+        <Icon icon="ic:outline-photo-camera" />
+      </PillButton>
+      <PillButton title="Design Overlay" onClick={() => setIsDesignOverlayModalOpen(true)}>
+        <Icon icon="lucide:layers" />
+      </PillButton>
+      <PillButton
+        title="Disable Event Mirroring"
+        isActive={eventMirroringOff}
+        onClick={toggleEventMirroring}
+      >
+        <Icon icon="fluent:plug-disconnected-24-regular" />
+      </PillButton>
+      <PillButton title="Open Devtools" onClick={openDevTools}>
+        <Icon icon="ic:round-code" />
+      </PillButton>
+      <PillButton
+        title={
+          isDeviceRotationEnabled
+            ? 'Rotate This Device'
+            : 'Rotation not available for non-mobile devices'
+        }
+        disabled={!isDeviceRotationEnabled}
+        isActive={isDeviceRotationEnabled ? rotated : undefined}
+        onClick={rotate}
+      >
+        <Icon icon={rotated ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'} />
+      </PillButton>
+      <PillButton title="Scroll to Top" onClick={scrollToTop}>
+        <Icon icon="ic:baseline-arrow-upward" />
+      </PillButton>
+      <PillButton title="Show rulers" onClick={toggleRulers}>
+        <Icon icon="tdesign:measurement-1" />
+      </PillButton>
+      <ColorBlindnessTools getWebview={getWebview} />
+      <PillButton
         title={`${isIndividualLayout ? 'Disable' : 'Enable'} Individual Layout`}
+        isActive={isIndividualLayout}
+        onClick={() => onIndividualLayoutHandler(device)}
       >
         <Icon icon={isIndividualLayout ? 'ic:twotone-zoom-in-map' : 'ic:twotone-zoom-out-map'} />
-      </Button>
+      </PillButton>
       <DesignOverlayControls
         device={device}
         isOpen={isDesignOverlayModalOpen}

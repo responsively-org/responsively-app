@@ -60,7 +60,7 @@ const DeviceFrame = ({
 
   return (
     <div
-      className={cx('h-fit', {
+      className={cx('group h-fit', {
         'w-52': isRestrictedMinimumDeviceSize,
       })}
     >
