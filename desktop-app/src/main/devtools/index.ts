@@ -6,6 +6,11 @@ import log from '../logging';
 import {isRegisteredWebview} from '../webview-registry';
 
 let devtoolsView: WebContentsView | undefined;
+// A WebContentsView is a native child view: it always paints above the page,
+// so any DOM modal or popover overlapping it is occluded (#694/#651). The
+// renderer reports when an overlay is open and we detach the view meanwhile.
+let devtoolsBounds: Electron.Rectangle | undefined;
+let overlayOpen = false;
 let devtoolsWebview: Electron.WebContents;
 let mainWindow: BrowserWindow | undefined;
 
@@ -189,18 +194,38 @@ const openDevtools = async (_: any, arg: OpenDevtoolsArgs): Promise<OpenDevtools
   return {status: true};
 };
 
-const resizeDevtools = async (_: any, arg: ResizeDevtoolsArgs) => {
+/** Attaches or detaches the devtools view to match the current overlay state. */
+const applyDevtoolsPlacement = () => {
   if (devtoolsView == null || mainWindow == null) {
     return;
   }
   try {
-    if (!mainWindow.contentView.children.includes(devtoolsView)) {
+    const isAttached = mainWindow.contentView.children.includes(devtoolsView);
+    if (overlayOpen) {
+      if (isAttached) {
+        mainWindow.contentView.removeChildView(devtoolsView);
+      }
+      return;
+    }
+    if (!isAttached) {
       mainWindow.contentView.addChildView(devtoolsView);
     }
-    devtoolsView.setBounds(arg.bounds);
+    if (devtoolsBounds !== undefined) {
+      devtoolsView.setBounds(devtoolsBounds);
+    }
   } catch (err) {
-    log.error('Error resizing devtools', err);
+    log.error('Error placing devtools', err);
   }
+};
+
+const resizeDevtools = async (_: any, arg: ResizeDevtoolsArgs) => {
+  devtoolsBounds = arg.bounds;
+  applyDevtoolsPlacement();
+};
+
+const setOverlayOpen = async (_: any, arg: {isOpen: boolean}) => {
+  overlayOpen = arg.isOpen;
+  applyDevtoolsPlacement();
 };
 
 const closeDevTools = async () => {
@@ -214,6 +239,7 @@ const closeDevTools = async () => {
   mainWindow?.contentView.removeChildView(devtoolsView);
   devtoolsView.webContents.close();
   devtoolsView = undefined;
+  devtoolsBounds = undefined;
 };
 
 export const initDevtoolsHandlers = (_mainWindow: BrowserWindow | undefined) => {
@@ -227,6 +253,9 @@ export const initDevtoolsHandlers = (_mainWindow: BrowserWindow | undefined) => 
 
   ipcMain.removeHandler(IPC_MAIN_CHANNELS.CLOSE_DEVTOOLS);
   ipcMain.handle(IPC_MAIN_CHANNELS.CLOSE_DEVTOOLS, closeDevTools);
+
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.SET_OVERLAY_OPEN);
+  ipcMain.handle(IPC_MAIN_CHANNELS.SET_OVERLAY_OPEN, setOverlayOpen);
 
   ipcMain.removeHandler(IPC_MAIN_CHANNELS.ENABLE_INSPECTOR_OVERLAY);
   ipcMain.handle(IPC_MAIN_CHANNELS.ENABLE_INSPECTOR_OVERLAY, enableInspector);

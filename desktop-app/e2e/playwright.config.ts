@@ -30,6 +30,7 @@ const testOrder = [
   'popup-policy.spec.ts',
   'title-bar.spec.ts',
   'status-bar.spec.ts',
+  'devtools-overlay.spec.ts',
   'shortcut-forwarding.spec.ts',
   'address-bar-features.spec.ts',
   'device-toolbar.spec.ts',

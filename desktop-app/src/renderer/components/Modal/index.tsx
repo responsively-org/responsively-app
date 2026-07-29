@@ -7,6 +7,7 @@ import {
   TransitionChild,
 } from '@headlessui/react';
 import {Fragment} from 'react';
+import useOverlayRegistry from 'renderer/hooks/useOverlayRegistry';
 
 interface Props {
   isOpen: boolean;
@@ -17,6 +18,8 @@ interface Props {
 }
 
 const Modal = ({isOpen, onClose, title, description, children}: Props) => {
+  useOverlayRegistry(isOpen);
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog onClose={onClose} className="relative z-50" as="div">
