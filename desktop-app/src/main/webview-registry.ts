@@ -1,4 +1,5 @@
 import {WebContents} from 'electron';
+import {matchShortcut, ShortcutChannel} from '../common/shortcuts';
 import store from '../store';
 import log from './logging';
 import {decidePopupAction, PopupBehavior} from './popup-policy';
@@ -15,6 +16,8 @@ export const isRegisteredWebview = (webContentsId: number): boolean =>
 export interface WebviewSecurityDeps {
   openInPreview: (url: string) => void;
   openExternal: (url: string) => void;
+  /** Routes an app shortcut typed inside a preview back to the renderer. */
+  onShortcut: (channel: ShortcutChannel) => void;
 }
 
 // Event mirroring replays a popup-triggering click in every preview, so one
@@ -53,6 +56,21 @@ export const wireWebviewSecurity = (hostContents: WebContents, deps: WebviewSecu
     registeredWebviewIds.add(id);
     guestContents.once('destroyed', () => {
       registeredWebviewIds.delete(id);
+    });
+
+    // Keystrokes that land inside a guest never reach the renderer's own
+    // handlers, which is why app shortcuts died whenever a preview had focus
+    // (#1175). The main process sees them first, so match and forward here.
+    guestContents.on('before-input-event', (event, input) => {
+      if (input.type !== 'keyDown') {
+        return;
+      }
+      const channel = matchShortcut(input, process.platform);
+      if (channel === null) {
+        return;
+      }
+      event.preventDefault();
+      deps.onShortcut(channel);
     });
 
     guestContents.setWindowOpenHandler((details) => {

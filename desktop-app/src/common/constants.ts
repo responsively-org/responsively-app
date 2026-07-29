@@ -57,6 +57,7 @@ export const IPC_MAIN_CHANNELS = {
   ELECTRON_STORE_GET: 'electron-store-get',
   ELECTRON_STORE_SET: 'electron-store-set',
   GET_ABOUT_INFO: 'get-about-info',
+  SHORTCUT_TRIGGERED: 'shortcut-triggered',
 } as const;
 
 export type Channels = (typeof IPC_MAIN_CHANNELS)[keyof typeof IPC_MAIN_CHANNELS];

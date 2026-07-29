@@ -251,6 +251,9 @@ const createWindow = async () => {
   wireWebviewSecurity(mainWindow.webContents, {
     openInPreview: (url) => openUrl(url, getMainWindow()),
     openExternal: (url) => shell.openExternal(url),
+    onShortcut: (channel) => {
+      getMainWindow()?.webContents.send(IPC_MAIN_CHANNELS.SHORTCUT_TRIGGERED, channel);
+    },
   });
 
   mainWindow.loadURL(

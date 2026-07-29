@@ -198,11 +198,10 @@ test.describe('Custom Device Creation', () => {
     await app.page.getByRole('button', {name: 'Delete'}).click();
     await app.page.waitForTimeout(500);
 
-    // Device should be removed
+    // Device should be removed. Only assert on the device this test created —
+    // sibling tests run in parallel and may share this app instance, so the
+    // list is not necessarily empty afterwards.
     await expect(customSection.getByText('Delete Me Device')).not.toBeVisible();
-
-    // Empty state should return
-    await expect(customSection.getByText('No custom devices added yet!')).toBeVisible();
 
     await app.closeDeviceManager();
   });
