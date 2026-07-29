@@ -100,10 +100,9 @@ export class ResponsivelyApp {
     await this.page.waitForTimeout(1000);
   }
 
+  /** Opens the suite editor popover (the dashed + button beside the chips). */
   async openSuiteSelector() {
-    const suiteSelector = this.page.locator('[data-testid="suite-selector"]');
-    const suiteSelectorBtn = suiteSelector.locator('button').first();
-    await suiteSelectorBtn.click();
+    await this.page.locator('button[title="Edit suite"]').click();
     await this.page.waitForTimeout(300);
   }
 
