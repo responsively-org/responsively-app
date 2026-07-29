@@ -1,11 +1,11 @@
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import cx from 'classnames';
 import {selectActiveSuite} from 'renderer/store/features/device-manager';
 import {DOCK_POSITION, PREVIEW_LAYOUTS} from 'common/constants';
 import {selectDockPosition, selectIsDevtoolsOpen} from 'renderer/store/features/devtools';
 import {getDevicesMap, Device as IDevice} from 'common/deviceList';
-import {useState} from 'react';
-import {selectLayout} from 'renderer/store/features/renderer';
+import {useState, useEffect, useRef} from 'react';
+import {selectLayout, zoomBy} from 'renderer/store/features/renderer';
 import Masonry from 'react-masonry-component';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
@@ -28,13 +28,33 @@ const TypedMasonry: React.FC<MasonryProps> = Masonry as any;
 
 const Previewer = () => {
   const activeSuite = useSelector(selectActiveSuite);
-  const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
+  const devices = activeSuite.devices.map((id: string) => getDevicesMap()[id]);
   const dockPosition = useSelector(selectDockPosition);
   const isDevtoolsOpen = useSelector(selectIsDevtoolsOpen);
   const layout = useSelector(selectLayout);
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
   const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY; // New state for Masonry layout
+  const dispatch = useDispatch();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+        // Pass the raw deltaY to the store to handle exponential smooth zoom
+        dispatch(zoomBy(e.deltaY));
+      }
+    };
+
+    container.addEventListener('wheel', handleWheel, {passive: false});
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+    };
+  }, [dispatch]);
 
   const masonryOptions = {
     columnWidth: 275,
@@ -60,11 +80,11 @@ const Previewer = () => {
           'justify-center': isIndividualLayout,
         })}
       >
-        <div className="flex flex-grow overflow-hidden">
+        <div className="flex flex-grow overflow-hidden" ref={containerRef}>
           <div className="w-full flex-grow overflow-y-auto" style={{height: '100%'}}>
             {isMasonryLayout ? (
               <TypedMasonry options={masonryOptions} className="w-full gap-4 p-2">
-                {devices.map((device) => (
+                {devices.map((device: IDevice) => (
                   <div key={device.id} className="device-item p-4">
                     <Device
                       device={device}
@@ -89,7 +109,7 @@ const Previewer = () => {
                     setIndividualDevice={setIndividualDevice}
                   />
                 ) : (
-                  devices.map((device, idx) => (
+                  devices.map((device: IDevice, idx: number) => (
                     <Device
                       key={device.id}
                       device={device}

@@ -62,38 +62,53 @@ export const rendererSlice = createSlice({
       }
     },
     zoomIn: (state) => {
-      const index =
-        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL
-          ? zoomSteps.indexOf(state.individualZoomFactor)
-          : zoomSteps.indexOf(state.zoomFactor);
+      const currentZoom =
+        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL ? state.individualZoomFactor : state.zoomFactor;
+      const nextStep = zoomSteps.find((step) => step > currentZoom + 0.001); // +0.001 to handle floating point precision
 
-      if (index < zoomSteps.length - 1) {
+      if (nextStep) {
+        const newIndex = zoomSteps.indexOf(nextStep);
         if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
-          const newIndex = index + 1;
-          state.individualZoomFactor = zoomSteps[newIndex];
+          state.individualZoomFactor = nextStep;
           window.electron.store.set('renderer.individualZoomStepIndex', newIndex);
         } else {
-          const newIndex = index + 1;
-          state.zoomFactor = zoomSteps[newIndex];
+          state.zoomFactor = nextStep;
           window.electron.store.set('renderer.zoomStepIndex', newIndex);
         }
       }
     },
     zoomOut: (state) => {
-      const index =
-        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL
-          ? zoomSteps.indexOf(state.individualZoomFactor)
-          : zoomSteps.indexOf(state.zoomFactor);
-      if (index > 0) {
+      const currentZoom =
+        state.layout === PREVIEW_LAYOUTS.INDIVIDUAL ? state.individualZoomFactor : state.zoomFactor;
+      const nextStep = [...zoomSteps].reverse().find((step) => step < currentZoom - 0.001);
+
+      if (nextStep) {
+        const newIndex = zoomSteps.indexOf(nextStep);
         if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
-          const newIndex = index - 1;
-          state.individualZoomFactor = zoomSteps[newIndex];
+          state.individualZoomFactor = nextStep;
           window.electron.store.set('renderer.individualZoomStepIndex', newIndex);
         } else {
-          const newIndex = index - 1;
-          state.zoomFactor = zoomSteps[newIndex];
+          state.zoomFactor = nextStep;
           window.electron.store.set('renderer.zoomStepIndex', newIndex);
         }
+      }
+    },
+    zoomBy: (state, action: PayloadAction<number>) => {
+      const deltaY = action.payload;
+      const MIN_ZOOM = zoomSteps[0];
+      const MAX_ZOOM = zoomSteps[zoomSteps.length - 1];
+
+      // Use an exponential scale so the perceived zoom speed is consistent across all zoom levels
+      const multiplier = Math.exp(-deltaY * 0.002);
+
+      if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
+        let newZoom = state.individualZoomFactor * multiplier;
+        newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+        state.individualZoomFactor = newZoom;
+      } else {
+        let newZoom = state.zoomFactor * multiplier;
+        newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+        state.zoomFactor = newZoom;
       }
     },
     setRotate: (state, action: PayloadAction<boolean>) => {
@@ -127,6 +142,7 @@ export const {
   setAddress,
   zoomIn,
   zoomOut,
+  zoomBy,
   setRotate,
   setIsInspecting,
   setLayout,

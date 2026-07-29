@@ -16,18 +16,26 @@ const documentBodyInit = () => {
     });
   });
 
-  window.addEventListener('wheel', (e) => {
-    ipcRenderer.sendToHost('pass-scroll-data', {
-      coordinates: {
-        x: e.deltaX,
-        y: e.deltaY,
-        scrollX: window.scrollX,
-        scrollY: window.scrollY,
-      },
-      innerHeight: document.body.scrollHeight,
-      innerWidth: window.innerWidth,
-    });
-  });
+  window.addEventListener(
+    'wheel',
+    (e) => {
+      if (e.ctrlKey) {
+        e.preventDefault(); // Prevent webview from zooming internally
+      }
+      ipcRenderer.sendToHost('pass-scroll-data', {
+        coordinates: {
+          x: e.deltaX,
+          y: e.deltaY,
+          scrollX: window.scrollX,
+          scrollY: window.scrollY,
+        },
+        ctrlKey: e.ctrlKey,
+        innerHeight: document.body.scrollHeight,
+        innerWidth: window.innerWidth,
+      });
+    },
+    {passive: false}
+  );
 
   window.addEventListener('scroll', () => {
     ipcRenderer.sendToHost('pass-scroll-data', {
