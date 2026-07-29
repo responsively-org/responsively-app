@@ -19,6 +19,8 @@ const ColorSchemeToggle = () => {
       }}
       subtle
       title="Device theme color toggle"
+      aria-label="Toggle device color scheme"
+      aria-pressed={isDarkColorScheme}
     >
       <span className="relative">
         <Icon icon="iconoir:empty-page" />
