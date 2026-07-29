@@ -67,7 +67,7 @@ export const AboutDialog = () => {
         <div className="flex flex-col items-center justify-center">
           <img src={Icon} alt="Logo" width={48} className="pb-2" />
           <div className="text-2xl">Responsively App</div>
-          <div className="text-base text-gray-500">
+          <div className="text-base text-gray-500 dark:text-gray-400">
             A dev-tool that aids faster and precise responsive web development.
           </div>
         </div>

@@ -39,7 +39,7 @@ export const ConfirmDialog = ({
         data-testid="confirm-dialog"
         className="mb-6 flex h-full w-full flex-col flex-wrap items-center justify-center bg-opacity-95"
       >
-        <h2 className="m-4 text-center text-2xl font-bold text-white">
+        <h2 className="m-4 text-center text-2xl font-bold text-slate-800 dark:text-white">
           <p>{confirmText || 'Are you sure?'}</p>
         </h2>
         <div className="m-4 flex justify-center">

@@ -9,7 +9,7 @@ const Notification = ({notification}: {notification: NotificationType}) => {
   };
 
   return (
-    <div className="mb-2 text-sm text-white">
+    <div className="mb-2 text-sm dark:text-white">
       <p> {notification.text} </p>
       {notification.link && notification.linkText && (
         <Button
