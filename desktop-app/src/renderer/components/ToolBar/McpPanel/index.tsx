@@ -4,6 +4,16 @@ import {IPC_MAIN_CHANNELS} from 'common/constants';
 import {useCallback, useEffect, useState} from 'react';
 import Popover from 'renderer/components/Popover';
 
+interface AgentToolState {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  installed: boolean;
+  added: boolean;
+  configPath: string | null;
+}
+
 interface McpServerStatus {
   enabled: boolean;
   running: boolean;
@@ -25,18 +35,36 @@ const configSnippet = (): string =>
  */
 const McpPanel = () => {
   const [status, setStatus] = useState<McpServerStatus | null>(null);
+  const [tools, setTools] = useState<AgentToolState[]>([]);
   const [copied, setCopied] = useState<boolean>(false);
+  const [toolError, setToolError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     const next = await window.electron.ipcRenderer.invoke<unknown, McpServerStatus>(
       IPC_MAIN_CHANNELS.MCP_STATUS
     );
     setStatus(next);
+    const nextTools = await window.electron.ipcRenderer.invoke<unknown, AgentToolState[]>(
+      IPC_MAIN_CHANNELS.MCP_LIST_TOOLS
+    );
+    setTools(nextTools);
   }, []);
 
   useEffect(() => {
     refresh();
   }, [refresh]);
+
+  const setTool = async (toolId: string, add: boolean) => {
+    setToolError(null);
+    const response = await window.electron.ipcRenderer.invoke<
+      {toolId: string; add: boolean},
+      {tools: AgentToolState[]; result: {error?: string}}
+    >(IPC_MAIN_CHANNELS.MCP_SET_TOOL, {toolId, add});
+    setTools(response.tools);
+    if (response.result?.error != null) {
+      setToolError(response.result.error);
+    }
+  };
 
   const toggle = async () => {
     if (status === null) {
@@ -121,6 +149,63 @@ const McpPanel = () => {
         </div>
 
         <div className="mx-1 mb-[6px] border-t border-line-soft" />
+
+        <div className="px-[10px] pb-1 pt-[2px] text-[10.5px] font-bold tracking-[0.08em] text-muted">
+          ADD TO YOUR TOOLS
+        </div>
+        <div className={cx({'pointer-events-none opacity-40': !(status?.enabled ?? false)})}>
+          {tools.filter((tool) => tool.installed).length === 0 ? (
+            <div className="px-[10px] pb-2 text-[11.5px] text-muted">
+              No supported AI tools detected — copy the config below instead.
+            </div>
+          ) : null}
+          {tools
+            .filter((tool) => tool.installed)
+            .map((tool) => (
+              <div
+                key={tool.id}
+                data-testid={`mcp-tool-${tool.id}`}
+                className="flex items-center gap-[9px] rounded-lg px-[10px] py-[5px] hover:bg-hover"
+              >
+                <span
+                  className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md text-white"
+                  style={{background: tool.color}}
+                >
+                  <Icon icon={tool.icon} fontSize={13} />
+                </span>
+                <span className="text-[13px]">{tool.name}</span>
+                <span className="flex-1" />
+                <button
+                  type="button"
+                  aria-pressed={tool.added}
+                  title={
+                    tool.added
+                      ? `Added — click to remove from ${tool.name}`
+                      : `Add Responsively MCP to ${tool.name}`
+                  }
+                  onClick={() => setTool(tool.id, !tool.added)}
+                  className={cx(
+                    'h-6 rounded-full text-[11px] font-bold focus:outline-none',
+                    tool.added
+                      ? 'flex items-center gap-1 px-2 text-accent'
+                      : 'border border-accent px-3 text-accent hover:bg-accent-soft'
+                  )}
+                >
+                  <span className="pointer-events-none contents">
+                    {tool.added ? <Icon icon="ic:round-check" fontSize={13} /> : null}
+                    {tool.added ? 'Added' : 'Add'}
+                  </span>
+                </button>
+              </div>
+            ))}
+        </div>
+        {toolError != null ? (
+          <p role="alert" className="px-[10px] py-1 text-[11.5px] text-red-500">
+            {toolError}
+          </p>
+        ) : null}
+
+        <div className="mx-1 my-[6px] border-t border-line-soft" />
 
         <button
           type="button"

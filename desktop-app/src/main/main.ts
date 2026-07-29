@@ -31,6 +31,7 @@ import {WebPermissionHandlers} from './web-permissions';
 import {initHttpBasicAuthHandlers} from './http-basic-auth';
 import {initAppMetaHandlers} from './app-meta';
 import {getMcpServerStatus, initMcpServer, setMcpServerEnabled} from './mcp';
+import {listAgentTools, setToolEntry, AgentEnv} from './mcp/agent-config';
 import {openUrl} from './protocol-handler';
 import {AppUpdater} from './app-updater';
 import {getSavedWindowState, trackWindowState} from './window-state';
@@ -139,6 +140,25 @@ ipcMain.handle(IPC_MAIN_CHANNELS.MCP_STATUS, async () => getMcpServerStatus());
 
 ipcMain.handle(IPC_MAIN_CHANNELS.MCP_SET_ENABLED, async (_event, {enabled}: {enabled: boolean}) =>
   setMcpServerEnabled(enabled)
+);
+
+const agentEnv = (): AgentEnv => ({
+  homeDir: app.getPath('home'),
+  platform: process.platform,
+  appData: process.env.APPDATA,
+});
+
+ipcMain.handle(IPC_MAIN_CHANNELS.MCP_LIST_TOOLS, async () => listAgentTools(agentEnv()));
+
+ipcMain.handle(
+  IPC_MAIN_CHANNELS.MCP_SET_TOOL,
+  async (_event, {toolId, add}: {toolId: string; add: boolean}) => {
+    const result = setToolEntry(agentEnv(), toolId, add);
+    if ('error' in result) {
+      log.warn('[mcp] agent config update failed', result.error);
+    }
+    return {tools: listAgentTools(agentEnv()), result};
+  }
 );
 
 if (process.env.NODE_ENV === 'production') {
