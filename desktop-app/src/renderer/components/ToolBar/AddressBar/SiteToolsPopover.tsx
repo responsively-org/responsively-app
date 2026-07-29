@@ -56,8 +56,11 @@ const SiteToolsPopover = ({address, actions, onShowPermissions}: Props) => {
               type="button"
               title={action.title}
               onClick={() => {
-                action.run();
+                // Close first: the action's loading state re-renders this
+                // subtree, and a menu that stays open also traps focus,
+                // which silently breaks keyboard shortcuts app-wide.
                 close();
+                action.run();
               }}
               className="flex w-full items-center gap-[10px] rounded-[7px] px-[10px] py-2 text-[13.5px] text-fg hover:bg-hover focus:outline-none focus-visible:bg-hover"
             >

@@ -1,37 +1,6 @@
-import cx from 'classnames';
 import {Icon} from '@iconify/react';
-import {DropDown} from '../DropDown';
-
-const MenuItemLabel = ({label, isActive}: {label: string; isActive: boolean}) => {
-  return (
-    <div className="flex w-full flex-shrink-0 items-center justify-normal gap-1 whitespace-nowrap">
-      <Icon
-        icon="ic:round-check"
-        className={cx('opacity-0', {
-          'opacity-100': isActive,
-        })}
-      />
-      <span
-        className={cx('capitalize', {
-          'font-semibold text-black dark:text-white': isActive,
-        })}
-      >
-        {label}
-      </span>
-    </div>
-  );
-};
-
-const MenuItemHeader = ({label}: {label: string}) => {
-  return (
-    <div className="relative flex w-full min-w-44 items-center justify-between gap-1 whitespace-nowrap">
-      <div className="absolute inset-0 flex items-center" aria-hidden="true">
-        <div className="w-full border-t border-gray-300 dark:border-gray-600" />
-      </div>
-      <span className="mxl-1 z-10 flex-shrink-0 bg-slate-100 pr-2 dark:bg-slate-900">{label}</span>
-    </div>
-  );
-};
+import cx from 'classnames';
+import Popover from '../Popover';
 
 export const SIMULATIONS = {
   DEUTERANOPIA: 'deuteranopia',
@@ -65,90 +34,93 @@ export const VISUAL_IMPAIRMENTS = [
 ];
 export const SUNLIGHT = [SIMULATIONS.SOLARIZE];
 
+const DISABLE_LABEL = 'Disable tool';
+
+const GROUPS: Array<{header: string; items: string[]}> = [
+  {header: 'No deficiency', items: [DISABLE_LABEL]},
+  {header: 'Red-green deficiency', items: RED_GREEN},
+  {header: 'Blue-yellow deficiency', items: BLUE_YELLOW},
+  {header: 'Full color deficiency', items: FULL},
+  {header: 'Visual impairment', items: VISUAL_IMPAIRMENTS},
+  {header: 'Temporary impairment', items: SUNLIGHT},
+];
+
 interface Props {
   simulationName: string | undefined;
   onChange: (name: string | undefined) => void;
+  /** `toolbar` shows the labelled action; `compact` is icon-only (per device). */
+  variant?: 'toolbar' | 'compact';
 }
 
-export const VisionSimulationDropDown = ({simulationName, onChange}: Props) => {
+export const VisionSimulationDropDown = ({
+  simulationName,
+  onChange,
+  variant = 'compact',
+}: Props) => {
+  const isSimulating = simulationName != null;
+  const isToolbar = variant === 'toolbar';
+
   return (
-    <DropDown
-      className={cx('rounded-lg text-xs', {
-        'bg-slate-400/60': simulationName != null,
-      })}
-      label={<Icon icon="bx:low-vision" fontSize={18} />}
-      options={[
-        {
-          label: <MenuItemHeader label="No deficiency" />,
-          onClick: null,
-        },
-        {
-          label: <MenuItemLabel label="Disable tool" isActive={simulationName === undefined} />,
-          onClick: () => {
-            onChange(undefined);
-          },
-        },
-        {
-          label: <MenuItemHeader label="Red-green deficiency" />,
-          onClick: null,
-        },
-        ...RED_GREEN.map((x: string) => {
-          return {
-            label: <MenuItemLabel label={x} isActive={simulationName === x.toLowerCase()} />,
-            onClick: () => {
-              onChange(x.toLowerCase());
-            },
-          };
-        }),
-        {
-          label: <MenuItemHeader label="Blue-yellow deficiency" />,
-          onClick: null,
-        },
-        ...BLUE_YELLOW.map((x: string) => {
-          return {
-            label: <MenuItemLabel label={x} isActive={simulationName === x.toLowerCase()} />,
-            onClick: () => {
-              onChange(x.toLowerCase());
-            },
-          };
-        }),
-        {
-          label: <MenuItemHeader label="Full color deficiency" />,
-          onClick: null,
-        },
-        ...FULL.map((x: string) => {
-          return {
-            label: <MenuItemLabel label={x} isActive={simulationName === x.toLowerCase()} />,
-            onClick: () => {
-              onChange(x.toLowerCase());
-            },
-          };
-        }),
-        {
-          label: <MenuItemHeader label="Visual impairment" />,
-          onClick: null,
-        },
-        ...VISUAL_IMPAIRMENTS.map((x: string) => {
-          return {
-            label: <MenuItemLabel label={x} isActive={simulationName === x.toLowerCase()} />,
-            onClick: () => {
-              onChange(x.toLowerCase());
-            },
-          };
-        }),
-        {
-          label: <MenuItemHeader label="Temporary impairment" />,
-          onClick: null,
-        },
-        ...SUNLIGHT.map((x: string) => {
-          return {
-            label: <MenuItemLabel label={x} isActive={simulationName === x.toLowerCase()} />,
-            onClick: () => {
-              onChange(x.toLowerCase());
-            },
-          };
-        }),
-      ]}
-    />
+    <Popover
+      triggerTitle="Vision simulation"
+      anchor="bottom end"
+      className="max-h-[470px] w-[238px] overflow-y-auto p-[6px]"
+      triggerClassName={cx(
+        'flex items-center transition-colors',
+        isToolbar
+          ? 'h-[30px] gap-[7px] rounded-[7px] px-[11px] text-[12.5px]'
+          : 'h-7 w-7 justify-center rounded-md text-[18px]',
+        isSimulating ? 'bg-accent-soft text-accent' : 'text-fg hover:bg-hover'
+      )}
+      trigger={
+        <span className="pointer-events-none contents">
+          <Icon icon="bx:low-vision" fontSize={isToolbar ? 16 : 18} />
+          {isToolbar ? 'Simulate' : null}
+          {isToolbar ? <Icon icon="mdi:chevron-down" fontSize={13} className="text-muted" /> : null}
+        </span>
+      }
+    >
+      {({close}) => (
+        <>
+          {GROUPS.map((group) => (
+            <div key={group.header}>
+              <div className="px-[10px] pb-[3px] pt-[10px] text-[10.5px] font-bold uppercase tracking-[0.07em] text-muted">
+                {group.header}
+              </div>
+              {group.items.map((item) => {
+                const isDisableEntry = item === DISABLE_LABEL;
+                const isActive = isDisableEntry
+                  ? simulationName === undefined
+                  : simulationName === item.toLowerCase();
+                return (
+                  <button
+                    key={item}
+                    type="button"
+                    aria-pressed={isActive}
+                    onClick={() => {
+                      onChange(isDisableEntry ? undefined : item.toLowerCase());
+                      close();
+                    }}
+                    className={cx(
+                      'flex w-full items-center gap-2 rounded-[7px] px-[10px] py-[6px] text-left text-[13px] capitalize text-fg hover:bg-hover focus:outline-none focus-visible:bg-hover',
+                      {'font-semibold': isActive}
+                    )}
+                  >
+                    <span className="pointer-events-none contents">
+                      <Icon
+                        icon="ic:round-check"
+                        fontSize={14}
+                        className={cx('text-accent', {'opacity-0': !isActive})}
+                      />
+                      {item}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </>
+      )}
+    </Popover>
   );
 };

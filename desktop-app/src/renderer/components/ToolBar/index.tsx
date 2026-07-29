@@ -129,9 +129,9 @@ const ToolBar = () => {
           <Icon icon="lucide:camera" fontSize={15} />
           Capture
         </ToolbarAction>
+        <ColorBlindnessControls />
         <ColorSchemeToggle />
       </ToolbarGroup>
-      <ColorBlindnessControls />
       <ToolbarDivider />
       <Shortcuts />
       <PreviewSuiteSelector />
