@@ -58,9 +58,10 @@ test.describe('Canvas mode', () => {
 
     const stage = app.page.locator('[data-testid="canvas-stage"]');
     const box = await stage.boundingBox();
-    // Bottom-right corner is guaranteed backdrop, not a device.
-    const startX = box!.x + box!.width - 30;
-    const startY = box!.y + box!.height - 30;
+    // The top strip is backdrop: devices start at world y=40 and the control
+    // cluster sits at the bottom of the stage.
+    const startX = box!.x + box!.width / 2;
+    const startY = box!.y + 10;
     await app.page.mouse.move(startX, startY);
     await app.page.mouse.down();
     await app.page.mouse.move(startX - 120, startY - 80, {steps: 5});
@@ -206,5 +207,71 @@ test.describe('Canvas mode', () => {
     await app.page.locator('[data-testid="exit-present"]').click();
 
     await expect(app.page.locator('[data-testid="status-bar"]')).toBeVisible();
+  });
+
+  test('view options toggle bezels, names and resolutions', async ({app}) => {
+    await app.dismissModals();
+    await app.page.locator('[data-testid="layout-CANVAS"]').click();
+
+    await app.page.locator('button[title="View options"]').click();
+
+    // Bezels off by default; toggling draws hardware frames.
+    await expect(app.page.locator('[data-bezel]')).toHaveCount(0);
+    await app.page.getByRole('button', {name: 'Device frames'}).click();
+    expect(await app.page.locator('[data-bezel]').count()).toBeGreaterThan(0);
+    await app.page.getByRole('button', {name: 'Device frames'}).click();
+    await expect(app.page.locator('[data-bezel]')).toHaveCount(0);
+
+    // Hiding names empties the labels but keeps the drag handles.
+    const firstLabel = app.page.locator('[data-device-label]').first();
+    await expect(firstLabel.locator('span.font-bold').first()).toBeVisible();
+    await app.page.getByRole('button', {name: 'Device names'}).click();
+    await expect(firstLabel.locator('span.font-bold')).toHaveCount(0);
+    await expect(firstLabel).toBeAttached();
+    await app.page.getByRole('button', {name: 'Device names'}).click();
+
+    await app.page.keyboard.press('Escape');
+  });
+
+  test('clicking a label moves the selection and reveals that pill', async ({app}) => {
+    await app.dismissModals();
+    await app.page.locator('[data-testid="layout-CANVAS"]').click();
+
+    // Selection is sticky worker state (the drag test selects device 1), so
+    // assert on the transition: select device 2 and both pills must swap.
+    const firstPill = app.page
+      .locator('[data-canvas-item]')
+      .first()
+      .locator('[data-testid="device-pill"]');
+    const secondItem = app.page.locator('[data-canvas-item]').nth(1);
+    const secondPill = secondItem.locator('[data-testid="device-pill"]');
+
+    const label = secondItem.locator('[data-device-label]');
+    const box = await label.boundingBox();
+    await app.page.mouse.click(box!.x + 8, box!.y + 4);
+
+    await expect.poll(() => secondPill.evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
+    // Park the pointer on the backdrop so hover doesn't keep pill 1 revealed.
+    await app.page.mouse.move(5, 5);
+    await expect.poll(() => firstPill.evaluate((el) => getComputedStyle(el).opacity)).toBe('0');
+  });
+
+  test('a per-device simulation shows a badge in the label', async ({app}) => {
+    await app.dismissModals();
+    await app.page.locator('[data-testid="layout-COLUMN"]').click();
+
+    // The device pill reveals on hover; use the first device's sim dropdown.
+    const firstDevice = app.page.locator('[data-testid="device-pill"]').first();
+    await firstDevice.locator('button[title="Vision simulation"]').click({force: true});
+    await app.page.getByRole('button', {name: 'deuteranopia'}).first().click();
+
+    await expect(app.page.locator('[data-testid="sim-badge"]').first()).toHaveText('deuteranopia', {
+      timeout: 10_000,
+    });
+
+    // Clear it for the next spec file.
+    await firstDevice.locator('button[title="Vision simulation"]').click({force: true});
+    await app.page.getByRole('button', {name: 'Disable tool'}).first().click();
+    await expect(app.page.locator('[data-testid="sim-badge"]')).toHaveCount(0);
   });
 });

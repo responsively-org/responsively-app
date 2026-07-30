@@ -11,11 +11,15 @@ import {DOCK_POSITION, PREVIEW_LAYOUTS} from 'common/constants';
 import {selectDockPosition, selectIsDevtoolsOpen} from 'renderer/store/features/devtools';
 import {getDevicesMap, Device as IDevice} from 'common/deviceList';
 import {useEffect, useMemo, useRef, useState} from 'react';
+import Popover from 'renderer/components/Popover';
 import {
+  selectCanvasOptions,
   selectCanvasZoom,
   selectLayout,
   selectZoomFactor,
   setCanvasZoom,
+  toggleCanvasOption,
+  type CanvasOptions,
 } from 'renderer/store/features/renderer';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
@@ -60,7 +64,9 @@ const Previewer = () => {
   const canvasZoom = useSelector(selectCanvasZoom);
   const deviceScale = useSelector(selectZoomFactor);
   const isPresenting = useSelector(selectIsPresenting);
+  const canvasOptions = useSelector(selectCanvasOptions);
   const presenting = isPresenting && layout === PREVIEW_LAYOUTS.CANVAS;
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
   const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY;
@@ -136,8 +142,13 @@ const Previewer = () => {
 
   const onStagePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
-    // Pointer capture retargets the whole stream, which would swallow the
-    // click on any control rendered over the stage.
+    // Portaled popover panels bubble through the React tree even though they
+    // live under <body>: if the real DOM target isn't inside the stage, this
+    // event is not ours. And pointer capture retargets the whole stream,
+    // which would swallow the click on any control rendered over the stage.
+    if (!stageRef.current?.contains(target)) {
+      return;
+    }
     if (target.closest('[data-canvas-controls]') !== null) {
       return;
     }
@@ -149,6 +160,7 @@ const Previewer = () => {
         return;
       }
       const deviceId = item.getAttribute('data-canvas-item')!;
+      setSelectedDeviceId(deviceId);
       const idx = devices.findIndex((d) => d.id === deviceId);
       dragState.current = {
         pointerId: e.pointerId,
@@ -257,33 +269,78 @@ const Previewer = () => {
               </button>
             ) : null}
             {isCanvasLayout && !presenting ? (
-              <div
-                data-canvas-controls
-                className="absolute right-3 top-3 z-10 flex items-center gap-[2px] rounded-full border border-line bg-panel p-[3px] shadow-elevated"
-              >
-                <button
-                  type="button"
-                  title="Auto-arrange"
-                  onClick={() => {
-                    dispatch(resetCanvasPositions(activeSuite.id));
-                    setCanvasPan({x: 0, y: 0});
-                  }}
-                  className="h-[26px] rounded-full px-[10px] text-[11.5px] text-muted transition-colors hover:bg-hover hover:text-fg focus:outline-none"
+              <>
+                <div className="pointer-events-none absolute bottom-[14px] left-4 z-10 font-mono text-[11px] text-muted">
+                  canvas mode · drag to pan · drag labels to move devices · click a label to select
+                </div>
+                <div
+                  data-canvas-controls
+                  className="absolute bottom-[14px] right-4 z-10 flex items-center gap-[2px] rounded-full border border-line bg-panel p-1 shadow-elevated"
                 >
-                  Arrange
-                </button>
-                <button
-                  type="button"
-                  title="Reset view"
-                  onClick={() => {
-                    setCanvasPan({x: 0, y: 0});
-                    dispatch(setCanvasZoom(0.9));
-                  }}
-                  className="h-[26px] rounded-full px-[10px] text-[11.5px] text-muted transition-colors hover:bg-hover hover:text-fg focus:outline-none"
-                >
-                  Reset
-                </button>
-              </div>
+                  <Popover
+                    triggerTitle="View options"
+                    anchor="top end"
+                    triggerClassName="flex h-[26px] w-[26px] items-center justify-center rounded-full text-[15px] text-muted transition-colors hover:bg-hover hover:text-fg"
+                    className="w-[186px] p-[5px]"
+                    trigger={
+                      <span className="pointer-events-none contents">
+                        <Icon icon="carbon:overflow-menu-horizontal" />
+                      </span>
+                    }
+                  >
+                    <div className="px-[9px] pb-[3px] pt-[7px] text-[10px] font-bold tracking-[0.07em] text-muted">
+                      SHOW ON CANVAS
+                    </div>
+                    {(
+                      [
+                        {key: 'showBezels', label: 'Device frames'},
+                        {key: 'showNames', label: 'Device names'},
+                        {key: 'showDims', label: 'Resolutions'},
+                      ] as Array<{key: keyof CanvasOptions; label: string}>
+                    ).map((item) => (
+                      <button
+                        key={item.key}
+                        type="button"
+                        aria-pressed={canvasOptions[item.key]}
+                        onClick={() => dispatch(toggleCanvasOption(item.key))}
+                        className="flex w-full items-center gap-2 rounded-[7px] px-[9px] py-[7px] text-[12.5px] text-fg hover:bg-hover focus:outline-none"
+                      >
+                        <span className="pointer-events-none contents">
+                          <Icon
+                            icon="ic:round-check"
+                            fontSize={14}
+                            className={cx('text-accent', {'opacity-0': !canvasOptions[item.key]})}
+                          />
+                          {item.label}
+                        </span>
+                      </button>
+                    ))}
+                  </Popover>
+                  <div className="mx-[3px] h-4 w-px bg-line" />
+                  <button
+                    type="button"
+                    title="Auto-arrange"
+                    onClick={() => {
+                      dispatch(resetCanvasPositions(activeSuite.id));
+                      setCanvasPan({x: 0, y: 0});
+                    }}
+                    className="h-[26px] rounded-full px-[10px] text-[11.5px] text-muted transition-colors hover:bg-hover hover:text-fg focus:outline-none"
+                  >
+                    Arrange
+                  </button>
+                  <button
+                    type="button"
+                    title="Reset view"
+                    onClick={() => {
+                      setCanvasPan({x: 0, y: 0});
+                      dispatch(setCanvasZoom(0.9));
+                    }}
+                    className="h-[26px] rounded-full px-[10px] text-[11.5px] text-muted transition-colors hover:bg-hover hover:text-fg focus:outline-none"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </>
             ) : null}
             {/* One stable host for every layout: devices never unmount on a
                 layout switch (a remount reloads the webview). Masonry is CSS
@@ -318,6 +375,10 @@ const Previewer = () => {
                     'w-fit break-inside-avoid p-4': isMasonryLayout,
                     hidden: isIndividualLayout && device.id !== individualDeviceId,
                     'absolute w-max': isCanvasLayout,
+                    // Selection (canvas): accent label + screen ring, and the
+                    // device pill stays visible without hover.
+                    '[&_[data-device-label]]:text-accent [&_[data-scaled-frame]]:ring-1 [&_[data-scaled-frame]]:ring-accent [&_[data-testid=device-pill]]:opacity-100':
+                      isCanvasLayout && device.id === selectedDeviceId,
                   })}
                   style={
                     isCanvasLayout

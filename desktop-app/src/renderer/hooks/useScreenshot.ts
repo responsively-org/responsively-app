@@ -48,6 +48,8 @@ interface DeviceScreenshotParams {
   getWebview: () => Electron.WebviewTag | null;
   device: Device;
   onFullPageCapturePending?: (inProgress: boolean) => void;
+  /** Fires when a capture lands — drives the frame flash. */
+  onCaptured?: () => void;
 }
 
 /**
@@ -58,6 +60,7 @@ export const useDeviceScreenshot = ({
   getWebview,
   device,
   onFullPageCapturePending,
+  onCaptured,
 }: DeviceScreenshotParams) => {
   const playShutter = useShutterSound();
   const [quickLoading, setQuickLoading] = useState<boolean>(false);
@@ -77,6 +80,7 @@ export const useDeviceScreenshot = ({
           device,
         }
       );
+      onCaptured?.();
       playShutter();
     } catch (error) {
       console.error('Error while taking quick screenshot', error);

@@ -9,6 +9,7 @@ import {
 } from 'renderer/store/features/device-manager';
 import {
   selectAddress,
+  selectCanvasOptions,
   selectLayout,
   selectRotate,
   selectZoomFactor,
@@ -46,7 +47,18 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const rotateDevices = useSelector(selectRotate);
   const individualRotations = useSelector(selectIndividualRotations);
   const layout = useSelector(selectLayout);
+  const canvasOptions = useSelector(selectCanvasOptions);
   const dispatch = useDispatch();
+  const [activeSimulation, setActiveSimulation] = useState<string | undefined>(undefined);
+  const [flashing, setFlashing] = useState<boolean>(false);
+  const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const onCaptured = useCallback(() => {
+    if (flashTimer.current !== null) {
+      clearTimeout(flashTimer.current);
+    }
+    setFlashing(true);
+    flashTimer.current = setTimeout(() => setFlashing(false), 400);
+  }, []);
   const darkMode = useSelector(selectDarkMode);
   const ref = useRef<Electron.WebviewTag>(null);
   const initialAddress = useRef<string>(address);
@@ -66,6 +78,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const {openDevTools, inspectElement} = useDevtoolsBridge({ref, webviewReady, zoomfactor});
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
+  const isCanvasLayout = layout === PREVIEW_LAYOUTS.CANVAS;
   const singleRotated = individualRotations[device.id] ?? false;
 
   let {height, width} = device;
@@ -208,6 +221,12 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       designOverlay={designOverlay}
       resolution={resolution}
       isRestrictedMinimumDeviceSize={isRestrictedMinimumDeviceSize}
+      showBezel={isCanvasLayout && canvasOptions.showBezels}
+      showName={!isCanvasLayout || canvasOptions.showNames}
+      showDims={!isCanvasLayout || canvasOptions.showDims}
+      isRotated={isDeviceRotationEnabled}
+      simulationName={activeSimulation}
+      flashing={flashing}
       initialSrc={initialAddress.current}
       webviewRef={setWebviewRef}
       toolbar={
@@ -215,6 +234,8 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
           getWebview={getWebview}
           device={device}
           setScreenshotInProgress={setScreenshotInProgress}
+          onCaptured={onCaptured}
+          onSimulationChange={setActiveSimulation}
           openDevTools={openDevTools}
           toggleRuler={toggleRuler}
           rotated={singleRotated}

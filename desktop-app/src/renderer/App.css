@@ -20,6 +20,8 @@
  * the Tailwind semantic colors (bg-panel, text-fg, border-line, ...).
  */
 :root {
+  /* Native controls (scrollbars, form widgets) must follow the theme. */
+  color-scheme: dark;
   /* dark (default) */
   --titlebar: #10161f;
   --titlebar-fg: #8d97a5;
@@ -42,6 +44,7 @@
 }
 
 :root[data-theme='light'] {
+  color-scheme: light;
   --titlebar: #e8e9ec;
   --titlebar-fg: #4d545e;
   --bg: #eef0f4;
@@ -64,6 +67,21 @@
 
 html {
   user-select: none;
+}
+
+/* Slim, theme-neutral scrollbars (Hybrid Studio design). */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* Canvas mode stage backdrop (Hybrid Studio). */

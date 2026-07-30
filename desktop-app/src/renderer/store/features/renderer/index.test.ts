@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {PREVIEW_LAYOUTS} from 'common/constants';
 import reducer, {
+  toggleCanvasOption,
   canvasZoomIn,
   canvasZoomOut,
   setCanvasZoom,
@@ -95,5 +96,14 @@ describe('renderer slice', () => {
   it('setCanvasZoom clamps out-of-range values', () => {
     expect(reducer(undefined, setCanvasZoom(9)).canvasZoom).toBe(1.25);
     expect(reducer(undefined, setCanvasZoom(0)).canvasZoom).toBe(0.25);
+  });
+
+  it('toggleCanvasOption flips view options', () => {
+    let state = baseState();
+    expect(state.canvasOptions).toEqual({showBezels: false, showNames: true, showDims: true});
+    state = reducer(state, toggleCanvasOption('showBezels'));
+    expect(state.canvasOptions.showBezels).toBe(true);
+    state = reducer(state, toggleCanvasOption('showNames'));
+    expect(state.canvasOptions.showNames).toBe(false);
   });
 });

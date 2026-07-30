@@ -20,10 +20,18 @@ interface InjectedCss {
 
 interface Props {
   getWebview: () => Electron.WebviewTag | null;
+  onSimulationChange?: (name: string | undefined) => void;
 }
 
-export const ColorBlindnessTools = ({getWebview}: Props) => {
-  const [injectCss, setInjectCss] = useState<InjectedCss>();
+export const ColorBlindnessTools = ({getWebview, onSimulationChange}: Props) => {
+  const [injectCss, setInjectCssState] = useState<InjectedCss>();
+  const setInjectCss = useCallback(
+    (next: InjectedCss | undefined) => {
+      setInjectCssState(next);
+      onSimulationChange?.(next?.name);
+    },
+    [onSimulationChange]
+  );
 
   const reApplyCss = useCallback(async () => {
     const webview = getWebview();

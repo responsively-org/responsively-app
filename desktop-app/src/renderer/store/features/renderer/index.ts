@@ -14,6 +14,7 @@ export interface RendererState {
   isCapturingScreenshot: boolean;
   notifications: Notification[] | null;
   canvasZoom: number;
+  canvasOptions: CanvasOptions;
 }
 
 export const zoomSteps = [0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
@@ -21,6 +22,13 @@ export const zoomSteps = [0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1
 // Canvas world zoom (design: 0.25–1.25, default 0.9). Distinct from the
 // per-device zoomFactor, which scales the devices themselves.
 export const canvasZoomSteps = [0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25];
+
+export interface CanvasOptions {
+  /** Draw hardware-style bezels around canvas frames. */
+  showBezels: boolean;
+  showNames: boolean;
+  showDims: boolean;
+}
 const DEFAULT_CANVAS_ZOOM = 0.9;
 const clampCanvasZoom = (value: number): number =>
   Math.min(canvasZoomSteps[canvasZoomSteps.length - 1], Math.max(canvasZoomSteps[0], value));
@@ -34,6 +42,7 @@ const initialState: RendererState = {
   individualZoomFactor: zoomSteps[8],
   zoomFactor: zoomSteps[8],
   canvasZoom: DEFAULT_CANVAS_ZOOM,
+  canvasOptions: {showBezels: false, showNames: true, showDims: true},
   rotate: false,
   isInspecting: undefined,
   layout: PREVIEW_LAYOUTS.FLEX,
@@ -121,6 +130,9 @@ export const rendererSlice = createSlice({
         state.canvasZoom = next;
       }
     },
+    toggleCanvasOption: (state, action: PayloadAction<keyof CanvasOptions>) => {
+      state.canvasOptions[action.payload] = !state.canvasOptions[action.payload];
+    },
     canvasZoomOut: (state) => {
       const next = [...canvasZoomSteps].reverse().find((step) => step < state.canvasZoom);
       if (next !== undefined) {
@@ -144,6 +156,7 @@ export const {
   setCanvasZoom,
   canvasZoomIn,
   canvasZoomOut,
+  toggleCanvasOption,
 } = rendererSlice.actions;
 
 // Use different zoom factor based on state's current layout
@@ -163,5 +176,6 @@ export const selectIsCapturingScreenshot = (state: RootState) =>
   state.renderer.isCapturingScreenshot;
 export const selectNotifications = (state: RootState) => state.renderer.notifications;
 export const selectCanvasZoom = (state: RootState) => state.renderer.canvasZoom;
+export const selectCanvasOptions = (state: RootState) => state.renderer.canvasOptions;
 
 export default rendererSlice.reducer;

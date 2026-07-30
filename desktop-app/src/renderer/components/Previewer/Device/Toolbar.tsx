@@ -10,6 +10,8 @@ interface Props {
   getWebview: () => Electron.WebviewTag | null;
   device: Device;
   setScreenshotInProgress: (value: boolean) => void;
+  onCaptured: () => void;
+  onSimulationChange: (name: string | undefined) => void;
   openDevTools: () => void;
   toggleRuler: () => void;
   /** Controlled: the device's individual-rotation state lives in the store. */
@@ -60,6 +62,8 @@ const Toolbar = ({
   getWebview,
   device,
   setScreenshotInProgress,
+  onCaptured,
+  onSimulationChange,
   openDevTools,
   toggleRuler,
   rotated,
@@ -79,6 +83,7 @@ const Toolbar = ({
     getWebview,
     device,
     onFullPageCapturePending: setScreenshotInProgress,
+    onCaptured,
   });
 
   const refreshView = () => {
@@ -177,7 +182,7 @@ const Toolbar = ({
       <PillButton title="Show rulers" onClick={toggleRulers}>
         <Icon icon="tdesign:measurement-1" />
       </PillButton>
-      <ColorBlindnessTools getWebview={getWebview} />
+      <ColorBlindnessTools getWebview={getWebview} onSimulationChange={onSimulationChange} />
       <PillButton
         title={`${isIndividualLayout ? 'Disable' : 'Enable'} Individual Layout`}
         isActive={isIndividualLayout}

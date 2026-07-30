@@ -59,6 +59,7 @@ export const buildPreloadedState = () => {
       isCapturingScreenshot: false,
       notifications: null,
       canvasZoom: 0.9,
+      canvasOptions: {showBezels: false, showNames: true, showDims: true},
     },
     devtools: {
       bounds: {x: 0, y: 0, width: 0, height: 0},
