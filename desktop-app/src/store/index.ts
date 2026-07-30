@@ -83,6 +83,16 @@ const schema = {
                 type: 'string',
               },
             },
+            canvasPositions: {
+              type: 'object',
+              additionalProperties: {
+                type: 'object',
+                properties: {
+                  x: {type: 'number'},
+                  y: {type: 'number'},
+                },
+              },
+            },
           },
         },
         default: [

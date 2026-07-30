@@ -64,7 +64,7 @@ const DeviceFrame = ({
         'w-52': isRestrictedMinimumDeviceSize,
       })}
     >
-      <div className="flex justify-between">
+      <div className="flex justify-between" data-device-label={device.name}>
         <span>
           {device.name}
           <span className="ml-[2px] text-xs opacity-60">

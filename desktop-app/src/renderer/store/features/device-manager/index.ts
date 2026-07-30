@@ -2,10 +2,17 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {Device} from 'common/deviceList';
 import type {RootState} from '../..';
 
+export interface CanvasPosition {
+  x: number;
+  y: number;
+}
+
 export interface PreviewSuite {
   id: string;
   name: string;
   devices: string[];
+  /** Canvas-mode frame positions in world coordinates, keyed by device id. */
+  canvasPositions?: Record<string, CanvasPosition>;
 }
 
 export type PreviewSuites = PreviewSuite[];
@@ -81,6 +88,25 @@ export const deviceManagerSlice = createSlice({
       state.suites = [DEFAULT_SUITE];
       state.activeSuite = DEFAULT_SUITE.id;
     },
+    setCanvasPosition(
+      state,
+      action: PayloadAction<{suite: string; device: string; position: CanvasPosition}>
+    ) {
+      const target = state.suites.find((s) => s.id === action.payload.suite);
+      if (target === undefined) {
+        return;
+      }
+      target.canvasPositions = {
+        ...target.canvasPositions,
+        [action.payload.device]: action.payload.position,
+      };
+    },
+    resetCanvasPositions(state, action: PayloadAction<string>) {
+      const target = state.suites.find((s) => s.id === action.payload);
+      if (target !== undefined) {
+        delete target.canvasPositions;
+      }
+    },
     setIndividualRotation(state, action: PayloadAction<{id: string; rotated: boolean}>) {
       const {id, rotated} = action.payload;
       if (rotated) {
@@ -101,6 +127,8 @@ export const {
   addSuites,
   deleteSuite,
   deleteAllSuites,
+  setCanvasPosition,
+  resetCanvasPositions,
   setIndividualRotation,
 } = deviceManagerSlice.actions;
 

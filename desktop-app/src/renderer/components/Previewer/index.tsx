@@ -1,11 +1,20 @@
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import cx from 'classnames';
-import {selectActiveSuite} from 'renderer/store/features/device-manager';
+import {
+  resetCanvasPositions,
+  selectActiveSuite,
+  setCanvasPosition,
+} from 'renderer/store/features/device-manager';
 import {DOCK_POSITION, PREVIEW_LAYOUTS} from 'common/constants';
 import {selectDockPosition, selectIsDevtoolsOpen} from 'renderer/store/features/devtools';
 import {getDevicesMap, Device as IDevice} from 'common/deviceList';
 import {useEffect, useMemo, useRef, useState} from 'react';
-import {selectCanvasZoom, selectLayout, selectZoomFactor} from 'renderer/store/features/renderer';
+import {
+  selectCanvasZoom,
+  selectLayout,
+  selectZoomFactor,
+  setCanvasZoom,
+} from 'renderer/store/features/renderer';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
 import IndividualLayoutToolbar from './IndividualLayoutToolBar';
@@ -40,6 +49,7 @@ const arrangeDevices = (devices: IDevice[], deviceScale: number): CanvasPosition
 };
 
 const Previewer = () => {
+  const dispatch = useDispatch();
   const activeSuite = useSelector(selectActiveSuite);
   const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
   const dockPosition = useSelector(selectDockPosition);
@@ -66,15 +76,30 @@ const Previewer = () => {
     startX: number;
     startY: number;
     base: CanvasPosition;
+    /** Set when dragging one device frame rather than panning the world. */
+    deviceId: string | null;
   } | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  // Live position of the frame being dragged; committed to the store on drop.
+  const [dragOverride, setDragOverride] = useState<{id: string; position: CanvasPosition} | null>(
+    null
+  );
 
   const deviceIdsKey = activeSuite.devices.join(',');
-  const canvasPositions = useMemo(
+  const arranged = useMemo(
     () => (isCanvasLayout ? arrangeDevices(devices, deviceScale) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isCanvasLayout, deviceScale, deviceIdsKey]
   );
+  const positionFor = (device: IDevice, idx: number): CanvasPosition => {
+    if (dragOverride?.id === device.id) {
+      return dragOverride.position;
+    }
+    return (
+      activeSuite.canvasPositions?.[device.id] ??
+      arranged[idx] ?? {x: CANVAS_ORIGIN, y: CANVAS_ORIGIN}
+    );
+  };
 
   // Wheel must preventDefault (trackpad pinch also arrives as ctrl+wheel),
   // which React's passive listeners can't — attach natively.
@@ -92,8 +117,29 @@ const Previewer = () => {
   }, [isCanvasLayout]);
 
   const onStagePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    // Pan only from the backdrop — clicks on a device belong to the device.
-    if ((e.target as HTMLElement).closest('[data-canvas-item]') !== null) {
+    const target = e.target as HTMLElement;
+    // Pointer capture retargets the whole stream, which would swallow the
+    // click on any control rendered over the stage.
+    if (target.closest('[data-canvas-controls]') !== null) {
+      return;
+    }
+    const item = target.closest('[data-canvas-item]');
+    if (item !== null) {
+      // Drag a device frame by its label; anything else on the device
+      // (toolbar, webview) belongs to the device itself.
+      if (target.closest('[data-device-label]') === null) {
+        return;
+      }
+      const deviceId = item.getAttribute('data-canvas-item')!;
+      const idx = devices.findIndex((d) => d.id === deviceId);
+      dragState.current = {
+        pointerId: e.pointerId,
+        startX: e.clientX,
+        startY: e.clientY,
+        base: positionFor(devices[idx], idx),
+        deviceId,
+      };
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
       return;
     }
     dragState.current = {
@@ -101,6 +147,7 @@ const Previewer = () => {
       startX: e.clientX,
       startY: e.clientY,
       base: canvasPan,
+      deviceId: null,
     };
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
@@ -110,6 +157,17 @@ const Previewer = () => {
     if (drag === null || drag.pointerId !== e.pointerId) {
       return;
     }
+    if (drag.deviceId !== null) {
+      // Pointer deltas are screen pixels; the world is scaled by canvasZoom.
+      setDragOverride({
+        id: drag.deviceId,
+        position: {
+          x: drag.base.x + (e.clientX - drag.startX) / canvasZoom,
+          y: drag.base.y + (e.clientY - drag.startY) / canvasZoom,
+        },
+      });
+      return;
+    }
     setCanvasPan({
       x: drag.base.x + (e.clientX - drag.startX),
       y: drag.base.y + (e.clientY - drag.startY),
@@ -117,9 +175,21 @@ const Previewer = () => {
   };
 
   const onStagePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (dragState.current?.pointerId === e.pointerId) {
-      dragState.current = null;
+    const drag = dragState.current;
+    if (drag === null || drag.pointerId !== e.pointerId) {
+      return;
     }
+    if (drag.deviceId !== null && dragOverride !== null) {
+      dispatch(
+        setCanvasPosition({
+          suite: activeSuite.id,
+          device: drag.deviceId,
+          position: dragOverride.position,
+        })
+      );
+      setDragOverride(null);
+    }
+    dragState.current = null;
   };
 
   return (
@@ -154,6 +224,35 @@ const Previewer = () => {
             onPointerMove={isCanvasLayout ? onStagePointerMove : undefined}
             onPointerUp={isCanvasLayout ? onStagePointerUp : undefined}
           >
+            {isCanvasLayout ? (
+              <div
+                data-canvas-controls
+                className="absolute right-3 top-3 z-10 flex items-center gap-[2px] rounded-full border border-line bg-panel p-[3px] shadow-elevated"
+              >
+                <button
+                  type="button"
+                  title="Auto-arrange"
+                  onClick={() => {
+                    dispatch(resetCanvasPositions(activeSuite.id));
+                    setCanvasPan({x: 0, y: 0});
+                  }}
+                  className="h-[26px] rounded-full px-[10px] text-[11.5px] text-muted transition-colors hover:bg-hover hover:text-fg focus:outline-none"
+                >
+                  Arrange
+                </button>
+                <button
+                  type="button"
+                  title="Reset view"
+                  onClick={() => {
+                    setCanvasPan({x: 0, y: 0});
+                    dispatch(setCanvasZoom(0.9));
+                  }}
+                  className="h-[26px] rounded-full px-[10px] text-[11.5px] text-muted transition-colors hover:bg-hover hover:text-fg focus:outline-none"
+                >
+                  Reset
+                </button>
+              </div>
+            ) : null}
             {/* One stable host for every layout: devices never unmount on a
                 layout switch (a remount reloads the webview). Masonry is CSS
                 multi-column (react-masonry-component is unmaintained and
@@ -190,10 +289,7 @@ const Previewer = () => {
                   })}
                   style={
                     isCanvasLayout
-                      ? {
-                          left: canvasPositions[idx]?.x ?? CANVAS_ORIGIN,
-                          top: canvasPositions[idx]?.y ?? CANVAS_ORIGIN,
-                        }
+                      ? {left: positionFor(device, idx).x, top: positionFor(device, idx).y}
                       : undefined
                   }
                 >

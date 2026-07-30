@@ -10,6 +10,8 @@ import {
   deleteSuite,
   setDevices,
   setSuiteDevices,
+  setCanvasPosition,
+  resetCanvasPositions,
 } from './features/device-manager';
 import {setDockPosition} from './features/devtools';
 import {
@@ -106,7 +108,15 @@ startListening({
 });
 
 startListening({
-  matcher: isAnyOf(setSuiteDevices, addSuite, addSuites, deleteSuite, deleteAllSuites),
+  matcher: isAnyOf(
+    setSuiteDevices,
+    addSuite,
+    addSuites,
+    deleteSuite,
+    deleteAllSuites,
+    setCanvasPosition,
+    resetCanvasPositions
+  ),
   effect: (_action, api) => {
     window.electron.store.set('deviceManager.previewSuites', api.getState().deviceManager.suites);
   },

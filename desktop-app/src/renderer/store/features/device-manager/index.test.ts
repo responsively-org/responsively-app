@@ -1,6 +1,8 @@
 import {describe, expect, it} from 'vitest';
 import reducer, {
   addSuite,
+  resetCanvasPositions,
+  setCanvasPosition,
   addSuites,
   deleteAllSuites,
   deleteSuite,
@@ -98,5 +100,36 @@ describe('device-manager slice', () => {
     let state = reducer(undefined, setIndividualRotation({id: '10008', rotated: true}));
     state = reducer(state, setIndividualRotation({id: '10008', rotated: false}));
     expect(state.individualRotations).toEqual({});
+  });
+
+  it('setCanvasPosition stores per-device world positions on the suite', () => {
+    let state = reducer(
+      undefined,
+      setCanvasPosition({suite: 'default', device: '10008', position: {x: 120, y: 40}})
+    );
+    state = reducer(
+      state,
+      setCanvasPosition({suite: 'default', device: '10013', position: {x: 600, y: 40}})
+    );
+    expect(state.suites[0].canvasPositions).toEqual({
+      '10008': {x: 120, y: 40},
+      '10013': {x: 600, y: 40},
+    });
+
+    // Unknown suite is a no-op.
+    const untouched = reducer(
+      state,
+      setCanvasPosition({suite: 'ghost', device: '10008', position: {x: 0, y: 0}})
+    );
+    expect(untouched.suites).toEqual(state.suites);
+  });
+
+  it('resetCanvasPositions clears the arrangement', () => {
+    let state = reducer(
+      undefined,
+      setCanvasPosition({suite: 'default', device: '10008', position: {x: 120, y: 40}})
+    );
+    state = reducer(state, resetCanvasPositions('default'));
+    expect(state.suites[0].canvasPositions).toBeUndefined();
   });
 });

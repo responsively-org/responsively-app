@@ -134,4 +134,47 @@ test.describe('Canvas mode', () => {
     // the compositing-chokes failure mode the spike exists to detect.
     expect(timings.p95).toBeLessThan(100);
   });
+
+  test('dragging a device by its label moves and persists its position', async ({app}) => {
+    await app.dismissModals();
+    await app.page.locator('[data-testid="layout-CANVAS"]').click();
+
+    const firstItem = app.page.locator('[data-canvas-item]').first();
+    const deviceId = await firstItem.getAttribute('data-canvas-item');
+    const label = firstItem.locator('[data-device-label]');
+
+    const before = await firstItem.evaluate((el) => ({
+      left: (el as HTMLElement).style.left,
+      top: (el as HTMLElement).style.top,
+    }));
+
+    const box = await label.boundingBox();
+    await app.page.mouse.move(box!.x + 10, box!.y + 5);
+    await app.page.mouse.down();
+    await app.page.mouse.move(box!.x + 10 + 90, box!.y + 5 + 45, {steps: 5});
+    await app.page.mouse.up();
+
+    const after = await firstItem.evaluate((el) => ({
+      left: (el as HTMLElement).style.left,
+      top: (el as HTMLElement).style.top,
+    }));
+    expect(after).not.toEqual(before);
+
+    // The position survives leaving and re-entering canvas (per-suite store).
+    await app.page.locator('[data-testid="layout-COLUMN"]').click();
+    await app.page.locator('[data-testid="layout-CANVAS"]').click();
+    const restored = await app.page.locator(`[data-canvas-item="${deviceId}"]`).evaluate((el) => ({
+      left: (el as HTMLElement).style.left,
+      top: (el as HTMLElement).style.top,
+    }));
+    expect(restored).toEqual(after);
+
+    // Arrange returns to the computed layout.
+    await app.page.locator('button[title="Auto-arrange"]').click();
+    const arranged = await app.page.locator(`[data-canvas-item="${deviceId}"]`).evaluate((el) => ({
+      left: (el as HTMLElement).style.left,
+      top: (el as HTMLElement).style.top,
+    }));
+    expect(arranged).toEqual(before);
+  });
 });
