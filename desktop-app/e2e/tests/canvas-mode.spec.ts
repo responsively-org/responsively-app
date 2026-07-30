@@ -198,12 +198,39 @@ test.describe('Canvas mode', () => {
     }
     await expect(app.page.locator('[data-testid="canvas-stage"]')).toBeVisible();
     await expect(app.page.locator('[data-testid="exit-present"]')).toBeVisible();
+    // Per-device pills are chrome too — none of them render while presenting.
+    await expect(app.page.locator('[data-testid="device-pill"]')).toHaveCount(0);
 
     await app.page.keyboard.press('Escape');
 
     await expect(app.page.locator('[data-testid="status-bar"]')).toBeVisible();
     await expect(app.addressBar).toBeVisible();
     await expect(app.page.locator('[data-testid="exit-present"]')).toBeHidden();
+    await expect(app.page.locator('[data-testid="device-pill"]').first()).toBeAttached();
+  });
+
+  test('the exit pill auto-hides on an idle mouse and returns on movement', async ({app}) => {
+    await app.dismissModals();
+    await app.page.locator('[data-testid="layout-CANVAS"]').click();
+    await app.page.locator('[data-testid="present-button"]').click();
+
+    const pill = app.page.locator('[data-testid="exit-present"]');
+    await expect(pill).toBeVisible();
+
+    // Park the mouse on the stage's backdrop strip (over a webview the host
+    // document would never see mousemove) and hold still past the idle delay:
+    // the pill fades out (opacity 0 + pointer-events none, still in the DOM).
+    const box = await app.page.locator('[data-testid="canvas-stage"]').boundingBox();
+    await app.page.mouse.move(box!.x + box!.width / 2, box!.y + 10);
+    await expect(pill).toHaveCSS('opacity', '0', {timeout: 5_000});
+    await expect(pill).toHaveCSS('pointer-events', 'none');
+
+    // Any movement brings it back immediately.
+    await app.page.mouse.move(box!.x + box!.width / 2 + 40, box!.y + 12);
+    await expect(pill).not.toHaveCSS('opacity', '0');
+
+    await app.page.keyboard.press('Escape');
+    await expect(app.page.locator('[data-testid="status-bar"]')).toBeVisible();
   });
 
   test('the exit pill leaves present mode', async ({app}) => {

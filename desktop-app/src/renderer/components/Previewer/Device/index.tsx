@@ -23,7 +23,7 @@ import {
   selectRulerEnabled,
   setRuler,
 } from '../../../store/features/ruler';
-import {selectDarkMode} from '../../../store/features/ui';
+import {selectDarkMode, selectIsPresenting} from '../../../store/features/ui';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from '../../KeyboardShortcutsManager/useKeyboardShortcut';
@@ -48,6 +48,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const individualRotations = useSelector(selectIndividualRotations);
   const layout = useSelector(selectLayout);
   const canvasOptions = useSelector(selectCanvasOptions);
+  const isPresenting = useSelector(selectIsPresenting);
   const dispatch = useDispatch();
   const [activeSimulation, setActiveSimulation] = useState<string | undefined>(undefined);
   const [flashing, setFlashing] = useState<boolean>(false);
@@ -229,21 +230,24 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       flashing={flashing}
       initialSrc={initialAddress.current}
       webviewRef={setWebviewRef}
+      // Present mode is pure content — no per-device pills.
       toolbar={
-        <Toolbar
-          getWebview={getWebview}
-          device={device}
-          setScreenshotInProgress={setScreenshotInProgress}
-          onCaptured={onCaptured}
-          onSimulationChange={setActiveSimulation}
-          openDevTools={openDevTools}
-          toggleRuler={toggleRuler}
-          rotated={singleRotated}
-          onRotate={onRotateHandler}
-          onIndividualLayoutHandler={onIndividualLayoutHandler}
-          isIndividualLayout={isIndividualLayout}
-          isDeviceRotationEnabled={isDeviceRotationEnabled}
-        />
+        isPresenting && isCanvasLayout ? null : (
+          <Toolbar
+            getWebview={getWebview}
+            device={device}
+            setScreenshotInProgress={setScreenshotInProgress}
+            onCaptured={onCaptured}
+            onSimulationChange={setActiveSimulation}
+            openDevTools={openDevTools}
+            toggleRuler={toggleRuler}
+            rotated={singleRotated}
+            onRotate={onRotateHandler}
+            onIndividualLayoutHandler={onIndividualLayoutHandler}
+            isIndividualLayout={isIndividualLayout}
+            isDeviceRotationEnabled={isDeviceRotationEnabled}
+          />
+        )
       }
     />
   );

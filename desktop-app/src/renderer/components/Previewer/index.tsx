@@ -31,6 +31,8 @@ interface CanvasPosition {
 }
 
 const CANVAS_GAP = 60;
+/** Present mode: hide the exit pill when the mouse has been still this long. */
+const EXIT_PILL_IDLE_MS = 1500;
 const CANVAS_ORIGIN = 40;
 const CANVAS_ROW_WIDTH = 2600;
 
@@ -67,6 +69,8 @@ const Previewer = () => {
   const canvasOptions = useSelector(selectCanvasOptions);
   const presenting = isPresenting && layout === PREVIEW_LAYOUTS.CANVAS;
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+  const [exitPillHidden, setExitPillHidden] = useState<boolean>(false);
+  const exitPillRef = useRef<HTMLButtonElement>(null);
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
   const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY;
@@ -110,6 +114,41 @@ const Previewer = () => {
       arranged[idx] ?? {x: CANVAS_ORIGIN, y: CANVAS_ORIGIN}
     );
   };
+
+  // The exit pill gets out of the way when the mouse is still (screenshots
+  // shouldn't have chrome in them) and returns on any movement.
+  useEffect(() => {
+    if (!presenting) {
+      setExitPillHidden(false);
+      return undefined;
+    }
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const arm = () => {
+      if (timer !== null) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(() => {
+        // Never hide it under a hovering cursor.
+        if (exitPillRef.current?.matches(':hover')) {
+          arm();
+          return;
+        }
+        setExitPillHidden(true);
+      }, EXIT_PILL_IDLE_MS);
+    };
+    const onMouseMove = () => {
+      setExitPillHidden(false);
+      arm();
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    arm();
+    return () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      if (timer !== null) {
+        clearTimeout(timer);
+      }
+    };
+  }, [presenting]);
 
   // Present mode exits on Escape.
   useEffect(() => {
@@ -256,11 +295,15 @@ const Previewer = () => {
           >
             {presenting ? (
               <button
+                ref={exitPillRef}
                 type="button"
                 data-canvas-controls
                 data-testid="exit-present"
                 onClick={() => dispatch(setPresenting(false))}
-                className="absolute bottom-[18px] left-1/2 z-20 flex h-[34px] -translate-x-1/2 items-center gap-2 rounded-full border border-line bg-panel px-4 text-[12.5px] font-bold text-fg opacity-90 shadow-elevated transition-opacity hover:opacity-100 focus:outline-none"
+                className={cx(
+                  'absolute bottom-[18px] left-1/2 z-20 flex h-[34px] -translate-x-1/2 items-center gap-2 rounded-full border border-line bg-panel px-4 text-[12.5px] font-bold text-fg shadow-elevated transition-opacity duration-300 focus:outline-none',
+                  exitPillHidden ? 'pointer-events-none opacity-0' : 'opacity-90 hover:opacity-100'
+                )}
               >
                 <span className="pointer-events-none contents">
                   <Icon icon="ic:round-close" fontSize={15} />
