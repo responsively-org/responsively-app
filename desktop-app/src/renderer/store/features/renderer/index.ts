@@ -13,9 +13,17 @@ export interface RendererState {
   layout: PreviewLayout;
   isCapturingScreenshot: boolean;
   notifications: Notification[] | null;
+  canvasZoom: number;
 }
 
 export const zoomSteps = [0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
+
+// Canvas world zoom (design: 0.25–1.25, default 0.9). Distinct from the
+// per-device zoomFactor, which scales the devices themselves.
+export const canvasZoomSteps = [0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25];
+const DEFAULT_CANVAS_ZOOM = 0.9;
+const clampCanvasZoom = (value: number): number =>
+  Math.min(canvasZoomSteps[canvasZoomSteps.length - 1], Math.max(canvasZoomSteps[0], value));
 
 // Persisted values are injected via the store's preloaded state
 // (store/preloadedState.ts); persistence and the file-watcher IPC happen in
@@ -25,6 +33,7 @@ const initialState: RendererState = {
   pageTitle: '',
   individualZoomFactor: zoomSteps[8],
   zoomFactor: zoomSteps[8],
+  canvasZoom: DEFAULT_CANVAS_ZOOM,
   rotate: false,
   isInspecting: undefined,
   layout: PREVIEW_LAYOUTS.FLEX,
@@ -103,6 +112,21 @@ export const rendererSlice = createSlice({
         state.notifications = [...notifications, action.payload];
       }
     },
+    setCanvasZoom: (state, action: PayloadAction<number>) => {
+      state.canvasZoom = clampCanvasZoom(action.payload);
+    },
+    canvasZoomIn: (state) => {
+      const next = canvasZoomSteps.find((step) => step > state.canvasZoom);
+      if (next !== undefined) {
+        state.canvasZoom = next;
+      }
+    },
+    canvasZoomOut: (state) => {
+      const next = [...canvasZoomSteps].reverse().find((step) => step < state.canvasZoom);
+      if (next !== undefined) {
+        state.canvasZoom = next;
+      }
+    },
   },
 });
 
@@ -117,6 +141,9 @@ export const {
   setIsCapturingScreenshot,
   setPageTitle,
   setNotifications,
+  setCanvasZoom,
+  canvasZoomIn,
+  canvasZoomOut,
 } = rendererSlice.actions;
 
 // Use different zoom factor based on state's current layout
@@ -135,5 +162,6 @@ export const selectLayout = (state: RootState) => state.renderer.layout;
 export const selectIsCapturingScreenshot = (state: RootState) =>
   state.renderer.isCapturingScreenshot;
 export const selectNotifications = (state: RootState) => state.renderer.notifications;
+export const selectCanvasZoom = (state: RootState) => state.renderer.canvasZoom;
 
 export default rendererSlice.reducer;

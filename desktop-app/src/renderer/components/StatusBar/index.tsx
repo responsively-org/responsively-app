@@ -12,6 +12,9 @@ import NotificationsBubble from 'renderer/components/Notifications/Notifications
 import useLocalStorage from 'renderer/components/useLocalStorage/useLocalStorage';
 import {selectActiveSuite} from 'renderer/store/features/device-manager';
 import {
+  canvasZoomIn,
+  canvasZoomOut,
+  selectCanvasZoom,
   selectLayout,
   selectNotifications,
   selectZoomFactor,
@@ -26,12 +29,15 @@ const LAYOUTS: Array<{layout: PreviewLayout; label: string; icon: string}> = [
   {layout: PREVIEW_LAYOUTS.FLEX, label: 'Flex', icon: 'lucide:layout-dashboard'},
   {layout: PREVIEW_LAYOUTS.MASONRY, label: 'Masonry', icon: 'bx:bx-grid-alt'},
   {layout: PREVIEW_LAYOUTS.INDIVIDUAL, label: 'Focus', icon: 'ic:twotone-zoom-in-map'},
+  {layout: PREVIEW_LAYOUTS.CANVAS, label: 'Canvas', icon: 'lucide:frame'},
 ];
 
 const StatusBar = () => {
   const dispatch = useDispatch();
   const layout = useSelector(selectLayout);
   const zoomfactor = useSelector(selectZoomFactor);
+  const canvasZoom = useSelector(selectCanvasZoom);
+  const isCanvas = layout === PREVIEW_LAYOUTS.CANVAS;
   const darkMode = useSelector(selectDarkMode);
   const notifications = useSelector(selectNotifications);
   const activeSuite = useSelector(selectActiveSuite);
@@ -40,8 +46,15 @@ const StatusBar = () => {
     true
   );
 
-  const onZoomIn = useCallback(() => dispatch(zoomIn()), [dispatch]);
-  const onZoomOut = useCallback(() => dispatch(zoomOut()), [dispatch]);
+  // In canvas mode the stepper drives the world zoom instead of device scale.
+  const onZoomIn = useCallback(
+    () => dispatch(isCanvas ? canvasZoomIn() : zoomIn()),
+    [dispatch, isCanvas]
+  );
+  const onZoomOut = useCallback(
+    () => dispatch(isCanvas ? canvasZoomOut() : zoomOut()),
+    [dispatch, isCanvas]
+  );
   const handleTheme = useCallback(() => dispatch(setDarkMode(!darkMode)), [dispatch, darkMode]);
 
   const toggleNextLayout = useCallback(() => {
@@ -107,7 +120,7 @@ const StatusBar = () => {
           data-testid="zoom-level"
           className="w-11 text-center font-mono text-xs font-medium text-fg"
         >
-          {Math.ceil(zoomfactor * 100)}%
+          {Math.ceil((isCanvas ? canvasZoom : zoomfactor) * 100)}%
         </span>
         <button
           type="button"

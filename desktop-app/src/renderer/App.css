@@ -66,6 +66,13 @@ html {
   user-select: none;
 }
 
+/* Canvas mode stage backdrop (Hybrid Studio). */
+.canvas-dots {
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
 /*
  * Frameless-window drag regions. The title bar is the drag handle, so any
  * interactive element placed inside it must opt out with .app-no-drag.

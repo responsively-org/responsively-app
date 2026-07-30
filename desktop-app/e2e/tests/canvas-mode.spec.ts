@@ -1,0 +1,137 @@
+import {Client} from '@modelcontextprotocol/sdk/client/index.js';
+import {StreamableHTTPClientTransport} from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import {expect, test} from '../fixtures/electron-app';
+import type {ResponsivelyApp} from '../models/app';
+
+const DEFAULT_DEVICE_IDS = ['10008', '10013', '10015'];
+// Six devices for the perf spike: three phones, two tablets, one laptop.
+const SPIKE_DEVICE_IDS = ['10008', '10006', '10016', '10013', '10011', '10015'];
+
+const setSuiteDevices = async (mcpPort: number, deviceIds: string[]) => {
+  const client = new Client({name: 'canvas-e2e', version: '1.0.0'});
+  const transport = new StreamableHTTPClientTransport(new URL(`http://127.0.0.1:${mcpPort}/mcp`));
+  await client.connect(transport);
+  await client.callTool({name: 'set_active_devices', arguments: {devices: deviceIds}});
+  await client.close();
+};
+
+const guestIds = (app: ResponsivelyApp): Promise<number[]> =>
+  app.electronApp.evaluate(({webContents}) =>
+    webContents
+      .getAllWebContents()
+      .filter(
+        (wc: Electron.WebContents) => (wc as unknown as {getType(): string}).getType() === 'webview'
+      )
+      .map((wc: Electron.WebContents) => wc.id)
+      .sort((a: number, b: number) => a - b)
+  );
+
+test.describe('Canvas mode', () => {
+  test.afterAll(async ({app, mcpPort}) => {
+    // Worker-scoped app: restore a grid layout and the default suite for
+    // whatever spec file runs next.
+    await app.page.locator('[data-testid="layout-FLEX"]').click();
+    await setSuiteDevices(mcpPort, DEFAULT_DEVICE_IDS);
+  });
+
+  test('entering canvas keeps every webview alive (no remount)', async ({app}) => {
+    await app.dismissModals();
+    await app.page.locator('[data-testid="layout-COLUMN"]').click();
+    const before = await guestIds(app);
+    expect(before.length).toBeGreaterThan(0);
+
+    await app.page.locator('[data-testid="layout-CANVAS"]').click();
+    await expect(app.page.locator('[data-testid="canvas-stage"]')).toBeVisible();
+    // The world is a zero-sized transform anchor — "visible" never applies.
+    await expect(app.page.locator('[data-testid="canvas-world"]')).toBeAttached();
+
+    // Identical webContents ids prove the switch reused the mounted guests.
+    expect(await guestIds(app)).toEqual(before);
+  });
+
+  test('dragging the backdrop pans the world', async ({app}) => {
+    await app.dismissModals();
+    await app.page.locator('[data-testid="layout-CANVAS"]').click();
+
+    const world = app.page.locator('[data-testid="canvas-world"]');
+    const before = await world.evaluate((el) => el.style.transform);
+
+    const stage = app.page.locator('[data-testid="canvas-stage"]');
+    const box = await stage.boundingBox();
+    // Bottom-right corner is guaranteed backdrop, not a device.
+    const startX = box!.x + box!.width - 30;
+    const startY = box!.y + box!.height - 30;
+    await app.page.mouse.move(startX, startY);
+    await app.page.mouse.down();
+    await app.page.mouse.move(startX - 120, startY - 80, {steps: 5});
+    await app.page.mouse.up();
+
+    const after = await world.evaluate((el) => el.style.transform);
+    expect(after).not.toBe(before);
+    expect(after).toContain('translate(-120px, -80px)');
+  });
+
+  test('the status bar stepper drives canvas zoom', async ({app}) => {
+    await app.dismissModals();
+    // Device zoom is worker state another spec may have changed — capture it
+    // rather than assuming the boot value.
+    await app.page.locator('[data-testid="layout-COLUMN"]').click();
+    const zoomLevel = app.page.locator('[data-testid="zoom-level"]');
+    const deviceZoomText = await zoomLevel.innerText();
+
+    await app.page.locator('[data-testid="layout-CANVAS"]').click();
+    await expect(zoomLevel).toHaveText('90%');
+
+    await app.page.locator('[data-testid="zoom-in"]').click();
+    await expect(zoomLevel).toHaveText('100%');
+    await expect
+      .poll(() =>
+        app.page.locator('[data-testid="canvas-world"]').evaluate((el) => el.style.transform)
+      )
+      .toContain('scale(1)');
+
+    await app.page.locator('[data-testid="zoom-out"]').click();
+    await expect(zoomLevel).toHaveText('90%');
+
+    // Leaving canvas restores the device zoom readout.
+    await app.page.locator('[data-testid="layout-COLUMN"]').click();
+    await expect(zoomLevel).toHaveText(deviceZoomText);
+  });
+
+  test('spike: pan frame timing with six devices', async ({app, mcpPort}) => {
+    await app.dismissModals();
+    await setSuiteDevices(mcpPort, SPIKE_DEVICE_IDS);
+    await app.page.locator('[data-testid="layout-CANVAS"]').click();
+    await expect.poll(async () => (await guestIds(app)).length, {timeout: 20_000}).toBe(6);
+    // Let the new guests finish their initial load before measuring.
+    await app.page.waitForTimeout(3000);
+
+    const timings = await app.page.evaluate(async () => {
+      const world = document.querySelector('[data-testid="canvas-world"]') as HTMLElement;
+      const deltas: number[] = [];
+      let last = performance.now();
+      for (let frame = 0; frame < 90; frame += 1) {
+        world.style.transform = `translate(${frame * 6}px, ${frame * 3}px) scale(0.9)`;
+
+        await new Promise(requestAnimationFrame);
+        const now = performance.now();
+        deltas.push(now - last);
+        last = now;
+      }
+      const sorted = [...deltas].sort((a, b) => a - b);
+      return {
+        p50: sorted[Math.floor(sorted.length * 0.5)],
+        p95: sorted[Math.floor(sorted.length * 0.95)],
+        max: sorted[sorted.length - 1],
+      };
+    });
+
+    console.log(
+      `SPIKE 6-device pan: p50=${timings.p50.toFixed(1)}ms p95=${timings.p95.toFixed(1)}ms max=${timings.max.toFixed(1)}ms`
+    );
+
+    // Informational threshold: generous enough for CI, tight enough to catch
+    // the compositing-chokes failure mode the spike exists to detect.
+    expect(timings.p95).toBeLessThan(100);
+  });
+});

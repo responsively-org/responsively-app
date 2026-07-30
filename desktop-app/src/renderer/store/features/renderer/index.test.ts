@@ -1,6 +1,9 @@
 import {describe, expect, it} from 'vitest';
 import {PREVIEW_LAYOUTS} from 'common/constants';
 import reducer, {
+  canvasZoomIn,
+  canvasZoomOut,
+  setCanvasZoom,
   setAddress,
   setIsCapturingScreenshot,
   setIsInspecting,
@@ -71,5 +74,26 @@ describe('renderer slice', () => {
     expect(state.isInspecting).toBe(true);
     expect(state.isCapturingScreenshot).toBe(true);
     expect(state.pageTitle).toBe('Title');
+  });
+
+  it('canvas zoom steps through the design scale and clamps at the ends', () => {
+    let state = baseState();
+    expect(state.canvasZoom).toBe(0.9);
+
+    state = reducer(state, canvasZoomIn());
+    expect(state.canvasZoom).toBe(1);
+
+    state = reducer(state, setCanvasZoom(1.25));
+    state = reducer(state, canvasZoomIn());
+    expect(state.canvasZoom).toBe(1.25);
+
+    state = reducer(state, setCanvasZoom(0.25));
+    state = reducer(state, canvasZoomOut());
+    expect(state.canvasZoom).toBe(0.25);
+  });
+
+  it('setCanvasZoom clamps out-of-range values', () => {
+    expect(reducer(undefined, setCanvasZoom(9)).canvasZoom).toBe(1.25);
+    expect(reducer(undefined, setCanvasZoom(0)).canvasZoom).toBe(0.25);
   });
 });

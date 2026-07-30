@@ -8,6 +8,7 @@ const availableCores =
 // get scheduled onto workers early, minimizing total wall-clock time.
 const testOrder = [
   'device-interaction-mirroring.spec.ts',
+  'canvas-mode.spec.ts',
   'cross-device-mirroring.spec.ts',
   'color-blindness.spec.ts',
   'inspect-elements.spec.ts',

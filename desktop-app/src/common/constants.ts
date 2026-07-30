@@ -9,6 +9,7 @@ export const PREVIEW_LAYOUTS = {
   FLEX: 'FLEX',
   INDIVIDUAL: 'INDIVIDUAL',
   MASONRY: 'MASONRY',
+  CANVAS: 'CANVAS',
 } as const;
 
 export type PreviewLayout = (typeof PREVIEW_LAYOUTS)[keyof typeof PREVIEW_LAYOUTS];

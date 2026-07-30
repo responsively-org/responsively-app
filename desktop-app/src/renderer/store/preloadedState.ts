@@ -57,6 +57,7 @@ export const buildPreloadedState = () => {
       layout: store.get('ui.previewLayout') ?? PREVIEW_LAYOUTS.FLEX,
       isCapturingScreenshot: false,
       notifications: null,
+      canvasZoom: 0.9,
     },
     devtools: {
       bounds: {x: 0, y: 0, width: 0, height: 0},
