@@ -1,10 +1,12 @@
 import {useDispatch, useSelector} from 'react-redux';
 import cx from 'classnames';
+import {Icon} from '@iconify/react';
 import {
   resetCanvasPositions,
   selectActiveSuite,
   setCanvasPosition,
 } from 'renderer/store/features/device-manager';
+import {selectIsPresenting, setPresenting} from 'renderer/store/features/ui';
 import {DOCK_POSITION, PREVIEW_LAYOUTS} from 'common/constants';
 import {selectDockPosition, selectIsDevtoolsOpen} from 'renderer/store/features/devtools';
 import {getDevicesMap, Device as IDevice} from 'common/deviceList';
@@ -57,6 +59,8 @@ const Previewer = () => {
   const layout = useSelector(selectLayout);
   const canvasZoom = useSelector(selectCanvasZoom);
   const deviceScale = useSelector(selectZoomFactor);
+  const isPresenting = useSelector(selectIsPresenting);
+  const presenting = isPresenting && layout === PREVIEW_LAYOUTS.CANVAS;
   const [individualDevice, setIndividualDevice] = useState<IDevice>(devices[0]);
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
   const isMasonryLayout = layout === PREVIEW_LAYOUTS.MASONRY;
@@ -100,6 +104,20 @@ const Previewer = () => {
       arranged[idx] ?? {x: CANVAS_ORIGIN, y: CANVAS_ORIGIN}
     );
   };
+
+  // Present mode exits on Escape.
+  useEffect(() => {
+    if (!presenting) {
+      return undefined;
+    }
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        dispatch(setPresenting(false));
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [presenting, dispatch]);
 
   // Wheel must preventDefault (trackpad pinch also arrives as ctrl+wheel),
   // which React's passive listeners can't — attach natively.
@@ -224,7 +242,21 @@ const Previewer = () => {
             onPointerMove={isCanvasLayout ? onStagePointerMove : undefined}
             onPointerUp={isCanvasLayout ? onStagePointerUp : undefined}
           >
-            {isCanvasLayout ? (
+            {presenting ? (
+              <button
+                type="button"
+                data-canvas-controls
+                data-testid="exit-present"
+                onClick={() => dispatch(setPresenting(false))}
+                className="absolute bottom-[18px] left-1/2 z-20 flex h-[34px] -translate-x-1/2 items-center gap-2 rounded-full border border-line bg-panel px-4 text-[12.5px] font-bold text-fg opacity-90 shadow-elevated transition-opacity hover:opacity-100 focus:outline-none"
+              >
+                <span className="pointer-events-none contents">
+                  <Icon icon="ic:round-close" fontSize={15} />
+                  Exit presentation
+                </span>
+              </button>
+            ) : null}
+            {isCanvasLayout && !presenting ? (
               <div
                 data-canvas-controls
                 className="absolute right-3 top-3 z-10 flex items-center gap-[2px] rounded-full border border-line bg-panel p-[3px] shadow-elevated"

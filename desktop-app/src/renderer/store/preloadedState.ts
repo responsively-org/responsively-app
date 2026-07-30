@@ -46,6 +46,7 @@ export const buildPreloadedState = () => {
       darkMode: Boolean(store.get('ui.darkMode')),
       appView: 'BROWSER' as const,
       menuFlyout: false,
+      isPresenting: false,
     },
     renderer: {
       address: urlFromQueryParam() ?? String(store.get('homepage') ?? ''),

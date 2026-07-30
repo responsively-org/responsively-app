@@ -1,10 +1,15 @@
 import {describe, expect, it} from 'vitest';
-import reducer, {APP_VIEWS, closeMenuFlyout, setAppView, setDarkMode} from './index';
+import reducer, {APP_VIEWS, closeMenuFlyout, setAppView, setDarkMode, setPresenting} from './index';
 
 describe('ui slice', () => {
   it('has pure defaults', () => {
     const state = reducer(undefined, {type: '@@INIT'});
-    expect(state).toEqual({darkMode: true, appView: 'BROWSER', menuFlyout: false});
+    expect(state).toEqual({
+      darkMode: true,
+      appView: 'BROWSER',
+      menuFlyout: false,
+      isPresenting: false,
+    });
   });
 
   it('setDarkMode updates state', () => {
@@ -20,5 +25,12 @@ describe('ui slice', () => {
   it('closeMenuFlyout sets the flyout flag', () => {
     const state = reducer(undefined, closeMenuFlyout(true));
     expect(state.menuFlyout).toBe(true);
+  });
+
+  it('setPresenting toggles present mode', () => {
+    let state = reducer(undefined, setPresenting(true));
+    expect(state.isPresenting).toBe(true);
+    state = reducer(state, setPresenting(false));
+    expect(state.isPresenting).toBe(false);
   });
 });

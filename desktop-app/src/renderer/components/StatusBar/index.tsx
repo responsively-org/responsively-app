@@ -22,7 +22,7 @@ import {
   zoomIn,
   zoomOut,
 } from 'renderer/store/features/renderer';
-import {selectDarkMode, setDarkMode} from 'renderer/store/features/ui';
+import {selectDarkMode, setDarkMode, setPresenting} from 'renderer/store/features/ui';
 
 const LAYOUTS: Array<{layout: PreviewLayout; label: string; icon: string}> = [
   {layout: PREVIEW_LAYOUTS.COLUMN, label: 'Column', icon: 'radix-icons:layout'},
@@ -103,6 +103,24 @@ const StatusBar = () => {
       </span>
 
       <span className="flex-1" />
+
+      {isCanvas ? (
+        <>
+          <button
+            type="button"
+            title="Present"
+            data-testid="present-button"
+            onClick={() => dispatch(setPresenting(true))}
+            className="flex h-[26px] items-center gap-[7px] rounded-[7px] bg-accent px-3 text-xs font-bold text-on-accent transition-[filter] hover:brightness-110 focus:outline-none"
+          >
+            <span className="pointer-events-none contents">
+              <Icon icon="lucide:play" fontSize={12} />
+              Present
+            </span>
+          </button>
+          <div className="h-5 w-px bg-line" />
+        </>
+      ) : null}
 
       <div className="flex items-center gap-[2px]">
         <button

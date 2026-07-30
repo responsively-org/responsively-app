@@ -177,4 +177,34 @@ test.describe('Canvas mode', () => {
     }));
     expect(arranged).toEqual(before);
   });
+
+  test('present mode hides the chrome and Esc restores it', async ({app}) => {
+    await app.dismissModals();
+    await app.page.locator('[data-testid="layout-CANVAS"]').click();
+
+    await app.page.locator('[data-testid="present-button"]').click();
+
+    // All three chrome bars disappear; the canvas and exit pill remain.
+    await expect(app.page.locator('[data-testid="status-bar"]')).toBeHidden();
+    await expect(app.addressBar).toBeHidden();
+    await expect(app.page.locator('[data-testid="title-bar"]')).toBeHidden();
+    await expect(app.page.locator('[data-testid="canvas-stage"]')).toBeVisible();
+    await expect(app.page.locator('[data-testid="exit-present"]')).toBeVisible();
+
+    await app.page.keyboard.press('Escape');
+
+    await expect(app.page.locator('[data-testid="status-bar"]')).toBeVisible();
+    await expect(app.addressBar).toBeVisible();
+    await expect(app.page.locator('[data-testid="exit-present"]')).toBeHidden();
+  });
+
+  test('the exit pill leaves present mode', async ({app}) => {
+    await app.dismissModals();
+    await app.page.locator('[data-testid="layout-CANVAS"]').click();
+    await app.page.locator('[data-testid="present-button"]').click();
+
+    await app.page.locator('[data-testid="exit-present"]').click();
+
+    await expect(app.page.locator('[data-testid="status-bar"]')).toBeVisible();
+  });
 });

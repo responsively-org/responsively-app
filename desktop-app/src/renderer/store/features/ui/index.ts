@@ -13,6 +13,8 @@ export interface UIState {
   darkMode: boolean;
   appView: AppView;
   menuFlyout: boolean;
+  /** Present mode: chrome hidden, canvas full-bleed (session state). */
+  isPresenting: boolean;
 }
 
 // Persisted values are injected via the store's preloaded state
@@ -21,6 +23,7 @@ const initialState: UIState = {
   darkMode: true,
   appView: APP_VIEWS.BROWSER,
   menuFlyout: false,
+  isPresenting: false,
 };
 
 export const uiSlice = createSlice({
@@ -36,14 +39,18 @@ export const uiSlice = createSlice({
     closeMenuFlyout: (state, action: PayloadAction<boolean>) => {
       state.menuFlyout = action.payload;
     },
+    setPresenting: (state, action: PayloadAction<boolean>) => {
+      state.isPresenting = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const {setDarkMode, setAppView, closeMenuFlyout} = uiSlice.actions;
+export const {setDarkMode, setAppView, closeMenuFlyout, setPresenting} = uiSlice.actions;
 
 export const selectDarkMode = (state: RootState) => state.ui.darkMode;
 export const selectAppView = (state: RootState) => state.ui.appView;
 export const selectMenuFlyout = (state: RootState) => state.ui.menuFlyout;
+export const selectIsPresenting = (state: RootState) => state.ui.isPresenting;
 
 export default uiSlice.reducer;
