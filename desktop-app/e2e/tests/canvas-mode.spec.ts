@@ -179,16 +179,23 @@ test.describe('Canvas mode', () => {
     expect(arranged).toEqual(before);
   });
 
-  test('present mode hides the chrome and Esc restores it', async ({app}) => {
+  test('present mode hides the chrome and Esc restores it', async ({app, testServerUrl}) => {
     await app.dismissModals();
+    await app.navigateTo(`${testServerUrl}/test-page.html`);
+    await expect(app.addressBar).toHaveValue(/test-page\.html/, {timeout: 15_000});
     await app.page.locator('[data-testid="layout-CANVAS"]').click();
 
     await app.page.locator('[data-testid="present-button"]').click();
 
-    // All three chrome bars disappear; the canvas and exit pill remain.
+    // Toolbar and status bar disappear; the canvas and exit pill remain. The
+    // title bar stays as the one piece of chrome, showing app — site — page.
     await expect(app.page.locator('[data-testid="status-bar"]')).toBeHidden();
     await expect(app.addressBar).toBeHidden();
-    await expect(app.page.locator('[data-testid="title-bar"]')).toBeHidden();
+    if (process.platform === 'darwin') {
+      const titleBar = app.page.locator('[data-testid="title-bar"]');
+      await expect(titleBar).toBeVisible();
+      await expect(titleBar).toContainText('Responsively — 127.0.0.1');
+    }
     await expect(app.page.locator('[data-testid="canvas-stage"]')).toBeVisible();
     await expect(app.page.locator('[data-testid="exit-present"]')).toBeVisible();
 

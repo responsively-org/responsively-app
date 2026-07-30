@@ -25,10 +25,6 @@ const usePresenting = (): boolean => {
   return isPresenting && layout === PREVIEW_LAYOUTS.CANVAS;
 };
 
-const PresentAwareTitleBar = () => {
-  return usePresenting() ? null : <TitleBar />;
-};
-
 const Browser = () => {
   const presenting = usePresenting();
   return (
@@ -63,7 +59,7 @@ const AppContent = () => {
         {/* The window is frameless: the title bar is ours, and the rest of
             the shell fills what's left of the viewport. */}
         <div className="flex h-screen flex-col overflow-hidden">
-          <PresentAwareTitleBar />
+          <TitleBar />
           {/* The shell itself never scrolls — a scroll container wrapping the
               previews would add a compositing layer around every webview.
               Long views (Device Manager) own their scrolling instead. */}
