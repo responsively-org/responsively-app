@@ -146,9 +146,11 @@ test.describe('Device Interaction Mirroring', () => {
       await app.dismissModals();
 
       const webviewCount = await app.webviews.count();
-      const mirroringBtnCount = await app.eventMirroringButtons.count();
+      // The mirroring toggle lives in each device's More popover; the pill's
+      // More trigger is the per-device anchor we can count without opening.
+      const moreBtnCount = await app.moreDeviceToolsButtons.count();
 
-      expect(mirroringBtnCount).toBe(webviewCount);
+      expect(moreBtnCount).toBe(webviewCount);
     });
 
     test('disabling mirroring closes BrowserSync socket', async ({app, testServerUrl}) => {
@@ -156,7 +158,9 @@ test.describe('Device Interaction Mirroring', () => {
       await app.navigateTo(`${testServerUrl}/test-page.html`, {timeout: 5000});
       await app.page.waitForTimeout(5000);
 
-      // Click first "Disable Event Mirroring" button
+      // The toggle sits inside the first device's "More device tools" popover.
+      await app.revealDevicePill();
+      await app.moreDeviceToolsButtons.first().click();
       const mirroringBtn = app.eventMirroringButtons.first();
       await mirroringBtn.click();
       await app.page.waitForTimeout(2000);
@@ -190,12 +194,15 @@ test.describe('Device Interaction Mirroring', () => {
       await app.navigateTo(`${testServerUrl}/test-page.html`, {timeout: 5000});
       await app.page.waitForTimeout(5000);
 
-      // Disable mirroring first
+      // Disable mirroring first (inside the More popover, which closes on pick)
+      await app.revealDevicePill();
+      await app.moreDeviceToolsButtons.first().click();
       const mirroringBtn = app.eventMirroringButtons.first();
       await mirroringBtn.click();
       await app.page.waitForTimeout(2000);
 
       // Re-enable mirroring
+      await app.moreDeviceToolsButtons.first().click();
       await mirroringBtn.click();
       await app.page.waitForTimeout(8000);
 
@@ -243,7 +250,8 @@ test.describe('Device Interaction Mirroring', () => {
       });
       await app.page.waitForTimeout(1000);
 
-      // Click "Scroll to Top" button
+      // Click "Scroll to top" button
+      await app.revealDevicePill();
       const scrollToTopBtn = app.scrollToTopButtons.first();
       await scrollToTopBtn.click();
       await app.page.waitForTimeout(1500);

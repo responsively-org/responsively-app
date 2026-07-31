@@ -113,5 +113,10 @@ export const migrations = {
     if (store.get('userPreferences.customTitlebar') !== undefined) {
       store.delete('userPreferences.customTitlebar');
     }
+    // 2.0 opens on the redesign's default layout (Grid/FLEX) once; the choice
+    // persists again from the next layout switch.
+    if (store.get('ui.previewLayout') !== undefined) {
+      store.delete('ui.previewLayout');
+    }
   },
 };

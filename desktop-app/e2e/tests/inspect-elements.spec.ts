@@ -79,7 +79,8 @@ test.describe('Inspect Elements', () => {
   test('opening devtools docks at bottom by default', async ({app}) => {
     await app.dismissModals();
 
-    const openDevtoolsBtn = app.page.locator('button[title="Open Devtools"]').first();
+    const openDevtoolsBtn = app.page.locator('button[title="Open devtools"]').first();
+    await app.revealDevicePill();
     await openDevtoolsBtn.click();
     await app.page.waitForTimeout(1000);
 
@@ -98,7 +99,8 @@ test.describe('Inspect Elements', () => {
   test('dock-right button switches devtools to right side', async ({app}) => {
     await app.dismissModals();
 
-    const openDevtoolsBtn = app.page.locator('button[title="Open Devtools"]').first();
+    const openDevtoolsBtn = app.page.locator('button[title="Open devtools"]').first();
+    await app.revealDevicePill();
     await openDevtoolsBtn.click();
     await app.page.waitForTimeout(1000);
 
@@ -120,7 +122,8 @@ test.describe('Inspect Elements', () => {
   test('dock toggle switches between right and bottom', async ({app}) => {
     await app.dismissModals();
 
-    const openDevtoolsBtn = app.page.locator('button[title="Open Devtools"]').first();
+    const openDevtoolsBtn = app.page.locator('button[title="Open devtools"]').first();
+    await app.revealDevicePill();
     await openDevtoolsBtn.click();
     await app.page.waitForTimeout(1000);
 
@@ -161,7 +164,8 @@ test.describe('Inspect Elements', () => {
   test('close button closes docked devtools', async ({app}) => {
     await app.dismissModals();
 
-    const openDevtoolsBtn = app.page.locator('button[title="Open Devtools"]').first();
+    const openDevtoolsBtn = app.page.locator('button[title="Open devtools"]').first();
+    await app.revealDevicePill();
     await openDevtoolsBtn.click();
     await app.page.waitForTimeout(1000);
 
@@ -179,7 +183,8 @@ test.describe('Inspect Elements', () => {
   test('undock button detaches devtools to separate window', async ({app}) => {
     await app.dismissModals();
 
-    const openDevtoolsBtn = app.page.locator('button[title="Open Devtools"]').first();
+    const openDevtoolsBtn = app.page.locator('button[title="Open devtools"]').first();
+    await app.revealDevicePill();
     await openDevtoolsBtn.click();
     await app.page.waitForTimeout(1000);
 

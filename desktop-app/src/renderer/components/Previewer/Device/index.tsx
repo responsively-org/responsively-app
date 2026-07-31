@@ -259,6 +259,9 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
             onIndividualLayoutHandler={onIndividualLayoutHandler}
             isIndividualLayout={isIndividualLayout}
             isDeviceRotationEnabled={isDeviceRotationEnabled}
+            rulerActive={rulerActive}
+            designOverlayActive={designOverlay?.enabled === true}
+            variant={isCanvasLayout ? 'canvas' : 'grid'}
           />
         )
       }

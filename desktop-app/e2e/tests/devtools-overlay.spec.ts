@@ -27,7 +27,8 @@ test.describe('Devtools overlay coordination', () => {
     await app.dismissModals();
 
     // Open devtools on the first device.
-    await app.page.locator('button[title="Open Devtools"]').first().click();
+    await app.revealDevicePill();
+    await app.page.locator('button[title="Open devtools"]').first().click();
     await expect.poll(() => devtoolsAttached(app), {timeout: 15_000}).toBe(true);
 
     // Opening a modal must get the native view out of the way.

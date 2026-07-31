@@ -496,7 +496,7 @@ const Previewer = () => {
                     'absolute w-max': isCanvasLayout,
                     // Selection (canvas): accent label + screen ring, and the
                     // device pill stays visible without hover.
-                    '[&_[data-device-label]]:text-accent [&_[data-scaled-frame]]:ring-1 [&_[data-scaled-frame]]:ring-accent [&_[data-testid=device-pill]]:opacity-100':
+                    '[&_[data-device-label]]:text-accent [&_[data-scaled-frame]]:ring-1 [&_[data-scaled-frame]]:ring-accent [&_[data-testid=device-pill]]:pointer-events-auto [&_[data-testid=device-pill]]:opacity-100':
                       isCanvasLayout && device.id === selectedDeviceId,
                   })}
                   style={

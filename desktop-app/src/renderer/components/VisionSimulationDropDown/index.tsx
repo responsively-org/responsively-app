@@ -62,8 +62,8 @@ export const VisionSimulationDropDown = ({
 
   return (
     <Popover
-      triggerTitle="Vision simulation"
-      anchor="bottom end"
+      triggerTitle="Simulate vision"
+      anchor={isToolbar ? 'bottom end' : 'bottom start'}
       className="max-h-[470px] w-[238px] overflow-y-auto p-[6px]"
       triggerClassName={cx(
         'flex items-center transition-colors',

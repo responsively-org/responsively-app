@@ -4,17 +4,16 @@ test.describe('Device Toolbar', () => {
   test('each device shows its name and dimensions in the header', async ({app}) => {
     await app.dismissModals();
 
-    // Each device has a name and dimensions like "390x844"
-    // Look for text containing "x" which represents dimension patterns
-    const dimensionTexts = app.page.locator('span:has-text("x")');
-    const count = await dimensionTexts.count();
-    expect(count).toBeGreaterThan(0);
+    // Each visible device header shows "<width> × <height>" in mono type.
+    const labelRow = app.page.locator('[data-device-label]:visible').first();
+    await expect(labelRow.locator('span.font-mono')).toHaveText(/\d+ × \d+/);
   });
 
   test('refresh view button reloads the individual webview', async ({app}) => {
     await app.dismissModals();
 
-    const refreshViewBtn = app.page.locator('button[title="Refresh This View"]').first();
+    await app.revealDevicePill();
+    const refreshViewBtn = app.page.locator('button[title="Refresh this device"]').first();
     await expect(refreshViewBtn).toBeVisible();
 
     // Click refresh on individual device
@@ -28,7 +27,8 @@ test.describe('Device Toolbar', () => {
   test('scroll to top button scrolls the webview to top', async ({app}) => {
     await app.dismissModals();
 
-    const scrollToTopBtn = app.page.locator('button[title="Scroll to Top"]').first();
+    await app.revealDevicePill();
+    const scrollToTopBtn = app.page.locator('button[title="Scroll to top"]').first();
     await expect(scrollToTopBtn).toBeVisible();
 
     // Click scroll to top
@@ -36,48 +36,40 @@ test.describe('Device Toolbar', () => {
     await app.page.waitForTimeout(500);
   });
 
-  test('individual layout toggle switches to single-device view', async ({app}) => {
+  test('focus this device switches to single-device view', async ({app}) => {
     await app.dismissModals();
+    await app.page.locator('[data-testid="layout-FLEX"]').click();
 
-    const individualLayoutBtn = app.page
-      .locator('button[title="Enable Individual Layout"]')
-      .first();
+    await app.revealDevicePill();
+    const focusBtn = app.page.locator('button[title="Focus this device"]').first();
+    await expect(focusBtn).toBeVisible();
+    await focusBtn.click();
 
-    const isVisible = await individualLayoutBtn.isVisible().catch(() => false);
-
-    if (isVisible) {
-      await individualLayoutBtn.click();
-      await app.page.waitForTimeout(500);
-
-      // In individual layout, only one webview should be prominent
-      // The container should have justify-center class
-      const centeredContainer = app.page.locator('.flex.gap-4.overflow-auto.p-4.justify-center');
-      await expect(centeredContainer).toBeVisible({timeout: 5_000});
-    }
+    // In the focus (individual) layout the container centers one device.
+    const centeredContainer = app.page.locator('.flex.gap-4.overflow-auto.p-4.justify-center');
+    await expect(centeredContainer).toBeVisible({timeout: 5_000});
+    await expect(focusBtn).toHaveAttribute('aria-pressed', 'true');
   });
 
-  test('individual layout toggle can switch back to multi-device view', async ({app}) => {
+  test('focus this device toggles back to a multi-device view', async ({app}) => {
     await app.dismissModals();
 
-    const disableIndividualBtn = app.page
-      .locator('button[title="Disable Individual Layout"]')
-      .first();
+    // Still in the focus layout from the previous test.
+    await app.revealDevicePill();
+    const focusBtn = app.page.locator('button[title="Focus this device"]').first();
+    await expect(focusBtn).toHaveAttribute('aria-pressed', 'true');
+    await focusBtn.click();
 
-    const isVisible = await disableIndividualBtn.isVisible().catch(() => false);
-
-    if (isVisible) {
-      await disableIndividualBtn.click();
-      await app.page.waitForTimeout(500);
-
-      // Multiple webviews should be visible again
-      const webviewCount = await app.webviews.count();
-      expect(webviewCount).toBeGreaterThanOrEqual(1);
-    }
+    await expect(focusBtn).toHaveAttribute('aria-pressed', 'false');
+    const centeredContainer = app.page.locator('.flex.gap-4.overflow-auto.p-4.justify-center');
+    await expect(centeredContainer).toBeHidden();
+    expect(await app.webviews.count()).toBeGreaterThanOrEqual(1);
   });
 
   test('ruler toggle shows rulers on the device', async ({app}) => {
     await app.dismissModals();
 
+    await app.revealDevicePill();
     const rulerBtn = app.page.locator('button[title="Show rulers"]').first();
     await expect(rulerBtn).toBeVisible();
 

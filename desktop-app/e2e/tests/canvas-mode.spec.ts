@@ -296,7 +296,8 @@ test.describe('Canvas mode', () => {
 
     // The device pill reveals on hover; use the first device's sim dropdown.
     const firstDevice = app.page.locator('[data-testid="device-pill"]').first();
-    await firstDevice.locator('button[title="Vision simulation"]').click({force: true});
+    await app.revealDevicePill();
+    await firstDevice.locator('button[title="Simulate vision"]').click();
     await app.page.getByRole('button', {name: 'deuteranopia'}).first().click();
 
     await expect(app.page.locator('[data-testid="sim-badge"]').first()).toHaveText('deuteranopia', {
@@ -304,7 +305,8 @@ test.describe('Canvas mode', () => {
     });
 
     // Clear it for the next spec file.
-    await firstDevice.locator('button[title="Vision simulation"]').click({force: true});
+    await app.revealDevicePill();
+    await firstDevice.locator('button[title="Simulate vision"]').click();
     await app.page.getByRole('button', {name: 'Disable tool'}).first().click();
     await expect(app.page.locator('[data-testid="sim-badge"]')).toHaveCount(0);
   });

@@ -26,16 +26,29 @@ export class ResponsivelyApp {
     this.webviews = page.locator('webview');
   }
 
+  /**
+   * Hidden pills are pointer-transparent; hover the device (its label row)
+   * first, exactly like a user, before clicking any pill button.
+   */
+  async revealDevicePill(index = 0) {
+    await this.page.locator('[data-device-label]:visible').nth(index).hover();
+  }
+
+  /** Menu item inside a device's "More device tools" popover (open it first). */
   get eventMirroringButtons(): Locator {
-    return this.page.locator('button[title="Disable Event Mirroring"]');
+    return this.page.locator('button[title="Event mirroring"]');
+  }
+
+  get moreDeviceToolsButtons(): Locator {
+    return this.page.locator('button[title="More device tools"]');
   }
 
   get perDeviceRefreshButtons(): Locator {
-    return this.page.locator('button[title="Refresh This View"]');
+    return this.page.locator('button[title="Refresh this device"]');
   }
 
   get scrollToTopButtons(): Locator {
-    return this.page.locator('button[title="Scroll to Top"]');
+    return this.page.locator('button[title="Scroll to top"]');
   }
 
   get modifier(): 'Meta' | 'Control' {

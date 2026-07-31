@@ -24,11 +24,12 @@ import {
 } from 'renderer/store/features/renderer';
 import {selectDarkMode, setDarkMode, setPresenting} from 'renderer/store/features/ui';
 
+// Order, labels and icons per the Hybrid Studio design; FLEX is its "Grid".
 const LAYOUTS: Array<{layout: PreviewLayout; label: string; icon: string}> = [
-  {layout: PREVIEW_LAYOUTS.COLUMN, label: 'Column', icon: 'radix-icons:layout'},
-  {layout: PREVIEW_LAYOUTS.FLEX, label: 'Flex', icon: 'lucide:layout-dashboard'},
+  {layout: PREVIEW_LAYOUTS.FLEX, label: 'Grid', icon: 'lucide:layout-dashboard'},
   {layout: PREVIEW_LAYOUTS.MASONRY, label: 'Masonry', icon: 'bx:bx-grid-alt'},
-  {layout: PREVIEW_LAYOUTS.INDIVIDUAL, label: 'Focus', icon: 'ic:twotone-zoom-in-map'},
+  {layout: PREVIEW_LAYOUTS.COLUMN, label: 'Column', icon: 'radix-icons:layout'},
+  {layout: PREVIEW_LAYOUTS.INDIVIDUAL, label: 'Focus', icon: 'ic:round-fullscreen'},
   {layout: PREVIEW_LAYOUTS.CANVAS, label: 'Canvas', icon: 'lucide:frame'},
 ];
 
