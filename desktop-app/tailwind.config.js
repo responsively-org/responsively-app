@@ -32,6 +32,8 @@ module.exports = {
         accent: 'var(--accent)',
         'accent-soft': 'var(--accent-soft)',
         'on-accent': 'var(--on-accent)',
+        overlay: '#ec4899',
+        'overlay-soft': 'rgba(236,72,153,.12)',
         heart: 'var(--heart)',
         'heart-soft': 'var(--heart-soft)',
         'on-heart': 'var(--on-heart)',

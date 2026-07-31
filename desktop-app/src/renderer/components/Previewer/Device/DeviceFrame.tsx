@@ -3,7 +3,11 @@ import cx from 'classnames';
 import {Device as IDevice} from 'common/deviceList';
 import {ReactNode} from 'react';
 import Spinner from 'renderer/components/Spinner';
-import type {DesignOverlayState, ViewResolution} from '../../../store/features/design-overlay';
+import {
+  overlayModeOf,
+  type DesignOverlayState,
+  type ViewResolution,
+} from '../../../store/features/design-overlay';
 import {Coordinates} from '../../../store/features/ruler';
 import GuideGrid, {DefaultGuide} from '../Guides';
 import ScaledFrame from '../ScaledFrame';
@@ -187,7 +191,24 @@ const DeviceFrame = ({
               />
             </div>
 
+            {designOverlay?.enabled && overlayModeOf(designOverlay) === 'grid' ? (
+              <div
+                data-testid="grid-overlay"
+                className="pointer-events-none absolute z-[2]"
+                style={{
+                  left: rulerOffset,
+                  top: rulerOffset,
+                  width: scaledWidth,
+                  height: scaledHeight,
+                  opacity: designOverlay.opacity / 100,
+                  backgroundImage:
+                    'repeating-linear-gradient(90deg, rgba(236,72,153,.45) 0 56px, transparent 56px 84px)',
+                  boxShadow: 'inset 0 0 0 1px rgba(236,72,153,.35)',
+                }}
+              />
+            ) : null}
             {designOverlay?.enabled &&
+              overlayModeOf(designOverlay) === 'image' &&
               designOverlay.image &&
               designOverlay.position === 'overlay' && (
                 <DesignOverlay
@@ -234,19 +255,22 @@ const DeviceFrame = ({
           </ScaledFrame>
         </div>
 
-        {designOverlay?.enabled && designOverlay.image && designOverlay.position === 'side' && (
-          <DesignOverlay
-            resolution={resolution}
-            scaledWidth={scaledWidth}
-            scaledHeight={scaledHeight}
-            zoomFactor={zoomfactor}
-            coordinates={coordinates}
-            position={designOverlay.position}
-            rulerMargin={rulerOffset}
-            width={width}
-            height={height}
-          />
-        )}
+        {designOverlay?.enabled &&
+          overlayModeOf(designOverlay) === 'image' &&
+          designOverlay.image &&
+          designOverlay.position === 'side' && (
+            <DesignOverlay
+              resolution={resolution}
+              scaledWidth={scaledWidth}
+              scaledHeight={scaledHeight}
+              zoomFactor={zoomfactor}
+              coordinates={coordinates}
+              position={designOverlay.position}
+              rulerMargin={rulerOffset}
+              width={width}
+              height={height}
+            />
+          )}
       </div>
     </div>
   );

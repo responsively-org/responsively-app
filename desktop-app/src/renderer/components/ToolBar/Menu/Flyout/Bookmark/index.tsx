@@ -1,6 +1,5 @@
 import {Icon} from '@iconify/react';
 import {useEffect, useState} from 'react';
-import Button from 'renderer/components/Button';
 import {closeMenuFlyout, selectMenuFlyout} from 'renderer/store/features/ui';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectBookmarks} from 'renderer/store/features/bookmarks';
@@ -27,18 +26,20 @@ const Bookmark = () => {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <div>
-        <div className="relative right-2 w-80 dark:border-slate-400">
-          <Button className="flex w-full items-center justify-between pl-6" isActive={isOpen}>
-            <span>Bookmarks</span>
-            <Icon
-              className="mr-3 -rotate-90 transform"
-              icon="ic:baseline-arrow-drop-down"
-              height={20}
-            />
-          </Button>
-        </div>
-      </div>
+      <button
+        type="button"
+        className="flex w-full items-center gap-[10px] rounded-[7px] px-[10px] py-2 text-[13.5px] text-fg hover:bg-hover focus:outline-none focus-visible:bg-hover"
+      >
+        <span className="pointer-events-none contents">
+          <Icon icon="ic:baseline-star-border" fontSize={15} className="text-muted" />
+          Bookmarks
+          <Icon
+            icon="ic:baseline-arrow-drop-down"
+            fontSize={18}
+            className="ml-auto -rotate-90 transform text-muted"
+          />
+        </span>
+      </button>
       {isOpen && (
         <ViewAllBookmarks bookmarks={bookmarks} handleBookmarkFlyout={handleBookmarkFlyout} />
       )}

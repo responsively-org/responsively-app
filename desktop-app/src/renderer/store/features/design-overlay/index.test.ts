@@ -1,7 +1,11 @@
 import {RootState, createAppStore} from 'renderer/store';
 import {type Mock} from 'vitest';
-import {
+import reducer, {
+  overlayModeOf,
   setDesignOverlay,
+  setOverlayMode,
+  setOverlayOpacity,
+  toggleDesignOverlay,
   removeDesignOverlay,
   selectDesignOverlay,
   selectDesignOverlayEnabled,
@@ -183,5 +187,53 @@ describe('designOverlaySlice', () => {
 
       expect(enabled).toBe(false);
     });
+  });
+
+  it('toggleDesignOverlay starts a grid overlay and flips enabled after', () => {
+    let state = reducer(undefined, toggleDesignOverlay({resolution: '390x844'}));
+    expect(state['390x844']).toEqual({
+      image: '',
+      opacity: 50,
+      position: 'overlay',
+      enabled: true,
+      mode: 'grid',
+    });
+
+    state = reducer(state, toggleDesignOverlay({resolution: '390x844'}));
+    expect(state['390x844'].enabled).toBe(false);
+  });
+
+  it('setOverlayMode and setOverlayOpacity update an existing overlay only', () => {
+    let state = reducer(undefined, setOverlayMode({resolution: 'ghost', mode: 'image'}));
+    expect(state).toEqual({});
+
+    state = reducer(state, toggleDesignOverlay({resolution: '390x844'}));
+    state = reducer(state, setOverlayMode({resolution: '390x844', mode: 'image'}));
+    state = reducer(state, setOverlayOpacity({resolution: '390x844', opacity: 80}));
+    expect(state['390x844'].mode).toBe('image');
+    expect(state['390x844'].opacity).toBe(80);
+  });
+
+  it('overlayModeOf treats legacy image overlays as image mode', () => {
+    expect(
+      overlayModeOf({
+        image: 'data:image/png;base64,x',
+        opacity: 50,
+        position: 'overlay',
+        enabled: true,
+      })
+    ).toBe('image');
+    expect(overlayModeOf({image: '', opacity: 50, position: 'overlay', enabled: true})).toBe(
+      'grid'
+    );
+    expect(
+      overlayModeOf({
+        image: 'data:image/png;base64,x',
+        opacity: 50,
+        position: 'overlay',
+        enabled: true,
+        mode: 'grid',
+      })
+    ).toBe('grid');
   });
 });

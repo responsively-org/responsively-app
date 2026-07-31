@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import type {RootState} from '../..';
 
 export type DesignOverlayPosition = 'overlay' | 'side';
+export type DesignOverlayMode = 'grid' | 'image';
 
 export interface DesignOverlayState {
   image: string;
@@ -9,7 +10,13 @@ export interface DesignOverlayState {
   position: DesignOverlayPosition;
   enabled: boolean;
   fileName?: string;
+  /** Absent on pre-2.0 persisted overlays — resolve via overlayModeOf(). */
+  mode?: DesignOverlayMode;
 }
+
+/** Pre-mode overlays were always images; a mode-less entry without one is the grid. */
+export const overlayModeOf = (overlay: DesignOverlayState): DesignOverlayMode =>
+  overlay.mode ?? (overlay.image !== '' ? 'image' : 'grid');
 
 export type ViewResolution = string;
 
@@ -38,10 +45,49 @@ export const designOverlaySlice = createSlice({
     ) => {
       delete state[action.payload.resolution];
     },
+    /** Quick toggle from the device pill; first use starts as the grid. */
+    toggleDesignOverlay: (state, action: PayloadAction<{resolution: ViewResolution}>) => {
+      const existing = state[action.payload.resolution];
+      if (existing === undefined) {
+        state[action.payload.resolution] = {
+          image: '',
+          opacity: 50,
+          position: 'overlay',
+          enabled: true,
+          mode: 'grid',
+        };
+        return;
+      }
+      existing.enabled = !existing.enabled;
+    },
+    setOverlayMode: (
+      state,
+      action: PayloadAction<{resolution: ViewResolution; mode: DesignOverlayMode}>
+    ) => {
+      const existing = state[action.payload.resolution];
+      if (existing !== undefined) {
+        existing.mode = action.payload.mode;
+      }
+    },
+    setOverlayOpacity: (
+      state,
+      action: PayloadAction<{resolution: ViewResolution; opacity: number}>
+    ) => {
+      const existing = state[action.payload.resolution];
+      if (existing !== undefined) {
+        existing.opacity = action.payload.opacity;
+      }
+    },
   },
 });
 
-export const {setDesignOverlay, removeDesignOverlay} = designOverlaySlice.actions;
+export const {
+  setDesignOverlay,
+  removeDesignOverlay,
+  toggleDesignOverlay,
+  setOverlayMode,
+  setOverlayOpacity,
+} = designOverlaySlice.actions;
 
 export const selectDesignOverlay =
   (state: RootState) =>

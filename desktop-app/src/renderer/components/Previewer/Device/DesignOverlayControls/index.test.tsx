@@ -2,7 +2,6 @@ import {render, screen, fireEvent, waitFor} from '@testing-library/react';
 import {Provider} from 'react-redux';
 import {configureStore} from '@reduxjs/toolkit';
 import designOverlayReducer from 'renderer/store/features/design-overlay';
-import type {Device} from 'common/deviceList';
 import {type Mock} from 'vitest';
 import DesignOverlayControls from './index';
 
@@ -65,20 +64,6 @@ vi.mock('renderer/components/Button', () => ({
   ),
 }));
 
-const mockDevice: Device = {
-  id: '10019',
-  type: 'phone',
-  dpr: 3,
-  capabilities: ['touch', 'mobile'],
-  isTouchCapable: true,
-  isMobileCapable: true,
-  name: 'iPhone 13',
-  width: 390,
-  height: 844,
-  userAgent:
-    'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
-};
-
 const createStore = (initialState = {}) =>
   configureStore({
     reducer: {
@@ -105,7 +90,7 @@ describe('DesignOverlayControls', () => {
   });
 
   it('renders modal when isOpen is true', () => {
-    renderWithRedux(<DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />);
+    renderWithRedux(<DesignOverlayControls resolution="390x844" isOpen onClose={mockOnClose} />);
 
     expect(screen.getByTestId('modal')).toBeInTheDocument();
     expect(screen.getByText('Design Overlay Settings')).toBeInTheDocument();
@@ -113,14 +98,14 @@ describe('DesignOverlayControls', () => {
 
   it('does not render modal when isOpen is false', () => {
     renderWithRedux(
-      <DesignOverlayControls device={mockDevice} isOpen={false} onClose={mockOnClose} />
+      <DesignOverlayControls resolution="390x844" isOpen={false} onClose={mockOnClose} />
     );
 
     expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
   });
 
   it('calls onClose when cancel button is clicked', () => {
-    renderWithRedux(<DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />);
+    renderWithRedux(<DesignOverlayControls resolution="390x844" isOpen onClose={mockOnClose} />);
 
     const cancelButton = screen.getByText('Cancel');
     fireEvent.click(cancelButton);
@@ -129,7 +114,7 @@ describe('DesignOverlayControls', () => {
   });
 
   it('shows opacity slider when image is uploaded', async () => {
-    renderWithRedux(<DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />);
+    renderWithRedux(<DesignOverlayControls resolution="390x844" isOpen onClose={mockOnClose} />);
 
     const fileInput = screen.getByTestId('file-input');
     const mockFile = new File(['dummy'], 'test.png', {type: 'image/png'});
@@ -142,7 +127,7 @@ describe('DesignOverlayControls', () => {
   });
 
   it('updates opacity when slider is moved', async () => {
-    renderWithRedux(<DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />);
+    renderWithRedux(<DesignOverlayControls resolution="390x844" isOpen onClose={mockOnClose} />);
 
     const fileInput = screen.getByTestId('file-input');
     const mockFile = new File(['dummy'], 'test.png', {type: 'image/png'});
@@ -160,7 +145,7 @@ describe('DesignOverlayControls', () => {
 
   it('saves overlay when save button is clicked', async () => {
     const {store} = renderWithRedux(
-      <DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />
+      <DesignOverlayControls resolution="390x844" isOpen onClose={mockOnClose} />
     );
 
     const fileInput = screen.getByTestId('file-input');
@@ -191,7 +176,7 @@ describe('DesignOverlayControls', () => {
     };
 
     const {store} = renderWithRedux(
-      <DesignOverlayControls device={mockDevice} isOpen onClose={mockOnClose} />,
+      <DesignOverlayControls resolution="390x844" isOpen onClose={mockOnClose} />,
       initialState
     );
 

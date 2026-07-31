@@ -28,7 +28,6 @@ import {PreviewSuiteSelector} from './PreviewSuiteSelector';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from '../KeyboardShortcutsManager/useKeyboardShortcut';
-import Shortcuts from './Shortcuts';
 import McpPanel from './McpPanel';
 import {ColorBlindnessControls} from './ColorBlindnessControls';
 
@@ -135,7 +134,6 @@ const ToolBar = () => {
       </ToolbarGroup>
       <ToolbarDivider />
       <McpPanel />
-      <Shortcuts />
       <PreviewSuiteSelector />
       <IconButton
         onClick={() => {

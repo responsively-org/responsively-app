@@ -66,6 +66,29 @@ test.describe('Device Toolbar', () => {
     expect(await app.webviews.count()).toBeGreaterThanOrEqual(1);
   });
 
+  test('design overlay toggles a grid overlay with adjustable opacity', async ({app}) => {
+    await app.dismissModals();
+    await app.page.locator('[data-testid="layout-FLEX"]').click();
+
+    await app.revealDevicePill();
+    await app.moreDeviceToolsButtons.first().click();
+    await app.page.locator('button[title="Design overlay"]').click();
+
+    const overlay = app.page.locator('[data-testid="grid-overlay"]').first();
+    await expect(overlay).toBeVisible();
+    await expect(overlay).toHaveCSS('opacity', '0.5');
+
+    // The inline picker appears under the menu item; drag the opacity slider.
+    const slider = app.page.getByRole('slider', {name: 'Overlay opacity'});
+    await slider.fill('80');
+    await expect(overlay).toHaveCSS('opacity', '0.8');
+
+    // Toggle back off for the next spec.
+    await app.page.locator('button[title="Design overlay"]').click();
+    await expect(overlay).toBeHidden();
+    await app.page.keyboard.press('Escape');
+  });
+
   test('ruler toggle shows rulers on the device', async ({app}) => {
     await app.dismissModals();
 

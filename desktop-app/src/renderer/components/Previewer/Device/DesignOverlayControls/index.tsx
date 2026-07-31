@@ -1,5 +1,4 @@
 import {Icon} from '@iconify/react';
-import type {Device} from 'common/deviceList';
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import Button from 'renderer/components/Button';
@@ -14,14 +13,14 @@ import {
 } from 'renderer/store/features/design-overlay';
 
 interface Props {
-  device: Device;
+  /** Rotation-aware resolution key, owned by Device. */
+  resolution: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const DesignOverlayControls = ({device, isOpen, onClose}: Props) => {
+const DesignOverlayControls = ({resolution, isOpen, onClose}: Props) => {
   const dispatch = useDispatch();
-  const resolution = `${device.width}x${device.height}`;
   const existingOverlay = useSelector((state: RootState) => selectDesignOverlay(state)(resolution));
 
   const [image, setImage] = useState<string>(existingOverlay?.image || '');

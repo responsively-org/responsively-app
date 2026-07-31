@@ -117,7 +117,7 @@ test.describe('Allow Insecure SSL', () => {
     expect(content).not.toContain('Secure Page Loaded');
   });
 
-  test('Allow Insecure SSL toggle in menu updates the store', async ({app}) => {
+  test('Allow Insecure SSL toggle in site tools updates the store', async ({app}) => {
     await app.dismissModals();
 
     // Ensure it's off first
@@ -125,10 +125,9 @@ test.describe('Allow Insecure SSL', () => {
       (window as any).electron.store.set('userPreferences.allowInsecureSSLConnections', false);
     });
 
-    // Open menu and click the toggle
-    await app.openMenuFlyout();
-    const sslRow = app.page.locator('div.flex.flex-row').filter({hasText: 'Allow Insecure SSL'});
-    const toggleLabel = sslRow.locator('label');
+    // The toggle lives in the address bar's site-tools popover now.
+    await app.page.locator('button[title="Site tools"]').click();
+    const toggleLabel = app.page.locator('[data-testid="ssl-toggle-row"] label');
     await toggleLabel.click();
     await app.page.waitForTimeout(500);
 
@@ -147,6 +146,6 @@ test.describe('Allow Insecure SSL', () => {
     });
     expect(storeValueAfter).toBe(false);
 
-    await app.closeMenuFlyout();
+    await app.page.keyboard.press('Escape');
   });
 });

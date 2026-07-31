@@ -2,7 +2,13 @@ import {createListenerMiddleware, isAnyOf} from '@reduxjs/toolkit';
 import {PREVIEW_LAYOUTS} from 'common/constants';
 import type {RootState} from '.';
 import {addBookmark, removeBookmark} from './features/bookmarks';
-import {removeDesignOverlay, setDesignOverlay} from './features/design-overlay';
+import {
+  removeDesignOverlay,
+  setDesignOverlay,
+  setOverlayMode,
+  setOverlayOpacity,
+  toggleDesignOverlay,
+} from './features/design-overlay';
 import {
   addSuite,
   addSuites,
@@ -63,7 +69,13 @@ startListening({
 });
 
 startListening({
-  matcher: isAnyOf(setDesignOverlay, removeDesignOverlay),
+  matcher: isAnyOf(
+    setDesignOverlay,
+    removeDesignOverlay,
+    toggleDesignOverlay,
+    setOverlayMode,
+    setOverlayOpacity
+  ),
   effect: (_action, api) => {
     window.electron.store.set('userPreferences.designOverlays', api.getState().designOverlay);
   },

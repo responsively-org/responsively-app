@@ -1,9 +1,18 @@
 import {Icon} from '@iconify/react';
 import cx from 'classnames';
 import {useState} from 'react';
+import {useDispatch} from 'react-redux';
 import {Device} from 'common/deviceList';
 import Popover from 'renderer/components/Popover';
 import {useDeviceScreenshot} from 'renderer/hooks/useScreenshot';
+import {
+  overlayModeOf,
+  setOverlayMode,
+  setOverlayOpacity,
+  toggleDesignOverlay,
+  type DesignOverlayState,
+  type ViewResolution,
+} from 'renderer/store/features/design-overlay';
 import {ColorBlindnessTools} from './ColorBlindnessTools';
 import DesignOverlayControls from './DesignOverlayControls';
 
@@ -22,7 +31,8 @@ interface Props {
   onIndividualLayoutHandler: (device: Device) => void;
   isIndividualLayout: boolean;
   isDeviceRotationEnabled: boolean;
-  designOverlayActive: boolean;
+  designOverlay: DesignOverlayState | undefined;
+  resolution: ViewResolution;
   /**
    * Placement per the design: grid pills float over the frame's top-left and
    * reveal on hover; the canvas pill sits centered below the device and only
@@ -116,9 +126,11 @@ const Toolbar = ({
   onIndividualLayoutHandler,
   isIndividualLayout,
   isDeviceRotationEnabled,
-  designOverlayActive,
+  designOverlay,
+  resolution,
   variant,
 }: Props) => {
+  const dispatch = useDispatch();
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
   const [isDesignOverlayModalOpen, setIsDesignOverlayModalOpen] = useState<boolean>(false);
   const {
@@ -252,12 +264,72 @@ const Toolbar = ({
             <MoreItem
               title="Design overlay"
               icon="lucide:layers"
-              checked={designOverlayActive}
-              onClick={() => {
-                close();
-                setIsDesignOverlayModalOpen(true);
-              }}
+              checked={designOverlay?.enabled === true}
+              onClick={() => dispatch(toggleDesignOverlay({resolution}))}
             />
+            {designOverlay?.enabled === true ? (
+              <div className="flex flex-col gap-[7px] pb-2 pl-[31px] pr-[9px] pt-[2px]">
+                <div className="flex gap-1" role="group" aria-label="Overlay mode">
+                  <button
+                    type="button"
+                    aria-pressed={overlayModeOf(designOverlay) === 'grid'}
+                    onClick={() => dispatch(setOverlayMode({resolution, mode: 'grid'}))}
+                    className={cx(
+                      'h-[22px] rounded-md border px-[10px] text-[11px] focus:outline-none',
+                      overlayModeOf(designOverlay) === 'grid'
+                        ? 'border-overlay bg-overlay-soft text-overlay'
+                        : 'border-line text-muted hover:bg-hover'
+                    )}
+                  >
+                    <span className="pointer-events-none contents">Grid</span>
+                  </button>
+                  <button
+                    type="button"
+                    aria-pressed={overlayModeOf(designOverlay) === 'image'}
+                    onClick={() => {
+                      // No image yet (or re-pick): the upload dialog owns that.
+                      if (designOverlay.image === '') {
+                        close();
+                        setIsDesignOverlayModalOpen(true);
+                        return;
+                      }
+                      if (overlayModeOf(designOverlay) === 'image') {
+                        close();
+                        setIsDesignOverlayModalOpen(true);
+                        return;
+                      }
+                      dispatch(setOverlayMode({resolution, mode: 'image'}));
+                    }}
+                    className={cx(
+                      'h-[22px] rounded-md border px-[10px] text-[11px] focus:outline-none',
+                      overlayModeOf(designOverlay) === 'image'
+                        ? 'border-overlay bg-overlay-soft text-overlay'
+                        : 'border-line text-muted hover:bg-hover'
+                    )}
+                  >
+                    <span className="pointer-events-none contents">Design image</span>
+                  </button>
+                </div>
+                <div className="flex items-center gap-[7px]">
+                  <input
+                    type="range"
+                    min={10}
+                    max={100}
+                    aria-label="Overlay opacity"
+                    value={designOverlay.opacity}
+                    onChange={(e) =>
+                      dispatch(
+                        setOverlayOpacity({resolution, opacity: parseInt(e.target.value, 10)})
+                      )
+                    }
+                    className="h-[14px] min-w-0 flex-1 accent-overlay"
+                  />
+                  <span className="w-[30px] text-right font-mono text-[10px] text-muted">
+                    {designOverlay.opacity}%
+                  </span>
+                </div>
+              </div>
+            ) : null}
             <MoreItem
               title="Event mirroring"
               icon="fluent:plug-disconnected-24-regular"
@@ -271,7 +343,7 @@ const Toolbar = ({
         )}
       </Popover>
       <DesignOverlayControls
-        device={device}
+        resolution={resolution}
         isOpen={isDesignOverlayModalOpen}
         onClose={() => setIsDesignOverlayModalOpen(false)}
       />

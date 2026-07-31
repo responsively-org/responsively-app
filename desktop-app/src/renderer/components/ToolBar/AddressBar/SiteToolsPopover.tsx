@@ -1,5 +1,7 @@
 import {Icon} from '@iconify/react';
+import {useState} from 'react';
 import Popover from 'renderer/components/Popover';
+import Toggle from 'renderer/components/Toggle';
 
 const hostLabel = (address: string): string => {
   if (address.startsWith('file://')) {
@@ -32,6 +34,9 @@ interface Props {
  * actions plus the permissions entry point (Hybrid Studio design).
  */
 const SiteToolsPopover = ({address, actions, onShowPermissions}: Props) => {
+  const [sslAllowed, setSslAllowed] = useState<boolean>(
+    Boolean(window.electron.store.get('userPreferences.allowInsecureSSLConnections'))
+  );
   return (
     <Popover
       triggerTitle="Site tools"
@@ -76,6 +81,23 @@ const SiteToolsPopover = ({address, actions, onShowPermissions}: Props) => {
             </button>
           ))}
           <div className="mx-1 my-[6px] border-t border-line-soft" />
+          <div
+            data-testid="ssl-toggle-row"
+            className="flex items-center justify-between px-[10px] py-2"
+          >
+            <span className="text-[13.5px] text-fg">Allow insecure SSL</span>
+            <Toggle
+              isOn={sslAllowed}
+              aria-label="Allow insecure SSL"
+              onChange={(e) => {
+                setSslAllowed(e.target.checked);
+                window.electron.store.set(
+                  'userPreferences.allowInsecureSSLConnections',
+                  e.target.checked
+                );
+              }}
+            />
+          </div>
           <button
             type="button"
             title="Site permissions"
