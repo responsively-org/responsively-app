@@ -13,15 +13,19 @@ import {getDevicesMap, Device as IDevice} from 'common/deviceList';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import Popover from 'renderer/components/Popover';
 import {
+  clampCanvasZoom,
   selectCanvasOptions,
   selectCanvasZoom,
   selectLayout,
   selectZoomFactor,
   setCanvasZoom,
   toggleCanvasOption,
+  zoomIn,
+  zoomOut,
   type CanvasOptions,
 } from 'renderer/store/features/renderer';
 import Device from './Device';
+import {PREVIEW_PINCH_EVENT, type PinchDetail} from './pinch';
 import DevtoolsResizer from './DevtoolsResizer';
 import IndividualLayoutToolbar from './IndividualLayoutToolBar';
 
@@ -33,6 +37,14 @@ interface CanvasPosition {
 const CANVAS_GAP = 60;
 /** Present mode: hide the exit pill when the mouse has been still this long. */
 const EXIT_PILL_IDLE_MS = 1500;
+/** Accumulated pinch delta per zoomIn/zoomOut step in the grid layouts. */
+const PINCH_STEP = 50;
+/**
+ * Per-event delta cap: trackpad pinches stream small deltas (~1–10) but a
+ * ctrl+scroll mouse tick reports 100+, which uncapped would jump the whole
+ * canvas zoom range in one notch.
+ */
+const PINCH_MAX_DELTA = 32;
 const CANVAS_ORIGIN = 40;
 const CANVAS_ROW_WIDTH = 2600;
 
@@ -99,6 +111,61 @@ const Previewer = () => {
     null
   );
 
+  // Pinch zoom (trackpad pinch = ctrl+wheel). Canvas zooms smoothly toward
+  // the focal point; the other layouts step through zoomSteps once enough
+  // delta accumulates. The zoom ref is updated eagerly so events that arrive
+  // between a dispatch and the next render compound from the right value.
+  const canvasZoomRef = useRef<number>(canvasZoom);
+  canvasZoomRef.current = canvasZoom;
+  const pinchAccRef = useRef<number>(0);
+  const applyPinch = (rawDeltaY: number, focalX: number, focalY: number) => {
+    const deltaY = Math.max(-PINCH_MAX_DELTA, Math.min(PINCH_MAX_DELTA, rawDeltaY));
+    if (isCanvasLayout) {
+      const stage = stageRef.current;
+      if (stage === null) {
+        return;
+      }
+      const oldZoom = canvasZoomRef.current;
+      const newZoom = clampCanvasZoom(oldZoom * Math.exp(-deltaY * 0.01));
+      if (newZoom === oldZoom) {
+        return;
+      }
+      canvasZoomRef.current = newZoom;
+      const rect = stage.getBoundingClientRect();
+      const localX = focalX - rect.left;
+      const localY = focalY - rect.top;
+      // Keep the world point under the cursor fixed while the scale changes.
+      setCanvasPan((pan) => ({
+        x: localX - ((localX - pan.x) / oldZoom) * newZoom,
+        y: localY - ((localY - pan.y) / oldZoom) * newZoom,
+      }));
+      dispatch(setCanvasZoom(newZoom));
+    } else {
+      pinchAccRef.current += deltaY;
+      while (pinchAccRef.current <= -PINCH_STEP) {
+        dispatch(zoomIn());
+        pinchAccRef.current += PINCH_STEP;
+      }
+      while (pinchAccRef.current >= PINCH_STEP) {
+        dispatch(zoomOut());
+        pinchAccRef.current -= PINCH_STEP;
+      }
+    }
+  };
+  const applyPinchRef = useRef(applyPinch);
+  applyPinchRef.current = applyPinch;
+
+  // Pinches over a webview reach us via the guest preload → Device → this
+  // window event, already mapped to host coordinates.
+  useEffect(() => {
+    const onPinch = (e: Event) => {
+      const {deltaY, x, y} = (e as CustomEvent<PinchDetail>).detail;
+      applyPinchRef.current(deltaY, x, y);
+    };
+    window.addEventListener(PREVIEW_PINCH_EVENT, onPinch);
+    return () => window.removeEventListener(PREVIEW_PINCH_EVENT, onPinch);
+  }, []);
+
   const deviceIdsKey = activeSuite.devices.join(',');
   const arranged = useMemo(
     () => (isCanvasLayout ? arrangeDevices(devices, deviceScale) : []),
@@ -164,14 +231,23 @@ const Previewer = () => {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [presenting, dispatch]);
 
-  // Wheel must preventDefault (trackpad pinch also arrives as ctrl+wheel),
-  // which React's passive listeners can't — attach natively.
+  // Wheel must preventDefault (trackpad pinch arrives as ctrl+wheel), which
+  // React's passive listeners can't — attach natively. Every layout zooms on
+  // pinch; plain wheel pans the canvas and scrolls the grids natively.
   useEffect(() => {
     const stage = stageRef.current;
-    if (!isCanvasLayout || stage === null) {
+    if (stage === null) {
       return undefined;
     }
     const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+        applyPinchRef.current(e.deltaY, e.clientX, e.clientY);
+        return;
+      }
+      if (!isCanvasLayout) {
+        return;
+      }
       e.preventDefault();
       setCanvasPan((pan) => ({x: pan.x - e.deltaX, y: pan.y - e.deltaY}));
     };

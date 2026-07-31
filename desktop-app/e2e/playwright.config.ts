@@ -9,6 +9,7 @@ const availableCores =
 const testOrder = [
   'device-interaction-mirroring.spec.ts',
   'canvas-mode.spec.ts',
+  'pinch-zoom.spec.ts',
   'cross-device-mirroring.spec.ts',
   'color-blindness.spec.ts',
   'inspect-elements.spec.ts',

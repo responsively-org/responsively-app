@@ -65,12 +65,35 @@ const documentBodyInit = () => {
   });
 
   window.addEventListener('wheel', (e) => {
+    // Pinches (reported as ctrl+wheel) zoom the previews, they don't scroll.
+    if (e.ctrlKey) {
+      return;
+    }
     wheelDelta = {
       x: (wheelDelta?.x ?? 0) + e.deltaX,
       y: (wheelDelta?.y ?? 0) + e.deltaY,
     };
     requestFlush();
   });
+
+  // Trackpad pinch arrives as a ctrl+wheel event. The host zooms the preview
+  // container, so the guest page must neither scroll nor zoom itself — and the
+  // host never sees input over a webview, hence the forward.
+  window.addEventListener(
+    'wheel',
+    (e) => {
+      if (!e.ctrlKey) {
+        return;
+      }
+      e.preventDefault();
+      ipcRenderer.sendToHost('pass-pinch-data', {
+        deltaY: e.deltaY,
+        x: e.clientX,
+        y: e.clientY,
+      });
+    },
+    {passive: false}
+  );
 
   window.addEventListener('scroll', () => {
     scrollPending = true;

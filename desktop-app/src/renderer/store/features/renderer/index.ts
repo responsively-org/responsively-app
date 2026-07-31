@@ -30,7 +30,7 @@ export interface CanvasOptions {
   showDims: boolean;
 }
 const DEFAULT_CANVAS_ZOOM = 0.9;
-const clampCanvasZoom = (value: number): number =>
+export const clampCanvasZoom = (value: number): number =>
   Math.min(canvasZoomSteps[canvasZoomSteps.length - 1], Math.max(canvasZoomSteps[0], value));
 
 // Persisted values are injected via the store's preloaded state

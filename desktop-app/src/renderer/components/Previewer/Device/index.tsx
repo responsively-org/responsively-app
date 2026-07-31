@@ -28,6 +28,7 @@ import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from '../../KeyboardShortcutsManager/useKeyboardShortcut';
 import {DefaultGuide} from '../Guides';
+import {emitPinch} from '../pinch';
 import DeviceFrame from './DeviceFrame';
 import Toolbar from './Toolbar';
 import useDeviceNavigation from './useDeviceNavigation';
@@ -167,6 +168,18 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
           scrollY: e.args[0].coordinates.scrollY,
           innerHeight: e.args[0].innerHeight,
           innerWidth: e.args[0].innerWidth,
+        });
+      }
+      if (e.channel === 'pass-pinch-data') {
+        // Map the guest-viewport focal point into host coordinates: the
+        // bounding rect carries every ancestor transform, offsetWidth is the
+        // untransformed layout size (= the guest viewport).
+        const {deltaY, x, y} = e.args[0];
+        const rect = webview.getBoundingClientRect();
+        emitPinch({
+          deltaY,
+          x: rect.left + (x / webview.offsetWidth) * rect.width,
+          y: rect.top + (y / webview.offsetHeight) * rect.height,
         });
       }
       if (e.channel === 'context-menu-command') {
