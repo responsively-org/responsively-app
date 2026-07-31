@@ -1,5 +1,14 @@
 import {describe, expect, it} from 'vitest';
-import reducer, {APP_VIEWS, closeMenuFlyout, setAppView, setDarkMode, setPresenting} from './index';
+import reducer, {
+  APP_VIEWS,
+  closeMenuFlyout,
+  hideSupportForever,
+  setAppView,
+  setDarkMode,
+  setPresenting,
+  setSupportShownAt,
+  setWhatsNewSeen,
+} from './index';
 
 describe('ui slice', () => {
   it('has pure defaults', () => {
@@ -9,6 +18,7 @@ describe('ui slice', () => {
       appView: 'BROWSER',
       menuFlyout: false,
       isPresenting: false,
+      announcements: {seenVersion: null, supportShownAt: null, supportHidden: false},
     });
   });
 
@@ -32,5 +42,16 @@ describe('ui slice', () => {
     expect(state.isPresenting).toBe(true);
     state = reducer(state, setPresenting(false));
     expect(state.isPresenting).toBe(false);
+  });
+
+  it('tracks announcement state', () => {
+    let state = reducer(undefined, setWhatsNewSeen('2.0.0'));
+    expect(state.announcements.seenVersion).toBe('2.0.0');
+
+    state = reducer(state, setSupportShownAt(1700000000000));
+    expect(state.announcements.supportShownAt).toBe(1700000000000);
+
+    state = reducer(state, hideSupportForever());
+    expect(state.announcements.supportHidden).toBe(true);
   });
 });

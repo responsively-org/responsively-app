@@ -8,7 +8,6 @@ import useKeyboardShortcut, {
 } from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
 import Popover from 'renderer/components/Popover';
 import Notifications from 'renderer/components/Notifications/Notifications';
-import NotificationsBubble from 'renderer/components/Notifications/NotificationsBubble';
 import useLocalStorage from 'renderer/components/useLocalStorage/useLocalStorage';
 import {selectActiveSuite} from 'renderer/store/features/device-manager';
 import {
@@ -22,7 +21,13 @@ import {
   zoomIn,
   zoomOut,
 } from 'renderer/store/features/renderer';
-import {selectDarkMode, setDarkMode, setPresenting} from 'renderer/store/features/ui';
+import {
+  selectAnnouncements,
+  selectDarkMode,
+  setDarkMode,
+  setPresenting,
+  setWhatsNewSeen,
+} from 'renderer/store/features/ui';
 
 // Order, labels and icons per the Hybrid Studio design; FLEX is its "Grid".
 const LAYOUTS: Array<{layout: PreviewLayout; label: string; icon: string}> = [
@@ -42,10 +47,17 @@ const StatusBar = () => {
   const darkMode = useSelector(selectDarkMode);
   const notifications = useSelector(selectNotifications);
   const activeSuite = useSelector(selectActiveSuite);
+  const announcements = useSelector(selectAnnouncements);
   const [hasNewNotifications, setHasNewNotifications] = useLocalStorage(
     'hasNewNotifications',
     true
   );
+  // Unread until this release's notes have been seen (bell or launch card) and
+  // any live notifications have been read.
+  const appVersion = window.responsively.appVersion;
+  const hasUnread =
+    announcements.seenVersion !== appVersion ||
+    ((notifications?.length ?? 0) > 0 && Boolean(hasNewNotifications));
 
   // In canvas mode the stepper drives the world zoom instead of device scale.
   const onZoomIn = useCallback(
@@ -71,7 +83,6 @@ const StatusBar = () => {
 
   const devicesMap = getDevicesMap();
   const deviceCount = activeSuite.devices.filter((id) => devicesMap[id] != null).length;
-  const hasNotifications = notifications != null && notifications.length > 0;
 
   return (
     <div
@@ -160,17 +171,28 @@ const StatusBar = () => {
         triggerTitle="Notifications"
         anchor="top end"
         triggerClassName="relative flex h-[26px] w-[26px] items-center justify-center rounded-md text-[15px] text-muted transition-colors hover:bg-hover hover:text-fg"
-        className="w-[280px] p-3"
+        className="w-[260px] p-[14px]"
+        onOpenChange={(open) => {
+          if (open) {
+            setHasNewNotifications(false);
+            if (announcements.seenVersion !== appVersion) {
+              dispatch(setWhatsNewSeen(appVersion));
+            }
+          }
+        }}
         trigger={
-          <span className="pointer-events-none contents">
+          <span className="pointer-events-none relative inline-flex">
             <Icon icon="carbon:notification" />
-            {hasNotifications && Boolean(hasNewNotifications) && <NotificationsBubble />}
+            {hasUnread ? (
+              <span
+                data-testid="bell-unread-dot"
+                className="absolute right-[-2px] top-[-2px] h-[7px] w-[7px] rounded-full border-[1.5px] border-panel bg-accent"
+              />
+            ) : null}
           </span>
         }
       >
-        <div onClick={() => setHasNewNotifications(false)} role="presentation">
-          <Notifications />
-        </div>
+        <Notifications />
       </Popover>
 
       <button

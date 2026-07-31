@@ -22,7 +22,7 @@ import {
   zoomOut,
   zoomSteps,
 } from './features/renderer';
-import {setDarkMode} from './features/ui';
+import {hideSupportForever, setDarkMode, setSupportShownAt, setWhatsNewSeen} from './features/ui';
 
 /**
  * All electron-store persistence lives here as action listeners, keeping
@@ -38,6 +38,13 @@ startListening({
   actionCreator: setDarkMode,
   effect: (action) => {
     window.electron.store.set('ui.darkMode', action.payload);
+  },
+});
+
+startListening({
+  matcher: isAnyOf(setWhatsNewSeen, setSupportShownAt, hideSupportForever),
+  effect: (_action, api) => {
+    window.electron.store.set('ui.announcements', api.getState().ui.announcements);
   },
 });
 

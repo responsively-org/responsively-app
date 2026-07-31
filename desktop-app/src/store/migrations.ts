@@ -118,5 +118,17 @@ export const migrations = {
     if (store.get('ui.previewLayout') !== undefined) {
       store.delete('ui.previewLayout');
     }
+    // The weekly sponsorship modal became the monthly support card; carry the
+    // last-shown timestamp over so upgraders aren't prompted immediately.
+    const sponsorshipLastShown = store.get('sponsorship.lastShown');
+    if (sponsorshipLastShown !== undefined) {
+      store.set('ui.announcements.supportShownAt', sponsorshipLastShown);
+      store.delete('sponsorship');
+    }
+    // The GitHub-release-notes modal is superseded by the launch card and the
+    // bell panel's release highlights.
+    if (store.get('seenReleaseNotes') !== undefined) {
+      store.delete('seenReleaseNotes');
+    }
   },
 };

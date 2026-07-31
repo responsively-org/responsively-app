@@ -166,11 +166,14 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-// Suppress popups during E2E tests
+// Suppress the launch card during E2E tests (specs opt back in by resetting
+// these keys and reloading).
 if (process.env.E2E_TEST === 'true') {
-  store.set('sponsorship.lastShown', Date.now());
-  const seenVersions = store.get('seenReleaseNotes') ?? [];
-  store.set('seenReleaseNotes', [...seenVersions, app.getVersion()]);
+  store.set('ui.announcements', {
+    seenVersion: app.getVersion(),
+    supportShownAt: Date.now(),
+    supportHidden: false,
+  });
 }
 
 const isDebug = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';

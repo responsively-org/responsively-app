@@ -27,11 +27,18 @@ export class ResponsivelyApp {
   }
 
   /**
-   * Hidden pills are pointer-transparent; hover the device (its label row)
-   * first, exactly like a user, before clicking any pill button.
+   * Hidden pills are pointer-transparent until their device is hovered or
+   * focused. Hover geometry is a trap here (the revealed pill floats over the
+   * label row, and hovering a webview never sets :hover on the host), so use
+   * the keyboard path: focusing a pill button reveals via group-focus-within.
    */
   async revealDevicePill(index = 0) {
-    await this.page.locator('[data-device-label]:visible').nth(index).hover();
+    await this.page
+      .locator('[data-testid="device-pill"]:visible')
+      .nth(index)
+      .locator('button')
+      .first()
+      .focus();
   }
 
   /** Menu item inside a device's "More device tools" popover (open it first). */

@@ -50,7 +50,12 @@ export const initAppMetaHandlers = () => {
       log.warn('[store-bridge] blocked write to key', key);
       return;
     }
-    store.set(key, val);
+    try {
+      store.set(key, val);
+    } catch (error) {
+      // A schema-invalid value must not take down the main process.
+      log.warn('[store-bridge] rejected write', key, error);
+    }
   });
 
   ipcMain.on(IPC_MAIN_CHANNELS.OPEN_EXTERNAL, async (_, {url}) => {

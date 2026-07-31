@@ -14,8 +14,7 @@ import {PREVIEW_LAYOUTS} from '../common/constants';
 import {selectLayout} from './store/features/renderer';
 import {selectIsPresenting} from './store/features/ui';
 import McpBridge from './components/McpBridge';
-import {ReleaseNotes} from './components/ReleaseNotes';
-import {Sponsorship} from './components/Sponsorship';
+import AnnouncementCard from './components/AnnouncementCard';
 import {AboutDialog} from './components/AboutDialog';
 
 /** Present mode only applies while the canvas layout is active. */
@@ -67,8 +66,7 @@ const AppContent = () => {
             <ViewComponent />
           </div>
         </div>
-        <ReleaseNotes />
-        <Sponsorship />
+        <AnnouncementCard />
         <AboutDialog />
       </ThemeProvider>
     </Provider>

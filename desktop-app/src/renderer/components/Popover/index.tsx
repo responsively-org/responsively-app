@@ -1,6 +1,6 @@
 import {Popover as HuiPopover, PopoverButton, PopoverPanel} from '@headlessui/react';
 import cx from 'classnames';
-import {ComponentProps, ReactNode} from 'react';
+import {ComponentProps, ReactNode, useEffect, useRef} from 'react';
 import useOverlayRegistry from 'renderer/hooks/useOverlayRegistry';
 
 interface Props {
@@ -9,6 +9,8 @@ interface Props {
   triggerTitle?: string;
   anchor?: ComponentProps<typeof PopoverPanel>['anchor'];
   className?: string;
+  /** Observes Headless UI's internal open state (e.g. to clear unread dots). */
+  onOpenChange?: (open: boolean) => void;
   children: ComponentProps<typeof PopoverPanel>['children'];
 }
 
@@ -17,8 +19,19 @@ interface Props {
  * inside the render prop — a child component is the only place a hook can
  * observe it.
  */
-const OverlayRegistration = ({isOpen}: {isOpen: boolean}) => {
+const OverlayRegistration = ({
+  isOpen,
+  onOpenChange,
+}: {
+  isOpen: boolean;
+  onOpenChange?: (open: boolean) => void;
+}) => {
   useOverlayRegistry(isOpen);
+  const onOpenChangeRef = useRef(onOpenChange);
+  onOpenChangeRef.current = onOpenChange;
+  useEffect(() => {
+    onOpenChangeRef.current?.(isOpen);
+  }, [isOpen]);
   return null;
 };
 
@@ -33,13 +46,14 @@ const Popover = ({
   triggerTitle,
   anchor = 'bottom end',
   className,
+  onOpenChange,
   children,
 }: Props) => {
   return (
     <HuiPopover className="relative">
       {({open}) => (
         <>
-          <OverlayRegistration isOpen={open} />
+          <OverlayRegistration isOpen={open} onOpenChange={onOpenChange} />
           <PopoverButton
             title={triggerTitle}
             className={cx(

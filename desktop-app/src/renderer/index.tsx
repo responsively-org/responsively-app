@@ -7,6 +7,7 @@ const root = createRoot(container);
 
 interface AppMeta {
   webviewPreloadPath: string;
+  appVersion?: string;
   isE2E?: boolean;
   platform?: NodeJS.Platform;
 }
@@ -16,6 +17,7 @@ window.electron.ipcRenderer
   .then((arg: AppMeta) => {
     window.responsively = {
       webviewPreloadPath: arg.webviewPreloadPath,
+      appVersion: arg.appVersion ?? '0.0.0',
       isE2E: Boolean(arg.isE2E),
       platform: arg.platform ?? 'darwin',
     };

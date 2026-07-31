@@ -47,6 +47,12 @@ export const buildPreloadedState = () => {
       appView: 'BROWSER' as const,
       menuFlyout: false,
       isPresenting: false,
+      announcements: {
+        seenVersion: (store.get('ui.announcements.seenVersion') as string | undefined) ?? null,
+        supportShownAt:
+          (store.get('ui.announcements.supportShownAt') as number | undefined) ?? null,
+        supportHidden: Boolean(store.get('ui.announcements.supportHidden')),
+      },
     },
     renderer: {
       address: urlFromQueryParam() ?? String(store.get('homepage') ?? ''),

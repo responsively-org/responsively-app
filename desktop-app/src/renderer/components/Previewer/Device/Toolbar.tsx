@@ -188,7 +188,7 @@ const Toolbar = ({
         // rendering hidden pills at all).
         'pointer-events-none absolute z-30 flex items-center gap-[2px] rounded-[9px] border border-line bg-panel p-[3px] opacity-0 shadow-elevated transition-opacity duration-150 group-focus-within:pointer-events-auto group-focus-within:opacity-100',
         variant === 'grid'
-          ? 'left-[6px] top-[26px] max-w-[calc(100%-12px)] flex-wrap group-hover:pointer-events-auto group-hover:opacity-100'
+          ? 'left-0 top-[-6px] max-w-[calc(100%-12px)] flex-wrap group-hover:pointer-events-auto group-hover:opacity-100'
           : 'left-1/2 top-full mt-[10px] -translate-x-1/2'
       )}
     >

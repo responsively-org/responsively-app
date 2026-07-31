@@ -28,6 +28,16 @@ const schema = {
         enum: Object.values(PREVIEW_LAYOUTS),
         default: PREVIEW_LAYOUTS.FLEX,
       },
+      announcements: {
+        type: 'object',
+        properties: {
+          // Nullable: the renderer persists the whole object, and "never" is
+          // null in state.
+          seenVersion: {type: ['string', 'null']},
+          supportShownAt: {type: ['number', 'null']},
+          supportHidden: {type: 'boolean'},
+        },
+      },
     },
   },
   renderer: {
