@@ -3,6 +3,7 @@ import {type Mock} from 'vitest';
 import reducer, {
   overlayModeOf,
   setDesignOverlay,
+  setOverlayImage,
   setOverlayMode,
   setOverlayOpacity,
   toggleDesignOverlay,
@@ -235,5 +236,33 @@ describe('designOverlaySlice', () => {
         mode: 'grid',
       })
     ).toBe('grid');
+  });
+
+  it('setOverlayImage stores the image and switches to image mode', () => {
+    // Fresh resolution: creates an enabled image overlay.
+    let state = reducer(
+      undefined,
+      setOverlayImage({resolution: '390x844', image: 'data:image/png;base64,a', fileName: 'a.png'})
+    );
+    expect(state['390x844']).toEqual({
+      image: 'data:image/png;base64,a',
+      fileName: 'a.png',
+      opacity: 50,
+      position: 'overlay',
+      enabled: true,
+      mode: 'image',
+    });
+
+    // Existing grid overlay: keeps opacity, swaps image + mode.
+    state = reducer(state, toggleDesignOverlay({resolution: '800x600'}));
+    state = reducer(state, setOverlayOpacity({resolution: '800x600', opacity: 70}));
+    state = reducer(
+      state,
+      setOverlayImage({resolution: '800x600', image: 'data:image/png;base64,b', fileName: 'b.png'})
+    );
+    expect(state['800x600'].mode).toBe('image');
+    expect(state['800x600'].image).toBe('data:image/png;base64,b');
+    expect(state['800x600'].opacity).toBe(70);
+    expect(state['800x600'].enabled).toBe(true);
   });
 });

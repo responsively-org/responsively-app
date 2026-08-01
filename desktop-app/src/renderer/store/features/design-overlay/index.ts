@@ -69,6 +69,28 @@ export const designOverlaySlice = createSlice({
         existing.mode = action.payload.mode;
       }
     },
+    /** Native-picker upload: stores the image and switches the overlay to it. */
+    setOverlayImage: (
+      state,
+      action: PayloadAction<{resolution: ViewResolution; image: string; fileName?: string}>
+    ) => {
+      const existing = state[action.payload.resolution];
+      if (existing === undefined) {
+        state[action.payload.resolution] = {
+          image: action.payload.image,
+          fileName: action.payload.fileName,
+          opacity: 50,
+          position: 'overlay',
+          enabled: true,
+          mode: 'image',
+        };
+        return;
+      }
+      existing.image = action.payload.image;
+      existing.fileName = action.payload.fileName;
+      existing.mode = 'image';
+      existing.enabled = true;
+    },
     setOverlayOpacity: (
       state,
       action: PayloadAction<{resolution: ViewResolution; opacity: number}>
@@ -86,6 +108,7 @@ export const {
   removeDesignOverlay,
   toggleDesignOverlay,
   setOverlayMode,
+  setOverlayImage,
   setOverlayOpacity,
 } = designOverlaySlice.actions;
 

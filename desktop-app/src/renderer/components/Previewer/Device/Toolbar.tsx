@@ -1,12 +1,13 @@
 import {Icon} from '@iconify/react';
 import cx from 'classnames';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {Device} from 'common/deviceList';
 import Popover from 'renderer/components/Popover';
 import {useDeviceScreenshot} from 'renderer/hooks/useScreenshot';
 import {
   overlayModeOf,
+  setOverlayImage,
   setOverlayMode,
   setOverlayOpacity,
   toggleDesignOverlay,
@@ -14,7 +15,6 @@ import {
   type ViewResolution,
 } from 'renderer/store/features/design-overlay';
 import {ColorBlindnessTools} from './ColorBlindnessTools';
-import DesignOverlayControls from './DesignOverlayControls';
 
 interface Props {
   getWebview: () => Electron.WebviewTag | null;
@@ -132,7 +132,21 @@ const Toolbar = ({
 }: Props) => {
   const dispatch = useDispatch();
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
-  const [isDesignOverlayModalOpen, setIsDesignOverlayModalOpen] = useState<boolean>(false);
+  const overlayFileInputRef = useRef<HTMLInputElement>(null);
+
+  const onOverlayFilePicked = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    // Reset so picking the same file again still fires a change event.
+    e.target.value = '';
+    if (file === undefined || !file.type.startsWith('image/')) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      dispatch(setOverlayImage({resolution, image: reader.result as string, fileName: file.name}));
+    };
+    reader.readAsDataURL(file);
+  };
   const {
     quickScreenshot,
     fullScreenshot,
@@ -287,15 +301,10 @@ const Toolbar = ({
                     type="button"
                     aria-pressed={overlayModeOf(designOverlay) === 'image'}
                     onClick={() => {
-                      // No image yet (or re-pick): the upload dialog owns that.
-                      if (designOverlay.image === '') {
-                        close();
-                        setIsDesignOverlayModalOpen(true);
-                        return;
-                      }
-                      if (overlayModeOf(designOverlay) === 'image') {
-                        close();
-                        setIsDesignOverlayModalOpen(true);
+                      // No image yet, or re-picking while already in image
+                      // mode: straight to the native file picker.
+                      if (designOverlay.image === '' || overlayModeOf(designOverlay) === 'image') {
+                        overlayFileInputRef.current?.click();
                         return;
                       }
                       dispatch(setOverlayMode({resolution, mode: 'image'}));
@@ -342,10 +351,14 @@ const Toolbar = ({
           </>
         )}
       </Popover>
-      <DesignOverlayControls
-        resolution={resolution}
-        isOpen={isDesignOverlayModalOpen}
-        onClose={() => setIsDesignOverlayModalOpen(false)}
+      {/* Outside the popover so it survives the panel closing mid-pick. */}
+      <input
+        ref={overlayFileInputRef}
+        type="file"
+        accept="image/*"
+        aria-label="Design overlay image"
+        className="hidden"
+        onChange={onOverlayFilePicked}
       />
     </div>
   );

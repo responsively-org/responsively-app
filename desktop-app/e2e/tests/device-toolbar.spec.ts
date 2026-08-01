@@ -83,9 +83,24 @@ test.describe('Device Toolbar', () => {
     await slider.fill('80');
     await expect(overlay).toHaveCSS('opacity', '0.8');
 
+    // Picking a design image (setInputFiles — a real click would open the
+    // native dialog) switches the overlay from grid to image mode.
+    const onePxPng = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==',
+      'base64'
+    );
+    await app.page
+      .locator('input[aria-label="Design overlay image"]')
+      .first()
+      .setInputFiles({name: 'mock.png', mimeType: 'image/png', buffer: onePxPng});
+    await expect(app.page.getByRole('button', {name: 'Design image'}).first()).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    await expect(overlay).toBeHidden();
+
     // Toggle back off for the next spec.
     await app.page.locator('button[title="Design overlay"]').click();
-    await expect(overlay).toBeHidden();
     await app.page.keyboard.press('Escape');
   });
 

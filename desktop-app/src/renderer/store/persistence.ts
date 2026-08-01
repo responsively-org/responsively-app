@@ -5,6 +5,7 @@ import {addBookmark, removeBookmark} from './features/bookmarks';
 import {
   removeDesignOverlay,
   setDesignOverlay,
+  setOverlayImage,
   setOverlayMode,
   setOverlayOpacity,
   toggleDesignOverlay,
@@ -74,6 +75,7 @@ startListening({
     removeDesignOverlay,
     toggleDesignOverlay,
     setOverlayMode,
+    setOverlayImage,
     setOverlayOpacity
   ),
   effect: (_action, api) => {
