@@ -40,6 +40,33 @@ Start the app in the `dev` environment:
 npm start
 ```
 
+## AI Agent Integration (MCP Server)
+
+Responsively App includes a built-in **Model Context Protocol (MCP) Server** enabling AI agents (e.g., Claude Desktop, Cursor, Antigravity, or custom agents) to inspect active device viewports, capture screenshots, and navigate URLs programmatically.
+
+### 🤖 MCP Server Details
+
+When Responsively App is running, the MCP server runs on `http://127.0.0.1:9444` (supporting both SSE and HTTP POST transport protocols).
+
+#### MCP Client Configuration Example (`mcp_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "responsively": {
+      "serverUrl": "http://127.0.0.1:9444/sse"
+    }
+  }
+}
+```
+
+#### Available Tools:
+
+- **`responsively_list_devices`**: Lists all open responsive device viewports, their IDs, URLs, and titles.
+- **`responsively_take_screenshot`**: Takes a screenshot of a targeted device (or main window) and returns image payload (`image/jpeg` base64). Option `saveToFile: true` saves to disk.
+- **`responsively_take_all_screenshots`**: Captures screenshots of all active device viewports.
+- **`responsively_navigate`**: Directs active device views to navigate to a target URL (`url: string`).
+
 ## Packaging for Production
 
 To package apps for the local platform:

@@ -32,6 +32,7 @@ import {initHttpBasicAuthHandlers} from './http-basic-auth';
 import {initAppMetaHandlers} from './app-meta';
 import {openUrl} from './protocol-handler';
 import {AppUpdater} from './app-updater';
+import {mcpServer} from './mcp';
 
 let windowShownOnOpen = false;
 
@@ -141,6 +142,7 @@ const createWindow = async () => {
       webviewTag: true,
     },
   });
+  mcpServer.setMainWindow(mainWindow);
   initDevtoolsHandlers(mainWindow);
   initHttpBasicAuthHandlers(mainWindow);
   const webPermissionHandlers = WebPermissionHandlers(mainWindow);
@@ -301,6 +303,7 @@ app.on('certificate-error', (event, _, url, __, ___, callback) => {
 app
   .whenReady()
   .then(() => {
+    mcpServer.start();
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
