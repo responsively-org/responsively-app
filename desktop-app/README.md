@@ -54,18 +54,65 @@ When Responsively App is running, the MCP server runs on `http://127.0.0.1:9444`
 {
   "mcpServers": {
     "responsively": {
-      "serverUrl": "http://127.0.0.1:9444/sse"
+      "serverUrl": "http://127.0.0.1:9444/"
     }
   }
 }
 ```
 
-#### Available Tools:
+#### Available Tools
 
-- **`responsively_list_devices`**: Lists all open responsive device viewports, their IDs, URLs, and titles.
-- **`responsively_take_screenshot`**: Takes a screenshot of a targeted device (or main window) and returns image payload (`image/jpeg` base64). Option `saveToFile: true` saves to disk.
-- **`responsively_take_all_screenshots`**: Captures screenshots of all active device viewports.
-- **`responsively_navigate`**: Directs active device views to navigate to a target URL (`url: string`).
+##### `responsively_list_devices`
+
+Lists all active responsive device viewports with their IDs, device names, URLs, and page titles.
+
+| Parameter | Type | Description            |
+| --------- | ---- | ---------------------- |
+| _(none)_  | —    | No parameters required |
+
+**Example response:**
+
+```json
+{
+  "count": 2,
+  "devices": [
+    {"id": 101, "name": "iPhone 14 Pro", "url": "https://example.com", "title": "Example"},
+    {"id": 102, "name": "iPad Air", "url": "https://example.com", "title": "Example"}
+  ]
+}
+```
+
+---
+
+##### `responsively_take_screenshot`
+
+Captures screenshots of **all** active device viewports. Screenshots are named after each device. Supports two capture modes:
+
+- **Viewport** (default) — captures only the visible area of each device
+- **Full page** — expands each device to its full scrollable height before capturing
+
+| Parameter    | Type    | Required | Description                                                                     |
+| ------------ | ------- | -------- | ------------------------------------------------------------------------------- |
+| `fullPage`   | boolean | No       | If `true`, captures the entire scrollable page. Defaults to viewport-only.      |
+| `saveToFile` | boolean | No       | If `true`, saves each screenshot to disk (location configured in app settings). |
+
+Each device returns an `image/jpeg` base64 payload paired with a text summary:
+
+```
+Device: iPhone 14 Pro | Type: viewport | URL: https://example.com
+```
+
+When `saveToFile` is `true`, files are saved as `<DeviceName>-<type>-<timestamp>.jpeg` (e.g., `iPhone_14_Pro-fullpage-1722506123.jpeg`).
+
+---
+
+##### `responsively_navigate`
+
+Directs all active device views to navigate to a target URL.
+
+| Parameter | Type   | Required | Description                                           |
+| --------- | ------ | -------- | ----------------------------------------------------- |
+| `url`     | string | Yes      | The URL to navigate to (e.g., `https://example.com`). |
 
 ## Packaging for Production
 
