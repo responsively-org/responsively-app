@@ -39,11 +39,20 @@ const getReloadIgnoringCacheMenu = (mainWindow: BrowserWindow): MenuItemConstruc
   },
 });
 
+const getFindMenu = (mainWindow: BrowserWindow): MenuItemConstructorOptions => ({
+  label: '&Find',
+  accelerator: 'CommandOrControl+F',
+  click: () => {
+    mainWindow.webContents.send('toggle-find-bar');
+  },
+});
+
 const getViewMenuProd = (mainWindow: BrowserWindow): MenuItemConstructorOptions => ({
   label: '&View',
   submenu: [
     getReloadMenu(mainWindow),
     getReloadIgnoringCacheMenu(mainWindow),
+    getFindMenu(mainWindow),
     getToggleFullScreen(mainWindow),
   ],
 });
@@ -53,6 +62,7 @@ const getViewMenuDev = (mainWindow: BrowserWindow): MenuItemConstructorOptions =
   submenu: [
     getReloadMenu(mainWindow),
     getToggleDevTools(mainWindow),
+    getFindMenu(mainWindow),
     getToggleFullScreen(mainWindow),
   ],
 });

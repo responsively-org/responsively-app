@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import {PREVIEW_LAYOUTS} from 'common/constants';
+import {IPC_MAIN_CHANNELS, PREVIEW_LAYOUTS} from 'common/constants';
 import {Device as IDevice} from 'common/deviceList';
 import {
   InspectElementArgs,
@@ -9,6 +9,13 @@ import {
   ToggleInspectorResult,
 } from 'main/devtools';
 import {ReloadArgs} from 'main/menu';
+import {
+  FindInPageArgs,
+  FindInPageResult,
+  FindInPageMatchResult,
+  StopFindInPageArgs,
+  StopFindInPageResult,
+} from 'main/find-in-page';
 import {
   DisableDefaultWindowOpenHandlerArgs,
   DisableDefaultWindowOpenHandlerResult,
@@ -21,7 +28,13 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import Spinner from 'renderer/components/Spinner';
 import {ADDRESS_BAR_EVENTS} from 'renderer/components/ToolBar/AddressBar';
+import {FIND_BAR_EVENTS} from 'renderer/components/FindBar';
 import {webViewPubSub} from 'renderer/lib/pubsub';
+import {
+  selectFindTextIsOpen,
+  selectFindTextSearchText,
+  setMatchResult,
+} from 'renderer/store/features/find-text';
 import {
   selectDevtoolsWebviewId,
   selectDockPosition,
@@ -91,6 +104,10 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const isNavigatingFromAddressBar = useRef<boolean>(false);
   const initialAddress = useRef<string>(address);
   const [webviewReady, setWebviewReady] = useState<boolean>(false);
+  const findTextIsOpen = useSelector(selectFindTextIsOpen);
+  const findSearchText = useSelector(selectFindTextSearchText);
+  // Track the last searched text so we can use findNext correctly
+  const lastSearchedText = useRef<string>('');
 
   // Navigation is driven from the main process (instead of the <webview> src
   // attribute or webview.loadURL) so that superseded loads don't surface as
@@ -511,6 +528,128 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       );
     })();
   }, [isInspecting, webviewReady]);
+
+  // Find-in-page: execute search when text changes, stop when bar closes
+  useEffect(() => {
+    if (!ref.current || !webviewReady) {
+      return undefined;
+    }
+    const webview = ref.current as Electron.WebviewTag;
+    let webContentsId: number;
+    try {
+      webContentsId = webview.getWebContentsId();
+    } catch {
+      return undefined;
+    }
+
+    if (!findTextIsOpen || findSearchText === '') {
+      // Stop any active find
+      if (lastSearchedText.current !== '') {
+        window.electron.ipcRenderer.invoke<StopFindInPageArgs, StopFindInPageResult>(
+          IPC_MAIN_CHANNELS.STOP_FIND_IN_PAGE,
+          {webContentsId, action: 'clearSelection'}
+        );
+        lastSearchedText.current = '';
+      }
+      return undefined;
+    }
+
+    // Debounce the search to avoid flooding the API
+    const timerId = setTimeout(() => {
+      window.electron.ipcRenderer.invoke<FindInPageArgs, FindInPageResult>(
+        IPC_MAIN_CHANNELS.FIND_IN_PAGE,
+        {
+          webContentsId,
+          text: findSearchText,
+          options: {
+            findNext: true,
+            forward: true,
+          },
+        }
+      );
+      lastSearchedText.current = findSearchText;
+    }, 50);
+
+    return () => clearTimeout(timerId);
+  }, [findTextIsOpen, findSearchText, webviewReady]);
+
+  // Find-in-page: listen for next/previous navigation events
+  useEffect(() => {
+    if (!ref.current || !webviewReady || !findTextIsOpen || findSearchText === '') {
+      return undefined;
+    }
+    const webview = ref.current as Electron.WebviewTag;
+    let webContentsId: number;
+    try {
+      webContentsId = webview.getWebContentsId();
+    } catch {
+      return undefined;
+    }
+
+    const handleFindNext = () => {
+      window.electron.ipcRenderer.invoke<FindInPageArgs, FindInPageResult>(
+        IPC_MAIN_CHANNELS.FIND_IN_PAGE,
+        {
+          webContentsId,
+          text: findSearchText,
+          options: {findNext: true, forward: true},
+        }
+      );
+    };
+
+    const handleFindPrevious = () => {
+      window.electron.ipcRenderer.invoke<FindInPageArgs, FindInPageResult>(
+        IPC_MAIN_CHANNELS.FIND_IN_PAGE,
+        {
+          webContentsId,
+          text: findSearchText,
+          options: {findNext: true, forward: false},
+        }
+      );
+    };
+
+    webViewPubSub.subscribe(FIND_BAR_EVENTS.FIND_NEXT, handleFindNext);
+    webViewPubSub.subscribe(FIND_BAR_EVENTS.FIND_PREVIOUS, handleFindPrevious);
+
+    return () => {
+      webViewPubSub.unsubscribe(FIND_BAR_EVENTS.FIND_NEXT, handleFindNext);
+      webViewPubSub.unsubscribe(FIND_BAR_EVENTS.FIND_PREVIOUS, handleFindPrevious);
+    };
+  }, [findTextIsOpen, findSearchText, webviewReady]);
+
+  // Find-in-page: primary device listens for match results from main process
+  useEffect(() => {
+    if (!isPrimary || !ref.current || !webviewReady) {
+      return undefined;
+    }
+    const webview = ref.current as Electron.WebviewTag;
+    let webContentsId: number;
+    try {
+      webContentsId = webview.getWebContentsId();
+    } catch {
+      return undefined;
+    }
+
+    const handleResult = (result: FindInPageMatchResult) => {
+      if (result.webContentsId === webContentsId && result.finalUpdate) {
+        dispatch(
+          setMatchResult({
+            matches: result.matches,
+            activeMatch: result.activeMatchOrdinal,
+          })
+        );
+      }
+    };
+
+    const removeListener = window.electron.ipcRenderer.on<FindInPageMatchResult>(
+      IPC_MAIN_CHANNELS.FIND_IN_PAGE_RESULT,
+      handleResult
+    );
+
+    return () => {
+      removeListener?.();
+    };
+  }, [isPrimary, dispatch, webviewReady]);
 
   useEffect(() => {
     if (!ref.current || !device.isMobileCapable) {
