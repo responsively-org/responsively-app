@@ -25,6 +25,7 @@ import store from '../store';
 import {initWebviewContextMenu} from './webview-context-menu/register';
 import {initScreenshotHandlers} from './screenshot';
 import {initDevtoolsHandlers} from './devtools';
+import {initFindInPageHandlers} from './find-in-page';
 import {initWebviewStorageManagerHandlers} from './webview-storage-manager';
 import {initNativeFunctionHandlers} from './native-functions';
 import {WebPermissionHandlers} from './web-permissions';
@@ -142,6 +143,7 @@ const createWindow = async () => {
     },
   });
   initDevtoolsHandlers(mainWindow);
+  initFindInPageHandlers(mainWindow);
   initHttpBasicAuthHandlers(mainWindow);
   const webPermissionHandlers = WebPermissionHandlers(mainWindow);
 

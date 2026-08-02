@@ -41,6 +41,10 @@ export const IPC_MAIN_CHANNELS = {
   UPDATE_SITE_PERMISSION: 'update-site-permission',
   CLEAR_SITE_PERMISSIONS: 'clear-site-permissions',
   PERMISSION_UPDATED: 'permission-updated',
+  FIND_IN_PAGE: 'find-in-page',
+  STOP_FIND_IN_PAGE: 'stop-find-in-page',
+  FIND_IN_PAGE_RESULT: 'find-in-page-result',
+  TOGGLE_FIND_BAR: 'toggle-find-bar',
 } as const;
 
 export type Channels = (typeof IPC_MAIN_CHANNELS)[keyof typeof IPC_MAIN_CHANNELS];
