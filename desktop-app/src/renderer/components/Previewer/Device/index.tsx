@@ -535,7 +535,12 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       return undefined;
     }
     const webview = ref.current as Electron.WebviewTag;
-    const webContentsId = webview.getWebContentsId();
+    let webContentsId: number;
+    try {
+      webContentsId = webview.getWebContentsId();
+    } catch {
+      return undefined;
+    }
 
     if (!findTextIsOpen || findSearchText === '') {
       // Stop any active find
@@ -551,14 +556,14 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
 
     // Debounce the search to avoid flooding the API
     const timerId = setTimeout(() => {
-      const isNewSearch = findSearchText !== lastSearchedText.current;
       window.electron.ipcRenderer.invoke<FindInPageArgs, FindInPageResult>(
         IPC_MAIN_CHANNELS.FIND_IN_PAGE,
         {
           webContentsId,
           text: findSearchText,
           options: {
-            findNext: !isNewSearch,
+            findNext: true,
+            forward: true,
           },
         }
       );
@@ -574,7 +579,12 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       return undefined;
     }
     const webview = ref.current as Electron.WebviewTag;
-    const webContentsId = webview.getWebContentsId();
+    let webContentsId: number;
+    try {
+      webContentsId = webview.getWebContentsId();
+    } catch {
+      return undefined;
+    }
 
     const handleFindNext = () => {
       window.electron.ipcRenderer.invoke<FindInPageArgs, FindInPageResult>(
@@ -613,7 +623,12 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       return undefined;
     }
     const webview = ref.current as Electron.WebviewTag;
-    const webContentsId = webview.getWebContentsId();
+    let webContentsId: number;
+    try {
+      webContentsId = webview.getWebContentsId();
+    } catch {
+      return undefined;
+    }
 
     const handleResult = (result: FindInPageMatchResult) => {
       if (result.webContentsId === webContentsId && result.finalUpdate) {
