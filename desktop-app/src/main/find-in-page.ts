@@ -94,15 +94,22 @@ export const initFindInPageHandlers = (mainWindow: BrowserWindow) => {
     }
   );
 
-  // Forward Escape key from webview guests to the renderer so the find bar
-  // can be closed even when focus is inside a webview.
+  // Forward Escape and Cmd/Ctrl+F from webview guests to the renderer so the
+  // find bar can be opened/closed even when focus is inside a webview.
   app.on('web-contents-created', (_event, wc) => {
     // Only attach to guest webContents (webview tags), not the main window
     if (wc.id === mainWindow.webContents.id) return;
 
     wc.on('before-input-event', (_e, input) => {
-      if (input.key === 'Escape' && input.type === 'keyDown' && !mainWindow.isDestroyed()) {
+      if (mainWindow.isDestroyed() || input.type !== 'keyDown') return;
+
+      if (input.key === 'Escape') {
         mainWindow.webContents.send('close-find-bar');
+      }
+
+      const isMod = process.platform === 'darwin' ? input.meta : input.control;
+      if (input.key === 'f' && isMod && !input.alt && !input.shift) {
+        mainWindow.webContents.send('toggle-find-bar');
       }
     });
   });
