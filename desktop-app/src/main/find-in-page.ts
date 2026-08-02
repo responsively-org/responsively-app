@@ -1,4 +1,4 @@
-import {BrowserWindow, ipcMain, webContents} from 'electron';
+import {app, BrowserWindow, ipcMain, webContents} from 'electron';
 
 export interface FindInPageArgs {
   webContentsId: number;
@@ -93,4 +93,17 @@ export const initFindInPageHandlers = (mainWindow: BrowserWindow) => {
       }
     }
   );
+
+  // Forward Escape key from webview guests to the renderer so the find bar
+  // can be closed even when focus is inside a webview.
+  app.on('web-contents-created', (_event, wc) => {
+    // Only attach to guest webContents (webview tags), not the main window
+    if (wc.id === mainWindow.webContents.id) return;
+
+    wc.on('before-input-event', (_e, input) => {
+      if (input.key === 'Escape' && input.type === 'keyDown' && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('close-find-bar');
+      }
+    });
+  });
 };

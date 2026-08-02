@@ -58,6 +58,26 @@ const FindBar = () => {
     dispatch(closeFindBar());
   }, [dispatch]);
 
+  // Global Escape key handler — close find bar even when input is not focused
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        handleClose();
+      }
+    };
+    document.addEventListener('keydown', handleGlobalKeyDown);
+
+    // Also listen for Escape forwarded from webview guests via main process
+    const removeIpcListener = window.electron.ipcRenderer.on('close-find-bar', handleClose);
+
+    return () => {
+      document.removeEventListener('keydown', handleGlobalKeyDown);
+      removeIpcListener?.();
+    };
+  }, [isOpen, handleClose]);
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       dispatch(setSearchText(e.target.value));
@@ -112,11 +132,13 @@ const FindBar = () => {
 
   return (
     <div
-      className={`flex justify-end overflow-hidden transition-all duration-200 ease-in-out ${
-        isOpen ? 'max-h-12 opacity-100' : 'max-h-0 opacity-0'
+      className={`absolute right-4 top-1 z-50 transition-all duration-200 ease-in-out ${
+        isOpen
+          ? 'pointer-events-auto translate-y-0 opacity-100'
+          : 'pointer-events-none -translate-y-2 opacity-0'
       }`}
     >
-      <div className="my-1 mr-4 flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 shadow-lg dark:border-gray-600 dark:bg-gray-800">
+      <div className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 shadow-lg dark:border-gray-600 dark:bg-gray-800">
         {/* Search input */}
         <div className="flex items-center gap-2">
           <Icon

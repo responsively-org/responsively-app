@@ -45,8 +45,10 @@ const Browser = () => {
   return (
     <div className="h-screen gap-2 overflow-hidden pt-2">
       <ToolBar />
-      <FindBar />
-      <Previewer />
+      <div className="relative h-full">
+        <FindBar />
+        <Previewer />
+      </div>
     </div>
   );
 };
