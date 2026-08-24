@@ -8,8 +8,10 @@ import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
 import {updateWebViewHeightAndScale} from 'common/webViewUtils';
-import {ColorBlindnessTools} from './ColorBlindnessTools';
-import DesignOverlayControls from './DesignOverlayControls';
+import {ColorBlindnessTools} from '../ColorBlindnessTools';
+import DesignOverlayControls from '../DesignOverlayControls';
+import OverflowMenu from './OverflowMenu';
+import {useResponsiveToolbarItems} from './useResponsiveToolbarItems';
 
 interface Props {
   webview: Electron.WebviewTag | null;
@@ -22,6 +24,8 @@ interface Props {
   isIndividualLayout: boolean;
   isDeviceRotationEnabled: boolean;
 }
+
+const TOOLBAR_ITEMS_GAP = 4; // matches the `gap-1` tailwind class below
 
 const Toolbar = ({
   webview,
@@ -139,12 +143,18 @@ const Toolbar = ({
     }
   };
 
-  return (
-    <div className="flex items-center justify-between gap-1">
-      <div className="my-1 inline-flex max-w-[78%] items-center gap-1 overflow-x-auto">
+  const toolbarItems = [
+    {
+      key: 'refresh',
+      node: (
         <Button onClick={refreshView} title="Refresh This View">
           <Icon icon="ic:round-refresh" />
         </Button>
+      ),
+    },
+    {
+      key: 'quick-screenshot',
+      node: (
         <Button onClick={quickScreenshot} isLoading={screenshotLoading} title="Quick Screenshot">
           <div className="relative h-4 w-4">
             <Icon icon="ic:outline-photo-camera" className="absolute left-0 top-0" />
@@ -155,6 +165,11 @@ const Toolbar = ({
             />
           </div>
         </Button>
+      ),
+    },
+    {
+      key: 'full-screenshot',
+      node: (
         <Button
           onClick={fullScreenshot}
           isLoading={fullScreenshotLoading}
@@ -162,9 +177,19 @@ const Toolbar = ({
         >
           <Icon icon="ic:outline-photo-camera" />
         </Button>
+      ),
+    },
+    {
+      key: 'design-overlay',
+      node: (
         <Button onClick={() => setIsDesignOverlayModalOpen(true)} title="Design Overlay">
           <Icon icon="lucide:layers" />
         </Button>
+      ),
+    },
+    {
+      key: 'event-mirroring',
+      node: (
         <Button
           onClick={toggleEventMirroring}
           isActive={eventMirroringOff}
@@ -172,9 +197,19 @@ const Toolbar = ({
         >
           <Icon icon="fluent:plug-disconnected-24-regular" />
         </Button>
+      ),
+    },
+    {
+      key: 'devtools',
+      node: (
         <Button onClick={openDevTools} title="Open Devtools">
           <Icon icon="ic:round-code" />
         </Button>
+      ),
+    },
+    {
+      key: 'rotate',
+      node: (
         <Button
           onClick={rotate}
           disabled={!isDeviceRotationEnabled}
@@ -186,13 +221,52 @@ const Toolbar = ({
         >
           <Icon icon={rotated ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'} />
         </Button>
+      ),
+    },
+    {
+      key: 'scroll-to-top',
+      node: (
         <Button onClick={scrollToTop} title="Scroll to Top">
           <Icon icon="ic:baseline-arrow-upward" />
         </Button>
+      ),
+    },
+    {
+      key: 'rulers',
+      node: (
         <Button onClick={toggleRulers} title="Show rulers">
           <Icon icon="tdesign:measurement-1" />
         </Button>
-        <ColorBlindnessTools webview={webview} />
+      ),
+    },
+    {
+      key: 'color-blindness',
+      node: <ColorBlindnessTools webview={webview} />,
+    },
+  ];
+
+  const {containerRef, firstItemRef, visibleCount} = useResponsiveToolbarItems(
+    toolbarItems.length,
+    TOOLBAR_ITEMS_GAP
+  );
+  const visibleItems = toolbarItems.slice(0, visibleCount);
+  const overflowItems = toolbarItems.slice(visibleCount);
+
+  return (
+    <div className="flex items-center justify-between gap-1">
+      <div ref={containerRef} className="my-1 flex max-w-[78%] items-center gap-1 overflow-hidden">
+        {visibleItems.map((item, idx) => (
+          <div key={item.key} ref={idx === 0 ? firstItemRef : undefined}>
+            {item.node}
+          </div>
+        ))}
+        {overflowItems.length > 0 && (
+          <OverflowMenu>
+            {overflowItems.map((item) => (
+              <div key={item.key}>{item.node}</div>
+            ))}
+          </OverflowMenu>
+        )}
       </div>
       <Button
         onClick={() => onIndividualLayoutHandler(device)}
