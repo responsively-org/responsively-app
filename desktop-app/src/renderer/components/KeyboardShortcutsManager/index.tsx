@@ -1,4 +1,4 @@
-import { SHORTCUT_KEYS, ShortcutChannel } from './constants';
+import {SHORTCUT_KEYS, ShortcutChannel} from './constants';
 import useMousetrapEmitter from './useMousetrapEmitter';
 
 const KeyboardShortcutsManager = () => {

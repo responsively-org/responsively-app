@@ -1,19 +1,16 @@
-import { Icon } from '@iconify/react';
+import {Icon} from '@iconify/react';
 import Button from 'renderer/components/Button';
-import { useState } from 'react';
-import { FileUploader } from 'renderer/components/FileUploader';
+import {useState} from 'react';
+import {FileUploader} from 'renderer/components/FileUploader';
 import Modal from 'renderer/components/Modal';
-import {
-  addSuites,
-  deleteAllSuites,
-} from 'renderer/store/features/device-manager';
-import { useDispatch } from 'react-redux';
-import { ConfirmDialog } from 'renderer/components/ConfirmDialog';
-import { transformFile } from './utils';
-import { onFileDownload, setCustomDevices } from './helpers';
-import { ManageSuitesToolError } from './ManageSuitesToolError';
+import {addSuites, deleteAllSuites} from 'renderer/store/features/device-manager';
+import {useDispatch} from 'react-redux';
+import {ConfirmDialog} from 'renderer/components/ConfirmDialog';
+import {transformFile} from './utils';
+import {onFileDownload, setCustomDevices} from './helpers';
+import {ManageSuitesToolError} from './ManageSuitesToolError';
 
-export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
+export const ManageSuitesTool = ({setCustomDevicesState}: any) => {
   const [open, setOpen] = useState<boolean>(false);
   const [resetConfirmation, setResetConfirmation] = useState<boolean>(false);
 
@@ -23,7 +20,7 @@ export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
   const onFileUpload = (fileUploaded: File) =>
     transformFile(fileUploaded)
       .then((fileTransformed) => {
-        const { customDevices, suites } = fileTransformed;
+        const {customDevices, suites} = fileTransformed;
 
         if (customDevices) {
           const newCustomDevices = setCustomDevices(customDevices);
@@ -87,11 +84,7 @@ export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
         open={resetConfirmation}
         confirmText="Do you want to reset all settings?"
       />
-      <Modal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title="Import your devices"
-      >
+      <Modal isOpen={open} onClose={() => setOpen(false)} title="Import your devices">
         <>
           <FileUploader
             acceptedFileTypes="application/json"

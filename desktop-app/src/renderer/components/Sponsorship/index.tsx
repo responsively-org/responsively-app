@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import {useEffect, useMemo, useState} from 'react';
 
-import { IPC_MAIN_CHANNELS } from 'common/constants';
+import {IPC_MAIN_CHANNELS} from 'common/constants';
 
 import Modal from '../Modal';
 import Icon from '../../assets/img/logo.png';
@@ -51,10 +51,7 @@ export const Sponsorship = () => {
   useEffect(() => {
     const lastShownMs = window.electron.store.get('sponsorship.lastShown');
     const now = Date.now();
-    if (
-      lastShownMs === undefined ||
-      now - lastShownMs > 1000 * 60 * 60 * 24 * 7
-    ) {
+    if (lastShownMs === undefined || now - lastShownMs > 1000 * 60 * 60 * 24 * 7) {
       setIsOpen(true);
     }
   }, []);
@@ -93,12 +90,9 @@ export const Sponsorship = () => {
         <div className="mt-4 flex justify-center">
           <Button
             onClick={() => {
-              window.electron.ipcRenderer.sendMessage(
-                IPC_MAIN_CHANNELS.OPEN_EXTERNAL,
-                {
-                  url: `https://responsively.app/sponsor?utm_source=app&utm_medium=app-banner&utm_campaign=sponsor&utm_term=${contentCopy.id}`,
-                }
-              );
+              window.electron.ipcRenderer.sendMessage(IPC_MAIN_CHANNELS.OPEN_EXTERNAL, {
+                url: `https://responsively.app/sponsor?utm_source=app&utm_medium=app-banner&utm_campaign=sponsor&utm_term=${contentCopy.id}`,
+              });
               onClose();
             }}
             isTextButton

@@ -1,4 +1,4 @@
-import { SHORTCUT_KEYS } from 'renderer/components/KeyboardShortcutsManager/constants';
+import {SHORTCUT_KEYS} from 'renderer/components/KeyboardShortcutsManager/constants';
 import Modal from 'renderer/components/Modal';
 import Button from 'renderer/components/Button';
 import ShortcutName from './ShortcutName';
@@ -22,16 +22,14 @@ export const shortcutsList = [
   },
 ];
 
-const ShortcutsModal = ({ isOpen, onClose }: Props) => {
+const ShortcutsModal = ({isOpen, onClose}: Props) => {
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <div className="flex w-[380px] flex-col gap-4 px-2">
           {Object.values(shortcutsList).map((category) => (
             <div key={category.id}>
-              <h3 className="mb-3 border-b border-slate-600 pb-1 text-lg">
-                {category.name}
-              </h3>
+              <h3 className="mb-3 border-b border-slate-600 pb-1 text-lg">{category.name}</h3>
               {category.shortcuts.map((value) => (
                 <div className="my-2.5 flex justify-between" key={value[0]}>
                   <ShortcutName text={value[0]} />

@@ -1,5 +1,5 @@
-import { AuthInfo, app, BrowserWindow, ipcMain } from 'electron';
-import { IPC_MAIN_CHANNELS } from '../../common/constants';
+import {AuthInfo, app, BrowserWindow, ipcMain} from 'electron';
+import {IPC_MAIN_CHANNELS} from '../../common/constants';
 
 export type AuthRequestArgs = AuthInfo;
 
@@ -11,7 +11,7 @@ export interface AuthResponseArgs {
 
 type Callback = (username: string, password: string) => void;
 
-const inProgressAuthentications: { [key: string]: Callback[] } = {};
+const inProgressAuthentications: {[key: string]: Callback[]} = {};
 
 const handleLogin = async (
   authInfo: AuthInfo,
@@ -27,10 +27,8 @@ const handleLogin = async (
   mainWindow.webContents.send(IPC_MAIN_CHANNELS.AUTH_REQUEST, authInfo);
   ipcMain.once(
     IPC_MAIN_CHANNELS.AUTH_RESPONSE,
-    (_, { authInfo: respAuthInfo, username, password }: AuthResponseArgs) => {
-      inProgressAuthentications[respAuthInfo.host].forEach((cb) =>
-        cb(username, password)
-      );
+    (_, {authInfo: respAuthInfo, username, password}: AuthResponseArgs) => {
+      inProgressAuthentications[respAuthInfo.host].forEach((cb) => cb(username, password));
       delete inProgressAuthentications[respAuthInfo.host];
     }
   );

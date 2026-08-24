@@ -18,10 +18,9 @@ export const SHORTCUT_CHANNEL = {
   ZOOM_OUT: 'ZOOM_OUT',
 } as const;
 
-export type ShortcutChannel =
-  typeof SHORTCUT_CHANNEL[keyof typeof SHORTCUT_CHANNEL];
+export type ShortcutChannel = (typeof SHORTCUT_CHANNEL)[keyof typeof SHORTCUT_CHANNEL];
 
-export const SHORTCUT_KEYS: { [key in ShortcutChannel]: string[] } = {
+export const SHORTCUT_KEYS: {[key in ShortcutChannel]: string[]} = {
   [SHORTCUT_CHANNEL.BACK]: ['alt+left'],
   [SHORTCUT_CHANNEL.BOOKMARK]: ['mod+d'],
   [SHORTCUT_CHANNEL.DELETE_ALL]: ['mod+alt+del', 'mod+alt+backspace'],

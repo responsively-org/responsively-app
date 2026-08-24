@@ -1,21 +1,17 @@
-import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {useCallback} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import Button from 'renderer/components/Button';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
-import {
-  selectZoomFactor,
-  zoomIn,
-  zoomOut,
-} from 'renderer/store/features/renderer';
+import {selectZoomFactor, zoomIn, zoomOut} from 'renderer/store/features/renderer';
 
 interface ZoomButtonProps {
   children: React.ReactNode;
   onClick: () => void;
 }
 
-const ZoomButton = ({ children, onClick }: ZoomButtonProps) => {
+const ZoomButton = ({children, onClick}: ZoomButtonProps) => {
   return (
     <Button className="p-0 px-2" onClick={onClick} subtle>
       {children}

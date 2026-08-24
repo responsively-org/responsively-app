@@ -8,7 +8,7 @@ interface HandlerResult {
 type Handler = ((...args: any) => void) | ((...args: any) => Promise<any>);
 
 class PubSub {
-  registry: { [key: string]: Handler[] };
+  registry: {[key: string]: Handler[]};
 
   constructor() {
     this.registry = {};
@@ -38,9 +38,9 @@ class PubSub {
 
     return Bluebird.map(this.registry[topic], async (callback: Handler) => {
       try {
-        return { result: await callback(...args), error: null };
+        return {result: await callback(...args), error: null};
       } catch (err) {
-        return { result: null, error: err };
+        return {result: null, error: err};
       }
     });
   };

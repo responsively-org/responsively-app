@@ -1,9 +1,6 @@
-import { Icon } from '@iconify/react';
-import {
-  SetNativeThemeArgs,
-  SetNativeThemeResult,
-} from 'main/native-functions';
-import { useState } from 'react';
+import {Icon} from '@iconify/react';
+import {SetNativeThemeArgs, SetNativeThemeResult} from 'main/native-functions';
+import {useState} from 'react';
 import Button from 'renderer/components/Button';
 
 const ColorSchemeToggle = () => {
@@ -12,12 +9,12 @@ const ColorSchemeToggle = () => {
   return (
     <Button
       onClick={() => {
-        window.electron.ipcRenderer.invoke<
-          SetNativeThemeArgs,
-          SetNativeThemeResult
-        >('set-native-theme', {
-          theme: isDarkColorScheme ? 'light' : 'dark',
-        });
+        window.electron.ipcRenderer.invoke<SetNativeThemeArgs, SetNativeThemeResult>(
+          'set-native-theme',
+          {
+            theme: isDarkColorScheme ? 'light' : 'dark',
+          }
+        );
         setIsDarkColorScheme(!isDarkColorScheme);
       }}
       subtle

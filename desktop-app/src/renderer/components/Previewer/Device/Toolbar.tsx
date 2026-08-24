@@ -1,14 +1,15 @@
-import { Icon } from '@iconify/react';
-import { useState } from 'react';
+import {Icon} from '@iconify/react';
+import {useState} from 'react';
 import Button from 'renderer/components/Button';
 import useSound from 'use-sound';
-import { ScreenshotArgs, ScreenshotResult } from 'main/screenshot';
-import { Device } from 'common/deviceList';
+import {ScreenshotArgs, ScreenshotResult} from 'main/screenshot';
+import {Device} from 'common/deviceList';
 import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
-import { updateWebViewHeightAndScale } from 'common/webViewUtils';
-import { ColorBlindnessTools } from './ColorBlindnessTools';
+import {updateWebViewHeightAndScale} from 'common/webViewUtils';
+import {ColorBlindnessTools} from './ColorBlindnessTools';
+import DesignOverlayControls from './DesignOverlayControls';
 
 interface Props {
   webview: Electron.WebviewTag | null;
@@ -19,14 +20,8 @@ interface Props {
   onRotate: (state: boolean) => void;
   onIndividualLayoutHandler: (device: Device) => void;
   isIndividualLayout: boolean;
+  isDeviceRotationEnabled: boolean;
 }
-
-const newVersionText = {
-  id: 'new-version',
-  text: 'There is a new version available.',
-  link: 'https://responsively.app/download',
-  linkText: 'See More',
-};
 
 const Toolbar = ({
   webview,
@@ -37,13 +32,14 @@ const Toolbar = ({
   onRotate,
   onIndividualLayoutHandler,
   isIndividualLayout,
+  isDeviceRotationEnabled,
 }: Props) => {
   const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
-  const [playScreenshotDone] = useSound(screenshotSfx, { volume: 0.5 });
+  const [playScreenshotDone] = useSound(screenshotSfx, {volume: 0.5});
   const [screenshotLoading, setScreenshotLoading] = useState<boolean>(false);
-  const [fullScreenshotLoading, setFullScreenshotLoading] =
-    useState<boolean>(false);
+  const [fullScreenshotLoading, setFullScreenshotLoading] = useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
+  const [isDesignOverlayModalOpen, setIsDesignOverlayModalOpen] = useState<boolean>(false);
 
   const refreshView = () => {
     if (webview) {
@@ -59,9 +55,7 @@ const Toolbar = ({
       await webview.executeJavaScript(
         `
         if(window.___browserSync___){
-          window.___browserSync___.socket.${
-            eventMirroringOff ? 'open' : 'close'
-          }()
+          window.___browserSync___.socket.${eventMirroringOff ? 'open' : 'close'}()
         }
         true
       `
@@ -79,10 +73,7 @@ const Toolbar = ({
     }
     setScreenshotLoading(true);
     try {
-      await window.electron.ipcRenderer.invoke<
-        ScreenshotArgs,
-        ScreenshotResult
-      >('screenshot', {
+      await window.electron.ipcRenderer.invoke<ScreenshotArgs, ScreenshotResult>('screenshot', {
         webContentsId: webview.getWebContentsId(),
         device,
       });
@@ -114,10 +105,7 @@ const Toolbar = ({
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      await window.electron.ipcRenderer.invoke<
-        ScreenshotArgs,
-        ScreenshotResult
-      >('screenshot', {
+      await window.electron.ipcRenderer.invoke<ScreenshotArgs, ScreenshotResult>('screenshot', {
         webContentsId: webview.getWebContentsId(),
         device,
       });
@@ -147,10 +135,7 @@ const Toolbar = ({
 
   const scrollToTop = () => {
     if (webview) {
-      webview.executeJavaScript(
-        'window.scrollTo({ top: 0, behavior: "smooth" })',
-        false
-      );
+      webview.executeJavaScript('window.scrollTo({ top: 0, behavior: "smooth" })', false);
     }
   };
 
@@ -160,19 +145,12 @@ const Toolbar = ({
         <Button onClick={refreshView} title="Refresh This View">
           <Icon icon="ic:round-refresh" />
         </Button>
-        <Button
-          onClick={quickScreenshot}
-          isLoading={screenshotLoading}
-          title="Quick Screenshot"
-        >
+        <Button onClick={quickScreenshot} isLoading={screenshotLoading} title="Quick Screenshot">
           <div className="relative h-4 w-4">
-            <Icon
-              icon="ic:outline-photo-camera"
-              className="absolute top-0 left-0"
-            />
+            <Icon icon="ic:outline-photo-camera" className="absolute left-0 top-0" />
             <Icon
               icon="clarity:lightning-solid"
-              className="absolute top-[-1px] right-[-2px]"
+              className="absolute right-[-2px] top-[-1px]"
               height={8}
             />
           </div>
@@ -184,6 +162,9 @@ const Toolbar = ({
         >
           <Icon icon="ic:outline-photo-camera" />
         </Button>
+        <Button onClick={() => setIsDesignOverlayModalOpen(true)} title="Design Overlay">
+          <Icon icon="lucide:layers" />
+        </Button>
         <Button
           onClick={toggleEventMirroring}
           isActive={eventMirroringOff}
@@ -194,14 +175,16 @@ const Toolbar = ({
         <Button onClick={openDevTools} title="Open Devtools">
           <Icon icon="ic:round-code" />
         </Button>
-        <Button onClick={rotate} title="Rotate This Device">
-          <Icon
-            icon={
-              rotated
-                ? 'mdi:phone-rotate-portrait'
-                : 'mdi:phone-rotate-landscape'
-            }
-          />
+        <Button
+          onClick={rotate}
+          disabled={!isDeviceRotationEnabled}
+          title={
+            isDeviceRotationEnabled
+              ? 'Rotate This Device'
+              : 'Rotation not available for non-mobile devices'
+          }
+        >
+          <Icon icon={rotated ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'} />
         </Button>
         <Button onClick={scrollToTop} title="Scroll to Top">
           <Icon icon="ic:baseline-arrow-upward" />
@@ -215,14 +198,13 @@ const Toolbar = ({
         onClick={() => onIndividualLayoutHandler(device)}
         title={`${isIndividualLayout ? 'Disable' : 'Enable'} Individual Layout`}
       >
-        <Icon
-          icon={
-            isIndividualLayout
-              ? 'ic:twotone-zoom-in-map'
-              : 'ic:twotone-zoom-out-map'
-          }
-        />
+        <Icon icon={isIndividualLayout ? 'ic:twotone-zoom-in-map' : 'ic:twotone-zoom-out-map'} />
       </Button>
+      <DesignOverlayControls
+        device={device}
+        isOpen={isDesignOverlayModalOpen}
+        onClose={() => setIsDesignOverlayModalOpen(false)}
+      />
     </div>
   );
 };

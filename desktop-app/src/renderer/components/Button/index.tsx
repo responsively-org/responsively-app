@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import cx from 'classnames';
-import { Icon } from '@iconify/react';
+import {Icon} from '@iconify/react';
 
 interface CustomProps {
   className?: string;
@@ -11,6 +11,7 @@ interface CustomProps {
   disableHoverEffects?: boolean;
   isActionButton?: boolean;
   subtle?: boolean;
+  disabled?: boolean;
 }
 
 const Button = ({
@@ -22,13 +23,11 @@ const Button = ({
   isActionButton = false,
   subtle = false,
   disableHoverEffects = false,
+  disabled = false,
   children,
   ...props
 }: CustomProps &
-  React.DetailedHTMLProps<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  >) => {
+  React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => {
   const [isLoadingDone, setIsLoadingDone] = useState<boolean>(false);
   const prevLoadingState = useRef(false);
 
@@ -55,7 +54,7 @@ const Button = ({
   return (
     <button
       className={cx(
-        { [className]: className?.length },
+        {[className]: className?.length},
         `flex items-center justify-center rounded-sm p-1 ${
           disableHoverEffects === false ? `${hoverBg} ${hoverBgDark}` : ''
         } focus:outline-none`,
@@ -66,16 +65,17 @@ const Button = ({
           'bg-slate-200': isActionButton,
           'dark:bg-slate-700': isActionButton,
           'px-2': isActionButton || isTextButton,
+          'cursor-not-allowed opacity-40': disabled,
+          'hover:bg-transparent dark:hover:bg-transparent': disabled,
         }
       )}
       type="button"
+      disabled={disabled}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     >
       {isLoading ? <Icon icon="line-md:loading-twotone-loop" /> : null}
-      {isLoadingDone ? (
-        <Icon icon="line-md:circle-to-confirm-circle-transition" />
-      ) : null}
+      {isLoadingDone ? <Icon icon="line-md:circle-to-confirm-circle-transition" /> : null}
       {!isLoading && !isLoadingDone ? children : null}
     </button>
   );

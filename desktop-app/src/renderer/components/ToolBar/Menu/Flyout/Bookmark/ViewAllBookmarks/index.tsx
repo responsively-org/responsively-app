@@ -1,8 +1,8 @@
-import { useDispatch } from 'react-redux';
+import {useDispatch} from 'react-redux';
 import Button from 'renderer/components/Button';
-import { IBookmarks } from 'renderer/store/features/bookmarks';
-import { setAddress } from 'renderer/store/features/renderer';
-import { useState } from 'react';
+import {IBookmarks} from 'renderer/store/features/bookmarks';
+import {setAddress} from 'renderer/store/features/renderer';
+import {useState} from 'react';
 import BookmarkListButton from './BookmarkListButton';
 import BookmarkFlyout from './BookmarkFlyout';
 
@@ -11,7 +11,7 @@ export interface Props {
   handleBookmarkFlyout: () => void;
 }
 
-const ViewAllBookmarks = ({ bookmarks, handleBookmarkFlyout }: Props) => {
+const ViewAllBookmarks = ({bookmarks, handleBookmarkFlyout}: Props) => {
   const [currentBookmark, setCurrentBookmark] = useState<IBookmarks>({
     id: '',
     name: '',
@@ -49,12 +49,7 @@ const ViewAllBookmarks = ({ bookmarks, handleBookmarkFlyout }: Props) => {
         )}
       </div>
       <div className="absolute right-[560px]">
-        {openFlyout && (
-          <BookmarkFlyout
-            bookmark={currentBookmark}
-            setOpenFlyout={setOpenFlyout}
-          />
-        )}
+        {openFlyout && <BookmarkFlyout bookmark={currentBookmark} setOpenFlyout={setOpenFlyout} />}
       </div>
     </div>
   );

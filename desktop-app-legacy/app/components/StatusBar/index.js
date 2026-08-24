@@ -85,7 +85,7 @@ const StatusBar = ({visible, zoomLevel}) => {
           className={cx(classes.text, classes.link)}
           onClick={() =>
             shell.openExternal(
-              'https://twitter.com/intent/follow?original_referer=app&ref_src=twsrc%5Etfw&region=follow_link&screen_name=ResponsivelyApp&tw_p=followbutton'
+              'https://x.com/intent/follow?original_referer=app&ref_src=twsrc%5Etfw&region=follow_link&screen_name=ResponsivelyApp&tw_p=followbutton'
             )
           }
         >

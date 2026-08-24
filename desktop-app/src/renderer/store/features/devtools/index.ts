@@ -1,10 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DOCK_POSITION } from 'common/constants';
-import type { RootState } from '../..';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {DOCK_POSITION} from 'common/constants';
+import type {RootState} from '../..';
 
-const defaultBounds = { x: 0, y: 0, width: 0, height: 0 };
+const defaultBounds = {x: 0, y: 0, width: 0, height: 0};
 
-export type DockPosition = typeof DOCK_POSITION[keyof typeof DOCK_POSITION];
+export type DockPosition = (typeof DOCK_POSITION)[keyof typeof DOCK_POSITION];
 
 export interface DevtoolsState {
   bounds: {
@@ -51,15 +51,13 @@ export const devtoolsSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setBounds, setDevtoolsOpen, setDevtoolsClose, setDockPosition } =
+export const {setBounds, setDevtoolsOpen, setDevtoolsClose, setDockPosition} =
   devtoolsSlice.actions;
 
 export const selectIsDevtoolsOpen = (state: RootState) => state.devtools.isOpen;
 
-export const selectDevtoolsWebviewId = (state: RootState) =>
-  state.devtools.webViewId;
+export const selectDevtoolsWebviewId = (state: RootState) => state.devtools.webViewId;
 
-export const selectDockPosition = (state: RootState) =>
-  state.devtools.dockPosition;
+export const selectDockPosition = (state: RootState) => state.devtools.dockPosition;
 
 export default devtoolsSlice.reducer;

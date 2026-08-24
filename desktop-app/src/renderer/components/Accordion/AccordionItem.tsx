@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import {useState} from 'react';
 
 type AccordionItemProps = {
   title: string;
   children: JSX.Element;
 };
 
-export const AccordionItem = ({ title, children }: AccordionItemProps) => {
+export const AccordionItem = ({title, children}: AccordionItemProps) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const toggle = () => {

@@ -7,7 +7,7 @@
       }
     }
   ],
-  "arrowParens": "avoid",
+  "arrowParens": "always",
   "singleQuote": true,
   "bracketSpacing": false,
   "printWidth": 100,

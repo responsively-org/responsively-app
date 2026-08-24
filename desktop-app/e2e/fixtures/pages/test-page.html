@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Page 1</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: sans-serif;
+        height: 2500px;
+      }
+      #click-counter {
+        margin: 20px 0;
+      }
+      #click-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      #scroll-position {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: #333;
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      #browsersync-status {
+        margin: 20px 0;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        display: inline-block;
+      }
+      .connected {
+        background: #4caf50;
+        color: #fff;
+      }
+      .disconnected {
+        background: #f44336;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="page-heading">Test Page 1</h1>
+
+    <div id="click-counter">
+      <button id="click-btn">Click Me</button>
+      <span id="click-count">Clicks: 0</span>
+    </div>
+
+    <div>
+      <span id="browsersync-status" class="disconnected">BrowserSync: checking...</span>
+    </div>
+
+    <div id="scroll-position">scrollY: 0</div>
+
+    <div id="form-section" style="margin: 20px 0">
+      <label for="mirror-input">Type here:</label>
+      <input type="text" id="mirror-input" autocomplete="off" />
+    </div>
+
+    <div id="checkbox-section" style="margin: 20px 0">
+      <label>
+        <input type="checkbox" id="mirror-checkbox" />
+        Toggle me
+      </label>
+    </div>
+
+    <p><a href="test-page-2.html" id="nav-link">Go to Page 2</a></p>
+
+    <div style="margin-top: 40px">
+      <p>Content block to make page scrollable.</p>
+      <p style="margin-top: 500px">Mid-page marker (500px)</p>
+      <p style="margin-top: 500px">Lower marker (1000px)</p>
+      <p style="margin-top: 500px">Bottom marker (1500px)</p>
+    </div>
+
+    <script>
+      window.testClickCount = 0;
+
+      document.getElementById('click-btn').addEventListener('click', function () {
+        window.testClickCount++;
+        document.getElementById('click-count').textContent = 'Clicks: ' + window.testClickCount;
+      });
+
+      window.addEventListener('scroll', function () {
+        document.getElementById('scroll-position').textContent =
+          'scrollY: ' + Math.round(window.scrollY);
+      });
+
+      (function checkBrowserSync() {
+        var el = document.getElementById('browsersync-status');
+        var check = setInterval(function () {
+          if (window.___browserSync___) {
+            el.textContent = 'BrowserSync: connected';
+            el.className = 'connected';
+            clearInterval(check);
+          }
+        }, 500);
+        setTimeout(function () {
+          clearInterval(check);
+          if (!window.___browserSync___) {
+            el.textContent = 'BrowserSync: not found';
+          }
+        }, 15000);
+      })();
+    </script>
+  </body>
+</html>

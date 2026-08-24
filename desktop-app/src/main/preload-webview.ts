@@ -1,10 +1,10 @@
-import { ipcRenderer } from 'electron';
+import {ipcRenderer} from 'electron';
 
 const documentBodyInit = () => {
   // Browser Sync
+  const bsPort = ipcRenderer.sendSync('get-browser-sync-port');
   const bsScript = window.document.createElement('script');
-  bsScript.src =
-    'https://localhost:12719/browser-sync/browser-sync-client.js?v=2.27.10';
+  bsScript.src = `https://localhost:${bsPort}/browser-sync/browser-sync-client.js?v=2.27.10`;
   bsScript.async = true;
   window.document.body.appendChild(bsScript);
 
@@ -12,20 +12,73 @@ const documentBodyInit = () => {
   window.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     ipcRenderer.send('show-context-menu', {
-      contextMenuMeta: { x: e.x, y: e.y },
+      contextMenuMeta: {x: e.x, y: e.y},
     });
   });
 
   window.addEventListener('wheel', (e) => {
     ipcRenderer.sendToHost('pass-scroll-data', {
-      coordinates: { x: e.deltaX, y: e.deltaY },
+      coordinates: {
+        x: e.deltaX,
+        y: e.deltaY,
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
+      },
       innerHeight: document.body.scrollHeight,
       innerWidth: window.innerWidth,
     });
   });
 
+  window.addEventListener('scroll', () => {
+    ipcRenderer.sendToHost('pass-scroll-data', {
+      coordinates: {
+        x: 0,
+        y: 0,
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
+      },
+      innerHeight: document.body.scrollHeight,
+      innerWidth: window.innerWidth,
+    });
+  });
+
+  // To detect if user is typing in an input field
+  const isUserTyping = () => {
+    const el = document.activeElement;
+    if (!el) return false;
+
+    return (
+      el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || (el as HTMLElement).isContentEditable
+    );
+  };
+
+  // Handle F key for fullscreen toggle
+  window.addEventListener('keydown', (e) => {
+    // Prevent fullscreen if user is typing
+    if (isUserTyping()) return;
+
+    if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault();
+
+      // Check if already in fullscreen
+      if (document.fullscreenElement) {
+        // Exit fullscreen
+        document.exitFullscreen().catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Error exiting fullscreen:', err);
+        });
+      } else {
+        // Request fullscreen
+        document.documentElement.requestFullscreen().catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Error requesting fullscreen:', err);
+        });
+      }
+    }
+  });
+
   window.addEventListener('dom-ready', () => {
-    const { body } = document;
+    const {body} = document;
     const html = document.documentElement;
 
     const height = Math.max(
@@ -37,7 +90,7 @@ const documentBodyInit = () => {
     );
 
     ipcRenderer.sendToHost('pass-scroll-data', {
-      coordinates: { x: 0, y: 0 },
+      coordinates: {x: 0, y: 0},
       innerHeight: height,
       innerWidth: window.innerWidth,
     });

@@ -1,16 +1,10 @@
 import cx from 'classnames';
-import { Icon } from '@iconify/react';
-import { DropDown } from '../DropDown';
+import {Icon} from '@iconify/react';
+import {DropDown} from '../DropDown';
 
-const MenuItemLabel = ({
-  label,
-  isActive,
-}: {
-  label: string;
-  isActive: boolean;
-}) => {
+const MenuItemLabel = ({label, isActive}: {label: string; isActive: boolean}) => {
   return (
-    <div className="justify-normal flex w-full flex-shrink-0 items-center gap-1 whitespace-nowrap">
+    <div className="flex w-full flex-shrink-0 items-center justify-normal gap-1 whitespace-nowrap">
       <Icon
         icon="ic:round-check"
         className={cx('opacity-0', {
@@ -28,15 +22,13 @@ const MenuItemLabel = ({
   );
 };
 
-const MenuItemHeader = ({ label }: { label: string }) => {
+const MenuItemHeader = ({label}: {label: string}) => {
   return (
     <div className="relative flex w-full min-w-44 items-center justify-between gap-1 whitespace-nowrap">
       <div className="absolute inset-0 flex items-center" aria-hidden="true">
         <div className="w-full border-t border-gray-300 dark:border-gray-600" />
       </div>
-      <span className="mxl-1 z-10 flex-shrink-0 bg-slate-100 pr-2 dark:bg-slate-900">
-        {label}
-      </span>
+      <span className="mxl-1 z-10 flex-shrink-0 bg-slate-100 pr-2 dark:bg-slate-900">{label}</span>
     </div>
   );
 };
@@ -78,10 +70,7 @@ interface Props {
   onChange: (name: string | undefined) => void;
 }
 
-export const VisionSimulationDropDown = ({
-  simulationName,
-  onChange,
-}: Props) => {
+export const VisionSimulationDropDown = ({simulationName, onChange}: Props) => {
   return (
     <DropDown
       className={cx('rounded-lg text-xs', {
@@ -94,12 +83,7 @@ export const VisionSimulationDropDown = ({
           onClick: null,
         },
         {
-          label: (
-            <MenuItemLabel
-              label="Disable tool"
-              isActive={simulationName === undefined}
-            />
-          ),
+          label: <MenuItemLabel label="Disable tool" isActive={simulationName === undefined} />,
           onClick: () => {
             onChange(undefined);
           },
@@ -110,12 +94,7 @@ export const VisionSimulationDropDown = ({
         },
         ...RED_GREEN.map((x: string) => {
           return {
-            label: (
-              <MenuItemLabel
-                label={x}
-                isActive={simulationName === x.toLowerCase()}
-              />
-            ),
+            label: <MenuItemLabel label={x} isActive={simulationName === x.toLowerCase()} />,
             onClick: () => {
               onChange(x.toLowerCase());
             },
@@ -127,12 +106,7 @@ export const VisionSimulationDropDown = ({
         },
         ...BLUE_YELLOW.map((x: string) => {
           return {
-            label: (
-              <MenuItemLabel
-                label={x}
-                isActive={simulationName === x.toLowerCase()}
-              />
-            ),
+            label: <MenuItemLabel label={x} isActive={simulationName === x.toLowerCase()} />,
             onClick: () => {
               onChange(x.toLowerCase());
             },
@@ -144,12 +118,7 @@ export const VisionSimulationDropDown = ({
         },
         ...FULL.map((x: string) => {
           return {
-            label: (
-              <MenuItemLabel
-                label={x}
-                isActive={simulationName === x.toLowerCase()}
-              />
-            ),
+            label: <MenuItemLabel label={x} isActive={simulationName === x.toLowerCase()} />,
             onClick: () => {
               onChange(x.toLowerCase());
             },
@@ -161,12 +130,7 @@ export const VisionSimulationDropDown = ({
         },
         ...VISUAL_IMPAIRMENTS.map((x: string) => {
           return {
-            label: (
-              <MenuItemLabel
-                label={x}
-                isActive={simulationName === x.toLowerCase()}
-              />
-            ),
+            label: <MenuItemLabel label={x} isActive={simulationName === x.toLowerCase()} />,
             onClick: () => {
               onChange(x.toLowerCase());
             },
@@ -178,12 +142,7 @@ export const VisionSimulationDropDown = ({
         },
         ...SUNLIGHT.map((x: string) => {
           return {
-            label: (
-              <MenuItemLabel
-                label={x}
-                isActive={simulationName === x.toLowerCase()}
-              />
-            ),
+            label: <MenuItemLabel label={x} isActive={simulationName === x.toLowerCase()} />,
             onClick: () => {
               onChange(x.toLowerCase());
             },

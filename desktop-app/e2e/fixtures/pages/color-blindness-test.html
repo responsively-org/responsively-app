@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Color Blindness Test</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+      .color-block {
+        width: 100%;
+        height: 33.34%;
+      }
+      #red-block {
+        background-color: #ff0000;
+      }
+      #green-block {
+        background-color: #00ff00;
+      }
+      #blue-block {
+        background-color: #0000ff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="red-block" class="color-block"></div>
+    <div id="green-block" class="color-block"></div>
+    <div id="blue-block" class="color-block"></div>
+  </body>
+</html>

@@ -1,5 +1,5 @@
-import { Icon } from '@iconify/react';
-import { useState } from 'react';
+import {Icon} from '@iconify/react';
+import {useState} from 'react';
 import Button from 'renderer/components/Button';
 import ShortcutsModal from './ShortcutsModal';
 

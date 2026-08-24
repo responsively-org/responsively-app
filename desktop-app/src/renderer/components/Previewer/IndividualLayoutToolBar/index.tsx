@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Tab, Tabs, TabList } from 'react-tabs';
-import { Icon } from '@iconify/react';
+import {useEffect, useState} from 'react';
+import {useDispatch} from 'react-redux';
+import {Tab, Tabs, TabList} from 'react-tabs';
+import {Icon} from '@iconify/react';
 import cx from 'classnames';
-import { setLayout } from 'renderer/store/features/renderer';
-import { PREVIEW_LAYOUTS } from 'common/constants';
-import { Device as IDevice } from 'common/deviceList';
+import {setLayout} from 'renderer/store/features/renderer';
+import {PREVIEW_LAYOUTS} from 'common/constants';
+import {Device as IDevice} from 'common/deviceList';
 import './styles.css';
 
 interface Props {
@@ -14,11 +14,7 @@ interface Props {
   devices: IDevice[];
 }
 
-const IndividualLayoutToolbar = ({
-  individualDevice,
-  setIndividualDevice,
-  devices,
-}: Props) => {
+const IndividualLayoutToolbar = ({individualDevice, setIndividualDevice, devices}: Props) => {
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState(0);
 
@@ -31,9 +27,7 @@ const IndividualLayoutToolbar = ({
   const handleCloseBtn = () => dispatch(setLayout(PREVIEW_LAYOUTS.COLUMN));
 
   useEffect(() => {
-    const activeTabIndex = devices.findIndex(
-      (device) => device.id === individualDevice.id
-    );
+    const activeTabIndex = devices.findIndex((device) => device.id === individualDevice.id);
     setActiveTab(activeTabIndex);
   }, [individualDevice, devices]);
 

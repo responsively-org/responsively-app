@@ -1,11 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import {useEffect, useState} from 'react';
+import {useDispatch} from 'react-redux';
 import Button from 'renderer/components/Button';
-import {
-  IBookmarks,
-  addBookmark,
-  removeBookmark,
-} from 'renderer/store/features/bookmarks';
+import {IBookmarks, addBookmark, removeBookmark} from 'renderer/store/features/bookmarks';
 import Input from 'renderer/components/Input';
 
 interface Props {
@@ -13,7 +9,7 @@ interface Props {
   setOpenFlyout: (bool: boolean) => void;
 }
 
-const BookmarkFlyout = ({ bookmark, setOpenFlyout }: Props) => {
+const BookmarkFlyout = ({bookmark, setOpenFlyout}: Props) => {
   const [currentBookmark, setCurrentBookmark] = useState<IBookmarks>(bookmark);
   const dispatch = useDispatch();
 
@@ -63,16 +59,11 @@ const BookmarkFlyout = ({ bookmark, setOpenFlyout }: Props) => {
           value={currentBookmark.address}
           onChange={handleChange}
         />
-        <div className="mt-4 mb-1 flex justify-center">
+        <div className="mb-1 mt-4 flex justify-center">
           <Button onClick={handleButton} id="remove" className="mr-6 px-6">
             Remove
           </Button>
-          <Button
-            onClick={handleButton}
-            id="add"
-            className="px-8"
-            isActionButton
-          >
+          <Button onClick={handleButton} id="add" className="px-8" isActionButton>
             Save
           </Button>
         </div>

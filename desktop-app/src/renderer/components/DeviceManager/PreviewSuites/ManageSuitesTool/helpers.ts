@@ -1,10 +1,8 @@
-import { defaultDevices, Device } from 'common/deviceList';
+import {defaultDevices, Device} from 'common/deviceList';
 
-export const downloadFile = <T extends Record<string, unknown>>(
-  fileData: T
-) => {
+export const downloadFile = <T extends Record<string, unknown>>(fileData: T) => {
   const jsonString = JSON.stringify(fileData, null, 2);
-  const blob = new Blob([jsonString], { type: 'application/json' });
+  const blob = new Blob([jsonString], {type: 'application/json'});
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
 
@@ -22,10 +20,7 @@ export const setCustomDevices = (customDevices: Device[]) => {
     (item: Device) => !defaultDevices.includes(item)
   );
 
-  window.electron.store.set(
-    'deviceManager.customDevices',
-    importedCustomDevices
-  );
+  window.electron.store.set('deviceManager.customDevices', importedCustomDevices);
 
   return importedCustomDevices;
 };

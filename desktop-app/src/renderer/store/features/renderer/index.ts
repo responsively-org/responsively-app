@@ -1,12 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import {
-  IPC_MAIN_CHANNELS,
-  Notification,
-  PREVIEW_LAYOUTS,
-  PreviewLayout,
-} from 'common/constants';
-import type { RootState } from '../..';
+import {createSlice} from '@reduxjs/toolkit';
+import type {PayloadAction} from '@reduxjs/toolkit';
+import {IPC_MAIN_CHANNELS, Notification, PREVIEW_LAYOUTS, PreviewLayout} from 'common/constants';
+import type {RootState} from '../..';
 
 export interface RendererState {
   address: string;
@@ -20,9 +15,7 @@ export interface RendererState {
   notifications: Notification[] | null;
 }
 
-const zoomSteps = [
-  0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2,
-];
+const zoomSteps = [0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
 
 const urlFromQueryParam = () => {
   const params = new URLSearchParams(window.location.search);
@@ -36,8 +29,7 @@ const urlFromQueryParam = () => {
 const initialState: RendererState = {
   address: urlFromQueryParam() ?? window.electron.store.get('homepage'),
   pageTitle: '',
-  individualZoomFactor:
-    zoomSteps[window.electron.store.get('renderer.individualZoomStepIndex')],
+  individualZoomFactor: zoomSteps[window.electron.store.get('renderer.individualZoomStepIndex')],
   zoomFactor: zoomSteps[window.electron.store.get('renderer.zoomStepIndex')],
   rotate: false,
   isInspecting: undefined,
@@ -47,16 +39,10 @@ const initialState: RendererState = {
 };
 
 export const updateFileWatcher = (newURL: string) => {
-  if (
-    newURL.startsWith('file://') &&
-    (newURL.endsWith('.html') || newURL.endsWith('.htm'))
-  )
-    window.electron.ipcRenderer.sendMessage(
-      IPC_MAIN_CHANNELS.START_WATCHING_FILE,
-      {
-        path: newURL,
-      }
-    );
+  if (newURL.startsWith('file://') && (newURL.endsWith('.html') || newURL.endsWith('.htm')))
+    window.electron.ipcRenderer.sendMessage(IPC_MAIN_CHANNELS.START_WATCHING_FILE, {
+      path: newURL,
+    });
   else window.electron.ipcRenderer.sendMessage(IPC_MAIN_CHANNELS.STOP_WATCHER);
 };
 
@@ -85,10 +71,7 @@ export const rendererSlice = createSlice({
         if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
           const newIndex = index + 1;
           state.individualZoomFactor = zoomSteps[newIndex];
-          window.electron.store.set(
-            'renderer.individualZoomStepIndex',
-            newIndex
-          );
+          window.electron.store.set('renderer.individualZoomStepIndex', newIndex);
         } else {
           const newIndex = index + 1;
           state.zoomFactor = zoomSteps[newIndex];
@@ -105,10 +88,7 @@ export const rendererSlice = createSlice({
         if (state.layout === PREVIEW_LAYOUTS.INDIVIDUAL) {
           const newIndex = index - 1;
           state.individualZoomFactor = zoomSteps[newIndex];
-          window.electron.store.set(
-            'renderer.individualZoomStepIndex',
-            newIndex
-          );
+          window.electron.store.set('renderer.individualZoomStepIndex', newIndex);
         } else {
           const newIndex = index - 1;
           state.zoomFactor = zoomSteps[newIndex];
@@ -166,12 +146,10 @@ export const selectZoomFactor = (state: RootState) => {
 export const selectAddress = (state: RootState) => state.renderer.address;
 export const selectPageTitle = (state: RootState) => state.renderer.pageTitle;
 export const selectRotate = (state: RootState) => state.renderer.rotate;
-export const selectIsInspecting = (state: RootState) =>
-  state.renderer.isInspecting;
+export const selectIsInspecting = (state: RootState) => state.renderer.isInspecting;
 export const selectLayout = (state: RootState) => state.renderer.layout;
 export const selectIsCapturingScreenshot = (state: RootState) =>
   state.renderer.isCapturingScreenshot;
-export const selectNotifications = (state: RootState) =>
-  state.renderer.notifications;
+export const selectNotifications = (state: RootState) => state.renderer.notifications;
 
 export default rendererSlice.reducer;

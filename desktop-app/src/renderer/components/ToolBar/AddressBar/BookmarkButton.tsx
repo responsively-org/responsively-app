@@ -1,15 +1,11 @@
-import { Icon } from '@iconify/react';
-import { useState, useMemo } from 'react';
-import { useDetectClickOutside } from 'react-detect-click-outside';
-import { useDispatch, useSelector } from 'react-redux';
+import {Icon} from '@iconify/react';
+import {useState, useMemo} from 'react';
+import {useDetectClickOutside} from 'react-detect-click-outside';
+import {useDispatch, useSelector} from 'react-redux';
 import cx from 'classnames';
 import Button from 'renderer/components/Button';
 
-import {
-  IBookmarks,
-  addBookmark,
-  selectBookmarks,
-} from 'renderer/store/features/bookmarks';
+import {IBookmarks, addBookmark, selectBookmarks} from 'renderer/store/features/bookmarks';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
@@ -20,7 +16,7 @@ interface Props {
   pageTitle: string;
 }
 
-const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
+const BookmarkButton = ({currentAddress, pageTitle}: Props) => {
   const [openFlyout, setOpenFlyout] = useState<boolean>(false);
   const dispatch = useDispatch();
   const ref = useDetectClickOutside({
@@ -65,18 +61,13 @@ const BookmarkButton = ({ currentAddress, pageTitle }: Props) => {
           onClick={handleFlyout}
           title={`${!isPageBookmarked ? 'Add' : 'Remove'} bookmark`}
         >
-          <Icon
-            icon={`ic:baseline-star${!isPageBookmarked ? '-border' : ''}`}
-          />
+          <Icon icon={`ic:baseline-star${!isPageBookmarked ? '-border' : ''}`} />
         </Button>
       </div>
 
-      <div className="absolute top-[40px] right-[0px]">
+      <div className="absolute right-[0px] top-[40px]">
         {openFlyout && (
-          <BookmarkFlyout
-            bookmark={bookmarkFound || initbookmark}
-            setOpenFlyout={setOpenFlyout}
-          />
+          <BookmarkFlyout bookmark={bookmarkFound || initbookmark} setOpenFlyout={setOpenFlyout} />
         )}
       </div>
     </div>

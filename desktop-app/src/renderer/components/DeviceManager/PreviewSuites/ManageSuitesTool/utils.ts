@@ -1,4 +1,4 @@
-export const transformFile = (file: File): Promise<{ [key: string]: any }> => {
+export const transformFile = (file: File): Promise<{[key: string]: any}> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 

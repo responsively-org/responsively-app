@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import {useId} from 'react';
 import cx from 'classnames';
 
 interface Props {
@@ -9,10 +9,7 @@ const Input = ({
   label,
   ...props
 }: Props &
-  React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  >) => {
+  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>) => {
   const id = useId();
   const isCheckbox = props.type === 'checkbox';
   return (

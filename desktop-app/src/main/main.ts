@@ -9,37 +9,35 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, screen, ipcMain } from 'electron';
-import { setupTitlebar } from 'custom-electron-titlebar/main';
+import {app, BrowserWindow, shell, screen, ipcMain} from 'electron';
 import cli from './cli';
-import { PROTOCOL } from '../common/constants';
+import {PROTOCOL} from '../common/constants';
 import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
+import {resolveHtmlPath} from './util';
 import {
-  BROWSER_SYNC_HOST,
+  getBrowserSyncHost,
+  getBrowserSyncPort,
   initInstance,
   stopWatchFiles,
   watchFiles,
 } from './browser-sync';
 import store from '../store';
-import { initWebviewContextMenu } from './webview-context-menu/register';
-import { initScreenshotHandlers } from './screenshot';
-import { initDevtoolsHandlers } from './devtools';
-import { initWebviewStorageManagerHandlers } from './webview-storage-manager';
-import { initNativeFunctionHandlers } from './native-functions';
-import { WebPermissionHandlers } from './web-permissions';
-import { initHttpBasicAuthHandlers } from './http-basic-auth';
-import { initAppMetaHandlers } from './app-meta';
-import { openUrl } from './protocol-handler';
-import { AppUpdater } from './app-updater';
+import {initWebviewContextMenu} from './webview-context-menu/register';
+import {initScreenshotHandlers} from './screenshot';
+import {initDevtoolsHandlers} from './devtools';
+import {initWebviewStorageManagerHandlers} from './webview-storage-manager';
+import {initNativeFunctionHandlers} from './native-functions';
+import {WebPermissionHandlers} from './web-permissions';
+import {initHttpBasicAuthHandlers} from './http-basic-auth';
+import {initAppMetaHandlers} from './app-meta';
+import {openUrl} from './protocol-handler';
+import {AppUpdater} from './app-updater';
 
 let windowShownOnOpen = false;
 
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
-    app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [
-      path.resolve(process.argv[1]),
-    ]);
+    app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [path.resolve(process.argv[1])]);
   }
 } else {
   app.setAsDefaultProtocolClient(PROTOCOL);
@@ -62,53 +60,64 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-const isDebug =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+// Suppress popups during E2E tests
+if (process.env.E2E_TEST === 'true') {
+  store.set('sponsorship.lastShown', Date.now());
+  const seenVersions = store.get('seenReleaseNotes') ?? [];
+  store.set('seenReleaseNotes', [...seenVersions, app.getVersion()]);
+}
+
+const isDebug = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
   require('electron-debug')();
+
+  // Electron warns about Chrome extension permissions it doesn't implement
+  // (e.g. Redux DevTools' 'contextMenus'). Node prints warnings through a
+  // default 'warning' listener, so swap it for one that drops just those.
+  const defaultWarningListeners = process.listeners('warning');
+  process.removeAllListeners('warning');
+  process.on('warning', (warning) => {
+    if (warning.name === 'ExtensionLoadWarning') {
+      return;
+    }
+    defaultWarningListeners.forEach((listener) => listener.call(process, warning));
+  });
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-assembler');
+  const installer = require('electron-devtools-installer');
+  // Only extensions relevant to this codebase; electron-devtools-installer@4
+  // dropped some previously referenced ones (e.g. APOLLO_DEVELOPER_TOOLS), and
+  // Ember Inspector's MV3 background crashes under Electron.
+  const {REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS} = installer;
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = [
-    'REACT_DEVELOPER_TOOLS',
-    'REDUX_DEVTOOLS',
-    'EMBER_INSPECTOR',
-    'BACKBONE_DEBUGGER',
-    'JQUERY_DEBUGGER',
-    'ANGULAR_DEVTOOLS',
-    'VUEJS_DEVTOOLS',
-    'MOBX_DEVTOOLS',
-    'APOLLO_DEVELOPER_TOOLS',
-  ];
 
-  return installer
-    .default(
-      extensions.map((name) => installer[name]),
-      forceDownload
-    )
-    .catch(console.log);
+  // electron-devtools-installer@4 still calls the deprecated session.loadExtension
+  // and session.getAllExtensions APIs; silence just those deprecation logs.
+  const previousNoDeprecation = process.noDeprecation;
+  process.noDeprecation = true;
+  try {
+    return await installer
+      .default([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS], {forceDownload})
+      .catch(console.log);
+  } finally {
+    process.noDeprecation = previousNoDeprecation;
+  }
 };
-
-// Custom titlebar config for windows
-const customTitlebarStatus = store.get(
-  'userPreferences.customTitlebar'
-) as boolean;
-if (customTitlebarStatus && process.platform === 'win32') {
-  setupTitlebar();
-}
 
 const createWindow = async () => {
   windowShownOnOpen = false;
   let isAppInitiated = false;
-  await installExtensions();
+  if (process.env.E2E_TEST !== 'true') {
+    await installExtensions();
+  }
 
   const setIsAppInitiated = () => {
     isAppInitiated = true;
   };
 
+  const isBuiltApp = app.isPackaged || process.env.E2E_TEST === 'true';
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../../assets');
@@ -117,19 +126,16 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
-  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+  const {width, height} = screen.getPrimaryDisplay().workAreaSize;
 
   mainWindow = new BrowserWindow({
     show: false,
     width,
     height,
     icon: getAssetPath('icon.png'),
-    titleBarStyle:
-      customTitlebarStatus && process.platform === 'win32'
-        ? 'hidden'
-        : 'default',
+    titleBarStyle: 'default',
     webPreferences: {
-      preload: app.isPackaged
+      preload: isBuiltApp
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
       webviewTag: true,
@@ -139,47 +145,29 @@ const createWindow = async () => {
   initHttpBasicAuthHandlers(mainWindow);
   const webPermissionHandlers = WebPermissionHandlers(mainWindow);
 
-  // Add BROWSER_SYNC_HOST to the allowed Content-Security-Policy origins
-  mainWindow.webContents.session.webRequest.onHeadersReceived(
-    async (details, callback) => {
-      if (details.responseHeaders?.['content-security-policy']) {
-        let cspHeader = details.responseHeaders['content-security-policy'][0];
+  // Add BrowserSync host to the allowed Content-Security-Policy origins
+  mainWindow.webContents.session.webRequest.onHeadersReceived(async (details, callback) => {
+    if (details.responseHeaders?.['content-security-policy']) {
+      let cspHeader = details.responseHeaders['content-security-policy'][0];
+      const bsHost = getBrowserSyncHost();
 
-        cspHeader = cspHeader.replace(
-          'default-src',
-          `default-src ${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'script-src',
-          `script-src ${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'script-src-elem',
-          `script-src-elem ${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'connect-src',
-          `connect-src ${BROWSER_SYNC_HOST} wss://${BROWSER_SYNC_HOST} ws://${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'child-src',
-          `child-src ${BROWSER_SYNC_HOST}`
-        );
-        cspHeader = cspHeader.replace(
-          'worker-src',
-          `worker-src ${BROWSER_SYNC_HOST}`
-        ); // Required when/if the browser-sync script is eventually relocated to a web worker
+      cspHeader = cspHeader.replace('default-src', `default-src ${bsHost}`);
+      cspHeader = cspHeader.replace('script-src', `script-src ${bsHost}`);
+      cspHeader = cspHeader.replace('script-src-elem', `script-src-elem ${bsHost}`);
+      cspHeader = cspHeader.replace(
+        'connect-src',
+        `connect-src ${bsHost} wss://${bsHost} ws://${bsHost}`
+      );
+      cspHeader = cspHeader.replace('child-src', `child-src ${bsHost}`);
+      cspHeader = cspHeader.replace('worker-src', `worker-src ${bsHost}`); // Required when/if the browser-sync script is eventually relocated to a web worker
 
-        details.responseHeaders['content-security-policy'][0] = cspHeader;
-      }
-      callback({ responseHeaders: details.responseHeaders });
+      details.responseHeaders['content-security-policy'][0] = cspHeader;
     }
-  );
+    callback({responseHeaders: details.responseHeaders});
+  });
 
   mainWindow.loadURL(
-    `${resolveHtmlPath('index.html')}?urlToOpen=${encodeURI(
-      urlToOpen ?? 'undefined'
-    )}`
+    `${resolveHtmlPath('index.html')}${urlToOpen ? `?urlToOpen=${encodeURI(urlToOpen)}` : ''}`
   );
 
   const isWindows = process.platform === 'win32';
@@ -217,6 +205,11 @@ const createWindow = async () => {
       webPermissionHandlers.init();
       if (process.env.START_MINIMIZED) {
         mainWindow.minimize();
+      } else if (process.env.E2E_TEST === 'true' && process.env.E2E_HEADLESS === 'true') {
+        windowShownOnOpen = true;
+      } else if (process.env.E2E_TEST === 'true') {
+        mainWindow.showInactive();
+        windowShownOnOpen = true;
       } else {
         mainWindow.showInactive();
         if (!windowShownOnOpen) {
@@ -229,9 +222,9 @@ const createWindow = async () => {
     }
   });
 
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+  mainWindow.webContents.setWindowOpenHandler(({url}) => {
     console.log('window open handler', url);
-    return { action: 'deny' };
+    return {action: 'deny'};
   });
 
   mainWindow.on('closed', () => {
@@ -246,7 +239,11 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
-    return { action: 'deny' };
+    return {action: 'deny'};
+  });
+
+  ipcMain.on('get-browser-sync-port', (event) => {
+    event.returnValue = getBrowserSyncPort();
   });
 
   ipcMain.on('start-watching-file', async (event, fileInfo) => {
@@ -293,11 +290,11 @@ app.on('window-all-closed', () => {
 });
 
 app.on('certificate-error', (event, _, url, __, ___, callback) => {
-  if (url.indexOf(BROWSER_SYNC_HOST) !== -1) {
+  if (url.indexOf(getBrowserSyncHost()) !== -1) {
     event.preventDefault();
     return callback(true);
   }
-  console.log('certificate-error event', url, BROWSER_SYNC_HOST);
+  console.log('certificate-error event', url, getBrowserSyncHost());
   return callback(store.get('userPreferences.allowInsecureSSLConnections'));
 });
 

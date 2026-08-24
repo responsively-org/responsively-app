@@ -13,7 +13,9 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "outDir": ".erb/dll"
+    "outDir": ".erb/dll",
+    "skipLibCheck": true,
+    "types": ["vitest/globals"]
   },
   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }

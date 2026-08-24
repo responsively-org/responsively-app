@@ -1,7 +1,12 @@
 import path from 'path';
-import { homedir } from 'os';
-import { DOCK_POSITION, PREVIEW_LAYOUTS } from '../common/constants';
-import { migrations } from './migrations';
+import {app} from 'electron';
+import {homedir} from 'os';
+import {DOCK_POSITION, PREVIEW_LAYOUTS} from '../common/constants';
+import {migrations} from './migrations';
+
+if (process.env.E2E_USER_DATA_DIR) {
+  app.setPath('userData', process.env.E2E_USER_DATA_DIR);
+}
 
 const Store = require('electron-store');
 
@@ -13,7 +18,7 @@ const schema = {
         type: 'boolean',
         default: true,
       },
-      previewlayout: {
+      previewLayout: {
         enum: Object.values(PREVIEW_LAYOUTS),
         default: PREVIEW_LAYOUTS.FLEX,
       },
@@ -42,6 +47,7 @@ const schema = {
         default: DOCK_POSITION.BOTTOM,
       },
     },
+    default: {},
   },
   deviceManager: {
     type: 'object',
@@ -170,6 +176,20 @@ const schema = {
           saveLocation: {
             type: 'string',
             default: path.join(homedir(), `Desktop/Responsively-Screenshots`),
+          },
+        },
+        default: {},
+      },
+      designOverlays: {
+        type: 'object',
+        additionalProperties: {
+          type: 'object',
+          properties: {
+            image: {type: 'string'},
+            opacity: {type: 'number'},
+            position: {type: 'string', enum: ['overlay', 'side']},
+            enabled: {type: 'boolean'},
+            fileName: {type: 'string'},
           },
         },
         default: {},

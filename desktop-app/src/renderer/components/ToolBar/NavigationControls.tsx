@@ -1,5 +1,5 @@
-import { Icon } from '@iconify/react';
-import { webViewPubSub } from 'renderer/lib/pubsub';
+import {Icon} from '@iconify/react';
+import {webViewPubSub} from 'renderer/lib/pubsub';
 import Button from '../Button';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
@@ -18,11 +18,22 @@ interface NavigationItemProps {
   action: () => void;
 }
 
-const NavigationButton = ({ label, icon, action }: NavigationItemProps) => {
+const TEST_ID_MAP: Record<string, string> = {
+  Back: 'nav-back',
+  Forward: 'nav-forward',
+  Refresh: 'nav-refresh',
+};
+
+const NavigationButton = ({label, icon, action}: NavigationItemProps) => {
   const shortcutName: ShortcutChannel = label.toUpperCase() as ShortcutChannel;
   useKeyboardShortcut(SHORTCUT_CHANNEL[shortcutName], action);
   return (
-    <Button className="!rounded-full px-2 py-1" onClick={action} title={label}>
+    <Button
+      className="!rounded-full px-2 py-1"
+      onClick={action}
+      title={label}
+      data-testid={TEST_ID_MAP[label]}
+    >
       <Icon icon={icon} />
     </Button>
   );

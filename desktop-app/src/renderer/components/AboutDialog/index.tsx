@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { IPC_MAIN_CHANNELS } from 'common/constants';
-import { AboutDialogArgs } from 'main/menu/help';
+import {useEffect, useRef, useState} from 'react';
+import {IPC_MAIN_CHANNELS} from 'common/constants';
+import {AboutDialogArgs} from 'main/menu/help';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import Icon from '../../assets/img/logo.png';
@@ -79,33 +79,23 @@ export const AboutDialog = () => {
           <div className="flex flex-col gap-[2px]">
             <div className="flex  justify-between">
               <span>App</span>
-              <span className="text-sm">
-                v{args?.environmentInfo.appVersion}
-              </span>
+              <span className="text-sm">v{args?.environmentInfo.appVersion}</span>
             </div>
             <div className="flex justify-between">
               <span>Electron</span>
-              <span className="text-sm">
-                v{args?.environmentInfo.electronVersion}
-              </span>
+              <span className="text-sm">v{args?.environmentInfo.electronVersion}</span>
             </div>
             <div className="flex justify-between">
               <span>Chrome</span>
-              <span className="text-sm">
-                v{args?.environmentInfo.chromeVersion}
-              </span>
+              <span className="text-sm">v{args?.environmentInfo.chromeVersion}</span>
             </div>
             <div className="flex justify-between">
               <span>Node.js</span>
-              <span className="text-sm">
-                v{args?.environmentInfo.nodeVersion}
-              </span>
+              <span className="text-sm">v{args?.environmentInfo.nodeVersion}</span>
             </div>
             <div className="flex justify-between">
               <span>V8</span>
-              <span className="text-sm">
-                v{args?.environmentInfo.v8Version}
-              </span>
+              <span className="text-sm">v{args?.environmentInfo.v8Version}</span>
             </div>
             <div className="flex justify-between">
               <span>OS</span>

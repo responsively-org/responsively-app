@@ -1,13 +1,8 @@
-import {
-  BrowserWindow,
-  MenuItemConstructorOptions,
-  ipcMain,
-  shell,
-} from 'electron';
+import {BrowserWindow, MenuItemConstructorOptions, ipcMain, shell} from 'electron';
 
-import { EnvironmentInfo, getEnvironmentInfo } from '../util';
-import { IPC_MAIN_CHANNELS } from '../../common/constants';
-import { AppUpdater, AppUpdaterStatus } from '../app-updater';
+import {EnvironmentInfo, getEnvironmentInfo} from '../util';
+import {IPC_MAIN_CHANNELS} from '../../common/constants';
+import {AppUpdater, AppUpdaterStatus} from '../app-updater';
 
 export interface AboutDialogArgs {
   environmentInfo: EnvironmentInfo;
@@ -38,9 +33,7 @@ export const subMenuHelp = (
       {
         label: 'Open Source',
         click() {
-          shell.openExternal(
-            'https://github.com/responsively-org/responsively-app'
-          );
+          shell.openExternal('https://github.com/responsively-org/responsively-app');
         },
       },
       {
@@ -52,9 +45,7 @@ export const subMenuHelp = (
       {
         label: 'Search Issues',
         click() {
-          shell.openExternal(
-            'https://github.com/responsively-org/responsively-app/issues'
-          );
+          shell.openExternal('https://github.com/responsively-org/responsively-app/issues');
         },
       },
       {
