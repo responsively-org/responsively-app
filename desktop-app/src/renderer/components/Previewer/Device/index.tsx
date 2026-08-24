@@ -517,6 +517,11 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       return;
     }
 
+    const hideMobileScrollbars = window.electron.store.get('userPreferences.hideMobileScrollbars');
+    if (!hideMobileScrollbars) {
+      return;
+    }
+
     const webview = ref.current;
     webview.addEventListener('dom-ready', () => {
       webview.insertCSS(`

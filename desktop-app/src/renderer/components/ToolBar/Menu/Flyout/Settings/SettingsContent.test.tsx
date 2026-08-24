@@ -35,4 +35,34 @@ describe('SettingsContentHeader', () => {
 
     expect(mockOnClose).toHaveBeenCalled();
   });
+
+  it('Hide mobile scrollbars preference is saved to store', () => {
+    vi.mocked(window.electron.store.get).mockImplementation((key: string) => {
+      if (key === 'userPreferences.hideMobileScrollbars') {
+        return true;
+      }
+      if (key === 'userPreferences.screenshot.saveLocation') {
+        return './path/location';
+      }
+      return undefined;
+    });
+
+    const {getByTestId} = renderComponent();
+
+    const hideMobileScrollbarsToggle = getByTestId('settings-hide_mobile_scrollbars-toggle');
+    const saveButton = getByTestId('settings-save-button');
+
+    expect(hideMobileScrollbarsToggle).toBeChecked();
+
+    fireEvent.click(hideMobileScrollbarsToggle);
+    fireEvent.click(saveButton);
+
+    expect(hideMobileScrollbarsToggle).not.toBeChecked();
+    expect(window.electron.store.set).toHaveBeenCalledWith(
+      'userPreferences.hideMobileScrollbars',
+      false
+    );
+
+    expect(mockOnClose).toHaveBeenCalled();
+  });
 });
