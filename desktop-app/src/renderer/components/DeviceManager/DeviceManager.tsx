@@ -1,50 +1,68 @@
-export { default as DeviceManager } from './DeviceManager';
-import {useEffect, useState} from 'react';
-import {Icon} from '@iconify/react';
-import {useDispatch, useSelector} from 'react-redux';
-import {DndProvider} from 'react-dnd';
-import {HTML5Backend} from 'react-dnd-html5-backend';
+import { useEffect, useState } from 'react';
+import { Icon } from '@iconify/react';
+import { useDispatch, useSelector } from 'react-redux';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
   selectActiveSuite,
   setDevices,
   setSuiteDevices,
 } from 'renderer/store/features/device-manager';
-import {APP_VIEWS, setAppView} from 'renderer/store/features/ui';
-import {defaultDevices, Device, getDevicesMap} from 'common/deviceList';
+import { APP_VIEWS, setAppView } from 'renderer/store/features/ui';
+import { defaultDevices, Device, getDevicesMap } from 'common/deviceList';
 
+import cx from 'classnames';
 import Button from '../Button';
 import DeviceLabel from './DeviceLabel';
 import DeviceDetailsModal from './DeviceDetailsModal';
-import {PreviewSuites} from './PreviewSuites';
-import {ManageSuitesTool} from './PreviewSuites/ManageSuitesTool/ManageSuitesTool';
-import {Divider} from '../Divider';
-import {AccordionItem, Accordion} from '../Accordion';
+import { PreviewSuites } from './PreviewSuites';
+import { ManageSuitesTool } from './PreviewSuites/ManageSuitesTool/ManageSuitesTool';
+import { Divider } from '../Divider';
+import { AccordionItem, Accordion } from '../Accordion';
+import { DropDown } from '../DropDown';
+import DeviceManagerLabel from './DeviceManagerLabel';
 
 const filterDevices = (devices: Device[], filter: string) => {
   const sanitizedFilter = filter.trim().toLowerCase();
 
   return devices.filter((device: Device) =>
-    `${device.name.toLowerCase()}${device.width}x${device.height}`.includes(sanitizedFilter)
+    `${device.name.toLowerCase()}${device.width}x${device.height}`.includes(
+      sanitizedFilter
+    )
   );
 };
 
 const DeviceManager = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState<boolean>(false);
-  const [selectedDevice, setSelectedDevice] = useState<Device | undefined>(undefined);
+  const [selectedDevice, setSelectedDevice] = useState<Device | undefined>(
+    undefined
+  );
   const dispatch = useDispatch();
   const activeSuite = useSelector(selectActiveSuite);
   const devices = activeSuite.devices?.map((id) => getDevicesMap()[id]);
   const [searchText, setSearchText] = useState<string>('');
-  const [filteredDevices, setFilteredDevices] = useState<Device[]>(defaultDevices);
+  const [filteredType, setFilteredType] = useState<string | null>(null);
+  const [filteredDevices, setFilteredDevices] =
+    useState<Device[]>(defaultDevices);
   const [customDevices, setCustomDevices] = useState<Device[]>(
     window.electron.store.get('deviceManager.customDevices')
   );
-  const [filteredCustomDevices, setFilteredCustomDevices] = useState<Device[]>(customDevices);
+  const [filteredCustomDevices, setFilteredCustomDevices] =
+    useState<Device[]>(customDevices);
+  const deviceTypes = Array.from(
+    new Set(defaultDevices.map((device) => device.type))
+  );
 
   useEffect(() => {
-    setFilteredDevices(filterDevices(defaultDevices, searchText));
-    setFilteredCustomDevices(filterDevices(customDevices, searchText));
-  }, [customDevices, searchText]);
+    const filtered = filterDevices(defaultDevices, searchText).filter(
+      (device) => (filteredType ? device.type === filteredType : true)
+    );
+    const filteredCustom = filterDevices(customDevices, searchText).filter(
+      (device) => (filteredType ? device.type === filteredType : true)
+    );
+    setFilteredDevices(filtered);
+    setFilteredCustomDevices(filteredCustom);
+  }, [customDevices, searchText, filteredType]);
 
   const saveCustomDevices = (newCustomDevices: Device[]) => {
     setCustomDevices(newCustomDevices);
@@ -86,7 +104,7 @@ const DeviceManager = () => {
   return (
     <div className="mx-auto flex w-4/5 flex-col gap-4 rounded-lg p-8">
       <div className="flex w-full justify-end text-3xl">
-        <Button onClick={() => dispatch(setAppView(APP_VIEWS.BROWSER))} title="Close">
+        <Button onClick={() => dispatch(setAppView(APP_VIEWS.BROWSER))}>
           <Icon icon="ic:round-close" fontSize={18} />
         </Button>
       </div>
@@ -105,6 +123,38 @@ const DeviceManager = () => {
         <div className="my-4 flex items-start justify-end justify-between">
           <div className="flex w-fit flex-col items-start px-1">
             <h2 className="text-2xl font-bold">Manage Devices</h2>
+          </div>
+          <div>
+            <DropDown
+              label={
+                <div className="flex items-center gap-2">
+                  <Icon icon="mdi:devices" fontSize={18} />
+                  <span>Device Type</span>
+                </div>
+              }
+              options={[
+                {
+                  label: (
+                    <DeviceManagerLabel
+                      type={null}
+                      filteredType={filteredType}
+                      label="All Device Types"
+                    />
+                  ),
+                  onClick: () => setFilteredType(null),
+                },
+                ...deviceTypes.map((type) => ({
+                  label: (
+                    <DeviceManagerLabel
+                      type={type}
+                      filteredType={filteredType}
+                      label={type}
+                    />
+                  ),
+                  onClick: () => setFilteredType(type),
+                })),
+              ]}
+            />
           </div>
           <div className="flex w-fit items-center bg-white px-1 dark:bg-slate-900">
             <Icon icon="ic:outline-search" height={24} />
@@ -126,7 +176,8 @@ const DeviceManager = () => {
                     key={device.id}
                     onShowDeviceDetails={onShowDeviceDetails}
                     disableSelectionControls={
-                      devices.find((d) => d.id === device.id) != null && devices.length === 1
+                      devices.find((d) => d.id === device.id) != null &&
+                      devices.length === 1
                     }
                   />
                 ))}
@@ -156,11 +207,12 @@ const DeviceManager = () => {
                       isActive
                     >
                       <Icon icon="ic:baseline-add" />
-                      <span className="pl-2 pr-2">Add Custom Device</span>
+                      <span className="pr-2 pl-2">Add Custom Device</span>
                     </Button>
                   </div>
                 ) : null}
-                {customDevices.length > 0 && filteredCustomDevices.length === 0 ? (
+                {customDevices.length > 0 &&
+                filteredCustomDevices.length === 0 ? (
                   <div className="m-10 flex w-full items-center justify-center">
                     Sorry, no matching devices found.
                     <Icon icon="mdi:emoticon-sad-outline" className="ml-1" />
@@ -176,7 +228,7 @@ const DeviceManager = () => {
                   isActive
                 >
                   <Icon icon="ic:baseline-add" />
-                  <span className="pl-2 pr-2">Add Custom Device</span>
+                  <span className="pr-2 pl-2">Add Custom Device</span>
                 </Button>
               </div>
             </AccordionItem>
@@ -199,10 +251,8 @@ const DeviceManager = () => {
   );
 };
 
-const DeviceManagerWithDnd = () => (
+export default () => (
   <DndProvider backend={HTML5Backend}>
     <DeviceManager />
   </DndProvider>
 );
-
-export default DeviceManagerWithDnd;
