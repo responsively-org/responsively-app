@@ -1,16 +1,19 @@
 interface Props {
   isOn: boolean;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  id?: string;
+  'data-testid'?: string;
 }
 
-const Toggle = ({isOn, onChange}: Props) => {
+const Toggle = ({isOn, onChange, id = 'small-toggle', 'data-testid': dataTestId}: Props) => {
   return (
     // eslint-disable-next-line jsx-a11y/label-has-associated-control
     <label className="relative inline-flex cursor-pointer items-center">
       <input
         type="checkbox"
         checked={isOn}
-        id="small-toggle"
+        id={id}
+        data-testid={dataTestId}
         className="peer sr-only"
         onChange={onChange}
       />
