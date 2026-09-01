@@ -16,8 +16,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/responsively-org/responsively-app.git",
+    "url": "git+https://github.com/responsively-org/responsively-app.git",
     "directory": "responsively-mcp"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "license": "MIT",
   "author": {
