@@ -238,44 +238,50 @@ test.describe('Device Interaction Mirroring', () => {
       await app.navigateTo(`${testServerUrl}/test-page.html`, {timeout: 5000});
       await app.page.waitForTimeout(2000);
 
-      // Scroll down in the first webview via executeJavaScript
+      // Which webContents pairs with the first visible pill is
+      // worker-history dependent (creation order diverges from display order
+      // once devices are added/removed), and mirroring may be mid-toggle
+      // from a sibling parallel test. So: scroll EVERY guest down, click one
+      // scroll-to-top, and assert that at least the clicked device reset.
+      const minGuestScrollY = () =>
+        app.electronApp.evaluate(async ({webContents}) => {
+          const webviews = webContents
+            .getAllWebContents()
+            .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview');
+          if (webviews.length === 0) return -1;
+          const ys: number[] = await Promise.all(
+            webviews.map((wv: Electron.WebContents) =>
+              wv.executeJavaScript('window.scrollY').catch(() => -1)
+            )
+          );
+          return Math.min(...ys);
+        });
+
       await app.electronApp.evaluate(async ({webContents}) => {
         const webviews = webContents
           .getAllWebContents()
           .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview');
-
-        if (webviews.length > 0) {
-          await webviews[0].executeJavaScript('window.scrollTo(0, 500); true');
-        }
+        await Promise.all(
+          webviews.map((wv: Electron.WebContents) =>
+            wv.executeJavaScript('window.scrollTo(0, 500); true')
+          )
+        );
       });
-      await app.page.waitForTimeout(1000);
+      // Every guest must actually be scrolled before the click, or a
+      // never-scrolled guest would fake the reset assertion below. scrollTo
+      // clamps to each page's max scroll (a tall viewport like the MacBook
+      // leaves less than 500px of runway), so require "scrolled at all",
+      // not an absolute distance.
+      await expect.poll(minGuestScrollY, {timeout: 10_000}).toBeGreaterThan(0);
 
       // Click "Scroll to top" button
       await app.revealDevicePill();
       const scrollToTopBtn = app.scrollToTopButtons.first();
       await scrollToTopBtn.click();
-      await app.page.waitForTimeout(1500);
 
-      // The reset is delivered asynchronously (and the worker-shared app may
-      // be busy) — poll instead of sampling once after a fixed sleep.
-      await expect
-        .poll(
-          () =>
-            app.electronApp.evaluate(async ({webContents}) => {
-              const webviews = webContents
-                .getAllWebContents()
-                .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview');
-
-              if (webviews.length === 0) return -1;
-              try {
-                return await webviews[0].executeJavaScript('window.scrollY');
-              } catch {
-                return -1;
-              }
-            }),
-          {timeout: 10_000}
-        )
-        .toBe(0);
+      // The reset lands asynchronously; min reaching 0 proves the clicked
+      // device's guest reset (all of them when mirroring is on).
+      await expect.poll(minGuestScrollY, {timeout: 10_000}).toBe(0);
     });
 
     test('per-device refresh button exists for each device', async ({app}) => {

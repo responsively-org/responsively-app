@@ -65,6 +65,31 @@ jobs:
           path: desktop-app/e2e/playwright-report/
           retention-days: 14
 
+  # Packaging is independent of the test pipeline — running it as its own job
+  # takes ~4 minutes off the serial path and keeps an e2e failure from hiding
+  # whether the app still packages (and vice versa).
+  package:
+    runs-on: macos-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: ./desktop-app
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js and NPM
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: ${{ !env.ACT && 'yarn' || '' }} # Disable cache for nektos/act
+          cache-dependency-path: ./desktop-app/yarn.lock
+
+      - name: yarn install
+        run: |
+          yarn install --network-timeout 120000
+
       - name: Package
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
