@@ -6,9 +6,9 @@ import path from 'path';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import {BundleAnalyzerPlugin} from 'webpack-bundle-analyzer';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
-import { merge } from 'webpack-merge';
+import {merge} from 'webpack-merge';
 import TerserPlugin from 'terser-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
@@ -110,7 +110,7 @@ const configuration: webpack.Configuration = {
               prettier: false,
               svgo: false,
               svgoConfig: {
-                plugins: [{ removeViewBox: false }],
+                plugins: [{removeViewBox: false}],
               },
               titleProp: true,
               ref: true,

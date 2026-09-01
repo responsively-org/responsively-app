@@ -1,13 +1,7 @@
-import {Icon} from '@iconify/react';
 import {useSelector} from 'react-redux';
-import Button from 'renderer/components/Button';
 import {selectActiveSuite, selectSuites} from 'renderer/store/features/device-manager';
-import {useState} from 'react';
-import {FileUploader} from 'renderer/components/FileUploader';
-import Modal from 'renderer/components/Modal';
 import {Suite} from './Suite';
 import {CreateSuiteButton} from './CreateSuiteButton';
-import {ManageSuitesTool} from './ManageSuitesTool/ManageSuitesTool';
 
 export const PreviewSuites = () => {
   const suites = useSelector(selectSuites);

@@ -1,8 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- CDP payloads are untyped by Electron */
 import {BrowserWindow, ipcMain, webContents, WebContentsView} from 'electron';
-import {DOCK_POSITION} from '../../common/constants';
+import {DOCK_POSITION, IPC_MAIN_CHANNELS} from '../../common/constants';
 import {DockPosition} from '../../renderer/store/features/devtools';
+import log from '../logging';
+import {isRegisteredWebview} from '../webview-registry';
 
 let devtoolsView: WebContentsView | undefined;
+// A WebContentsView is a native child view: it always paints above the page,
+// so any DOM modal or popover overlapping it is occluded (#694/#651). The
+// renderer reports when an overlay is open and we detach the view meanwhile.
+let devtoolsBounds: Electron.Rectangle | undefined;
+let overlayOpen = false;
 let devtoolsWebview: Electron.WebContents;
 let mainWindow: BrowserWindow | undefined;
 
@@ -58,7 +66,7 @@ const onInspectNodeRequested = async (
     coords: {x, y},
     webviewId,
   };
-  mainWindow?.webContents.send('inspect-element', args);
+  mainWindow?.webContents.send(IPC_MAIN_CHANNELS.INSPECT_ELEMENT, args);
 };
 
 const onDebuggerEvent = async (
@@ -82,6 +90,9 @@ const enableInspector = async (
   args: ToggleInspectorArgs
 ): Promise<ToggleInspectorResult> => {
   const {webviewId} = args;
+  if (!isRegisteredWebview(webviewId)) {
+    return {status: false};
+  }
   const webViewContents = webContents.fromId(webviewId);
   if (webViewContents === undefined) {
     return {status: false};
@@ -115,6 +126,9 @@ const disableInspector = async (
   args: ToggleInspectorArgs
 ): Promise<ToggleInspectorResult> => {
   const {webviewId} = args;
+  if (!isRegisteredWebview(webviewId)) {
+    return {status: false};
+  }
   const webViewContents = webContents.fromId(webviewId);
   if (webViewContents === undefined) {
     return {status: false};
@@ -128,14 +142,16 @@ const disableInspector = async (
 
     dbg.removeAllListeners().detach();
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.log('Error detaching debugger', err);
+    log.warn('Error detaching debugger', err);
   }
   return {status: true};
 };
 
 const openDevtools = async (_: any, arg: OpenDevtoolsArgs): Promise<OpenDevtoolsResult> => {
   const {webviewId, dockPosition} = arg;
+  if (!isRegisteredWebview(webviewId)) {
+    return {status: false};
+  }
   const optionalWebview = webContents.fromId(webviewId);
   if (mainWindow == null || optionalWebview === undefined) {
     return {status: false};
@@ -172,26 +188,44 @@ const openDevtools = async (_: any, arg: OpenDevtoolsArgs): Promise<OpenDevtools
     `
     )
     .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error('Error removing the native inspect button', err);
+      log.warn('Error removing the native inspect button', err);
     });
 
   return {status: true};
 };
 
-const resizeDevtools = async (_: any, arg: ResizeDevtoolsArgs) => {
+/** Attaches or detaches the devtools view to match the current overlay state. */
+const applyDevtoolsPlacement = () => {
   if (devtoolsView == null || mainWindow == null) {
     return;
   }
   try {
-    if (!mainWindow.contentView.children.includes(devtoolsView)) {
+    const isAttached = mainWindow.contentView.children.includes(devtoolsView);
+    if (overlayOpen) {
+      if (isAttached) {
+        mainWindow.contentView.removeChildView(devtoolsView);
+      }
+      return;
+    }
+    if (!isAttached) {
       mainWindow.contentView.addChildView(devtoolsView);
     }
-    devtoolsView.setBounds(arg.bounds);
+    if (devtoolsBounds !== undefined) {
+      devtoolsView.setBounds(devtoolsBounds);
+    }
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error resizing devtools', err);
+    log.error('Error placing devtools', err);
   }
+};
+
+const resizeDevtools = async (_: any, arg: ResizeDevtoolsArgs) => {
+  devtoolsBounds = arg.bounds;
+  applyDevtoolsPlacement();
+};
+
+const setOverlayOpen = async (_: any, arg: {isOpen: boolean}) => {
+  overlayOpen = arg.isOpen;
+  applyDevtoolsPlacement();
 };
 
 const closeDevTools = async () => {
@@ -205,23 +239,27 @@ const closeDevTools = async () => {
   mainWindow?.contentView.removeChildView(devtoolsView);
   devtoolsView.webContents.close();
   devtoolsView = undefined;
+  devtoolsBounds = undefined;
 };
 
 export const initDevtoolsHandlers = (_mainWindow: BrowserWindow | undefined) => {
   mainWindow = _mainWindow;
 
-  ipcMain.removeHandler('open-devtools');
-  ipcMain.handle('open-devtools', openDevtools);
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.OPEN_DEVTOOLS);
+  ipcMain.handle(IPC_MAIN_CHANNELS.OPEN_DEVTOOLS, openDevtools);
 
-  ipcMain.removeHandler('resize-devtools');
-  ipcMain.handle('resize-devtools', resizeDevtools);
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.RESIZE_DEVTOOLS);
+  ipcMain.handle(IPC_MAIN_CHANNELS.RESIZE_DEVTOOLS, resizeDevtools);
 
-  ipcMain.removeHandler('close-devtools');
-  ipcMain.handle('close-devtools', closeDevTools);
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.CLOSE_DEVTOOLS);
+  ipcMain.handle(IPC_MAIN_CHANNELS.CLOSE_DEVTOOLS, closeDevTools);
 
-  ipcMain.removeHandler('enable-inspector-overlay');
-  ipcMain.handle('enable-inspector-overlay', enableInspector);
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.SET_OVERLAY_OPEN);
+  ipcMain.handle(IPC_MAIN_CHANNELS.SET_OVERLAY_OPEN, setOverlayOpen);
 
-  ipcMain.removeHandler('disable-inspector-overlay');
-  ipcMain.handle('disable-inspector-overlay', disableInspector);
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.ENABLE_INSPECTOR_OVERLAY);
+  ipcMain.handle(IPC_MAIN_CHANNELS.ENABLE_INSPECTOR_OVERLAY, enableInspector);
+
+  ipcMain.removeHandler(IPC_MAIN_CHANNELS.DISABLE_INSPECTOR_OVERLAY);
+  ipcMain.handle(IPC_MAIN_CHANNELS.DISABLE_INSPECTOR_OVERLAY, disableInspector);
 };

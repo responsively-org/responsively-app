@@ -1,8 +1,12 @@
-import {RootState} from 'renderer/store';
-import {configureStore} from '@reduxjs/toolkit';
+import {RootState, createAppStore} from 'renderer/store';
 import {type Mock} from 'vitest';
-import designOverlayReducer, {
+import reducer, {
+  overlayModeOf,
   setDesignOverlay,
+  setOverlayImage,
+  setOverlayMode,
+  setOverlayOpacity,
+  toggleDesignOverlay,
   removeDesignOverlay,
   selectDesignOverlay,
   selectDesignOverlayEnabled,
@@ -22,12 +26,9 @@ beforeEach(() => {
 });
 
 describe('designOverlaySlice', () => {
-  const createStore = () =>
-    configureStore({
-      reducer: {
-        designOverlay: designOverlayReducer,
-      },
-    });
+  // The app store factory includes the persistence listener middleware, so
+  // these tests cover the real persistence path.
+  const createStore = () => createAppStore();
 
   const mockOverlayState: DesignOverlayState = {
     image:
@@ -111,13 +112,11 @@ describe('designOverlaySlice', () => {
 
     it('should remove overlay from electron store', () => {
       const store = createStore();
-      mockStore.get.mockReturnValue({
-        [resolution]: mockOverlayState,
-      });
+      store.dispatch(setDesignOverlay({resolution, overlayState: mockOverlayState}));
 
       store.dispatch(removeDesignOverlay({resolution}));
 
-      expect(mockStore.set).toHaveBeenCalledWith('userPreferences.designOverlays', {});
+      expect(mockStore.set).toHaveBeenLastCalledWith('userPreferences.designOverlays', {});
     });
   });
 
@@ -189,5 +188,81 @@ describe('designOverlaySlice', () => {
 
       expect(enabled).toBe(false);
     });
+  });
+
+  it('toggleDesignOverlay starts a grid overlay and flips enabled after', () => {
+    let state = reducer(undefined, toggleDesignOverlay({resolution: '390x844'}));
+    expect(state['390x844']).toEqual({
+      image: '',
+      opacity: 50,
+      position: 'overlay',
+      enabled: true,
+      mode: 'grid',
+    });
+
+    state = reducer(state, toggleDesignOverlay({resolution: '390x844'}));
+    expect(state['390x844'].enabled).toBe(false);
+  });
+
+  it('setOverlayMode and setOverlayOpacity update an existing overlay only', () => {
+    let state = reducer(undefined, setOverlayMode({resolution: 'ghost', mode: 'image'}));
+    expect(state).toEqual({});
+
+    state = reducer(state, toggleDesignOverlay({resolution: '390x844'}));
+    state = reducer(state, setOverlayMode({resolution: '390x844', mode: 'image'}));
+    state = reducer(state, setOverlayOpacity({resolution: '390x844', opacity: 80}));
+    expect(state['390x844'].mode).toBe('image');
+    expect(state['390x844'].opacity).toBe(80);
+  });
+
+  it('overlayModeOf treats legacy image overlays as image mode', () => {
+    expect(
+      overlayModeOf({
+        image: 'data:image/png;base64,x',
+        opacity: 50,
+        position: 'overlay',
+        enabled: true,
+      })
+    ).toBe('image');
+    expect(overlayModeOf({image: '', opacity: 50, position: 'overlay', enabled: true})).toBe(
+      'grid'
+    );
+    expect(
+      overlayModeOf({
+        image: 'data:image/png;base64,x',
+        opacity: 50,
+        position: 'overlay',
+        enabled: true,
+        mode: 'grid',
+      })
+    ).toBe('grid');
+  });
+
+  it('setOverlayImage stores the image and switches to image mode', () => {
+    // Fresh resolution: creates an enabled image overlay.
+    let state = reducer(
+      undefined,
+      setOverlayImage({resolution: '390x844', image: 'data:image/png;base64,a', fileName: 'a.png'})
+    );
+    expect(state['390x844']).toEqual({
+      image: 'data:image/png;base64,a',
+      fileName: 'a.png',
+      opacity: 50,
+      position: 'overlay',
+      enabled: true,
+      mode: 'image',
+    });
+
+    // Existing grid overlay: keeps opacity, swaps image + mode.
+    state = reducer(state, toggleDesignOverlay({resolution: '800x600'}));
+    state = reducer(state, setOverlayOpacity({resolution: '800x600', opacity: 70}));
+    state = reducer(
+      state,
+      setOverlayImage({resolution: '800x600', image: 'data:image/png;base64,b', fileName: 'b.png'})
+    );
+    expect(state['800x600'].mode).toBe('image');
+    expect(state['800x600'].image).toBe('data:image/png;base64,b');
+    expect(state['800x600'].opacity).toBe(70);
+    expect(state['800x600'].enabled).toBe(true);
   });
 });

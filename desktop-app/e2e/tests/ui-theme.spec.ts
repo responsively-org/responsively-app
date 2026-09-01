@@ -22,20 +22,22 @@ test.describe('UI Theme', () => {
     });
 
     // Open menu flyout
-    await app.openMenuFlyout();
 
     // Click the theme toggle button
     const themeToggle = app.page.locator('[data-testid="theme-toggle"]');
     await themeToggle.click();
     await app.page.waitForTimeout(300);
 
-    await app.closeMenuFlyout();
-
     // Verify theme toggled
     const isDark = await app.page.evaluate(() => {
       return document.documentElement.classList.contains('dark');
     });
     expect(isDark).not.toBe(wasDark);
+
+    // The design-token palette must flip with it (data-theme drives the
+    // CSS custom properties).
+    const dataTheme = await app.page.evaluate(() => document.documentElement.dataset.theme);
+    expect(dataTheme).toBe(isDark ? 'dark' : 'light');
   });
 
   test('clicking theme toggle again switches back', async ({app}) => {
@@ -45,13 +47,9 @@ test.describe('UI Theme', () => {
       return document.documentElement.classList.contains('dark');
     });
 
-    await app.openMenuFlyout();
-
     const themeToggle = app.page.locator('[data-testid="theme-toggle"]');
     await themeToggle.click();
     await app.page.waitForTimeout(300);
-
-    await app.closeMenuFlyout();
 
     const isDark = await app.page.evaluate(() => {
       return document.documentElement.classList.contains('dark');

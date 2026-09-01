@@ -14,9 +14,8 @@ const Select = ({
     <div className="flex flex-col gap-1">
       <label htmlFor={id}>{label}</label>
       <select
-        id="device-capabilities"
-        className="rounded-sm bg-white p-1 px-1 dark:bg-slate-900"
-        /* eslint-disable-next-line react/jsx-props-no-spreading */
+        id={id}
+        className="rounded-md border border-line bg-input p-1 px-1 text-fg focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
         {...props}
       >
         {props.children}

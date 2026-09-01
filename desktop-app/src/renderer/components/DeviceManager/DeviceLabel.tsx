@@ -66,7 +66,13 @@ const DeviceLabel = ({
   return (
     <div
       className="flex w-fit items-center gap-2 rounded bg-slate-300 px-2 py-1 dark:bg-slate-600"
-      ref={enableDnd ? (node) => drag(drop(node)) : null}
+      ref={
+        enableDnd
+          ? (node) => {
+              drag(drop(node));
+            }
+          : null
+      }
       style={{opacity}}
     >
       {enableDnd ? <Icon icon="ic:baseline-drag-indicator" /> : null}
@@ -77,12 +83,11 @@ const DeviceLabel = ({
         type="checkbox"
         disabled={disableSelectionControls}
         title={
-          // eslint-disable-next-line no-nested-ternary
           disableSelectionControls
             ? 'Cannot make the suite empty add another device to remove this one'
             : isChecked
-            ? 'Click to remove the device'
-            : 'Click to add the device'
+              ? 'Click to remove the device'
+              : 'Click to add the device'
         }
         checked={isChecked}
         onChange={(e) => {

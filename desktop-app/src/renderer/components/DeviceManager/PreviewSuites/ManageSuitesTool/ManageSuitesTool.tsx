@@ -1,4 +1,6 @@
 import {Icon} from '@iconify/react';
+import type {Device} from 'common/deviceList';
+import {invalidateDevicesMap} from 'common/deviceList';
 import Button from 'renderer/components/Button';
 import {useState} from 'react';
 import {FileUploader} from 'renderer/components/FileUploader';
@@ -10,7 +12,11 @@ import {transformFile} from './utils';
 import {onFileDownload, setCustomDevices} from './helpers';
 import {ManageSuitesToolError} from './ManageSuitesToolError';
 
-export const ManageSuitesTool = ({setCustomDevicesState}: any) => {
+interface ManageSuitesToolProps {
+  setCustomDevicesState: (devices: Device[]) => void;
+}
+
+export const ManageSuitesTool = ({setCustomDevicesState}: ManageSuitesToolProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [resetConfirmation, setResetConfirmation] = useState<boolean>(false);
 
@@ -44,6 +50,7 @@ export const ManageSuitesTool = ({setCustomDevicesState}: any) => {
 
   const clearCustomDevices = () => {
     window.electron.store.set('deviceManager.customDevices', []);
+    invalidateDevicesMap();
     setCustomDevicesState([]);
   };
 

@@ -54,7 +54,8 @@ test.describe('Rotate Devices', () => {
     await app.dismissModals();
 
     // Per-device rotate buttons — some may be disabled for non-mobile devices
-    const perDeviceRotateBtn = app.page.locator('button[title="Rotate This Device"]').first();
+    await app.revealDevicePill();
+    const perDeviceRotateBtn = app.page.locator('button[title="Rotate this device"]').first();
 
     const isVisible = await perDeviceRotateBtn.isVisible().catch(() => false);
 

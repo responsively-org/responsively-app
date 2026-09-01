@@ -6,16 +6,14 @@ import {test, expect} from '../fixtures/electron-app';
  * Returns them as a stable-ordered array so we can reference
  * "source" vs "other" devices consistently within a test.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 const getWebviewIds = async (electronApp: ElectronApplication): Promise<number[]> => {
   return electronApp.evaluate(({webContents}) => {
-    return (
-      webContents
-        .getAllWebContents()
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview')
-        .map((wc: Electron.WebContents) => wc.id)
-    );
+    return webContents
+      .getAllWebContents()
+
+      .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview')
+      .map((wc: Electron.WebContents) => wc.id);
   });
 };
 
@@ -26,7 +24,6 @@ const execInWebview = async (
   electronApp: ElectronApplication,
   wcId: number,
   js: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> => {
   return electronApp.evaluate(
     async ({webContents}, {id, script}: {id: number; script: string}) => {
@@ -44,9 +41,10 @@ const execInWebview = async (
 const waitForBrowserSync = async (
   electronApp: ElectronApplication,
   ids: number[],
-  timeoutMs = 10_000
+  timeoutMs = 20_000
 ) => {
   const start = Date.now();
+  let nudged = false;
   while (Date.now() - start < timeoutMs) {
     const results: boolean[] = [];
     for (const id of ids) {
@@ -58,6 +56,22 @@ const waitForBrowserSync = async (
       }
     }
     if (results.every(Boolean)) return;
+    // The client script is injected per page load. Under full-suite load a
+    // page can finish loading before the BrowserSync server accepts
+    // connections — only a reload re-injects the client, so nudge stragglers
+    // once at half time.
+    if (!nudged && Date.now() - start > timeoutMs / 2) {
+      nudged = true;
+      for (const [index, id] of ids.entries()) {
+        if (!results[index]) {
+          try {
+            await execInWebview(electronApp, id, 'window.location.reload()');
+          } catch {
+            // webview may be mid-navigation; the next poll retries
+          }
+        }
+      }
+    }
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
   throw new Error('BrowserSync did not initialise on all webviews within timeout');

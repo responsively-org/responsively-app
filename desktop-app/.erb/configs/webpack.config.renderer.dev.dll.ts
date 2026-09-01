@@ -4,10 +4,10 @@
 
 import webpack from 'webpack';
 import path from 'path';
-import { merge } from 'webpack-merge';
+import {merge} from 'webpack-merge';
 import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
-import { dependencies } from '../../package.json';
+import {dependencies} from '../../package.json';
 import checkNodeEnv from '../scripts/check-node-env';
 
 checkNodeEnv('development');
@@ -31,7 +31,11 @@ const configuration: webpack.Configuration = {
   module: require('./webpack.config.renderer.dev').default.module,
 
   entry: {
-    renderer: Object.keys(dependencies || {}),
+    // Main-process-only deps (no renderer usage; the MCP SDK has no root
+    // export so it cannot be bundled into the renderer DLL).
+    renderer: Object.keys(dependencies || {}).filter(
+      (dependency) => dependency !== '@modelcontextprotocol/sdk'
+    ),
   },
 
   output: {

@@ -66,6 +66,22 @@ async function disableSimulation(app: {
 
 test.describe('Color Blindness Simulation', () => {
   test.describe.configure({mode: 'parallel'});
+
+  // Workers are reused across spec files, so this file inherits whatever the
+  // previous one left behind. The pixel samples below read fixed height
+  // fractions of the first webview, which only line up on an unrotated device
+  // with no filter applied — normalise both before every test.
+  test.beforeEach(async ({app}) => {
+    await app.dismissModals();
+
+    const rotateBtn = app.page.locator('button[title="Rotate Devices"]');
+    if ((await rotateBtn.getAttribute('aria-pressed')) === 'true') {
+      await rotateBtn.click();
+      await app.page.waitForTimeout(300);
+    }
+
+    await disableSimulation(app);
+  });
   test('color blindness dropdown is visible in toolbar', async ({app}) => {
     await app.dismissModals();
 

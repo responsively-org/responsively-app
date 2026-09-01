@@ -19,6 +19,9 @@ declare global {
     };
     responsively: {
       webviewPreloadPath: string;
+      appVersion: string;
+      isE2E: boolean;
+      platform: NodeJS.Platform;
     };
   }
 }

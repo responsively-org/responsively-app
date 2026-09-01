@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- migrations operate on historical untyped shapes */
 import Store from 'electron-store';
 import {randomUUID} from 'crypto';
 
@@ -10,7 +11,6 @@ const defaultActiveDevices = ['10008', '10013', '10015'];
 export const migrations = {
   '1.2.0': (store: Store) => {
     try {
-      // eslint-disable-next-line no-console
       console.log('Migrating for 1.2.0', store.get('deviceManager'));
 
       // Migrate custom devices
@@ -50,7 +50,6 @@ export const migrations = {
         },
       ]);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.log('Migration failed', e);
       store.set('deviceManager.previewSuites', [
         {
@@ -61,7 +60,7 @@ export const migrations = {
       ]);
       return;
     }
-    // eslint-disable-next-line no-console
+
     console.log('Migration successful', store.get('deviceManager'));
   },
   '1.2.1': (store: Store) => {
@@ -105,6 +104,31 @@ export const migrations = {
 
     if (legacyPreviewLayout != null) {
       store.delete('ui.previewlayout');
+    }
+  },
+  '2.0.0': (store: Store) => {
+    // The Windows "Menus in Titlebar" option and its custom-electron-titlebar
+    // implementation are gone; drop the orphaned preference so it stops
+    // sitting in config.json for anyone who toggled it.
+    if (store.get('userPreferences.customTitlebar') !== undefined) {
+      store.delete('userPreferences.customTitlebar');
+    }
+    // 2.0 opens on the redesign's default layout (Grid/FLEX) once; the choice
+    // persists again from the next layout switch.
+    if (store.get('ui.previewLayout') !== undefined) {
+      store.delete('ui.previewLayout');
+    }
+    // The weekly sponsorship modal became the monthly support card; carry the
+    // last-shown timestamp over so upgraders aren't prompted immediately.
+    const sponsorshipLastShown = store.get('sponsorship.lastShown');
+    if (sponsorshipLastShown !== undefined) {
+      store.set('ui.announcements.supportShownAt', sponsorshipLastShown);
+      store.delete('sponsorship');
+    }
+    // The GitHub-release-notes modal is superseded by the launch card and the
+    // bell panel's release highlights.
+    if (store.get('seenReleaseNotes') !== undefined) {
+      store.delete('seenReleaseNotes');
     }
   },
 };

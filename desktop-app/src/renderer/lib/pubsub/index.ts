@@ -1,11 +1,10 @@
-import Bluebird from 'bluebird';
-
+/* eslint-disable @typescript-eslint/no-explicit-any -- generic event bus is intentionally untyped */
 interface HandlerResult {
   result: any;
   error: any;
 }
 
-type Handler = ((...args: any) => void) | ((...args: any) => Promise<any>);
+export type Handler = ((...args: any) => void) | ((...args: any) => Promise<any>);
 
 class PubSub {
   registry: {[key: string]: Handler[]};
@@ -36,13 +35,15 @@ class PubSub {
       return [];
     }
 
-    return Bluebird.map(this.registry[topic], async (callback: Handler) => {
-      try {
-        return {result: await callback(...args), error: null};
-      } catch (err) {
-        return {result: null, error: err};
-      }
-    });
+    return Promise.all(
+      this.registry[topic].map(async (callback: Handler) => {
+        try {
+          return {result: await callback(...args), error: null};
+        } catch (err) {
+          return {result: null, error: err};
+        }
+      })
+    );
   };
 }
 

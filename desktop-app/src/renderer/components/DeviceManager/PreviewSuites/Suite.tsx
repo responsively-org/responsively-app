@@ -28,8 +28,8 @@ export const Suite = ({suite: {id, name, devices}, isActive}: Props) => {
   };
   return (
     <div
-      className={cx('relative min-w-56 flex-shrink-0  rounded bg-white dark:bg-slate-900', {
-        'border-2 border-slate-500 ': isActive,
+      className={cx('relative min-w-56 flex-shrink-0 rounded bg-white dark:bg-slate-900', {
+        'border-2 border-slate-500': isActive,
       })}
     >
       {!isActive ? (
@@ -51,7 +51,12 @@ export const Suite = ({suite: {id, name, devices}, isActive}: Props) => {
             </Button>
           ) : null}
         </div>
-        <div className="flex flex-col gap-2" ref={drop}>
+        <div
+          className="flex flex-col gap-2"
+          ref={(node) => {
+            drop(node);
+          }}
+        >
           {devices.map((deviceId) => (
             <DeviceLabel
               device={getDevicesMap()[deviceId]}

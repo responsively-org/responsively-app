@@ -1,9 +1,10 @@
-/* eslint-disable promise/always-return */
 import {Device} from 'common/deviceList';
 import {ipcMain, shell, webContents} from 'electron';
 import {writeFile, ensureDir} from 'fs-extra';
 import path from 'path';
+import {IPC_MAIN_CHANNELS} from '../../common/constants';
 import store from '../../store';
+import {isRegisteredWebview} from '../webview-registry';
 
 export interface ScreenshotArgs {
   webContentsId: number;
@@ -22,7 +23,22 @@ export interface ScreenshotAllArgs {
 export interface ScreenshotResult {
   done: boolean;
 }
-const captureImage = async (webContentsId: number): Promise<Electron.NativeImage | undefined> => {
+
+const CAPTURE_ATTEMPTS = 3;
+const CAPTURE_RETRY_DELAY_MS = 250;
+
+const delay = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+export const captureImage = async (
+  webContentsId: number
+): Promise<Electron.NativeImage | undefined> => {
+  // Single choke point for both the IPC and MCP screenshot paths.
+  if (!isRegisteredWebview(webContentsId)) {
+    return undefined;
+  }
   const WebContents = webContents.fromId(webContentsId);
 
   const isExecuted = await WebContents?.executeJavaScript(`
@@ -41,8 +57,30 @@ const captureImage = async (webContentsId: number): Promise<Electron.NativeImage
     `);
   }
 
-  const Image = await WebContents?.capturePage();
-  return Image;
+  // capturePage throws (e.g. UnknownVizError) or hands back an empty frame
+  // while the guest's compositor surface is still settling — typically right
+  // after a navigation or a freshly attached preview. That state is
+  // transient, so retry briefly before reporting the capture as failed.
+  let lastError: unknown;
+  let image: Electron.NativeImage | undefined;
+  for (let attempt = 0; attempt < CAPTURE_ATTEMPTS; attempt += 1) {
+    if (attempt > 0) {
+      await delay(CAPTURE_RETRY_DELAY_MS);
+    }
+    try {
+      image = await WebContents?.capturePage();
+      lastError = undefined;
+      if (image !== undefined && !image.isEmpty()) {
+        return image;
+      }
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  if (lastError !== undefined) {
+    throw lastError;
+  }
+  return image;
 };
 
 const quickScreenshot = async (arg: ScreenshotArgs): Promise<ScreenshotResult> => {
@@ -83,11 +121,17 @@ const captureAllDecies = async (args: Array<ScreenshotAllArgs>): Promise<Screens
 };
 
 export const initScreenshotHandlers = () => {
-  ipcMain.handle('screenshot', async (_, arg: ScreenshotArgs): Promise<ScreenshotResult> => {
-    return quickScreenshot(arg);
-  });
+  ipcMain.handle(
+    IPC_MAIN_CHANNELS.SCREENSHOT,
+    async (_, arg: ScreenshotArgs): Promise<ScreenshotResult> => {
+      return quickScreenshot(arg);
+    }
+  );
 
-  ipcMain.handle('screenshot:All', async (event, args: Array<ScreenshotAllArgs>) => {
-    return captureAllDecies(args);
-  });
+  ipcMain.handle(
+    IPC_MAIN_CHANNELS.SCREENSHOT_ALL,
+    async (event, args: Array<ScreenshotAllArgs>) => {
+      return captureAllDecies(args);
+    }
+  );
 };

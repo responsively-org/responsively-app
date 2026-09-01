@@ -1,19 +1,29 @@
-import {Dialog, Transition} from '@headlessui/react';
+import {
+  Description,
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  Transition,
+  TransitionChild,
+} from '@headlessui/react';
 import {Fragment} from 'react';
+import useOverlayRegistry from 'renderer/hooks/useOverlayRegistry';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  title?: JSX.Element | string;
-  description?: JSX.Element | string;
-  children?: JSX.Element | string;
+  title?: React.JSX.Element | string;
+  description?: React.JSX.Element | string;
+  children?: React.JSX.Element | string;
 }
 
 const Modal = ({isOpen, onClose, title, description, children}: Props) => {
+  useOverlayRegistry(isOpen);
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog onClose={onClose} className="relative z-50" as="div">
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -23,10 +33,10 @@ const Modal = ({isOpen, onClose, title, description, children}: Props) => {
           leaveTo="opacity-0"
         >
           <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
-        </Transition.Child>
+        </TransitionChild>
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4">
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -35,19 +45,19 @@ const Modal = ({isOpen, onClose, title, description, children}: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel
+              <DialogPanel
                 className={`flex w-fit min-w-[320px] flex-col gap-4 rounded bg-slate-200 text-light-normal dark:bg-slate-800 dark:text-dark-normal ${
                   title ? 'p-8' : 'px-8 py-4'
                 }`}
               >
                 <div>
-                  <Dialog.Title className="text-xl font-medium leading-6">{title}</Dialog.Title>
-                  <Dialog.Description>{description}</Dialog.Description>
+                  <DialogTitle className="text-xl font-medium leading-6">{title}</DialogTitle>
+                  <Description>{description}</Description>
                 </div>
 
                 {children}
-              </Dialog.Panel>
-            </Transition.Child>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

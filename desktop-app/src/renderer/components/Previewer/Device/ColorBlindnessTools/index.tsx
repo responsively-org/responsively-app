@@ -1,7 +1,4 @@
-import {Icon} from '@iconify/react';
-import cx from 'classnames';
 import {useCallback, useEffect, useState} from 'react';
-import {DropDown} from 'renderer/components/DropDown';
 import {COLOR_BLINDNESS_CHANNEL} from 'renderer/components/ToolBar/ColorBlindnessControls';
 import {
   BLUE_YELLOW,
@@ -22,13 +19,22 @@ interface InjectedCss {
 }
 
 interface Props {
-  webview: Electron.WebviewTag | null;
+  getWebview: () => Electron.WebviewTag | null;
+  onSimulationChange?: (name: string | undefined) => void;
 }
 
-export const ColorBlindnessTools = ({webview}: Props) => {
-  const [injectCss, setInjectCss] = useState<InjectedCss>();
+export const ColorBlindnessTools = ({getWebview, onSimulationChange}: Props) => {
+  const [injectCss, setInjectCssState] = useState<InjectedCss>();
+  const setInjectCss = useCallback(
+    (next: InjectedCss | undefined) => {
+      setInjectCssState(next);
+      onSimulationChange?.(next?.name);
+    },
+    [onSimulationChange]
+  );
 
   const reApplyCss = useCallback(async () => {
+    const webview = getWebview();
     if (webview === null) {
       return;
     }
@@ -41,10 +47,11 @@ export const ColorBlindnessTools = ({webview}: Props) => {
     }
 
     setInjectCss({...injectCss, key});
-  }, [webview, injectCss, setInjectCss]);
+  }, [getWebview, injectCss, setInjectCss]);
 
   const applyCss = useCallback(
     async (debugType: string, css: string, js: string | null = null) => {
+      const webview = getWebview();
       if (webview === null) {
         return;
       }
@@ -70,16 +77,16 @@ export const ColorBlindnessTools = ({webview}: Props) => {
         }
         setInjectCss({key, css, name: debugType, js});
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error('Error inserting css', error);
         // dispatch(setCss(undefined));
         setInjectCss(undefined);
       }
     },
-    [setInjectCss, webview, injectCss]
+    [setInjectCss, getWebview, injectCss]
   );
 
   const clearSimulation = useCallback(async () => {
+    const webview = getWebview();
     if (webview === null) {
       return;
     }
@@ -88,9 +95,10 @@ export const ColorBlindnessTools = ({webview}: Props) => {
     }
     await webview.removeInsertedCSS(injectCss.key);
     setInjectCss(undefined);
-  }, [webview, injectCss, setInjectCss]);
+  }, [getWebview, injectCss, setInjectCss]);
 
   useEffect(() => {
+    const webview = getWebview();
     if (webview === null) {
       return () => {};
     }
@@ -103,7 +111,7 @@ export const ColorBlindnessTools = ({webview}: Props) => {
     return () => {
       webview.removeEventListener('did-navigate', handler);
     };
-  }, [webview, reApplyCss]);
+  }, [getWebview, reApplyCss]);
 
   const applyColorDeficiency = useCallback(
     async (colorDeficiency: string) => {

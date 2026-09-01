@@ -8,6 +8,10 @@ type StoreState = {
     previewlayout?: string;
     previewLayout?: string;
   };
+  userPreferences?: {
+    customTitlebar?: boolean;
+    screenshot?: {saveLocation?: string};
+  };
 };
 
 const getValue = (state: StoreState, key: string) =>
@@ -65,7 +69,7 @@ const createStoreMock = (state: StoreState) =>
     get: vi.fn((key: string) => getValue(state, key)),
     set: vi.fn((key: string, value: unknown) => setValue(state, key, value)),
     delete: vi.fn((key: string) => deleteValue(state, key)),
-  } as unknown as Store);
+  }) as unknown as Store;
 
 describe('migrations', () => {
   it('moves the legacy previewlayout value to previewLayout', () => {
@@ -99,5 +103,31 @@ describe('migrations', () => {
     expect(store.delete).toHaveBeenCalledWith('ui.previewlayout');
     expect(state.ui?.previewLayout).toBe(PREVIEW_LAYOUTS.MASONRY);
     expect(state.ui?.previewlayout).toBeUndefined();
+  });
+
+  it('drops the orphaned customTitlebar preference', () => {
+    const state: StoreState = {
+      userPreferences: {
+        customTitlebar: true,
+        screenshot: {saveLocation: '/tmp/shots'},
+      },
+    };
+    const store = createStoreMock(state);
+
+    migrations['2.0.0'](store);
+
+    expect(store.delete).toHaveBeenCalledWith('userPreferences.customTitlebar');
+    expect(state.userPreferences?.customTitlebar).toBeUndefined();
+    // Neighbouring preferences are untouched.
+    expect(state.userPreferences?.screenshot?.saveLocation).toBe('/tmp/shots');
+  });
+
+  it('is a no-op when customTitlebar was never set', () => {
+    const state: StoreState = {userPreferences: {screenshot: {saveLocation: '/tmp/shots'}}};
+    const store = createStoreMock(state);
+
+    migrations['2.0.0'](store);
+
+    expect(store.delete).not.toHaveBeenCalled();
   });
 });

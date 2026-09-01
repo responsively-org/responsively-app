@@ -1,4 +1,8 @@
-export const transformFile = (file: File): Promise<{[key: string]: any}> => {
+import type {Device} from 'common/deviceList';
+import type {PreviewSuite} from 'renderer/store/features/device-manager';
+export const transformFile = (
+  file: File
+): Promise<{customDevices?: Device[]; suites?: PreviewSuite[]}> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 

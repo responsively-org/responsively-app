@@ -67,7 +67,7 @@ test.describe('Navigation Controls — Extended', () => {
   test('keyboard shortcut Cmd/Ctrl+R reloads the page', async ({app}) => {
     await app.dismissModals();
 
-    const srcBefore = await app.firstWebview.getAttribute('src');
+    await app.firstWebview.getAttribute('src');
 
     await app.pressShortcut('r');
     await app.page.waitForTimeout(2000);

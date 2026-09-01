@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import Button from 'renderer/components/Button';
 import {IBookmarks} from 'renderer/store/features/bookmarks';
 import {Icon} from '@iconify/react';
 import {useState} from 'react';
@@ -21,7 +20,7 @@ const BookmarkListButton = ({
 
   return (
     <div
-      className="flex h-[40px] w-60 justify-between hover:bg-slate-400 dark:hover:bg-slate-600 "
+      className="flex h-[40px] w-60 justify-between hover:bg-slate-400 dark:hover:bg-slate-600"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       key={bookmark.id}

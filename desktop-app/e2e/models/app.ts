@@ -26,16 +26,36 @@ export class ResponsivelyApp {
     this.webviews = page.locator('webview');
   }
 
+  /**
+   * Hidden pills are pointer-transparent until their device is hovered or
+   * focused. Hover geometry is a trap here (the revealed pill floats over the
+   * label row, and hovering a webview never sets :hover on the host), so use
+   * the keyboard path: focusing a pill button reveals via group-focus-within.
+   */
+  async revealDevicePill(index = 0) {
+    await this.page
+      .locator('[data-testid="device-pill"]:visible')
+      .nth(index)
+      .locator('button')
+      .first()
+      .focus();
+  }
+
+  /** Menu item inside a device's "More device tools" popover (open it first). */
   get eventMirroringButtons(): Locator {
-    return this.page.locator('button[title="Disable Event Mirroring"]');
+    return this.page.locator('button[title="Event mirroring"]');
+  }
+
+  get moreDeviceToolsButtons(): Locator {
+    return this.page.locator('button[title="More device tools"]');
   }
 
   get perDeviceRefreshButtons(): Locator {
-    return this.page.locator('button[title="Refresh This View"]');
+    return this.page.locator('button[title="Refresh this device"]');
   }
 
   get scrollToTopButtons(): Locator {
-    return this.page.locator('button[title="Scroll to Top"]');
+    return this.page.locator('button[title="Scroll to top"]');
   }
 
   get modifier(): 'Meta' | 'Control' {
@@ -73,21 +93,25 @@ export class ResponsivelyApp {
     await this.page.waitForTimeout(500);
   }
 
+  /** The Device Manager is a sheet over the stage, not a separate view. */
+  get deviceManagerSheet(): Locator {
+    return this.page.locator('[data-testid="device-manager-sheet"]');
+  }
+
   async openDeviceManager() {
     await this.page.locator('button[title="Device Manager"]').click();
-    await this.page.getByText('DEFAULT DEVICES').waitFor({state: 'visible', timeout: 10_000});
+    await this.deviceManagerSheet.waitFor({state: 'visible', timeout: 10_000});
   }
 
   async ensureDeviceManagerOpen() {
-    const dmHeader = this.page.getByText('DEFAULT DEVICES');
-    if (!(await dmHeader.isVisible())) {
+    if (!(await this.deviceManagerSheet.isVisible())) {
       await this.openDeviceManager();
     }
   }
 
   async closeDeviceManager() {
-    await this.page.locator('button[title="Close"]').click();
-    await this.addressBar.waitFor({state: 'visible', timeout: 10_000});
+    await this.deviceManagerSheet.locator('button[title="Close"]').click();
+    await this.deviceManagerSheet.waitFor({state: 'hidden', timeout: 10_000});
   }
 
   async openAboutDialog() {
@@ -100,10 +124,9 @@ export class ResponsivelyApp {
     await this.page.waitForTimeout(1000);
   }
 
+  /** Opens the suite editor popover (the dashed + button beside the chips). */
   async openSuiteSelector() {
-    const suiteSelector = this.page.locator('[data-testid="suite-selector"]');
-    const suiteSelectorBtn = suiteSelector.locator('button').first();
-    await suiteSelectorBtn.click();
+    await this.page.locator('button[title="Edit suite"]').click();
     await this.page.waitForTimeout(300);
   }
 

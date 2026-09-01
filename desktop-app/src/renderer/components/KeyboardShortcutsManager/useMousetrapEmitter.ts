@@ -5,6 +5,23 @@ import {ShortcutChannel} from './constants';
 
 export const keyboardShortcutsPubsub = new PubSub();
 
+// Mousetrap refuses to fire any shortcut while an <input>/<textarea> has
+// focus, which silently disabled every app shortcut whenever the address bar
+// was focused (zoom, reload, inspect...). Modifier combos never conflict with
+// text entry — every shortcut we bind is a `mod+` combo — so let those
+// through and keep the default guard for bare keys.
+const defaultStopCallback = Mousetrap.prototype.stopCallback;
+Mousetrap.prototype.stopCallback = function stopCallback(
+  e: Mousetrap.ExtendedKeyboardEvent,
+  element: Element,
+  combo: string
+): boolean {
+  if (e.metaKey || e.ctrlKey) {
+    return false;
+  }
+  return defaultStopCallback.call(this, e, element, combo);
+};
+
 const useMousetrapEmitter = (
   accelerator: string | string[],
   eventChannel: ShortcutChannel,
@@ -13,7 +30,6 @@ const useMousetrapEmitter = (
   useEffect(() => {
     const callback = (_e: Mousetrap.ExtendedKeyboardEvent, _combo: string) => {
       keyboardShortcutsPubsub.publish(eventChannel).catch((err) => {
-        // eslint-disable-next-line no-console
         console.error('useMousetrapEmitter: callback: error: ', err);
       });
     };

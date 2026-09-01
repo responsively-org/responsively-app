@@ -58,17 +58,24 @@ test.describe('Screenshot Save', () => {
     const screenshotBtn = app.page.locator('button[title="Screenshot All WebViews"]');
     await screenshotBtn.click();
 
-    // Wait for screenshot files to appear
+    // Wait for screenshots to appear AND finish writing (a file can exist,
+    // momentarily empty, while its JPEG is still being flushed).
     await expect
-      .poll(() => getJpegs(screenshotDir).length, {timeout: 15_000})
+      .poll(
+        () => {
+          const files = getJpegs(screenshotDir);
+          if (files.length <= beforeFiles.length) {
+            return 0;
+          }
+          return files.every((f) => fs.statSync(path.join(screenshotDir, f)).size > 0)
+            ? files.length
+            : 0;
+        },
+        {timeout: 15_000}
+      )
       .toBeGreaterThan(beforeFiles.length);
 
     const afterFiles = getJpegs(screenshotDir);
-    // Each file should be non-empty
-    for (const file of afterFiles) {
-      const stat = fs.statSync(path.join(screenshotDir, file));
-      expect(stat.size).toBeGreaterThan(0);
-    }
 
     // Verify shell.showItemInFolder was called for each saved file
     await expect
@@ -133,9 +140,10 @@ test.describe('Screenshot Save', () => {
     }
     await app.clearShowItemCalls();
 
-    const quickScreenshotBtn = app.page.locator('button[title="Quick Screenshot"]').first();
+    await app.revealDevicePill();
+    const quickScreenshotBtn = app.page.locator('button[title="Quick screenshot"]').first();
     await expect(quickScreenshotBtn).toBeVisible();
-    await quickScreenshotBtn.click({force: true});
+    await quickScreenshotBtn.click();
 
     await expect.poll(() => getJpegs(screenshotDir).length, {timeout: 15_000}).toBe(1);
 
@@ -171,9 +179,12 @@ test.describe('Screenshot Save', () => {
     }
     await app.clearShowItemCalls();
 
-    const fullPageBtn = app.page.locator('button[title="Full Page Screenshot"]').first();
+    // Full-page capture moved into the device's "More device tools" popover.
+    await app.revealDevicePill();
+    await app.moreDeviceToolsButtons.first().click();
+    const fullPageBtn = app.page.locator('button[title="Full-page screenshot"]').first();
     await expect(fullPageBtn).toBeVisible();
-    await fullPageBtn.click({force: true});
+    await fullPageBtn.click();
 
     await expect.poll(() => getJpegs(screenshotDir).length, {timeout: 15_000}).toBe(1);
 

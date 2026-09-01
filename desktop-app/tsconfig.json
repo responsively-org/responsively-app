@@ -2,13 +2,13 @@
   "compilerOptions": {
     "incremental": true,
     "target": "es2021",
-    "module": "commonjs",
+    "module": "esnext",
     "lib": ["dom", "es2021"],
     "jsx": "react-jsx",
     "strict": true,
     "sourceMap": true,
     "baseUrl": "./src",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
@@ -16,6 +16,13 @@
     "outDir": ".erb/dll",
     "skipLibCheck": true,
     "types": ["vitest/globals"]
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "node"
+    }
   },
   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }

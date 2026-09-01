@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- store schema typing lands with the v11 typed-store refactor */
 import path from 'path';
 import {app} from 'electron';
 import {homedir} from 'os';
@@ -8,7 +9,12 @@ if (process.env.E2E_USER_DATA_DIR) {
   app.setPath('userData', process.env.E2E_USER_DATA_DIR);
 }
 
-const Store = require('electron-store');
+import ElectronStore from 'electron-store';
+
+// electron-store 11 is ESM-only; the class arrives as the module default.
+// Kept loosely typed for now — the schema below predates the stricter v11
+// generics (proper typing lands with the store refactor).
+const Store = ElectronStore as any;
 
 const schema = {
   ui: {
@@ -21,6 +27,16 @@ const schema = {
       previewLayout: {
         enum: Object.values(PREVIEW_LAYOUTS),
         default: PREVIEW_LAYOUTS.FLEX,
+      },
+      announcements: {
+        type: 'object',
+        properties: {
+          // Nullable: the renderer persists the whole object, and "never" is
+          // null in state.
+          seenVersion: {type: ['string', 'null']},
+          supportShownAt: {type: ['number', 'null']},
+          supportHidden: {type: 'boolean'},
+        },
       },
     },
   },
@@ -52,7 +68,9 @@ const schema = {
   deviceManager: {
     type: 'object',
     properties: {
-      // TODO: remove this in a future version of v1.2.0
+      // Not legacy: hydrates the active device set on boot (preloadedState),
+      // is rewritten on every device change (persistence listener), and feeds
+      // the 1.2.0 migration for configs predating preview suites.
       activeDevices: {
         type: 'array',
         items: {
@@ -75,6 +93,16 @@ const schema = {
               type: 'array',
               items: {
                 type: 'string',
+              },
+            },
+            canvasPositions: {
+              type: 'object',
+              additionalProperties: {
+                type: 'object',
+                properties: {
+                  x: {type: 'number'},
+                  y: {type: 'number'},
+                },
               },
             },
           },
@@ -147,6 +175,15 @@ const schema = {
       allowInsecureSSLConnections: {
         type: 'boolean',
         default: false,
+      },
+      popupBehavior: {
+        type: 'string',
+        enum: ['in-preview', 'external'],
+        default: 'in-preview',
+      },
+      mcpEnabled: {
+        type: 'boolean',
+        default: true,
       },
       guides: {
         type: 'array',
@@ -246,6 +283,17 @@ const schema = {
     type: 'string',
     default: 'https://www.google.com/',
   },
+  windowState: {
+    type: 'object',
+    properties: {
+      x: {type: 'number'},
+      y: {type: 'number'},
+      width: {type: 'number'},
+      height: {type: 'number'},
+      isMaximized: {type: 'boolean'},
+    },
+    default: {},
+  },
   seenReleaseNotes: {
     type: 'array',
     items: {
@@ -287,5 +335,12 @@ const store = new Store({
   watch: true,
   migrations,
 });
+
+// Keys the renderer may touch through the electron-store IPC bridge.
+// windowState is main-process-only.
+const RENDERER_STORE_ROOTS = new Set(Object.keys(schema).filter((key) => key !== 'windowState'));
+
+export const isRendererStoreKey = (property: unknown): property is string =>
+  typeof property === 'string' && RENDERER_STORE_ROOTS.has(property.split('.')[0]);
 
 export default store;

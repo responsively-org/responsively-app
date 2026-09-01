@@ -15,32 +15,6 @@ export function resolveHtmlPath(htmlFileName: string) {
   return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
 }
 
-let isCliArgResult: boolean | undefined;
-
-export function isValidCliArgURL(arg?: string): boolean {
-  if (isCliArgResult !== undefined) {
-    return isCliArgResult;
-  }
-  if (arg == null || arg === '') {
-    isCliArgResult = false;
-    return false;
-  }
-  try {
-    const url = new URL(arg);
-    if (url.protocol === 'http:' || url.protocol === 'https:' || url.protocol === 'file:') {
-      isCliArgResult = true;
-      return true;
-    }
-    // eslint-disable-next-line no-console
-    console.warn('Protocol not supported', url.protocol);
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.warn('Not a valid URL', arg, e);
-  }
-  isCliArgResult = false;
-  return false;
-}
-
 export const getPackageJson = () => {
   let appPath;
   if (process.env.NODE_ENV === 'production') appPath = app.getAppPath();

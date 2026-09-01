@@ -67,22 +67,11 @@ test.describe('Settings', () => {
     // Clear the input
     await screenshotInput.fill('');
 
-    // Override window.alert to capture the message instead of showing a native dialog
-    const alertMessage = await app.page.evaluate(() => {
-      return new Promise<string>((resolve) => {
-        const origAlert = window.alert;
-        window.alert = (msg: string) => {
-          window.alert = origAlert;
-          resolve(msg);
-        };
-        const saveBtn = document.querySelector(
-          '[data-testid="settings-save-button"]'
-        ) as HTMLButtonElement;
-        saveBtn?.click();
-      });
-    });
-
-    expect(alertMessage).toContain('valid location');
+    // Validation renders inline instead of a blocking alert, and the modal
+    // stays open.
+    await app.page.locator('[data-testid="settings-save-button"]').click();
+    await expect(app.page.getByRole('alert')).toContainText('valid location');
+    await expect(screenshotInput).toBeVisible();
 
     // Restore original value and save
     await screenshotInput.fill(originalValue);

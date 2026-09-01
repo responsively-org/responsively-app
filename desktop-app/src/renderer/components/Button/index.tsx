@@ -4,6 +4,11 @@ import {Icon} from '@iconify/react';
 
 interface CustomProps {
   className?: string;
+  /**
+   * Marks a toggle button. Passing it (either value) makes the button expose
+   * `aria-pressed`, which is both the correct a11y contract and what tests
+   * should assert on instead of styling classes.
+   */
   isActive?: boolean;
   isLoading?: boolean;
   isPrimary?: boolean;
@@ -16,7 +21,7 @@ interface CustomProps {
 
 const Button = ({
   className = '',
-  isActive = false,
+  isActive,
   isLoading = false,
   isPrimary = false,
   isTextButton = false,
@@ -71,12 +76,17 @@ const Button = ({
       )}
       type="button"
       disabled={disabled}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      aria-pressed={isActive}
       {...props}
     >
-      {isLoading ? <Icon icon="line-md:loading-twotone-loop" /> : null}
-      {isLoadingDone ? <Icon icon="line-md:circle-to-confirm-circle-transition" /> : null}
-      {!isLoading && !isLoadingDone ? children : null}
+      {/* pointer-events-none keeps mouse events targeting the stable button
+          node — icon SVGs can be re-rendered mid-click (e.g. by an input
+          blur), which makes the browser drop the click entirely. */}
+      <span className="pointer-events-none contents">
+        {isLoading ? <Icon icon="line-md:loading-twotone-loop" /> : null}
+        {isLoadingDone ? <Icon icon="line-md:circle-to-confirm-circle-transition" /> : null}
+        {!isLoading && !isLoadingDone ? children : null}
+      </span>
     </button>
   );
 };

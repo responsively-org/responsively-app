@@ -1,5 +1,6 @@
 import {app} from 'electron';
 import {autoUpdater} from 'electron-updater';
+import log from './logging';
 
 export interface AppUpdaterStatus {
   status: string;
@@ -24,13 +25,18 @@ export class AppUpdater {
   error?: Error;
 
   constructor() {
-    autoUpdater.logger = console;
+    autoUpdater.logger = log;
     // electron-updater can't update unpacked (dev) builds and only logs
     // "Skip checkForUpdates" noise there, so don't even start the check.
     if (process.env.CI || process.env.E2E_TEST || !app.isPackaged) {
       return;
     }
-    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdatesAndNotify().catch((error) => {
+      this.status = 'ERROR';
+      this.error = error;
+      this.lastChecked = Date.now();
+      log.error('Update check failed', error);
+    });
     autoUpdater.on('checking-for-update', () => {
       this.status = 'CHECKING';
       this.lastChecked = Date.now();
@@ -40,7 +46,7 @@ export class AppUpdater {
       this.version = info.version;
       this.lastChecked = Date.now();
     });
-    autoUpdater.on('update-not-available', (info) => {
+    autoUpdater.on('update-not-available', (_info) => {
       this.status = 'UP_TO_DATE';
       this.lastChecked = Date.now();
     });
@@ -50,15 +56,15 @@ export class AppUpdater {
       this.lastChecked = Date.now();
     });
     autoUpdater.on('download-progress', (progressObj) => {
-      const logMessage = `Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}% (${progressObj.transferred}/${progressObj.total})`;
-      // eslint-disable-next-line no-console
-      console.log(logMessage);
+      log.debug(
+        `Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}% (${progressObj.transferred}/${progressObj.total})`
+      );
       this.status = `DOWNLOADING - ${progressObj.percent}%`;
       this.progress = progressObj.percent;
       this.size = progressObj.total;
       this.lastChecked = Date.now();
     });
-    autoUpdater.on('update-downloaded', (info) => {
+    autoUpdater.on('update-downloaded', (_info) => {
       this.status = 'DOWNLOADED (Restart to apply update)';
       this.lastChecked = Date.now();
     });

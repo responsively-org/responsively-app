@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {v4 as uuidv4} from 'uuid';
 
@@ -15,12 +15,13 @@ interface Props {
 
 export const CreateSuiteModal = ({isOpen, onClose}: Props) => {
   const [name, setName] = useState<string>('');
+  const [nameError, setNameError] = useState<string | null>(null);
   const dispatch = useDispatch();
 
   const handleAddSuite = async (): Promise<void> => {
     if (name === '') {
-      // eslint-disable-next-line no-alert
-      return alert('Suite name cannot be empty. Please enter a name for the suite.');
+      setNameError('Suite name cannot be empty. Please enter a name for the suite.');
+      return undefined;
     }
     dispatch(addSuite({id: uuidv4(), name, devices: ['10008']}));
     return onClose();
@@ -36,7 +37,11 @@ export const CreateSuiteModal = ({isOpen, onClose}: Props) => {
               type="text"
               placeholder="My Custom Suite"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              error={nameError}
+              onChange={(e) => {
+                setName(e.target.value);
+                setNameError(null);
+              }}
             />
           </div>
           <div className="flex flex-row justify-between">

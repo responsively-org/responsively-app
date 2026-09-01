@@ -6,48 +6,67 @@ import {store} from './store';
 
 import './App.css';
 import ThemeProvider from './context/ThemeProvider';
-import type {AppView} from './store/features/ui';
-import {APP_VIEWS, selectAppView} from './store/features/ui';
 import DeviceManager from './components/DeviceManager';
+import TitleBar from './components/TitleBar';
+import StatusBar from './components/StatusBar';
 import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
-import {ReleaseNotes} from './components/ReleaseNotes';
-import {Sponsorship} from './components/Sponsorship';
+import {PREVIEW_LAYOUTS} from '../common/constants';
+import {selectLayout} from './store/features/renderer';
+import {selectIsPresenting} from './store/features/ui';
+import McpBridge from './components/McpBridge';
+import AnnouncementCard from './components/AnnouncementCard';
 import {AboutDialog} from './components/AboutDialog';
 
+/** Present mode only applies while the canvas layout is active. */
+const usePresenting = (): boolean => {
+  const isPresenting = useSelector(selectIsPresenting);
+  const layout = useSelector(selectLayout);
+  return isPresenting && layout === PREVIEW_LAYOUTS.CANVAS;
+};
+
 const Browser = () => {
+  const presenting = usePresenting();
   return (
-    <div className="h-screen gap-2 overflow-hidden pt-2">
-      <ToolBar />
-      <Previewer />
+    <div className="flex h-full flex-col overflow-hidden">
+      {presenting ? null : <ToolBar />}
+      <div className="min-h-0 flex-1">
+        <Previewer />
+      </div>
+      {presenting ? null : <StatusBar />}
     </div>
   );
 };
 
-const getView = (appView: AppView) => {
-  switch (appView) {
-    case APP_VIEWS.BROWSER:
-      return <Browser />;
-    case APP_VIEWS.DEVICE_MANAGER:
-      return <DeviceManager />;
-    default:
-      return <Browser />;
-  }
-};
-
-const ViewComponent = () => {
-  const appView = useSelector(selectAppView);
-
-  return <>{getView(appView)}</>;
-};
+/**
+ * The Device Manager is a sheet over the stage, not a replacement view: the
+ * previews stay mounted behind it (so closing it doesn't reload every
+ * webview) and stay visible, as the design intends.
+ */
+const ViewComponent = () => (
+  <div className="relative h-full">
+    <Browser />
+    <DeviceManager />
+  </div>
+);
 
 const AppContent = () => {
   return (
     <Provider store={store}>
       <ThemeProvider>
         <KeyboardShortcutsManager />
-        <ViewComponent />
-        <ReleaseNotes />
-        <Sponsorship />
+        <McpBridge />
+        {/* The window is frameless: the title bar is ours, and the rest of
+            the shell fills what's left of the viewport. */}
+        <div className="flex h-screen flex-col overflow-hidden">
+          <TitleBar />
+          {/* The shell itself never scrolls — a scroll container wrapping the
+              previews would add a compositing layer around every webview.
+              Long views (Device Manager) own their scrolling instead. */}
+          <div className="min-h-0 flex-1 overflow-hidden">
+            <ViewComponent />
+          </div>
+        </div>
+        <AnnouncementCard />
         <AboutDialog />
       </ThemeProvider>
     </Provider>

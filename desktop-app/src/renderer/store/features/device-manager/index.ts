@@ -1,16 +1,18 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {getDevicesMap, Device} from 'common/deviceList';
+import {Device} from 'common/deviceList';
 import type {RootState} from '../..';
-import {sanitizeSuites} from './utils';
 
-const activeDeviceIds: string[] = window.electron.store.get('deviceManager.activeDevices');
-
-const DEFAULT_DEVICES: Device[] = activeDeviceIds.map((id) => getDevicesMap()[id]);
+export interface CanvasPosition {
+  x: number;
+  y: number;
+}
 
 export interface PreviewSuite {
   id: string;
   name: string;
   devices: string[];
+  /** Canvas-mode frame positions in world coordinates, keyed by device id. */
+  canvasPositions?: Record<string, CanvasPosition>;
 }
 
 export type PreviewSuites = PreviewSuite[];
@@ -19,14 +21,24 @@ export interface DeviceManagerState {
   devices: Device[];
   activeSuite: string;
   suites: PreviewSuites;
+  // Per-device rotation (session state, not persisted). The global rotate
+  // flag lives in the renderer slice; a device is rotated when either is set.
+  individualRotations: Record<string, boolean>;
 }
 
-sanitizeSuites();
+export const DEFAULT_SUITE: PreviewSuite = {
+  id: 'default',
+  name: 'Default',
+  devices: ['10008', '10013', '10015'],
+};
 
+// Persisted values are injected via the store's preloaded state
+// (store/preloadedState.ts); persistence happens in store/persistence.ts.
 const initialState: DeviceManagerState = {
-  devices: DEFAULT_DEVICES,
-  activeSuite: 'default',
-  suites: window.electron.store.get('deviceManager.previewSuites'),
+  devices: [],
+  activeSuite: DEFAULT_SUITE.id,
+  suites: [DEFAULT_SUITE],
+  individualRotations: {},
 };
 
 export const deviceManagerSlice = createSlice({
@@ -35,70 +47,73 @@ export const deviceManagerSlice = createSlice({
   reducers: {
     setDevices: (state, action: PayloadAction<Device[]>) => {
       state.devices = action.payload;
-      window.electron.store.set(
-        'deviceManager.activeDevices',
-        action.payload.map((device) => device.id)
-      );
     },
     setSuiteDevices: (state, action: PayloadAction<{suite: string; devices: string[]}>) => {
       const {suite, devices} = action.payload;
-      const suites: PreviewSuites = window.electron.store.get('deviceManager.previewSuites');
-      const suiteIndex = suites.findIndex((s) => s.id === suite);
-      if (suiteIndex === -1) {
+      const target = state.suites.find((s) => s.id === suite);
+      if (target === undefined) {
         return;
       }
-      suites[suiteIndex].devices = devices;
-      state.suites = suites;
-      window.electron.store.set('deviceManager.previewSuites', suites);
+      target.devices = devices;
     },
     setActiveSuite(state, action: PayloadAction<string>) {
       state.activeSuite = action.payload;
     },
     addSuite(state, action: PayloadAction<PreviewSuite>) {
-      const suites = window.electron.store.get('deviceManager.previewSuites');
-      suites.push(action.payload);
-      state.suites = suites;
+      state.suites.push(action.payload);
       state.activeSuite = action.payload.id;
-      window.electron.store.set('deviceManager.previewSuites', suites);
     },
     addSuites(state, action: PayloadAction<PreviewSuite[]>) {
-      const existingSuites = window.electron.store.get('deviceManager.previewSuites');
-
-      const suitesMap = new Map();
+      const suitesMap = new Map<string, PreviewSuite>();
       action.payload.forEach((suite) => suitesMap.set(suite.name, suite));
 
-      existingSuites.forEach((suite: PreviewSuite) => {
+      state.suites.forEach((suite) => {
         if (!suitesMap.has(suite.name)) {
           suitesMap.set(suite.name, suite);
         }
       });
 
-      const mergedSuites = Array.from(suitesMap.values());
-
-      state.suites = mergedSuites;
+      state.suites = Array.from(suitesMap.values());
       state.activeSuite = action.payload[0].id;
-      window.electron.store.set('deviceManager.previewSuites', mergedSuites);
     },
     deleteSuite(state, action: PayloadAction<string>) {
-      const suites: PreviewSuite[] = window.electron.store.get('deviceManager.previewSuites');
-      const suiteIndex = suites.findIndex((s) => s.id === action.payload);
+      const suiteIndex = state.suites.findIndex((s) => s.id === action.payload);
       if (suiteIndex === -1) {
         return;
       }
-      suites.splice(suiteIndex, 1);
-      state.suites = suites;
-      state.activeSuite = suites[0].id;
-      window.electron.store.set('deviceManager.previewSuites', suites);
+      state.suites.splice(suiteIndex, 1);
+      state.activeSuite = state.suites[0].id;
     },
     deleteAllSuites(state) {
-      const defaultSuites = {
-        id: 'default',
-        name: 'Default',
-        devices: ['10008', '10013', '10015'],
+      state.suites = [DEFAULT_SUITE];
+      state.activeSuite = DEFAULT_SUITE.id;
+    },
+    setCanvasPosition(
+      state,
+      action: PayloadAction<{suite: string; device: string; position: CanvasPosition}>
+    ) {
+      const target = state.suites.find((s) => s.id === action.payload.suite);
+      if (target === undefined) {
+        return;
+      }
+      target.canvasPositions = {
+        ...target.canvasPositions,
+        [action.payload.device]: action.payload.position,
       };
-      const suites: PreviewSuite[] = window.electron.store.get('deviceManager.previewSuites');
-      window.electron.store.set('deviceManager.previewSuites', [defaultSuites]);
-      state.suites = [defaultSuites];
+    },
+    resetCanvasPositions(state, action: PayloadAction<string>) {
+      const target = state.suites.find((s) => s.id === action.payload);
+      if (target !== undefined) {
+        delete target.canvasPositions;
+      }
+    },
+    setIndividualRotation(state, action: PayloadAction<{id: string; rotated: boolean}>) {
+      const {id, rotated} = action.payload;
+      if (rotated) {
+        state.individualRotations[id] = true;
+      } else {
+        delete state.individualRotations[id];
+      }
     },
   },
 });
@@ -112,9 +127,15 @@ export const {
   addSuites,
   deleteSuite,
   deleteAllSuites,
+  setCanvasPosition,
+  resetCanvasPositions,
+  setIndividualRotation,
 } = deviceManagerSlice.actions;
 
 export const selectSuites = (state: RootState) => state.deviceManager.suites;
+
+export const selectIndividualRotations = (state: RootState) =>
+  state.deviceManager.individualRotations;
 
 export const selectActiveSuite = (state: RootState): PreviewSuite => {
   const {activeSuite, suites} = state.deviceManager;

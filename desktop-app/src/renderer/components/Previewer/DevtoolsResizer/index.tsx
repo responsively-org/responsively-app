@@ -1,5 +1,5 @@
 import {Icon} from '@iconify/react';
-import {DOCK_POSITION} from 'common/constants';
+import {DOCK_POSITION, IPC_MAIN_CHANNELS} from 'common/constants';
 import {OpenDevtoolsArgs, OpenDevtoolsResult} from 'main/devtools';
 import {Resizable, Size} from 're-resizable';
 import {useCallback, useEffect, useRef, useState} from 'react';
@@ -67,7 +67,7 @@ const DevtoolsResizer = () => {
   const sendBounds = useCallback(() => {
     if (!contentRef.current) return;
     const rect = contentRef.current.getBoundingClientRect();
-    window.electron.ipcRenderer.invoke('resize-devtools', {
+    window.electron.ipcRenderer.invoke(IPC_MAIN_CHANNELS.RESIZE_DEVTOOLS, {
       bounds: {
         x: Math.round(rect.x),
         y: Math.round(rect.y),
@@ -96,7 +96,10 @@ const DevtoolsResizer = () => {
   }, [sendBounds]);
 
   return (
-    <div className="border-[#d0d0d0] bg-[#f3f3f3] text-[#555]">
+    <div
+      data-testid="devtools-resizer"
+      className="border-gray-300 bg-gray-100 text-gray-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
+    >
       <Resizable
         className="border"
         key={dockPosition}
@@ -131,12 +134,12 @@ const DevtoolsResizer = () => {
               </Button>
               <Button
                 onClick={() => {
-                  window.electron.ipcRenderer.invoke('close-devtools');
+                  window.electron.ipcRenderer.invoke(IPC_MAIN_CHANNELS.CLOSE_DEVTOOLS);
                   dispatch(setDockPosition(DOCK_POSITION.UNDOCKED));
                   dispatch(setDevtoolsClose());
                   setTimeout(() => {
                     window.electron.ipcRenderer.invoke<OpenDevtoolsArgs, OpenDevtoolsResult>(
-                      'open-devtools',
+                      IPC_MAIN_CHANNELS.OPEN_DEVTOOLS,
                       {
                         webviewId,
                         dockPosition: DOCK_POSITION.UNDOCKED,
@@ -150,7 +153,7 @@ const DevtoolsResizer = () => {
               </Button>
               <Button
                 onClick={() => {
-                  window.electron.ipcRenderer.invoke('close-devtools');
+                  window.electron.ipcRenderer.invoke(IPC_MAIN_CHANNELS.CLOSE_DEVTOOLS);
                   dispatch(setDevtoolsClose());
                 }}
                 disableHoverEffects

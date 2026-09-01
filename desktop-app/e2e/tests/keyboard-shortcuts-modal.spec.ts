@@ -4,10 +4,8 @@ test.describe('Keyboard Shortcuts Modal', () => {
   test('shortcuts button opens the shortcuts modal', async ({app}) => {
     await app.dismissModals();
 
-    const shortcutsBtn = app.page.locator('button[title="View Shortcuts"]');
-    await expect(shortcutsBtn).toBeVisible();
-
-    await shortcutsBtn.click();
+    await app.openMenuFlyout();
+    await app.page.getByText('Keyboard shortcuts').click();
     await app.page.waitForTimeout(500);
 
     // The modal should show shortcut categories
@@ -20,8 +18,8 @@ test.describe('Keyboard Shortcuts Modal', () => {
     // Modal should still be open from previous test
     const generalShortcuts = app.page.getByText('General Shortcuts');
     if (!(await generalShortcuts.isVisible())) {
-      const shortcutsBtn = app.page.locator('button[title="View Shortcuts"]');
-      await shortcutsBtn.click();
+      await app.openMenuFlyout();
+      await app.page.getByText('Keyboard shortcuts').click();
       await app.page.waitForTimeout(500);
     }
 
@@ -33,8 +31,8 @@ test.describe('Keyboard Shortcuts Modal', () => {
     // Modal should still be open
     const generalShortcuts = app.page.getByText('General Shortcuts');
     if (!(await generalShortcuts.isVisible())) {
-      const shortcutsBtn = app.page.locator('button[title="View Shortcuts"]');
-      await shortcutsBtn.click();
+      await app.openMenuFlyout();
+      await app.page.getByText('Keyboard shortcuts').click();
       await app.page.waitForTimeout(500);
     }
 

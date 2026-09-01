@@ -13,7 +13,11 @@ export const ColorBlindnessControls = () => {
 
   return (
     <div data-testid="color-blindness-controls">
-      <VisionSimulationDropDown simulationName={simulationName} onChange={setSimulationName} />
+      <VisionSimulationDropDown
+        simulationName={simulationName}
+        onChange={setSimulationName}
+        variant="toolbar"
+      />
     </div>
   );
 };

@@ -146,9 +146,11 @@ test.describe('Device Interaction Mirroring', () => {
       await app.dismissModals();
 
       const webviewCount = await app.webviews.count();
-      const mirroringBtnCount = await app.eventMirroringButtons.count();
+      // The mirroring toggle lives in each device's More popover; the pill's
+      // More trigger is the per-device anchor we can count without opening.
+      const moreBtnCount = await app.moreDeviceToolsButtons.count();
 
-      expect(mirroringBtnCount).toBe(webviewCount);
+      expect(moreBtnCount).toBe(webviewCount);
     });
 
     test('disabling mirroring closes BrowserSync socket', async ({app, testServerUrl}) => {
@@ -156,7 +158,9 @@ test.describe('Device Interaction Mirroring', () => {
       await app.navigateTo(`${testServerUrl}/test-page.html`, {timeout: 5000});
       await app.page.waitForTimeout(5000);
 
-      // Click first "Disable Event Mirroring" button
+      // The toggle sits inside the first device's "More device tools" popover.
+      await app.revealDevicePill();
+      await app.moreDeviceToolsButtons.first().click();
       const mirroringBtn = app.eventMirroringButtons.first();
       await mirroringBtn.click();
       await app.page.waitForTimeout(2000);
@@ -190,12 +194,15 @@ test.describe('Device Interaction Mirroring', () => {
       await app.navigateTo(`${testServerUrl}/test-page.html`, {timeout: 5000});
       await app.page.waitForTimeout(5000);
 
-      // Disable mirroring first
+      // Disable mirroring first (inside the More popover, which closes on pick)
+      await app.revealDevicePill();
+      await app.moreDeviceToolsButtons.first().click();
       const mirroringBtn = app.eventMirroringButtons.first();
       await mirroringBtn.click();
       await app.page.waitForTimeout(2000);
 
       // Re-enable mirroring
+      await app.moreDeviceToolsButtons.first().click();
       await mirroringBtn.click();
       await app.page.waitForTimeout(8000);
 
@@ -231,38 +238,50 @@ test.describe('Device Interaction Mirroring', () => {
       await app.navigateTo(`${testServerUrl}/test-page.html`, {timeout: 5000});
       await app.page.waitForTimeout(2000);
 
-      // Scroll down in the first webview via executeJavaScript
+      // Which webContents pairs with the first visible pill is
+      // worker-history dependent (creation order diverges from display order
+      // once devices are added/removed), and mirroring may be mid-toggle
+      // from a sibling parallel test. So: scroll EVERY guest down, click one
+      // scroll-to-top, and assert that at least the clicked device reset.
+      const minGuestScrollY = () =>
+        app.electronApp.evaluate(async ({webContents}) => {
+          const webviews = webContents
+            .getAllWebContents()
+            .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview');
+          if (webviews.length === 0) return -1;
+          const ys: number[] = await Promise.all(
+            webviews.map((wv: Electron.WebContents) =>
+              wv.executeJavaScript('window.scrollY').catch(() => -1)
+            )
+          );
+          return Math.min(...ys);
+        });
+
       await app.electronApp.evaluate(async ({webContents}) => {
         const webviews = webContents
           .getAllWebContents()
           .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview');
-
-        if (webviews.length > 0) {
-          await webviews[0].executeJavaScript('window.scrollTo(0, 500); true');
-        }
+        await Promise.all(
+          webviews.map((wv: Electron.WebContents) =>
+            wv.executeJavaScript('window.scrollTo(0, 500); true')
+          )
+        );
       });
-      await app.page.waitForTimeout(1000);
+      // Every guest must actually be scrolled before the click, or a
+      // never-scrolled guest would fake the reset assertion below. scrollTo
+      // clamps to each page's max scroll (a tall viewport like the MacBook
+      // leaves less than 500px of runway), so require "scrolled at all",
+      // not an absolute distance.
+      await expect.poll(minGuestScrollY, {timeout: 10_000}).toBeGreaterThan(0);
 
-      // Click "Scroll to Top" button
+      // Click "Scroll to top" button
+      await app.revealDevicePill();
       const scrollToTopBtn = app.scrollToTopButtons.first();
       await scrollToTopBtn.click();
-      await app.page.waitForTimeout(1500);
 
-      // Verify scrollY is 0
-      const scrollY: number = await app.electronApp.evaluate(async ({webContents}) => {
-        const webviews = webContents
-          .getAllWebContents()
-          .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview');
-
-        if (webviews.length === 0) return -1;
-        try {
-          return await webviews[0].executeJavaScript('window.scrollY');
-        } catch {
-          return -1;
-        }
-      });
-
-      expect(scrollY).toBe(0);
+      // The reset lands asynchronously; min reaching 0 proves the clicked
+      // device's guest reset (all of them when mirroring is on).
+      await expect.poll(minGuestScrollY, {timeout: 10_000}).toBe(0);
     });
 
     test('per-device refresh button exists for each device', async ({app}) => {

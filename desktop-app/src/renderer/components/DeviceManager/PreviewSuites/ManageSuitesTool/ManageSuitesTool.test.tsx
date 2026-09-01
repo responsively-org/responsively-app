@@ -1,5 +1,4 @@
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
-import {Device} from 'common/deviceList';
 import {Provider, useDispatch} from 'react-redux';
 import {configureStore} from '@reduxjs/toolkit';
 import {ReactNode} from 'react';
@@ -49,7 +48,7 @@ vi.mock('react-redux', async (importOriginal) => {
 });
 
 const renderWithRedux = (
-  component: string | number | boolean | Iterable<ReactNode> | JSX.Element | null | undefined
+  component: string | number | boolean | Iterable<ReactNode> | React.JSX.Element | null | undefined
 ) => {
   const store = configureStore({
     reducer: {
@@ -68,7 +67,7 @@ describe('ManageSuitesTool', () => {
   const dispatchMock = vi.fn();
 
   beforeEach(() => {
-    (useDispatch as Mock).mockReturnValue(dispatchMock);
+    (useDispatch as unknown as Mock).mockReturnValue(dispatchMock);
 
     setCustomDevicesStateMock = vi.fn();
 
@@ -91,10 +90,13 @@ describe('ManageSuitesTool', () => {
     expect(screen.getByText('Do you want to reset all settings?')).toBeInTheDocument();
   });
 
-  it('closes the reset confirmation dialog when the close button is clicked', () => {
+  it('closes the reset confirmation dialog when the close button is clicked', async () => {
     fireEvent.click(screen.getByTestId('reset-btn'));
     fireEvent.click(screen.getByText('Cancel'));
-    expect(screen.queryByText('Do you want to reset all settings?')).not.toBeInTheDocument();
+    // Headless UI v2 unmounts dialogs after the leave transition settles.
+    await waitFor(() =>
+      expect(screen.queryByText('Do you want to reset all settings?')).not.toBeInTheDocument()
+    );
   });
 
   it('dispatches deleteAllSuites and clears custom devices on reset confirmation', async () => {

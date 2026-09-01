@@ -1,7 +1,12 @@
 {
   "overrides": [
     {
-      "files": [".prettierrc", ".babelrc", ".eslintrc", ".stylelintrc"],
+      "files": [
+        ".prettierrc",
+        ".babelrc",
+        ".eslintrc",
+        ".stylelintrc"
+      ],
       "options": {
         "parser": "json"
       }
@@ -12,5 +17,8 @@
   "bracketSpacing": false,
   "printWidth": 100,
   "tailwindConfig": "./tailwind.config.js",
-  "trailingComma": "es5"
+  "trailingComma": "es5",
+  "plugins": [
+    "prettier-plugin-tailwindcss"
+  ]
 }
