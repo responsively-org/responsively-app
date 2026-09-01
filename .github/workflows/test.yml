@@ -8,6 +8,10 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    # The whole pipeline (install, build, lint, unit, e2e, package) fits well
+    # under this when healthy; a hung or crawling e2e run must not burn an
+    # hour of runner time.
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: ./desktop-app
@@ -46,6 +50,7 @@ jobs:
         run: npm test
 
       - name: E2E Tests
+        timeout-minutes: 15
         run: yarn test:e2e
         env:
           CI: true

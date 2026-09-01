@@ -42,7 +42,10 @@ export const PreviewSuiteSelector = () => {
   };
 
   return (
-    <div className="flex flex-shrink-0 items-center gap-[6px]" data-testid="suite-selector">
+    <div
+      className="flex min-w-0 max-w-[320px] items-center gap-[6px] overflow-x-auto"
+      data-testid="suite-selector"
+    >
       {suites.map((suite) => {
         const isActive = suite.id === activeSuite.id;
         return (
