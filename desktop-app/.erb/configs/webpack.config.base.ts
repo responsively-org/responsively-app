@@ -2,6 +2,7 @@
  * Base webpack config used across other specific configs
  */
 
+import path from 'path';
 import webpack from 'webpack';
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
 import webpackPaths from './webpack.paths';
@@ -45,7 +46,16 @@ const configuration: webpack.Configuration = {
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
     modules: [webpackPaths.srcPath, 'node_modules'],
-    // There is no need to add aliases here, the paths in tsconfig get mirrored
+    alias: {
+      // Force the MCP SDK to its CJS dist. Webpack's scope hoisting wraps CJS
+      // deps of the ESM dist (ajv) in lazy namespace accessors and emits
+      // `new ajv_namespaceFn()(...)`, which crashes every MCP request at
+      // runtime; CJS modules are never concatenated, so this sidesteps it.
+      '@modelcontextprotocol/sdk': path.join(
+        webpackPaths.rootPath,
+        'node_modules/@modelcontextprotocol/sdk/dist/cjs'
+      ),
+    },
     plugins: [new TsconfigPathsPlugins()],
   },
 
