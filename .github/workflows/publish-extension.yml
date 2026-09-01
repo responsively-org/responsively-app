@@ -1,0 +1,62 @@
+name: Publish Browser Extension
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Store(s) to publish to"
+        type: choice
+        options:
+          - both
+          - chrome
+          - firefox
+        default: both
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./browser-extension
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Package
+        run: npm run package
+
+      - name: Publish to Chrome Web Store
+        if: ${{ inputs.target == 'both' || inputs.target == 'chrome' }}
+        run: npx chrome-webstore-upload-cli@3 upload --source "$(ls web-ext-artifacts/*.zip)" --auto-publish
+        env:
+          EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+
+      # AMO asks for the original source when the submitted code is bundled/transpiled
+      - name: Create source archive for AMO review
+        if: ${{ inputs.target == 'both' || inputs.target == 'firefox' }}
+        run: git archive --format=zip --output=amo-source.zip HEAD:browser-extension
+
+      - name: Publish to Firefox Add-ons (AMO)
+        if: ${{ inputs.target == 'both' || inputs.target == 'firefox' }}
+        run: npx web-ext sign --source-dir=dist --channel=listed --upload-source-code=amo-source.zip
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
