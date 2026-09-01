@@ -121,6 +121,10 @@ test.describe('Inspect Elements', () => {
 
   test('dock toggle switches between right and bottom', async ({app}) => {
     await app.dismissModals();
+    // Worker-shared app: a previous spec file may have left the canvas
+    // layout, where the dock container classes never render — pin the grid
+    // layout before asserting on them.
+    await app.page.locator('[data-testid="layout-FLEX"]').click();
 
     const openDevtoolsBtn = app.page.locator('button[title="Open devtools"]').first();
     await app.revealDevicePill();

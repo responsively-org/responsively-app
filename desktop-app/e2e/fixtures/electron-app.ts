@@ -58,6 +58,14 @@ export const test = base.extend<{}, ElectronFixtures>({
         env,
       });
 
+      // Deterministic geometry: runner displays vary, and responsive layout
+      // (like the toolbar row) must not decide test outcomes. Wait for the
+      // window, then pin its size.
+      await electronApp.firstWindow();
+      await electronApp.evaluate(({BrowserWindow}) => {
+        BrowserWindow.getAllWindows()[0]?.setBounds({x: 0, y: 0, width: 1500, height: 900});
+      });
+
       await use(electronApp);
 
       const timeout = (ms: number) =>

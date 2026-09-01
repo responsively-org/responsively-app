@@ -256,21 +256,26 @@ test.describe('Device Interaction Mirroring', () => {
       await scrollToTopBtn.click();
       await app.page.waitForTimeout(1500);
 
-      // Verify scrollY is 0
-      const scrollY: number = await app.electronApp.evaluate(async ({webContents}) => {
-        const webviews = webContents
-          .getAllWebContents()
-          .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview');
+      // The reset is delivered asynchronously (and the worker-shared app may
+      // be busy) — poll instead of sampling once after a fixed sleep.
+      await expect
+        .poll(
+          () =>
+            app.electronApp.evaluate(async ({webContents}) => {
+              const webviews = webContents
+                .getAllWebContents()
+                .filter((wc: Electron.WebContents) => (wc as any).getType() === 'webview');
 
-        if (webviews.length === 0) return -1;
-        try {
-          return await webviews[0].executeJavaScript('window.scrollY');
-        } catch {
-          return -1;
-        }
-      });
-
-      expect(scrollY).toBe(0);
+              if (webviews.length === 0) return -1;
+              try {
+                return await webviews[0].executeJavaScript('window.scrollY');
+              } catch {
+                return -1;
+              }
+            }),
+          {timeout: 10_000}
+        )
+        .toBe(0);
     });
 
     test('per-device refresh button exists for each device', async ({app}) => {
