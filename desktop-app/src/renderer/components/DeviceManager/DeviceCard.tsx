@@ -45,7 +45,7 @@ const DeviceCard = ({device, isMember, isLastMember, onToggle, onEdit}: Props) =
           <span className="pointer-events-none contents">
             <span
               className={cx(
-                'flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-[5px] border-[1.5px]',
+                'flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px] border-[1.5px]',
                 isMember ? 'border-accent bg-accent' : 'border-line'
               )}
             >
@@ -58,7 +58,7 @@ const DeviceCard = ({device, isMember, isLastMember, onToggle, onEdit}: Props) =
             <Icon
               icon={TYPE_ICONS[device.type] ?? 'lucide:monitor'}
               fontSize={15}
-              className="flex-shrink-0 text-muted"
+              className="shrink-0 text-muted"
             />
             <span className="truncate text-[13px] font-bold">{device.name}</span>
           </span>
@@ -68,7 +68,7 @@ const DeviceCard = ({device, isMember, isLastMember, onToggle, onEdit}: Props) =
             type="button"
             title="Edit device"
             onClick={onEdit}
-            className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md text-[13px] text-muted transition-colors hover:bg-hover hover:text-fg focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[13px] text-muted transition-colors hover:bg-hover hover:text-fg focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
           >
             <span className="pointer-events-none contents">
               <Icon icon="lucide:pencil" />

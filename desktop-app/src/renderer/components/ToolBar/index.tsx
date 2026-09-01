@@ -99,9 +99,9 @@ const ToolBar = () => {
   useKeyboardShortcut(SHORTCUT_CHANNEL.INSPECT_ELEMENTS, handleInspectShortcut);
 
   return (
-    <div className="flex h-14 flex-shrink-0 items-center gap-3 border-b border-line-soft bg-panel px-[14px]">
+    <div className="flex h-14 shrink-0 items-center gap-3 border-b border-line-soft bg-panel px-[14px]">
       <NavigationControls />
-      <div className="min-w-0 max-w-[540px] flex-1">
+      <div className="max-w-[540px] min-w-0 flex-1">
         <AddressBar />
       </div>
       <div className="flex-1" />

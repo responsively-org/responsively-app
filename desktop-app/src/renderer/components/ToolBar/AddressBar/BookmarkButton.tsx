@@ -63,7 +63,7 @@ const BookmarkButton = ({currentAddress, pageTitle}: Props) => {
         </Button>
       </div>
 
-      <div className="absolute right-[0px] top-[40px]">
+      <div className="absolute top-[40px] right-0">
         {openFlyout && (
           <BookmarkFlyout bookmark={bookmarkFound || initbookmark} setOpenFlyout={setOpenFlyout} />
         )}

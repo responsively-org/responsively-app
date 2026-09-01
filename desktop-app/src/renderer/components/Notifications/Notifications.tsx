@@ -50,7 +50,7 @@ const Row = ({
   linkText?: string;
 }) => (
   <div className="flex gap-2 border-t border-line-soft py-[6px]">
-    <Icon icon={icon} fontSize={14} className="mt-[1px] flex-shrink-0 text-accent" />
+    <Icon icon={icon} fontSize={14} className="mt-px shrink-0 text-accent" />
     <div className="min-w-0">
       <div className="text-[12px] font-bold">{title}</div>
       <div className="text-[11.5px] leading-[1.45] text-muted">{body}</div>
@@ -67,7 +67,7 @@ const Row = ({
       ) : null}
     </div>
     {when !== undefined ? (
-      <span className="ml-auto flex-shrink-0 font-mono text-[10px] text-muted">{when}</span>
+      <span className="ml-auto shrink-0 font-mono text-[10px] text-muted">{when}</span>
     ) : null}
   </div>
 );
@@ -93,7 +93,7 @@ const Notifications = () => {
         <Row key={item.title} {...item} />
       ))}
       <div className="mt-[2px] flex items-center gap-2 rounded-lg bg-heart-soft px-[10px] py-2">
-        <Icon icon="lucide:heart" fontSize={13} className="flex-shrink-0 text-heart" />
+        <Icon icon="lucide:heart" fontSize={13} className="shrink-0 text-heart" />
         <span className="text-[11.5px] text-fg">Enjoying Responsively?</span>
         <span className="flex-1" />
         <button
