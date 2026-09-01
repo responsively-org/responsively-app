@@ -6,24 +6,33 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # npm trusted publishing: the workflow authenticates to npmjs.com via
+      # OIDC — no NPM_TOKEN secret. Requires the trusted publisher to be
+      # configured in the package's settings on npmjs.com (org
+      # responsively-org, repo responsively-app, workflow publish-mcp-cli.yml).
+      id-token: write
     defaults:
       run:
         working-directory: ./responsively-mcp
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+
+      # OIDC/trusted publishing needs npm >= 11.5.1; Node's bundled npm can lag.
+      - name: Update npm
+        run: npm install -g npm@latest && npm --version
 
       - name: Test
         run: npm test
 
       - name: Publish to npm
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
