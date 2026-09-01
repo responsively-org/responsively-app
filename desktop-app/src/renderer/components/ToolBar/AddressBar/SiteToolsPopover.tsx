@@ -52,7 +52,7 @@ const SiteToolsPopover = ({address, actions, onShowPermissions}: Props) => {
     >
       {({close}) => (
         <>
-          <div className="px-[10px] pb-1 pt-2 text-[11px] font-bold tracking-[0.08em] text-muted">
+          <div className="px-[10px] pt-2 pb-1 text-[11px] font-bold tracking-[0.08em] text-muted">
             SITE DATA — {hostLabel(address)}
           </div>
           {actions.map((action) => (

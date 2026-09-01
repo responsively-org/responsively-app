@@ -51,7 +51,7 @@ const Modal = ({isOpen, onClose, title, description, children}: Props) => {
                 }`}
               >
                 <div>
-                  <DialogTitle className="text-xl font-medium leading-6">{title}</DialogTitle>
+                  <DialogTitle className="text-xl leading-6 font-medium">{title}</DialogTitle>
                   <Description>{description}</Description>
                 </div>
 

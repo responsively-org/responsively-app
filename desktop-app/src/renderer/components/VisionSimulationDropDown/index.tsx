@@ -84,7 +84,7 @@ export const VisionSimulationDropDown = ({
         <>
           {GROUPS.map((group) => (
             <div key={group.header}>
-              <div className="px-[10px] pb-[3px] pt-[10px] text-[10.5px] font-bold uppercase tracking-[0.07em] text-muted">
+              <div className="px-[10px] pt-[10px] pb-[3px] text-[10.5px] font-bold tracking-[0.07em] text-muted uppercase">
                 {group.header}
               </div>
               {group.items.map((item) => {
@@ -102,7 +102,7 @@ export const VisionSimulationDropDown = ({
                       close();
                     }}
                     className={cx(
-                      'flex w-full items-center gap-2 rounded-[7px] px-[10px] py-[6px] text-left text-[13px] capitalize text-fg hover:bg-hover focus:outline-none focus-visible:bg-hover',
+                      'flex w-full items-center gap-2 rounded-[7px] px-[10px] py-[6px] text-left text-[13px] text-fg capitalize hover:bg-hover focus:outline-none focus-visible:bg-hover',
                       {'font-semibold': isActive}
                     )}
                   >

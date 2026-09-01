@@ -18,7 +18,7 @@ const Toggle = ({isOn, onChange, 'aria-label': ariaLabel}: Props) => {
         onChange={onChange}
         aria-label={ariaLabel}
       />
-      <div className="peer h-5 w-9 rounded-full bg-active after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-accent peer-checked:after:translate-x-full peer-focus-visible:ring-2 peer-focus-visible:ring-accent" />
+      <div className="peer h-5 w-9 rounded-full bg-active peer-checked:bg-accent peer-focus-visible:ring-2 peer-focus-visible:ring-accent after:absolute after:top-[2px] after:left-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full" />
     </label>
   );
 };
