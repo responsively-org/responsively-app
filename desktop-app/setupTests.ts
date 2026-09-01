@@ -26,18 +26,25 @@ if (typeof window !== 'undefined') {
   };
 }
 
-global.IntersectionObserver = vi.fn(() => ({
-  root: null,
-  rootMargin: '',
-  thresholds: [],
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-  takeRecords: vi.fn(),
-}));
+// vitest 4 invokes mock implementations with `new` when the caller constructs
+// them, so these must be constructible (arrow functions are not).
+global.IntersectionObserver = vi.fn(function IntersectionObserverMock() {
+  return {
+    root: null,
+    rootMargin: '',
+    scrollMargin: '',
+    thresholds: [],
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+    takeRecords: vi.fn(),
+  };
+}) as unknown as typeof IntersectionObserver;
 
-global.ResizeObserver = vi.fn(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+global.ResizeObserver = vi.fn(function ResizeObserverMock() {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  };
+}) as unknown as typeof ResizeObserver;

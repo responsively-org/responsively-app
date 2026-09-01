@@ -35,6 +35,7 @@ import {listAgentTools, setToolEntry, AgentEnv} from './mcp/agent-config';
 import {openUrl} from './protocol-handler';
 import {AppUpdater} from './app-updater';
 import {getSavedWindowState, trackWindowState} from './window-state';
+import electronDebug from 'electron-debug';
 import log, {initCrashHandlers, initLogging} from './logging';
 import {injectHostIntoCsp} from './csp';
 import {isOpenableUrl} from './url-validation';
@@ -179,7 +180,7 @@ if (process.env.E2E_TEST === 'true') {
 const isDebug = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
-  require('electron-debug')();
+  electronDebug();
 
   // Electron warns about Chrome extension permissions it doesn't implement
   // (e.g. Redux DevTools' 'contextMenus'). Node prints warnings through a

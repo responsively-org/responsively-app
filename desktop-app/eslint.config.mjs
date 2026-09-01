@@ -55,8 +55,6 @@ export default tseslint.config(
       'import/resolver': {
         typescript: {
           project: ['./tsconfig.json', './e2e/tsconfig.json'],
-          // Two projects are intentional (app + e2e) — silence the
-          // resolver's multi-project performance advisory.
           noWarnOnMultipleProjects: true,
         },
         node: {},
