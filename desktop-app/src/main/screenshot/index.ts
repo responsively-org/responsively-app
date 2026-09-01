@@ -23,6 +23,15 @@ export interface ScreenshotAllArgs {
 export interface ScreenshotResult {
   done: boolean;
 }
+
+const CAPTURE_ATTEMPTS = 3;
+const CAPTURE_RETRY_DELAY_MS = 250;
+
+const delay = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
 export const captureImage = async (
   webContentsId: number
 ): Promise<Electron.NativeImage | undefined> => {
@@ -48,8 +57,30 @@ export const captureImage = async (
     `);
   }
 
-  const Image = await WebContents?.capturePage();
-  return Image;
+  // capturePage throws (e.g. UnknownVizError) or hands back an empty frame
+  // while the guest's compositor surface is still settling — typically right
+  // after a navigation or a freshly attached preview. That state is
+  // transient, so retry briefly before reporting the capture as failed.
+  let lastError: unknown;
+  let image: Electron.NativeImage | undefined;
+  for (let attempt = 0; attempt < CAPTURE_ATTEMPTS; attempt += 1) {
+    if (attempt > 0) {
+      await delay(CAPTURE_RETRY_DELAY_MS);
+    }
+    try {
+      image = await WebContents?.capturePage();
+      lastError = undefined;
+      if (image !== undefined && !image.isEmpty()) {
+        return image;
+      }
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  if (lastError !== undefined) {
+    throw lastError;
+  }
+  return image;
 };
 
 const quickScreenshot = async (arg: ScreenshotArgs): Promise<ScreenshotResult> => {

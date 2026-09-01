@@ -22,6 +22,12 @@ pre-commit:
       stage_fixed: true
     root-docs-format:
       glob: "*.{md,yml}"
-      exclude: "(desktop-app|responsively-mcp|browser-extension)/.*"
+      # exclude takes a list of globs (not a regex): package dirs format
+      # themselves above, and their prettier plugins only resolve from
+      # their own directories.
+      exclude:
+        - "desktop-app/**"
+        - "responsively-mcp/**"
+        - "browser-extension/**"
       run: desktop-app/node_modules/.bin/prettier --write {staged_files}
       stage_fixed: true

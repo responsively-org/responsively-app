@@ -2,40 +2,68 @@ name: Publish
 
 on:
   workflow_dispatch:
+    inputs:
+      channel:
+        description: "beta bumps the prerelease (x.y.z-beta.N, published as a GitHub prerelease); stable strips the prerelease suffix and publishes the exact version"
+        type: choice
+        options:
+          - beta
+          - stable
+        default: beta
 
 jobs:
   publish:
     runs-on: ${{ matrix.os }}
+    permissions:
+      # push the version-bump commit + tag, and upload release assets
+      contents: write
     defaults:
       run:
         working-directory: ./desktop-app
 
     strategy:
       matrix:
-        os: [macos-13]
+        # macos-15 is Apple Silicon: mac arm64 builds natively, mac x64 and
+        # win/linux cross-build; macos-13 (Intel) is deprecated on GitHub.
+        os: [macos-15]
 
     steps:
       - name: Checkout git repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Node and NPM
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 24
-          cache: ${{ !env.ACT && 'npm' || '' }} # Disable cache for nektos/act
+          cache: ${{ !env.ACT && 'yarn' || '' }} # Disable cache for nektos/act
           cache-dependency-path: ./desktop-app/yarn.lock
+
+      # Bump BEFORE building: the build embeds the version (e.g. the MCP
+      # manifest reads release/app/package.json), so bumping afterwards would
+      # ship artifacts stamped with the previous version.
+      - name: Bump version
+        run: |
+          cd release/app
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          CURRENT=$(node -p "require('./package.json').version")
+          if [ "${{ github.event.inputs.channel }}" = "stable" ]; then
+            STABLE="${CURRENT%%-*}"
+            if [ "$STABLE" = "$CURRENT" ]; then
+              echo "Version $CURRENT is already stable; publishing it as-is"
+            else
+              yarn version --new-version "$STABLE"
+            fi
+          else
+            yarn version --preid beta --prerelease
+          fi
+          git push --follow-tags
 
       - name: Install and build
         run: |
           yarn install
           yarn run postinstall
           yarn run build
-
-      - name: Bump version
-        run: |
-          cd release/app
-          yarn version --preid beta --prerelease
-          git push
 
       - name: Publish releases
         env:
@@ -46,5 +74,10 @@ jobs:
           CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
           # This is used for uploading release assets to github
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Betas publish immediately as GitHub prereleases, which v1.x
+          # auto-updaters ignore (electron-updater only allows prereleases
+          # when the running version has one). Stable keeps the default
+          # draft so a human reviews before it reaches every updater.
+          EP_PRE_RELEASE: ${{ github.event.inputs.channel != 'stable' && 'true' || '' }}
         run: |
           yarn exec electron-builder -- --publish always --win --mac --linux --arm64 --x64
