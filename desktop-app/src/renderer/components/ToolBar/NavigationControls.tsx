@@ -60,7 +60,7 @@ const ITEMS: NavigationItemProps[] = [
 
 const NavigationControls = () => {
   return (
-    <div className="flex flex-shrink-0 gap-[2px]">
+    <div className="flex shrink-0 gap-[2px]">
       {ITEMS.map((item) => (
         <NavigationButton {...item} key={item.label} />
       ))}

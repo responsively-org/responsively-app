@@ -89,11 +89,11 @@ const AnnouncementCard = () => {
   return (
     <div
       data-testid="announcement-card"
-      className="fixed bottom-[52px] right-[14px] z-40 w-[308px] rounded-xl border border-line bg-panel p-[14px] text-fg shadow-elevated"
+      className="fixed right-[14px] bottom-[52px] z-40 w-[308px] rounded-xl border border-line bg-panel p-[14px] text-fg shadow-elevated"
     >
       <div className="flex items-center gap-[9px]">
         <span
-          className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg ${
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
             isWhatsNew ? 'bg-accent-soft text-accent' : 'bg-heart-soft text-heart'
           }`}
         >
@@ -116,14 +116,10 @@ const AnnouncementCard = () => {
       </div>
       {isWhatsNew ? (
         <>
-          <div className="mb-3 mt-[10px] flex flex-col gap-[5px]">
+          <div className="mt-[10px] mb-3 flex flex-col gap-[5px]">
             {WHATS_NEW_ROWS.map((row) => (
               <div key={row.label} className="flex gap-[7px] text-[12px] text-fg">
-                <Icon
-                  icon={row.icon}
-                  fontSize={13}
-                  className="mt-[1px] flex-shrink-0 text-accent"
-                />
+                <Icon icon={row.icon} fontSize={13} className="mt-px shrink-0 text-accent" />
                 {row.label}
               </div>
             ))}
@@ -147,7 +143,7 @@ const AnnouncementCard = () => {
         </>
       ) : (
         <>
-          <div className="mb-1 mt-[10px] text-[12px] leading-[1.55] text-fg">
+          <div className="mt-[10px] mb-1 text-[12px] leading-[1.55] text-fg">
             Responsively is free, open source, and built by volunteers. If it saves you time,
             consider chipping in to keep it going.
           </div>

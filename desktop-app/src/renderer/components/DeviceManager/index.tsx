@@ -128,7 +128,7 @@ const DeviceManagerSheet = () => {
       data-testid="device-manager-sheet"
     >
       <div className="flex h-[840px] max-h-[92%] w-[1180px] max-w-[95%] flex-col overflow-hidden rounded-[14px] border border-line bg-bg shadow-elevated">
-        <div className="flex flex-shrink-0 items-center gap-3 border-b border-line-soft px-[18px] py-[14px]">
+        <div className="flex shrink-0 items-center gap-3 border-b border-line-soft px-[18px] py-[14px]">
           <Icon icon="heroicons:swatch" fontSize={20} className="text-accent" />
           <div>
             <div className="text-base font-bold">Device Manager</div>

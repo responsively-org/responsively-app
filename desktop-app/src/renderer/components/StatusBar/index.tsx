@@ -87,7 +87,7 @@ const StatusBar = () => {
   return (
     <div
       data-testid="status-bar"
-      className="flex h-[38px] flex-shrink-0 items-center gap-[14px] border-t border-line-soft bg-panel px-3"
+      className="flex h-[38px] shrink-0 items-center gap-[14px] border-t border-line-soft bg-panel px-3"
     >
       <div className="flex items-center gap-[2px] rounded-lg border border-line p-[2px]">
         {LAYOUTS.map(({layout: value, label, icon}) => (
@@ -186,7 +186,7 @@ const StatusBar = () => {
             {hasUnread ? (
               <span
                 data-testid="bell-unread-dot"
-                className="absolute right-[-2px] top-[-2px] h-[7px] w-[7px] rounded-full border-[1.5px] border-panel bg-accent"
+                className="absolute top-[-2px] right-[-2px] h-[7px] w-[7px] rounded-full border-[1.5px] border-panel bg-accent"
               />
             ) : null}
           </span>

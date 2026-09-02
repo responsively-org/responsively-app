@@ -1,18 +1,76 @@
+@import '@fontsource/lato/300.css' layer(base);
+@import '@fontsource/lato/400.css' layer(base);
+@import '@fontsource/lato/400-italic.css' layer(base);
+@import '@fontsource/lato/700.css' layer(base);
+@import '@fontsource/jetbrains-mono/400.css' layer(base);
+@import '@fontsource/jetbrains-mono/700.css' layer(base);
+
 /*
- * @NOTE: Prepend a `~` to css file paths that are in your node_modules
- *        See https://github.com/webpack-contrib/sass-loader#imports
+ * Only the renderer sources feed utility generation (the v3 `content` scope).
+ * Automatic detection would also sweep e2e specs and build scripts whose
+ * selector strings look like class names.
  */
+@import 'tailwindcss' source(none);
+@source './';
 
-@import '~@fontsource/lato/300.css';
-@import '~@fontsource/lato/400.css';
-@import '~@fontsource/lato/400-italic.css';
-@import '~@fontsource/lato/700.css';
-@import '~@fontsource/jetbrains-mono/400.css';
-@import '~@fontsource/jetbrains-mono/700.css';
+@plugin '@tailwindcss/typography';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-dark-normal: #d1d5db;
+
+  --color-light-normal: #374151;
+
+  --color-bg: var(--bg);
+  --color-dot: var(--dot);
+  --color-panel: var(--panel);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-input: var(--input);
+  --color-hover: var(--hover);
+  --color-active: var(--active);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-overlay: #ec4899;
+  --color-overlay-soft: rgba(236, 72, 153, 0.12);
+  --color-heart: var(--heart);
+  --color-heart-soft: var(--heart-soft);
+  --color-on-heart: var(--on-heart);
+  --color-titlebar: var(--titlebar);
+  --color-titlebar-fg: var(--titlebar-fg);
+
+  --shadow-elevated: var(--shadow);
+
+  --font-sans:
+    Lato, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-mono:
+    JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 /*
  * Hybrid Studio design tokens (spec of record: "Redesign 2a - Hybrid Studio").

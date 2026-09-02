@@ -212,7 +212,7 @@ const SitePermissionsDropdown = ({
     return (
       <div
         ref={dropdownRef}
-        className="w-80 rounded-md bg-white p-4 shadow-lg ring-1 ring-slate-500 !ring-opacity-40 dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40"
+        className="w-80 rounded-md bg-white p-4 shadow-lg ring-1 ring-slate-500/40 dark:bg-slate-900 dark:ring-white/40"
       >
         <div className="flex items-center gap-2 text-gray-500">
           <Icon icon="mdi:shield-lock" />
@@ -225,7 +225,7 @@ const SitePermissionsDropdown = ({
   return (
     <div
       ref={dropdownRef}
-      className="w-80 rounded-md bg-white shadow-lg ring-1 ring-slate-500 !ring-opacity-40 dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40"
+      className="w-80 rounded-md bg-white shadow-lg ring-1 ring-slate-500/40 dark:bg-slate-900 dark:ring-white/40"
     >
       {/* Header */}
       <div className="border-b border-gray-200 px-4 py-3 dark:border-slate-700">
@@ -249,7 +249,7 @@ const SitePermissionsDropdown = ({
 
       {/* Refresh Notification */}
       {showRefreshNotification && (
-        <div className="mx-4 mb-2 mt-3 rounded border border-blue-200 bg-blue-50 px-3 py-2 dark:border-blue-700 dark:bg-blue-900">
+        <div className="mx-4 mt-3 mb-2 rounded border border-blue-200 bg-blue-50 px-3 py-2 dark:border-blue-700 dark:bg-blue-900">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300">
               <Icon

@@ -24,7 +24,7 @@ test.describe('Error Handling', () => {
 
     if (isVisible) {
       // The error overlay shows "ERROR: {code}" and a description
-      const errorOverlay = app.page.locator('.bg-slate-600.bg-opacity-95').first();
+      const errorOverlay = app.page.locator('.bg-slate-600\\/95').first();
       await expect(errorOverlay).toBeVisible();
 
       // Should contain error code

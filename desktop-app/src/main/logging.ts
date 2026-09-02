@@ -11,7 +11,7 @@ export const initLogging = () => {
   log.transports.console.level =
     process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true' ? 'debug' : 'warn';
   // uncaughtException + unhandledRejection
-  log.catchErrors({showDialog: false});
+  log.errorHandler.startCatching({showDialog: false});
 };
 
 export const initCrashHandlers = () => {

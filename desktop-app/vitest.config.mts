@@ -1,5 +1,8 @@
 import path from 'path';
+import {fileURLToPath} from 'url';
 import {defineConfig} from 'vitest/config';
+
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   test: {
@@ -11,10 +14,10 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      renderer: path.resolve(__dirname, 'src/renderer'),
-      common: path.resolve(__dirname, 'src/common'),
-      main: path.resolve(__dirname, 'src/main'),
-      store: path.resolve(__dirname, 'src/store'),
+      renderer: path.resolve(dirname, 'src/renderer'),
+      common: path.resolve(dirname, 'src/common'),
+      main: path.resolve(dirname, 'src/main'),
+      store: path.resolve(dirname, 'src/store'),
     },
   },
 });
