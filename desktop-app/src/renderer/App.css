@@ -5,7 +5,13 @@
 @import '@fontsource/jetbrains-mono/400.css' layer(base);
 @import '@fontsource/jetbrains-mono/700.css' layer(base);
 
-@import 'tailwindcss';
+/*
+ * Only the renderer sources feed utility generation (the v3 `content` scope).
+ * Automatic detection would also sweep e2e specs and build scripts whose
+ * selector strings look like class names.
+ */
+@import 'tailwindcss' source(none);
+@source './';
 
 @plugin '@tailwindcss/typography';
 

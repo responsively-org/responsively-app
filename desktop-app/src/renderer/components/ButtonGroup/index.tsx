@@ -12,7 +12,7 @@ interface Props {
 
 export const ButtonGroup = ({buttons}: Props) => {
   return (
-    <span className="isolate inline-flex rounded-md shadow-sm">
+    <span className="isolate inline-flex rounded-md shadow-xs">
       {buttons.map(({content, srContent, onClick, isActive}, index) => (
         <button
           key={srContent}

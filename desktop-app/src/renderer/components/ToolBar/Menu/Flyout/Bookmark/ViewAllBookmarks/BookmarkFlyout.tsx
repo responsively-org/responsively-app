@@ -43,7 +43,7 @@ const BookmarkFlyout = ({bookmark, setOpenFlyout}: Props) => {
       <div className="z-50 flex w-80 flex-col gap-4 rounded bg-white px-6 py-4 text-sm shadow-lg ring-1 ring-slate-500/40 focus:outline-none dark:bg-slate-900 dark:ring-white/40">
         <Input
           type="text"
-          className="rounded-sm bg-slate-200 p-1 px-1 dark:bg-slate-700"
+          className="rounded-xs bg-slate-200 p-1 px-1 dark:bg-slate-700"
           id="name"
           name="name"
           label="Bookmark Name"
@@ -52,7 +52,7 @@ const BookmarkFlyout = ({bookmark, setOpenFlyout}: Props) => {
         />
         <Input
           type="text"
-          className="rounded-sm bg-slate-200 p-1 px-1 dark:bg-slate-700"
+          className="rounded-xs bg-slate-200 p-1 px-1 dark:bg-slate-700"
           id="address"
           name="address"
           label="Address"
