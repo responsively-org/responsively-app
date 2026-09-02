@@ -33,19 +33,19 @@ After having above installed, proceed through the following steps to setup the c
 ```bash
 git checkout -b BRANCH_NAME
 ```
-- Go to the desktop-app directory.
+
+- Install project dependencies from the root directory.
+```bash
+yarn
+```
+
+- Navigate to the desktop-app directory.
 
 ```bash
 cd desktop-app
 ```
 
-- Run the following command to install dependencies inside the desktop-app directory.
-
-```bash
-yarn
-```
-
-- This will start the app for local development with live reloading.
+- Start the development server with live reloading.
 
 ```bash
 yarn dev
