@@ -32,7 +32,7 @@ const IndividualLayoutToolbar = ({individualDevice, setIndividualDevice, devices
   }, [individualDevice, devices]);
 
   return (
-    <div className="my-4 ml-12 mr-4 flex justify-between">
+    <div className="my-4 mr-4 ml-12 flex justify-between">
       <Tabs
         onSelect={onTabClick}
         selectedIndex={activeTab}
@@ -46,7 +46,7 @@ const IndividualLayoutToolbar = ({individualDevice, setIndividualDevice, devices
           {devices.map((device, idx) => (
             <Tab
               className={cx(
-                'border-1 bottom-auto flex flex-shrink-0 cursor-pointer items-center rounded-t-md border-gray-300 px-4',
+                'bottom-auto flex shrink-0 cursor-pointer items-center rounded-t-md border border-gray-300 px-4',
                 {
                   'bg-slate-400/60': isActive(idx),
                   'dark:bg-slate-100/90': isActive(idx),

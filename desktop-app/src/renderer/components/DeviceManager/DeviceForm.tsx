@@ -120,7 +120,7 @@ const DeviceForm = ({
   return (
     <div
       data-testid="device-form"
-      className="box-border flex w-[312px] flex-shrink-0 flex-col gap-3 overflow-y-auto border-l border-line-soft bg-panel p-4"
+      className="box-border flex w-[312px] shrink-0 flex-col gap-3 overflow-y-auto border-l border-line-soft bg-panel p-4"
     >
       <div className="flex items-center">
         <span className="text-sm font-bold">

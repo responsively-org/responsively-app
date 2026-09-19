@@ -42,7 +42,7 @@ export const PreviewSuiteSelector = () => {
   };
 
   return (
-    <div className="flex flex-shrink-0 items-center gap-[6px]" data-testid="suite-selector">
+    <div className="flex shrink-0 items-center gap-[6px]" data-testid="suite-selector">
       {suites.map((suite) => {
         const isActive = suite.id === activeSuite.id;
         return (
@@ -82,7 +82,7 @@ export const PreviewSuiteSelector = () => {
       >
         {({close}) => (
           <>
-            <div className="px-[10px] pb-1 pt-2 text-[10.5px] font-bold tracking-[0.08em] text-muted">
+            <div className="px-[10px] pt-2 pb-1 text-[10.5px] font-bold tracking-[0.08em] text-muted">
               DEVICES IN “{activeSuite.name.toUpperCase()}”
             </div>
             <div className="max-h-[300px] overflow-y-auto">
@@ -99,7 +99,7 @@ export const PreviewSuiteSelector = () => {
                     <span className="pointer-events-none contents">
                       <span
                         className={cx(
-                          'flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-[5px] border-[1.5px]',
+                          'flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px] border-[1.5px]',
                           isMember ? 'border-accent bg-accent' : 'border-line'
                         )}
                       >
@@ -110,7 +110,7 @@ export const PreviewSuiteSelector = () => {
                         />
                       </span>
                       <span className="truncate">{device.name}</span>
-                      <span className="ml-auto flex-shrink-0 font-mono text-[11px] text-muted">
+                      <span className="ml-auto shrink-0 font-mono text-[11px] text-muted">
                         {device.width}×{device.height}
                       </span>
                     </span>

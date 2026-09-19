@@ -192,9 +192,9 @@ const AddressBar = () => {
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragExit}
         onDrop={handleDrop}
-        className="relative z-10 w-full flex-grow"
+        className="relative z-10 w-full grow"
       >
-        <div className="absolute left-2 top-full z-50">
+        <div className="absolute top-full left-2 z-50">
           <SitePermissionsDropdown
             currentAddress={address}
             isVisible={showSitePermissions}
@@ -203,7 +203,7 @@ const AddressBar = () => {
         </div>
 
         {permissionRequest != null ? (
-          <div className="absolute left-2 top-12 z-40 flex w-96 flex-col gap-8 rounded bg-white p-6 shadow-lg ring-1 ring-slate-500 !ring-opacity-40 focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
+          <div className="absolute top-12 left-2 z-40 flex w-96 flex-col gap-8 rounded bg-white p-6 shadow-lg ring-1 ring-slate-500/40 focus:outline-none dark:bg-slate-900 dark:ring-white/40">
             <span>
               {permissionRequest.requestingOrigin} requests permission for: <br />
               <span className="flex justify-center font-bold capitalize">
@@ -234,8 +234,8 @@ const AddressBar = () => {
         ) : null}
         <div
           className={cx(
-            'flex h-[34px] items-center gap-[6px] rounded-full border border-line-soft bg-input pl-1 pr-[6px]',
-            {'rounded-bl-none rounded-br-none': isSuggesting}
+            'flex h-[34px] items-center gap-[6px] rounded-full border border-line-soft bg-input pr-[6px] pl-1',
+            {'rounded-br-none rounded-bl-none': isSuggesting}
           )}
         >
           <SiteToolsPopover
@@ -291,7 +291,7 @@ const AddressBar = () => {
             }}
           />
           <IconButton
-            className="!h-[26px] !w-[26px] rounded-full text-[15px]"
+            className="h-[26px]! w-[26px]! rounded-full text-[15px]"
             onClick={() => setHomepage(address)}
             isActive={isHomepage}
             title="Homepage"
@@ -306,7 +306,7 @@ const AddressBar = () => {
         <div
           className={`${
             isDragOver ? 'opacity-100' : 'opacity-0'
-          } pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full border-spacing-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-emerald-500 bg-emerald-200 duration-100 dark:bg-emerald-300 dark:text-slate-900`}
+          } pointer-events-none absolute top-0 left-0 z-10 flex h-full w-full border-spacing-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-emerald-500 bg-emerald-200 duration-100 dark:bg-emerald-300 dark:text-slate-900`}
         >
           <Icon icon="mdi:plus" />
           <p className="text-sm font-semibold">Drop URL Here</p>

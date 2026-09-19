@@ -66,7 +66,7 @@ const PillButton = ({
     disabled={disabled}
     onClick={onClick}
     className={cx(
-      'flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[7px] text-[15px] transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent',
+      'flex h-7 w-7 shrink-0 items-center justify-center rounded-[7px] text-[15px] transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent',
       isActive === true ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-hover hover:text-fg',
       {'cursor-not-allowed opacity-40': disabled}
     )}
@@ -94,7 +94,7 @@ const MoreItem = ({title, icon, checked, disabled = false, onClick}: MoreItemPro
     disabled={disabled}
     onClick={onClick}
     className={cx(
-      'flex w-full items-center gap-2 whitespace-nowrap rounded-[7px] px-[9px] py-[7px] text-[12.5px] text-fg hover:bg-hover focus:outline-none',
+      'flex w-full items-center gap-2 rounded-[7px] px-[9px] py-[7px] text-[12.5px] whitespace-nowrap text-fg hover:bg-hover focus:outline-none',
       {'cursor-not-allowed opacity-40': disabled}
     )}
   >
@@ -214,8 +214,8 @@ const Toolbar = ({
         // rendering hidden pills at all).
         'pointer-events-none absolute z-30 flex items-center gap-[2px] rounded-[9px] border border-line bg-panel p-[3px] opacity-0 shadow-elevated transition-opacity duration-150 group-focus-within:pointer-events-auto group-focus-within:opacity-100',
         variant === 'grid'
-          ? 'left-0 top-[-6px] max-w-[calc(100%-12px)] flex-wrap group-hover:pointer-events-auto group-hover:opacity-100'
-          : 'left-1/2 top-full mt-[10px] -translate-x-1/2'
+          ? 'top-[-6px] left-0 max-w-[calc(100%-12px)] flex-wrap group-hover:pointer-events-auto group-hover:opacity-100'
+          : 'top-full left-1/2 mt-[10px] -translate-x-1/2'
       )}
     >
       <PillButton title="Refresh this device" onClick={refreshView}>
@@ -256,7 +256,7 @@ const Toolbar = ({
       <Popover
         triggerTitle="More device tools"
         anchor="bottom start"
-        triggerClassName="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[7px] text-[15px] text-muted transition-colors hover:bg-hover hover:text-fg data-[open]:bg-active focus:outline-none"
+        triggerClassName="flex h-7 w-7 shrink-0 items-center justify-center rounded-[7px] text-[15px] text-muted transition-colors hover:bg-hover hover:text-fg data-open:bg-active focus:outline-none"
         className="w-[216px] p-[5px]"
         trigger={
           <span className="pointer-events-none contents">
@@ -282,7 +282,7 @@ const Toolbar = ({
               onClick={() => dispatch(toggleDesignOverlay({resolution}))}
             />
             {designOverlay?.enabled === true ? (
-              <div className="flex flex-col gap-[7px] pb-2 pl-[31px] pr-[9px] pt-[2px]">
+              <div className="flex flex-col gap-[7px] pt-[2px] pr-[9px] pb-2 pl-[31px]">
                 <div className="flex gap-1" role="group" aria-label="Overlay mode">
                   <button
                     type="button"

@@ -48,7 +48,7 @@ const configuration: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /\.s?(a|c)ss$/,
+        test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
           {
@@ -59,36 +59,24 @@ const configuration: webpack.Configuration = {
               importLoaders: 1,
             },
           },
-          {
-            loader: 'sass-loader',
-            options: {
-              api: 'modern',
-            },
-          },
         ],
-        include: /\.module\.s?(c|a)ss$/,
+        include: /\.module\.css$/,
       },
       {
-        test: /\.s?(a|c)ss$/,
+        test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
           {
-            loader: 'sass-loader',
-            options: {
-              api: 'modern',
-            },
-          },
-          {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [require('tailwindcss'), require('autoprefixer')],
+                plugins: [require('@tailwindcss/postcss')],
               },
             },
           },
         ],
-        exclude: /\.module\.s?(c|a)ss$/,
+        exclude: /\.module\.css$/,
       },
       // Fonts
       {

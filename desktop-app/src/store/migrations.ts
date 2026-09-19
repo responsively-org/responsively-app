@@ -10,6 +10,12 @@ const defaultActiveDevices = ['10008', '10013', '10015'];
 
 export const migrations = {
   '1.2.0': (store: Store) => {
+    // conf runs every migration on a brand-new store (0.0.0 → current); with
+    // no legacy deviceManager there is nothing to migrate and the schema
+    // defaults already provide the current shape.
+    if (store.get('deviceManager') === undefined) {
+      return;
+    }
     try {
       console.log('Migrating for 1.2.0', store.get('deviceManager'));
 
@@ -78,8 +84,13 @@ export const migrations = {
   },
   '1.14.0': (store: Store) => {
     // Migrate dpi to dpr in custom devices
+    const previousCustomDevices: any[] | undefined = store.get('deviceManager.customDevices') as
+      any[] | undefined;
+    // Fresh store: no custom devices recorded yet, nothing to migrate.
+    if (previousCustomDevices === undefined) {
+      return;
+    }
     try {
-      const previousCustomDevices: any[] = store.get('deviceManager.customDevices') as any[];
       const newCustomDevices: Device[] = previousCustomDevices.map((device) => {
         const newDevice = {
           ...device,

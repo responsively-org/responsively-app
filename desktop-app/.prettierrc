@@ -16,7 +16,7 @@
   "singleQuote": true,
   "bracketSpacing": false,
   "printWidth": 100,
-  "tailwindConfig": "./tailwind.config.js",
+  "tailwindStylesheet": "./src/renderer/App.css",
   "trailingComma": "es5",
   "plugins": [
     "prettier-plugin-tailwindcss"

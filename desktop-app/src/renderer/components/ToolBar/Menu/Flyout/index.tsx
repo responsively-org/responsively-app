@@ -45,7 +45,7 @@ const MenuFlyout = ({closeFlyout}: Props) => {
 
   return (
     <>
-      <div className="absolute right-0 top-[30px] z-50 w-[232px] rounded-[10px] border border-line bg-panel p-[6px] text-fg shadow-elevated focus:outline-none">
+      <div className="absolute top-[30px] right-0 z-50 w-[232px] rounded-[10px] border border-line bg-panel p-[6px] text-fg shadow-elevated focus:outline-none">
         <div className="flex items-center justify-between px-[10px] py-2">
           <span className="text-[13.5px]">Dock devtools</span>
           <Toggle

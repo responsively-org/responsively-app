@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "incremental": true,
+    "rootDir": ".",
+    "ignoreDeprecations": "6.0",
     "target": "es2021",
     "module": "esnext",
     "lib": ["dom", "es2021"],

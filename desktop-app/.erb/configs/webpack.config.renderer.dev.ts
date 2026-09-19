@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import chalk from 'chalk';
+import pc from 'picocolors';
 import {merge} from 'webpack-merge';
 import {execSync, spawn} from 'child_process';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
@@ -28,8 +28,12 @@ const skipDLLs =
  */
 if (!skipDLLs && !(fs.existsSync(webpackPaths.dllPath) && fs.existsSync(manifest))) {
   console.log(
-    chalk.black.bgYellow.bold(
-      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
+    pc.black(
+      pc.bgYellow(
+        pc.bold(
+          'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
+        )
+      )
     )
   );
   execSync('npm run postinstall');
@@ -42,11 +46,10 @@ const configuration: webpack.Configuration = {
 
   target: ['web', 'electron-renderer'],
 
-  entry: [
-    `webpack-dev-server/client?http://localhost:${port}/dist`,
-    'webpack/hot/only-dev-server',
-    path.join(webpackPaths.srcRendererPath, 'index.tsx'),
-  ],
+  // webpack-dev-server injects its client and the HMR runtime itself
+  // (hot: 'only' below keeps the old only-dev-server semantics); v6 no longer
+  // exports ./client for manual entry injection.
+  entry: [path.join(webpackPaths.srcRendererPath, 'index.tsx')],
 
   output: {
     path: webpackPaths.distRendererPath,
@@ -60,7 +63,7 @@ const configuration: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /\.s?css$/,
+        test: /\.css$/,
         use: [
           'style-loader',
           {
@@ -71,36 +74,24 @@ const configuration: webpack.Configuration = {
               importLoaders: 1,
             },
           },
-          {
-            loader: 'sass-loader',
-            options: {
-              api: 'modern',
-            },
-          },
         ],
-        include: /\.module\.s?(c|a)ss$/,
+        include: /\.module\.css$/,
       },
       {
-        test: /\.s?css$/,
+        test: /\.css$/,
         use: [
           'style-loader',
           'css-loader',
           {
-            loader: 'sass-loader',
-            options: {
-              api: 'modern',
-            },
-          },
-          {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [require('tailwindcss'), require('autoprefixer')],
+                plugins: [require('@tailwindcss/postcss')],
               },
             },
           },
         ],
-        exclude: /\.module\.s?(c|a)ss$/,
+        exclude: /\.module\.css$/,
       },
       // Fonts
       {
@@ -199,7 +190,7 @@ const configuration: webpack.Configuration = {
   devServer: {
     port,
     compress: true,
-    hot: true,
+    hot: 'only',
     headers: {'Access-Control-Allow-Origin': '*'},
     static: {
       publicPath: '/',

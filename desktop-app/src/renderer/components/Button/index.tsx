@@ -60,7 +60,7 @@ const Button = ({
     <button
       className={cx(
         {[className]: className?.length},
-        `flex items-center justify-center rounded-sm p-1 ${
+        `flex items-center justify-center rounded-xs p-1 ${
           disableHoverEffects === false ? `${hoverBg} ${hoverBgDark}` : ''
         } focus:outline-none`,
         {

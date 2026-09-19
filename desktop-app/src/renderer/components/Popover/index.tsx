@@ -67,7 +67,7 @@ const Popover = ({
             anchor={anchor}
             transition
             className={cx(
-              'z-50 rounded-lg border border-line bg-panel text-fg shadow-elevated transition duration-100 ease-out focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0',
+              'z-50 rounded-lg border border-line bg-panel text-fg shadow-elevated transition duration-100 ease-out focus:outline-none data-closed:scale-95 data-closed:opacity-0',
               className
             )}
           >

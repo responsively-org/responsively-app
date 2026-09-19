@@ -31,7 +31,7 @@ export const IconButton = ({
     type="button"
     aria-pressed={isActive}
     className={cx(
-      'flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg text-[17px] transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent',
+      'flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg text-[17px] transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent',
       isActive === true ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-hover hover:text-fg',
       className
     )}
@@ -80,4 +80,4 @@ export const ToolbarGroup = ({
   </div>
 );
 
-export const ToolbarDivider = () => <div className="h-[26px] w-px flex-shrink-0 bg-line" />;
+export const ToolbarDivider = () => <div className="h-[26px] w-px shrink-0 bg-line" />;

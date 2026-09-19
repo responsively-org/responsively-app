@@ -105,7 +105,7 @@ const McpPanel = () => {
       }
     >
       <div data-testid="mcp-panel">
-        <div className="flex items-center gap-2 px-[10px] pb-[2px] pt-[10px]">
+        <div className="flex items-center gap-2 px-[10px] pt-[10px] pb-[2px]">
           <span className="text-[13px] font-bold">MCP server</span>
           <span
             data-testid="mcp-status"
@@ -143,14 +143,14 @@ const McpPanel = () => {
           </button>
         </div>
 
-        <div className="px-[10px] pb-[10px] pt-1 text-[11.5px] leading-[1.55] text-muted">
+        <div className="px-[10px] pt-1 pb-[10px] text-[11.5px] leading-[1.55] text-muted">
           Let AI agents drive this device lab — open URLs, screenshot devices, inspect responsive
           layouts.
         </div>
 
         <div className="mx-1 mb-[6px] border-t border-line-soft" />
 
-        <div className="px-[10px] pb-1 pt-[2px] text-[10.5px] font-bold tracking-[0.08em] text-muted">
+        <div className="px-[10px] pt-[2px] pb-1 text-[10.5px] font-bold tracking-[0.08em] text-muted">
           ADD TO YOUR TOOLS
         </div>
         <div className={cx({'pointer-events-none opacity-40': !(status?.enabled ?? false)})}>
@@ -168,7 +168,7 @@ const McpPanel = () => {
                 className="flex items-center gap-[9px] rounded-lg px-[10px] py-[5px] hover:bg-hover"
               >
                 <span
-                  className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md text-white"
+                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-white"
                   style={{background: tool.color}}
                 >
                   <Icon icon={tool.icon} fontSize={13} />

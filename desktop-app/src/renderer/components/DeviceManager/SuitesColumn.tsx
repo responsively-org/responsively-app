@@ -18,7 +18,7 @@ const SuitesColumn = () => {
   const activeSuite = useSelector(selectActiveSuite);
 
   return (
-    <div className="box-border flex w-60 flex-shrink-0 flex-col gap-2 overflow-y-auto border-r border-line-soft p-[14px]">
+    <div className="box-border flex w-60 shrink-0 flex-col gap-2 overflow-y-auto border-r border-line-soft p-[14px]">
       <div className="text-[11px] font-bold tracking-[0.08em] text-muted">SUITES</div>
 
       {suites.map((suite) => {
@@ -104,7 +104,7 @@ const SuitesColumn = () => {
       </button>
 
       <div className="flex-1" />
-      <div className="text-[11.5px] leading-[1.5] text-muted">
+      <div className="text-[11.5px] leading-normal text-muted">
         Checkboxes in the grid assign devices to the selected suite.
       </div>
     </div>

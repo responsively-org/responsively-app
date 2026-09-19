@@ -354,14 +354,14 @@ const Previewer = () => {
           'justify-center': isIndividualLayout,
         })}
       >
-        <div className="flex flex-grow overflow-hidden">
+        <div className="flex grow overflow-hidden">
           <div
             ref={stageRef}
             data-testid={isCanvasLayout ? 'canvas-stage' : undefined}
             className={cx(
-              'w-full flex-grow',
+              'w-full grow',
               isCanvasLayout
-                ? 'canvas-dots relative cursor-grab touch-none select-none overflow-hidden active:cursor-grabbing'
+                ? 'canvas-dots relative cursor-grab touch-none overflow-hidden select-none active:cursor-grabbing'
                 : 'overflow-y-auto'
             )}
             style={{height: '100%'}}
@@ -394,7 +394,7 @@ const Previewer = () => {
                 </div>
                 <div
                   data-canvas-controls
-                  className="absolute bottom-[14px] right-4 z-10 flex items-center gap-[2px] rounded-full border border-line bg-panel p-1 shadow-elevated"
+                  className="absolute right-4 bottom-[14px] z-10 flex items-center gap-[2px] rounded-full border border-line bg-panel p-1 shadow-elevated"
                 >
                   <Popover
                     triggerTitle="View options"
@@ -407,7 +407,7 @@ const Previewer = () => {
                       </span>
                     }
                   >
-                    <div className="px-[9px] pb-[3px] pt-[7px] text-[10px] font-bold tracking-[0.07em] text-muted">
+                    <div className="px-[9px] pt-[7px] pb-[3px] text-[10px] font-bold tracking-[0.07em] text-muted">
                       SHOW ON CANVAS
                     </div>
                     {(
@@ -496,7 +496,7 @@ const Previewer = () => {
                     'absolute w-max': isCanvasLayout,
                     // Selection (canvas): accent label + screen ring, and the
                     // device pill stays visible without hover.
-                    '[&_[data-device-label]]:text-accent [&_[data-scaled-frame]]:ring-1 [&_[data-scaled-frame]]:ring-accent [&_[data-testid=device-pill]]:pointer-events-auto [&_[data-testid=device-pill]]:opacity-100':
+                    '**:data-device-label:text-accent **:data-scaled-frame:ring-1 **:data-scaled-frame:ring-accent **:data-[testid=device-pill]:pointer-events-auto **:data-[testid=device-pill]:opacity-100':
                       isCanvasLayout && device.id === selectedDeviceId,
                   })}
                   style={

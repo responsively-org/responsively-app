@@ -45,7 +45,7 @@ const TitleBar = () => {
     <div
       data-testid="title-bar"
       style={{paddingLeft: TRAFFIC_LIGHTS_WIDTH}}
-      className="app-drag relative flex h-[38px] flex-shrink-0 select-none items-center bg-titlebar"
+      className="app-drag relative flex h-[38px] shrink-0 items-center bg-titlebar select-none"
     >
       <span className="pointer-events-none absolute inset-x-0 truncate px-[150px] text-center text-[13px] font-semibold text-titlebar-fg">
         {titleText}

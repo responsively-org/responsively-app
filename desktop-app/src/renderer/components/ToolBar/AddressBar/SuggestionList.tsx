@@ -61,7 +61,7 @@ const SuggestionList = ({match, onEnter}: Props) => {
             onEnter(url);
           }}
           className={cx(
-            'pointer-events-auto flex w-full items-center gap-2 py-1 pl-2 pr-8 hover:bg-slate-200 dark:hover:bg-slate-700',
+            'pointer-events-auto flex w-full items-center gap-2 py-1 pr-8 pl-2 hover:bg-slate-200 dark:hover:bg-slate-700',
             {'bg-slate-200 dark:bg-slate-700': activeIndex === idx}
           )}
           type="button"

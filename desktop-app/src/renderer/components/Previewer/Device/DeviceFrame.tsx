@@ -108,7 +108,7 @@ const DeviceFrame = ({
         {simulationName !== undefined ? (
           <span
             data-testid="sim-badge"
-            className="rounded-full bg-accent-soft px-2 py-[2px] text-[10.5px] capitalize text-accent"
+            className="rounded-full bg-accent-soft px-2 py-[2px] text-[10.5px] text-accent capitalize"
           >
             {simulationName}
           </span>
@@ -134,11 +134,11 @@ const DeviceFrame = ({
           }
         >
           {bezel !== null && !isLaptop && !isRotated ? (
-            <div className="absolute left-1/2 top-[6px] h-1 w-[34px] -translate-x-1/2 rounded-full bg-[#4a4d55]" />
+            <div className="absolute top-[6px] left-1/2 h-1 w-[34px] -translate-x-1/2 rounded-full bg-[#4a4d55]" />
           ) : null}
           {bezel !== null && isLaptop ? (
             <div
-              className="absolute -bottom-[9px] left-1/2 h-3 -translate-x-1/2 rounded-[2px_2px_12px_12px] shadow-[0_8px_16px_rgba(0,0,0,.3)]"
+              className="absolute bottom-[-9px] left-1/2 h-3 -translate-x-1/2 rounded-[2px_2px_12px_12px] shadow-[0_8px_16px_rgba(0,0,0,.3)]"
               style={{
                 width: scaledWidth + 20 + 36,
                 background: 'linear-gradient(180deg,#4a4d55,#26282e)',
@@ -194,7 +194,7 @@ const DeviceFrame = ({
             {designOverlay?.enabled && overlayModeOf(designOverlay) === 'grid' ? (
               <div
                 data-testid="grid-overlay"
-                className="pointer-events-none absolute z-[2]"
+                className="pointer-events-none absolute z-2"
                 style={{
                   left: rulerOffset,
                   top: rulerOffset,
@@ -226,7 +226,7 @@ const DeviceFrame = ({
 
             {screenshotInProgress ? (
               <div
-                className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
+                className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600/95"
                 style={{height: scaledHeight, width: scaledWidth}}
               >
                 <Spinner spinnerHeight={30} />
@@ -235,7 +235,7 @@ const DeviceFrame = ({
             {flashing ? (
               <div
                 data-testid="capture-flash"
-                className="absolute left-0 top-0 z-10 flex items-center justify-center bg-[var(--flash)]"
+                className="absolute top-0 left-0 z-10 flex items-center justify-center bg-(--flash)"
                 style={{height: scaledHeight, width: scaledWidth}}
               >
                 <Icon icon="lucide:camera" fontSize={26} className="text-[#333]" />
@@ -243,7 +243,7 @@ const DeviceFrame = ({
             ) : null}
             {navigation.error != null ? (
               <div
-                className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
+                className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600/95"
                 style={{height: scaledHeight, width: scaledWidth}}
               >
                 <div className="text-center text-sm text-white">
