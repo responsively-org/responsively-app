@@ -100,9 +100,9 @@ describe('renderer slice', () => {
 
   it('toggleCanvasOption flips view options', () => {
     let state = baseState();
-    expect(state.canvasOptions).toEqual({showBezels: false, showNames: true, showDims: true});
+    expect(state.canvasOptions).toEqual({showBezels: true, showNames: true, showDims: true});
     state = reducer(state, toggleCanvasOption('showBezels'));
-    expect(state.canvasOptions.showBezels).toBe(true);
+    expect(state.canvasOptions.showBezels).toBe(false);
     state = reducer(state, toggleCanvasOption('showNames'));
     expect(state.canvasOptions.showNames).toBe(false);
   });

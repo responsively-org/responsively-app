@@ -24,6 +24,7 @@ import {setDockPosition} from './features/devtools';
 import {
   setAddress,
   setLayout,
+  toggleCanvasOption,
   updateFileWatcher,
   zoomIn,
   zoomOut,
@@ -87,6 +88,13 @@ startListening({
   actionCreator: setLayout,
   effect: (action) => {
     window.electron.store.set('ui.previewLayout', action.payload);
+  },
+});
+
+startListening({
+  actionCreator: toggleCanvasOption,
+  effect: (_action, api) => {
+    window.electron.store.set('renderer.canvasOptions', api.getState().renderer.canvasOptions);
   },
 });
 

@@ -1,0 +1,1190 @@
+{
+  "nexus-5x": {
+    "name": "Nexus 5X",
+    "source": "aosp",
+    "width": 1284,
+    "height": 2293,
+    "screen": {
+      "x": 137.81,
+      "y": 218.44,
+      "width": 1012.5,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/nexus_5x (port_back.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/nexus_5x/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "iphone-6": {
+    "name": "iPhone 6/7/8",
+    "source": "chrome-devtools",
+    "width": 1163,
+    "height": 2367,
+    "screen": {
+      "x": 75.56,
+      "y": 283.36,
+      "width": 1011.99,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "front_end/emulated_devices/iPhone6-portrait.svg",
+      "author": "The Chromium Authors",
+      "license": "BSD-3-Clause",
+      "licenseUrl": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/LICENSE",
+      "url": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/front_end/emulated_devices/iPhone6-portrait.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "nest-hub": {
+    "name": "Nest Hub",
+    "source": "chrome-devtools",
+    "width": 2090,
+    "height": 1575,
+    "screen": {
+      "x": 144.14,
+      "y": 130.08,
+      "width": 1800,
+      "height": 1054.69
+    },
+    "screenRadius": 0,
+    "orientation": "landscape",
+    "credit": {
+      "work": "front_end/emulated_devices/google-nest-hub-horizontal.png",
+      "author": "The Chromium Authors",
+      "license": "BSD-3-Clause",
+      "licenseUrl": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/LICENSE",
+      "url": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/front_end/emulated_devices/google-nest-hub-horizontal.png",
+      "changes": "resized, encoded as WebP"
+    }
+  },
+  "laptop": {
+    "name": "Laptop",
+    "source": "wikimedia-commons",
+    "width": 2359,
+    "height": 1365,
+    "screen": {
+      "x": 277.42,
+      "y": 88.73,
+      "width": 1800,
+      "height": 1129.57
+    },
+    "screenRadius": 0,
+    "orientation": "landscape",
+    "credit": {
+      "work": "Asahilinux laptop mockup.svg",
+      "author": "Asahi Linux project, based on \"Apple MacBook Pro SVG\" by averywebdesign (CC BY-SA 3.0)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:Asahilinux_laptop_mockup.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "pixel-9-pro": {
+    "name": "Pixel 9 Pro",
+    "source": "aosp",
+    "width": 887,
+    "height": 1874,
+    "screen": {
+      "x": 37.82,
+      "y": 38.45,
+      "width": 806.72,
+      "height": 1800
+    },
+    "screenRadius": 68.7,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_9_pro (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_9_pro/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "iphone-4": {
+    "name": "iPhone 4",
+    "source": "wikimedia-commons",
+    "width": 1454,
+    "height": 2746,
+    "screen": {
+      "x": 131.25,
+      "y": 480.75,
+      "width": 1200,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "BenBois-iPhone-SVG.svg",
+      "author": "BenBois (openclipart.org)",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:BenBois-iPhone-SVG.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-x": {
+    "name": "iPhone X",
+    "source": "wikimedia-commons",
+    "width": 957,
+    "height": 1919,
+    "screen": {
+      "x": 63.28,
+      "y": 59.26,
+      "width": 830.69,
+      "height": 1800
+    },
+    "screenRadius": 86.38,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone X vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_X_vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "nothing-phone-1": {
+    "name": "Nothing Phone (1)",
+    "source": "wikimedia-commons",
+    "width": 915,
+    "height": 1891,
+    "screen": {
+      "x": 43.63,
+      "y": 44.88,
+      "width": 825.21,
+      "height": 1800
+    },
+    "screenRadius": 92.24,
+    "orientation": "portrait",
+    "credit": {
+      "work": "Nothing phone(1) White.svg",
+      "author": "Raju (Wikimedia Commons)",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:Nothing_phone(1)_White.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "ipad": {
+    "name": "iPad",
+    "source": "chrome-devtools",
+    "width": 1537,
+    "height": 2201,
+    "screen": {
+      "x": 91.33,
+      "y": 200.39,
+      "width": 1348.92,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "front_end/emulated_devices/iPad-portrait.svg",
+      "author": "The Chromium Authors",
+      "license": "BSD-3-Clause",
+      "licenseUrl": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/LICENSE",
+      "url": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/front_end/emulated_devices/iPad-portrait.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-se-2": {
+    "name": "iPhone SE (2020)",
+    "source": "wikimedia-commons",
+    "width": 1176,
+    "height": 2379,
+    "screen": {
+      "x": 79.47,
+      "y": 289.55,
+      "width": 1017.11,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone SE (2nd generation) white vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_SE_(2nd_generation)_white_vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-14-pro": {
+    "name": "iPhone 14 Pro",
+    "source": "wikimedia-commons",
+    "width": 929,
+    "height": 1884,
+    "screen": {
+      "x": 48.78,
+      "y": 41.95,
+      "width": 831.22,
+      "height": 1800
+    },
+    "screenRadius": 117.07,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 14 Pro vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_14_Pro_vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-16-pro": {
+    "name": "iPhone 16 Pro",
+    "source": "wikimedia-commons",
+    "width": 907,
+    "height": 1860,
+    "screen": {
+      "x": 39.49,
+      "y": 29.86,
+      "width": 828.25,
+      "height": 1800
+    },
+    "screenRadius": 115.57,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 16 Pro Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_16_Pro_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-17-pro": {
+    "name": "iPhone 17 Pro",
+    "source": "wikimedia-commons",
+    "width": 899,
+    "height": 1861,
+    "screen": {
+      "x": 35.98,
+      "y": 31.01,
+      "width": 827.43,
+      "height": 1800
+    },
+    "screenRadius": 115.37,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 17 Pro Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_17_Pro_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-air": {
+    "name": "iPhone Air",
+    "source": "wikimedia-commons",
+    "width": 905,
+    "height": 1866,
+    "screen": {
+      "x": 39.47,
+      "y": 33.49,
+      "width": 825.25,
+      "height": 1800
+    },
+    "screenRadius": 116.01,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone Air Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_Air_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "nexus-4": {
+    "name": "Nexus 4",
+    "source": "aosp",
+    "width": 1347,
+    "height": 2360,
+    "screen": {
+      "x": 132.19,
+      "y": 262.97,
+      "width": 1080,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/nexus_4 (port_back.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/nexus_4/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "nexus-5": {
+    "name": "Nexus 5",
+    "source": "aosp",
+    "width": 1284,
+    "height": 2255,
+    "screen": {
+      "x": 135,
+      "y": 182.81,
+      "width": 1012.5,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/nexus_5 (port_back.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/nexus_5/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "nexus-6": {
+    "name": "Nexus 6",
+    "source": "aosp",
+    "width": 1333,
+    "height": 2147,
+    "screen": {
+      "x": 161.02,
+      "y": 168.05,
+      "width": 1012.5,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/nexus_6 (port_back.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/nexus_6/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "nexus-6p": {
+    "name": "Nexus 6P",
+    "source": "aosp",
+    "width": 1294,
+    "height": 2286,
+    "screen": {
+      "x": 137.11,
+      "y": 231.33,
+      "width": 1012.5,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/nexus_6p (port_back.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/nexus_6p/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "nexus-7": {
+    "name": "Nexus 7 (2013)",
+    "source": "aosp",
+    "width": 1496,
+    "height": 2410,
+    "screen": {
+      "x": 182.81,
+      "y": 282.19,
+      "width": 1125,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/nexus_7_2013 (port_back.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/nexus_7_2013/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "nexus-10": {
+    "name": "Nexus 10",
+    "source": "aosp",
+    "width": 1638,
+    "height": 2205,
+    "screen": {
+      "x": 257.34,
+      "y": 187.03,
+      "width": 1125,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/nexus_10 (port_back.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/nexus_10/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-2": {
+    "name": "Pixel 2",
+    "source": "aosp",
+    "width": 1284,
+    "height": 2376,
+    "screen": {
+      "x": 131.25,
+      "y": 262.5,
+      "width": 1012.5,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_2 (port_back.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_2/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-2-xl": {
+    "name": "Pixel 2 XL",
+    "source": "aosp",
+    "width": 1161,
+    "height": 2160,
+    "screen": {
+      "x": 125.63,
+      "y": 153.13,
+      "width": 900,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_2_xl (port_back.webp + round_corners.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_2_xl/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-3": {
+    "name": "Pixel 3",
+    "source": "aosp",
+    "width": 995,
+    "height": 2110,
+    "screen": {
+      "x": 45,
+      "y": 163.33,
+      "width": 900,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_3 (port_back.webp + round_corners.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_3/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-3-xl": {
+    "name": "Pixel 3 XL",
+    "source": "aosp",
+    "width": 1024,
+    "height": 1974,
+    "screen": {
+      "x": 76.62,
+      "y": 43.78,
+      "width": 875.68,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_3_xl (port_back.webp + round_corners.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_3_xl/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-4": {
+    "name": "Pixel 4",
+    "source": "aosp",
+    "width": 930,
+    "height": 1972,
+    "screen": {
+      "x": 36.32,
+      "y": 115.26,
+      "width": 852.63,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_4 (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_4/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-5": {
+    "name": "Pixel 5",
+    "source": "aosp",
+    "width": 932,
+    "height": 1903,
+    "screen": {
+      "x": 46.15,
+      "y": 50,
+      "width": 830.77,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_5 (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_5/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-7": {
+    "name": "Pixel 7",
+    "source": "aosp",
+    "width": 900,
+    "height": 1906,
+    "screen": {
+      "x": 44.25,
+      "y": 43.5,
+      "width": 810,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_7 (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_7/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-7a": {
+    "name": "Pixel 7a",
+    "source": "aosp",
+    "width": 920,
+    "height": 1919,
+    "screen": {
+      "x": 51.75,
+      "y": 51.75,
+      "width": 810,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_7a (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_7a/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-7-pro": {
+    "name": "Pixel 7 Pro",
+    "source": "aosp",
+    "width": 892,
+    "height": 1888,
+    "screen": {
+      "x": 27.69,
+      "y": 38.08,
+      "width": 830.77,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_7_pro (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_7_pro/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-8": {
+    "name": "Pixel 8",
+    "source": "aosp",
+    "width": 890,
+    "height": 1885,
+    "screen": {
+      "x": 36.75,
+      "y": 41.25,
+      "width": 810,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_8 (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_8/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-8-pro": {
+    "name": "Pixel 8 Pro",
+    "source": "aosp",
+    "width": 884,
+    "height": 1867,
+    "screen": {
+      "x": 34.89,
+      "y": 34.89,
+      "width": 808.56,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_8_pro (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_8_pro/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-8a": {
+    "name": "Pixel 8a",
+    "source": "aosp",
+    "width": 899,
+    "height": 1904,
+    "screen": {
+      "x": 42.75,
+      "y": 42.75,
+      "width": 810,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_8a (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_8a/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-9": {
+    "name": "Pixel 9",
+    "source": "aosp",
+    "width": 890,
+    "height": 1879,
+    "screen": {
+      "x": 40.84,
+      "y": 43.07,
+      "width": 801.98,
+      "height": 1800
+    },
+    "screenRadius": 64.6,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_9 (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_9/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-9a": {
+    "name": "Pixel 9a",
+    "source": "aosp",
+    "width": 909,
+    "height": 1908,
+    "screen": {
+      "x": 51.24,
+      "y": 54.21,
+      "width": 801.98,
+      "height": 1800
+    },
+    "screenRadius": 64.6,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_9a (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_9a/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-10": {
+    "name": "Pixel 10",
+    "source": "aosp",
+    "width": 890,
+    "height": 1879,
+    "screen": {
+      "x": 43.81,
+      "y": 40.84,
+      "width": 801.98,
+      "height": 1800
+    },
+    "screenRadius": 64.6,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_10 (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_10/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-10-pro": {
+    "name": "Pixel 10 Pro",
+    "source": "aosp",
+    "width": 887,
+    "height": 1869,
+    "screen": {
+      "x": 37.18,
+      "y": 37.82,
+      "width": 806.72,
+      "height": 1800
+    },
+    "screenRadius": 62.39,
+    "orientation": "portrait",
+    "credit": {
+      "work": "device-art-resources/pixel_10_pro (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_10_pro/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "pixel-tablet": {
+    "name": "Pixel Tablet",
+    "source": "aosp",
+    "width": 1967,
+    "height": 1292,
+    "screen": {
+      "x": 83.67,
+      "y": 82.27,
+      "width": 1800,
+      "height": 1125
+    },
+    "screenRadius": 0,
+    "orientation": "landscape",
+    "credit": {
+      "work": "device-art-resources/pixel_tablet (back.webp + mask.webp)",
+      "author": "The Android Open Source Project",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://android.googlesource.com/platform/tools/adt/idea/+/d9039d0b361f78cc563ab8a40671ef38477d9f74/artwork/resources/device-art-resources/pixel_tablet/",
+      "changes": "display area made transparent, corner/camera mask composited, resized, encoded as WebP"
+    }
+  },
+  "iphone-5": {
+    "name": "iPhone 5/SE",
+    "source": "chrome-devtools",
+    "width": 1169,
+    "height": 2485,
+    "screen": {
+      "x": 90.63,
+      "y": 332.75,
+      "width": 1000.05,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "front_end/emulated_devices/iPhone5-portrait.svg",
+      "author": "The Chromium Authors",
+      "license": "BSD-3-Clause",
+      "licenseUrl": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/LICENSE",
+      "url": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/front_end/emulated_devices/iPhone5-portrait.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-6-plus": {
+    "name": "iPhone 6/7/8 Plus",
+    "source": "chrome-devtools",
+    "width": 1149,
+    "height": 2333,
+    "screen": {
+      "x": 63.59,
+      "y": 261.68,
+      "width": 1012.5,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "front_end/emulated_devices/iPhone6Plus-portrait.svg",
+      "author": "The Chromium Authors",
+      "license": "BSD-3-Clause",
+      "licenseUrl": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/LICENSE",
+      "url": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/front_end/emulated_devices/iPhone6Plus-portrait.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "moto-g4": {
+    "name": "Moto G4",
+    "source": "chrome-devtools",
+    "width": 1163,
+    "height": 2264,
+    "screen": {
+      "x": 83.1,
+      "y": 255.94,
+      "width": 997.15,
+      "height": 1800
+    },
+    "screenRadius": 0,
+    "orientation": "portrait",
+    "credit": {
+      "work": "front_end/emulated_devices/MotoG4-portrait.svg",
+      "author": "The Chromium Authors",
+      "license": "BSD-3-Clause",
+      "licenseUrl": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/LICENSE",
+      "url": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/front_end/emulated_devices/MotoG4-portrait.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "nest-hub-max": {
+    "name": "Nest Hub Max",
+    "source": "chrome-devtools",
+    "width": 2057,
+    "height": 1609,
+    "screen": {
+      "x": 129.38,
+      "y": 135,
+      "width": 1800,
+      "height": 1125
+    },
+    "screenRadius": 0,
+    "orientation": "landscape",
+    "credit": {
+      "work": "front_end/emulated_devices/google-nest-hub-max-horizontal.png",
+      "author": "The Chromium Authors",
+      "license": "BSD-3-Clause",
+      "licenseUrl": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/LICENSE",
+      "url": "https://github.com/ChromeDevTools/devtools-frontend/blob/19e88ae6de83cc6dbb31f4c5c08209151c9b7b99/front_end/emulated_devices/google-nest-hub-max-horizontal.png",
+      "changes": "resized, encoded as WebP"
+    }
+  },
+  "iphone-xr": {
+    "name": "iPhone XR",
+    "source": "wikimedia-commons",
+    "width": 957,
+    "height": 1919,
+    "screen": {
+      "x": 63.28,
+      "y": 59.26,
+      "width": 830.69,
+      "height": 1800
+    },
+    "screenRadius": 86.38,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone XR Blue.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_XR_Blue.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-12-pro": {
+    "name": "iPhone 12 Pro",
+    "source": "wikimedia-commons",
+    "width": 934,
+    "height": 1888,
+    "screen": {
+      "x": 50.84,
+      "y": 44,
+      "width": 831.07,
+      "height": 1800
+    },
+    "screenRadius": 97.77,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 12 Pro Gold.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_12_Pro_Gold.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-13-pro": {
+    "name": "iPhone 13 Pro",
+    "source": "wikimedia-commons",
+    "width": 934,
+    "height": 1888,
+    "screen": {
+      "x": 50.84,
+      "y": 44,
+      "width": 831.07,
+      "height": 1800
+    },
+    "screenRadius": 97.77,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 13 Pro vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_13_Pro_vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-14": {
+    "name": "iPhone 14",
+    "source": "wikimedia-commons",
+    "width": 939,
+    "height": 1888,
+    "screen": {
+      "x": 53.78,
+      "y": 44,
+      "width": 831.07,
+      "height": 1800
+    },
+    "screenRadius": 97.77,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 14 vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_14_vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-15": {
+    "name": "iPhone 15",
+    "source": "wikimedia-commons",
+    "width": 929,
+    "height": 1884,
+    "screen": {
+      "x": 48.78,
+      "y": 41.95,
+      "width": 831.22,
+      "height": 1800
+    },
+    "screenRadius": 117.07,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 15 Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_15_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-15-plus": {
+    "name": "iPhone 15 Plus",
+    "source": "wikimedia-commons",
+    "width": 919,
+    "height": 1876,
+    "screen": {
+      "x": 43.64,
+      "y": 38.3,
+      "width": 831.87,
+      "height": 1800
+    },
+    "screenRadius": 115.78,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 15 Plus Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_15_Plus_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-15-pro": {
+    "name": "iPhone 15 Pro",
+    "source": "wikimedia-commons",
+    "width": 914,
+    "height": 1874,
+    "screen": {
+      "x": 39.78,
+      "y": 36.87,
+      "width": 834.5,
+      "height": 1800
+    },
+    "screenRadius": 116.44,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 15 Pro Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_15_Pro_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-15-pro-max": {
+    "name": "iPhone 15 Pro Max",
+    "source": "wikimedia-commons",
+    "width": 908,
+    "height": 1867,
+    "screen": {
+      "x": 36.95,
+      "y": 33.43,
+      "width": 833.14,
+      "height": 1800
+    },
+    "screenRadius": 114.37,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 15 Pro Max Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_15_Pro_Max_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-16": {
+    "name": "iPhone 16",
+    "source": "wikimedia-commons",
+    "width": 929,
+    "height": 1884,
+    "screen": {
+      "x": 48.78,
+      "y": 41.95,
+      "width": 831.22,
+      "height": 1800
+    },
+    "screenRadius": 117.07,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 16 Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_16_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-16-plus": {
+    "name": "iPhone 16 Plus",
+    "source": "wikimedia-commons",
+    "width": 919,
+    "height": 1876,
+    "screen": {
+      "x": 43.64,
+      "y": 38.3,
+      "width": 831.87,
+      "height": 1800
+    },
+    "screenRadius": 115.78,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 16 Plus Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_16_Plus_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-16-pro-max": {
+    "name": "iPhone 16 Pro Max",
+    "source": "wikimedia-commons",
+    "width": 905,
+    "height": 1860,
+    "screen": {
+      "x": 35.07,
+      "y": 29.81,
+      "width": 834.68,
+      "height": 1800
+    },
+    "screenRadius": 113.98,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 16 Pro Max Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_16_Pro_Max_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-17": {
+    "name": "iPhone 17",
+    "source": "wikimedia-commons",
+    "width": 899,
+    "height": 1861,
+    "screen": {
+      "x": 35.98,
+      "y": 31.01,
+      "width": 827.43,
+      "height": 1800
+    },
+    "screenRadius": 115.37,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 17 Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_17_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  },
+  "iphone-17-pro-max": {
+    "name": "iPhone 17 Pro Max",
+    "source": "wikimedia-commons",
+    "width": 899,
+    "height": 1857,
+    "screen": {
+      "x": 32.93,
+      "y": 28.39,
+      "width": 832.43,
+      "height": 1800
+    },
+    "screenRadius": 113.56,
+    "orientation": "portrait",
+    "credit": {
+      "work": "IPhone 17 Pro Max Vector.svg",
+      "author": "TheGoldenBox (Wikimedia Commons)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "url": "https://commons.wikimedia.org/wiki/File:IPhone_17_Pro_Max_Vector.svg",
+      "changes": "screen area made transparent, rasterized, encoded as WebP"
+    }
+  }
+}

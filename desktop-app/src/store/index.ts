@@ -51,6 +51,16 @@ const schema = {
         type: 'number',
         default: 3,
       },
+      // Canvas view options (device frames, names, resolutions). Persisted as
+      // one object; the renderer merges it over its defaults on boot.
+      canvasOptions: {
+        type: 'object',
+        properties: {
+          showBezels: {type: 'boolean'},
+          showNames: {type: 'boolean'},
+          showDims: {type: 'boolean'},
+        },
+      },
     },
     default: {},
   },
