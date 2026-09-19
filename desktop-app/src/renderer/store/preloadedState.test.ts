@@ -22,6 +22,7 @@ describe('buildPreloadedState', () => {
       'renderer.zoomStepIndex': 9,
       'renderer.individualZoomStepIndex': 8,
       'ui.previewLayout': PREVIEW_LAYOUTS.COLUMN,
+      'renderer.canvasOptions': {showBezels: false},
       'devtools.dockPosition': 'RIGHT',
       bookmarks: [{id: 'b1', name: 'One', address: 'https://one.com'}],
       'userPreferences.designOverlays': {},
@@ -34,6 +35,12 @@ describe('buildPreloadedState', () => {
     expect(state.renderer.address).toBe('https://home.example/');
     expect(state.renderer.zoomFactor).toBe(1.1);
     expect(state.renderer.layout).toBe(PREVIEW_LAYOUTS.COLUMN);
+    // A partially persisted options object is merged over the defaults.
+    expect(state.renderer.canvasOptions).toEqual({
+      showBezels: false,
+      showNames: true,
+      showDims: true,
+    });
     expect(state.devtools.dockPosition).toBe('RIGHT');
     expect(state.bookmarks.bookmarks).toHaveLength(1);
     expect(state.deviceManager.suites).toEqual([DEFAULT_SUITE]);
@@ -46,6 +53,11 @@ describe('buildPreloadedState', () => {
     const state = buildPreloadedState();
     expect(state.renderer.zoomFactor).toBe(1);
     expect(state.renderer.layout).toBe(PREVIEW_LAYOUTS.FLEX);
+    expect(state.renderer.canvasOptions).toEqual({
+      showBezels: true,
+      showNames: true,
+      showDims: true,
+    });
     expect(state.deviceManager.suites).toEqual([DEFAULT_SUITE]);
     expect(window.electron.store.set as Mock).toHaveBeenCalledWith('deviceManager.previewSuites', [
       DEFAULT_SUITE,

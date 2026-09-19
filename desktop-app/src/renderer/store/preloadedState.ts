@@ -2,7 +2,7 @@ import {PREVIEW_LAYOUTS} from 'common/constants';
 import {Device, getDevicesMap} from 'common/deviceList';
 import {DEFAULT_SUITE, PreviewSuites} from './features/device-manager';
 import {sanitizeSuites} from './features/device-manager/utils';
-import {zoomSteps} from './features/renderer';
+import {DEFAULT_CANVAS_OPTIONS, zoomSteps, type CanvasOptions} from './features/renderer';
 
 const urlFromQueryParam = (): string | undefined => {
   const params = new URLSearchParams(window.location.search);
@@ -65,7 +65,10 @@ export const buildPreloadedState = () => {
       isCapturingScreenshot: false,
       notifications: null,
       canvasZoom: 0.9,
-      canvasOptions: {showBezels: false, showNames: true, showDims: true},
+      canvasOptions: {
+        ...DEFAULT_CANVAS_OPTIONS,
+        ...((store.get('renderer.canvasOptions') as Partial<CanvasOptions> | undefined) ?? {}),
+      },
     },
     devtools: {
       bounds: {x: 0, y: 0, width: 0, height: 0},

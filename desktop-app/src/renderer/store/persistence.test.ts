@@ -6,7 +6,7 @@ import {addBookmark, removeBookmark} from './features/bookmarks';
 import {setDesignOverlay} from './features/design-overlay';
 import {addSuite, deleteSuite, setSuiteDevices, DEFAULT_SUITE} from './features/device-manager';
 import {setDockPosition} from './features/devtools';
-import {setAddress, setLayout, zoomIn, zoomOut} from './features/renderer';
+import {setAddress, setLayout, toggleCanvasOption, zoomIn, zoomOut} from './features/renderer';
 import {setDarkMode} from './features/ui';
 
 const setMock = () => window.electron.store.set as Mock;
@@ -54,6 +54,22 @@ describe('persistence middleware', () => {
     expect(setMock()).toHaveBeenCalledWith('ui.previewLayout', PREVIEW_LAYOUTS.COLUMN);
     store.dispatch(zoomIn());
     expect(setMock()).toHaveBeenCalledWith('renderer.zoomStepIndex', 9);
+  });
+
+  it('persists the canvas view options as one object', () => {
+    const store = createAppStore();
+    store.dispatch(toggleCanvasOption('showBezels'));
+    expect(setMock()).toHaveBeenCalledWith('renderer.canvasOptions', {
+      showBezels: false,
+      showNames: true,
+      showDims: true,
+    });
+    store.dispatch(toggleCanvasOption('showNames'));
+    expect(setMock()).toHaveBeenLastCalledWith('renderer.canvasOptions', {
+      showBezels: false,
+      showNames: false,
+      showDims: true,
+    });
   });
 
   it('does not write zoom when already at the boundary', () => {

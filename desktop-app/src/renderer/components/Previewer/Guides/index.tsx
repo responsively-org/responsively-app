@@ -20,6 +20,8 @@ interface Props {
   night: boolean;
   enabled: boolean;
   defaultGuides: DefaultGuide[];
+  /** Draw rulers above hardware artwork without raising the page itself. */
+  zIndex?: number;
 }
 
 const GuideGrid = ({
@@ -32,6 +34,7 @@ const GuideGrid = ({
   night,
   enabled,
   defaultGuides,
+  zIndex = 1,
 }: Props) => {
   const horizontalGuidesRef = useRef<Guides | null>(null);
   const verticalGuidesRef = useRef<Guides | null>(null);
@@ -99,7 +102,7 @@ const GuideGrid = ({
               pointerEvents: 'none',
               width: `${scaledWidth + 30}px`,
               height: `${scaledHeight + 30}px`,
-              zIndex: 1,
+              zIndex,
               overflow: 'hidden',
             }}
           >

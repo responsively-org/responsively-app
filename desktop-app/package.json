@@ -211,6 +211,10 @@
       {
         "from": "release/app/dist/mcp",
         "to": "mcp"
+      },
+      {
+        "from": "src/renderer/components/Previewer/Device/frames/NOTICE.md",
+        "to": "licenses/device-frames-NOTICE.md"
       }
     ],
     "publish": {

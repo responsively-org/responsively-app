@@ -4,6 +4,7 @@ import {Icon} from '@iconify/react';
 import {
   resetCanvasPositions,
   selectActiveSuite,
+  selectIndividualRotations,
   setCanvasPosition,
 } from 'renderer/store/features/device-manager';
 import {selectIsPresenting, setPresenting} from 'renderer/store/features/ui';
@@ -17,6 +18,7 @@ import {
   selectCanvasOptions,
   selectCanvasZoom,
   selectLayout,
+  selectRotate,
   selectZoomFactor,
   setCanvasZoom,
   toggleCanvasOption,
@@ -25,6 +27,7 @@ import {
   type CanvasOptions,
 } from 'renderer/store/features/renderer';
 import Device from './Device';
+import {framedSize} from './Device/frames';
 import {PREVIEW_PINCH_EVENT, type PinchDetail} from './pinch';
 import DevtoolsResizer from './DevtoolsResizer';
 import IndividualLayoutToolbar from './IndividualLayoutToolBar';
@@ -48,14 +51,29 @@ const PINCH_MAX_DELTA = 32;
 const CANVAS_ORIGIN = 40;
 const CANVAS_ROW_WIDTH = 2600;
 
-/** Simple row-flow arrangement in world coordinates. */
-const arrangeDevices = (devices: IDevice[], deviceScale: number): CanvasPosition[] => {
+/**
+ * Simple row-flow arrangement in world coordinates. With device frames on,
+ * each slot budgets for the artwork around the screen (a laptop's base, a
+ * phone's bezels) so frames don't overlap their neighbours.
+ */
+const arrangeDevices = (
+  devices: IDevice[],
+  deviceScale: number,
+  framed: boolean,
+  rotateDevices: boolean,
+  individualRotations: Record<string, boolean>
+): CanvasPosition[] => {
   let x = CANVAS_ORIGIN;
   let y = CANVAS_ORIGIN;
   let rowHeight = 0;
   return devices.map((device) => {
-    const width = device.width * deviceScale;
-    const height = device.height * deviceScale;
+    const rotated = device.isMobileCapable && (rotateDevices || individualRotations[device.id]);
+    const viewport = rotated
+      ? {width: device.height, height: device.width}
+      : {width: device.width, height: device.height};
+    const size = framed ? framedSize(device, viewport.width, viewport.height) : viewport;
+    const width = size.width * deviceScale;
+    const height = size.height * deviceScale;
     if (x > CANVAS_ORIGIN && x + width > CANVAS_ROW_WIDTH) {
       x = CANVAS_ORIGIN;
       y += rowHeight + CANVAS_GAP;
@@ -79,6 +97,8 @@ const Previewer = () => {
   const deviceScale = useSelector(selectZoomFactor);
   const isPresenting = useSelector(selectIsPresenting);
   const canvasOptions = useSelector(selectCanvasOptions);
+  const rotateDevices = useSelector(selectRotate);
+  const individualRotations = useSelector(selectIndividualRotations);
   const presenting = isPresenting && layout === PREVIEW_LAYOUTS.CANVAS;
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
   const [exitPillHidden, setExitPillHidden] = useState<boolean>(false);
@@ -168,9 +188,25 @@ const Previewer = () => {
 
   const deviceIdsKey = activeSuite.devices.join(',');
   const arranged = useMemo(
-    () => (isCanvasLayout ? arrangeDevices(devices, deviceScale) : []),
+    () =>
+      isCanvasLayout
+        ? arrangeDevices(
+            devices,
+            deviceScale,
+            canvasOptions.showBezels,
+            rotateDevices,
+            individualRotations
+          )
+        : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isCanvasLayout, deviceScale, deviceIdsKey]
+    [
+      isCanvasLayout,
+      deviceScale,
+      deviceIdsKey,
+      canvasOptions.showBezels,
+      rotateDevices,
+      individualRotations,
+    ]
   );
   const positionFor = (device: IDevice, idx: number): CanvasPosition => {
     if (dragOverride?.id === device.id) {

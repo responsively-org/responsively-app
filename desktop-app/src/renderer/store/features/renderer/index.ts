@@ -24,11 +24,19 @@ export const zoomSteps = [0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1
 export const canvasZoomSteps = [0.25, 0.33, 0.5, 0.55, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25];
 
 export interface CanvasOptions {
-  /** Draw hardware-style bezels around canvas frames. */
+  /**
+   * Wrap canvas previews in device frames: real hardware artwork where the
+   * device has one, a generic bezel otherwise.
+   */
   showBezels: boolean;
   showNames: boolean;
   showDims: boolean;
 }
+export const DEFAULT_CANVAS_OPTIONS: CanvasOptions = {
+  showBezels: true,
+  showNames: true,
+  showDims: true,
+};
 const DEFAULT_CANVAS_ZOOM = 0.9;
 export const clampCanvasZoom = (value: number): number =>
   Math.min(canvasZoomSteps[canvasZoomSteps.length - 1], Math.max(canvasZoomSteps[0], value));
@@ -42,7 +50,7 @@ const initialState: RendererState = {
   individualZoomFactor: zoomSteps[8],
   zoomFactor: zoomSteps[8],
   canvasZoom: DEFAULT_CANVAS_ZOOM,
-  canvasOptions: {showBezels: false, showNames: true, showDims: true},
+  canvasOptions: DEFAULT_CANVAS_OPTIONS,
   rotate: false,
   isInspecting: undefined,
   layout: PREVIEW_LAYOUTS.FLEX,
