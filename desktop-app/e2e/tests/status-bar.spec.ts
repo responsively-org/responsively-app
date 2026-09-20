@@ -36,6 +36,25 @@ test.describe('Status Bar', () => {
     await expect(app.page.locator('[data-testid="status-text"]')).toContainText('device');
   });
 
+  test('heart opens support choices and Escape returns focus to the trigger', async ({app}) => {
+    await app.dismissModals();
+
+    const heart = app.page
+      .locator('[data-testid="status-bar"]')
+      .getByRole('button', {name: 'Support Responsively'});
+    await heart.click();
+    await expect(heart).toHaveAttribute('aria-expanded', 'true');
+    await expect(app.page.getByText('Enjoying Responsively?')).toBeVisible();
+    await expect(app.page.getByRole('button', {name: 'Sponsor', exact: true})).toBeVisible();
+    await expect(app.page.getByRole('button', {name: 'Star on GitHub'})).toBeVisible();
+    await expect(app.page.getByRole('button', {name: 'Share Responsively'})).toBeVisible();
+
+    await app.page.keyboard.press('Escape');
+    await expect(heart).toHaveAttribute('aria-expanded', 'false');
+    await expect(app.page.getByRole('button', {name: 'Share Responsively'})).toBeHidden();
+    await expect(heart).toBeFocused();
+  });
+
   test('notifications open from the status bar bell', async ({app}) => {
     await app.dismissModals();
 
