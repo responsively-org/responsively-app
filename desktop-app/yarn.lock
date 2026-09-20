@@ -5299,10 +5299,10 @@ electron-updater@^6.8.9:
     semver "~7.7.3"
     tiny-typed-emitter "^2.1.0"
 
-electron@44.0.0:
-  version "44.0.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-44.0.0.tgz#fdb4e911833d47252a716699a0766aca1efc4711"
-  integrity sha512-FkTqPrFPZYljdPI5b7KORGsJTd6FgUQDefl5MrU3Xz9R87pAj9JLreIjDqcRN8hJIkFHIou0o8kKzvcpT9qiRQ==
+electron@44.4.1:
+  version "44.4.1"
+  resolved "https://registry.npmjs.org/electron/-/electron-44.4.1.tgz#6f4f73dbf4a9cc789332847d7f66c93ae5feb6f9"
+  integrity sha512-gXJarQ2Utfn8G6bp/IqLXvckOSCtrxPWjFqQaqm02Gf4zYn1aP+RN9PKimoLH/DMqjKLfBrNC4C4CviPv0cXnQ==
   dependencies:
     "@electron-internal/extract-zip" "^1.0.1"
     "@electron/get" "^5.0.0"
