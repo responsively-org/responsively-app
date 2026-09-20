@@ -26,12 +26,6 @@ const WHATS_NEW: Array<{icon: string; title: string; body: string; when: string}
     body: 'Free-arrange devices, add frames, hit Present for clean recordings.',
     when: '2.0',
   },
-  {
-    icon: 'lucide:smartphone',
-    title: 'Custom devices',
-    body: 'Create devices with exact size, DPR and UA from the Device Manager.',
-    when: '2.0',
-  },
 ];
 
 const Row = ({

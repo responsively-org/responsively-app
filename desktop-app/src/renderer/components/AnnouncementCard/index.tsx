@@ -20,7 +20,6 @@ const shortVersion = (version: string) => version.split('.').slice(0, 2).join('.
 const WHATS_NEW_ROWS: Array<{icon: string; label: string}> = [
   {icon: 'lucide:plug-zap', label: 'MCP server — connect Claude, Codex & more'},
   {icon: 'lucide:presentation', label: 'Canvas mode for presentations & recordings'},
-  {icon: 'lucide:smartphone', label: 'Custom devices with live preview'},
 ];
 
 /**

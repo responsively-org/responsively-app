@@ -33,7 +33,7 @@ test.describe('Announcements', () => {
 
     await expect(app.page.getByText('MCP integration')).toBeVisible();
     await expect(app.page.getByText('Canvas mode', {exact: true})).toBeVisible();
-    await expect(app.page.getByText('Custom devices', {exact: true})).toBeVisible();
+    await expect(app.page.getByText('Custom devices', {exact: true})).toHaveCount(0);
     await expect(app.page.getByText('Enjoying Responsively?')).toBeVisible();
     await expect(app.page.getByRole('button', {name: 'Sponsor'})).toBeVisible();
 
