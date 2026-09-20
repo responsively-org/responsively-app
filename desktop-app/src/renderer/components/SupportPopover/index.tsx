@@ -37,7 +37,7 @@ const SupportPopover = () => {
     <Popover
       triggerTitle="Support Responsively"
       anchor="top end"
-      triggerClassName="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-md text-[15px] text-heart transition-colors hover:bg-heart-soft"
+      triggerClassName="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-md text-[15px] text-muted transition-colors hover:bg-hover hover:text-fg"
       className="w-[260px] max-w-[calc(100vw-24px)] p-[14px]"
       onOpenChange={() => {
         // A previous panel session must not overwrite feedback after reopening.
