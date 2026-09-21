@@ -67,7 +67,7 @@ Please visit the website to learn more about the application - https://responsiv
 
 The application is available for Mac, Windows and Linux platforms. Please <a href="https://responsively.app/download" target="_blank">download it from responsively.app</a>
 
-Alternatively, MacOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) <a href="https://formulae.brew.sh/cask/responsively" target="_blank"> <img src="https://badgen.net/homebrew/cask/dy/responsively" alt="Homebrew installs"></a>
+Alternatively, macOS users can use [`brew`](https://formulae.brew.sh/cask/responsively) <a href="https://formulae.brew.sh/cask/responsively" target="_blank"> <img src="https://badgen.net/homebrew/cask/dy/responsively" alt="Homebrew installs"></a>
 
 ```bash
 brew install --cask responsively
@@ -93,13 +93,12 @@ sudo rpm -i https://github.com/responsively-org/responsively-app/releases/downlo
 
 otherwise, download an AppImage from [the releases page](https://github.com/responsively-org/responsively-app/releases)
 
-Follow us on Twitter for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://x.com/ResponsivelyApp)
+Follow us on X (Twitter) for future updates - [![Twitter Follow](https://img.shields.io/twitter/follow/ResponsivelyApp?style=social)](https://x.com/ResponsivelyApp)
 
 ## Browser Extension
 
 Install the handy browser extension to easily send links from your browser to the app and preview instantly.
 
-- [Download for Chrome](https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj) <a href="https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj" target="_blank"><img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/users/jhphiidjkooiaollfiknkokgodbaddcj?color=blue"></a>
 - [Download for Firefox](https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/) <a href="https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/" target="_blank"><img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/responsively-helper"></a>
 - [Download for Edge](https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn) <a href="https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn" target="_blank"><img alt="Edge Add-on" src="https://img.shields.io/badge/dynamic/json?label=users&query=%24.activeInstallCount&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fooiejjgflcgkbbehheengalibfehaojn"></a>
 
