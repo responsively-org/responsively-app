@@ -3,6 +3,23 @@
 
 Contributions are welcome and always appreciated!
 
+## Quick Start for First-Time Contributors
+
+New to open source? Here's a simple workflow to get started:
+
+1. **Find an issue**: Browse [open issues](https://github.com/responsively-org/responsively-app/issues) and look for labels like `good-first-issue` or `help-wanted`
+2. **Claim it**: Leave a comment on the issue saying you'd like to work on it
+3. **Fork and clone**: Fork this repository and clone it to your local machine
+4. **Set up locally**: Follow the [Run Locally](#run-locally) section below to get the project running
+5. **Create a branch**: Make a new branch for your changes (`git checkout -b fix-issue-123`)
+6. **Make changes**: Implement your fix or feature
+7. **Test thoroughly**: Run `yarn test` and `yarn build` to ensure everything works
+8. **Commit and push**: Commit your changes with a clear message and push to your fork
+9. **Open a PR**: Submit a pull request with a description of what you changed and why
+
+💡 **Tip**: Start small! Documentation improvements and bug fixes are great first contributions.
+
+
 To begin working on an issue, simply leave a comment indicating that you're taking it on. There's no need to be officially assigned to the issue before you start.
 
 ### Before Starting
