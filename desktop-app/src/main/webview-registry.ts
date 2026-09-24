@@ -56,6 +56,21 @@ export const wireWebviewSecurity = (hostContents: WebContents, deps: WebviewSecu
     registeredWebviewIds.add(id);
     guestContents.once('destroyed', () => {
       registeredWebviewIds.delete(id);
+      // A CDP debugger session (devtools inspector, JS-disable toggle) left
+      // attached when the guest is torn down races Electron's own guest-view
+      // cleanup and surfaces as "Invalid guestInstanceId" in the renderer.
+      // By the time 'destroyed' fires the WebContents may already be an
+      // unusable native handle, so every property access needs the guard,
+      // not just detach() itself.
+      try {
+        if (guestContents.debugger.isAttached()) {
+          guestContents.debugger.detach();
+        }
+      } catch (err) {
+        // Expected and harmless per the guard above — debug, not warn, so it
+        // doesn't read as a problem in the default log output.
+        log.debug('[webview] error detaching debugger before guest teardown', err);
+      }
     });
 
     // Keystrokes that land inside a guest never reach the renderer's own

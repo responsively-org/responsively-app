@@ -140,7 +140,11 @@ const disableInspector = async (
       highlightConfig: {},
     });
 
-    dbg.removeAllListeners().detach();
+    // Quiet the inspector's own listener only — the debugger session may
+    // still be owned by another feature (e.g. the JS-disable toggle) on the
+    // same guest, so it's left attached and torn down centrally when the
+    // guest is destroyed (see webview-registry.ts), not here.
+    dbg.removeAllListeners('message');
   } catch (err) {
     log.warn('Error detaching debugger', err);
   }

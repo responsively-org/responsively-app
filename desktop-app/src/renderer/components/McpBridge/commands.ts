@@ -1,3 +1,4 @@
+import {IPC_MAIN_CHANNELS} from 'common/constants';
 import {Device, getDevicesMap} from 'common/deviceList';
 import {
   McpActiveDevice,
@@ -10,12 +11,27 @@ import {
   McpNavigateResult,
   McpSetActiveDevicesPayload,
   McpSetActiveDevicesResult,
+  McpSetJavascriptEnabledPayload,
+  McpSetJavascriptEnabledResult,
+  McpSetNetworkScriptsBlockedPayload,
+  McpSetNetworkScriptsBlockedResult,
 } from 'common/mcp';
+import {SetJavascriptEnabledArgs, SetJavascriptEnabledResult} from 'main/javascript-toggle';
+import {
+  SetNetworkScriptsBlockedArgs,
+  SetNetworkScriptsBlockedResult,
+} from 'main/network-script-blocker';
 import {Store} from 'redux';
-import {selectActiveSuite, setSuiteDevices} from 'renderer/store/features/device-manager';
+import {
+  selectActiveSuite,
+  setDeviceJavaScriptDisabled,
+  setDeviceNetworkScriptsBlocked,
+  setSuiteDevices,
+} from 'renderer/store/features/device-manager';
 import {selectZoomFactor, setAddress} from 'renderer/store/features/renderer';
 import type {RootState} from '../../store';
 import {resolveDeviceQuery} from './deviceQuery';
+import {getRegisteredDeviceWebview} from './webviewRegistry';
 
 type AppStore = Pick<Store<RootState>, 'getState' | 'dispatch'>;
 
@@ -41,10 +57,8 @@ const getActiveDevices = (state: RootState): Device[] => {
     .filter((device): device is Device => device !== undefined);
 };
 
-const getDeviceWebview = (deviceName: string): Electron.WebviewTag | null => {
-  // Device names contain spaces and slashes, so getElementById instead of selectors.
-  return document.getElementById(deviceName) as Electron.WebviewTag | null;
-};
+const getDeviceWebview = (deviceId: string): Electron.WebviewTag | null =>
+  getRegisteredDeviceWebview(deviceId);
 
 const getAppState = (state: RootState): McpAppState => ({
   url: state.renderer.address,
@@ -112,7 +126,7 @@ const navigate = async (
   if (primaryDevice === undefined) {
     throw new Error('No active devices to navigate. Use the set_active_devices tool first.');
   }
-  const webview = getDeviceWebview(primaryDevice.name);
+  const webview = getDeviceWebview(primaryDevice.id);
   if (webview === null) {
     throw new Error('The device previews are not visible. Switch the app to the browser view.');
   }
@@ -185,7 +199,7 @@ const getCaptureTargets = (
 
   const result: McpCaptureTargetsResult = {targets: [], skipped: []};
   devices.forEach((device) => {
-    const webview = getDeviceWebview(device.name);
+    const webview = getDeviceWebview(device.id);
     if (webview === null) {
       result.skipped.push({
         deviceName: device.name,
@@ -208,6 +222,71 @@ const getCaptureTargets = (
   return result;
 };
 
+const setJavascriptEnabled = async (
+  store: AppStore,
+  payload: McpSetJavascriptEnabledPayload
+): Promise<McpSetJavascriptEnabledResult> => {
+  const {device: deviceQuery, enabled} = payload ?? ({} as McpSetJavascriptEnabledPayload);
+  if (!deviceQuery) {
+    throw new Error('Provide a device id or name');
+  }
+  const device = resolveDeviceQuery(getDevicesMap(), deviceQuery);
+  if (device === undefined) {
+    throw new Error(
+      `Unknown device: ${deviceQuery}. Use the list_devices tool to see valid ids and names.`
+    );
+  }
+  if (!getActiveDevices(store.getState()).some((d) => d.id === device.id)) {
+    throw new Error(
+      `Device "${device.name}" is not in the active preview. Use the set_active_devices tool to activate it first.`
+    );
+  }
+  const webview = getDeviceWebview(device.id);
+  if (webview === null) {
+    throw new Error(`The "${device.name}" preview is not mounted.`);
+  }
+  store.dispatch(setDeviceJavaScriptDisabled({id: device.id, disabled: !enabled}));
+  await window.electron.ipcRenderer.invoke<SetJavascriptEnabledArgs, SetJavascriptEnabledResult>(
+    IPC_MAIN_CHANNELS.SET_JAVASCRIPT_ENABLED,
+    {webviewId: webview.getWebContentsId(), enabled}
+  );
+  return {deviceName: device.name, enabled};
+};
+
+const setNetworkScriptsBlocked = async (
+  store: AppStore,
+  payload: McpSetNetworkScriptsBlockedPayload
+): Promise<McpSetNetworkScriptsBlockedResult> => {
+  const {device: deviceQuery, blocked} = payload ?? ({} as McpSetNetworkScriptsBlockedPayload);
+  if (!deviceQuery) {
+    throw new Error('Provide a device id or name');
+  }
+  const device = resolveDeviceQuery(getDevicesMap(), deviceQuery);
+  if (device === undefined) {
+    throw new Error(
+      `Unknown device: ${deviceQuery}. Use the list_devices tool to see valid ids and names.`
+    );
+  }
+  if (!getActiveDevices(store.getState()).some((d) => d.id === device.id)) {
+    throw new Error(
+      `Device "${device.name}" is not in the active preview. Use the set_active_devices tool to activate it first.`
+    );
+  }
+  const webview = getDeviceWebview(device.id);
+  if (webview === null) {
+    throw new Error(`The "${device.name}" preview is not mounted.`);
+  }
+  store.dispatch(setDeviceNetworkScriptsBlocked({id: device.id, blocked}));
+  await window.electron.ipcRenderer.invoke<
+    SetNetworkScriptsBlockedArgs,
+    SetNetworkScriptsBlockedResult
+  >(IPC_MAIN_CHANNELS.SET_NETWORK_SCRIPTS_BLOCKED, {
+    webviewId: webview.getWebContentsId(),
+    blocked,
+  });
+  return {deviceName: device.name, blocked};
+};
+
 export const executeMcpCommand = async (
   store: AppStore,
   command: McpBridgeCommand,
@@ -224,6 +303,10 @@ export const executeMcpCommand = async (
       return navigate(store, payload as McpNavigatePayload);
     case 'get-capture-targets':
       return getCaptureTargets(store.getState(), (payload ?? {}) as McpCaptureTargetsPayload);
+    case 'set-javascript-enabled':
+      return setJavascriptEnabled(store, payload as McpSetJavascriptEnabledPayload);
+    case 'set-network-scripts-blocked':
+      return setNetworkScriptsBlocked(store, payload as McpSetNetworkScriptsBlockedPayload);
     default:
       throw new Error(`Unknown MCP command: ${command}`);
   }

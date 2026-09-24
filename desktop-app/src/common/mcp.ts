@@ -23,7 +23,13 @@ export interface McpBeacon {
 }
 
 export type McpBridgeCommand =
-  'get-app-state' | 'navigate' | 'list-devices' | 'set-active-devices' | 'get-capture-targets';
+  | 'get-app-state'
+  | 'navigate'
+  | 'list-devices'
+  | 'set-active-devices'
+  | 'get-capture-targets'
+  | 'set-javascript-enabled'
+  | 'set-network-scripts-blocked';
 
 export interface McpBridgeRequest {
   requestId: string;
@@ -98,4 +104,24 @@ export interface McpSkippedCapture {
 export interface McpCaptureTargetsResult {
   targets: McpCaptureTarget[];
   skipped: McpSkippedCapture[];
+}
+
+export interface McpSetJavascriptEnabledPayload {
+  device: string;
+  enabled: boolean;
+}
+
+export interface McpSetJavascriptEnabledResult {
+  deviceName: string;
+  enabled: boolean;
+}
+
+export interface McpSetNetworkScriptsBlockedPayload {
+  device: string;
+  blocked: boolean;
+}
+
+export interface McpSetNetworkScriptsBlockedResult {
+  deviceName: string;
+  blocked: boolean;
 }

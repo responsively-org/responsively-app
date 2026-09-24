@@ -85,6 +85,8 @@ export const buildPreloadedState = () => {
       activeSuite: DEFAULT_SUITE.id,
       suites,
       individualRotations: {},
+      disabledJavaScript: {},
+      networkScriptsBlocked: {},
     },
   };
 };

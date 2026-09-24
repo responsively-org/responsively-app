@@ -23,6 +23,10 @@ interface Props {
   onCaptured: () => void;
   onSimulationChange: (name: string | undefined) => void;
   openDevTools: () => void;
+  jsDisabled: boolean;
+  onToggleJavaScript: () => void;
+  networkScriptsBlocked: boolean;
+  onToggleNetworkScriptBlock: () => void;
   toggleRuler: () => void;
   rulerActive: boolean;
   /** Controlled: the device's individual-rotation state lives in the store. */
@@ -119,6 +123,10 @@ const Toolbar = ({
   onCaptured,
   onSimulationChange,
   openDevTools,
+  jsDisabled,
+  onToggleJavaScript,
+  networkScriptsBlocked,
+  onToggleNetworkScriptBlock,
   toggleRuler,
   rulerActive,
   rotated,
@@ -238,6 +246,26 @@ const Toolbar = ({
       </PillButton>
       <PillButton title="Open devtools" onClick={openDevTools}>
         <Icon icon="ic:round-code" />
+      </PillButton>
+      <PillButton
+        title={
+          jsDisabled ? 'Enable JavaScript for this device' : 'Disable JavaScript for this device'
+        }
+        isActive={jsDisabled}
+        onClick={onToggleJavaScript}
+      >
+        <Icon icon="mdi:language-javascript" />
+      </PillButton>
+      <PillButton
+        title={
+          networkScriptsBlocked
+            ? 'Unblock script requests for this device'
+            : 'Block script requests for this device (network level; JS engine stays on)'
+        }
+        isActive={networkScriptsBlocked}
+        onClick={onToggleNetworkScriptBlock}
+      >
+        <Icon icon="mdi:wifi-off" />
       </PillButton>
       <PillButton title="Scroll to top" onClick={scrollToTop}>
         <Icon icon="ic:baseline-arrow-upward" />
