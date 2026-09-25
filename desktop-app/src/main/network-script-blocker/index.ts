@@ -1,5 +1,6 @@
 import {ipcMain, session, webContents} from 'electron';
 import {IPC_MAIN_CHANNELS} from '../../common/constants';
+import {getBrowserSyncHost} from '../browser-sync';
 import {isRegisteredWebview} from '../webview-registry';
 
 export interface SetNetworkScriptsBlockedArgs {
@@ -23,7 +24,16 @@ const watchedForDestroy = new Set<number>();
 
 const registerRequestFilter = () => {
   session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
-    if (details.resourceType === 'script' && blockedWebviewIds.has(details.webContentsId ?? -1)) {
+    // The BrowserSync client script is the app's own event-mirroring
+    // transport, injected into every preview regardless of this toggle —
+    // it's indistinguishable from a page's own script by resourceType alone,
+    // but blocking it would silently drop a device out of scroll/click
+    // mirroring instead of just blocking the site's scripts as intended.
+    if (
+      details.resourceType === 'script' &&
+      blockedWebviewIds.has(details.webContentsId ?? -1) &&
+      !details.url.includes(getBrowserSyncHost())
+    ) {
       callback({cancel: true});
       return;
     }
