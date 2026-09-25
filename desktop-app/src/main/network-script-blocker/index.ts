@@ -41,6 +41,42 @@ const registerRequestFilter = () => {
   });
 };
 
+const RELOAD_SETTLE_TIMEOUT_MS = 15_000;
+
+// reloadIgnoringCache() is fire-and-forget — it returns before the reload
+// actually starts or commits. Resolving this handler right after calling it
+// (as it used to) let a caller's very next action (e.g. an MCP navigate()
+// call) race the in-flight reload on the same webContents: two competing
+// navigations, and whichever happens to commit last — not necessarily the
+// one requested last — wins. Waiting for the reload to genuinely settle
+// before resolving closes that window, so callers can rely on this device
+// being idle again by the time the promise resolves.
+const waitForReloadToSettle = (contents: Electron.WebContents): Promise<void> =>
+  new Promise((resolve) => {
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      contents.removeListener('did-stop-loading', onStopLoading);
+      contents.removeListener('did-fail-load', onFailLoad);
+      contents.removeListener('destroyed', finish);
+      resolve();
+    };
+    const onStopLoading = () => finish();
+    const onFailLoad = (_event: Electron.Event, errorCode: number) => {
+      // -3 (ERR_ABORTED) fires for in-page interruptions (e.g. a follow-up
+      // navigation superseding this reload) — something else committed, so
+      // that's a settle too, not a failure worth surfacing here.
+      if (errorCode !== -3) finish();
+    };
+    contents.once('did-stop-loading', onStopLoading);
+    contents.once('did-fail-load', onFailLoad);
+    contents.once('destroyed', finish);
+    const timer = setTimeout(finish, RELOAD_SETTLE_TIMEOUT_MS);
+    contents.reloadIgnoringCache();
+  });
+
 const setNetworkScriptsBlocked = async (
   _: unknown,
   args: SetNetworkScriptsBlockedArgs
@@ -72,7 +108,7 @@ const setNetworkScriptsBlocked = async (
   // case Chromium never issues a fresh network request for the script and
   // this filter never gets a chance to see it — bypassing the cache is what
   // makes toggling this reliably observable, on a first visit or a hundredth.
-  webViewContents.reloadIgnoringCache();
+  await waitForReloadToSettle(webViewContents);
   return {status: true};
 };
 

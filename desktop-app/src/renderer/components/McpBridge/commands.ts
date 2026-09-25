@@ -113,45 +113,23 @@ const setActiveDevices = async (
   return {activeDevices: resolved.map(toActiveDevice)};
 };
 
-const navigate = async (
-  store: AppStore,
-  payload: McpNavigatePayload
-): Promise<McpNavigateResult> => {
-  const url = payload?.url;
-  if (!url) {
-    throw new Error('URL is required');
-  }
-  const state = store.getState();
-  const primaryDevice = getActiveDevices(state)[0];
-  if (primaryDevice === undefined) {
-    throw new Error('No active devices to navigate. Use the set_active_devices tool first.');
-  }
-  const webview = getDeviceWebview(primaryDevice.id);
-  if (webview === null) {
-    throw new Error('The device previews are not visible. Switch the app to the browser view.');
-  }
+// Only means "the network-level load finished" — a page's own async-mounted
+// content (a client-rendered hero, a lazily-hydrated component) can still be
+// settling after this fires. Giving it a short extra window before navigate()
+// returns measurably reduces (it can't fully eliminate — that would need
+// page-specific knowledge) the odds that an immediate follow-up read (e.g.
+// read_all_pages) catches a device mid-render.
+const POST_NAVIGATE_SETTLE_MS = 500;
 
-  let currentUrl = '';
-  try {
-    currentUrl = webview.getURL();
-  } catch {
-    // Webview not attached yet; proceed with navigation.
-  }
-  if (currentUrl === url) {
-    return {url, pageTitle: webview.getTitle(), loaded: true};
-  }
-
-  const loaded = await new Promise<boolean>((resolve) => {
+const waitForWebviewSettle = (target: Electron.WebviewTag): Promise<boolean> =>
+  new Promise((resolve) => {
     let settled = false;
     const finish = (result: boolean) => {
       if (settled) return;
       settled = true;
-
       clearTimeout(timer);
-
-      webview.removeEventListener('did-stop-loading', onStopLoading);
-
-      webview.removeEventListener('did-fail-load', onFailLoad);
+      target.removeEventListener('did-stop-loading', onStopLoading);
+      target.removeEventListener('did-fail-load', onFailLoad);
       resolve(result);
     };
     const onStopLoading = () => finish(true);
@@ -162,19 +140,65 @@ const navigate = async (
       }
     };
     const timer = setTimeout(() => finish(false), NAVIGATION_TIMEOUT_MS);
-    webview.addEventListener('did-stop-loading', onStopLoading);
-    webview.addEventListener('did-fail-load', onFailLoad);
+    target.addEventListener('did-stop-loading', onStopLoading);
+    target.addEventListener('did-fail-load', onFailLoad);
+  });
 
-    if (url === store.getState().renderer.address) {
-      // Address unchanged in state (e.g. reload after user navigated away):
-      // the Device effect won't fire, so drive the primary webview directly.
-      webview.loadURL(url).catch(() => finish(false));
-    } else {
-      store.dispatch(setAddress(url));
+const navigate = async (
+  store: AppStore,
+  payload: McpNavigatePayload
+): Promise<McpNavigateResult> => {
+  const url = payload?.url;
+  if (!url) {
+    throw new Error('URL is required');
+  }
+  const activeDevices = getActiveDevices(store.getState());
+  const primaryDevice = activeDevices[0];
+  if (primaryDevice === undefined) {
+    throw new Error('No active devices to navigate. Use the set_active_devices tool first.');
+  }
+  const primaryWebview = getDeviceWebview(primaryDevice.id);
+  if (primaryWebview === null) {
+    throw new Error('The device previews are not visible. Switch the app to the browser view.');
+  }
+
+  const deviceWebviews = activeDevices
+    .map((device) => getDeviceWebview(device.id))
+    .filter((target): target is Electron.WebviewTag => target !== null);
+
+  // Every device not already at `url` — this is what we wait on before
+  // returning. Previously only the primary device was awaited here, so a
+  // caller reading every device right after navigate() returns (read_page on
+  // a non-primary device, or read_all_pages) could catch a slower device
+  // still mid-navigation from the *previous* URL.
+  const pending = deviceWebviews.filter((target) => {
+    try {
+      return target.getURL() !== url;
+    } catch {
+      return true;
     }
   });
 
-  return {url: webview.getURL(), pageTitle: webview.getTitle(), loaded};
+  const settling = Promise.all(pending.map(waitForWebviewSettle));
+
+  if (url === store.getState().renderer.address) {
+    // Address unchanged in state (e.g. reload after user navigated away): a
+    // dispatch with the same value doesn't change any device's effect
+    // dependency, so every pending device needs driving directly.
+    pending.forEach((target) => {
+      target.loadURL(url).catch(() => undefined);
+    });
+  } else {
+    store.dispatch(setAddress(url));
+  }
+
+  const results = await settling;
+  if (pending.length > 0) {
+    await sleep(POST_NAVIGATE_SETTLE_MS);
+  }
+  const loaded = results.every(Boolean);
+
+  return {url: primaryWebview.getURL(), pageTitle: primaryWebview.getTitle(), loaded};
 };
 
 const getCaptureTargets = (
