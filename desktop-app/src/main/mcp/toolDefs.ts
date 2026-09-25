@@ -85,6 +85,30 @@ export const toolDefs = {
         .describe('Optional device id or exact name; omit to type in the primary device'),
     },
   },
+  set_javascript_enabled: {
+    description:
+      'Enable or disable JavaScript execution for one Responsively App device preview. ' +
+      'Reloads that preview so the change takes effect; the state persists across further ' +
+      'reloads and navigation until changed again or the device is removed from the preview.',
+    inputSchema: {
+      device: z.string().min(1).describe('Device id or exact name (use list_devices)'),
+      enabled: z.boolean().describe('true to enable JavaScript, false to disable it'),
+    },
+  },
+  set_network_scripts_blocked: {
+    description:
+      'Block or unblock JavaScript network requests for one Responsively App device preview, ' +
+      'without disabling the JavaScript engine itself. Distinct from set_javascript_enabled: ' +
+      'the page can still execute inline or already-loaded scripts, but any request Chromium ' +
+      'classifies as a script (any <script src>, any source) is cancelled at the network layer ' +
+      '— closer to an ad-blocker, corporate firewall, or a dead CDN than a no-JS browser. ' +
+      'Reloads that preview so the change takes effect; the state persists across further ' +
+      'reloads and navigation until changed again or the device is removed from the preview.',
+    inputSchema: {
+      device: z.string().min(1).describe('Device id or exact name (use list_devices)'),
+      blocked: z.boolean().describe('true to block script network requests, false to allow them'),
+    },
+  },
   screenshot: {
     description:
       'Capture screenshots of Responsively App device previews rendering the current page. ' +

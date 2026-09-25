@@ -74,6 +74,8 @@ test.describe('MCP server', () => {
       'read_page',
       'screenshot',
       'set_active_devices',
+      'set_javascript_enabled',
+      'set_network_scripts_blocked',
       'type_text',
     ]);
   });

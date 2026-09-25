@@ -3,6 +3,7 @@ import {Device as IDevice} from 'common/deviceList';
 import {CONTEXT_MENUS} from 'main/webview-context-menu/common';
 import {memo, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+import {registerDeviceWebview, unregisterDeviceWebview} from '../../McpBridge/webviewRegistry';
 import {
   selectIndividualRotations,
   setIndividualRotation,
@@ -33,6 +34,8 @@ import DeviceFrame from './DeviceFrame';
 import Toolbar from './Toolbar';
 import useDeviceNavigation from './useDeviceNavigation';
 import useDevtoolsBridge from './useDevtoolsBridge';
+import useJavaScriptToggle from './useJavaScriptToggle';
+import useNetworkScriptBlock from './useNetworkScriptBlock';
 import useWebviewLifecycle from './useWebviewLifecycle';
 
 interface Props {
@@ -70,14 +73,33 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   // reads `$$typeof` off everything it finds, and the element exposes an own
   // `contentWindow` — a cross-origin Window for any remote page, which throws
   // a SecurityError on property access. Functions are never walked.
-  const setWebviewRef = useCallback((element: Electron.WebviewTag | null) => {
-    ref.current = element;
-  }, []);
+  const setWebviewRef = useCallback(
+    (element: Electron.WebviewTag | null) => {
+      const previous = ref.current;
+      ref.current = element;
+      if (element) {
+        registerDeviceWebview(device.id, element);
+      } else if (previous) {
+        unregisterDeviceWebview(device.id, previous);
+      }
+    },
+    [device.id]
+  );
   const getWebview = useCallback(() => ref.current, []);
 
   const {webviewReady} = useWebviewLifecycle(ref, {isMobileCapable: device.isMobileCapable});
   const navigation = useDeviceNavigation({ref, isPrimary, webviewReady, address});
   const {openDevTools, inspectElement} = useDevtoolsBridge({ref, webviewReady, zoomfactor});
+  const {jsDisabled, toggleJavaScript} = useJavaScriptToggle({
+    ref,
+    webviewReady,
+    deviceId: device.id,
+  });
+  const {networkScriptsBlocked, toggleNetworkScriptBlock} = useNetworkScriptBlock({
+    ref,
+    webviewReady,
+    deviceId: device.id,
+  });
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
   const isCanvasLayout = layout === PREVIEW_LAYOUTS.CANVAS;
@@ -253,6 +275,10 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
             onCaptured={onCaptured}
             onSimulationChange={setActiveSimulation}
             openDevTools={openDevTools}
+            jsDisabled={jsDisabled}
+            onToggleJavaScript={toggleJavaScript}
+            networkScriptsBlocked={networkScriptsBlocked}
+            onToggleNetworkScriptBlock={toggleNetworkScriptBlock}
             toggleRuler={toggleRuler}
             rotated={singleRotated}
             onRotate={onRotateHandler}
