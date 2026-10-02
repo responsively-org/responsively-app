@@ -12,11 +12,7 @@ import {Icon} from '@iconify/react';
 import {ScreenshotAllArgs} from 'main/screenshot';
 import {selectActiveSuite} from 'renderer/store/features/device-manager';
 import {getDevicesMap} from 'common/deviceList';
-import {
-  FULL_PAGE_SETTLE_MS,
-  prepareFullPageCapture,
-  useShutterSound,
-} from 'renderer/hooks/useScreenshot';
+import {useShutterSound} from 'renderer/hooks/useScreenshot';
 import {APP_VIEWS, setAppView} from 'renderer/store/features/ui';
 import NavigationControls from './NavigationControls';
 import Menu from './Menu';
@@ -51,36 +47,21 @@ const ToolBar = () => {
     dispatch(setIsCapturingScreenshot(true));
     const webViews: NodeListOf<Electron.WebviewTag> = document.querySelectorAll('webView');
     const screens: Array<ScreenshotAllArgs> = [];
-    const restores: Array<() => void> = [];
     const devices = activeSuite.devices.map((d) => getDevicesMap()[d]);
-    // Sequential await: every webview must be measured and resized before the
-    // capture fires (the old forEach(async) raced the capture call).
     for (const webview of Array.from(webViews)) {
       const device = devices.find((d) => d.name === webview.id);
       if (device != null) {
-        const prep = await prepareFullPageCapture(webview);
         screens.push({
           webContentsId: webview.getWebContentsId(),
           device,
-          previousHeight: prep.previousHeight,
-          previousTransform: prep.previousTransform,
-          pageHeight: prep.pageHeight,
+          fullPage: true,
         });
-        restores.push(prep.restore);
       }
     }
-    await new Promise((resolve) => {
-      setTimeout(resolve, FULL_PAGE_SETTLE_MS);
-    });
     await window.electron.ipcRenderer.invoke<Array<ScreenshotAllArgs>, unknown>(
       IPC_MAIN_CHANNELS.SCREENSHOT_ALL,
       screens
     );
-
-    // reset webviews to original size
-    restores.forEach((restore) => {
-      restore();
-    });
 
     dispatch(setIsCapturingScreenshot(false));
     playShutter();
