@@ -27,10 +27,9 @@ export class ResponsivelyApp {
   }
 
   /**
-   * Hidden pills are pointer-transparent until their device is hovered or
-   * focused. Hover geometry is a trap here (the revealed pill floats over the
-   * label row, and hovering a webview never sets :hover on the host), so use
-   * the keyboard path: focusing a pill button reveals via group-focus-within.
+   * Grid tools are always visible; canvas pills reveal on selection or focus.
+   * Focus the first action to support both layouts without depending on hover
+   * behavior across Electron's webview boundary.
    */
   async revealDevicePill(index = 0) {
     await this.page

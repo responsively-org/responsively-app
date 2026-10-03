@@ -33,10 +33,11 @@ interface Props {
   isDeviceRotationEnabled: boolean;
   designOverlay: DesignOverlayState | undefined;
   resolution: ViewResolution;
+  /** Available width for wrapping grid actions without widening the preview. */
+  previewWidth: number;
   /**
-   * Placement per the design: grid pills float over the frame's top-left and
-   * reveal on hover; the canvas pill sits centered below the device and only
-   * shows for the selected frame (the Previewer's selection wrapper reveals it).
+   * Grid tools reserve their own row above the page; the canvas pill sits
+   * centered below the device and shows for the selected or focused frame.
    */
   variant: 'grid' | 'canvas';
 }
@@ -128,6 +129,7 @@ const Toolbar = ({
   isDeviceRotationEnabled,
   designOverlay,
   resolution,
+  previewWidth,
   variant,
 }: Props) => {
   const dispatch = useDispatch();
@@ -208,15 +210,13 @@ const Toolbar = ({
     <div
       data-testid="device-pill"
       className={cx(
-        // Hidden pills are also pointer-transparent: neighbouring devices sit
-        // close enough that an invisible-but-clickable pill would swallow
-        // clicks aimed at the device beside it (the design avoids this by not
-        // rendering hidden pills at all).
-        'pointer-events-none absolute z-30 flex items-center gap-[2px] rounded-[9px] border border-line bg-panel p-[3px] opacity-0 shadow-elevated transition-opacity duration-150 group-focus-within:pointer-events-auto group-focus-within:opacity-100',
+        // Unselected canvas tools must not intercept neighbouring previews.
+        'z-30 flex items-center gap-[2px] rounded-[9px] border border-line bg-panel p-[3px] shadow-elevated',
         variant === 'grid'
-          ? 'top-[-6px] left-0 max-w-[calc(100%-12px)] flex-wrap group-hover:pointer-events-auto group-hover:opacity-100'
-          : 'top-full left-1/2 mt-[10px] -translate-x-1/2'
+          ? 'relative mb-2 w-max flex-wrap'
+          : 'pointer-events-none absolute top-full left-1/2 mt-[10px] -translate-x-1/2 opacity-0 transition-opacity duration-150 group-focus-within:pointer-events-auto group-focus-within:opacity-100'
       )}
+      style={variant === 'grid' ? {maxWidth: previewWidth} : undefined}
     >
       <PillButton title="Refresh this device" onClick={refreshView}>
         <Icon icon="ic:round-refresh" />
