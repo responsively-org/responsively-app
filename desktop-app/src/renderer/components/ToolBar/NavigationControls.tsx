@@ -10,6 +10,7 @@ export const NAVIGATION_EVENTS = {
   BACK: 'back',
   FORWARD: 'forward',
   RELOAD: 'reload',
+  HOME: 'home',
 };
 
 interface NavigationItemProps {

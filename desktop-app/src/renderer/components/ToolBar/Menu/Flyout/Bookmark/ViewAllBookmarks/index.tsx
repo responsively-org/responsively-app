@@ -49,7 +49,13 @@ const ViewAllBookmarks = ({bookmarks, handleBookmarkFlyout}: Props) => {
         )}
       </div>
       <div className="absolute right-[560px]">
-        {openFlyout && <BookmarkFlyout bookmark={currentBookmark} setOpenFlyout={setOpenFlyout} />}
+        {openFlyout && (
+          <BookmarkFlyout
+            bookmark={currentBookmark}
+            onChange={setCurrentBookmark}
+            onClose={() => setOpenFlyout(false)}
+          />
+        )}
       </div>
     </div>
   );

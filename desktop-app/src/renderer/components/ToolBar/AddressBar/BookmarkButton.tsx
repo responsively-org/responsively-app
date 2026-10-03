@@ -1,5 +1,5 @@
 import {Icon} from '@iconify/react';
-import {useState, useMemo} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import useClickOutside from 'renderer/hooks/useClickOutside';
 import {useDispatch, useSelector} from 'react-redux';
 import cx from 'classnames';
@@ -17,37 +17,47 @@ interface Props {
 }
 
 const BookmarkButton = ({currentAddress, pageTitle}: Props) => {
-  const [openFlyout, setOpenFlyout] = useState<boolean>(false);
+  const [editingBookmark, setEditingBookmark] = useState<IBookmarks | null>(null);
+  const editingPageAddress = useRef(currentAddress);
   const dispatch = useDispatch();
-  const ref = useClickOutside(() => {
-    if (!openFlyout) return;
-    setOpenFlyout(false);
-  });
-
-  const initbookmark = {
-    id: '',
-    name: pageTitle,
-    address: currentAddress,
-  };
-
   const bookmarks = useSelector(selectBookmarks);
-  const bookmarkFound = useMemo(
-    () => bookmarks.find((bm: IBookmarks) => bm.address === currentAddress),
-    [currentAddress, bookmarks]
-  );
-
+  const bookmarkFound = bookmarks.find((bookmark) => bookmark.address === currentAddress);
   const isPageBookmarked = !!bookmarkFound;
 
-  const handleFlyout = () => {
-    setOpenFlyout(!openFlyout);
+  const dismissFlyout = useCallback(() => {
+    if (!editingBookmark) return;
+    // Like Chrome's bookmark bubble, dismissing the editor keeps the bookmark
+    // and applies its edits. Only the explicit Remove action deletes it.
+    dispatch(addBookmark(editingBookmark));
+    setEditingBookmark(null);
+  }, [dispatch, editingBookmark]);
+  const ref = useClickOutside(dismissFlyout);
+
+  useEffect(() => {
+    if (currentAddress !== editingPageAddress.current) dismissFlyout();
+  }, [currentAddress, dismissFlyout]);
+
+  useEffect(() => {
+    // Guest webviews receive pointer events in their own document. The host
+    // window loses focus when the user enters a preview, so close there too.
+    window.addEventListener('blur', dismissFlyout);
+    return () => window.removeEventListener('blur', dismissFlyout);
+  }, [dismissFlyout]);
+
+  const openFlyout = () => {
+    if (!currentAddress.trim() || editingBookmark) return;
+
+    // Use the prepared action's id for the editor so Done updates the bookmark
+    // created here, instead of adding a second copy.
+    const action = addBookmark(
+      bookmarkFound || {name: pageTitle || currentAddress, address: currentAddress}
+    );
+    if (!bookmarkFound) dispatch(action);
+    editingPageAddress.current = currentAddress;
+    setEditingBookmark(action.payload);
   };
 
-  const handleKeyboardShortcut = () => {
-    handleFlyout();
-    dispatch(addBookmark(bookmarkFound || initbookmark));
-  };
-
-  useKeyboardShortcut(SHORTCUT_CHANNEL.BOOKMARK, handleKeyboardShortcut);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.BOOKMARK, openFlyout);
 
   return (
     <div ref={ref}>
@@ -56,16 +66,24 @@ const BookmarkButton = ({currentAddress, pageTitle}: Props) => {
           className={cx('rounded-full', {
             'text-blue-500': isPageBookmarked,
           })}
-          onClick={handleFlyout}
-          title={`${!isPageBookmarked ? 'Add' : 'Remove'} bookmark`}
+          onClick={editingBookmark ? dismissFlyout : openFlyout}
+          disabled={!currentAddress.trim()}
+          title={`${isPageBookmarked ? 'Edit' : 'Add'} bookmark`}
+          aria-label={`${isPageBookmarked ? 'Edit' : 'Add'} bookmark`}
+          aria-haspopup="dialog"
+          aria-expanded={editingBookmark !== null}
         >
           <Icon icon={`ic:baseline-star${!isPageBookmarked ? '-border' : ''}`} />
         </Button>
       </div>
 
       <div className="absolute top-[40px] right-0">
-        {openFlyout && (
-          <BookmarkFlyout bookmark={bookmarkFound || initbookmark} setOpenFlyout={setOpenFlyout} />
+        {editingBookmark && (
+          <BookmarkFlyout
+            bookmark={editingBookmark}
+            onChange={setEditingBookmark}
+            onClose={() => setEditingBookmark(null)}
+          />
         )}
       </div>
     </div>

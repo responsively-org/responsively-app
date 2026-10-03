@@ -145,7 +145,7 @@ const useDeviceNavigation = ({ref, isPrimary, webviewReady, address}: Params): N
     };
   }, [ref]);
 
-  // Toolbar pub/sub: reload for everyone; back/forward/storage only on the
+  // Toolbar pub/sub: reload/home for everyone; back/forward/storage only on the
   // primary device.
   const registerNavigationHandlers = useCallback(() => {
     const subscriptions: Array<[string, PubSubHandler]> = [];
@@ -158,6 +158,17 @@ const useDeviceNavigation = ({ref, isPrimary, webviewReady, address}: Params): N
       if (ref.current) {
         ref.current.reload();
       }
+    });
+    subscribe(NAVIGATION_EVENTS.HOME, async (url: string) => {
+      const webview = ref.current;
+      if (!webview || !webviewReady) return;
+      // Home is a fresh URL navigation, even when Redux already holds this
+      // address. Reloading could resend a POST or stay on a redirected page.
+      if (isPrimary) isNavigatingFromAddressBar.current = true;
+      await window.electron.ipcRenderer.invoke<LoadURLInWebviewArgs, LoadURLInWebviewResult>(
+        IPC_MAIN_CHANNELS.LOAD_URL_IN_WEBVIEW,
+        {webContentsId: webview.getWebContentsId(), url}
+      );
     });
     if (isPrimary) {
       subscribe(NAVIGATION_EVENTS.BACK, () => {
@@ -215,7 +226,7 @@ const useDeviceNavigation = ({ref, isPrimary, webviewReady, address}: Params): N
     return () => {
       subscriptions.forEach(([topic, handler]) => webViewPubSub.unsubscribe(topic, handler));
     };
-  }, [ref, isPrimary]);
+  }, [ref, isPrimary, webviewReady]);
 
   useEffect(() => {
     const unregister = registerNavigationHandlers();
