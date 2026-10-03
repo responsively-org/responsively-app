@@ -30,31 +30,92 @@ test.describe('Address Bar Features', () => {
     expect(isFocused).toBe(true);
   });
 
-  test('homepage button is visible and clickable', async ({app}) => {
-    await app.dismissModals();
-
-    const homepageBtn = app.page.locator('button[title="Homepage"]');
-    await expect(homepageBtn).toBeVisible();
-    await homepageBtn.click();
-    await app.page.waitForTimeout(300);
-  });
-
-  test('setting a page as homepage changes the home icon to filled', async ({
+  test('Home navigates to the saved homepage without changing it and preserves Back', async ({
     app,
     testServerUrl,
   }) => {
     await app.dismissModals();
+    const homepage = `${testServerUrl}/test-page.html`;
+    const previousPage = `${testServerUrl}/test-page-2.html`;
+    const originalHomepage = await app.page.evaluate(() =>
+      (window as any).electron.store.get('homepage')
+    );
 
-    // Navigate to a specific page first
-    await app.navigateTo(`${testServerUrl}/test-page.html`);
+    try {
+      await app.openSettings();
+      await app.page.getByTestId('settings-homepage-input').fill(homepage);
+      await app.page.getByTestId('settings-save-button').click();
+      await expect(app.page.getByTestId('settings-homepage-input')).toBeHidden();
+      await expect
+        .poll(() => app.page.evaluate(() => (window as any).electron.store.get('homepage')))
+        .toBe(homepage);
 
-    // Click homepage button to set current page as homepage
-    const homepageBtn = app.page.locator('button[title="Homepage"]');
-    await homepageBtn.click();
-    await app.page.waitForTimeout(300);
+      await app.navigateTo(previousPage);
+      const previewUrls = () =>
+        app.webviews.evaluateAll((views) => views.map((view) => (view as any).getURL()));
+      const previewCount = await app.webviews.count();
+      expect(previewCount).toBeGreaterThan(0);
+      await expect.poll(previewUrls).toEqual(Array(previewCount).fill(previousPage));
+      await app.addressBar.fill('unfinished address');
 
-    // The button reports the current page as the homepage.
-    await expect(homepageBtn).toHaveAttribute('aria-pressed', 'true');
+      await app.page.getByRole('button', {name: 'Home', exact: true}).click();
+
+      await expect(app.addressBar).toHaveValue(homepage);
+      await expect.poll(previewUrls).toEqual(Array(previewCount).fill(homepage));
+      expect(await app.page.evaluate(() => (window as any).electron.store.get('homepage'))).toBe(
+        homepage
+      );
+      await expect(app.page.getByTestId('nav-home')).not.toHaveAttribute('aria-pressed');
+
+      await app.backButton.click();
+      await expect(app.addressBar).toHaveValue(previousPage);
+      await expect.poll(previewUrls).toEqual(Array(previewCount).fill(previousPage));
+    } finally {
+      await app.page.evaluate(
+        (value) => (window as any).electron.store.set('homepage', value),
+        originalHomepage
+      );
+    }
+  });
+
+  test('Home loads the homepage again when already there', async ({app, testServerUrl}) => {
+    await app.dismissModals();
+    const homepage = `${testServerUrl}/test-page.html`;
+    const originalHomepage = await app.page.evaluate(() =>
+      (window as any).electron.store.get('homepage')
+    );
+
+    try {
+      await app.page.evaluate(
+        (value) => (window as any).electron.store.set('homepage', value),
+        homepage
+      );
+      await app.navigateTo(homepage);
+      await app.webviews.evaluateAll(async (views) => {
+        await Promise.all(
+          views.map((view) => (view as any).executeJavaScript('window.__homeReloadMarker = true'))
+        );
+      });
+      await app.page.locator('button[title="Homepage"]').click();
+
+      await expect
+        .poll(() =>
+          app.webviews.evaluateAll(async (views) =>
+            Promise.all(
+              views.map((view) =>
+                (view as any).executeJavaScript('window.__homeReloadMarker === undefined')
+              )
+            )
+          )
+        )
+        .toEqual(Array(await app.webviews.count()).fill(true));
+      await expect(app.addressBar).toHaveValue(homepage);
+    } finally {
+      await app.page.evaluate(
+        (value) => (window as any).electron.store.set('homepage', value),
+        originalHomepage
+      );
+    }
   });
 
   // The per-site data actions live behind the address bar's site-tools

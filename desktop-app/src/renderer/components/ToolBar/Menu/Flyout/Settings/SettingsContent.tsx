@@ -1,6 +1,7 @@
 import {useId, useState} from 'react';
 
 import Button from 'renderer/components/Button';
+import {DEFAULT_HOMEPAGE, normalizeHomepage} from 'renderer/lib/homepage';
 import {SettingsContentHeaders} from './SettingsContentHeaders';
 
 interface Props {
@@ -9,6 +10,10 @@ interface Props {
 
 export const SettingsContent = ({onClose}: Props) => {
   const id = useId();
+  const [homepage, setHomepage] = useState<string>(
+    window.electron.store.get('homepage') ?? DEFAULT_HOMEPAGE
+  );
+  const [homepageError, setHomepageError] = useState(false);
   const [screenshotSaveLocation, setScreenshotSaveLocation] = useState<string>(
     window.electron.store.get('userPreferences.screenshot.saveLocation')
   );
@@ -21,6 +26,11 @@ export const SettingsContent = ({onClose}: Props) => {
   const [locationError, setLocationError] = useState<boolean>(false);
 
   const onSave = () => {
+    const normalizedHomepage = normalizeHomepage(homepage);
+    if (!normalizedHomepage) {
+      setHomepageError(true);
+      return;
+    }
     if (screenshotSaveLocation === '' || screenshotSaveLocation == null) {
       setLocationError(true);
       return;
@@ -34,12 +44,41 @@ export const SettingsContent = ({onClose}: Props) => {
     );
 
     window.electron.store.set('userPreferences.popupBehavior', popupBehavior);
+    window.electron.store.set('homepage', normalizedHomepage);
 
     onClose();
   };
 
   return (
     <div className="w-[75vw] max-w-3xl">
+      <h2>Home</h2>
+      <div className="my-4 flex flex-col space-y-2 text-sm">
+        <label htmlFor={`${id}-homepage`} className="flex flex-col">
+          Homepage
+          <input
+            data-testid="settings-homepage-input"
+            type="text"
+            id={`${id}-homepage`}
+            placeholder="https://example.com"
+            className="mt-2 rounded-md border border-gray-300 px-4 py-2 text-base focus-visible:outline-gray-400 dark:border-gray-500 dark:bg-slate-900"
+            value={homepage}
+            aria-invalid={homepageError || undefined}
+            onChange={(e) => {
+              setHomepage(e.target.value);
+              setHomepageError(false);
+            }}
+          />
+        </label>
+        {homepageError && (
+          <p role="alert" className="text-sm text-red-500">
+            Please enter a valid homepage URL (http, https, or file).
+          </p>
+        )}
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Opened by the Home button and when Responsively starts.
+        </p>
+      </div>
+
       <h2>Screenshots</h2>
       <div className="my-4 flex flex-col space-y-4 text-sm">
         <div className="flex flex-col space-y-2">

@@ -1,130 +1,180 @@
 import {test, expect} from '../fixtures/electron-app';
+import type {ResponsivelyApp} from '../models/app';
+
+type Bookmark = {id: string; name: string; address: string};
+
+const readBookmarks = (app: ResponsivelyApp): Promise<Bookmark[]> =>
+  app.page.evaluate(() => (window as any).electron.store.get('bookmarks') ?? []);
+
+async function navigateTo(app: ResponsivelyApp, url: string) {
+  await app.navigateTo(url);
+  await expect.poll(() => app.firstWebview.evaluate((view: any) => view.getURL())).toBe(url);
+}
 
 test.describe('Bookmarks', () => {
   test.describe.configure({mode: 'parallel'});
-  test('bookmark button (star) is visible in address bar', async ({app}) => {
+
+  test('star immediately saves the current page and Escape keeps it bookmarked', async ({
+    app,
+    testServerUrl,
+  }) => {
     await app.dismissModals();
+    const url = `${testServerUrl}/test-page.html#bookmark-click`;
+    await navigateTo(app, url);
+    await app.page.getByTitle('Add bookmark', {exact: true}).click();
 
-    // The bookmark button should show either filled or outline star
-    const bookmarkBtn = app.page.locator(
-      'button[title="Add bookmark"], button[title="Remove bookmark"]'
-    );
-    await expect(bookmarkBtn.first()).toBeVisible();
-  });
+    await expect
+      .poll(async () => (await readBookmarks(app)).filter((b) => b.address === url))
+      .toHaveLength(1);
+    await expect(app.page.getByTitle('Edit bookmark', {exact: true})).toBeVisible();
+    await expect(app.page.getByLabel('Bookmark Name')).toBeVisible();
+    await expect(app.page.getByLabel('Address', {exact: true})).toHaveValue(url);
 
-  test('clicking star bookmarks the current page', async ({app, testServerUrl}) => {
-    await app.dismissModals();
-
-    // Navigate to a known page first
-    await app.navigateTo(`${testServerUrl}/test-page.html`);
-
-    // Click the add bookmark button
-    const addBookmarkBtn = app.page.locator('button[title="Add bookmark"]');
-    const isAddVisible = await addBookmarkBtn.isVisible().catch(() => false);
-
-    if (isAddVisible) {
-      await addBookmarkBtn.click();
-      await app.page.waitForTimeout(500);
-
-      // A bookmark flyout should appear — close it
-      await app.page.keyboard.press('Escape');
-      await app.page.waitForTimeout(300);
-    }
-  });
-
-  test('keyboard shortcut Cmd/Ctrl+D toggles bookmark', async ({app}) => {
-    await app.dismissModals();
-
-    // Use keyboard shortcut to toggle bookmark
-    await app.pressShortcut('d');
-    await app.page.waitForTimeout(500);
-
-    // A flyout might appear — dismiss it
     await app.page.keyboard.press('Escape');
-    await app.page.waitForTimeout(300);
+    await expect(app.page.getByLabel('Bookmark Name')).toBeHidden();
+    await expect(app.page.getByTitle('Edit bookmark', {exact: true})).toBeVisible();
+
+    await navigateTo(app, `${testServerUrl}/test-page-2.html`);
+    await expect(app.page.getByTitle('Add bookmark', {exact: true})).toBeVisible();
+    await navigateTo(app, url);
+    await expect(app.page.getByTitle('Edit bookmark', {exact: true})).toBeVisible();
   });
 
-  test('bookmarked page shows filled star on revisit', async ({app, testServerUrl}) => {
+  test('Cmd/Ctrl+D adds once and opens the existing bookmark for editing', async ({
+    app,
+    testServerUrl,
+  }) => {
     await app.dismissModals();
+    const url = `${testServerUrl}/test-page.html#bookmark-shortcut`;
+    await navigateTo(app, url);
+    await app.pressShortcut('d');
+    await expect(app.page.getByLabel('Bookmark Name')).toBeVisible();
+    await expect
+      .poll(async () => (await readBookmarks(app)).filter((b) => b.address === url))
+      .toHaveLength(1);
+    await app.page.keyboard.press('Escape');
+    await app.pressShortcut('d');
+    await expect(app.page.getByLabel('Bookmark Name')).toBeVisible();
+    await app.page.getByLabel('Bookmark Name').fill('Keyboard bookmark');
+    await app.pressShortcut('d');
+    await expect(app.page.getByLabel('Bookmark Name')).toHaveValue('Keyboard bookmark');
+    await app.page.getByLabel('Bookmark Name').press('Enter');
 
-    // Bookmark the page first
-    await app.navigateTo(`${testServerUrl}/test-page.html`);
-    const addBtn = app.page.locator('button[title="Add bookmark"]');
-    if (await addBtn.isVisible().catch(() => false)) {
-      await addBtn.click();
-      await app.page.waitForTimeout(500);
-      // Click Save in the bookmark flyout
-      const saveBtn = app.page.locator('button#add');
-      await saveBtn.click();
-      await app.page.waitForTimeout(300);
-    }
-
-    // Navigate away and back to the bookmarked page
-    await app.navigateTo(`${testServerUrl}/test-page-2.html`);
-    await app.navigateTo(`${testServerUrl}/test-page.html`);
-
-    // Should show "Remove bookmark" (filled star)
-    const removeBookmarkBtn = app.page.locator('button[title="Remove bookmark"]');
-    await expect(removeBookmarkBtn).toBeVisible({timeout: 5_000});
+    await expect(app.page.getByLabel('Bookmark Name')).toBeHidden();
+    await expect
+      .poll(async () => (await readBookmarks(app)).filter((b) => b.address === url))
+      .toEqual([expect.objectContaining({name: 'Keyboard bookmark', address: url})]);
   });
 
-  test('bookmarks appear in the menu flyout bookmarks section', async ({app}) => {
+  test('editing and dismissing with Escape or an outside click saves the name', async ({
+    app,
+    testServerUrl,
+  }) => {
     await app.dismissModals();
+    const url = `${testServerUrl}/test-page.html#bookmark-dismiss`;
+    await navigateTo(app, url);
+    await app.page.getByTitle('Add bookmark', {exact: true}).click();
+    await app.page.getByLabel('Bookmark Name').fill('Saved with Escape');
+    await app.page.keyboard.press('Escape');
+    await expect
+      .poll(async () => (await readBookmarks(app)).find((b) => b.address === url)?.name)
+      .toBe('Saved with Escape');
 
+    await app.page.getByTitle('Edit bookmark', {exact: true}).click();
+    await app.page.getByLabel('Bookmark Name').fill('Saved by clicking outside');
+    await app.addressBar.click();
+    await expect(app.page.getByLabel('Bookmark Name')).toBeHidden();
+    await expect
+      .poll(async () => (await readBookmarks(app)).find((b) => b.address === url)?.name)
+      .toBe('Saved by clicking outside');
+
+    await app.page.getByTitle('Edit bookmark', {exact: true}).click();
+    await app.page.getByLabel('Bookmark Name').fill('Saved by clicking the star');
+    await app.page.getByTitle('Edit bookmark', {exact: true}).click();
+    await expect(app.page.getByLabel('Bookmark Name')).toBeHidden();
+    await expect
+      .poll(async () => (await readBookmarks(app)).find((b) => b.address === url)?.name)
+      .toBe('Saved by clicking the star');
+  });
+
+  test('clicking a preview dismisses the editor and saves its edits', async ({
+    app,
+    testServerUrl,
+  }) => {
+    await app.dismissModals();
+    const url = `${testServerUrl}/test-page.html#bookmark-preview-click`;
+    await navigateTo(app, url);
+    await app.page.getByTitle('Add bookmark', {exact: true}).click();
+    await app.page.getByLabel('Bookmark Name').fill('Saved from preview');
+    await app.firstWebview.click({position: {x: 40, y: 150}});
+
+    await expect(app.page.getByLabel('Bookmark Name')).toBeHidden();
+    await expect
+      .poll(async () => (await readBookmarks(app)).find((b) => b.address === url)?.name)
+      .toBe('Saved from preview');
+  });
+
+  test('Done updates a bookmark URL without duplicating it', async ({app, testServerUrl}) => {
+    await app.dismissModals();
+    const url = `${testServerUrl}/test-page.html#bookmark-edit-url`;
+    const newUrl = `${testServerUrl}/test-page-2.html#bookmark-edited`;
+    await navigateTo(app, url);
+    await app.page.getByTitle('Add bookmark', {exact: true}).click();
+    await expect
+      .poll(async () => (await readBookmarks(app)).find((b) => b.address === url)?.id)
+      .toBeTruthy();
+    const bookmark = (await readBookmarks(app)).find((b) => b.address === url)!;
+    await app.page.getByLabel('Bookmark Name').fill('Edited bookmark');
+    await app.page.getByLabel('Address', {exact: true}).fill(newUrl);
+    await app.page.getByRole('button', {name: 'Done', exact: true}).click();
+
+    await expect(app.page.getByTitle('Add bookmark', {exact: true})).toBeVisible();
+    await expect
+      .poll(async () => (await readBookmarks(app)).filter((b) => b.id === bookmark.id))
+      .toEqual([{id: bookmark.id, name: 'Edited bookmark', address: newUrl}]);
+    await expect
+      .poll(async () => (await readBookmarks(app)).filter((b) => b.address === url))
+      .toHaveLength(0);
+    await navigateTo(app, newUrl);
+    await expect(app.page.getByTitle('Edit bookmark', {exact: true})).toBeVisible();
+  });
+
+  test('Remove deletes the bookmark and restores the empty star', async ({app, testServerUrl}) => {
+    await app.dismissModals();
+    const url = `${testServerUrl}/test-page.html#bookmark-remove`;
+    await navigateTo(app, url);
+    await app.page.getByTitle('Add bookmark', {exact: true}).click();
+    await app.page.getByRole('button', {name: 'Done', exact: true}).click();
+    await app.page.getByTitle('Edit bookmark', {exact: true}).click();
+    await app.page.getByRole('button', {name: 'Remove', exact: true}).click();
+
+    await expect(app.page.getByLabel('Bookmark Name')).toBeHidden();
+    await expect(app.page.getByTitle('Add bookmark', {exact: true})).toBeVisible();
+    await expect
+      .poll(async () => (await readBookmarks(app)).filter((b) => b.address === url))
+      .toHaveLength(0);
+    await navigateTo(app, `${testServerUrl}/test-page-2.html`);
+    await navigateTo(app, url);
+    await expect(app.page.getByTitle('Add bookmark', {exact: true})).toBeVisible();
+  });
+
+  test('clicking a saved bookmark in the menu navigates the previews', async ({
+    app,
+    testServerUrl,
+  }) => {
+    await app.dismissModals();
+    const url = `${testServerUrl}/test-page.html#bookmark-menu`;
+    await navigateTo(app, url);
+    await app.page.getByTitle('Add bookmark', {exact: true}).click();
+    await app.page.getByLabel('Bookmark Name').fill('Menu navigation bookmark');
+    await app.page.getByRole('button', {name: 'Done', exact: true}).click();
+    await navigateTo(app, `${testServerUrl}/test-page-2.html`);
     await app.openMenuFlyout();
+    await app.page.getByRole('button', {name: 'Bookmarks', exact: true}).hover();
+    await app.page.getByRole('button', {name: 'Menu navigation bookmark', exact: true}).click();
 
-    // Verify Bookmarks section is visible
-    await expect(app.page.getByText('Bookmarks')).toBeVisible();
-
-    await app.closeMenuFlyout();
-  });
-
-  test('clicking a bookmark in the list navigates to the URL', async ({app}) => {
-    await app.dismissModals();
-
-    await app.openMenuFlyout();
-
-    // Hover over Bookmarks to see submenu
-    const bookmarksBtn = app.page.getByText('Bookmarks').first();
-    await bookmarksBtn.hover();
-    await app.page.waitForTimeout(500);
-
-    await app.closeMenuFlyout();
-  });
-
-  test('removing a bookmark returns star to outline state', async ({app, testServerUrl}) => {
-    await app.dismissModals();
-
-    // Bookmark the page first so we have something to remove
-    await app.navigateTo(`${testServerUrl}/test-page.html`);
-    const addBtn = app.page.locator('button[title="Add bookmark"]');
-    if (await addBtn.isVisible().catch(() => false)) {
-      await addBtn.click();
-      await app.page.waitForTimeout(500);
-      // Click Save in the bookmark flyout
-      const saveBtn = app.page.locator('button#add');
-      await saveBtn.click();
-      await app.page.waitForTimeout(300);
-    }
-
-    // Now remove the bookmark
-    const removeBookmarkBtn = app.page.locator('button[title="Remove bookmark"]');
-    await expect(removeBookmarkBtn).toBeVisible({timeout: 5_000});
-    await removeBookmarkBtn.click();
-    await app.page.waitForTimeout(500);
-
-    const removeBtn = app.page.locator('button#remove');
-    const hasRemoveBtn = await removeBtn.isVisible().catch(() => false);
-    if (hasRemoveBtn) {
-      await removeBtn.click();
-      await app.page.waitForTimeout(500);
-    } else {
-      await app.page.keyboard.press('Escape');
-      await app.page.waitForTimeout(300);
-    }
-
-    // The star should now show "Add bookmark"
-    const addBookmarkBtn = app.page.locator('button[title="Add bookmark"]');
-    await expect(addBookmarkBtn).toBeVisible({timeout: 5_000});
+    await expect(app.addressBar).toHaveValue(url);
+    await expect.poll(() => app.firstWebview.evaluate((view: any) => view.getURL())).toBe(url);
+    await expect(app.page.getByTitle('Edit bookmark', {exact: true})).toBeVisible();
   });
 });

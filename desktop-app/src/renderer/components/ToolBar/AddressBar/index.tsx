@@ -7,6 +7,7 @@ import {DragEvent, KeyboardEventHandler, useCallback, useEffect, useRef, useStat
 import {useDispatch, useSelector} from 'react-redux';
 import Button from 'renderer/components/Button';
 import {webViewPubSub} from 'renderer/lib/pubsub';
+import {DEFAULT_HOMEPAGE, normalizeHomepage} from 'renderer/lib/homepage';
 import {selectAddress, selectPageTitle, setAddress} from 'renderer/store/features/renderer';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
@@ -17,6 +18,7 @@ import Bookmark from './BookmarkButton';
 import SitePermissionsDropdown from './SitePermissions';
 import SiteToolsPopover from './SiteToolsPopover';
 import {IconButton} from '../primitives';
+import {NAVIGATION_EVENTS} from '../NavigationControls';
 
 export const ADDRESS_BAR_EVENTS = {
   DELETE_COOKIES: 'DELETE_COOKIES',
@@ -29,7 +31,6 @@ const AddressBar = () => {
   const [typedAddress, setTypedAddress] = useState<string>('');
   const [isSuggesting, setIsSuggesting] = useState<boolean>(false);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
-  const [homepage, setHomepage] = useState<string>(window.electron.store.get('homepage'));
   const [isFocused, setIsFocused] = useState(false);
   const [deleteStorageLoading, setDeleteStorageLoading] = useState<boolean>(false);
   const [deleteCookiesLoading, setDeleteCookiesLoading] = useState<boolean>(false);
@@ -54,10 +55,10 @@ const AddressBar = () => {
       let newAddress = url ?? typedAddress;
       if (newAddress.indexOf('://') === -1) {
         let protocol = 'https://';
-        if (typedAddress.indexOf('localhost') !== -1 || typedAddress.indexOf('127.0.0.1') !== -1) {
+        if (newAddress.indexOf('localhost') !== -1 || newAddress.indexOf('127.0.0.1') !== -1) {
           protocol = 'http://';
         }
-        newAddress = protocol + typedAddress;
+        newAddress = protocol + newAddress;
       }
       if (url && url !== typedAddress) setTypedAddress(url);
       dispatch(setAddress(newAddress));
@@ -86,12 +87,6 @@ const AddressBar = () => {
       window.electron.ipcRenderer.removeAllListeners(IPC_MAIN_CHANNELS.OPEN_URL);
     };
   }, [dispatchAddress]);
-
-  useEffect(() => {
-    if (homepage !== window.electron.store.get('homepage')) {
-      window.electron.store.set('homepage', homepage);
-    }
-  }, [homepage]);
 
   const permissionReqClickHandler = (allow: boolean) => {
     if (!permissionRequest) {
@@ -178,7 +173,17 @@ const AddressBar = () => {
     }
   };
 
-  const isHomepage = address === homepage;
+  const navigateHome = () => {
+    const homepage =
+      normalizeHomepage(window.electron.store.get('homepage') ?? '') ?? DEFAULT_HOMEPAGE;
+    setIsSuggesting(false);
+    setTypedAddress(homepage);
+    if (address === homepage) {
+      webViewPubSub.publish(NAVIGATION_EVENTS.HOME, homepage);
+    } else {
+      dispatchAddress(homepage);
+    }
+  };
 
   useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_CACHE, deleteCache);
   useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_STORAGE, deleteStorage);
@@ -292,14 +297,12 @@ const AddressBar = () => {
           />
           <IconButton
             className="h-[26px]! w-[26px]! rounded-full text-[15px]"
-            onClick={() => setHomepage(address)}
-            isActive={isHomepage}
+            onClick={navigateHome}
             title="Homepage"
+            aria-label="Home"
+            data-testid="nav-home"
           >
-            <Icon
-              icon={isHomepage ? 'mdi:home' : 'mdi:home-outline'}
-              className={cx({'text-accent': isHomepage})}
-            />
+            <Icon icon="mdi:home-outline" />
           </IconButton>
           <Bookmark pageTitle={pageTitle} currentAddress={address} />
         </div>
