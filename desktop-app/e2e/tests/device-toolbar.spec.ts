@@ -1,6 +1,100 @@
 import {test, expect} from '../fixtures/electron-app';
 
 test.describe('Device Toolbar', () => {
+  for (const layout of ['FLEX', 'COLUMN', 'MASONRY', 'INDIVIDUAL']) {
+    test(`wrapped tools leave page content accessible in ${layout}`, async ({
+      app,
+      testServerUrl,
+    }) => {
+      await app.dismissModals();
+      await app.page.getByTestId('layout-FLEX').click();
+      if (layout === 'INDIVIDUAL') {
+        // Focus the first device explicitly; a worker may retain another selection.
+        await app.revealDevicePill();
+        await app.page.getByTitle('Focus this device', {exact: true}).first().click();
+      } else {
+        await app.page.getByTestId(`layout-${layout}`).click();
+      }
+      await app.navigateTo(`${testServerUrl}/test-page.html`);
+
+      const zoomLevel = app.page.getByTestId('zoom-level');
+      const initialZoom = await zoomLevel.innerText();
+      let zoomSteps = 0;
+
+      try {
+        // Small previews force multiple toolbar rows, which previously covered
+        // the page's top edge when the pointer approached it.
+        while ((await zoomLevel.innerText()) !== '25%' && zoomSteps < 14) {
+          await app.page.getByTestId('zoom-out').click();
+          zoomSteps += 1;
+        }
+        await expect(zoomLevel).toHaveText('25%');
+
+        const webview = app.page.locator('webview:visible').first();
+        const pill = app.page.getByTestId('device-pill').filter({visible: true}).first();
+        const firstAction = pill.locator('button').first();
+        const lastAction = pill.getByTitle('More device tools', {exact: true});
+        await webview.scrollIntoViewIfNeeded();
+        await expect(pill).toHaveCSS('opacity', '1');
+        const firstActionBox = await firstAction.boundingBox();
+        const lastActionBox = await lastAction.boundingBox();
+        expect(lastActionBox!.y).toBeGreaterThan(firstActionBox!.y);
+
+        const pageBox = (await webview.boundingBox())!;
+        const pillBox = (await pill.boundingBox())!;
+        expect(pillBox.y + pillBox.height).toBeLessThanOrEqual(pageBox.y);
+        expect(pillBox.width).toBeLessThanOrEqual(pageBox.width + 1);
+
+        await firstAction.focus();
+        expect(await webview.boundingBox()).toEqual(pageBox);
+        await firstAction.hover();
+        expect(await webview.boundingBox()).toEqual(pageBox);
+        await app.page.mouse.move(pageBox.x + 2, pageBox.y + 2);
+        expect(await webview.boundingBox()).toEqual(pageBox);
+
+        // Use an actual host mouse click, so an overlapping toolbar would
+        // intercept it. Executing button.click() inside the guest would miss
+        // the regression entirely.
+        const executeInGuest = (script: string) =>
+          webview.evaluate(
+            (element, code) => (element as Electron.WebviewTag).executeJavaScript(code),
+            script
+          );
+        await expect
+          .poll(() => executeInGuest('document.getElementById("click-btn") !== null'))
+          .toBe(true);
+        const target = await executeInGuest(`
+          (() => {
+            const button = document.getElementById('click-btn');
+            button.style.cssText = 'position: fixed; left: 8px; top: 8px; z-index: 2147483647';
+            window.testClickCount = 0;
+            const rect = button.getBoundingClientRect();
+            return {x: rect.x + rect.width / 2, y: rect.y + rect.height / 2};
+          })()
+        `);
+        const scale = Number(await webview.getAttribute('data-scale-factor'));
+        const clickPoint = {
+          x: pageBox.x + target.x * scale,
+          y: pageBox.y + target.y * scale,
+        };
+        await app.page.mouse.move(clickPoint.x, clickPoint.y);
+        expect(
+          await app.page.evaluate(({x, y}) => document.elementFromPoint(x, y)?.tagName, clickPoint)
+        ).toBe('WEBVIEW');
+        await app.page.mouse.click(clickPoint.x, clickPoint.y);
+        await expect.poll(() => executeInGuest('window.testClickCount')).toBe(1);
+      } finally {
+        // App state is shared across this worker's specs, including a separate
+        // zoom value for the individual layout.
+        for (let step = 0; step < zoomSteps; step += 1) {
+          await app.page.getByTestId('zoom-in').click();
+        }
+        await expect(zoomLevel).toHaveText(initialZoom);
+        await app.page.getByTestId('layout-FLEX').click();
+      }
+    });
+  }
+
   test('each device shows its name and dimensions in the header', async ({app}) => {
     await app.dismissModals();
 

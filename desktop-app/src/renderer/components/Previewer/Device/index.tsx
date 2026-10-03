@@ -262,6 +262,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
             rulerActive={rulerActive}
             designOverlay={designOverlay}
             resolution={resolution}
+            previewWidth={width * zoomfactor}
             variant={isCanvasLayout ? 'canvas' : 'grid'}
           />
         )
