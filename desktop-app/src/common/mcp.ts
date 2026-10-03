@@ -6,6 +6,28 @@ export const MCP_PORT_ENV_VAR = 'RESPONSIVELY_MCP_PORT';
 
 export const MCP_SERVER_NAME = 'responsively';
 
+// Shared by the HTTP server and stdio bridge so either connection advertises
+// the same capabilities during MCP initialization.
+export const MCP_SERVER_INFO = {
+  name: MCP_SERVER_NAME,
+  title: 'Responsively App — Responsive Browser Testing',
+  description:
+    'Browser automation for testing website responsiveness across mobile, tablet, and ' +
+    'desktop viewports. Open a URL in multiple device previews, compare labeled screenshots, ' +
+    'read page content, and test website interactions in Responsively App.',
+  websiteUrl: 'https://responsively.app',
+};
+
+export const MCP_SERVER_INSTRUCTIONS =
+  'Use Responsively App for responsive website testing and visual comparisons across ' +
+  'browser screen sizes. Start with get_app_state to inspect the current URL and viewports. ' +
+  'Choose mobile, tablet, and desktop presets with list_devices and set_active_devices, ' +
+  'open the website with navigate, then use screenshot to capture all active viewports in ' +
+  'one call. Use read_page to find selectors for click and type_text when testing menus, ' +
+  'links, and forms. Screenshots are labeled JPEGs of the visible viewport, not full-page ' +
+  'captures, and are downscaled to at most 1000px wide. These are browser device previews, ' +
+  'not physical-device tests.';
+
 export const MCP_BEACON_FILENAME = 'app-location.json';
 
 /**

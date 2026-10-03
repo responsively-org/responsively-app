@@ -5,7 +5,7 @@ import {
   ListToolsRequestSchema,
   McpError,
 } from '@modelcontextprotocol/sdk/types.js';
-import {MCP_SERVER_NAME} from '../common/mcp';
+import {MCP_SERVER_INFO, MCP_SERVER_INSTRUCTIONS} from '../common/mcp';
 import {createBackend} from './backend';
 import {readBeacon, resolveTargetPort} from './beacon';
 import {log} from './log';
@@ -17,8 +17,8 @@ export const startBridge = async () => {
   const backend = createBackend({port});
 
   const server = new Server(
-    {name: MCP_SERVER_NAME, version: manifest.version},
-    {capabilities: {tools: {}}}
+    {...MCP_SERVER_INFO, version: manifest.version},
+    {capabilities: {tools: {}}, instructions: MCP_SERVER_INSTRUCTIONS}
   );
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {

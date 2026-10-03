@@ -4,7 +4,7 @@ import {app} from 'electron';
 import http from 'http';
 import store from '../../store';
 import log from '../logging';
-import {MCP_SERVER_NAME} from '../../common/mcp';
+import {MCP_SERVER_INFO, MCP_SERVER_INSTRUCTIONS} from '../../common/mcp';
 import {writeMcpBeacon} from './beacon';
 import {GetMainWindow, initMcpBridge} from './bridge';
 import {registerTools} from './tools';
@@ -30,7 +30,10 @@ const handleMcpRequest = async (
 ) => {
   // Stateless mode: a fresh server + transport per request, so concurrent
   // agents need no session bookkeeping.
-  const server = new McpServer({name: MCP_SERVER_NAME, version: app.getVersion()});
+  const server = new McpServer(
+    {...MCP_SERVER_INFO, version: app.getVersion()},
+    {instructions: MCP_SERVER_INSTRUCTIONS}
+  );
   registerTools(server, getMainWindow);
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: undefined,

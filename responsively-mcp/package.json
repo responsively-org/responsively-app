@@ -1,12 +1,18 @@
 {
   "name": "@responsively/mcp",
   "version": "1.0.0",
-  "description": "MCP server for Responsively App — launches the installed app on demand and lets AI agents drive it",
+  "description": "Browser MCP server for testing website responsiveness across mobile, tablet, and desktop viewports with screenshots and page interactions in Responsively App",
   "keywords": [
     "mcp",
     "model-context-protocol",
     "responsively",
+    "browser",
+    "browser-automation",
     "responsive-design",
+    "responsive-testing",
+    "website-testing",
+    "viewport",
+    "screenshots",
     "devtools",
     "ai-agents"
   ],
