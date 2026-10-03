@@ -96,6 +96,10 @@ const documentBodyInit = () => {
   );
 
   window.addEventListener('scroll', () => {
+    if ((window as Window & {__responsivelyScreenshotInProgress?: boolean})
+      .__responsivelyScreenshotInProgress) {
+      return;
+    }
     scrollPending = true;
     requestFlush();
   });

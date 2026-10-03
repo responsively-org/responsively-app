@@ -5,6 +5,8 @@ import path from 'path';
 import {IPC_MAIN_CHANNELS} from '../../common/constants';
 import store from '../../store';
 import {isRegisteredWebview} from '../webview-registry';
+import {captureFullPage} from './capture-full-page';
+import {captureViewport} from './capture-viewport';
 
 export interface ScreenshotArgs {
   webContentsId: number;
@@ -12,43 +14,33 @@ export interface ScreenshotArgs {
   device: Device;
 }
 
-export interface ScreenshotAllArgs {
-  webContentsId: number;
-  device: Device;
-  previousHeight: string;
-  previousTransform: string;
-  pageHeight: number;
-}
+export type ScreenshotAllArgs = ScreenshotArgs;
 
 export interface ScreenshotResult {
   done: boolean;
 }
 
-const CAPTURE_ATTEMPTS = 3;
-const CAPTURE_RETRY_DELAY_MS = 250;
-
-const delay = (ms: number) =>
-  new Promise<void>((resolve) => {
-    setTimeout(resolve, ms);
-  });
-
 export const captureImage = async (
-  webContentsId: number
+  webContentsId: number,
+  fullPage = false
 ): Promise<Electron.NativeImage | undefined> => {
   // Single choke point for both the IPC and MCP screenshot paths.
   if (!isRegisteredWebview(webContentsId)) {
     return undefined;
   }
   const WebContents = webContents.fromId(webContentsId);
+  if (WebContents === undefined) {
+    return undefined;
+  }
 
-  const isExecuted = await WebContents?.executeJavaScript(`
+  const isExecuted = await WebContents.executeJavaScript(`
     if (window.isExecuted) {
       true;
     }
   `);
 
   if (!isExecuted) {
-    await WebContents?.executeJavaScript(`
+    await WebContents.executeJavaScript(`
       const bgColor = window.getComputedStyle(document.body).backgroundColor;
       if (bgColor === 'rgba(0, 0, 0, 0)') {
         document.body.style.backgroundColor = 'white';
@@ -57,30 +49,15 @@ export const captureImage = async (
     `);
   }
 
+  if (fullPage) {
+    return captureFullPage(WebContents);
+  }
+
   // capturePage throws (e.g. UnknownVizError) or hands back an empty frame
   // while the guest's compositor surface is still settling — typically right
   // after a navigation or a freshly attached preview. That state is
   // transient, so retry briefly before reporting the capture as failed.
-  let lastError: unknown;
-  let image: Electron.NativeImage | undefined;
-  for (let attempt = 0; attempt < CAPTURE_ATTEMPTS; attempt += 1) {
-    if (attempt > 0) {
-      await delay(CAPTURE_RETRY_DELAY_MS);
-    }
-    try {
-      image = await WebContents?.capturePage();
-      lastError = undefined;
-      if (image !== undefined && !image.isEmpty()) {
-        return image;
-      }
-    } catch (error) {
-      lastError = error;
-    }
-  }
-  if (lastError !== undefined) {
-    throw lastError;
-  }
-  return image;
+  return captureViewport(WebContents);
 };
 
 const quickScreenshot = async (arg: ScreenshotArgs): Promise<ScreenshotResult> => {
@@ -88,7 +65,7 @@ const quickScreenshot = async (arg: ScreenshotArgs): Promise<ScreenshotResult> =
     webContentsId,
     device: {name},
   } = arg;
-  const image = await captureImage(webContentsId);
+  const image = await captureImage(webContentsId, arg.fullPage);
   if (image === undefined) {
     return {done: false};
   }
@@ -110,13 +87,11 @@ const quickScreenshot = async (arg: ScreenshotArgs): Promise<ScreenshotResult> =
 };
 
 const captureAllDecies = async (args: Array<ScreenshotAllArgs>): Promise<ScreenshotResult> => {
-  const screenShots = args.map((arg) => {
-    const {device, webContentsId} = arg;
-    const screenShotArg: ScreenshotArgs = {device, webContentsId};
-    return quickScreenshot(screenShotArg);
-  });
-
-  await Promise.all(screenShots);
+  // Full-page capture scrolls each guest while stitching its viewport. Capture
+  // sequentially so mirrored scrolling cannot make previews race each other.
+  for (const arg of args) {
+    await quickScreenshot(arg);
+  }
   return {done: true};
 };
 

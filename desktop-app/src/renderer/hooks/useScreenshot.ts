@@ -1,14 +1,9 @@
 import {IPC_MAIN_CHANNELS} from 'common/constants';
 import {Device} from 'common/deviceList';
-import {updateWebViewHeightAndScale} from 'common/webViewUtils';
 import {ScreenshotArgs, ScreenshotResult} from 'main/screenshot';
-import WebPage from 'main/screenshot/webpage';
 import {useState} from 'react';
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
 import useSound from 'use-sound';
-
-/** Pages need a beat to relayout after being resized to full height. */
-export const FULL_PAGE_SETTLE_MS = 1000;
 
 /**
  * The camera shutter, silenced during E2E runs so test machines don't click
@@ -20,27 +15,6 @@ export const useShutterSound = () => {
     if (!window.responsively.isE2E) {
       play();
     }
-  };
-};
-
-/**
- * Resizes a webview to its full page height for capture and hands back a
- * restore function. Shared by the per-device and capture-all flows.
- */
-export const prepareFullPageCapture = async (webview: Electron.WebviewTag) => {
-  const webPage = new WebPage(webview as unknown as Electron.WebContents);
-  const pageHeight = await webPage.getPageHeight();
-  const previousHeight = webview.style.height;
-  const previousTransform = webview.style.transform;
-  updateWebViewHeightAndScale(webview, pageHeight);
-  return {
-    pageHeight,
-    previousHeight,
-    previousTransform,
-    restore: () => {
-      webview.style.height = previousHeight;
-      webview.style.transform = previousTransform;
-    },
   };
 };
 
@@ -96,21 +70,15 @@ export const useDeviceScreenshot = ({
     setFullLoading(true);
     try {
       onFullPageCapturePending?.(true);
-      const prep = await prepareFullPageCapture(webview);
-
-      await new Promise((resolve) => {
-        setTimeout(resolve, FULL_PAGE_SETTLE_MS);
-      });
-
       await window.electron.ipcRenderer.invoke<ScreenshotArgs, ScreenshotResult>(
         IPC_MAIN_CHANNELS.SCREENSHOT,
         {
           webContentsId: webview.getWebContentsId(),
           device,
+          fullPage: true,
         }
       );
 
-      prep.restore();
       onFullPageCapturePending?.(false);
       playShutter();
     } catch (error) {
