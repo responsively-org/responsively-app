@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-'use strict';
+"use strict";
 
 /**
  * @responsively/mcp — frozen bootstrap.
@@ -10,10 +10,13 @@
  * keep this file dumb so stale npx caches never matter.
  */
 
-const {resolveBridgeEntry} = require('./lib/resolve');
-const {runNotInstalledServer} = require('./lib/not-installed');
+const { resolveBridgeEntry } = require("./lib/resolve");
+const { runNotInstalledServer } = require("./lib/not-installed");
 
-const HELP = `responsively-mcp — MCP server for Responsively App (https://responsively.app)
+const HELP = `responsively-mcp — Browser MCP server for responsive website testing
+
+Check websites across mobile, tablet, and desktop viewports with screenshots
+and page interactions in Responsively App (https://responsively.app).
 
 Usage:
   npx -y @responsively/mcp            Start the stdio MCP server (used by MCP clients)
@@ -34,17 +37,19 @@ Environment variables:
 `;
 
 const argv = process.argv.slice(2);
-if (argv.includes('--help') || argv.includes('-h')) {
+if (argv.includes("--help") || argv.includes("-h")) {
   process.stdout.write(HELP);
   process.exit(0);
 }
 
 const entry = resolveBridgeEntry(process.env, process.platform);
 
-if (argv.includes('--version') || argv.includes('-v')) {
-  const {version} = require('./package.json');
+if (argv.includes("--version") || argv.includes("-v")) {
+  const { version } = require("./package.json");
   process.stdout.write(`@responsively/mcp ${version}\n`);
-  process.stdout.write(`bridge: ${entry ?? 'not found (is Responsively App installed?)'}\n`);
+  process.stdout.write(
+    `bridge: ${entry ?? "not found (is Responsively App installed?)"}\n`,
+  );
   process.exit(0);
 }
 
