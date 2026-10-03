@@ -5,7 +5,7 @@ Browser extension (Manifest V3) that opens the current page in the [Responsively
 ## Development
 
 ```bash
-npm install
+npm ci
 npm run start    # development build with watch
 npm run build    # production build into dist/
 npm run lint     # validate dist/ with web-ext (AMO validator)
