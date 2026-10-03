@@ -11,13 +11,13 @@
 		"release": "npm run build && npm run lint && npm run package"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.26.0",
-		"@babel/preset-env": "^7.26.0",
-		"@babel/preset-react": "^7.26.3",
+		"@babel/core": "^7.29.7",
+		"@babel/preset-env": "^7.29.7",
+		"@babel/preset-react": "^7.29.7",
 		"babel-loader": "^9.2.1",
-		"copy-webpack-plugin": "^12.0.2",
-		"web-ext": "^8.3.0",
-		"webpack": "^5.97.1",
+		"copy-webpack-plugin": "^14.0.0",
+		"web-ext": "^10.7.0",
+		"webpack": "^5.111.1",
 		"webpack-cli": "^5.1.4"
 	},
 	"dependencies": {

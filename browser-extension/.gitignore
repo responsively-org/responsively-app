@@ -1,6 +1,5 @@
 node_modules
 yarn.lock
-package-lock.json
 dist
 setCreds.sh
 web-ext-artifacts
