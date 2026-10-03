@@ -101,13 +101,11 @@ const ToolBar = () => {
   return (
     <div className="flex h-14 shrink-0 items-center gap-3 border-b border-line-soft bg-panel px-[14px]">
       <NavigationControls />
-      {/* The floor keeps the address input usable no matter how crowded the
-          row gets — without it the two flex-1 tracks absorb the whole deficit
-          and the input collapses to zero width. */}
-      <div className="max-w-[540px] min-w-[220px] flex-1">
+      {/* Fill the available space while keeping the address input usable
+          when the toolbar gets crowded. */}
+      <div className="min-w-[220px] flex-1">
         <AddressBar />
       </div>
-      <div className="flex-1" />
       <ToolbarGroup>
         <ToolbarAction onClick={handleRotate} isActive={rotateDevices} title="Rotate Devices">
           <Icon
