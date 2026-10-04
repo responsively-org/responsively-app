@@ -25,6 +25,8 @@ import store from '../store';
 import {initWebviewContextMenu} from './webview-context-menu/register';
 import {initScreenshotHandlers} from './screenshot';
 import {initDevtoolsHandlers} from './devtools';
+import {initJavascriptToggleHandlers} from './javascript-toggle';
+import {initNetworkScriptBlockerHandlers} from './network-script-blocker';
 import {initWebviewStorageManagerHandlers} from './webview-storage-manager';
 import {initNativeFunctionHandlers} from './native-functions';
 import {WebPermissionHandlers} from './web-permissions';
@@ -278,6 +280,8 @@ const createWindow = async () => {
   }
   trackWindowState(mainWindow);
   initDevtoolsHandlers(mainWindow);
+  initJavascriptToggleHandlers();
+  initNetworkScriptBlockerHandlers();
   wireWebviewSecurity(mainWindow.webContents, {
     openInPreview: (url) => openUrl(url, getMainWindow()),
     openExternal: (url) => shell.openExternal(url),

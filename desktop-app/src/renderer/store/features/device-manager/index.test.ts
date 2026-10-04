@@ -20,6 +20,8 @@ const stateWith = (overrides: Partial<DeviceManagerState>): DeviceManagerState =
   activeSuite: DEFAULT_SUITE.id,
   suites: [DEFAULT_SUITE],
   individualRotations: {},
+  disabledJavaScript: {},
+  networkScriptsBlocked: {},
   ...overrides,
 });
 

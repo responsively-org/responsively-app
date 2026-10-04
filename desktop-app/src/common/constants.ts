@@ -50,6 +50,8 @@ export const IPC_MAIN_CHANNELS = {
   ENABLE_INSPECTOR_OVERLAY: 'enable-inspector-overlay',
   DISABLE_INSPECTOR_OVERLAY: 'disable-inspector-overlay',
   INSPECT_ELEMENT: 'inspect-element',
+  SET_JAVASCRIPT_ENABLED: 'set-javascript-enabled',
+  SET_NETWORK_SCRIPTS_BLOCKED: 'set-network-scripts-blocked',
   DELETE_STORAGE: 'delete-storage',
   LOAD_URL_IN_WEBVIEW: 'load-url-in-webview',
   SET_NATIVE_THEME: 'set-native-theme',

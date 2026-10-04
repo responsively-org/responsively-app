@@ -24,6 +24,14 @@ export interface DeviceManagerState {
   // Per-device rotation (session state, not persisted). The global rotate
   // flag lives in the renderer slice; a device is rotated when either is set.
   individualRotations: Record<string, boolean>;
+  // Per-device JavaScript-disabled flag (session state, not persisted, same
+  // reasoning as individualRotations — a website silently losing JS across
+  // app restarts would be confusing).
+  disabledJavaScript: Record<string, boolean>;
+  // Per-device network-level script-blocking flag (session state, not
+  // persisted). Distinct from disabledJavaScript: the JS engine stays on,
+  // only script network requests are cancelled — see network-script-blocker.
+  networkScriptsBlocked: Record<string, boolean>;
 }
 
 export const DEFAULT_SUITE: PreviewSuite = {
@@ -39,6 +47,8 @@ const initialState: DeviceManagerState = {
   activeSuite: DEFAULT_SUITE.id,
   suites: [DEFAULT_SUITE],
   individualRotations: {},
+  disabledJavaScript: {},
+  networkScriptsBlocked: {},
 };
 
 export const deviceManagerSlice = createSlice({
@@ -115,6 +125,22 @@ export const deviceManagerSlice = createSlice({
         delete state.individualRotations[id];
       }
     },
+    setDeviceJavaScriptDisabled(state, action: PayloadAction<{id: string; disabled: boolean}>) {
+      const {id, disabled} = action.payload;
+      if (disabled) {
+        state.disabledJavaScript[id] = true;
+      } else {
+        delete state.disabledJavaScript[id];
+      }
+    },
+    setDeviceNetworkScriptsBlocked(state, action: PayloadAction<{id: string; blocked: boolean}>) {
+      const {id, blocked} = action.payload;
+      if (blocked) {
+        state.networkScriptsBlocked[id] = true;
+      } else {
+        delete state.networkScriptsBlocked[id];
+      }
+    },
   },
 });
 
@@ -130,12 +156,20 @@ export const {
   setCanvasPosition,
   resetCanvasPositions,
   setIndividualRotation,
+  setDeviceJavaScriptDisabled,
+  setDeviceNetworkScriptsBlocked,
 } = deviceManagerSlice.actions;
 
 export const selectSuites = (state: RootState) => state.deviceManager.suites;
 
 export const selectIndividualRotations = (state: RootState) =>
   state.deviceManager.individualRotations;
+
+export const selectDisabledJavaScript = (state: RootState) =>
+  state.deviceManager.disabledJavaScript;
+
+export const selectNetworkScriptsBlocked = (state: RootState) =>
+  state.deviceManager.networkScriptsBlocked;
 
 export const selectActiveSuite = (state: RootState): PreviewSuite => {
   const {activeSuite, suites} = state.deviceManager;

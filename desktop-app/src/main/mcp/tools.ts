@@ -6,6 +6,8 @@ import {
   McpDeviceInfo,
   McpNavigateResult,
   McpSetActiveDevicesResult,
+  McpSetJavascriptEnabledResult,
+  McpSetNetworkScriptsBlockedResult,
   McpSkippedCapture,
 } from '../../common/mcp';
 import {captureImage} from '../screenshot';
@@ -154,6 +156,40 @@ export const registerTools = (server: McpServer, getMainWindow: GetMainWindow) =
         return textResult(
           await typeText(getMainWindow, {text, selector, clear, pressEnter, device})
         );
+      } catch (error) {
+        return errorResult(error);
+      }
+    }
+  );
+
+  server.registerTool(
+    'set_javascript_enabled',
+    toolDefs.set_javascript_enabled,
+    async ({device, enabled}) => {
+      try {
+        const result = await sendBridgeCommand<McpSetJavascriptEnabledResult>(
+          getMainWindow,
+          'set-javascript-enabled',
+          {device, enabled}
+        );
+        return textResult(result);
+      } catch (error) {
+        return errorResult(error);
+      }
+    }
+  );
+
+  server.registerTool(
+    'set_network_scripts_blocked',
+    toolDefs.set_network_scripts_blocked,
+    async ({device, blocked}) => {
+      try {
+        const result = await sendBridgeCommand<McpSetNetworkScriptsBlockedResult>(
+          getMainWindow,
+          'set-network-scripts-blocked',
+          {device, blocked}
+        );
+        return textResult(result);
       } catch (error) {
         return errorResult(error);
       }
