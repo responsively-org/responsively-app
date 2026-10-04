@@ -11,13 +11,19 @@ on:
           - chrome
           - firefox
         default: both
+      dry_run_chrome:
+        description: "Check Chrome package and store access without uploading"
+        type: boolean
+        default: false
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./browser-extension
+    permissions:
+      contents: read
 
     steps:
       - name: Check out Git repository
@@ -40,22 +46,112 @@ jobs:
       - name: Package
         run: npm run package
 
-      - name: Publish to Chrome Web Store
-        if: ${{ inputs.target == 'both' || inputs.target == 'chrome' }}
-        run: npx chrome-webstore-upload-cli@3 upload --source "$(ls web-ext-artifacts/*.zip)" --auto-publish
-        env:
-          EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
-          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
-          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+      - name: Prepare Chrome package
+        run: |
+          package="$(find web-ext-artifacts -maxdepth 1 -type f -name '*.zip' -print -quit)"
+          if [[ -z "$package" ]]; then
+            echo "No extension ZIP was created" >&2
+            exit 1
+          fi
+          cp "$package" chrome-extension.zip
 
       # AMO asks for the original source when the submitted code is bundled/transpiled
       - name: Create source archive for AMO review
-        if: ${{ inputs.target == 'both' || inputs.target == 'firefox' }}
         run: git archive --format=zip --output=amo-source.zip HEAD:browser-extension
 
+      - name: Upload store packages
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: browser-extension-store-packages
+          path: |
+            browser-extension/chrome-extension.zip
+            browser-extension/dist/
+            browser-extension/amo-source.zip
+          if-no-files-found: error
+          retention-days: 1
+
+  publish-chrome:
+    if: ${{ inputs.target == 'both' || inputs.target == 'chrome' }}
+    needs: build
+    runs-on: ubuntu-latest
+    environment: chrome-web-store
+    concurrency:
+      group: chrome-web-store
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Download extension package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8b0b5a5461e7c # v8
+        with:
+          name: browser-extension-store-packages
+          path: browser-extension
+
+      - name: Check Chrome Web Store configuration
+        shell: bash
+        env:
+          CWS_PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
+          CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          CWS_WIF_PROVIDER: ${{ vars.CWS_WIF_PROVIDER }}
+          CWS_SERVICE_ACCOUNT: ${{ vars.CWS_SERVICE_ACCOUNT }}
+        run: |
+          missing=0
+          for name in CWS_PUBLISHER_ID CWS_EXTENSION_ID CWS_WIF_PROVIDER CWS_SERVICE_ACCOUNT; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::$name is not configured"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ vars.CWS_WIF_PROVIDER }}
+          service_account: ${{ vars.CWS_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
+          access_token_lifetime: 1800s
+          create_credentials_file: false
+          export_environment_variables: false
+
+      - name: Publish to Chrome Web Store
+        uses: hamzahamidi/publish-to-chrome-web-store@c8919147f8de0d6f1129bec36345e4a9aa638af9 # v1
+        with:
+          access-token: ${{ steps.auth.outputs.access_token }}
+          publisher-id: ${{ vars.CWS_PUBLISHER_ID }}
+          item-id: ${{ secrets.CWS_EXTENSION_ID }}
+          zip: browser-extension/chrome-extension.zip
+          dry-run: ${{ inputs.dry_run_chrome }}
+
+  publish-firefox:
+    if: ${{ inputs.target == 'both' || inputs.target == 'firefox' }}
+    needs: build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./browser-extension
+    permissions:
+      contents: read
+
+    steps:
+      - name: Download extension package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8b0b5a5461e7c # v8
+        with:
+          name: browser-extension-store-packages
+          path: browser-extension
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Publish to Firefox Add-ons (AMO)
-        if: ${{ inputs.target == 'both' || inputs.target == 'firefox' }}
         run: npx web-ext sign --source-dir=dist --channel=listed --upload-source-code=amo-source.zip
         env:
           WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
