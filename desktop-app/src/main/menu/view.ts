@@ -24,7 +24,11 @@ const getReloadMenu = (mainWindow: BrowserWindow): MenuItemConstructorOptions =>
   accelerator: 'CommandOrControl+R',
   click: () => {
     if (isDev) {
+      const bounds = mainWindow.getBounds();
       mainWindow.webContents.reload();
+      mainWindow.webContents.once('did-finish-load', () => {
+        mainWindow.setBounds(bounds);
+      });
       return;
     }
     mainWindow.webContents.send('reload', {});
