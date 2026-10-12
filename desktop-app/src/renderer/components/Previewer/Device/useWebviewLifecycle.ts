@@ -27,10 +27,18 @@ const useWebviewLifecycle = (
       return undefined;
     }
     const hideScrollbars = () => {
+      // Zero-size scrollbars keep the layout viewport steady; hiding them
+      // without taking the space still shifted a scaled mobile preview.
       webview.insertCSS(`
-               ::-webkit-scrollbar {
-              display: none;
-              } `);
+        html, body {
+          scrollbar-width: none;
+        }
+        ::-webkit-scrollbar {
+          width: 0px !important;
+          height: 0px !important;
+          display: none !important;
+        }
+      `);
     };
     webview.addEventListener('dom-ready', hideScrollbars);
     return () => {

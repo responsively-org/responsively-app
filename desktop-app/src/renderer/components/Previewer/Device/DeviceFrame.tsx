@@ -218,9 +218,10 @@ const DeviceFrame = ({
 
   return (
     <div
-      className={cx('group relative h-fit', {
-        'w-52': isRestrictedMinimumDeviceSize,
-      })}
+      className="group relative h-fit"
+      style={{
+        minWidth: isRestrictedMinimumDeviceSize ? Math.max(scaledWidth, 208) : undefined,
+      }}
     >
       {/* The label row is also the canvas drag handle, so it stays in the
           tree even when name and dims are toggled off. */}
