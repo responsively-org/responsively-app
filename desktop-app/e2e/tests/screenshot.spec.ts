@@ -8,6 +8,13 @@ test.describe('Screenshot', () => {
     await expect(screenshotBtn).toBeVisible();
   });
 
+  test('quick capture button is visible in toolbar', async ({app}) => {
+    await app.dismissModals();
+
+    const quickCaptureBtn = app.page.locator('button[title="Quick Capture"]');
+    await expect(quickCaptureBtn).toBeVisible();
+  });
+
   test('clicking screenshot button shows the screenshot progress modal', async ({
     app,
     testServerUrl,

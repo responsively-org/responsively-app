@@ -22,7 +22,7 @@ const ColorSchemeToggle = () => {
       title="Device theme color toggle"
     >
       <Icon icon={isDarkColorScheme ? 'carbon:moon' : 'carbon:sun'} fontSize={15} />
-      Scheme
+      <span className="hidden 2xl:inline">Scheme</span>
     </ToolbarAction>
   );
 };

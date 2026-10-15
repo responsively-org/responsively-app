@@ -9,7 +9,7 @@ import {
   setRotate,
 } from 'renderer/store/features/renderer';
 import {Icon} from '@iconify/react';
-import {ScreenshotAllArgs} from 'main/screenshot';
+import {ScreenshotArgs, ScreenshotAllArgs, ScreenshotResult} from 'main/screenshot';
 import {selectActiveSuite} from 'renderer/store/features/device-manager';
 import {getDevicesMap} from 'common/deviceList';
 import {
@@ -86,6 +86,38 @@ const ToolBar = () => {
     playShutter();
   };
 
+  // Viewport-only capture: unlike Capture (which resizes every webview to the
+  // full page height first), this leaves the previews untouched so each shot
+  // is just the visible first fold.
+  const quickCaptureHandler = async () => {
+    if (isCapturingScreenshot) {
+      return;
+    }
+
+    dispatch(setIsCapturingScreenshot(true));
+    const webViews: NodeListOf<Electron.WebviewTag> = document.querySelectorAll('webView');
+    const devices = activeSuite.devices.map((d) => getDevicesMap()[d]);
+    const screens: Array<Promise<ScreenshotResult>> = [];
+    for (const webview of Array.from(webViews)) {
+      const device = devices.find((d) => d.name === webview.id);
+      if (device != null) {
+        screens.push(
+          window.electron.ipcRenderer.invoke<ScreenshotArgs, ScreenshotResult>(
+            IPC_MAIN_CHANNELS.SCREENSHOT,
+            {
+              webContentsId: webview.getWebContentsId(),
+              device,
+            }
+          )
+        );
+      }
+    }
+    await Promise.all(screens);
+
+    dispatch(setIsCapturingScreenshot(false));
+    playShutter();
+  };
+
   const handleClose = () => {
     // Do nothing. Prevent Dialog from closing.
   };
@@ -96,6 +128,7 @@ const ToolBar = () => {
 
   useKeyboardShortcut(SHORTCUT_CHANNEL.ROTATE_ALL, handleRotate);
   useKeyboardShortcut(SHORTCUT_CHANNEL.SCREENSHOT_ALL, screenshotCaptureHandler);
+  useKeyboardShortcut(SHORTCUT_CHANNEL.QUICK_CAPTURE_ALL, quickCaptureHandler);
   useKeyboardShortcut(SHORTCUT_CHANNEL.INSPECT_ELEMENTS, handleInspectShortcut);
 
   return (
@@ -103,7 +136,7 @@ const ToolBar = () => {
       <NavigationControls />
       {/* Fill the available space while keeping the address input usable
           when the toolbar gets crowded. */}
-      <div className="min-w-[220px] flex-1">
+      <div className="min-w-[150px] flex-1 xl:min-w-[220px]">
         <AddressBar />
       </div>
       <ToolbarGroup>
@@ -112,7 +145,7 @@ const ToolBar = () => {
             icon={rotateDevices ? 'mdi:phone-rotate-portrait' : 'mdi:phone-rotate-landscape'}
             fontSize={16}
           />
-          Rotate
+          <span className="hidden 2xl:inline">Rotate</span>
         </ToolbarAction>
         <ToolbarAction
           onClick={() => dispatch(setIsInspecting(!isInspecting))}
@@ -120,7 +153,7 @@ const ToolBar = () => {
           title="Inspect Elements"
         >
           <Icon icon="lucide:inspect" fontSize={15} />
-          Inspect
+          <span className="hidden 2xl:inline">Inspect</span>
         </ToolbarAction>
         <ToolbarAction
           onClick={screenshotCaptureHandler}
@@ -128,8 +161,15 @@ const ToolBar = () => {
           title="Screenshot All WebViews"
         >
           <Icon icon="lucide:camera" fontSize={15} />
-          Capture
+          <span className="hidden 2xl:inline">Capture</span>
         </ToolbarAction>
+        <IconButton
+          onClick={quickCaptureHandler}
+          isActive={isCapturingScreenshot}
+          title="Quick Capture"
+        >
+          <Icon icon="lucide:scan" width={16} />
+        </IconButton>
         <ColorBlindnessControls />
         <ColorSchemeToggle />
       </ToolbarGroup>
