@@ -52,7 +52,7 @@ export const ToolbarAction = ({
     type="button"
     aria-pressed={isActive}
     className={cx(
-      'flex h-[30px] items-center gap-[7px] rounded-[7px] px-[11px] text-[12.5px] transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent',
+      'flex h-[30px] shrink-0 items-center gap-[7px] rounded-[7px] px-[11px] text-[12.5px] whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent',
       isActive === true ? 'bg-accent-soft text-accent' : 'text-fg hover:bg-hover',
       className
     )}
@@ -72,7 +72,7 @@ export const ToolbarGroup = ({
 }) => (
   <div
     className={cx(
-      'flex items-center gap-[2px] rounded-[10px] border border-line bg-card p-[3px]',
+      'flex shrink-0 items-center gap-[2px] rounded-[10px] border border-line bg-card p-[3px]',
       className
     )}
   >

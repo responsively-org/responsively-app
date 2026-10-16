@@ -89,6 +89,41 @@ test.describe('Screenshot Save', () => {
     }
   });
 
+  test('quick capture saves JPEG files to disk and opens folder', async ({
+    app,
+    screenshotDir,
+    testServerUrl,
+  }) => {
+    await app.dismissModals();
+    await app.navigateTo(`${testServerUrl}/test-page.html`, {timeout: 3000});
+
+    await expect(app.firstWebview).toHaveAttribute('src', /test-page\.html/, {
+      timeout: 10_000,
+    });
+    await app.page.waitForTimeout(1000);
+
+    // Clear directory and showItem call log
+    for (const f of getJpegs(screenshotDir)) {
+      fs.unlinkSync(path.join(screenshotDir, f));
+    }
+    await app.clearShowItemCalls();
+
+    const quickCaptureBtn = app.page.locator('button[title="Quick Capture"]');
+    await quickCaptureBtn.click();
+
+    await expect.poll(() => getJpegs(screenshotDir).length, {timeout: 15_000}).toBeGreaterThan(0);
+
+    const files = getJpegs(screenshotDir);
+    for (const file of files) {
+      expect(fs.statSync(path.join(screenshotDir, file)).size).toBeGreaterThan(0);
+    }
+
+    // Verify shell.showItemInFolder was called for each saved file
+    await expect
+      .poll(async () => (await app.getShowItemCalls()).length, {timeout: 5_000})
+      .toBeGreaterThanOrEqual(files.length);
+  });
+
   test('screenshot filename includes device name and timestamp', async ({
     app,
     screenshotDir,
