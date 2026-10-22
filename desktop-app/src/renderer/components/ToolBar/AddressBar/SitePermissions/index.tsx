@@ -1,8 +1,8 @@
-import { Icon } from '@iconify/react';
-import { useState, useEffect, useRef } from 'react';
-import { IPC_MAIN_CHANNELS, SitePermission } from 'common/constants';
-import { webViewPubSub } from 'renderer/lib/pubsub';
-import { NAVIGATION_EVENTS } from 'renderer/components/ToolBar/NavigationControls';
+import {Icon} from '@iconify/react';
+import {useState, useEffect, useRef} from 'react';
+import {IPC_MAIN_CHANNELS, SitePermission} from 'common/constants';
+import {webViewPubSub} from 'renderer/lib/pubsub';
+import {NAVIGATION_EVENTS} from 'renderer/components/ToolBar/NavigationControls';
 
 const PERMISSION_STATES = {
   GRANTED: 'GRANTED',
@@ -22,7 +22,7 @@ interface PermissionToggleProps {
   onToggle: (type: string, state: string) => void;
 }
 
-const PermissionToggle = ({ permission, onToggle }: PermissionToggleProps) => {
+const PermissionToggle = ({permission, onToggle}: PermissionToggleProps) => {
   const getStateDisplay = (state: string) => {
     switch (state) {
       case PERMISSION_STATES.GRANTED:
@@ -47,14 +47,8 @@ const PermissionToggle = ({ permission, onToggle }: PermissionToggleProps) => {
   };
 
   const cycleState = () => {
-    const states = [
-      PERMISSION_STATES.UNKNOWN,
-      PERMISSION_STATES.GRANTED,
-      PERMISSION_STATES.DENIED,
-    ];
-    const currentIndex = states.findIndex(
-      (state) => state === permission.state
-    );
+    const states = [PERMISSION_STATES.UNKNOWN, PERMISSION_STATES.GRANTED, PERMISSION_STATES.DENIED];
+    const currentIndex = states.findIndex((state) => state === permission.state);
     const nextIndex = (currentIndex + 1) % states.length;
     onToggle(permission.type, states[nextIndex]);
   };
@@ -62,7 +56,7 @@ const PermissionToggle = ({ permission, onToggle }: PermissionToggleProps) => {
   const display = getStateDisplay(permission.state);
 
   return (
-    <div className="flex items-center justify-between rounded py-2 px-2 hover:bg-gray-100 dark:hover:bg-slate-700">
+    <div className="flex items-center justify-between rounded px-2 py-2 hover:bg-gray-100 dark:hover:bg-slate-700">
       <div className="flex items-center gap-2">
         <Icon icon={permission.icon} className="text-sm" />
         <span className="text-xs">{permission.displayName}</span>
@@ -93,10 +87,7 @@ const SitePermissionsDropdown = ({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         onClose();
       }
     };
@@ -124,7 +115,6 @@ const SitePermissionsDropdown = ({
         setIsRefreshing(false);
       }, 2000);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Failed to refresh page:', error);
       setIsRefreshing(false);
     }
@@ -145,11 +135,7 @@ const SitePermissionsDropdown = ({
     setOrigin(currentOrigin);
 
     const loadSitePermissions = async () => {
-      if (
-        currentOrigin &&
-        currentOrigin !== 'Local File' &&
-        currentOrigin !== 'Invalid URL'
-      ) {
+      if (currentOrigin && currentOrigin !== 'Local File' && currentOrigin !== 'Invalid URL') {
         try {
           const permissions = (await window.electron.ipcRenderer.invoke(
             IPC_MAIN_CHANNELS.GET_SITE_PERMISSIONS,
@@ -157,7 +143,6 @@ const SitePermissionsDropdown = ({
           )) as SitePermission[];
           setSitePermissions(permissions);
         } catch (error) {
-          // eslint-disable-next-line no-console
           console.error('Failed to load site permissions:', error);
           setSitePermissions([]);
         }
@@ -173,18 +158,12 @@ const SitePermissionsDropdown = ({
 
   // Listen for permission updates from the main process
   useEffect(() => {
-    const handlePermissionUpdate = (args: {
-      origin: string;
-      type: string;
-      state: string;
-    }) => {
+    const handlePermissionUpdate = (args: {origin: string; type: string; state: string}) => {
       // Only update if it's for the current origin
       if (args.origin === origin) {
         setSitePermissions((prev) =>
           prev.map((p) =>
-            p.type === args.type
-              ? { ...p, state: args.state as SitePermission['state'] }
-              : p
+            p.type === args.type ? {...p, state: args.state as SitePermission['state']} : p
           )
         );
 
@@ -193,10 +172,7 @@ const SitePermissionsDropdown = ({
       }
     };
 
-    window.electron.ipcRenderer.on(
-      IPC_MAIN_CHANNELS.PERMISSION_UPDATED,
-      handlePermissionUpdate
-    );
+    window.electron.ipcRenderer.on(IPC_MAIN_CHANNELS.PERMISSION_UPDATED, handlePermissionUpdate);
 
     return () => {
       window.electron.ipcRenderer.removeListener(
@@ -208,36 +184,26 @@ const SitePermissionsDropdown = ({
 
   const handlePermissionToggle = async (type: string, state: string) => {
     try {
-      await window.electron.ipcRenderer.invoke(
-        IPC_MAIN_CHANNELS.UPDATE_SITE_PERMISSION,
-        {
-          origin,
-          type,
-          state,
-        }
-      );
+      await window.electron.ipcRenderer.invoke(IPC_MAIN_CHANNELS.UPDATE_SITE_PERMISSION, {
+        origin,
+        type,
+        state,
+      });
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Failed to update permission:', error);
     }
   };
 
   const handleClearAllPermissions = async () => {
     try {
-      await window.electron.ipcRenderer.invoke(
-        IPC_MAIN_CHANNELS.CLEAR_SITE_PERMISSIONS,
-        origin
-      );
+      await window.electron.ipcRenderer.invoke(IPC_MAIN_CHANNELS.CLEAR_SITE_PERMISSIONS, origin);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Failed to clear permissions:', error);
     }
   };
 
   const hasActivePermissions = sitePermissions.some(
-    (p) =>
-      p.state === PERMISSION_STATES.GRANTED ||
-      p.state === PERMISSION_STATES.DENIED
+    (p) => p.state === PERMISSION_STATES.GRANTED || p.state === PERMISSION_STATES.DENIED
   );
 
   if (!isVisible) return null;
@@ -246,13 +212,11 @@ const SitePermissionsDropdown = ({
     return (
       <div
         ref={dropdownRef}
-        className="w-80 rounded-md bg-white p-4 shadow-lg ring-1 ring-slate-500 !ring-opacity-40 dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40"
+        className="w-80 rounded-md bg-white p-4 shadow-lg ring-1 ring-slate-500/40 dark:bg-slate-900 dark:ring-white/40"
       >
         <div className="flex items-center gap-2 text-gray-500">
           <Icon icon="mdi:shield-lock" />
-          <span className="text-sm">
-            Site permissions not available for this page
-          </span>
+          <span className="text-sm">Site permissions not available for this page</span>
         </div>
       </div>
     );
@@ -261,7 +225,7 @@ const SitePermissionsDropdown = ({
   return (
     <div
       ref={dropdownRef}
-      className="w-80 rounded-md bg-white shadow-lg ring-1 ring-slate-500 !ring-opacity-40 dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40"
+      className="w-80 rounded-md bg-white shadow-lg ring-1 ring-slate-500/40 dark:bg-slate-900 dark:ring-white/40"
     >
       {/* Header */}
       <div className="border-b border-gray-200 px-4 py-3 dark:border-slate-700">

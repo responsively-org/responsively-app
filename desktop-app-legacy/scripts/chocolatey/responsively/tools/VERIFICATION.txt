@@ -1,7 +1,0 @@
-﻿
-
-
-VERIFICATION
-I'm the author
-
-powershell > (Get-FileHash -Path .\ResponsivelyApp-Setup-#VERSION#.exe -Algorithm 'sha512').Hash

@@ -1,24 +1,14 @@
-import { Icon } from '@iconify/react';
+import {Icon} from '@iconify/react';
 import cx from 'classnames';
-import { IPC_MAIN_CHANNELS, OpenUrlArgs } from 'common/constants';
-import { AuthRequestArgs } from 'main/http-basic-auth';
-import { PermissionRequestArg } from 'main/web-permissions/PermissionsManager';
-import {
-  DragEvent,
-  KeyboardEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {IPC_MAIN_CHANNELS, OpenUrlArgs} from 'common/constants';
+import {AuthRequestArgs} from 'main/http-basic-auth';
+import {PermissionRequestArg} from 'main/web-permissions/PermissionsManager';
+import {DragEvent, KeyboardEventHandler, useCallback, useEffect, useRef, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import Button from 'renderer/components/Button';
-import { webViewPubSub } from 'renderer/lib/pubsub';
-import {
-  selectAddress,
-  selectPageTitle,
-  setAddress,
-} from 'renderer/store/features/renderer';
+import {webViewPubSub} from 'renderer/lib/pubsub';
+import {DEFAULT_HOMEPAGE, normalizeHomepage} from 'renderer/lib/homepage';
+import {selectAddress, selectPageTitle, setAddress} from 'renderer/store/features/renderer';
 import useKeyboardShortcut, {
   SHORTCUT_CHANNEL,
 } from 'renderer/components/KeyboardShortcutsManager/useKeyboardShortcut';
@@ -26,6 +16,9 @@ import AuthModal from './AuthModal';
 import SuggestionList from './SuggestionList';
 import Bookmark from './BookmarkButton';
 import SitePermissionsDropdown from './SitePermissions';
+import SiteToolsPopover from './SiteToolsPopover';
+import {IconButton} from '../primitives';
+import {NAVIGATION_EVENTS} from '../NavigationControls';
 
 export const ADDRESS_BAR_EVENTS = {
   DELETE_COOKIES: 'DELETE_COOKIES',
@@ -38,17 +31,11 @@ const AddressBar = () => {
   const [typedAddress, setTypedAddress] = useState<string>('');
   const [isSuggesting, setIsSuggesting] = useState<boolean>(false);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
-  const [homepage, setHomepage] = useState<string>(
-    window.electron.store.get('homepage')
-  );
   const [isFocused, setIsFocused] = useState(false);
-  const [deleteStorageLoading, setDeleteStorageLoading] =
-    useState<boolean>(false);
-  const [deleteCookiesLoading, setDeleteCookiesLoading] =
-    useState<boolean>(false);
+  const [deleteStorageLoading, setDeleteStorageLoading] = useState<boolean>(false);
+  const [deleteCookiesLoading, setDeleteCookiesLoading] = useState<boolean>(false);
   const [deleteCacheLoading, setDeleteCacheLoading] = useState<boolean>(false);
-  const [permissionRequest, setPermissionRequest] =
-    useState<PermissionRequestArg | null>(null);
+  const [permissionRequest, setPermissionRequest] = useState<PermissionRequestArg | null>(null);
   const [authRequest, setAuthRequest] = useState<AuthRequestArgs | null>(null);
   const [showSitePermissions, setShowSitePermissions] = useState(false);
   const address = useSelector(selectAddress);
@@ -68,13 +55,10 @@ const AddressBar = () => {
       let newAddress = url ?? typedAddress;
       if (newAddress.indexOf('://') === -1) {
         let protocol = 'https://';
-        if (
-          typedAddress.indexOf('localhost') !== -1 ||
-          typedAddress.indexOf('127.0.0.1') !== -1
-        ) {
+        if (newAddress.indexOf('localhost') !== -1 || newAddress.indexOf('127.0.0.1') !== -1) {
           protocol = 'http://';
         }
-        newAddress = protocol + typedAddress;
+        newAddress = protocol + newAddress;
       }
       if (url && url !== typedAddress) setTypedAddress(url);
       dispatch(setAddress(newAddress));
@@ -90,37 +74,19 @@ const AddressBar = () => {
       }
     );
 
-    window.electron.ipcRenderer.on<AuthRequestArgs>(
-      IPC_MAIN_CHANNELS.AUTH_REQUEST,
-      (args) => {
-        setAuthRequest(args);
-      }
-    );
-    window.electron.ipcRenderer.on<OpenUrlArgs>(
-      IPC_MAIN_CHANNELS.OPEN_URL,
-      (args) => {
-        dispatchAddress(args.url);
-      }
-    );
+    window.electron.ipcRenderer.on<AuthRequestArgs>(IPC_MAIN_CHANNELS.AUTH_REQUEST, (args) => {
+      setAuthRequest(args);
+    });
+    window.electron.ipcRenderer.on<OpenUrlArgs>(IPC_MAIN_CHANNELS.OPEN_URL, (args) => {
+      dispatchAddress(args.url);
+    });
 
     return () => {
-      window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.PERMISSION_REQUEST
-      );
-      window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.AUTH_REQUEST
-      );
-      window.electron.ipcRenderer.removeAllListeners(
-        IPC_MAIN_CHANNELS.OPEN_URL
-      );
+      window.electron.ipcRenderer.removeAllListeners(IPC_MAIN_CHANNELS.PERMISSION_REQUEST);
+      window.electron.ipcRenderer.removeAllListeners(IPC_MAIN_CHANNELS.AUTH_REQUEST);
+      window.electron.ipcRenderer.removeAllListeners(IPC_MAIN_CHANNELS.OPEN_URL);
     };
   }, [dispatchAddress]);
-
-  useEffect(() => {
-    if (homepage !== window.electron.store.get('homepage')) {
-      window.electron.store.set('homepage', homepage);
-    }
-  }, [homepage]);
 
   const permissionReqClickHandler = (allow: boolean) => {
     if (!permissionRequest) {
@@ -172,7 +138,6 @@ const AddressBar = () => {
         throw new Error('Invalid URL');
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('Invalid URL', err);
     }
   };
@@ -208,7 +173,17 @@ const AddressBar = () => {
     }
   };
 
-  const isHomepage = address === homepage;
+  const navigateHome = () => {
+    const homepage =
+      normalizeHomepage(window.electron.store.get('homepage') ?? '') ?? DEFAULT_HOMEPAGE;
+    setIsSuggesting(false);
+    setTypedAddress(homepage);
+    if (address === homepage) {
+      webViewPubSub.publish(NAVIGATION_EVENTS.HOME, homepage);
+    } else {
+      dispatchAddress(homepage);
+    }
+  };
 
   useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_CACHE, deleteCache);
   useKeyboardShortcut(SHORTCUT_CHANNEL.DELETE_STORAGE, deleteStorage);
@@ -222,19 +197,8 @@ const AddressBar = () => {
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragExit}
         onDrop={handleDrop}
-        className="relative z-10 w-full flex-grow"
+        className="relative z-10 w-full grow"
       >
-        <div className="absolute inset-y-0 left-2 flex items-center">
-          <button
-            type="button"
-            onClick={() => setShowSitePermissions(!showSitePermissions)}
-            className="rounded-full p-1 transition-colors hover:bg-gray-200 dark:hover:bg-slate-700"
-            title="Site permissions"
-          >
-            <Icon icon="mdi:web" className="text-gray-500" />
-          </button>
-        </div>
-
         <div className="absolute top-full left-2 z-50">
           <SitePermissionsDropdown
             currentAddress={address}
@@ -244,10 +208,9 @@ const AddressBar = () => {
         </div>
 
         {permissionRequest != null ? (
-          <div className="absolute top-12 left-2 z-40 flex w-96 flex-col gap-8 rounded bg-white p-6 shadow-lg ring-1 ring-slate-500 !ring-opacity-40 focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
+          <div className="absolute top-12 left-2 z-40 flex w-96 flex-col gap-8 rounded bg-white p-6 shadow-lg ring-1 ring-slate-500/40 focus:outline-none dark:bg-slate-900 dark:ring-white/40">
             <span>
-              {permissionRequest.requestingOrigin} requests permission for:{' '}
-              <br />
+              {permissionRequest.requestingOrigin} requests permission for: <br />
               <span className="flex justify-center font-bold capitalize">
                 {permissionRequest.permission}
               </span>
@@ -274,79 +237,84 @@ const AddressBar = () => {
             </div>
           </div>
         ) : null}
-        <input
-          ref={inputRef}
-          type="text"
+        <div
           className={cx(
-            'w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-40 dark:bg-slate-900',
-            {
-              'rounded-tl-lg rounded-tr-lg rounded-bl-none rounded-br-none outline-none':
-                isSuggesting,
-            }
+            'flex h-[34px] items-center gap-[6px] rounded-full border border-line-soft bg-input pr-[6px] pl-1',
+            {'rounded-br-none rounded-bl-none': isSuggesting}
           )}
-          value={typedAddress}
-          onChange={(e) => setTypedAddress(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onBlur={() => {
-            setIsFocused(false);
-            setTimeout(() => {
-              setIsSuggesting(false);
-            }, 100);
-          }}
-          onSelect={(e) => {
-            if (e.target === inputRef.current && !isFocused) {
-              inputRef.current?.select();
-              setIsFocused(true);
-            }
-          }}
-        />
+        >
+          <SiteToolsPopover
+            address={address}
+            onShowPermissions={() => setShowSitePermissions(true)}
+            actions={[
+              {
+                title: 'Delete Storage',
+                label: 'Clear storage',
+                icon: 'mdi:database-remove-outline',
+                note: 'local + session',
+                isLoading: deleteStorageLoading,
+                run: deleteStorage,
+              },
+              {
+                title: 'Delete Cookies',
+                label: 'Clear cookies',
+                icon: 'mdi:cookie-remove-outline',
+                note: 'this site',
+                isLoading: deleteCookiesLoading,
+                run: deleteCookies,
+              },
+              {
+                title: 'Clear Cache',
+                label: 'Clear cache',
+                icon: 'mdi:wifi-remove',
+                note: 'network',
+                isLoading: deleteCacheLoading,
+                run: deleteCache,
+              },
+            ]}
+          />
+          <input
+            ref={inputRef}
+            type="text"
+            data-testid="address-bar"
+            className="min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-muted"
+
+            value={typedAddress}
+            onChange={(e) => setTypedAddress(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onBlur={() => {
+              setIsFocused(false);
+              setTimeout(() => {
+                setIsSuggesting(false);
+              }, 100);
+            }}
+            onSelect={(e) => {
+              if (e.target === inputRef.current && !isFocused) {
+                inputRef.current?.select();
+                setIsFocused(true);
+              }
+            }}
+          />
+          <IconButton
+            className="h-[26px]! w-[26px]! rounded-full text-[15px]"
+            onClick={navigateHome}
+            title="Homepage"
+            aria-label="Home"
+            data-testid="nav-home"
+          >
+            <Icon icon="mdi:home-outline" />
+          </IconButton>
+          <Bookmark pageTitle={pageTitle} currentAddress={address} />
+        </div>
         <div
           className={`${
             isDragOver ? 'opacity-100' : 'opacity-0'
-          } pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full border-spacing-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-[#37b598] bg-[#92e2ce] duration-100 dark:bg-[#86e0ca] dark:text-slate-900`}
+          } pointer-events-none absolute top-0 left-0 z-10 flex h-full w-full border-spacing-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-emerald-500 bg-emerald-200 duration-100 dark:bg-emerald-300 dark:text-slate-900`}
         >
           <Icon icon="mdi:plus" />
           <p className="text-sm font-semibold">Drop URL Here</p>
         </div>
-        <div className="absolute inset-y-0 right-0 mr-2 flex items-center">
-          <Button
-            className="rounded-full"
-            onClick={deleteStorage}
-            isLoading={deleteStorageLoading}
-            title="Delete Storage"
-          >
-            <Icon icon="mdi:database-remove-outline" />
-          </Button>
-          <Button
-            className="rounded-full"
-            onClick={deleteCookies}
-            isLoading={deleteCookiesLoading}
-            title="Delete Cookies"
-          >
-            <Icon icon="mdi:cookie-remove-outline" />
-          </Button>
-          <Button
-            className="rounded-full"
-            onClick={deleteCache}
-            isLoading={deleteCacheLoading}
-            title="Clear Cache"
-          >
-            <Icon icon="mdi:wifi-remove" />
-          </Button>
-          <Button
-            className={cx('rounded-full', {
-              'text-blue-500': isHomepage,
-            })}
-            onClick={() => setHomepage(address)}
-            title="Homepage"
-          >
-            <Icon icon={isHomepage ? 'mdi:home' : 'mdi:home-outline'} />
-          </Button>
-          <Bookmark pageTitle={pageTitle} currentAddress={address} />
-        </div>
-        {isSuggesting ? (
-          <SuggestionList match={typedAddress} onEnter={onEnter} />
-        ) : null}
+        {isSuggesting ? <SuggestionList match={typedAddress} onEnter={onEnter} /> : null}
       </div>
       <AuthModal
         isOpen={authRequest != null}

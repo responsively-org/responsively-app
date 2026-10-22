@@ -6,9 +6,9 @@ import path from 'path';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import {BundleAnalyzerPlugin} from 'webpack-bundle-analyzer';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
-import { merge } from 'webpack-merge';
+import {merge} from 'webpack-merge';
 import TerserPlugin from 'terser-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
@@ -48,7 +48,7 @@ const configuration: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /\.s?(a|c)ss$/,
+        test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
           {
@@ -59,26 +59,24 @@ const configuration: webpack.Configuration = {
               importLoaders: 1,
             },
           },
-          'sass-loader',
         ],
-        include: /\.module\.s?(c|a)ss$/,
+        include: /\.module\.css$/,
       },
       {
-        test: /\.s?(a|c)ss$/,
+        test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
-          'sass-loader',
           {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [require('tailwindcss'), require('autoprefixer')],
+                plugins: [require('@tailwindcss/postcss')],
               },
             },
           },
         ],
-        exclude: /\.module\.s?(c|a)ss$/,
+        exclude: /\.module\.css$/,
       },
       // Fonts
       {
@@ -87,7 +85,7 @@ const configuration: webpack.Configuration = {
       },
       // Images
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
         type: 'asset/resource',
       },
       // SVG
@@ -100,7 +98,7 @@ const configuration: webpack.Configuration = {
               prettier: false,
               svgo: false,
               svgoConfig: {
-                plugins: [{ removeViewBox: false }],
+                plugins: [{removeViewBox: false}],
               },
               titleProp: true,
               ref: true,

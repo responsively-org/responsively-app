@@ -1,18 +1,17 @@
-import { useId } from 'react';
+import {useId} from 'react';
 import cx from 'classnames';
 
 interface Props {
   label: string;
+  error?: string | null;
 }
 
 const Input = ({
   label,
+  error,
   ...props
 }: Props &
-  React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  >) => {
+  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>) => {
   const id = useId();
   const isCheckbox = props.type === 'checkbox';
   return (
@@ -26,10 +25,18 @@ const Input = ({
       <input
         type="text"
         id={id}
-        className="rounded-sm bg-white p-1 px-1 dark:bg-slate-900"
-        /* eslint-disable-next-line react/jsx-props-no-spreading */
+        className={cx(
+          'rounded-md border bg-input p-1 px-1 text-fg focus:outline-none focus-visible:ring-1 focus-visible:ring-accent',
+          error != null ? 'border-red-500' : 'border-line'
+        )}
+        aria-invalid={error != null || undefined}
         {...props}
       />
+      {error != null && (
+        <p role="alert" className="text-sm text-red-500">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

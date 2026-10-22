@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { IPC_MAIN_CHANNELS } from 'common/constants';
-import { AboutDialogArgs } from 'main/menu/help';
+import {useEffect, useRef, useState} from 'react';
+import {IPC_MAIN_CHANNELS} from 'common/constants';
+import {AboutDialogArgs} from 'main/menu/help';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import Icon from '../../assets/img/logo.png';
@@ -43,14 +43,13 @@ export const AboutDialog = () => {
     if (show) {
       intervalRef.current = setInterval(() => {
         window.electron.ipcRenderer
-          .invoke<null, AboutDialogArgs>('get-about-info')
+          .invoke<null, AboutDialogArgs>(IPC_MAIN_CHANNELS.GET_ABOUT_INFO)
           .then((arg: AboutDialogArgs) => {
             setArgs(arg);
 
             return arg;
           })
           .catch((err) => {
-            // eslint-disable-next-line no-console
             console.error('Error while refreshing about info', err);
           });
       }, 1000);
@@ -77,35 +76,25 @@ export const AboutDialog = () => {
         <div className="flex w-3/4 flex-col gap-2 rounded border border-slate-300 p-4 dark:border-slate-700">
           <div className="flex justify-center text-lg">Versions</div>
           <div className="flex flex-col gap-[2px]">
-            <div className="flex  justify-between">
+            <div className="flex justify-between">
               <span>App</span>
-              <span className="text-sm">
-                v{args?.environmentInfo.appVersion}
-              </span>
+              <span className="text-sm">v{args?.environmentInfo.appVersion}</span>
             </div>
             <div className="flex justify-between">
               <span>Electron</span>
-              <span className="text-sm">
-                v{args?.environmentInfo.electronVersion}
-              </span>
+              <span className="text-sm">v{args?.environmentInfo.electronVersion}</span>
             </div>
             <div className="flex justify-between">
               <span>Chrome</span>
-              <span className="text-sm">
-                v{args?.environmentInfo.chromeVersion}
-              </span>
+              <span className="text-sm">v{args?.environmentInfo.chromeVersion}</span>
             </div>
             <div className="flex justify-between">
               <span>Node.js</span>
-              <span className="text-sm">
-                v{args?.environmentInfo.nodeVersion}
-              </span>
+              <span className="text-sm">v{args?.environmentInfo.nodeVersion}</span>
             </div>
             <div className="flex justify-between">
               <span>V8</span>
-              <span className="text-sm">
-                v{args?.environmentInfo.v8Version}
-              </span>
+              <span className="text-sm">v{args?.environmentInfo.v8Version}</span>
             </div>
             <div className="flex justify-between">
               <span>OS</span>
@@ -119,7 +108,7 @@ export const AboutDialog = () => {
               className="w-fit"
               onClick={async () => {
                 window.electron.ipcRenderer.invoke<string, void>(
-                  'copy-to-clipboard',
+                  IPC_MAIN_CHANNELS.COPY_TO_CLIPBOARD,
                   `App Version: ${args?.environmentInfo.appVersion}\nElectron Version: ${args?.environmentInfo.electronVersion}\nChrome Version: ${args?.environmentInfo.chromeVersion}\nNode.js Version: ${args?.environmentInfo.nodeVersion}\nV8 Version: ${args?.environmentInfo.v8Version}\nOS: ${args?.environmentInfo.osInfo}`
                 );
               }}
@@ -131,7 +120,7 @@ export const AboutDialog = () => {
         <div className="flex w-3/4 flex-col gap-4 rounded border border-slate-300 p-4 dark:border-slate-700">
           <div className="flex justify-center text-lg">Update Status</div>
           <div className="flex flex-col gap-[2px]">
-            <div className="flex  justify-between">
+            <div className="flex justify-between">
               <span>Status</span>
               <span className="text-sm capitalize">
                 {args?.updaterStatus.status.toLocaleLowerCase()}

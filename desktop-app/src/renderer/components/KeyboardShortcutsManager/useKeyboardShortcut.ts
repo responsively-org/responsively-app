@@ -1,11 +1,8 @@
-import { useEffect } from 'react';
-import { ShortcutChannel } from './constants';
-import { keyboardShortcutsPubsub } from './useMousetrapEmitter';
+import {useEffect} from 'react';
+import {ShortcutChannel} from './constants';
+import {keyboardShortcutsPubsub} from './useMousetrapEmitter';
 
-const useKeyboardShortcut = (
-  eventChannel: ShortcutChannel,
-  callback: () => void
-) => {
+const useKeyboardShortcut = (eventChannel: ShortcutChannel, callback: () => void) => {
   useEffect(() => {
     keyboardShortcutsPubsub.subscribe(eventChannel, callback);
     return () => {

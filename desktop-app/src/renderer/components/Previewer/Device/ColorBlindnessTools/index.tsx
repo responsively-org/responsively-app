@@ -1,8 +1,5 @@
-import { Icon } from '@iconify/react';
-import cx from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
-import { DropDown } from 'renderer/components/DropDown';
-import { COLOR_BLINDNESS_CHANNEL } from 'renderer/components/ToolBar/ColorBlindnessControls';
+import {useCallback, useEffect, useState} from 'react';
+import {COLOR_BLINDNESS_CHANNEL} from 'renderer/components/ToolBar/ColorBlindnessControls';
 import {
   BLUE_YELLOW,
   FULL,
@@ -12,7 +9,7 @@ import {
   VISUAL_IMPAIRMENTS,
   VisionSimulationDropDown,
 } from 'renderer/components/VisionSimulationDropDown';
-import { webViewPubSub } from 'renderer/lib/pubsub';
+import {webViewPubSub} from 'renderer/lib/pubsub';
 
 interface InjectedCss {
   key: string;
@@ -22,13 +19,22 @@ interface InjectedCss {
 }
 
 interface Props {
-  webview: Electron.WebviewTag | null;
+  getWebview: () => Electron.WebviewTag | null;
+  onSimulationChange?: (name: string | undefined) => void;
 }
 
-export const ColorBlindnessTools = ({ webview }: Props) => {
-  const [injectCss, setInjectCss] = useState<InjectedCss>();
+export const ColorBlindnessTools = ({getWebview, onSimulationChange}: Props) => {
+  const [injectCss, setInjectCssState] = useState<InjectedCss>();
+  const setInjectCss = useCallback(
+    (next: InjectedCss | undefined) => {
+      setInjectCssState(next);
+      onSimulationChange?.(next?.name);
+    },
+    [onSimulationChange]
+  );
 
   const reApplyCss = useCallback(async () => {
+    const webview = getWebview();
     if (webview === null) {
       return;
     }
@@ -40,11 +46,12 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
       await webview.executeJavaScript(injectCss.js);
     }
 
-    setInjectCss({ ...injectCss, key });
-  }, [webview, injectCss, setInjectCss]);
+    setInjectCss({...injectCss, key});
+  }, [getWebview, injectCss, setInjectCss]);
 
   const applyCss = useCallback(
     async (debugType: string, css: string, js: string | null = null) => {
+      const webview = getWebview();
       if (webview === null) {
         return;
       }
@@ -68,18 +75,18 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
         if (js !== null) {
           await webview.executeJavaScript(js);
         }
-        setInjectCss({ key, css, name: debugType, js });
+        setInjectCss({key, css, name: debugType, js});
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error('Error inserting css', error);
         // dispatch(setCss(undefined));
         setInjectCss(undefined);
       }
     },
-    [setInjectCss, webview, injectCss]
+    [setInjectCss, getWebview, injectCss]
   );
 
   const clearSimulation = useCallback(async () => {
+    const webview = getWebview();
     if (webview === null) {
       return;
     }
@@ -88,9 +95,10 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
     }
     await webview.removeInsertedCSS(injectCss.key);
     setInjectCss(undefined);
-  }, [webview, injectCss, setInjectCss]);
+  }, [getWebview, injectCss, setInjectCss]);
 
   useEffect(() => {
+    const webview = getWebview();
     if (webview === null) {
       return () => {};
     }
@@ -103,7 +111,7 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
     return () => {
       webview.removeEventListener('did-navigate', handler);
     };
-  }, [webview, reApplyCss]);
+  }, [getWebview, reApplyCss]);
 
   const applyColorDeficiency = useCallback(
     async (colorDeficiency: string) => {
@@ -133,7 +141,7 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
       const blur =
         'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8ZGVmcz4KICAgICAgICA8ZmlsdGVyIGlkPSJnYXVzc2lhbl9ibHVyIj4KICAgICAgICAgICAgPGZlR2F1c3NpYW5CbHVyIGluPSJTb3VyY2VHcmFwaGljIiBzdGREZXZpYXRpb249IjEwIiAvPgogICAgICAgIDwvZmlsdGVyPgogICAgPC9kZWZzPgo8L3N2Zz4=';
 
-      const impairments: { [key: string]: string } = {
+      const impairments: {[key: string]: string} = {
         [SIMULATIONS.CATARACT]: `body {
        -webkit-filter: url('${blur}#gaussian_blur');
         filter: url('${blur}#gaussian_blur');
@@ -210,16 +218,11 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
 
       return clearSimulation();
     },
-    [
-      applyColorDeficiency,
-      applyVisualImpairment,
-      applySunlight,
-      clearSimulation,
-    ]
+    [applyColorDeficiency, applyVisualImpairment, applySunlight, clearSimulation]
   );
 
   useEffect(() => {
-    const handler = ({ simulationName }: { simulationName: string }) => {
+    const handler = ({simulationName}: {simulationName: string}) => {
       applySimulation(simulationName);
     };
     webViewPubSub.subscribe(COLOR_BLINDNESS_CHANNEL, handler);
@@ -229,10 +232,5 @@ export const ColorBlindnessTools = ({ webview }: Props) => {
     };
   }, [applySimulation]);
 
-  return (
-    <VisionSimulationDropDown
-      simulationName={injectCss?.name}
-      onChange={applySimulation}
-    />
-  );
+  return <VisionSimulationDropDown simulationName={injectCss?.name} onChange={applySimulation} />;
 };

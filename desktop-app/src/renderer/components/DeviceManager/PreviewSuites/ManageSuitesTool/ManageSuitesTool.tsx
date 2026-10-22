@@ -1,19 +1,22 @@
-import { Icon } from '@iconify/react';
+import {Icon} from '@iconify/react';
+import type {Device} from 'common/deviceList';
+import {invalidateDevicesMap} from 'common/deviceList';
 import Button from 'renderer/components/Button';
-import { useState } from 'react';
-import { FileUploader } from 'renderer/components/FileUploader';
+import {useState} from 'react';
+import {FileUploader} from 'renderer/components/FileUploader';
 import Modal from 'renderer/components/Modal';
-import {
-  addSuites,
-  deleteAllSuites,
-} from 'renderer/store/features/device-manager';
-import { useDispatch } from 'react-redux';
-import { ConfirmDialog } from 'renderer/components/ConfirmDialog';
-import { transformFile } from './utils';
-import { onFileDownload, setCustomDevices } from './helpers';
-import { ManageSuitesToolError } from './ManageSuitesToolError';
+import {addSuites, deleteAllSuites} from 'renderer/store/features/device-manager';
+import {useDispatch} from 'react-redux';
+import {ConfirmDialog} from 'renderer/components/ConfirmDialog';
+import {transformFile} from './utils';
+import {onFileDownload, setCustomDevices} from './helpers';
+import {ManageSuitesToolError} from './ManageSuitesToolError';
 
-export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
+interface ManageSuitesToolProps {
+  setCustomDevicesState: (devices: Device[]) => void;
+}
+
+export const ManageSuitesTool = ({setCustomDevicesState}: ManageSuitesToolProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [resetConfirmation, setResetConfirmation] = useState<boolean>(false);
 
@@ -23,7 +26,7 @@ export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
   const onFileUpload = (fileUploaded: File) =>
     transformFile(fileUploaded)
       .then((fileTransformed) => {
-        const { customDevices, suites } = fileTransformed;
+        const {customDevices, suites} = fileTransformed;
 
         if (customDevices) {
           const newCustomDevices = setCustomDevices(customDevices);
@@ -47,6 +50,7 @@ export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
 
   const clearCustomDevices = () => {
     window.electron.store.set('deviceManager.customDevices', []);
+    invalidateDevicesMap();
     setCustomDevicesState([]);
   };
 
@@ -61,21 +65,21 @@ export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
       <div className="flex flex-row content-end justify-end">
         <Button
           data-testid="download-btn"
-          className="aspect-square w-12 rounded-full hover:!bg-slate-500"
+          className="aspect-square w-12 rounded-full hover:bg-slate-500!"
           onClick={() => setOpen(true)}
         >
           <Icon icon="uil:export" fontSize={18} />
         </Button>
         <Button
           data-testid="upload-btn"
-          className="aspect-square w-12 rounded-full hover:!bg-slate-500"
+          className="aspect-square w-12 rounded-full hover:bg-slate-500!"
           onClick={onFileDownload}
         >
           <Icon icon="uil:import" fontSize={18} />
         </Button>
         <Button
           data-testid="reset-btn"
-          className="aspect-square w-12 rounded-full hover:!bg-slate-500"
+          className="aspect-square w-12 rounded-full hover:bg-slate-500!"
           onClick={() => setResetConfirmation(true)}
         >
           <Icon icon="uil:redo" fontSize={18} />
@@ -87,11 +91,7 @@ export const ManageSuitesTool = ({ setCustomDevicesState }: any) => {
         open={resetConfirmation}
         confirmText="Do you want to reset all settings?"
       />
-      <Modal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title="Import your devices"
-      >
+      <Modal isOpen={open} onClose={() => setOpen(false)} title="Import your devices">
         <>
           <FileUploader
             acceptedFileTypes="application/json"

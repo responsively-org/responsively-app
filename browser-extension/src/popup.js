@@ -1,6 +1,6 @@
 import openCustomProtocolURI from "custom-protocol-check";
 import React, { useEffect, useState, useCallback } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import spinner from "./spinner.svg";
 
 const isChrome = () => {
@@ -121,15 +121,6 @@ const URLOpenerChrome = () => {
   );
 };
 
-ReactDOM.render(
-  isChrome() ? <URLOpenerChrome /> : <URLOpenerNonChrome />,
-  document.getElementById("app")
+createRoot(document.getElementById("app")).render(
+  isChrome() ? <URLOpenerChrome /> : <URLOpenerNonChrome />
 );
-
-// HMR integration
-if (module.hot) {
-  module.hot.accept('./popup', () => {
-    const NextPopup = require('./popup').default;
-    ReactDOM.render(<NextPopup />, document.getElementById('app'));
-  });
-}

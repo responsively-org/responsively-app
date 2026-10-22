@@ -1,17 +1,168 @@
+@import '@fontsource/lato/300.css' layer(base);
+@import '@fontsource/lato/400.css' layer(base);
+@import '@fontsource/lato/400-italic.css' layer(base);
+@import '@fontsource/lato/700.css' layer(base);
+@import '@fontsource/jetbrains-mono/400.css' layer(base);
+@import '@fontsource/jetbrains-mono/700.css' layer(base);
+
 /*
- * @NOTE: Prepend a `~` to css file paths that are in your node_modules
- *        See https://github.com/webpack-contrib/sass-loader#imports
+ * Only the renderer sources feed utility generation (the v3 `content` scope).
+ * Automatic detection would also sweep e2e specs and build scripts whose
+ * selector strings look like class names.
  */
+@import 'tailwindcss' source(none);
+@source './';
 
-@import '~@fontsource/lato/300.css';
-@import '~@fontsource/lato/400.css';
-@import '~@fontsource/lato/400-italic.css';
-@import '~@fontsource/lato/700.css';
+@plugin '@tailwindcss/typography';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-dark-normal: #d1d5db;
+
+  --color-light-normal: #374151;
+
+  --color-bg: var(--bg);
+  --color-dot: var(--dot);
+  --color-panel: var(--panel);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-input: var(--input);
+  --color-hover: var(--hover);
+  --color-active: var(--active);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-overlay: #ec4899;
+  --color-overlay-soft: rgba(236, 72, 153, 0.12);
+  --color-heart: var(--heart);
+  --color-heart-soft: var(--heart-soft);
+  --color-on-heart: var(--on-heart);
+  --color-titlebar: var(--titlebar);
+  --color-titlebar-fg: var(--titlebar-fg);
+
+  --shadow-elevated: var(--shadow);
+
+  --font-sans:
+    Lato, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-mono:
+    JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+/*
+ * Hybrid Studio design tokens (spec of record: "Redesign 2a - Hybrid Studio").
+ * ThemeProvider stamps data-theme on <html>; components consume these through
+ * the Tailwind semantic colors (bg-panel, text-fg, border-line, ...).
+ */
+:root {
+  /* Native controls (scrollbars, form widgets) must follow the theme. */
+  color-scheme: dark;
+  /* dark (default) */
+  --titlebar: #10161f;
+  --titlebar-fg: #8d97a5;
+  --bg: #151d29;
+  --dot: #28344a;
+  --panel: #0d1420;
+  --card: #0f1725;
+  --line: #273246;
+  --line-soft: #1d2739;
+  --fg: #d3dae4;
+  --muted: #7d8a9c;
+  --input: #0b111b;
+  --hover: #223048;
+  --active: #2c3d5c;
+  --accent: #2fd9a2;
+  --accent-soft: rgba(47, 217, 162, 0.15);
+  --on-accent: #07271b;
+  --heart: #f66d9b;
+  --heart-soft: rgba(246, 109, 155, 0.14);
+  --on-heart: #33091a;
+  --flash: rgba(255, 255, 255, 0.82);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --titlebar: #e8e9ec;
+  --titlebar-fg: #4d545e;
+  --bg: #eef0f4;
+  --dot: #ccd3de;
+  --panel: #ffffff;
+  --card: #ffffff;
+  --line: #d8dce4;
+  --line-soft: #e6e9ef;
+  --fg: #33404f;
+  --muted: #8b96a5;
+  --input: #f1f3f7;
+  --hover: #e7eaf1;
+  --active: #dde2ec;
+  --accent: #0e9d6e;
+  --accent-soft: rgba(14, 157, 110, 0.12);
+  --on-accent: #ffffff;
+  --heart: #d6336c;
+  --heart-soft: rgba(214, 51, 108, 0.1);
+  --on-heart: #ffffff;
+  --flash: rgba(255, 255, 255, 0.9);
+  --shadow: 0 12px 32px rgba(23, 32, 48, 0.18), 0 0 0 1px rgba(23, 32, 48, 0.06);
+}
 
 html {
   user-select: none;
+}
+
+/* Slim, theme-neutral scrollbars (Hybrid Studio design). */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Canvas mode stage backdrop (Hybrid Studio). */
+.canvas-dots {
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
+/*
+ * Frameless-window drag regions. The title bar is the drag handle, so any
+ * interactive element placed inside it must opt out with .app-no-drag.
+ */
+.app-drag {
+  -webkit-app-region: drag;
+}
+
+.app-no-drag {
+  -webkit-app-region: no-drag;
 }

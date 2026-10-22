@@ -102,6 +102,64 @@ Install the handy browser extension to easily send links from your browser to th
 - [Download for Firefox](https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/) <a href="https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/" target="_blank"><img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/responsively-helper"></a>
 - [Download for Edge](https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn) <a href="https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn" target="_blank"><img alt="Edge Add-on" src="https://img.shields.io/badge/dynamic/json?label=users&query=%24.activeInstallCount&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fooiejjgflcgkbbehheengalibfehaojn"></a>
 
+## MCP Server (AI coding agents)
+
+Responsively App ships a built-in [Model Context Protocol](https://modelcontextprotocol.io) server, so AI coding agents like Claude Code and Cursor can drive the app while you build — load your dev server, switch device previews, interact with pages, and visually verify responsive layouts with per-device screenshots.
+
+Install the app, launch it once, then connect from Claude Code:
+
+```bash
+claude mcp add responsively -- npx -y @responsively/mcp
+```
+
+Or add to Cursor's `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "responsively": {"command": "npx", "args": ["-y", "@responsively/mcp"]}
+  }
+}
+```
+
+**The app is launched on demand** — connecting an agent session doesn't open it; the first tool call starts it automatically (and it stays open afterwards). If it's already running, it's reused.
+
+Available tools:
+
+| Tool | Description |
+| --- | --- |
+| `get_app_state` | Current URL, page title, layout, zoom and active devices |
+| `navigate` | Load a URL in all device previews (waits for the page to load) |
+| `list_devices` | Full device catalog, including custom devices |
+| `set_active_devices` | Change which devices are previewed, by id or name |
+| `screenshot` | Capture one or all device previews as JPEG images |
+| `read_page` | Read a preview's page text and interactive elements with CSS selectors |
+| `click` | Click an element (trusted mouse event; mirrors across previews) |
+| `type_text` | Type into a form field with real keystrokes, optionally press Enter |
+
+Screenshots capture the visible viewport and are downscaled to at most 1000px wide.
+
+<details>
+<summary>Advanced configuration</summary>
+
+The app's MCP server listens on `http://127.0.0.1:12720/mcp` (localhost only) whenever the app is running. If your MCP client can't run npx, connect to it directly — but you'll need to have the app running yourself:
+
+```bash
+claude mcp add --transport http responsively http://127.0.0.1:12720/mcp
+```
+
+Environment variables understood by `@responsively/mcp`:
+
+| Variable | Purpose |
+| --- | --- |
+| `RESPONSIVELY_APP_PATH` | Path to a custom app install (auto-detected otherwise) |
+| `RESPONSIVELY_MCP_PORT` | Port of the app's MCP server (default `12720`) |
+| `RESPONSIVELY_MCP_BRIDGE` | Direct path to a bridge `cli.js` (development override) |
+
+Linux note: the app ships as an AppImage, so launch it once before first agent use — that's how the CLI learns where it lives.
+
+</details>
+
 ## Issues
 
 If you face any problems while using the application, please open an issue here - https://github.com/responsively-org/responsively-app/issues
@@ -111,19 +169,21 @@ If you face any problems while using the application, please open an issue here 
 Here is the roadmap of the desktop app - https://github.com/responsively-org/responsively-app/projects/
 
 ## Gold sponsors 🥇
-
-<p>&nbsp;</p>
-
-<p align="center" >
-  <a href="https://www.lambdatest.com/?utm_source=responsively&utm_medium=sponsor" target="_blank">
-            <img src="https://www.lambdatest.com/blue-logo.png" style="vertical-align: middle;" width="380" height="220" />
-        </a>
-  <a href="https://www.syncfusion.com/?utm_source=responsivelyapp&utm_medium=cpc&utm_campaign=responsivelyapp_esee_ban" target="_blank">
-    <img src="https://responsively.app/assets/img/logos/syncfusion.png" height="120px" alt="Syncfusion"></a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/sponsors/responsively-org" target="_blank">
+<table style="width: 100%; border: none;" cellspacing="0" cellpadding="0" border="0" align="center" id="sponsors">
+  <tr>
+    <td style="border: none;"><a href="https://www.testmuai.com/?utm_medium=sponsor&utm_source=responsively-app" target="_blank">
+            <img src="https://responsively.app/_next/static/media/testmu.a5a8be46.svg" style="vertical-align: middle;" width="280" />
+        </a></td>
+    <td style="border: none;"><a href="https://global.fun88.com/?utm_medium=sponsor&utm_source=responsively-app" target="_blank">
+            <img src="https://responsively.app/assets/img/logos/fun88.png" style="vertical-align: middle;" width="200" alt="Fun88" />
+        </a></td>
+    <td rowspan="3" style="border: none;"><a href="https://github.com/sponsors/responsively-org" target="_blank">
     <img src="https://user-images.githubusercontent.com/1283424/142834528-4cd5b8eb-eeae-4437-b749-d09c96dde160.png" height="120px" alt="Sponsor to add your company logo here">
-  </a>
-</p>
+  </a></td>
+  </tr>
+</table>
+
+
 
 [Become a sponsor and have your company logo here](https://opencollective.com/responsively)
 
@@ -283,6 +343,10 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
       <td align="center" valign="top" width="20%"><a href="http://aaryancreates.framer.media"><img src="https://avatars.githubusercontent.com/u/93996658?v=4?s=100" width="100px;" alt="aaryan"/><br /><sub><b>aaryan</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=meezumi" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/mklikushin"><img src="https://avatars.githubusercontent.com/u/135151016?v=4?s=100" width="100px;" alt="Michael Klikushin"/><br /><sub><b>Michael Klikushin</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=mklikushin" title="Code">💻</a></td>
       <td align="center" valign="top" width="20%"><a href="https://github.com/bhnprksh222"><img src="https://avatars.githubusercontent.com/u/48930756?v=4?s=100" width="100px;" alt="Bhanu Prakash"/><br /><sub><b>Bhanu Prakash</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=bhnprksh222" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="20%"><a href="http://sayago.dev"><img src="https://avatars.githubusercontent.com/u/67727553?v=4?s=100" width="100px;" alt="Saúl Sáyago"/><br /><sub><b>Saúl Sáyago</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=sayagodev" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/Dailin521"><img src="https://avatars.githubusercontent.com/u/71995555?v=4?s=100" width="100px;" alt="Dailin"/><br /><sub><b>Dailin</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=Dailin521" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

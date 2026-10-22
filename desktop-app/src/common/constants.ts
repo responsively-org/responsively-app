@@ -1,5 +1,3 @@
-/* eslint-disable  import/prefer-default-export */
-
 export const DOCK_POSITION = {
   BOTTOM: 'BOTTOM',
   RIGHT: 'RIGHT',
@@ -11,10 +9,10 @@ export const PREVIEW_LAYOUTS = {
   FLEX: 'FLEX',
   INDIVIDUAL: 'INDIVIDUAL',
   MASONRY: 'MASONRY',
+  CANVAS: 'CANVAS',
 } as const;
 
-export type PreviewLayout =
-  typeof PREVIEW_LAYOUTS[keyof typeof PREVIEW_LAYOUTS];
+export type PreviewLayout = (typeof PREVIEW_LAYOUTS)[keyof typeof PREVIEW_LAYOUTS];
 
 export type Notification = {
   id: string;
@@ -42,9 +40,33 @@ export const IPC_MAIN_CHANNELS = {
   UPDATE_SITE_PERMISSION: 'update-site-permission',
   CLEAR_SITE_PERMISSIONS: 'clear-site-permissions',
   PERMISSION_UPDATED: 'permission-updated',
+  MCP_COMMAND: 'mcp-command',
+  MCP_COMMAND_RESPONSE: 'mcp-command-response',
+  SCREENSHOT: 'screenshot',
+  SCREENSHOT_ALL: 'screenshot:All',
+  OPEN_DEVTOOLS: 'open-devtools',
+  RESIZE_DEVTOOLS: 'resize-devtools',
+  CLOSE_DEVTOOLS: 'close-devtools',
+  ENABLE_INSPECTOR_OVERLAY: 'enable-inspector-overlay',
+  DISABLE_INSPECTOR_OVERLAY: 'disable-inspector-overlay',
+  INSPECT_ELEMENT: 'inspect-element',
+  DELETE_STORAGE: 'delete-storage',
+  LOAD_URL_IN_WEBVIEW: 'load-url-in-webview',
+  SET_NATIVE_THEME: 'set-native-theme',
+  COPY_TO_CLIPBOARD: 'copy-to-clipboard',
+  GET_BROWSER_SYNC_PORT: 'get-browser-sync-port',
+  ELECTRON_STORE_GET: 'electron-store-get',
+  ELECTRON_STORE_SET: 'electron-store-set',
+  GET_ABOUT_INFO: 'get-about-info',
+  SHORTCUT_TRIGGERED: 'shortcut-triggered',
+  SET_OVERLAY_OPEN: 'set-overlay-open',
+  MCP_STATUS: 'mcp-status',
+  MCP_SET_ENABLED: 'mcp-set-enabled',
+  MCP_LIST_TOOLS: 'mcp-list-tools',
+  MCP_SET_TOOL: 'mcp-set-tool',
 } as const;
 
-export type Channels = typeof IPC_MAIN_CHANNELS[keyof typeof IPC_MAIN_CHANNELS];
+export type Channels = (typeof IPC_MAIN_CHANNELS)[keyof typeof IPC_MAIN_CHANNELS];
 
 export const PROTOCOL = 'responsively';
 
@@ -59,8 +81,7 @@ export const PERMISSION_TYPES = {
   POINTER_LOCK: 'pointerLock',
 } as const;
 
-export type PermissionType =
-  typeof PERMISSION_TYPES[keyof typeof PERMISSION_TYPES];
+export type PermissionType = (typeof PERMISSION_TYPES)[keyof typeof PERMISSION_TYPES];
 
 export interface SitePermission {
   type: string;

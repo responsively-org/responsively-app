@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Guides from '@scena/react-guides';
-import { LegacyRef, useEffect, useRef, useMemo } from 'react';
-import { Coordinates } from '../../../store/features/ruler';
+import {LegacyRef, useEffect, useRef, useMemo} from 'react';
+import {Coordinates} from '../../../store/features/ruler';
 import './guide.css';
 
 export type DefaultGuide = {
@@ -20,6 +20,8 @@ interface Props {
   night: boolean;
   enabled: boolean;
   defaultGuides: DefaultGuide[];
+  /** Draw rulers above hardware artwork without raising the page itself. */
+  zIndex?: number;
 }
 
 const GuideGrid = ({
@@ -32,19 +34,17 @@ const GuideGrid = ({
   night,
   enabled,
   defaultGuides,
+  zIndex = 1,
 }: Props) => {
-  const horizontalGuidesRef = useRef<Guides>();
-  const verticalGuidesRef = useRef<Guides>();
+  const horizontalGuidesRef = useRef<Guides | null>(null);
+  const verticalGuidesRef = useRef<Guides | null>(null);
   const defaultsHor = useMemo(() => {
     return defaultGuides
       .filter((x: DefaultGuide) => !x.is_vertical)
       .flatMap((x: DefaultGuide) => x.positions);
   }, [defaultGuides]);
   const defaultsVer = useMemo(
-    () =>
-      defaultGuides
-        .filter((x: DefaultGuide) => x.is_vertical)
-        .flatMap((x) => x.positions),
+    () => defaultGuides.filter((x: DefaultGuide) => x.is_vertical).flatMap((x) => x.positions),
     [defaultGuides]
   );
 
@@ -102,7 +102,7 @@ const GuideGrid = ({
               pointerEvents: 'none',
               width: `${scaledWidth + 30}px`,
               height: `${scaledHeight + 30}px`,
-              zIndex: 1,
+              zIndex,
               overflow: 'hidden',
             }}
           >
@@ -128,7 +128,7 @@ const GuideGrid = ({
               displayGuidePos
               useResizeObserver
               defaultGuides={defaultsHor.length > 0 ? defaultsHor : undefined}
-              onChangeGuides={({ guides }) => {
+              onChangeGuides={({guides}) => {
                 window.electron.store.set('userPreferences.guides', [
                   ...window.electron.store
                     .get('userPreferences.guides')
@@ -166,7 +166,7 @@ const GuideGrid = ({
               displayGuidePos
               useResizeObserver
               defaultGuides={defaultsVer.length > 0 ? defaultsVer : undefined}
-              onChangeGuides={({ guides }) => {
+              onChangeGuides={({guides}) => {
                 window.electron.store.set('userPreferences.guides', [
                   ...window.electron.store
                     .get('userPreferences.guides')

@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { v4 as uuidv4 } from 'uuid';
-import type { RootState } from '../..';
+import {createSlice} from '@reduxjs/toolkit';
+import type {PayloadAction} from '@reduxjs/toolkit';
+import {v4 as uuidv4} from 'uuid';
+import type {RootState} from '../..';
 
 export interface IBookmarks {
   id?: string;
@@ -12,48 +12,44 @@ export interface BookmarksState {
   bookmarks: IBookmarks[];
 }
 
+// Persisted values are injected via the store's preloaded state
+// (store/preloadedState.ts); persistence happens in store/persistence.ts.
 const initialState: BookmarksState = {
-  bookmarks: window.electron.store.get('bookmarks'),
+  bookmarks: [],
 };
 
 export const bookmarksSlice = createSlice({
   name: 'bookmarks',
   initialState,
   reducers: {
-    addBookmark: (state, action: PayloadAction<IBookmarks>) => {
-      const bookmarks: IBookmarks[] = window.electron.store.get('bookmarks');
-      if (action.payload.id) {
-        const index = bookmarks.findIndex(
-          (bookmark) => bookmark.id === action.payload.id
-        );
-        bookmarks[index] = action.payload;
-      } else {
-        const updatedPayload = {
-          ...action.payload,
-          id: uuidv4(),
-        };
-        bookmarks.push(updatedPayload);
-      }
-      state.bookmarks = bookmarks;
-      window.electron.store.set('bookmarks', bookmarks);
+    addBookmark: {
+      reducer: (state, action: PayloadAction<IBookmarks>) => {
+        const index = state.bookmarks.findIndex((bookmark) => bookmark.id === action.payload.id);
+        if (index === -1) {
+          state.bookmarks.push(action.payload);
+        } else {
+          state.bookmarks[index] = action.payload;
+        }
+      },
+      // Ids are assigned outside the reducer to keep it pure.
+      prepare: (bookmark: IBookmarks) => ({
+        payload: bookmark.id ? bookmark : {...bookmark, id: uuidv4()},
+      }),
     },
-    removeBookmark: (state, action) => {
-      const bookmarks = window.electron.store.get('bookmarks');
+    removeBookmark: (state, action: PayloadAction<{id?: string}>) => {
       const bookmarkIndex = state.bookmarks.findIndex(
         (bookmark) => bookmark.id === action.payload.id
       );
       if (bookmarkIndex === -1) {
         return;
       }
-      bookmarks.splice(bookmarkIndex, 1);
-      state.bookmarks = bookmarks;
-      window.electron.store.set('bookmarks', bookmarks);
+      state.bookmarks.splice(bookmarkIndex, 1);
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addBookmark, removeBookmark } = bookmarksSlice.actions;
+export const {addBookmark, removeBookmark} = bookmarksSlice.actions;
 
 export const selectBookmarks = (state: RootState) => state.bookmarks.bookmarks;
 

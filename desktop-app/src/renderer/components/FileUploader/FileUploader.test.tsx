@@ -1,17 +1,17 @@
-import { render, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { FileUploader, FileUploaderProps } from './FileUploader';
-import { useFileUpload } from './hooks';
+import {render, fireEvent} from '@testing-library/react';
+import {type Mock} from 'vitest';
+import {FileUploader, FileUploaderProps} from './FileUploader';
+import {useFileUpload} from './hooks';
 
-jest.mock('./hooks');
+vi.mock('./hooks');
 
-const mockHandleFileUpload = jest.fn();
-const mockHandleUpload = jest.fn();
-const mockResetUploadedFile = jest.fn();
+const mockHandleFileUpload = vi.fn();
+const mockHandleUpload = vi.fn();
+const mockResetUploadedFile = vi.fn();
 
 describe('FileUploader', () => {
   beforeEach(() => {
-    (useFileUpload as jest.Mock).mockReturnValue({
+    (useFileUpload as Mock).mockReturnValue({
       uploadedFile: null,
       handleUpload: mockHandleUpload,
       resetUploadedFile: mockResetUploadedFile,
@@ -28,7 +28,7 @@ describe('FileUploader', () => {
     );
 
   it('renders the component', () => {
-    const { getByTestId } = renderComponent();
+    const {getByTestId} = renderComponent();
 
     const fileInput = getByTestId('fileUploader');
 
@@ -36,17 +36,17 @@ describe('FileUploader', () => {
   });
 
   it('calls handleUpload when file input changes', () => {
-    const { getByTestId } = renderComponent();
+    const {getByTestId} = renderComponent();
     const fileInput = getByTestId('fileUploader');
     fireEvent.change(fileInput, {
-      target: { files: [new File(['content'], 'file.txt')] },
+      target: {files: [new File(['content'], 'file.txt')]},
     });
     expect(mockHandleUpload).toHaveBeenCalled();
   });
 
   it('calls handleFileUpload when uploadedFile is set', () => {
     const mockFile = new File(['content'], 'file.txt');
-    (useFileUpload as jest.Mock).mockReturnValue({
+    (useFileUpload as Mock).mockReturnValue({
       uploadedFile: mockFile,
       handleUpload: mockHandleUpload,
       resetUploadedFile: mockResetUploadedFile,
@@ -56,7 +56,7 @@ describe('FileUploader', () => {
   });
 
   it('sets the accept attribute correctly', () => {
-    const { getByTestId } = renderComponent({
+    const {getByTestId} = renderComponent({
       acceptedFileTypes: 'application/json',
       handleFileUpload: mockHandleFileUpload,
     });
@@ -65,7 +65,7 @@ describe('FileUploader', () => {
   });
 
   it('allows multiple file uploads when multiple prop is true', () => {
-    const { getByTestId } = renderComponent({
+    const {getByTestId} = renderComponent({
       multiple: true,
       handleFileUpload: mockHandleFileUpload,
     });
@@ -74,7 +74,7 @@ describe('FileUploader', () => {
   });
 
   it('does not allow multiple file uploads when multiple prop is false', () => {
-    const { getByTestId } = renderComponent({
+    const {getByTestId} = renderComponent({
       multiple: false,
       handleFileUpload: mockHandleFileUpload,
     });

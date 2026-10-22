@@ -1,13 +1,10 @@
-import { Icon } from '@iconify/react';
+import {Icon} from '@iconify/react';
 import cx from 'classnames';
-import { useDrag, useDrop } from 'react-dnd';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDrag, useDrop} from 'react-dnd';
+import {useDispatch, useSelector} from 'react-redux';
 
-import { Device, getDevicesMap } from 'common/deviceList';
-import {
-  selectActiveSuite,
-  setSuiteDevices,
-} from 'renderer/store/features/device-manager';
+import {Device, getDevicesMap} from 'common/deviceList';
+import {selectActiveSuite, setSuiteDevices} from 'renderer/store/features/device-manager';
 import Button from '../Button';
 
 export const DND_TYPE = 'Device';
@@ -34,7 +31,7 @@ const DeviceLabel = ({
   const devices = activeSuite.devices.map((id) => getDevicesMap()[id]);
   const originalIndex = devices.indexOf(device);
 
-  const [{ isDragging }, drag] = useDrag(
+  const [{isDragging}, drag] = useDrag(
     () => ({
       type: DND_TYPE,
       item: device,
@@ -69,8 +66,14 @@ const DeviceLabel = ({
   return (
     <div
       className="flex w-fit items-center gap-2 rounded bg-slate-300 px-2 py-1 dark:bg-slate-600"
-      ref={enableDnd ? (node) => drag(drop(node)) : null}
-      style={{ opacity }}
+      ref={
+        enableDnd
+          ? (node) => {
+              drag(drop(node));
+            }
+          : null
+      }
+      style={{opacity}}
     >
       {enableDnd ? <Icon icon="ic:baseline-drag-indicator" /> : null}
       <input
@@ -80,12 +83,11 @@ const DeviceLabel = ({
         type="checkbox"
         disabled={disableSelectionControls}
         title={
-          // eslint-disable-next-line no-nested-ternary
           disableSelectionControls
             ? 'Cannot make the suite empty add another device to remove this one'
             : isChecked
-            ? 'Click to remove the device'
-            : 'Click to add the device'
+              ? 'Click to remove the device'
+              : 'Click to add the device'
         }
         checked={isChecked}
         onChange={(e) => {
@@ -114,9 +116,7 @@ const DeviceLabel = ({
         </span>
       </div>
       <Button onClick={() => onShowDeviceDetails(device)}>
-        <Icon
-          icon={device.isCustom ? 'ic:baseline-edit' : 'ic:baseline-info'}
-        />
+        <Icon icon={device.isCustom ? 'ic:baseline-edit' : 'ic:baseline-info'} />
       </Button>
     </div>
   );

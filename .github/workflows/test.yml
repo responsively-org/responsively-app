@@ -1,10 +1,17 @@
 name: Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    # The whole pipeline (install, build, lint, unit, e2e, package) fits well
+    # under this when healthy; a hung or crawling e2e run must not burn an
+    # hour of runner time.
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: ./desktop-app
@@ -16,24 +23,74 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node.js and NPM
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
-          cache: ${{ !env.ACT && 'npm' || '' }} # Disable cache for nektos/act
+          node-version: 24
+          cache: ${{ !env.ACT && 'yarn' || '' }} # Disable cache for nektos/act
           cache-dependency-path: ./desktop-app/yarn.lock
 
       - name: yarn install
         run: |
           yarn install --network-timeout 120000
 
-      - name: yarn test
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build
+        run: yarn run build
+
+      - name: Lint, typecheck and unit test
         run: |
-          yarn run package
           yarn run lint
           yarn exec tsc
           yarn test
+
+      - name: MCP bootstrap package tests
+        working-directory: ./responsively-mcp
+        run: npm test
+
+      - name: E2E Tests
+        timeout-minutes: 15
+        run: yarn test:e2e
+        env:
+          CI: true
+          E2E_TEST: true
+          E2E_HEADLESS: true
+
+      - name: Upload E2E Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: desktop-app/e2e/playwright-report/
+          retention-days: 14
+
+  # Packaging is independent of the test pipeline — running it as its own job
+  # takes ~4 minutes off the serial path and keeps an e2e failure from hiding
+  # whether the app still packages (and vice versa).
+  package:
+    runs-on: macos-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: ./desktop-app
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js and NPM
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: ${{ !env.ACT && 'yarn' || '' }} # Disable cache for nektos/act
+          cache-dependency-path: ./desktop-app/yarn.lock
+
+      - name: yarn install
+        run: |
+          yarn install --network-timeout 120000
+
+      - name: Package
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn run package

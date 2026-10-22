@@ -1,1 +1,1 @@
-export { useFileUpload } from './useFileUpload';
+export {useFileUpload} from './useFileUpload';

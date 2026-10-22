@@ -1,0 +1,49 @@
+{
+  "name": "@responsively/mcp",
+  "version": "1.0.0",
+  "description": "Browser MCP server for testing website responsiveness across mobile, tablet, and desktop viewports with screenshots and page interactions in Responsively App",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "responsively",
+    "browser",
+    "browser-automation",
+    "responsive-design",
+    "responsive-testing",
+    "website-testing",
+    "viewport",
+    "screenshots",
+    "devtools",
+    "ai-agents"
+  ],
+  "homepage": "https://responsively.app",
+  "bugs": {
+    "url": "https://github.com/responsively-org/responsively-app/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/responsively-org/responsively-app.git",
+    "directory": "responsively-mcp"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Responsively",
+    "email": "p.manoj.vivek@gmail.com"
+  },
+  "bin": {
+    "responsively-mcp": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "lib"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

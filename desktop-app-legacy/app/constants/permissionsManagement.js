@@ -1,9 +1,0 @@
-const PERMISSION_MANAGEMENT_OPTIONS = {
-  ALLOW_ALWAYS: 'Allow always',
-  DENY_ALWAYS: 'Deny always',
-  ASK_ALWAYS: 'Ask always',
-};
-
-Object.freeze(PERMISSION_MANAGEMENT_OPTIONS);
-
-export {PERMISSION_MANAGEMENT_OPTIONS};

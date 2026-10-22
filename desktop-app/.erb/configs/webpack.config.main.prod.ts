@@ -4,9 +4,9 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import { merge } from 'webpack-merge';
+import {merge} from 'webpack-merge';
 import TerserPlugin from 'terser-webpack-plugin';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import {BundleAnalyzerPlugin} from 'webpack-bundle-analyzer';
 import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
 import checkNodeEnv from '../scripts/check-node-env';
@@ -32,10 +32,7 @@ const configuration: webpack.Configuration = {
   entry: {
     main: path.join(webpackPaths.srcMainPath, 'main.ts'),
     preload: path.join(webpackPaths.srcMainPath, 'preload.ts'),
-    'preload-webview': path.join(
-      webpackPaths.srcMainPath,
-      'preload-webview.ts'
-    ),
+    'preload-webview': path.join(webpackPaths.srcMainPath, 'preload-webview.ts'),
   },
 
   externals: ['fsevents'],

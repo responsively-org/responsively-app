@@ -1,7 +1,7 @@
-import { app, Menu, BrowserWindow, MenuItemConstructorOptions } from 'electron';
-import { subMenuHelp } from './help';
-import { getViewMenu } from './view';
-import { AppUpdater } from '../app-updater';
+import {app, Menu, BrowserWindow, MenuItemConstructorOptions} from 'electron';
+import {subMenuHelp} from './help';
+import {getViewMenu} from './view';
+import {AppUpdater} from '../app-updater';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -23,17 +23,12 @@ export default class MenuBuilder {
   }
 
   buildMenu(): Menu {
-    if (
-      process.env.NODE_ENV === 'development' ||
-      process.env.DEBUG_PROD === 'true'
-    ) {
+    if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
       this.setupDevelopmentEnvironment();
     }
 
     const template =
-      process.platform === 'darwin'
-        ? this.buildDarwinTemplate()
-        : this.buildDefaultTemplate();
+      process.platform === 'darwin' ? this.buildDarwinTemplate() : this.buildDefaultTemplate();
 
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
@@ -43,7 +38,7 @@ export default class MenuBuilder {
 
   setupDevelopmentEnvironment(): void {
     this.mainWindow.webContents.on('context-menu', (_, props) => {
-      const { x, y } = props;
+      const {x, y} = props;
 
       Menu.buildFromTemplate([
         {
@@ -52,7 +47,7 @@ export default class MenuBuilder {
             this.mainWindow.webContents.inspectElement(x, y);
           },
         },
-      ]).popup({ window: this.mainWindow });
+      ]).popup({window: this.mainWindow});
     });
   }
 
@@ -64,7 +59,7 @@ export default class MenuBuilder {
           label: 'About ResponsivelyApp',
           selector: 'orderFrontStandardAboutPanel:',
         },
-        { type: 'separator' },
+        {type: 'separator'},
         {
           label: 'Hide ResponsivelyApp',
           accelerator: 'Command+H',
@@ -75,8 +70,8 @@ export default class MenuBuilder {
           accelerator: 'Command+Shift+H',
           selector: 'hideOtherApplications:',
         },
-        { label: 'Show All', selector: 'unhideAllApplications:' },
-        { type: 'separator' },
+        {label: 'Show All', selector: 'unhideAllApplications:'},
+        {type: 'separator'},
         {
           label: 'Quit',
           accelerator: 'Command+Q',
@@ -89,12 +84,12 @@ export default class MenuBuilder {
     const subMenuEdit: DarwinMenuItemConstructorOptions = {
       label: 'Edit',
       submenu: [
-        { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
-        { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
-        { type: 'separator' },
-        { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
-        { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
-        { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
+        {label: 'Undo', accelerator: 'Command+Z', selector: 'undo:'},
+        {label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:'},
+        {type: 'separator'},
+        {label: 'Cut', accelerator: 'Command+X', selector: 'cut:'},
+        {label: 'Copy', accelerator: 'Command+C', selector: 'copy:'},
+        {label: 'Paste', accelerator: 'Command+V', selector: 'paste:'},
         {
           label: 'Select All',
           accelerator: 'Command+A',
@@ -111,9 +106,9 @@ export default class MenuBuilder {
           accelerator: 'Command+M',
           selector: 'performMiniaturize:',
         },
-        { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
-        { type: 'separator' },
-        { label: 'Bring All to Front', selector: 'arrangeInFront:' },
+        {label: 'Close', accelerator: 'Command+W', selector: 'performClose:'},
+        {type: 'separator'},
+        {label: 'Bring All to Front', selector: 'arrangeInFront:'},
       ],
     };
 

@@ -1,10 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DOCK_POSITION } from 'common/constants';
-import type { RootState } from '../..';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {DOCK_POSITION} from 'common/constants';
+import type {RootState} from '../..';
 
-const defaultBounds = { x: 0, y: 0, width: 0, height: 0 };
+const defaultBounds = {x: 0, y: 0, width: 0, height: 0};
 
-export type DockPosition = typeof DOCK_POSITION[keyof typeof DOCK_POSITION];
+export type DockPosition = (typeof DOCK_POSITION)[keyof typeof DOCK_POSITION];
 
 export interface DevtoolsState {
   bounds: {
@@ -18,10 +18,12 @@ export interface DevtoolsState {
   webViewId: number;
 }
 
+// Persisted values are injected via the store's preloaded state
+// (store/preloadedState.ts); persistence happens in store/persistence.ts.
 const initialState: DevtoolsState = {
   bounds: defaultBounds,
   isOpen: false,
-  dockPosition: window.electron.store.get('devtools.dockPosition'),
+  dockPosition: DOCK_POSITION.BOTTOM,
   webViewId: -1,
 };
 
@@ -44,22 +46,19 @@ export const devtoolsSlice = createSlice({
       state.webViewId = -1;
     },
     setDockPosition: (state, action: PayloadAction<DockPosition>) => {
-      window.electron.store.set('devtools.dockPosition', action.payload);
       state.dockPosition = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setBounds, setDevtoolsOpen, setDevtoolsClose, setDockPosition } =
+export const {setBounds, setDevtoolsOpen, setDevtoolsClose, setDockPosition} =
   devtoolsSlice.actions;
 
 export const selectIsDevtoolsOpen = (state: RootState) => state.devtools.isOpen;
 
-export const selectDevtoolsWebviewId = (state: RootState) =>
-  state.devtools.webViewId;
+export const selectDevtoolsWebviewId = (state: RootState) => state.devtools.webViewId;
 
-export const selectDockPosition = (state: RootState) =>
-  state.devtools.dockPosition;
+export const selectDockPosition = (state: RootState) => state.devtools.dockPosition;
 
 export default devtoolsSlice.reducer;

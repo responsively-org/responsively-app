@@ -3,9 +3,9 @@ import path from 'path';
 import fs from 'fs';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import chalk from 'chalk';
-import { merge } from 'webpack-merge';
-import { execSync, spawn } from 'child_process';
+import pc from 'picocolors';
+import {merge} from 'webpack-merge';
+import {execSync, spawn} from 'child_process';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
@@ -26,13 +26,14 @@ const skipDLLs =
 /**
  * Warn if the DLL is not built
  */
-if (
-  !skipDLLs &&
-  !(fs.existsSync(webpackPaths.dllPath) && fs.existsSync(manifest))
-) {
+if (!skipDLLs && !(fs.existsSync(webpackPaths.dllPath) && fs.existsSync(manifest))) {
   console.log(
-    chalk.black.bgYellow.bold(
-      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
+    pc.black(
+      pc.bgYellow(
+        pc.bold(
+          'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
+        )
+      )
     )
   );
   execSync('npm run postinstall');
@@ -45,11 +46,10 @@ const configuration: webpack.Configuration = {
 
   target: ['web', 'electron-renderer'],
 
-  entry: [
-    `webpack-dev-server/client?http://localhost:${port}/dist`,
-    'webpack/hot/only-dev-server',
-    path.join(webpackPaths.srcRendererPath, 'index.tsx'),
-  ],
+  // webpack-dev-server injects its client and the HMR runtime itself
+  // (hot: 'only' below keeps the old only-dev-server semantics); v6 no longer
+  // exports ./client for manual entry injection.
+  entry: [path.join(webpackPaths.srcRendererPath, 'index.tsx')],
 
   output: {
     path: webpackPaths.distRendererPath,
@@ -63,7 +63,7 @@ const configuration: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /\.s?css$/,
+        test: /\.css$/,
         use: [
           'style-loader',
           {
@@ -74,26 +74,24 @@ const configuration: webpack.Configuration = {
               importLoaders: 1,
             },
           },
-          'sass-loader',
         ],
-        include: /\.module\.s?(c|a)ss$/,
+        include: /\.module\.css$/,
       },
       {
-        test: /\.s?css$/,
+        test: /\.css$/,
         use: [
           'style-loader',
           'css-loader',
-          'sass-loader',
           {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [require('tailwindcss'), require('autoprefixer')],
+                plugins: [require('@tailwindcss/postcss')],
               },
             },
           },
         ],
-        exclude: /\.module\.s?(c|a)ss$/,
+        exclude: /\.module\.css$/,
       },
       // Fonts
       {
@@ -102,7 +100,7 @@ const configuration: webpack.Configuration = {
       },
       // Images
       {
-        test: /\.(png|jpg|jpeg|gif)$/i,
+        test: /\.(png|jpg|jpeg|gif|webp)$/i,
         type: 'asset/resource',
       },
       // SVG
@@ -115,7 +113,7 @@ const configuration: webpack.Configuration = {
               prettier: false,
               svgo: false,
               svgoConfig: {
-                plugins: [{ removeViewBox: false }],
+                plugins: [{removeViewBox: false}],
               },
               titleProp: true,
               ref: true,
@@ -192,8 +190,8 @@ const configuration: webpack.Configuration = {
   devServer: {
     port,
     compress: true,
-    hot: true,
-    headers: { 'Access-Control-Allow-Origin': '*' },
+    hot: 'only',
+    headers: {'Access-Control-Allow-Origin': '*'},
     static: {
       publicPath: '/',
     },
@@ -210,23 +208,17 @@ const configuration: webpack.Configuration = {
         .on('error', (spawnError) => console.error(spawnError));
 
       console.log('Starting preload-webview.js builder...');
-      const preloadWebviewProcess = spawn(
-        'npm',
-        ['run', 'start:preloadWebview'],
-        {
-          shell: true,
-          stdio: 'inherit',
-        }
-      )
+      const preloadWebviewProcess = spawn('npm', ['run', 'start:preloadWebview'], {
+        shell: true,
+        stdio: 'inherit',
+      })
         .on('close', (code: number) => process.exit(code!))
         .on('error', (spawnError) => console.error(spawnError));
 
       console.log('Starting Main Process...');
       let args = ['run', 'start:main'];
       if (process.env.MAIN_ARGS) {
-        args = args.concat(
-          ['--', ...process.env.MAIN_ARGS.matchAll(/"[^"]+"|[^\s"]+/g)].flat()
-        );
+        args = args.concat(['--', ...process.env.MAIN_ARGS.matchAll(/"[^"]+"|[^\s"]+/g)].flat());
       }
       spawn('npm', args, {
         shell: true,

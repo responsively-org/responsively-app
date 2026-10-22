@@ -1,0 +1,33 @@
+# Git hooks for the whole repo (multi-package: desktop-app, responsively-mcp,
+# browser-extension). Lefthook runs from the repo root regardless of commit
+# cwd; each command pins its own working directory and binaries resolve from
+# that package's node_modules — no global installs, no npx-fetched versions.
+pre-commit:
+  parallel: false
+  commands:
+    desktop-app-lint:
+      root: "desktop-app/"
+      glob: "*.{js,jsx,ts,tsx,mjs}"
+      run: node_modules/.bin/eslint --fix --max-warnings 0 {staged_files}
+      stage_fixed: true
+    desktop-app-format:
+      root: "desktop-app/"
+      glob: "*.{json,css,scss,md,yml,html}"
+      run: node_modules/.bin/prettier --write {staged_files}
+      stage_fixed: true
+    mcp-bootstrap-format:
+      root: "responsively-mcp/"
+      glob: "*.{js,mjs,json,md}"
+      run: ../desktop-app/node_modules/.bin/prettier --write {staged_files}
+      stage_fixed: true
+    root-docs-format:
+      glob: "*.{md,yml}"
+      # exclude takes a list of globs (not a regex): package dirs format
+      # themselves above, and their prettier plugins only resolve from
+      # their own directories.
+      exclude:
+        - "desktop-app/**"
+        - "responsively-mcp/**"
+        - "browser-extension/**"
+      run: desktop-app/node_modules/.bin/prettier --write {staged_files}
+      stage_fixed: true

@@ -1,17 +1,28 @@
-import { IPC_MAIN_CHANNELS } from 'common/constants';
-import { createRoot } from 'react-dom/client';
+import {IPC_MAIN_CHANNELS} from 'common/constants';
+import {createRoot} from 'react-dom/client';
 import App from './AppContent';
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 
+interface AppMeta {
+  webviewPreloadPath: string;
+  appVersion?: string;
+  isE2E?: boolean;
+  platform?: NodeJS.Platform;
+}
+
 window.electron.ipcRenderer
-  .invoke(IPC_MAIN_CHANNELS.APP_META, [])
-  .then((arg: any) => {
-    window.responsively = { webviewPreloadPath: arg.webviewPreloadPath };
+  .invoke<unknown, AppMeta>(IPC_MAIN_CHANNELS.APP_META, [])
+  .then((arg: AppMeta) => {
+    window.responsively = {
+      webviewPreloadPath: arg.webviewPreloadPath,
+      appVersion: arg.appVersion ?? '0.0.0',
+      isE2E: Boolean(arg.isE2E),
+      platform: arg.platform ?? 'darwin',
+    };
     return root.render(<App />);
   })
   .catch((err) => {
-    // eslint-disable-next-line no-console
     console.error(err);
   });

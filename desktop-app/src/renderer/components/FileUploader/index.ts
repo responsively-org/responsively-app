@@ -1,2 +1,2 @@
-export { FileUploader } from './FileUploader';
-export { useFileUpload } from './hooks';
+export {FileUploader} from './FileUploader';
+export {useFileUpload} from './hooks';
