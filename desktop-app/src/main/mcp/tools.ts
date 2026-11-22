@@ -10,6 +10,7 @@ import {
 } from '../../common/mcp';
 import {captureImage} from '../screenshot';
 import {GetMainWindow, sendBridgeCommand} from './bridge';
+import {assertAllowedFileUrl, fileUrlRejection} from './file-url';
 import {clickElement, readPage, typeText} from './interactions';
 import {toolDefs} from './toolDefs';
 import {normalizeUrl} from './utils';
@@ -45,6 +46,12 @@ const captureTarget = async (
   if (targetContents === undefined || targetContents.isDestroyed()) {
     return {skip: {deviceName: target.deviceName, reason: 'the preview was closed'}};
   }
+  // Check the URL the preview is actually showing, before and after the
+  // capture: a local .html page may have navigated to another local file.
+  const blockedBefore = fileUrlRejection(targetContents.getURL());
+  if (blockedBefore !== null) {
+    return {skip: {deviceName: target.deviceName, reason: blockedBefore}};
+  }
   let image: Electron.NativeImage | undefined;
   try {
     image = await captureImage(target.webContentsId);
@@ -55,6 +62,12 @@ const captureTarget = async (
         reason: `capture failed: ${error instanceof Error ? error.message : String(error)}`,
       },
     };
+  }
+  const blockedAfter = targetContents.isDestroyed()
+    ? 'the preview was closed'
+    : fileUrlRejection(targetContents.getURL());
+  if (blockedAfter !== null) {
+    return {skip: {deviceName: target.deviceName, reason: blockedAfter}};
   }
   if (image === undefined || image.isEmpty()) {
     return {
@@ -96,12 +109,22 @@ export const registerTools = (server: McpServer, getMainWindow: GetMainWindow) =
   server.registerTool('navigate', toolDefs.navigate, async ({url}) => {
     try {
       const normalizedUrl = normalizeUrl(url);
+      // The original URL is loaded unchanged, so the address bar shows what
+      // the agent asked for.
+      assertAllowedFileUrl(normalizedUrl);
       const result = await sendBridgeCommand<McpNavigateResult>(
         getMainWindow,
         'navigate',
         {url: normalizedUrl},
         NAVIGATE_BRIDGE_TIMEOUT_MS
       );
+      // A local .html page can redirect itself to another local file on load.
+      const landedOn = fileUrlRejection(result.url);
+      if (landedOn !== null) {
+        throw new Error(
+          `The page navigated to a local file that MCP tools can't access. ${landedOn}`
+        );
+      }
       return textResult(result);
     } catch (error) {
       return errorResult(error);

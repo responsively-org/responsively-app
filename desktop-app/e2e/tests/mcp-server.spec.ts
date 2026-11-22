@@ -1,6 +1,10 @@
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StreamableHTTPClientTransport} from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import fs from 'fs';
 import http from 'http';
+import os from 'os';
+import path from 'path';
+import {pathToFileURL} from 'url';
 import {expect, test} from '../fixtures/electron-app';
 
 const DEFAULT_DEVICE_IDS = ['10008', '10013', '10015'];
@@ -117,6 +121,65 @@ test.describe('MCP server', () => {
     });
     expect(isError).toBe(true);
     expect((content[0] as TextBlock).text).toContain('Unsupported URL scheme');
+  });
+
+  test.describe('local file:// access (#1559)', () => {
+    let dir: string;
+    let pageUrl: string;
+    let notesUrl: string;
+
+    test.beforeAll(() => {
+      dir = fs.mkdtempSync(path.join(os.tmpdir(), 'mcp-file-e2e-'));
+      fs.writeFileSync(path.join(dir, 'notes.txt'), 'top secret notes');
+      fs.writeFileSync(
+        path.join(dir, 'page.html'),
+        '<title>Local page</title><h1>Local page</h1><a id="notes" href="notes.txt">Notes</a>'
+      );
+      pageUrl = pathToFileURL(path.join(dir, 'page.html')).href;
+      notesUrl = pathToFileURL(path.join(dir, 'notes.txt')).href;
+    });
+
+    test.afterAll(async ({testServerUrl}) => {
+      await callTool(client, 'navigate', {url: `${testServerUrl}/test-page.html`});
+      fs.rmSync(dir, {recursive: true, force: true});
+    });
+
+    test('navigate refuses local files that are not .html/.htm', async () => {
+      const {content, isError} = await callTool(client, 'navigate', {url: notesUrl});
+      expect(isError).toBe(true);
+      expect((content[0] as TextBlock).text).toContain(
+        'Only .html and .htm files can be opened with file:// URLs ("notes.txt" is not one)'
+      );
+    });
+
+    test('navigate opens a local .html file and read_page works on it', async ({app}) => {
+      const nav = await callTool(client, 'navigate', {url: pageUrl});
+      expect(nav.isError).toBe(false);
+      expect(firstTextJson(nav.content).pageTitle).toBe('Local page');
+      await expect(app.addressBar).toHaveValue(/page\.html/);
+
+      const read = await callTool(client, 'read_page');
+      expect(read.isError).toBe(false);
+      expect(firstTextJson(read.content).text).toContain('Local page');
+    });
+
+    test('tools refuse to read a local file reached from a local .html page', async () => {
+      const nav = await callTool(client, 'navigate', {url: pageUrl});
+      expect(nav.isError).toBe(false);
+
+      const click = await callTool(client, 'click', {selector: '#notes'});
+      expect(click.isError).toBe(true);
+      expect((click.content[0] as TextBlock).text).toContain("MCP tools can't access");
+      expect((click.content[0] as TextBlock).text).not.toContain('top secret');
+
+      const read = await callTool(client, 'read_page');
+      expect(read.isError).toBe(true);
+      expect((read.content[0] as TextBlock).text).not.toContain('top secret');
+
+      const shot = await callTool(client, 'screenshot');
+      expect(shot.content.some((c) => c.type === 'image')).toBe(false);
+      expect(shot.content.map((c) => (c as TextBlock).text).join(' ')).toContain('Skipped:');
+    });
   });
 
   test('set_active_devices switches previews by id and name', async ({app}) => {
