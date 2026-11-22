@@ -53,6 +53,7 @@ export const IPC_MAIN_CHANNELS = {
   DELETE_STORAGE: 'delete-storage',
   LOAD_URL_IN_WEBVIEW: 'load-url-in-webview',
   SET_NATIVE_THEME: 'set-native-theme',
+  SET_DEVICE_COLOR_SCHEME: 'set-device-color-scheme',
   COPY_TO_CLIPBOARD: 'copy-to-clipboard',
   GET_BROWSER_SYNC_PORT: 'get-browser-sync-port',
   ELECTRON_STORE_GET: 'electron-store-get',

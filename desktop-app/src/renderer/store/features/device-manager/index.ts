@@ -1,6 +1,9 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {Device} from 'common/deviceList';
+import type {ViewportOptions} from 'common/device-options';
 import type {RootState} from '../..';
+
+export type {ViewportOptions} from 'common/device-options';
 
 export interface CanvasPosition {
   x: number;
@@ -17,6 +20,30 @@ export interface PreviewSuite {
 
 export type PreviewSuites = PreviewSuite[];
 
+/** Effective CSS viewport; explicit session options take precedence over rotation. */
+export const getEffectiveDeviceViewport = (
+  device: Device,
+  rotateDevices = false,
+  individualRotated = false,
+  options: ViewportOptions = {}
+) => {
+  const presetRotated = device.isMobileCapable && (rotateDevices || individualRotated);
+  let width = options.width ?? (presetRotated ? device.height : device.width);
+  let height = options.height ?? (presetRotated ? device.width : device.height);
+  if (
+    (options.orientation === 'portrait' && width > height) ||
+    (options.orientation === 'landscape' && width < height)
+  ) {
+    [width, height] = [height, width];
+  }
+  return {
+    width,
+    height,
+    orientation: width > height ? ('landscape' as const) : ('portrait' as const),
+    isRotated: width !== height && width > height !== device.width > device.height,
+  };
+};
+
 export interface DeviceManagerState {
   devices: Device[];
   activeSuite: string;
@@ -24,6 +51,8 @@ export interface DeviceManagerState {
   // Per-device rotation (session state, not persisted). The global rotate
   // flag lives in the renderer slice; a device is rotated when either is set.
   individualRotations: Record<string, boolean>;
+  /** Preview-only changes, never written back to the device catalog or electron-store. */
+  viewportOverrides: Record<string, ViewportOptions>;
 }
 
 export const DEFAULT_SUITE: PreviewSuite = {
@@ -39,6 +68,7 @@ const initialState: DeviceManagerState = {
   activeSuite: DEFAULT_SUITE.id,
   suites: [DEFAULT_SUITE],
   individualRotations: {},
+  viewportOverrides: {},
 };
 
 export const deviceManagerSlice = createSlice({
@@ -115,6 +145,22 @@ export const deviceManagerSlice = createSlice({
         delete state.individualRotations[id];
       }
     },
+    setViewportOptions(
+      state,
+      action: PayloadAction<ViewportOptions & {id: string; reset?: boolean}>
+    ) {
+      const {id, reset, ...suppliedOptions} = action.payload;
+      const options = Object.fromEntries(
+        Object.entries(suppliedOptions).filter(([, value]) => value !== undefined)
+      ) as ViewportOptions;
+      if (reset) {
+        delete state.viewportOverrides[id];
+        delete state.individualRotations[id];
+      }
+      if (Object.keys(options).length > 0) {
+        state.viewportOverrides[id] = {...state.viewportOverrides[id], ...options};
+      }
+    },
   },
 });
 
@@ -130,12 +176,15 @@ export const {
   setCanvasPosition,
   resetCanvasPositions,
   setIndividualRotation,
+  setViewportOptions,
 } = deviceManagerSlice.actions;
 
 export const selectSuites = (state: RootState) => state.deviceManager.suites;
 
 export const selectIndividualRotations = (state: RootState) =>
   state.deviceManager.individualRotations;
+
+export const selectViewportOverrides = (state: RootState) => state.deviceManager.viewportOverrides;
 
 export const selectActiveSuite = (state: RootState): PreviewSuite => {
   const {activeSuite, suites} = state.deviceManager;

@@ -12,7 +12,10 @@ const EXPECTED_TOOLS = [
   'navigate',
   'read_page',
   'screenshot',
+  'scroll_to',
   'set_active_devices',
+  'set_device_options',
+  'set_mirroring',
   'type_text',
 ];
 

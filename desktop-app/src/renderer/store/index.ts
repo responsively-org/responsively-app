@@ -7,6 +7,7 @@ import rulersReducer from './features/ruler';
 import uiReducer from './features/ui';
 import bookmarkReducer from './features/bookmarks';
 import designOverlayReducer from './features/design-overlay';
+import eventMirroringReducer from './features/event-mirroring';
 import {persistenceMiddleware} from './persistence';
 import {buildPreloadedState} from './preloadedState';
 
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   bookmarks: bookmarkReducer,
   rulers: rulersReducer,
   designOverlay: designOverlayReducer,
+  eventMirroring: eventMirroringReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

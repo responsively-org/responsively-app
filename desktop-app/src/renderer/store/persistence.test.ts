@@ -4,7 +4,13 @@ import {IPC_MAIN_CHANNELS, PREVIEW_LAYOUTS} from 'common/constants';
 import {createAppStore} from './index';
 import {addBookmark, removeBookmark} from './features/bookmarks';
 import {setDesignOverlay} from './features/design-overlay';
-import {addSuite, deleteSuite, setSuiteDevices, DEFAULT_SUITE} from './features/device-manager';
+import {
+  addSuite,
+  deleteSuite,
+  setSuiteDevices,
+  setViewportOptions,
+  DEFAULT_SUITE,
+} from './features/device-manager';
 import {setDockPosition} from './features/devtools';
 import {setAddress, setLayout, toggleCanvasOption, zoomIn, zoomOut} from './features/renderer';
 import {setDarkMode} from './features/ui';
@@ -28,6 +34,17 @@ describe('persistence middleware', () => {
     const store = createAppStore();
     store.dispatch(setDockPosition('RIGHT'));
     expect(setMock()).toHaveBeenCalledWith('devtools.dockPosition', 'RIGHT');
+  });
+
+  it('keeps viewport options in the current session without persisting them', () => {
+    const store = createAppStore();
+    store.dispatch(setViewportOptions({id: '10008', width: 640, colorScheme: 'dark'}));
+    expect(store.getState().deviceManager.viewportOverrides['10008']).toEqual({
+      width: 640,
+      colorScheme: 'dark',
+    });
+    expect(setMock()).not.toHaveBeenCalled();
+    expect(createAppStore().getState().deviceManager.viewportOverrides).toEqual({});
   });
 
   it('persists bookmarks on add and remove', () => {

@@ -43,7 +43,7 @@ const sleep = (ms: number) =>
     setTimeout(resolve, ms);
   });
 
-const resolveTarget = async (
+export const resolveTarget = async (
   getMainWindow: GetMainWindow,
   device?: string
 ): Promise<{deviceName: string; targetContents: Electron.WebContents}> => {
@@ -71,7 +71,7 @@ const resolveTarget = async (
   return {deviceName: target.deviceName, targetContents};
 };
 
-const executeInPage = async <T>(
+export const executeInPage = async <T>(
   targetContents: Electron.WebContents,
   script: string
 ): Promise<T> => {

@@ -5,6 +5,8 @@ import type {RootState} from '../..';
 
 export interface RendererState {
   address: string;
+  addressSource: {deviceId: string; mirroringEnabled: boolean} | null;
+  addressRevision: number;
   pageTitle: string;
   individualZoomFactor: number;
   zoomFactor: number;
@@ -46,6 +48,8 @@ export const clampCanvasZoom = (value: number): number =>
 // store/persistence.ts.
 const initialState: RendererState = {
   address: '',
+  addressSource: null,
+  addressRevision: 0,
   pageTitle: '',
   individualZoomFactor: zoomSteps[8],
   zoomFactor: zoomSteps[8],
@@ -71,9 +75,22 @@ export const rendererSlice = createSlice({
   initialState,
   reducers: {
     setAddress: (state, action: PayloadAction<string>) => {
-      if (action.payload !== state.address) {
-        state.address = action.payload;
-      }
+      state.address = action.payload;
+      state.addressSource = null;
+      // Repeating an explicit address still reconciles isolated previews
+      // whose current page differs from the shared address.
+      state.addressRevision += 1;
+    },
+    setAddressFromDevice: (
+      state,
+      {payload}: PayloadAction<{url: string; deviceId: string; mirroringEnabled: boolean}>
+    ) => {
+      state.address = payload.url;
+      state.addressSource = {
+        deviceId: payload.deviceId,
+        mirroringEnabled: payload.mirroringEnabled,
+      };
+      state.addressRevision += 1;
     },
     setPageTitle: (state, action: PayloadAction<string>) => {
       if (action.payload !== state.pageTitle) {
@@ -153,6 +170,7 @@ export const rendererSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   setAddress,
+  setAddressFromDevice,
   zoomIn,
   zoomOut,
   setRotate,
@@ -176,6 +194,8 @@ export const selectZoomFactor = (state: RootState) => {
 };
 
 export const selectAddress = (state: RootState) => state.renderer.address;
+export const selectAddressSource = (state: RootState) => state.renderer.addressSource;
+export const selectAddressRevision = (state: RootState) => state.renderer.addressRevision;
 export const selectPageTitle = (state: RootState) => state.renderer.pageTitle;
 export const selectRotate = (state: RootState) => state.renderer.rotate;
 export const selectIsInspecting = (state: RootState) => state.renderer.isInspecting;

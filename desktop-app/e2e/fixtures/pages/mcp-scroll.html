@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MCP Scroll Test</title>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
+      section {
+        height: 1200px;
+      }
+      #nested {
+        height: 180px;
+        overflow: auto;
+        scroll-behavior: smooth;
+      }
+      #nested-spacer {
+        height: 600px;
+      }
+      #footer {
+        height: 400px;
+        background: #aabbcc;
+      }
+    </style>
+  </head>
+  <body>
+    <section>
+      <h1>Scroll test</h1>
+      <p>Repeated label</p>
+      <p>Repeated label</p>
+      <p hidden>Hidden target</p>
+    </section>
+    <section>
+      <h2 id="pricing">Pricing <span>plans</span></h2>
+      <div id="nested">
+        <div id="nested-spacer"></div>
+        <p id="nested-target">Nested target</p>
+      </div>
+    </section>
+    <footer id="footer">Footer details</footer>
+  </body>
+</html>

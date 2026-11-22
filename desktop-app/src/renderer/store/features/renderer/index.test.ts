@@ -6,6 +6,7 @@ import reducer, {
   canvasZoomOut,
   setCanvasZoom,
   setAddress,
+  setAddressFromDevice,
   setIsCapturingScreenshot,
   setIsInspecting,
   setLayout,
@@ -31,6 +32,22 @@ describe('renderer slice', () => {
   it('setAddress updates the address', () => {
     const state = reducer(undefined, setAddress('https://other.com/'));
     expect(state.address).toBe('https://other.com/');
+  });
+
+  it('keeps device navigation origin until an explicit address request, including the same URL', () => {
+    const address = 'https://other.com/';
+    const local = reducer(
+      undefined,
+      setAddressFromDevice({url: address, deviceId: 'phone', mirroringEnabled: false})
+    );
+    expect(local.addressSource).toEqual({deviceId: 'phone', mirroringEnabled: false});
+    const explicit = reducer(local, setAddress(address));
+    expect(explicit.address).toBe(address);
+    expect(explicit.addressSource).toBeNull();
+    expect(explicit.addressRevision).toBe(local.addressRevision + 1);
+    expect(reducer(explicit, setAddress(address)).addressRevision).toBe(
+      explicit.addressRevision + 1
+    );
   });
 
   it('zoomIn advances the shared zoom', () => {

@@ -3,11 +3,18 @@ import {ReloadArgs} from 'main/menu';
 import {LoadURLInWebviewArgs, LoadURLInWebviewResult} from 'main/native-functions';
 import {DeleteStorageArgs, DeleteStorageResult} from 'main/webview-storage-manager';
 import {RefObject, useCallback, useEffect, useReducer, useRef} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {ADDRESS_BAR_EVENTS} from 'renderer/components/ToolBar/AddressBar';
 import {NAVIGATION_EVENTS} from 'renderer/components/ToolBar/NavigationControls';
 import {webViewPubSub, type Handler as PubSubHandler} from 'renderer/lib/pubsub';
-import {setAddress, setPageTitle} from 'renderer/store/features/renderer';
+import type {RootState} from 'renderer/store';
+import {selectEventMirroringEnabled} from 'renderer/store/features/event-mirroring';
+import {
+  selectAddressRevision,
+  selectAddressSource,
+  setAddressFromDevice,
+  setPageTitle,
+} from 'renderer/store/features/renderer';
 import {initialNavigationState, navigationReducer, NavigationState} from './navigationMachine';
 import {appendHistory} from './utils';
 
@@ -16,6 +23,7 @@ interface Params {
   isPrimary: boolean;
   webviewReady: boolean;
   address: string;
+  deviceId: string;
 }
 
 /**
@@ -24,8 +32,23 @@ interface Params {
  * history, page title, the menu reload channel and the toolbar pub/sub
  * events. Only the primary device writes navigation state back to Redux.
  */
-const useDeviceNavigation = ({ref, isPrimary, webviewReady, address}: Params): NavigationState => {
+const useDeviceNavigation = ({
+  ref,
+  isPrimary,
+  webviewReady,
+  address,
+  deviceId,
+}: Params): NavigationState => {
   const dispatch = useDispatch();
+  const addressSource = useSelector(selectAddressSource);
+  const addressRevision = useSelector(selectAddressRevision);
+  const mirroringEnabled = useSelector((state: RootState) =>
+    selectEventMirroringEnabled(state, deviceId)
+  );
+  // Changing group membership applies only to future navigation. Reading
+  // this ref avoids loading a previously skipped URL when mirroring toggles.
+  const mirroringEnabledRef = useRef(mirroringEnabled);
+  mirroringEnabledRef.current = mirroringEnabled;
   const [navigation, dispatchNavigationEvent] = useReducer(
     navigationReducer,
     initialNavigationState
@@ -38,6 +61,13 @@ const useDeviceNavigation = ({ref, isPrimary, webviewReady, address}: Params): N
   useEffect(() => {
     const webview = ref.current;
     if (webview == null || !webviewReady) {
+      return;
+    }
+    if (
+      addressSource !== null &&
+      addressSource.deviceId !== deviceId &&
+      (!addressSource.mirroringEnabled || !mirroringEnabledRef.current)
+    ) {
       return;
     }
     try {
@@ -54,7 +84,7 @@ const useDeviceNavigation = ({ref, isPrimary, webviewReady, address}: Params): N
     } catch (err) {
       console.error('Error loading URL', err);
     }
-  }, [ref, address, isPrimary, webviewReady]);
+  }, [ref, address, addressSource, addressRevision, deviceId, isPrimary, webviewReady]);
 
   // Webview navigation + load events → state machine (and, for the primary
   // device, the shared address/history state).
@@ -71,7 +101,13 @@ const useDeviceNavigation = ({ref, isPrimary, webviewReady, address}: Params): N
       // Only update Redux on the primary device and only if this navigation
       // wasn't initiated by the AddressBar itself.
       if (isPrimary && !isNavigatingFromAddressBar.current) {
-        dispatch(setAddress(e.url));
+        dispatch(
+          setAddressFromDevice({
+            url: e.url,
+            deviceId,
+            mirroringEnabled: mirroringEnabledRef.current,
+          })
+        );
       } else if (isPrimary) {
         isNavigatingFromAddressBar.current = false; // Reset the flag
       }
@@ -120,7 +156,7 @@ const useDeviceNavigation = ({ref, isPrimary, webviewReady, address}: Params): N
         remove();
       });
     };
-  }, [ref, dispatch, isPrimary]);
+  }, [ref, dispatch, deviceId, isPrimary]);
 
   // Menu-driven reloads arrive over IPC.
   useEffect(() => {

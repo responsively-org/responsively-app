@@ -1,10 +1,15 @@
 import {Icon} from '@iconify/react';
 import cx from 'classnames';
-import {useRef, useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useRef} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {Device} from 'common/deviceList';
 import Popover from 'renderer/components/Popover';
 import {useDeviceScreenshot} from 'renderer/hooks/useScreenshot';
+import type {RootState} from 'renderer/store';
+import {
+  selectEventMirroringEnabled,
+  setEventMirroring,
+} from 'renderer/store/features/event-mirroring';
 import {
   overlayModeOf,
   setOverlayImage,
@@ -92,6 +97,7 @@ const MoreItem = ({title, icon, checked, disabled = false, onClick}: MoreItemPro
   <button
     type="button"
     title={title}
+    aria-pressed={checked}
     disabled={disabled}
     onClick={onClick}
     className={cx(
@@ -133,7 +139,9 @@ const Toolbar = ({
   variant,
 }: Props) => {
   const dispatch = useDispatch();
-  const [eventMirroringOff, setEventMirroringOff] = useState<boolean>(false);
+  const eventMirroringEnabled = useSelector((state: RootState) =>
+    selectEventMirroringEnabled(state, device.id)
+  );
   const overlayFileInputRef = useRef<HTMLInputElement>(null);
 
   const onOverlayFilePicked = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,25 +176,8 @@ const Toolbar = ({
     }
   };
 
-  const toggleEventMirroring = async () => {
-    const webview = getWebview();
-    if (webview === null) {
-      return;
-    }
-    try {
-      await webview.executeJavaScript(
-        `
-        if(window.___browserSync___){
-          window.___browserSync___.socket.${eventMirroringOff ? 'open' : 'close'}()
-        }
-        true
-      `
-      );
-      setEventMirroringOff(!eventMirroringOff);
-    } catch (error) {
-      console.error('Error while toggleing event mirroring', error);
-    }
-  };
+  const toggleEventMirroring = () =>
+    dispatch(setEventMirroring({deviceIds: [device.id], enabled: !eventMirroringEnabled}));
 
   const toggleRulers = async () => {
     if (getWebview() === null) {
@@ -342,7 +333,7 @@ const Toolbar = ({
             <MoreItem
               title="Event mirroring"
               icon="fluent:plug-disconnected-24-regular"
-              checked={!eventMirroringOff}
+              checked={eventMirroringEnabled}
               onClick={() => {
                 close();
                 toggleEventMirroring();

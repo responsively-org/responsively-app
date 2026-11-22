@@ -11,7 +11,8 @@ export const toolDefs = {
     description:
       'Inspect the browser viewports currently open in Responsively App before checking ' +
       'website responsiveness. Returns the loaded URL, page title, preview layout, zoom ' +
-      'factor, and active devices with their viewport dimensions.',
+      'factor, and active devices with effective viewport dimensions, orientation, color ' +
+      'scheme, and whether each device participates in event mirroring.',
   },
   navigate: {
     description:
@@ -40,6 +41,74 @@ export const toolDefs = {
         .array(z.string())
         .min(1)
         .describe('Device ids or exact device names to show, e.g. ["10008", "iPad Pro"]'),
+    },
+  },
+  set_mirroring: {
+    description:
+      'Enable or disable event mirroring for all active previews, or one device by id or ' +
+      'exact name. A disabled preview neither sends nor receives mirrored website clicks, ' +
+      'typing, and scrolling. Disable mirroring on a device before interacting with it ' +
+      'to test it independently. Settings are shared with the Event mirroring UI control, ' +
+      'survive page navigation during this app session, and do not reload the page. ' +
+      'Returns the active devices and their current settings. Explicit app commands such ' +
+      'as navigate still act on their documented device scope.',
+    inputSchema: {
+      enabled: z.boolean().describe('Whether previews participate in event mirroring'),
+      device: z
+        .string()
+        .trim()
+        .min(1)
+        .optional()
+        .describe('Device id or exact name; omit to change all active devices'),
+    },
+  },
+  set_device_options: {
+    description:
+      'Set session-only viewport options for one active device in Responsively App. ' +
+      'Accepts arbitrary CSS-pixel width and height, portrait/landscape orientation, and ' +
+      'light/dark/system color scheme. Omitted fields keep their current setting. Explicit ' +
+      'geometry overrides take precedence over the global Rotate setting; orientation ' +
+      'normalizes the resulting dimensions. System clears the per-device color override ' +
+      'and follows the app global device theme. Use reset to restore the preset under ' +
+      'the current global rotation/theme, optionally applying new options afterward. ' +
+      'Does not modify the saved device catalog or reload the page. Defaults to the primary ' +
+      'device. Returns the device with its effective settings and viewportApplied. Hidden ' +
+      'previews save the settings with viewportApplied=false and resize when shown again.',
+    inputSchema: {
+      device: z
+        .string()
+        .trim()
+        .min(1)
+        .optional()
+        .describe('Device id or exact name; omit for the primary device'),
+      width: z
+        .number()
+        .int()
+        .min(1)
+        .max(10000)
+        .optional()
+        .describe('Viewport width in CSS pixels (1–10000)'),
+      height: z
+        .number()
+        .int()
+        .min(1)
+        .max(10000)
+        .optional()
+        .describe('Viewport height in CSS pixels (1–10000)'),
+      orientation: z
+        .enum(['portrait', 'landscape'])
+        .optional()
+        .describe('Normalize dimensions to portrait or landscape'),
+      colorScheme: z
+        .enum(['light', 'dark', 'system'])
+        .optional()
+        .describe('Per-device preferred color scheme; system follows the global device theme'),
+      reset: z
+        .boolean()
+        .optional()
+        .describe(
+          'Clear this device’s session viewport options and individual rotation before applying supplied fields'
+        ),
     },
   },
   read_page: {
@@ -98,15 +167,58 @@ export const toolDefs = {
       'Capture browser screenshots to evaluate website responsiveness across mobile, tablet, ' +
       'and desktop viewports in Responsively App. Use for visual responsive audits, comparing ' +
       'page layouts across screen sizes, and spotting clipping or awkward wrapping. Returns ' +
-      'one labeled JPEG per active device in one call, or a single device specified by id or ' +
-      'exact name. Captures only the visible viewport, not the full page, and downscales images ' +
-      'to at most 1000px wide. Choose devices with list_devices and set_active_devices, then ' +
-      'load the website with navigate before capturing.',
+      'one labeled image per active device in one call, or a single device specified by id or ' +
+      'exact name. Defaults to visible-viewport JPEGs downscaled to at most 1000px wide. ' +
+      'Set fullPage to capture the entire document and originalResolution to return an ' +
+      'unscaled, lossless PNG. Choose devices with list_devices and set_active_devices, then ' +
+      'load the website with navigate before capturing. Full-page captures include currently ' +
+      'rendered content; scroll first to load lazy content when needed.',
     inputSchema: {
       device: z
         .string()
         .optional()
         .describe('Optional device id or exact name; omit to capture all active devices'),
+      fullPage: z
+        .boolean()
+        .optional()
+        .describe('Capture the full document instead of the visible viewport (default false)'),
+      originalResolution: z
+        .boolean()
+        .optional()
+        .describe('Return an unscaled PNG instead of a JPEG capped at 1000px wide (default false)'),
+    },
+  },
+  scroll_to: {
+    description:
+      'Scroll a Responsively App browser preview to a CSS selector, visible page text, or ' +
+      'absolute page coordinates in CSS pixels. Supply exactly one target: selector, text, ' +
+      'or x/y. Text matching ignores case and normalizes whitespace; ambiguous matches return ' +
+      'an error so you can refine the text or use a unique selector. Element targets also ' +
+      'scroll nested containers. Returns the resulting scroll position, page dimensions, ' +
+      'and matched element. Defaults to the primary device. Page scrolling may mirror across ' +
+      'previews according to the app settings. Use screenshot afterward to inspect the section.',
+    inputSchema: {
+      selector: z
+        .string()
+        .trim()
+        .min(1)
+        .optional()
+        .describe('Unique CSS selector to scroll into view'),
+      text: z.string().trim().min(1).optional().describe('Visible page text to scroll into view'),
+      x: z.number().min(0).optional().describe('Absolute horizontal scroll position in CSS pixels'),
+      y: z.number().min(0).optional().describe('Absolute vertical scroll position in CSS pixels'),
+      exact: z
+        .boolean()
+        .optional()
+        .describe('Match the entire normalized text (default false; text targets only)'),
+      block: z
+        .enum(['start', 'center', 'end', 'nearest'])
+        .optional()
+        .describe('Vertical alignment for an element target (default center)'),
+      device: z
+        .string()
+        .optional()
+        .describe('Optional device id or exact name; omit to scroll the primary device'),
     },
   },
 };
