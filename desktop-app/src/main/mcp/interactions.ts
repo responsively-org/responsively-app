@@ -2,6 +2,7 @@ import {webContents} from 'electron';
 import {McpCaptureTargetsResult} from '../../common/mcp';
 import {isRegisteredWebview} from '../webview-registry';
 import {GetMainWindow, sendBridgeCommand} from './bridge';
+import {assertOperablePage} from './file-url';
 
 const EXECUTE_TIMEOUT_MS = 10_000;
 const POST_INPUT_SETTLE_MS = 500;
@@ -66,6 +67,7 @@ const resolveTarget = async (
   if (targetContents === undefined || targetContents.isDestroyed()) {
     throw new Error(`The ${target.deviceName} preview is no longer available`);
   }
+  assertOperablePage(target.deviceName, targetContents.getURL());
   return {deviceName: target.deviceName, targetContents};
 };
 
@@ -201,6 +203,9 @@ export const readPage = async (
     targetContents,
     READ_PAGE_SCRIPT
   );
+  // The page may have navigated while the script ran.
+  assertOperablePage(deviceName, targetContents.getURL());
+  assertOperablePage(deviceName, page.url);
   return {deviceName, ...page};
 };
 
@@ -223,6 +228,8 @@ export const clickElement = async (
   targetContents.sendInputEvent({type: 'mouseUp', x, y, button: 'left', clickCount: 1});
   // Give the page a moment to react (state updates, navigation start).
   await sleep(POST_INPUT_SETTLE_MS);
+  // The click may have followed a link or submitted a form to a local file.
+  assertOperablePage(deviceName, targetContents.getURL());
   return {
     deviceName,
     clicked: {tag: located.tag, text: located.text},
@@ -259,6 +266,8 @@ export const typeText = async (
     targetContents.sendInputEvent({type: 'keyUp', keyCode: 'Return'});
   }
   await sleep(POST_INPUT_SETTLE_MS);
+  // Pressing Enter may have submitted a form to a local file.
+  assertOperablePage(deviceName, targetContents.getURL());
   const state = await executeInPage<{value: string}>(targetContents, readValueScript(selector));
   return {
     deviceName,

@@ -16,7 +16,7 @@ export const toolDefs = {
   navigate: {
     description:
       'Open a website URL across all active browser viewports in Responsively App for ' +
-      'responsive testing on mobile, tablet, and desktop. Accepts http(s) and file:// URLs; ' +
+      'responsive testing on mobile, tablet, and desktop. Accepts http(s) URLs and file:// URLs of local .html/.htm files; ' +
       'bare domains get https:// prepended (localhost gets http://). Waits for the page to ' +
       'finish loading (up to 30s) before returning the final URL and page title. Use ' +
       'screenshot afterward to compare layouts across screen sizes.',

@@ -39,7 +39,7 @@ claude mcp add responsively -- npx -y @responsively/mcp
 | Tool                 | Description                                                                                                       |
 | -------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `get_app_state`      | Inspect the current URL, page title and active viewport dimensions, layout and zoom                               |
-| `navigate`           | Open a website or local URL in all browser viewports (waits for the page to load)                                 |
+| `navigate`           | Open a website or a local `.html`/`.htm` file in all browser viewports (waits for the page to load)               |
 | `list_devices`       | Find phone, tablet and desktop viewport presets, including configured custom devices                              |
 | `set_active_devices` | Select browser viewports for responsive testing by device id or name                                              |
 | `screenshot`         | Capture labeled JPEG screenshots of one or all visible browser viewports                                          |
