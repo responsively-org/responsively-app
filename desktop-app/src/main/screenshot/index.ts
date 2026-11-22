@@ -5,6 +5,7 @@ import path from 'path';
 import {IPC_MAIN_CHANNELS} from '../../common/constants';
 import store from '../../store';
 import {isRegisteredWebview} from '../webview-registry';
+import {captureFullPageImage} from './full-page';
 
 export interface ScreenshotArgs {
   webContentsId: number;
@@ -33,13 +34,17 @@ const delay = (ms: number) =>
   });
 
 export const captureImage = async (
-  webContentsId: number
+  webContentsId: number,
+  options: {fullPage?: boolean} = {}
 ): Promise<Electron.NativeImage | undefined> => {
   // Single choke point for both the IPC and MCP screenshot paths.
   if (!isRegisteredWebview(webContentsId)) {
     return undefined;
   }
   const WebContents = webContents.fromId(webContentsId);
+  if (WebContents === undefined || WebContents.isDestroyed()) {
+    return undefined;
+  }
 
   const isExecuted = await WebContents?.executeJavaScript(`
     if (window.isExecuted) {
@@ -68,7 +73,9 @@ export const captureImage = async (
       await delay(CAPTURE_RETRY_DELAY_MS);
     }
     try {
-      image = await WebContents?.capturePage();
+      image = options.fullPage
+        ? await captureFullPageImage(WebContents)
+        : await WebContents.capturePage();
       lastError = undefined;
       if (image !== undefined && !image.isEmpty()) {
         return image;

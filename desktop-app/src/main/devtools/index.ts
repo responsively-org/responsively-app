@@ -2,6 +2,7 @@
 import {BrowserWindow, ipcMain, webContents, WebContentsView} from 'electron';
 import {DOCK_POSITION, IPC_MAIN_CHANNELS} from '../../common/constants';
 import {DockPosition} from '../../renderer/store/features/devtools';
+import {acquireDebugger} from '../debugger-lease';
 import log from '../logging';
 import {isRegisteredWebview} from '../webview-registry';
 
@@ -13,6 +14,7 @@ let devtoolsBounds: Electron.Rectangle | undefined;
 let overlayOpen = false;
 let devtoolsWebview: Electron.WebContents;
 let mainWindow: BrowserWindow | undefined;
+const inspectorSessions = new WeakMap<Electron.Debugger, () => void>();
 
 export interface OpenDevtoolsArgs {
   webviewId: number;
@@ -99,25 +101,39 @@ const enableInspector = async (
   }
 
   const dbg = webViewContents.debugger;
-  if (!dbg.isAttached()) {
-    dbg.attach();
-    dbg.on('message', (__: any, method: string, params: any) => {
+  if (!inspectorSessions.has(dbg)) {
+    const releaseDebugger = acquireDebugger(webViewContents);
+    const onMessage = (__: any, method: string, params: any) => {
       onDebuggerEvent(__, method, params, dbg, webviewId);
-    });
+    };
+    const releaseInspector = () => {
+      inspectorSessions.delete(dbg);
+      dbg.removeListener('message', onMessage);
+      dbg.removeListener('detach', releaseInspector);
+      releaseDebugger();
+    };
+    inspectorSessions.set(dbg, releaseInspector);
+    dbg.on('message', onMessage);
+    dbg.once('detach', releaseInspector);
   }
-  await dbg.sendCommand('DOM.enable');
-  await dbg.sendCommand('Overlay.enable');
-  await dbg.sendCommand('Overlay.setInspectMode', {
-    mode: 'searchForNode',
-    highlightConfig: {
-      showInfo: true,
-      showStyles: true,
-      contentColor: {r: 111, g: 168, b: 220, a: 0.66},
-      paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
-      borderColor: {r: 255, g: 229, b: 153, a: 0.66},
-      marginColor: {r: 246, g: 178, b: 107, a: 0.66},
-    },
-  });
+  try {
+    await dbg.sendCommand('DOM.enable');
+    await dbg.sendCommand('Overlay.enable');
+    await dbg.sendCommand('Overlay.setInspectMode', {
+      mode: 'searchForNode',
+      highlightConfig: {
+        showInfo: true,
+        showStyles: true,
+        contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+        paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+        borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+        marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+      },
+    });
+  } catch (error) {
+    inspectorSessions.get(dbg)?.();
+    throw error;
+  }
   return {status: true};
 };
 
@@ -139,10 +155,10 @@ const disableInspector = async (
       mode: 'none',
       highlightConfig: {},
     });
-
-    dbg.removeAllListeners().detach();
   } catch (err) {
     log.warn('Error detaching debugger', err);
+  } finally {
+    inspectorSessions.get(dbg)?.();
   }
   return {status: true};
 };

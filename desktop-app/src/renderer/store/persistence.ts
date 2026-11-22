@@ -23,6 +23,7 @@ import {
 import {setDockPosition} from './features/devtools';
 import {
   setAddress,
+  setAddressFromDevice,
   setLayout,
   toggleCanvasOption,
   updateFileWatcher,
@@ -117,11 +118,11 @@ startListening({
 });
 
 startListening({
-  actionCreator: setAddress,
-  effect: (action, api) => {
+  matcher: isAnyOf(setAddress, setAddressFromDevice),
+  effect: (_action, api) => {
     // Start/stop the local file watcher only on real address changes.
     if (api.getOriginalState().renderer.address !== api.getState().renderer.address) {
-      updateFileWatcher(action.payload);
+      updateFileWatcher(api.getState().renderer.address);
     }
   },
 });

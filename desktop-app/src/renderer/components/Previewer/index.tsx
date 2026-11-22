@@ -3,9 +3,12 @@ import cx from 'classnames';
 import {Icon} from '@iconify/react';
 import {
   resetCanvasPositions,
+  getEffectiveDeviceViewport,
   selectActiveSuite,
   selectIndividualRotations,
+  selectViewportOverrides,
   setCanvasPosition,
+  type ViewportOptions,
 } from 'renderer/store/features/device-manager';
 import {selectIsPresenting, setPresenting} from 'renderer/store/features/ui';
 import {DOCK_POSITION, PREVIEW_LAYOUTS} from 'common/constants';
@@ -61,16 +64,19 @@ const arrangeDevices = (
   deviceScale: number,
   framed: boolean,
   rotateDevices: boolean,
-  individualRotations: Record<string, boolean>
+  individualRotations: Record<string, boolean>,
+  viewportOverrides: Record<string, ViewportOptions>
 ): CanvasPosition[] => {
   let x = CANVAS_ORIGIN;
   let y = CANVAS_ORIGIN;
   let rowHeight = 0;
   return devices.map((device) => {
-    const rotated = device.isMobileCapable && (rotateDevices || individualRotations[device.id]);
-    const viewport = rotated
-      ? {width: device.height, height: device.width}
-      : {width: device.width, height: device.height};
+    const viewport = getEffectiveDeviceViewport(
+      device,
+      rotateDevices,
+      individualRotations[device.id],
+      viewportOverrides[device.id]
+    );
     const size = framed ? framedSize(device, viewport.width, viewport.height) : viewport;
     const width = size.width * deviceScale;
     const height = size.height * deviceScale;
@@ -99,6 +105,7 @@ const Previewer = () => {
   const canvasOptions = useSelector(selectCanvasOptions);
   const rotateDevices = useSelector(selectRotate);
   const individualRotations = useSelector(selectIndividualRotations);
+  const viewportOverrides = useSelector(selectViewportOverrides);
   const presenting = isPresenting && layout === PREVIEW_LAYOUTS.CANVAS;
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
   const [exitPillHidden, setExitPillHidden] = useState<boolean>(false);
@@ -130,6 +137,9 @@ const Previewer = () => {
   const [dragOverride, setDragOverride] = useState<{id: string; position: CanvasPosition} | null>(
     null
   );
+  // The drop handler reads the latest position from this ref: a fast drag can
+  // release before React re-renders with the last move's state.
+  const dragOverrideRef = useRef<{id: string; position: CanvasPosition} | null>(null);
 
   // Pinch zoom (trackpad pinch = ctrl+wheel). Canvas zooms smoothly toward
   // the focal point; the other layouts step through zoomSteps once enough
@@ -195,7 +205,8 @@ const Previewer = () => {
             deviceScale,
             canvasOptions.showBezels,
             rotateDevices,
-            individualRotations
+            individualRotations,
+            viewportOverrides
           )
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -206,6 +217,7 @@ const Previewer = () => {
       canvasOptions.showBezels,
       rotateDevices,
       individualRotations,
+      viewportOverrides,
     ]
   );
   const positionFor = (device: IDevice, idx: number): CanvasPosition => {
@@ -340,13 +352,15 @@ const Previewer = () => {
     }
     if (drag.deviceId !== null) {
       // Pointer deltas are screen pixels; the world is scaled by canvasZoom.
-      setDragOverride({
+      const override = {
         id: drag.deviceId,
         position: {
           x: drag.base.x + (e.clientX - drag.startX) / canvasZoom,
           y: drag.base.y + (e.clientY - drag.startY) / canvasZoom,
         },
-      });
+      };
+      dragOverrideRef.current = override;
+      setDragOverride(override);
       return;
     }
     setCanvasPan({
@@ -360,16 +374,18 @@ const Previewer = () => {
     if (drag === null || drag.pointerId !== e.pointerId) {
       return;
     }
-    if (drag.deviceId !== null && dragOverride !== null) {
+    const override = dragOverrideRef.current;
+    if (drag.deviceId !== null && override !== null) {
       dispatch(
         setCanvasPosition({
           suite: activeSuite.id,
           device: drag.deviceId,
-          position: dragOverride.position,
+          position: override.position,
         })
       );
-      setDragOverride(null);
     }
+    dragOverrideRef.current = null;
+    setDragOverride(null);
     dragState.current = null;
   };
 

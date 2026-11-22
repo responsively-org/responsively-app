@@ -41,6 +41,7 @@ import {injectHostIntoCsp} from './csp';
 import {isOpenableUrl} from './url-validation';
 import {wireWebviewSecurity} from './webview-registry';
 import {getTitleBarOptions} from './titlebar';
+import {initDeviceColorSchemeHandlers} from './device-color-scheme';
 
 initLogging();
 initCrashHandlers();
@@ -115,6 +116,7 @@ initWebviewContextMenu();
 initScreenshotHandlers();
 initWebviewStorageManagerHandlers();
 initNativeFunctionHandlers();
+initDeviceColorSchemeHandlers();
 initMcpServer(getMainWindow);
 initHttpBasicAuthHandlers(getMainWindow);
 const webPermissionHandlers = WebPermissionHandlers(getMainWindow);

@@ -4,9 +4,13 @@ import {CONTEXT_MENUS} from 'main/webview-context-menu/common';
 import {memo, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  getEffectiveDeviceViewport,
   selectIndividualRotations,
+  selectViewportOverrides,
   setIndividualRotation,
+  setViewportOptions,
 } from 'renderer/store/features/device-manager';
+import useEventMirroring from 'renderer/hooks/useEventMirroring';
 import {
   selectAddress,
   selectCanvasOptions,
@@ -32,6 +36,7 @@ import {emitPinch} from '../pinch';
 import DeviceFrame from './DeviceFrame';
 import Toolbar from './Toolbar';
 import useDeviceNavigation from './useDeviceNavigation';
+import useDeviceColorScheme from './useDeviceColorScheme';
 import useDevtoolsBridge from './useDevtoolsBridge';
 import useWebviewLifecycle from './useWebviewLifecycle';
 
@@ -47,6 +52,8 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const zoomfactor = useSelector(selectZoomFactor);
   const rotateDevices = useSelector(selectRotate);
   const individualRotations = useSelector(selectIndividualRotations);
+  const viewportOverrides = useSelector(selectViewportOverrides);
+  const viewportOptions = viewportOverrides[device.id];
   const layout = useSelector(selectLayout);
   const canvasOptions = useSelector(selectCanvasOptions);
   const isPresenting = useSelector(selectIsPresenting);
@@ -76,24 +83,32 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
   const getWebview = useCallback(() => ref.current, []);
 
   const {webviewReady} = useWebviewLifecycle(ref, {isMobileCapable: device.isMobileCapable});
-  const navigation = useDeviceNavigation({ref, isPrimary, webviewReady, address});
+  useDeviceColorScheme(ref, webviewReady, viewportOptions?.colorScheme);
+  useEventMirroring(ref, device.id);
+  const navigation = useDeviceNavigation({
+    ref,
+    isPrimary,
+    webviewReady,
+    address,
+    deviceId: device.id,
+  });
   const {openDevTools, inspectElement} = useDevtoolsBridge({ref, webviewReady, zoomfactor});
 
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
   const isCanvasLayout = layout === PREVIEW_LAYOUTS.CANVAS;
   const singleRotated = individualRotations[device.id] ?? false;
 
-  let {height, width} = device;
-
-  // Check if device rotation is enabled (only mobile-capable devices can be rotated)
-  const isDeviceRotationEnabled = device.isMobileCapable && (rotateDevices || singleRotated);
-
-  // Apply rotation: both global and individual rotation only affect mobile-capable devices
-  if (isDeviceRotationEnabled) {
-    const temp = width;
-    width = height;
-    height = temp;
-  }
+  const {width, height, isRotated} = getEffectiveDeviceViewport(
+    device,
+    rotateDevices,
+    singleRotated,
+    viewportOptions
+  );
+  const hasViewportGeometry =
+    viewportOptions?.width !== undefined ||
+    viewportOptions?.height !== undefined ||
+    viewportOptions?.orientation !== undefined;
+  const isDeviceRotationEnabled = device.isMobileCapable || hasViewportGeometry;
 
   const resolution: ViewResolution = `${width}x${height}`;
   const designOverlay = useSelector((state: RootState) => selectDesignOverlay(state)(resolution));
@@ -140,8 +155,20 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
 
   useKeyboardShortcut(SHORTCUT_CHANNEL.TOGGLE_RULERS, toggleRuler);
 
-  const onRotateHandler = (state: boolean) =>
-    dispatch(setIndividualRotation({id: device.id, rotated: state}));
+  const onRotateHandler = (state: boolean) => {
+    if (hasViewportGeometry || rotateDevices) {
+      dispatch(
+        setViewportOptions({
+          id: device.id,
+          width: height,
+          height: width,
+          orientation: width > height ? 'portrait' : 'landscape',
+        })
+      );
+    } else {
+      dispatch(setIndividualRotation({id: device.id, rotated: state}));
+    }
+  };
 
   const onIndividualLayoutHandler = (selectedDevice: IDevice) => {
     if (!isIndividualLayout) {
@@ -217,8 +244,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
     [width, height]
   );
 
-  const isRestrictedMinimumDeviceSize =
-    device.width < 400 && zoomfactor < 0.6 && !isDeviceRotationEnabled;
+  const isRestrictedMinimumDeviceSize = width < 400 && zoomfactor < 0.6 && !isRotated;
 
   return (
     <DeviceFrame
@@ -238,7 +264,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
       showBezel={isCanvasLayout && canvasOptions.showBezels}
       showName={!isCanvasLayout || canvasOptions.showNames}
       showDims={!isCanvasLayout || canvasOptions.showDims}
-      isRotated={isDeviceRotationEnabled}
+      isRotated={isRotated}
       simulationName={activeSimulation}
       flashing={flashing}
       initialSrc={initialAddress.current}
@@ -254,7 +280,7 @@ const Device = ({isPrimary, device, setIndividualDevice}: Props) => {
             onSimulationChange={setActiveSimulation}
             openDevTools={openDevTools}
             toggleRuler={toggleRuler}
-            rotated={singleRotated}
+            rotated={isRotated}
             onRotate={onRotateHandler}
             onIndividualLayoutHandler={onIndividualLayoutHandler}
             isIndividualLayout={isIndividualLayout}

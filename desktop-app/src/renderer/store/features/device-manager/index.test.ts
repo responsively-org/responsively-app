@@ -1,4 +1,5 @@
 import {describe, expect, it} from 'vitest';
+import {defaultDevices} from 'common/deviceList';
 import reducer, {
   addSuite,
   resetCanvasPositions,
@@ -9,6 +10,8 @@ import reducer, {
   selectActiveSuite,
   setActiveSuite,
   setIndividualRotation,
+  setViewportOptions,
+  getEffectiveDeviceViewport,
   setSuiteDevices,
   DEFAULT_SUITE,
   DeviceManagerState,
@@ -20,6 +23,7 @@ const stateWith = (overrides: Partial<DeviceManagerState>): DeviceManagerState =
   activeSuite: DEFAULT_SUITE.id,
   suites: [DEFAULT_SUITE],
   individualRotations: {},
+  viewportOverrides: {},
   ...overrides,
 });
 
@@ -102,6 +106,34 @@ describe('device-manager slice', () => {
     expect(state.individualRotations).toEqual({});
   });
 
+  it('merges session viewport options for one device without changing catalog or suites', () => {
+    const before = stateWith({devices: defaultDevices.slice(0, 2)});
+    let state = reducer(before, setViewportOptions({id: '10001', width: 640, colorScheme: 'dark'}));
+    state = reducer(state, setViewportOptions({id: '10001', height: 960}));
+    state = reducer(
+      state,
+      setViewportOptions({id: '10001', width: undefined, height: undefined, colorScheme: 'dark'})
+    );
+    state = reducer(state, setViewportOptions({id: '10002', colorScheme: 'light'}));
+    expect(state.viewportOverrides).toEqual({
+      '10001': {width: 640, height: 960, colorScheme: 'dark'},
+      '10002': {colorScheme: 'light'},
+    });
+    expect(state.devices).toBe(before.devices);
+    expect(state.suites).toBe(before.suites);
+  });
+
+  it('reset restores the preset and individual rotation, then applies any supplied options', () => {
+    let state = reducer(undefined, setIndividualRotation({id: '10001', rotated: true}));
+    state = reducer(state, setViewportOptions({id: '10001', width: 640, colorScheme: 'dark'}));
+    state = reducer(state, setViewportOptions({id: '10002', width: 700}));
+    state = reducer(state, setViewportOptions({id: '10001', reset: true}));
+    expect(state.viewportOverrides).toEqual({'10002': {width: 700}});
+    expect(state.individualRotations).toEqual({});
+    state = reducer(state, setViewportOptions({id: '10002', reset: true, colorScheme: 'light'}));
+    expect(state.viewportOverrides).toEqual({'10002': {colorScheme: 'light'}});
+  });
+
   it('setCanvasPosition stores per-device world positions on the suite', () => {
     let state = reducer(
       undefined,
@@ -131,5 +163,62 @@ describe('device-manager slice', () => {
     );
     state = reducer(state, resetCanvasPositions('default'));
     expect(state.suites[0].canvasPositions).toBeUndefined();
+  });
+});
+
+describe('effective device viewport', () => {
+  const phone = {...defaultDevices[0], width: 390, height: 844};
+  const desktop = {...phone, isMobileCapable: false, width: 1440, height: 900};
+
+  it('retains existing global or individual rotation for presets', () => {
+    expect(getEffectiveDeviceViewport(phone, true)).toEqual({
+      width: 844,
+      height: 390,
+      orientation: 'landscape',
+      isRotated: true,
+    });
+    expect(getEffectiveDeviceViewport(phone, false, true)).toEqual(
+      getEffectiveDeviceViewport(phone, true, true)
+    );
+    expect(getEffectiveDeviceViewport(desktop, true, true)).toMatchObject({
+      width: 1440,
+      height: 900,
+      isRotated: false,
+    });
+  });
+
+  it('applies exact supplied dimensions even while global rotation is enabled', () => {
+    expect(getEffectiveDeviceViewport(phone, true, true, {width: 720, height: 900})).toMatchObject({
+      width: 720,
+      height: 900,
+      orientation: 'portrait',
+      isRotated: false,
+    });
+    expect(getEffectiveDeviceViewport(phone, true, false, {width: 640})).toMatchObject({
+      width: 640,
+      height: 390,
+    });
+  });
+
+  it('normalizes dimensions with an explicit orientation on phones and desktops', () => {
+    expect(
+      getEffectiveDeviceViewport(phone, false, false, {
+        width: 640,
+        height: 960,
+        orientation: 'landscape',
+      })
+    ).toMatchObject({width: 960, height: 640, orientation: 'landscape', isRotated: true});
+    expect(
+      getEffectiveDeviceViewport(desktop, false, false, {orientation: 'portrait'})
+    ).toMatchObject({width: 900, height: 1440, orientation: 'portrait', isRotated: true});
+  });
+
+  it('color-only overrides preserve rotation and squares are not rotated', () => {
+    expect(getEffectiveDeviceViewport(phone, true, false, {colorScheme: 'dark'})).toEqual(
+      getEffectiveDeviceViewport(phone, true)
+    );
+    expect(
+      getEffectiveDeviceViewport(phone, false, false, {width: 600, height: 600})
+    ).toMatchObject({width: 600, height: 600, isRotated: false});
   });
 });

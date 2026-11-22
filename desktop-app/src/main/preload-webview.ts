@@ -1,5 +1,7 @@
-import {ipcRenderer} from 'electron';
+import {ipcRenderer, webFrame} from 'electron';
 import {IPC_MAIN_CHANNELS} from 'common/constants';
+import {EVENT_MIRRORING_CHANNELS, type EventMirroringRequest} from 'common/event-mirroring';
+import {setBrowserSyncMirroring} from './browser-sync-mirroring';
 
 window.onerror = function logError(errorMsg, url, lineNumber) {
   console.log(`Unhandled error: ${errorMsg} ${url} ${lineNumber}`);
@@ -49,12 +51,9 @@ const requestFlush = () => {
 };
 
 const documentBodyInit = () => {
-  // Browser Sync
-  const bsPort = ipcRenderer.sendSync(IPC_MAIN_CHANNELS.GET_BROWSER_SYNC_PORT);
-  const bsScript = window.document.createElement('script');
-  bsScript.src = `https://localhost:${bsPort}/browser-sync/browser-sync-client.js?v=2.27.10`;
-  bsScript.async = true;
-  window.document.body.appendChild(bsScript);
+  // The host supplies this device's session preference before BrowserSync
+  // loads. Disabled devices must not briefly reconnect during navigation.
+  ipcRenderer.sendToHost(EVENT_MIRRORING_CHANNELS.READY);
 
   // Context Menu
   window.addEventListener('contextmenu', (e) => {
@@ -158,6 +157,27 @@ const documentBodyInit = () => {
 ipcRenderer.on('context-menu-command', (_, command) => {
   ipcRenderer.sendToHost('context-menu-command', command);
 });
+
+ipcRenderer.on(
+  EVENT_MIRRORING_CHANNELS.SET,
+  async (_, {requestId, enabled}: EventMirroringRequest) => {
+    if (!Number.isSafeInteger(requestId) || typeof enabled !== 'boolean') return;
+    try {
+      const bsPort = ipcRenderer.sendSync(IPC_MAIN_CHANNELS.GET_BROWSER_SYNC_PORT);
+      const scriptUrl = `https://localhost:${bsPort}/browser-sync/browser-sync-client.js`;
+      await webFrame.executeJavaScript(
+        `(${setBrowserSyncMirroring.toString()})(${enabled}, ${JSON.stringify(scriptUrl)})`
+      );
+      ipcRenderer.sendToHost(EVENT_MIRRORING_CHANNELS.APPLIED, {requestId, enabled});
+    } catch (error) {
+      ipcRenderer.sendToHost(EVENT_MIRRORING_CHANNELS.APPLIED, {
+        requestId,
+        enabled,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+);
 
 const init = () => {
   try {

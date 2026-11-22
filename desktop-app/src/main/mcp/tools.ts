@@ -1,34 +1,23 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
-import {webContents} from 'electron';
 import {
   McpAppState,
   McpCaptureTargetsResult,
   McpDeviceInfo,
   McpNavigateResult,
   McpSetActiveDevicesResult,
+  McpSetDeviceOptionsResult,
+  McpSetMirroringResult,
   McpSkippedCapture,
 } from '../../common/mcp';
-import {captureImage} from '../screenshot';
 import {GetMainWindow, sendBridgeCommand} from './bridge';
 import {assertAllowedFileUrl, fileUrlRejection} from './file-url';
 import {clickElement, readPage, typeText} from './interactions';
+import {captureTarget, ImageContent, TextContent} from './screenshots';
+import {scrollTo} from './scroll';
 import {toolDefs} from './toolDefs';
 import {normalizeUrl} from './utils';
 
-const MAX_SCREENSHOT_WIDTH = 1000;
-const SCREENSHOT_JPEG_QUALITY = 80;
 const NAVIGATE_BRIDGE_TIMEOUT_MS = 35_000;
-
-interface TextContent {
-  type: 'text';
-  text: string;
-}
-
-interface ImageContent {
-  type: 'image';
-  data: string;
-  mimeType: string;
-}
 
 const textResult = (value: unknown) => ({
   content: [{type: 'text' as const, text: JSON.stringify(value, null, 2)}],
@@ -38,63 +27,6 @@ const errorResult = (error: unknown) => ({
   content: [{type: 'text' as const, text: error instanceof Error ? error.message : String(error)}],
   isError: true,
 });
-
-const captureTarget = async (
-  target: McpCaptureTargetsResult['targets'][number]
-): Promise<{content: [TextContent, ImageContent]} | {skip: McpSkippedCapture}> => {
-  const targetContents = webContents.fromId(target.webContentsId);
-  if (targetContents === undefined || targetContents.isDestroyed()) {
-    return {skip: {deviceName: target.deviceName, reason: 'the preview was closed'}};
-  }
-  // Check the URL the preview is actually showing, before and after the
-  // capture: a local .html page may have navigated to another local file.
-  const blockedBefore = fileUrlRejection(targetContents.getURL());
-  if (blockedBefore !== null) {
-    return {skip: {deviceName: target.deviceName, reason: blockedBefore}};
-  }
-  let image: Electron.NativeImage | undefined;
-  try {
-    image = await captureImage(target.webContentsId);
-  } catch (error) {
-    return {
-      skip: {
-        deviceName: target.deviceName,
-        reason: `capture failed: ${error instanceof Error ? error.message : String(error)}`,
-      },
-    };
-  }
-  const blockedAfter = targetContents.isDestroyed()
-    ? 'the preview was closed'
-    : fileUrlRejection(targetContents.getURL());
-  if (blockedAfter !== null) {
-    return {skip: {deviceName: target.deviceName, reason: blockedAfter}};
-  }
-  if (image === undefined || image.isEmpty()) {
-    return {
-      skip: {
-        deviceName: target.deviceName,
-        reason: 'capture returned an empty image (the app window may be hidden or minimized)',
-      },
-    };
-  }
-  const resized =
-    image.getSize().width > MAX_SCREENSHOT_WIDTH
-      ? image.resize({width: MAX_SCREENSHOT_WIDTH})
-      : image;
-  return {
-    content: [
-      {
-        type: 'text',
-        text: `${target.deviceName} (${target.width}x${target.height}) — ${target.url}`,
-      },
-      {
-        type: 'image',
-        data: resized.toJPEG(SCREENSHOT_JPEG_QUALITY).toString('base64'),
-        mimeType: 'image/jpeg',
-      },
-    ],
-  };
-};
 
 export const registerTools = (server: McpServer, getMainWindow: GetMainWindow) => {
   server.registerTool('get_app_state', toolDefs.get_app_state, async () => {
@@ -161,6 +93,36 @@ export const registerTools = (server: McpServer, getMainWindow: GetMainWindow) =
     }
   });
 
+  server.registerTool('set_mirroring', toolDefs.set_mirroring, async (options) => {
+    try {
+      return textResult(
+        await sendBridgeCommand<McpSetMirroringResult>(
+          getMainWindow,
+          'set-mirroring',
+          options,
+          20_000
+        )
+      );
+    } catch (error) {
+      return errorResult(error);
+    }
+  });
+
+  server.registerTool('set_device_options', toolDefs.set_device_options, async (options) => {
+    try {
+      return textResult(
+        await sendBridgeCommand<McpSetDeviceOptionsResult>(
+          getMainWindow,
+          'set-device-options',
+          options,
+          20_000
+        )
+      );
+    } catch (error) {
+      return errorResult(error);
+    }
+  });
+
   server.registerTool('click', toolDefs.click, async ({selector, device}) => {
     try {
       return textResult(await clickElement(getMainWindow, selector, device));
@@ -183,37 +145,54 @@ export const registerTools = (server: McpServer, getMainWindow: GetMainWindow) =
     }
   );
 
-  server.registerTool('screenshot', toolDefs.screenshot, async ({device}) => {
+  server.registerTool('scroll_to', toolDefs.scroll_to, async (options) => {
     try {
-      const {targets, skipped} = await sendBridgeCommand<McpCaptureTargetsResult>(
-        getMainWindow,
-        'get-capture-targets',
-        {device}
-      );
-      if (targets.length === 0 && skipped.length === 0) {
-        return errorResult(
-          new Error('No active devices to capture. Use the set_active_devices tool first.')
-        );
-      }
-      const captures = await Promise.all(targets.map(captureTarget));
-      const content: Array<TextContent | ImageContent> = [];
-      const skips: McpSkippedCapture[] = [...skipped];
-      captures.forEach((capture) => {
-        if ('skip' in capture) {
-          skips.push(capture.skip);
-        } else {
-          content.push(...capture.content);
-        }
-      });
-      if (skips.length > 0) {
-        content.push({
-          type: 'text',
-          text: `Skipped: ${skips.map((s) => `${s.deviceName} (${s.reason})`).join('; ')}`,
-        });
-      }
-      return {content};
+      return textResult(await scrollTo(getMainWindow, options));
     } catch (error) {
       return errorResult(error);
     }
   });
+
+  server.registerTool(
+    'screenshot',
+    toolDefs.screenshot,
+    async ({device, fullPage, originalResolution}) => {
+      try {
+        const {targets, skipped} = await sendBridgeCommand<McpCaptureTargetsResult>(
+          getMainWindow,
+          'get-capture-targets',
+          {device}
+        );
+        if (targets.length === 0 && skipped.length === 0) {
+          return errorResult(
+            new Error('No active devices to capture. Use the set_active_devices tool first.')
+          );
+        }
+        const captures = await Promise.all(
+          targets.map((target) => captureTarget(target, {fullPage, originalResolution}))
+        );
+        const content: Array<TextContent | ImageContent> = [];
+        const skips: McpSkippedCapture[] = [...skipped];
+        captures.forEach((capture) => {
+          if ('skip' in capture) {
+            skips.push(capture.skip);
+          } else {
+            content.push(...capture.content);
+          }
+        });
+        if (skips.length > 0) {
+          content.push({
+            type: 'text',
+            text: `Skipped: ${skips.map((s) => `${s.deviceName} (${s.reason})`).join('; ')}`,
+          });
+        }
+        return {
+          content,
+          ...(captures.every((capture) => 'skip' in capture) ? {isError: true} : {}),
+        };
+      } catch (error) {
+        return errorResult(error);
+      }
+    }
+  );
 };

@@ -56,6 +56,8 @@ export const buildPreloadedState = () => {
     },
     renderer: {
       address: urlFromQueryParam() ?? String(store.get('homepage') ?? ''),
+      addressSource: null,
+      addressRevision: 0,
       pageTitle: '',
       individualZoomFactor: zoomFactorFromStep(store.get('renderer.individualZoomStepIndex')),
       zoomFactor: zoomFactorFromStep(store.get('renderer.zoomStepIndex')),
@@ -85,6 +87,7 @@ export const buildPreloadedState = () => {
       activeSuite: DEFAULT_SUITE.id,
       suites,
       individualRotations: {},
+      viewportOverrides: {},
     },
   };
 };

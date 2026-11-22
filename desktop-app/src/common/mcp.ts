@@ -23,9 +23,15 @@ export const MCP_SERVER_INSTRUCTIONS =
   'browser screen sizes. Start with get_app_state to inspect the current URL and viewports. ' +
   'Choose mobile, tablet, and desktop presets with list_devices and set_active_devices, ' +
   'open the website with navigate, then use screenshot to capture all active viewports in ' +
-  'one call. Use read_page to find selectors for click and type_text when testing menus, ' +
-  'links, and forms. Screenshots are labeled JPEGs of the visible viewport, not full-page ' +
-  'captures, and are downscaled to at most 1000px wide. These are browser device previews, ' +
+  'one call. Use set_mirroring to isolate one preview or enable shared interactions, and ' +
+  'set_device_options to test custom viewport sizes, orientation, and color scheme without ' +
+  'changing saved device presets. get_app_state reports the effective settings. ' +
+  'Use read_page to find selectors for click and type_text when testing menus, ' +
+  'links, and forms. Use scroll_to with a selector, text, or x/y coordinates to inspect ' +
+  'content below the fold. Screenshots default to labeled viewport JPEGs capped at 1000px ' +
+  'wide; set fullPage for the entire document and originalResolution for unscaled PNGs. ' +
+  'Full-page captures include currently rendered content; scroll first to load lazy content. ' +
+  'These are browser device previews, ' +
   'not physical-device tests.';
 
 export const MCP_BEACON_FILENAME = 'app-location.json';
@@ -45,7 +51,13 @@ export interface McpBeacon {
 }
 
 export type McpBridgeCommand =
-  'get-app-state' | 'navigate' | 'list-devices' | 'set-active-devices' | 'get-capture-targets';
+  | 'get-app-state'
+  | 'navigate'
+  | 'list-devices'
+  | 'set-active-devices'
+  | 'get-capture-targets'
+  | 'set-mirroring'
+  | 'set-device-options';
 
 export interface McpBridgeRequest {
   requestId: string;
@@ -66,6 +78,9 @@ export interface McpActiveDevice {
   width: number;
   height: number;
   type: string;
+  orientation: 'portrait' | 'landscape';
+  colorScheme: 'light' | 'dark' | 'system';
+  mirroringEnabled: boolean;
 }
 
 export interface McpAppState {
@@ -77,7 +92,10 @@ export interface McpAppState {
   activeDevices: McpActiveDevice[];
 }
 
-export interface McpDeviceInfo extends McpActiveDevice {
+export interface McpDeviceInfo extends Omit<
+  McpActiveDevice,
+  'orientation' | 'colorScheme' | 'mirroringEnabled'
+> {
   isCustom: boolean;
   isActive: boolean;
 }
@@ -98,6 +116,30 @@ export interface McpSetActiveDevicesPayload {
 
 export interface McpSetActiveDevicesResult {
   activeDevices: McpActiveDevice[];
+}
+
+export interface McpSetMirroringPayload {
+  enabled: boolean;
+  device?: string;
+}
+
+export interface McpSetMirroringResult {
+  activeDevices: McpActiveDevice[];
+}
+
+export interface McpSetDeviceOptionsPayload {
+  device?: string;
+  width?: number;
+  height?: number;
+  orientation?: 'portrait' | 'landscape';
+  colorScheme?: 'light' | 'dark' | 'system';
+  reset?: boolean;
+}
+
+export interface McpSetDeviceOptionsResult {
+  device: McpActiveDevice;
+  /** Hidden previews apply their geometry when shown again. */
+  viewportApplied: boolean;
 }
 
 export interface McpCaptureTargetsPayload {
