@@ -59,4 +59,42 @@ export const trackWindowState = (window: BrowserWindow) => {
       isMaximized: window.isMaximized(),
     });
   });
+
+  // Electron bug: on Windows, reloading the renderer (Ctrl+R or DevTools
+  // reload) causes the BrowserWindow to expand to the full work area when the
+  // window is in a snapped / non-maximised custom position.
+  // Workaround: snapshot the current bounds immediately before the reload
+  // begins (did-start-loading fires synchronously in the main process before
+  // the renderer is torn down) so that ready-to-show can restore them.
+  // See: https://github.com/electron/electron/issues/25359
+  let boundsSnapshot: (WindowState & {x: number; y: number}) | null = null;
+
+  window.webContents.on('did-start-loading', () => {
+    if (window.isDestroyed() || !window.isVisible()) {
+      return;
+    }
+    const bounds = window.getNormalBounds();
+    boundsSnapshot = {
+      x: bounds.x,
+      y: bounds.y,
+      width: bounds.width,
+      height: bounds.height,
+      isMaximized: window.isMaximized(),
+    };
+  });
+
+  window.on('ready-to-show', () => {
+    if (!boundsSnapshot || window.isDestroyed()) {
+      return;
+    }
+    const snap = boundsSnapshot;
+    boundsSnapshot = null;
+    if (snap.isMaximized) {
+      // Already maximised — Electron handles this correctly; nothing to do.
+      return;
+    }
+    // Restore the bounds that existed before the reload. setBounds is a no-op
+    // when the values are already correct, so this is safe to call every time.
+    window.setBounds({x: snap.x, y: snap.y, width: snap.width, height: snap.height});
+  });
 };
