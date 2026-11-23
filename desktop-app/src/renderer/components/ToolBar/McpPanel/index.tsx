@@ -100,7 +100,7 @@ const McpPanel = () => {
       trigger={
         <span className="pointer-events-none contents">
           <Icon icon="lucide:plug-zap" fontSize={16} className="text-accent" />
-          MCP
+          <span className="hidden xl:inline">MCP</span>
         </span>
       }
     >

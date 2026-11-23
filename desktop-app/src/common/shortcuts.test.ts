@@ -61,6 +61,15 @@ describe('matchShortcut', () => {
     );
   });
 
+  it('maps mod+shift+s to quick capture and mod+s to full capture', () => {
+    expect(matchShortcut(press({code: 'KeyS', meta: true}), 'darwin')).toBe(
+      SHORTCUT_CHANNEL.SCREENSHOT_ALL
+    );
+    expect(matchShortcut(press({code: 'KeyS', meta: true, shift: true}), 'darwin')).toBe(
+      SHORTCUT_CHANNEL.QUICK_CAPTURE_ALL
+    );
+  });
+
   it('matches alt-only combos', () => {
     expect(matchShortcut(press({code: 'ArrowLeft', alt: true}), 'darwin')).toBe(
       SHORTCUT_CHANNEL.BACK

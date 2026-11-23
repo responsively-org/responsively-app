@@ -3,7 +3,7 @@ interface Props {
 }
 
 const ShortcutName = ({text}: Props) => {
-  const formattedText = text.replace('_', ' ').toLowerCase();
+  const formattedText = text.replaceAll('_', ' ').toLowerCase();
   return <div className="capitalize">{formattedText}</div>;
 };
 

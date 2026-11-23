@@ -75,7 +75,7 @@ export const VisionSimulationDropDown = ({
       trigger={
         <span className="pointer-events-none contents">
           <Icon icon="bx:low-vision" fontSize={isToolbar ? 16 : 18} />
-          {isToolbar ? 'Simulate' : null}
+          {isToolbar ? <span className="hidden 2xl:inline">Simulate</span> : null}
           {isToolbar ? <Icon icon="mdi:chevron-down" fontSize={13} className="text-muted" /> : null}
         </span>
       }

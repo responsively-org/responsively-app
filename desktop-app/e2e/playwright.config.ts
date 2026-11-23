@@ -49,6 +49,7 @@ const testOrder = [
   'device-manager-extended.spec.ts',
   'device-manager.spec.ts',
   'app-launch.spec.ts',
+  'toolbar-responsive.spec.ts',
 ];
 
 export default defineConfig({
